@@ -1,3 +1,5 @@
+[![MseeP.ai Security Assessment Badge](https://mseep.net/pr/mims-harvard-tooluniverse-badge.png)](https://mseep.ai/app/mims-harvard-tooluniverse)
+
 # ToolUniverse
 
 [![ProjectPage](https://img.shields.io/badge/Page-TxAgent-red)](https://zitniklab.hms.harvard.edu/TxAgent)
