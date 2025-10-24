@@ -72,6 +72,7 @@ class AzureOpenAIClient(BaseLLMClient):
         try:
             from openai import AzureOpenAI as _AzureOpenAI  # type: ignore
             import openai as _openai  # type: ignore
+            from openai import OpenAI
         except Exception as e:  # pragma: no cover
             raise RuntimeError("openai AzureOpenAI client is not available") from e
         self._AzureOpenAI = _AzureOpenAI
@@ -85,13 +86,10 @@ class AzureOpenAIClient(BaseLLMClient):
             f"Resolved Azure API version for {model_id}: {resolved_version}"
         )
 
-        api_key = os.getenv("AZURE_OPENAI_API_KEY")
+        api_key = os.getenv("OPENAI_API_KEY")
         if not api_key:
-            raise ValueError("AZURE_OPENAI_API_KEY not set")
-        endpoint = os.getenv("AZURE_OPENAI_ENDPOINT", "https://azure-ai.hms.edu")
-        self.client = self._AzureOpenAI(
-            azure_endpoint=endpoint, api_key=api_key, api_version=resolved_version
-        )
+            raise ValueError("OPENAI_API_KEY not set")
+        self.client = OpenAI(api_key=api_key)
         self.api_version = resolved_version
 
         # Load env overrides for model limits (JSON dict of {prefix: {max_output, context_window}})
