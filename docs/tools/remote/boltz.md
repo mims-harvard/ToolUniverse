@@ -100,11 +100,11 @@ python path/to/boltz_mcp_server.py
 The server will start on `http://0.0.0.0:8080` but will be accessible via your GPU hostname (e.g., `http://your-gpu-hostname:8080`) and provide molecular docking capabilities.
 
 ## Usage Examples
-For comprehensive usage examples and testing patterns, please refer to the test file:
+For an example Boltz-2 tool call, please refer to the following examples file:
 
 ```bash
 # View MCP tool usage examples
-cat ToolUniverse/src/tooluniverse/test/test_mcp_tool.py
+cat ToolUniverse/examples/mcp/mcp_tool_example.py
 ```
 
-This test file contains detailed examples of how to interact with the Boltz2 molecular docking MCP servers, including proper API calls and parameter formatting.
+This test file contains a detailed example of how to interact with the Boltz2 molecular docking MCP server, including proper parameter formatting. For more details on how to use the Boltz2 prediction parameters, check out: `https://github.com/jwohlwend/boltz/blob/main/docs/prediction.md`.
