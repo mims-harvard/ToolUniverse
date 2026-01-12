@@ -66,12 +66,16 @@ Step 2: Install UV and ToolUniverse
    # Install UV package manager
    curl -LsSf https://astral.sh/uv/install.sh | sh
 
-   # Create working directory for ToolUniverse
-   # uv will automatically create and manage a virtual environment (.venv) inside this directory
+   # Create working directory for ToolUniverse   
    mkdir -p /path/to/tooluniverse-env
-   uv --directory /path/to/tooluniverse-env pip install tooluniverse
+   cd /path/to/tooluniverse-env
+   # uv will create a virtual environment (.venv) inside this directory
+   uv venv
+   # uv will install tooluniverse and all its dependencies
+   uv pip install tooluniverse
 
    # Verify installation
+   cd ~
    uv --directory /path/to/tooluniverse-env run python -c "import tooluniverse; print('ToolUniverse installed successfully')"
 
 Step 3: Configure Codex CLI
