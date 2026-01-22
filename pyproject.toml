@@ -118,6 +118,9 @@ space = [
 all = [
     "tooluniverse[dev,docs,graph,visualization,space,embedding,ml]",
 ]
+pubmed = [
+    "pubmed-search-mcp>=0.1.29",
+]
 build = [
     "pyinstaller>=6.0.0",
 ]

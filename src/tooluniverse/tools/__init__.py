@@ -796,6 +796,31 @@ from .PubChem_search_compounds_by_substructure import (
 )
 from .PubMed_Guidelines_Search import PubMed_Guidelines_Search
 from .PubMed_search_articles import PubMed_search_articles
+from .pubmed_analyze_figure_mcp import pubmed_analyze_figure_mcp
+from .pubmed_build_citation_tree_mcp import pubmed_build_citation_tree_mcp
+from .pubmed_configure_institution_mcp import pubmed_configure_institution_mcp
+from .pubmed_export_citations_mcp import pubmed_export_citations_mcp
+from .pubmed_fetch_article_mcp import pubmed_fetch_article_mcp
+from .pubmed_find_citations_mcp import pubmed_find_citations_mcp
+from .pubmed_find_related_mcp import pubmed_find_related_mcp
+from .pubmed_generate_queries_mcp import pubmed_generate_queries_mcp
+from .pubmed_get_citation_metrics_mcp import pubmed_get_citation_metrics_mcp
+from .pubmed_get_compound_details_mcp import pubmed_get_compound_details_mcp
+from .pubmed_get_compound_literature_mcp import pubmed_get_compound_literature_mcp
+from .pubmed_get_full_text_mcp import pubmed_get_full_text_mcp
+from .pubmed_get_gene_details_mcp import pubmed_get_gene_details_mcp
+from .pubmed_get_gene_literature_mcp import pubmed_get_gene_literature_mcp
+from .pubmed_get_institutional_link_mcp import pubmed_get_institutional_link_mcp
+from .pubmed_get_references_mcp import pubmed_get_references_mcp
+from .pubmed_get_text_mined_terms_mcp import pubmed_get_text_mined_terms_mcp
+from .pubmed_list_resolver_presets_mcp import pubmed_list_resolver_presets_mcp
+from .pubmed_parse_pico_mcp import pubmed_parse_pico_mcp
+from .pubmed_reverse_image_search_mcp import pubmed_reverse_image_search_mcp
+from .pubmed_search_clinvar_mcp import pubmed_search_clinvar_mcp
+from .pubmed_search_compound_mcp import pubmed_search_compound_mcp
+from .pubmed_search_gene_mcp import pubmed_search_gene_mcp
+from .pubmed_suggest_citation_tree_mcp import pubmed_suggest_citation_tree_mcp
+from .pubmed_unified_search_mcp import pubmed_unified_search_mcp
 from .PubTator3_EntityAutocomplete import PubTator3_EntityAutocomplete
 from .PubTator3_LiteratureSearch import PubTator3_LiteratureSearch
 from .PyPIPackageInspector import PyPIPackageInspector
@@ -1839,6 +1864,31 @@ __all__ = [
     "PubChem_search_compounds_by_substructure",
     "PubMed_Guidelines_Search",
     "PubMed_search_articles",
+    "pubmed_analyze_figure_mcp",
+    "pubmed_build_citation_tree_mcp",
+    "pubmed_configure_institution_mcp",
+    "pubmed_export_citations_mcp",
+    "pubmed_fetch_article_mcp",
+    "pubmed_find_citations_mcp",
+    "pubmed_find_related_mcp",
+    "pubmed_generate_queries_mcp",
+    "pubmed_get_citation_metrics_mcp",
+    "pubmed_get_compound_details_mcp",
+    "pubmed_get_compound_literature_mcp",
+    "pubmed_get_full_text_mcp",
+    "pubmed_get_gene_details_mcp",
+    "pubmed_get_gene_literature_mcp",
+    "pubmed_get_institutional_link_mcp",
+    "pubmed_get_references_mcp",
+    "pubmed_get_text_mined_terms_mcp",
+    "pubmed_list_resolver_presets_mcp",
+    "pubmed_parse_pico_mcp",
+    "pubmed_reverse_image_search_mcp",
+    "pubmed_search_clinvar_mcp",
+    "pubmed_search_compound_mcp",
+    "pubmed_search_gene_mcp",
+    "pubmed_suggest_citation_tree_mcp",
+    "pubmed_unified_search_mcp",
     "PubTator3_EntityAutocomplete",
     "PubTator3_LiteratureSearch",
     "PyPIPackageInspector",

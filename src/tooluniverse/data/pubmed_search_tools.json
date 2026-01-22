@@ -1,0 +1,351 @@
+[
+  {
+    "name": "pubmed_unified_search_mcp",
+    "type": "PubMedUnifiedSearchMCP",
+    "description": "Main search entry point - auto multi-source search across PubMed, Europe PMC, CORE (200M+ papers). Automatically analyzes query and selects optimal sources.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "query": {"type": "string", "description": "Search query (natural language or PubMed syntax)"},
+        "limit": {"type": "integer", "default": 10, "minimum": 1, "maximum": 100},
+        "min_year": {"type": "integer", "minimum": 1900},
+        "max_year": {"type": "integer", "minimum": 1900},
+        "ranking": {"type": "string", "enum": ["balanced", "impact", "recency", "quality"], "default": "balanced"},
+        "sources": {"type": "array", "items": {"type": "string"}, "description": "Sources to search: pubmed, europe_pmc, core, openalex"},
+        "include_oa_links": {"type": "boolean", "default": true}
+      },
+      "required": ["query"]
+    },
+    "test_examples": [{"query": "CRISPR gene therapy cancer", "limit": 5, "ranking": "impact"}]
+  },
+  {
+    "name": "pubmed_parse_pico_mcp",
+    "type": "PubMedParsePICOMCP",
+    "description": "Parse clinical question into PICO elements (Population, Intervention, Comparison, Outcome).",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "description": {"type": "string", "description": "Clinical question in natural language"},
+        "p": {"type": "string"}, "i": {"type": "string"}, "c": {"type": "string"}, "o": {"type": "string"}
+      },
+      "required": ["description"]
+    },
+    "test_examples": [{"description": "Does aspirin reduce mortality in MI patients compared to placebo?"}]
+  },
+  {
+    "name": "pubmed_generate_queries_mcp",
+    "type": "PubMedGenerateQueriesMCP",
+    "description": "Generate optimized PubMed search queries using MeSH vocabulary and synonyms.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "topic": {"type": "string", "description": "Research topic in natural language"},
+        "strategy": {"type": "string", "enum": ["comprehensive", "sensitive", "specific", "balanced"], "default": "comprehensive"},
+        "check_spelling": {"type": "boolean", "default": true}
+      },
+      "required": ["topic"]
+    },
+    "test_examples": [{"topic": "diabetes prevention exercise", "strategy": "comprehensive"}]
+  },
+  {
+    "name": "pubmed_fetch_article_mcp",
+    "type": "PubMedFetchArticleMCP",
+    "description": "Fetch detailed article information by PMID(s). Returns complete metadata including abstract.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "pmids": {"type": "string", "description": "Comma-separated PMIDs, e.g. '12345678,23456789'"}
+      },
+      "required": ["pmids"]
+    },
+    "test_examples": [{"pmids": "36653562,28346489"}]
+  },
+  {
+    "name": "pubmed_find_related_mcp",
+    "type": "PubMedFindRelatedMCP",
+    "description": "Find articles related to a given paper using PubMed's Similar Articles algorithm.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "pmid": {"type": "string", "description": "Source article PMID"},
+        "limit": {"type": "integer", "default": 10, "maximum": 50}
+      },
+      "required": ["pmid"]
+    },
+    "test_examples": [{"pmid": "36653562", "limit": 5}]
+  },
+  {
+    "name": "pubmed_find_citations_mcp",
+    "type": "PubMedFindCitationsMCP",
+    "description": "Find articles that cite a given paper (forward citation tracking).",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "pmid": {"type": "string"},
+        "limit": {"type": "integer", "default": 20, "maximum": 100}
+      },
+      "required": ["pmid"]
+    },
+    "test_examples": [{"pmid": "36653562", "limit": 10}]
+  },
+  {
+    "name": "pubmed_get_references_mcp",
+    "type": "PubMedGetReferencesMCP",
+    "description": "Get the reference list (bibliography) of an article.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "pmid": {"type": "string"},
+        "limit": {"type": "integer", "default": 20, "maximum": 100}
+      },
+      "required": ["pmid"]
+    },
+    "test_examples": [{"pmid": "36653562", "limit": 10}]
+  },
+  {
+    "name": "pubmed_get_citation_metrics_mcp",
+    "type": "PubMedGetCitationMetricsMCP",
+    "description": "Get NIH iCite citation metrics (RCR, percentile) for articles.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "pmids": {"type": "string", "description": "Comma-separated PMIDs"}
+      },
+      "required": ["pmids"]
+    },
+    "test_examples": [{"pmids": "36653562,28346489"}]
+  },
+  {
+    "name": "pubmed_get_full_text_mcp",
+    "type": "PubMedGetFullTextMCP",
+    "description": "Get fulltext from Europe PMC. Supports PMID, PMC ID, or DOI input. Auto-tries multiple sources.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "pmcid": {"type": "string", "description": "PubMed Central ID"},
+        "pmid": {"type": "string", "description": "PubMed ID"},
+        "doi": {"type": "string", "description": "Digital Object Identifier"},
+        "sections": {"type": "string", "description": "Comma-separated sections to retrieve"}
+      }
+    },
+    "test_examples": [{"pmcid": "PMC7614529"}]
+  },
+  {
+    "name": "pubmed_get_text_mined_terms_mcp",
+    "type": "PubMedGetTextMinedTermsMCP",
+    "description": "Get text-mined entities (genes, diseases, chemicals) from Europe PMC annotations.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "pmcid": {"type": "string"},
+        "pmid": {"type": "string"},
+        "entity_types": {"type": "string", "description": "Filter by entity types (genes,diseases,chemicals)"}
+      }
+    },
+    "test_examples": [{"pmcid": "PMC7614529", "entity_types": "genes,diseases"}]
+  },
+  {
+    "name": "pubmed_search_gene_mcp",
+    "type": "PubMedSearchGeneMCP",
+    "description": "Search NCBI Gene database for gene information.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "query": {"type": "string", "description": "Gene name, symbol, or keyword"},
+        "organism": {"type": "string", "default": "human"},
+        "limit": {"type": "integer", "default": 10, "maximum": 50}
+      },
+      "required": ["query"]
+    },
+    "test_examples": [{"query": "BRCA1", "organism": "human"}]
+  },
+  {
+    "name": "pubmed_get_gene_details_mcp",
+    "type": "PubMedGetGeneDetailsMCP",
+    "description": "Get detailed information about a specific gene by NCBI Gene ID.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "gene_id": {"type": "string", "description": "NCBI Gene ID (e.g., '672' for BRCA1)"}
+      },
+      "required": ["gene_id"]
+    },
+    "test_examples": [{"gene_id": "672"}]
+  },
+  {
+    "name": "pubmed_get_gene_literature_mcp",
+    "type": "PubMedGetGeneLiteratureMCP",
+    "description": "Get PubMed articles related to a specific gene.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "gene_id": {"type": "string"},
+        "limit": {"type": "integer", "default": 20}
+      },
+      "required": ["gene_id"]
+    },
+    "test_examples": [{"gene_id": "672", "limit": 10}]
+  },
+  {
+    "name": "pubmed_search_compound_mcp",
+    "type": "PubMedSearchCompoundMCP",
+    "description": "Search PubChem for chemical compound information.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "query": {"type": "string", "description": "Compound name or identifier"},
+        "limit": {"type": "integer", "default": 10, "maximum": 50}
+      },
+      "required": ["query"]
+    },
+    "test_examples": [{"query": "aspirin"}]
+  },
+  {
+    "name": "pubmed_get_compound_details_mcp",
+    "type": "PubMedGetCompoundDetailsMCP",
+    "description": "Get detailed information about a compound by PubChem CID.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "cid": {"type": "string", "description": "PubChem Compound ID (e.g., '2244' for aspirin)"}
+      },
+      "required": ["cid"]
+    },
+    "test_examples": [{"cid": "2244"}]
+  },
+  {
+    "name": "pubmed_get_compound_literature_mcp",
+    "type": "PubMedGetCompoundLiteratureMCP",
+    "description": "Get PubMed articles related to a specific compound.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "cid": {"type": "string"},
+        "limit": {"type": "integer", "default": 20}
+      },
+      "required": ["cid"]
+    },
+    "test_examples": [{"cid": "2244", "limit": 10}]
+  },
+  {
+    "name": "pubmed_search_clinvar_mcp",
+    "type": "PubMedSearchClinVarMCP",
+    "description": "Search ClinVar for clinical variant records.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "query": {"type": "string", "description": "Variant or gene name"},
+        "limit": {"type": "integer", "default": 10, "maximum": 50}
+      },
+      "required": ["query"]
+    },
+    "test_examples": [{"query": "BRCA1 pathogenic"}]
+  },
+  {
+    "name": "pubmed_build_citation_tree_mcp",
+    "type": "PubMedBuildCitationTreeMCP",
+    "description": "Build citation network graph from a seed article. Supports cytoscape, g6, d3, vis, graphml, mermaid formats.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "pmid": {"type": "string"},
+        "depth": {"type": "integer", "default": 1, "maximum": 3},
+        "limit_per_level": {"type": "integer", "default": 5, "maximum": 20},
+        "direction": {"type": "string", "enum": ["citing", "references", "both"], "default": "both"},
+        "format": {"type": "string", "enum": ["cytoscape", "g6", "d3", "vis", "graphml", "mermaid"], "default": "cytoscape"}
+      },
+      "required": ["pmid"]
+    },
+    "test_examples": [{"pmid": "36653562", "depth": 1, "format": "mermaid"}]
+  },
+  {
+    "name": "pubmed_suggest_citation_tree_mcp",
+    "type": "PubMedSuggestCitationTreeMCP",
+    "description": "Suggest optimal citation tree parameters based on article characteristics.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "pmid": {"type": "string"}
+      },
+      "required": ["pmid"]
+    },
+    "test_examples": [{"pmid": "36653562"}]
+  },
+  {
+    "name": "pubmed_export_citations_mcp",
+    "type": "PubMedExportCitationsMCP",
+    "description": "Export citations in RIS, BibTeX, CSV, or MEDLINE format.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "pmids": {"type": "string", "description": "Comma-separated PMIDs (max 50)"},
+        "format": {"type": "string", "enum": ["ris", "bibtex", "csv", "medline", "json"], "default": "ris"}
+      },
+      "required": ["pmids"]
+    },
+    "test_examples": [{"pmids": "36653562,28346489", "format": "ris"}]
+  },
+  {
+    "name": "pubmed_analyze_figure_mcp",
+    "type": "PubMedAnalyzeFigureMCP",
+    "description": "[Experimental] Analyze a scientific figure and extract search keywords for literature search.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "image_url": {"type": "string", "description": "URL of the image to analyze"},
+        "image_base64": {"type": "string", "description": "Base64-encoded image data"}
+      }
+    },
+    "test_examples": [{"image_url": "https://example.com/figure.png"}]
+  },
+  {
+    "name": "pubmed_reverse_image_search_mcp",
+    "type": "PubMedReverseImageSearchMCP",
+    "description": "[Experimental] Search for papers containing similar figures/images.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "image_url": {"type": "string"},
+        "keywords": {"type": "string", "description": "Keywords extracted from image analysis"}
+      }
+    },
+    "test_examples": [{"keywords": "western blot BRCA1 protein expression"}]
+  },
+  {
+    "name": "pubmed_configure_institution_mcp",
+    "type": "PubMedConfigureInstitutionMCP",
+    "description": "Configure institutional link resolver for full-text access. Supports presets (ntu, harvard, etc.) or custom URL.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "preset": {"type": "string", "description": "Preset name (ntu, ncku, harvard, stanford, etc.)"},
+        "resolver_url": {"type": "string", "description": "Custom resolver URL"},
+        "enable": {"type": "boolean", "default": true}
+      }
+    },
+    "test_examples": [{"preset": "ntu"}]
+  },
+  {
+    "name": "pubmed_get_institutional_link_mcp",
+    "type": "PubMedGetInstitutionalLinkMCP",
+    "description": "Generate institutional access link (OpenURL) for an article.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "pmid": {"type": "string"},
+        "doi": {"type": "string"}
+      }
+    },
+    "test_examples": [{"pmid": "36653562"}]
+  },
+  {
+    "name": "pubmed_list_resolver_presets_mcp",
+    "type": "PubMedListResolverPresetsMCP",
+    "description": "List available institutional link resolver presets.",
+    "parameter": {
+      "type": "object",
+      "properties": {}
+    },
+    "test_examples": [{}]
+  }
+]

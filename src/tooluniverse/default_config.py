@@ -44,6 +44,7 @@ default_tool_files = {
     "simbad": os.path.join(current_dir, "data", "simbad_tools.json"),
     "dblp": os.path.join(current_dir, "data", "dblp_tools.json"),
     "pubmed": os.path.join(current_dir, "data", "pubmed_tools.json"),
+    "pubmed_search_mcp": os.path.join(current_dir, "data", "pubmed_search_tools.json"),
     "doaj": os.path.join(current_dir, "data", "doaj_tools.json"),
     "unpaywall": os.path.join(current_dir, "data", "unpaywall_tools.json"),
     "biorxiv": os.path.join(current_dir, "data", "biorxiv_tools.json"),
