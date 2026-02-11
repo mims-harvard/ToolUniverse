@@ -8,7 +8,7 @@ Choose the section that matches your current needs:
 
 💡 **For Python API documentation**, see the dedicated :doc:`../api/modules` section.
 
-💡 **For MCP integration and server setup**, see the comprehensive :doc:`mcp_support` guide.
+💡 **For MCP integration and server setup**, see the comprehensive :doc:`building_ai_scientists/mcp_support` guide.
 
 Core Concepts
 -------------
@@ -19,11 +19,11 @@ Core Concepts
 * **🔗 Tool Composition** → :doc:`tool_composition` - Chain ToolUniverse's 1000+ tools into powerful scientific workflows using Tool Composer
 * **🐍 Coding API** → :doc:`coding_api` - Import and call tools like normal Python functions with type safety
 * **🔬 Scientific Workflows** → :doc:`scientific_workflows` - Real-world research scenarios: drug discovery, safety analysis, literature review
-* **📡 MCP Support** → :doc:`mcp_support` - Model Context Protocol integration and server setup
-* **✂️ MCP Name Shortening** → :doc:`mcp_name_shortening` - Automatic tool name shortening for MCP 64-character limit compatibility
-* **📦 MCPB Support** → :doc:`mcpb_introduction` - Standalone executable bundle for Claude Desktop and other clients
+* **📡 MCP Support** → :doc:`building_ai_scientists/mcp_support` - Model Context Protocol integration and server setup
+* **✂️ MCP Name Shortening** → :doc:`building_ai_scientists/mcp_name_shortening` - Automatic tool name shortening for MCP 64-character limit compatibility
+* **📦 MCPB Support** → :doc:`building_ai_scientists/mcpb_introduction` - Standalone executable bundle for Claude Desktop and other clients
 * **🌐 HTTP API** → :doc:`http_api` - Remote access via HTTP/REST with auto-updating server and minimal client dependencies
-* **📦 Compact Mode** → :doc:`compact_mode` - Optimize context window usage by exposing only core tools (4 tools) while maintaining full functionality
+* **📦 Compact Mode** → :doc:`building_ai_scientists/compact_mode` - Optimize context window usage by exposing only core tools (4 tools) while maintaining full functionality
 * **🔊 Streaming Tools** → :doc:`streaming_tools` - Real-time streaming output and custom tool integration
 * **📝 Logging** → :doc:`logging` - Comprehensive logging configuration and debugging
 * **🗃️ Result Caching** → :doc:`cache_system` - Configure in-memory and persistent caches for tool results
@@ -32,20 +32,20 @@ Core Concepts
 Tool Discovery & Usage
 ----------------------
 
-* **🔍 Tool Discovery** → :doc:`../tutorials/finding_tools` - Tutorial to ToolUniverse's three tool finder methods: keyword, LLM, and embedding search
+* **🔍 Tool Discovery** → :doc:`finding_tools` - Tutorial to ToolUniverse's three tool finder methods: keyword, LLM, and embedding search
 * **📚 Tools Overview** → :doc:`tools` - Comprehensive overview of all available tools
 
-Building AI Scientists
-----------------------
+AI Agent Platform Setup
+-----------------------
 
-* **🤖 Building AI Scientists** → :doc:`building_ai_scientists/index` - Create AI research assistants from LLMs, reasoning models, and agentic systems
+* **🤖 Platform Setup** → :doc:`building_ai_scientists/index` - Connect ToolUniverse to your AI agent
 
-  * **🖥️ Claude Desktop** → :doc:`building_ai_scientists/claude_desktop` - Integrate ToolUniverse with Claude Desktop App through MCP
-  * **💻 Claude Code** → :doc:`building_ai_scientists/claude_code` - Build AI scientists using Claude Code environment
-  * **🔮 Gemini CLI** → :doc:`building_ai_scientists/gemini_cli` - Command-line based scientific research with Gemini CLI
-  * **🧠 Qwen Code** → :doc:`building_ai_scientists/qwen_code` - AI scientist integration with Qwen Code environment
-  * **⚡ Codex CLI** → :doc:`building_ai_scientists/codex_cli` - Terminal-based AI scientist with Codex CLI
-  * **🎯 ChatGPT API** → :doc:`building_ai_scientists/chatgpt_api` - Programmatic scientific research with ChatGPT function calling
+  * **🖥️ Claude Desktop** → :doc:`building_ai_scientists/claude_desktop` - Claude Desktop app setup
+  * **💻 Claude Code** → :doc:`building_ai_scientists/claude_code` - Claude Code editor setup
+  * **🔮 Gemini CLI** → :doc:`building_ai_scientists/gemini_cli` - Gemini command-line setup
+  * **🧠 Qwen Code** → :doc:`building_ai_scientists/qwen_code` - Qwen Code editor setup
+  * **⚡ Codex CLI** → :doc:`building_ai_scientists/codex_cli` - Codex terminal setup
+  * **🎯 ChatGPT API** → :doc:`building_ai_scientists/chatgpt_api` - ChatGPT API setup
 
 LLM Providers
 -------------
@@ -72,5 +72,5 @@ Tool Collections
 Specialized tool collections for specific research domains:
 
 * **🏥 Clinical Guidelines** → :doc:`clinical_guidelines_tools` - Search and extract clinical practice guidelines from NICE, WHO, PubMed, and 5 other authoritative sources
-* **📖 Literature Search** → :doc:`../tutorials/literature_search_tools_tutorial` - Comprehensive literature search across PubMed, arXiv, bioRxiv, and academic databases
+* **📖 Literature Search** → :doc:`literature_search_tools_tutorial` - Comprehensive literature search across PubMed, arXiv, bioRxiv, and academic databases
 * **⚙️ Space Configurations** → :doc:`toolspace` - Pre-configured tool collections for protein research, genomics, bioinformatics, structural biology, cheminformatics, disease research, drug discovery, literature search, and clinical research. Load directly from GitHub or customize for your needs.

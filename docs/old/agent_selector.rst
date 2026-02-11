@@ -13,7 +13,7 @@ Platforms
    :class-container: platform-grid
 
    .. grid-item-card:: 
-      :link: claude_desktop
+      :link: building_ai_scientists/claude_desktop
       :link-type: doc
       :class-card: platform-card hover-lift
       :shadow: md
@@ -23,7 +23,7 @@ Platforms
       Desktop app with native MCP integration
 
    .. grid-item-card::
-      :link: claude_code
+      :link: building_ai_scientists/claude_code
       :link-type: doc
       :class-card: platform-card hover-lift
       :shadow: md
@@ -33,7 +33,7 @@ Platforms
       Code editor for AI scientist development
 
    .. grid-item-card::
-      :link: cursor
+      :link: building_ai_scientists/cursor
       :link-type: doc
       :class-card: platform-card hover-lift
       :shadow: md
@@ -43,7 +43,7 @@ Platforms
       AI-first code editor with MCP support
 
    .. grid-item-card::
-      :link: windsurf
+      :link: building_ai_scientists/windsurf
       :link-type: doc
       :class-card: platform-card hover-lift
       :shadow: md
@@ -53,7 +53,7 @@ Platforms
       Agentic IDE with autonomous coding agents
 
    .. grid-item-card::
-      :link: antigravity
+      :link: building_ai_scientists/antigravity
       :link-type: doc
       :class-card: platform-card hover-lift
       :shadow: md
@@ -63,7 +63,7 @@ Platforms
       Google's free agentic IDE with parallel agents
 
    .. grid-item-card::
-      :link: cline
+      :link: building_ai_scientists/cline
       :link-type: doc
       :class-card: platform-card hover-lift
       :shadow: md
@@ -73,7 +73,7 @@ Platforms
       VS Code extension with MCP integration
 
    .. grid-item-card::
-      :link: trae
+      :link: building_ai_scientists/trae
       :link-type: doc
       :class-card: platform-card hover-lift
       :shadow: md
@@ -83,7 +83,7 @@ Platforms
       AI coding assistant with MCP support
 
    .. grid-item-card::
-      :link: opencode
+      :link: building_ai_scientists/opencode
       :link-type: doc
       :class-card: platform-card hover-lift
       :shadow: md
@@ -93,7 +93,7 @@ Platforms
       Open-source AI coding platform
 
    .. grid-item-card::
-      :link: gemini_cli
+      :link: building_ai_scientists/gemini_cli
       :link-type: doc
       :class-card: platform-card hover-lift
       :shadow: md
@@ -103,7 +103,7 @@ Platforms
       Command-line interface with Google Gemini
 
    .. grid-item-card::
-      :link: qwen_code
+      :link: building_ai_scientists/qwen_code
       :link-type: doc
       :class-card: platform-card hover-lift
       :shadow: md
@@ -113,7 +113,7 @@ Platforms
       Code editor for AI scientist workflows
 
    .. grid-item-card::
-      :link: codex_cli
+      :link: building_ai_scientists/codex_cli
       :link-type: doc
       :class-card: platform-card hover-lift
       :shadow: md
@@ -123,7 +123,7 @@ Platforms
       Terminal-based interface with OpenAI Codex
 
    .. grid-item-card::
-      :link: chatgpt_api
+      :link: building_ai_scientists/chatgpt_api
       :link-type: doc
       :class-card: platform-card hover-lift
       :shadow: md
@@ -131,24 +131,6 @@ Platforms
       **ChatGPT API**
       ^^^
       API for programmatic research automation
-
-.. toctree::
-   :maxdepth: 1
-   :hidden:
-   :caption: Platform Setup Guides
-
-   claude_desktop
-   claude_code
-   cursor
-   windsurf
-   antigravity
-   cline
-   trae
-   opencode
-   gemini_cli
-   qwen_code
-   codex_cli
-   chatgpt_api
 
 .. tip:: 🎯 **Guided Setup Available**
    
@@ -214,33 +196,23 @@ Getting Help
 ------------
 
 
-- **Setup issues?** Check the :doc:`../../help/troubleshooting` guide
+- **Setup issues?** Check the :doc:`../help/troubleshooting` guide
 - **Questions?** Join our `Slack community <https://join.slack.com/t/tooluniversehq/shared_invite/zt-3dic3eoio-5xxoJch7TLNibNQn5_AREQ>`_
 - **Bug reports?** `Create an issue <https://github.com/mims-harvard/ToolUniverse/issues>`_
 
 Quick Links
 -----------
 
-.. button-ref:: ../python_guide
+.. button-ref:: python_guide
    :color: secondary
    :shadow:
    :expand:
 
    🐍 **Coding Agent?** Use ToolUniverse directly with Python API
 
-.. button-ref:: ../../index
+.. button-ref:: ../index
    :color: info
    :shadow:
    :expand:
 
    🏠 **Back to Home**: Return to main documentation
-
-.. toctree::
-   :maxdepth: 1
-   :hidden:
-   :caption: MCP & Integration
-
-   mcp_support
-   mcpb_introduction
-   mcp_name_shortening
-   compact_mode

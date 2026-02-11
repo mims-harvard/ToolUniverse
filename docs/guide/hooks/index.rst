@@ -91,6 +91,7 @@ The trade-off is usually worth it for large outputs that benefit from processing
 
 .. toctree::
    :maxdepth: 1
+   :hidden:
    :caption: Hook Topics
 
    summarization_hook

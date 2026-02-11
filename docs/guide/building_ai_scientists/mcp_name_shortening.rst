@@ -576,8 +576,8 @@ See Also
 ========
 
 - :doc:`mcp_support` - Complete MCP integration guide
-- :doc:`../api/tooluniverse` - ToolUniverse API reference
-- :doc:`tool_caller` - Tool execution documentation
+- :doc:`../../api/tooluniverse` - ToolUniverse API reference
+- :doc:`../tool_caller` - Tool execution documentation
 
 .. note::
    For complete technical details, see ``NAME_SHORTENING_REPORT.md`` in the repository root.

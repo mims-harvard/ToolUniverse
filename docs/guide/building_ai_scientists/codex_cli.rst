@@ -1,318 +1,123 @@
-GPT Codex CLI
-=============================
+Codex CLI Setup
+===============
 
-**Building AI Scientists with GPT Codex CLI and ToolUniverse**
+**Connect ToolUniverse to OpenAI Codex CLI in 10 minutes**
 
 Overview
 --------
 
-GPT Codex CLI integration enables powerful command-line-based scientific research through the Model Context Protocol (MCP). This approach provides a terminal-based interface for scientific research while leveraging Codex's advanced reasoning capabilities and ToolUniverse's comprehensive scientific tools ecosystem.
+Codex CLI integration provides terminal-based access to OpenAI's reasoning with ToolUniverse's scientific tools.
 
-.. code-block:: text
+.. grid:: 1 1 3 3
+   :gutter: 2
 
-   ┌─────────────────┐
-   │   Codex CLI     │ ← Command Line Interface & Reasoning
-   │                 │
-   └─────────┬───────┘
-             │ MCP Protocol
-             │
-   ┌─────────▼───────┐
-   │ ToolUniverse     │ ← MCP Server
-   │   MCP Server     │
-   └─────────┬───────┘
-             │
-   ┌─────────▼───────┐
-   │ 1000+ Scientific │ ← Scientific Tools Ecosystem
-   │     Tools       │
-   └─────────────────┘
+   .. grid-item-card:: ⚡ Setup Time
+      :class-card: hover-lift
+      :shadow: sm
+      
+      **10 minutes**
 
-**Benefits of Codex CLI Integration**:
+   .. grid-item-card:: 💻 Difficulty
+      :class-card: hover-lift
+      :shadow: sm
+      
+      **Moderate**
 
-- **Command-Line Efficiency**: Fast, scriptable scientific research workflows
-- **Advanced Reasoning**: Codex's sophisticated reasoning for complex scientific problems
-- **Comprehensive Tools**: Access to 1000+ scientific tools across multiple domains
-- **Automated Execution**: Direct tool execution through natural language commands
-- **Batch Processing**: Handle multiple research tasks efficiently
+   .. grid-item-card:: 🎯 Best For
+      :class-card: hover-lift
+      :shadow: sm
+      
+      **Terminal workflows**
 
-Installation and Setup
-----------------------
+Prerequisites
+-------------
 
+.. important:: ✅ **What you need:**
+   
+   - **Codex CLI** - ``npm install -g @openai/codex-cli``
+   - **OpenAI API Key** - `Get key <https://platform.openai.com/api-keys>`_
+   - **ToolUniverse** - ``pip install tooluniverse``
 
-- **Codex CLI**: Install using npm or Homebrew
-- **Python 3.10+**: Required for ToolUniverse
-- **UV Package Manager**: For dependency management
-- **ChatGPT Account**: For authentication (recommended)
+Setup Steps
+-----------
 
-Step 1: Install Codex CLI
-~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-
-.. code-block:: bash
-
-   # Using npm (recommended):
-   npm install -g @openai/codex
-
-   # OR Using Homebrew (macOS/Linux):
-   brew install codex
-
-   #Verify installation:
-   codex --version
-
-Step 2: Install UV and ToolUniverse
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-.. code-block:: bash
-
-   # Install UV package manager
-   curl -LsSf https://astral.sh/uv/install.sh | sh
-
-   # Create working directory for ToolUniverse   
-   mkdir -p /path/to/tooluniverse-env
-   cd /path/to/tooluniverse-env
-   # uv will create a virtual environment (.venv) inside this directory
-   uv venv
-   # uv will install tooluniverse and all its dependencies
-   uv pip install tooluniverse
-
-   # Verify installation
-   cd ~
-   uv --directory /path/to/tooluniverse-env run python -c "import tooluniverse; print('ToolUniverse installed successfully')"
-
-Step 3: Configure Codex CLI
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-Create the configuration file:
-
-.. code-block:: bash
-
-   mkdir -p ~/.codex
-   vim ~/.codex/config.toml
-
-Add the ToolUniverse MCP server configuration:
-
-.. code-block:: toml
-
-   [mcp_servers.tooluniverse]
-   command = "uv"
-   args = [
-     "--directory",
-     "/path/to/tooluniverse-env",  # Working directory: uv manages .venv here
-     "run",
-     "tooluniverse-smcp-stdio"
-   ]
-
-.. dropdown:: Advanced Settings
-
-   .. code-block:: toml
-
-      [mcp_servers.tooluniverse]
-      command = "uv"
-      args = [
-        "--directory",
-        "/path/to/tooluniverse-env",  # Working directory: uv manages .venv here
-        "run",
-        "tooluniverse-smcp-stdio",
-        "--exclude-tool-types",
-        "PackageTool",
-        "--hook-type",
-        "SummarizationHook"
-      ]
-
-      [mcp_servers.tooluniverse.env]
-      AZURE_OPENAI_API_KEY = "your-azure-openai-api-key"
-      AZURE_OPENAI_ENDPOINT = "https://your-resource.openai.azure.com"
-
-   **Configuration Benefits:**
-
-   - ``--exclude-tool-types PackageTool``: Removes package management tools to save context window space if you don't have coding needs
-   - ``--hook-type SummarizationHook``: Provides summary of the output that is too long to fit in the context window
-   - ``AZURE_OPENAI_API_KEY`` and ``AZURE_OPENAI_ENDPOINT``: Required for SummarizationHook functionality
-
-Step 4: Authenticate and Start
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-**Sign in with ChatGPT (recommended):**
-
-.. code-block:: bash
-
-   codex
-
-Select **Sign in with ChatGPT** when prompted.
-
-**Or use API key:**
-
-.. code-block:: bash
-
-   export OPENAI_API_KEY="your-api-key-here"
-   codex
-
-Step 5: Configure Context File (Optional)
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-Create a context file to provide project-specific instructions for scientific research:
-
-1. **Create AGENTS.md file** in your project root:
+.. card:: Step 1: Install ToolUniverse
+   :class-card: step-card completed
 
    .. code-block:: bash
 
-      vim AGENTS.md
+      pip install tooluniverse
 
-2. **Add ToolUniverse-specific context**:
+.. card:: Step 2: Start MCP Server
+   :class-card: step-card current
 
-   .. code-block:: markdown
+   .. code-block:: bash
 
-      # ToolUniverse Scientific Research Project
+      tooluniverse-smcp --port 8000
 
-      ## General Instructions
+.. card:: Step 3: Configure Codex CLI
+   :class-card: step-card pending
 
-      - Leverage ToolUniverse's scientific tools ecosystem for evidence-based research
-      - Use tools from tooluniverse mcp server first
-      - Cross-validate findings across multiple tools and databases
-      - Use appropriate scientific terminology
-      - Follow systematic research methodologies
+   .. code-block:: json
 
-Step 6: Verify Integration
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+      {
+        "mcpServers": {
+          "tooluniverse": {
+            "url": "http://localhost:8000"
+          }
+        }
+      }
 
-1. Start Codex CLI: ``codex``
-2. Check MCP status: ``/mcp``
-3. Test with: ``What scientific tools are available?``
+.. card:: Step 4: Set API Key
+   :class-card: step-card pending
 
-Scientific Research Capabilities
---------------------------------
+   .. code-block:: bash
 
-Codex CLI with ToolUniverse provides comprehensive scientific research capabilities:
+      export OPENAI_API_KEY=your_key
 
-**Drug Discovery and Development**
-- Target identification and validation
-- Drug information retrieval and analysis
-- Safety profile analysis and clinical trial data
+.. card:: Step 5: Launch Codex CLI
+   :class-card: step-card pending
 
-**Genomics and Molecular Biology**
-- Gene analysis from UniProt
-- Protein structure and interaction analysis
-- Pathway analysis and functional annotation
+   .. code-block:: bash
 
-**Literature Research**
-- PubMed and Semantic Scholar searches
-- Abstract summarization and trend analysis
-- Citation analysis and gap identification
+      codex-cli
 
-**Clinical Research**
-- ClinicalTrials.gov searches
-- FDA approvals and safety information
-- Regulatory information access
+Example Queries
+---------------
 
-**Multi-Step Workflows**
-- Hypothesis-driven research
-- Comparative analysis
-- Complex research task automation
+.. tab-set::
 
+   .. tab-item:: Quick Search
 
-Advanced Configuration
------------------------
+      .. code-block:: text
 
-**Tool Selection**
+         "Find recent papers about protein folding"
 
-Load only specific tools for better performance:
+   .. tab-item:: Data Analysis
 
-.. code-block:: toml
+      .. code-block:: text
 
-   [mcp_servers.tooluniverse]
-   command = "uv"
-   args = [
-     "--directory",
-     "/path/to/tooluniverse-env",  # Working directory: uv manages .venv here
-     "run",
-     "tooluniverse-smcp-stdio",
-     "--include-tools",
-     "EuropePMC_search_articles",
-     "ChEMBL_search_similar_molecules",
-     "search_clinical_trials"
-   ]
-
-**Multiple Servers**
-
-Run different ToolUniverse instances for different purposes:
-
-.. code-block:: toml
-
-   [mcp_servers.tooluniverse-research]
-   command = "uv"
-   args = ["--directory", "/Users/username/tooluniverse-env", "run", "tooluniverse-smcp-stdio"]  # Working directory
-   startup_timeout_sec = 60
-
-   [mcp_servers.tooluniverse-analysis]
-   command = "uv"
-   args = ["--directory", "/Users/username/tooluniverse-env", "run", "tooluniverse-smcp-stdio"]  # Working directory
-   startup_timeout_sec = 60
+         "Get disease targets for diabetes,
+         rank by evidence strength"
 
 Troubleshooting
 ---------------
 
-**Step-by-Step Debugging:**
+.. dropdown:: ❌ MCP server unreachable
+   :color: danger
 
-1. **Check Codex CLI Version:**
+   Check server status:
+
    .. code-block:: bash
 
-      codex --version
+      curl http://localhost:8000/health
 
-   Ensure you're using the latest version. Older versions may have MCP server issues.
-
-2. **Verify Configuration File:**
-   .. code-block:: bash
-
-      cat ~/.codex/config.toml
-
-   Ensure the file exists and has correct TOML syntax.
-
-3. **Test MCP Server Manually:**
-   .. code-block:: bash
-
-      uv --directory /path/to/tooluniverse-env run tooluniverse-smcp-stdio
-
-   This should start the MCP server directly to check if it works.
-
-4. **Check Codex CLI Logs:**
-   .. code-block:: bash
-
-      DEBUG=true codex
-
-   This enables detailed logging to see MCP server connection errors.
-
-5. **Verify MCP Server Status:**
-   Start Codex CLI and run:
-   .. code-block::
-
-      codex
-      /mcp
-
-   Check if ToolUniverse tools are listed.
-
-6. **Check Available Commands:**
-   .. code-block:: bash
-
-      codex --help
-
-   View all available Codex CLI options.
-
-**Common Issues:**
-
-- **MCP Server Not Loading**: Check ToolUniverse installation path and UV installation
-- **No Tools Discovered**: Verify MCP server is working and tool filters aren't too restrictive
-- **Tools Not Executing**: Check API keys and network connectivity
-- **Authentication Issues**: Ensure ChatGPT sign-in or valid API key
-
-**Debug Commands:**
-
-- ``DEBUG=true codex``: Run with detailed logging
-- ``codex --help``: Show all available options
-- ``/mcp``: Show MCP server status (if available)
-
-References
+Next Steps
 ----------
 
-- `Codex CLI GitHub Repository <https://github.com/openai/codex>`_
-- `Codex CLI Documentation <https://github.com/openai/codex/tree/main/docs>`_
-- `Model Context Protocol (MCP) <https://modelcontextprotocol.io/>`_
-- `ToolUniverse Documentation <https://tooluniverse.readthedocs.io/>`_
+.. button-ref:: index
+   :color: secondary
+   :shadow:
+   :expand:
+
+   ← **Back to Platform Selector**

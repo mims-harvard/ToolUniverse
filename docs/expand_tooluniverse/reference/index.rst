@@ -10,6 +10,7 @@ Understanding the internal architecture of ToolUniverse helps you build better t
 
 .. toctree::
    :maxdepth: 1
+   :hidden:
 
    architecture
 

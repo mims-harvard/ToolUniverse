@@ -231,7 +231,7 @@ Remote tools integrate external services, APIs, and specialized systems running 
    **Discover Available Tools:**
 
    * :doc:`../guide/listing_tools` - Browse tools by category and explore the full catalog
-   * :doc:`../tutorials/finding_tools` - Learn advanced search techniques and filters
+   * :doc:`../guide/finding_tools` - Learn advanced search techniques and filters
    * :doc:`../tools/remote_tools` - Set up remote tool integrations
    * :doc:`../guide/loading_tools` - Load and configure local tools
 

@@ -220,132 +220,171 @@ These environment variables specify paths to local data stores for specific tool
 Configuration Methods
 ---------------------
 
-Method 1: Environment Variables (Recommended)
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Choose the method that best fits your use case:
 
-Set environment variables in your shell:
+.. tab-set::
 
-.. code-block:: bash
+   .. tab-item:: MCP Configuration
 
-   # On Linux/macOS
-   export NVIDIA_API_KEY="your_nvidia_api_key"
-   export NCBI_API_KEY="your_ncbi_api_key"
-   export OPENTARGETS_API_KEY="your_opentargets_key"
+      **For AI agents using Model Context Protocol (Claude, Cursor, etc.)**
 
-   # On Windows (Command Prompt)
-   set NVIDIA_API_KEY=your_nvidia_api_key
-   set NCBI_API_KEY=your_ncbi_api_key
+      Add API keys to your MCP configuration file's ``env`` section:
 
-   # On Windows (PowerShell)
-   $env:NVIDIA_API_KEY="your_nvidia_api_key"
-   $env:NCBI_API_KEY="your_ncbi_api_key"
+      .. code-block:: json
 
-Method 2: .env File (Recommended)
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+         {
+           "mcpServers": {
+             "tooluniverse": {
+               "command": "uvx",
+               "args": ["tooluniverse"],
+               "env": {
+                 "PYTHONIOENCODING": "utf-8",
+                 "NVIDIA_API_KEY": "your_nvidia_api_key",
+                 "NCBI_API_KEY": "your_ncbi_api_key",
+                 "SEMANTIC_SCHOLAR_API_KEY": "your_semantic_scholar_key",
+                 "FDA_API_KEY": "your_fda_key",
+                 "OPENTARGETS_API_KEY": "your_opentargets_key"
+               }
+             }
+           }
+         }
 
-Create a ``.env`` file in your project root:
+      **MCP config file locations:**
 
-.. tip::
-   **Use the template**: Copy ``.env.template`` from the project root as a starting point. It includes all available environment variables with documentation.
-   
-   .. code-block:: bash
-   
-      cp .env.template .env
-      # Then edit .env and add your API keys
+      - **Claude Desktop**: ``~/Library/Application Support/Claude/claude_desktop_config.json`` (macOS) or ``%APPDATA%\Claude\claude_desktop_config.json`` (Windows)
+      - **Cursor**: ``.cursor/mcp_config.json`` in your project
+      - **Other agents**: Check your agent's documentation
 
-Create a ``.env`` file manually:
+   .. tab-item:: Environment Variables
 
-.. code-block:: bash
+      **For Python scripts and command-line usage**
 
-   # Required API Keys
-   NVIDIA_API_KEY=your_nvidia_api_key_here
-   USPTO_API_KEY=your_uspto_key_here
-   HF_TOKEN=your_huggingface_token_here
+      Set environment variables in your shell:
 
-   # Recommended API Keys (Optional but improves performance)
-   NCBI_API_KEY=your_ncbi_key_here              # 3x faster PubMed queries
-   SEMANTIC_SCHOLAR_API_KEY=your_key_here       # 100x faster literature search
-   FDA_API_KEY=your_fda_key_here                # 6x faster drug safety queries
-   DISGENET_API_KEY=your_disgenet_key_here      # Required for gene-disease data
-   OMIM_API_KEY=your_omim_key_here              # Required for genetic disorders
-   BIOGRID_API_KEY=your_biogrid_key_here        # Required for PPI data
-   UMLS_API_KEY=your_umls_key_here              # Required for medical terminology
+      .. code-block:: bash
 
-   # LLM Provider API Keys (for agentic tools)
-   OPENAI_API_KEY=your_openai_key_here
-   OPENAI_BASE_URL=https://api.openai.com/v1
-   AZURE_OPENAI_API_KEY=your_azure_key_here
-   AZURE_OPENAI_ENDPOINT=https://your-endpoint.openai.azure.com
-   AZURE_OPENAI_API_VERSION=2024-02-15-preview
-   GEMINI_API_KEY=your_gemini_key_here
-   GEMINI_MODEL_ID=gemini-2.0-flash
-   VLLM_SERVER_URL=http://localhost:8000
+         # On Linux/macOS
+         export NVIDIA_API_KEY="your_nvidia_api_key"
+         export NCBI_API_KEY="your_ncbi_api_key"
+         export OPENTARGETS_API_KEY="your_opentargets_key"
 
-   # MCP Server Configurations
-   EXPERT_FEEDBACK_MCP_SERVER_URL=http://localhost:9877
-   TXAGENT_MCP_SERVER_HOST=http://localhost:8001
-   BOLTZ_MCP_SERVER_HOST=http://localhost:8002
-   USPTO_MCP_SERVER_HOST=http://localhost:8003
+         # On Windows (Command Prompt)
+         set NVIDIA_API_KEY=your_nvidia_api_key
+         set NCBI_API_KEY=your_ncbi_api_key
 
-   # Data Path Configurations
-   COMPASS_MODEL_PATH=/path/to/compass/models
-   PINNACLE_DATA_PATH=/path/to/pinnacle/data
-   TRANSCRIPTFORMER_DATA_PATH=/path/to/prismdb
-   DEPMAP_DATA_PATH=/path/to/depmap/data
+         # On Windows (PowerShell)
+         $env:NVIDIA_API_KEY="your_nvidia_api_key"
+         $env:NCBI_API_KEY="your_ncbi_api_key"
 
-Load the ``.env`` file in your Python code:
+   .. tab-item:: .env File
 
-.. code-block:: python
+      **For Python projects with persistent configuration**
 
-   from dotenv import load_dotenv
-   load_dotenv()  # Load from .env file
+      Create a ``.env`` file in your project root:
 
-   from tooluniverse import ToolUniverse
-   tu = ToolUniverse()
-   tu.load_tools()
+      .. tip::
+         **Use the template**: Copy ``.env.template`` from the project root as a starting point. It includes all available environment variables with documentation.
+         
+         .. code-block:: bash
+         
+            cp .env.template .env
+            # Then edit .env and add your API keys
 
-Method 3: Python Environment
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+      Create a ``.env`` file manually:
 
-Set environment variables programmatically:
+      .. code-block:: bash
 
-.. code-block:: python
+         # Required API Keys
+         NVIDIA_API_KEY=your_nvidia_api_key_here
+         USPTO_API_KEY=your_uspto_key_here
+         HF_TOKEN=your_huggingface_token_here
 
-   import os
+         # Recommended API Keys (Optional but improves performance)
+         NCBI_API_KEY=your_ncbi_key_here              # 3x faster PubMed queries
+         SEMANTIC_SCHOLAR_API_KEY=your_key_here       # 100x faster literature search
+         FDA_API_KEY=your_fda_key_here                # 6x faster drug safety queries
+         DISGENET_API_KEY=your_disgenet_key_here      # Required for gene-disease data
+         OMIM_API_KEY=your_omim_key_here              # Required for genetic disorders
+         BIOGRID_API_KEY=your_biogrid_key_here        # Required for PPI data
+         UMLS_API_KEY=your_umls_key_here              # Required for medical terminology
 
-   # Set API keys
-   os.environ["NVIDIA_API_KEY"] = "your_nvidia_api_key"
-   os.environ["NCBI_API_KEY"] = "your_ncbi_api_key"
+         # LLM Provider API Keys (for agentic tools)
+         OPENAI_API_KEY=your_openai_key_here
+         OPENAI_BASE_URL=https://api.openai.com/v1
+         AZURE_OPENAI_API_KEY=your_azure_key_here
+         AZURE_OPENAI_ENDPOINT=https://your-endpoint.openai.azure.com
+         AZURE_OPENAI_API_VERSION=2024-02-15-preview
+         GEMINI_API_KEY=your_gemini_key_here
+         GEMINI_MODEL_ID=gemini-2.0-flash
+         VLLM_SERVER_URL=http://localhost:8000
 
-   # Now initialize ToolUniverse
-   from tooluniverse import ToolUniverse
-   tu = ToolUniverse()
-   tu.load_tools()
+         # MCP Server Configurations
+         EXPERT_FEEDBACK_MCP_SERVER_URL=http://localhost:9877
+         TXAGENT_MCP_SERVER_HOST=http://localhost:8001
+         BOLTZ_MCP_SERVER_HOST=http://localhost:8002
+         USPTO_MCP_SERVER_HOST=http://localhost:8003
 
-Method 4: Docker Environment
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+         # Data Path Configurations
+         COMPASS_MODEL_PATH=/path/to/compass/models
+         PINNACLE_DATA_PATH=/path/to/pinnacle/data
+         TRANSCRIPTFORMER_DATA_PATH=/path/to/prismdb
+         DEPMAP_DATA_PATH=/path/to/depmap/data
 
-Pass environment variables to Docker:
+      Load the ``.env`` file in your Python code:
 
-.. code-block:: bash
+      .. code-block:: python
 
-   docker run -e NVIDIA_API_KEY=your_key \
-              -e NCBI_API_KEY=your_key \
-              -e SEMANTIC_SCHOLAR_API_KEY=your_key \
-              your-tooluniverse-image
+         from dotenv import load_dotenv
+         load_dotenv()  # Load from .env file
 
-Or use a ``.env`` file with Docker Compose:
+         from tooluniverse import ToolUniverse
+         tu = ToolUniverse()
+         tu.load_tools()
 
-.. code-block:: yaml
+   .. tab-item:: Python Code
 
-   version: '3.8'
-   services:
-     tooluniverse:
-       build: .
-       env_file:
-         - .env
-       ports:
-         - "7000:7000"
+      **For setting API keys programmatically in Python**
+
+      Set environment variables in your Python code:
+
+      .. code-block:: python
+
+         import os
+
+         # Set API keys
+         os.environ["NVIDIA_API_KEY"] = "your_nvidia_api_key"
+         os.environ["NCBI_API_KEY"] = "your_ncbi_api_key"
+
+         # Now initialize ToolUniverse
+         from tooluniverse import ToolUniverse
+         tu = ToolUniverse()
+         tu.load_tools()
+
+   .. tab-item:: Docker
+
+      **For containerized deployments**
+
+      Pass environment variables to Docker:
+
+      .. code-block:: bash
+
+         docker run -e NVIDIA_API_KEY=your_key \
+                    -e NCBI_API_KEY=your_key \
+                    -e SEMANTIC_SCHOLAR_API_KEY=your_key \
+                    your-tooluniverse-image
+
+      Or use a ``.env`` file with Docker Compose:
+
+      .. code-block:: yaml
+
+         version: '3.8'
+         services:
+           tooluniverse:
+             build: .
+             env_file:
+               - .env
+             ports:
+               - "7000:7000"
 
 Agentic Tool Configuration
 ---------------------------
@@ -538,5 +577,5 @@ See Also
 
 - :doc:`installation` - Installation instructions
 - :doc:`getting_started` - Getting started guide
-- :doc:`guide/building_ai_scientists/index` - Building AI scientists with LLMs
+- :doc:`guide/building_ai_scientists/index` - AI agent platform setup
 - :doc:`guide/hooks/hook_configuration` - Advanced hook configuration

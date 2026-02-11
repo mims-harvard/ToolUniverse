@@ -224,7 +224,7 @@ When you encounter API errors, check this reference table:
 
 1. **Identify which API key you need:**
 
-   See :doc:`../api_keys` for a complete list of which tools require which API keys and how to obtain them.
+   See :doc:`../guide/api_keys` for a complete list of which tools require which API keys and how to obtain them.
 
 2. **Set API keys in environment:**
 
@@ -298,7 +298,7 @@ Many services limit how many requests you can make per second/minute. API keys t
 
 1. **Get an API key for higher limits:**
 
-   See :doc:`../api_keys` for how to obtain API keys for each service.
+   See :doc:`../guide/api_keys` for how to obtain API keys for each service.
 
 2. **Add delays between requests:**
 

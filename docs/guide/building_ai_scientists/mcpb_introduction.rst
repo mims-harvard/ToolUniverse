@@ -1,4 +1,4 @@
-Introduction to Model Context Protocol Bundle (MCPB)
+MCP Bundle
 ====================================================
 
 What is MCPB?

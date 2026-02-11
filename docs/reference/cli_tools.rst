@@ -64,7 +64,7 @@ Start the Scientific Model Context Protocol (SMCP) server with HTTP/SSE transpor
    # Load workspace configuration
    tooluniverse-smcp --load "community/proteomics-toolkit"
 
-**See also**: :doc:`../guide/mcp_support` for detailed MCP integration guide
+**See also**: :doc:`../guide/building_ai_scientists/mcp_support` for detailed MCP integration guide
 
 tooluniverse-smcp-stdio
 ~~~~~~~~~~~~~~~~~~~~~~~
@@ -478,7 +478,7 @@ See Also
 --------
 
 - :doc:`../installation` - Installation instructions
-- :doc:`../guide/mcp_support` - MCP integration guide
+- :doc:`../guide/building_ai_scientists/mcp_support` - MCP integration guide
 - :doc:`../help/troubleshooting` - Troubleshooting guide
 - :doc:`environment_variables` - Environment variables reference
-- :doc:`../api_keys` - API keys configuration
+- :doc:`../guide/api_keys` - API keys configuration

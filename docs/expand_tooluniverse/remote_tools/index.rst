@@ -5,6 +5,7 @@ Remote tools are external services, APIs, or tools running on separate servers t
 
 .. toctree::
    :maxdepth: 2
+   :hidden:
    :caption: Remote Tools
 
    tutorial

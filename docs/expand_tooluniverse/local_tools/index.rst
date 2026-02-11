@@ -5,6 +5,7 @@ Python classes that run within ToolUniverse for high-performance custom function
 
 .. toctree::
    :maxdepth: 2
+   :hidden:
    :caption: Local Tools
 
    local_tools_tutorial

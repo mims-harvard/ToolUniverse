@@ -181,6 +181,6 @@ See ``examples/compact_mode/`` for complete examples.
 Related Documentation
 ---------------------
 
-- :doc:`mcp_support` - General MCP support
+- :doc:`building_ai_scientists/mcp_support` - General MCP support
 - :doc:`building_ai_scientists/claude_desktop` - Claude Desktop integration
 - :doc:`building_ai_scientists/gemini_cli` - Gemini CLI integration with Space configuration

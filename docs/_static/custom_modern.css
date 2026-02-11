@@ -1,0 +1,527 @@
+/* ============================================
+   ToolUniverse Modern Documentation Styles
+   ============================================ */
+
+/* Disable background logo images */
+*[style*="background-image"][style*="logo.png"] {
+    background-image: none !important;
+}
+
+/* Logo size fix for navigation header */
+.sy-head-brand .light-logo,
+.sy-head-brand .dark-logo,
+.logo img,
+img[alt="ToolUniverse Logo"],
+img[alt="ToolUniverse"] {
+    max-height: 28px !important;
+    height: 28px !important;
+    width: auto !important;
+}
+
+/* Document title logo inline - more specific selectors */
+h1 img,
+h1 a img,
+a.reference.internal img {
+    max-height: 28px !important;
+    height: 28px !important;
+    width: auto !important;
+    vertical-align: middle !important;
+    margin-right: 8px !important;
+    display: inline-block !important;
+}
+
+/* Override any default image sizing in headers */
+.section h1 img {
+    max-height: 28px !important;
+    height: 28px !important;
+}
+
+/* Hero Choice Cards with Gradient Backgrounds */
+.python-card {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%) !important;
+    color: white !important;
+    border: none !important;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.python-card .sd-card-title,
+.python-card .sd-card-text,
+.python-card .sd-card-footer {
+    color: white !important;
+}
+
+.agent-card {
+    background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%) !important;
+    color: white !important;
+    border: none !important;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.agent-card .sd-card-title,
+.agent-card .sd-card-text,
+.agent-card .sd-card-footer {
+    color: white !important;
+}
+
+.choice-card:hover {
+    transform: translateY(-8px);
+    box-shadow: 0 20px 40px rgba(0,0,0,0.2) !important;
+    cursor: pointer;
+}
+
+/* Platform Cards with Hover Effect */
+.platform-card {
+    transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
+    border: 2px solid #e2e8f0;
+}
+
+.platform-card:hover {
+    transform: scale(1.05);
+    border-color: #667eea;
+    box-shadow: 0 10px 25px rgba(102, 126, 234, 0.3) !important;
+}
+
+/* Step Progress Indicators */
+.step-card {
+    position: relative;
+    padding-left: 60px;
+    margin-bottom: 1.5rem;
+}
+
+.step-card.completed::before {
+    content: "✓";
+    position: absolute;
+    left: 15px;
+    top: 20px;
+    width: 35px;
+    height: 35px;
+    background: #10b981;
+    color: white;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: bold;
+    font-size: 20px;
+    line-height: 35px;
+    text-align: center;
+}
+
+.step-card.current::before {
+    content: "→";
+    position: absolute;
+    left: 15px;
+    top: 20px;
+    width: 35px;
+    height: 35px;
+    background: #667eea;
+    color: white;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: bold;
+    font-size: 20px;
+    line-height: 35px;
+    text-align: center;
+    animation: pulse 2s infinite;
+}
+
+.step-card.pending::before {
+    content: "";
+    position: absolute;
+    left: 15px;
+    top: 20px;
+    width: 35px;
+    height: 35px;
+    background: #e2e8f0;
+    color: #64748b;
+    border-radius: 50%;
+    border: 2px solid #cbd5e1;
+}
+
+@keyframes pulse {
+    0%, 100% { 
+        opacity: 1;
+        transform: scale(1);
+    }
+    50% { 
+        opacity: 0.6;
+        transform: scale(1.1);
+    }
+}
+
+/* Animated Hover Lift Effect */
+.hover-lift {
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.hover-lift:hover {
+    transform: translateY(-4px) scale(1.02);
+}
+
+/* Hero Grid Spacing */
+.hero-grid {
+    margin: 3rem 0;
+}
+
+.hero-grid .sd-card {
+    min-height: 200px;
+}
+
+/* Platform Grid */
+.platform-grid .sd-card {
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+}
+
+.platform-grid .sd-card-body {
+    flex-grow: 1;
+}
+
+/* Badge Enhancements */
+.sd-badge {
+    padding: 0.25rem 0.75rem;
+    font-size: 0.875rem;
+    font-weight: 600;
+    border-radius: 9999px;
+}
+
+/* Tab Enhancements - Make them prominent! */
+.sd-tab-set {
+    margin: 1.5rem 0;
+    padding: 0.5rem;
+    background: #f8fafc;
+    border-radius: 0.75rem;
+    border: 1px solid #e2e8f0;
+}
+
+.sd-tab-set > input[type="radio"] + label {
+    padding: 0.75rem 1.5rem;
+    font-weight: 600;
+    font-size: 0.95rem;
+    border-radius: 0.5rem;
+    transition: all 0.2s ease;
+    background: transparent;
+    color: #64748b;
+}
+
+.sd-tab-set > input[type="radio"]:checked + label {
+    background: #667eea;
+    color: white !important;
+    box-shadow: 0 2px 4px rgba(102, 126, 234, 0.2);
+}
+
+.sd-tab-set > input[type="radio"] + label:hover {
+    background: #e2e8f0;
+    color: #334155;
+    cursor: pointer;
+}
+
+.sd-tab-set > input[type="radio"]:checked + label:hover {
+    background: #5568d3;
+    color: white !important;
+}
+
+.sd-tab-content {
+    padding: 1.5rem;
+    border: 1px solid #e2e8f0;
+    border-top: none;
+    border-radius: 0 0 0.5rem 0.5rem;
+    background: white;
+}
+
+/* Dropdown Enhancements */
+.sd-dropdown {
+    margin: 1.5rem 0;
+}
+
+.sd-dropdown-title {
+    font-weight: 600;
+    padding: 1rem 1.5rem;
+    background: #f8fafc;
+    border: 1px solid #e2e8f0;
+    border-radius: 0.5rem;
+    transition: background-color 0.2s ease;
+}
+
+.sd-dropdown-title:hover {
+    background: #f1f5f9;
+}
+
+.sd-dropdown-body {
+    padding: 1.5rem;
+    border: 1px solid #e2e8f0;
+    border-top: none;
+    border-radius: 0 0 0.5rem 0.5rem;
+}
+
+/* Card Image Styling */
+.sd-card-img-top {
+    padding: 1.5rem;
+    background: #f8fafc;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.sd-card-img-top img {
+    max-width: 80px;
+    height: auto;
+}
+
+/* Button Enhancements */
+.sd-btn-primary {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    border: none;
+    color: white;
+    padding: 0.75rem 1.5rem;
+    font-weight: 600;
+    border-radius: 0.5rem;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.sd-btn-primary:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 10px 20px rgba(102, 126, 234, 0.3);
+}
+
+/* Callout Enhancements */
+.admonition {
+    padding: 1rem 1.5rem;
+    margin: 1.5rem 0;
+    border-radius: 0.5rem;
+    border-left: 4px solid;
+}
+
+.admonition.tip {
+    background: #ecfdf5;
+    border-color: #10b981;
+}
+
+.admonition.important {
+    background: #fef3c7;
+    border-color: #f59e0b;
+}
+
+.admonition.warning {
+    background: #fef2f2;
+    border-color: #ef4444;
+}
+
+.admonition.note {
+    background: #eff6ff;
+    border-color: #3b82f6;
+}
+
+/* Code Block Enhancements */
+.highlight {
+    border-radius: 0.5rem;
+    margin: 1.5rem 0;
+}
+
+.highlight pre {
+    border-radius: 0.5rem;
+    padding: 1.5rem;
+}
+
+/* Copy Button Styling */
+.copybtn {
+    opacity: 0.6;
+    transition: opacity 0.2s ease;
+}
+
+.copybtn:hover {
+    opacity: 1;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .hero-grid .sd-card {
+        min-height: 150px;
+    }
+    
+    .step-card {
+        padding-left: 50px;
+    }
+    
+    .step-card::before {
+        left: 10px;
+        width: 30px;
+        height: 30px;
+        font-size: 16px;
+        line-height: 30px;
+    }
+}
+
+/* Fade-in Animation for Cards */
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.sd-card {
+    animation: fadeInUp 0.6s ease-out;
+}
+
+/* Staggered Animation for Grid Items */
+.platform-grid .sd-card:nth-child(1) {
+    animation-delay: 0.1s;
+}
+
+.platform-grid .sd-card:nth-child(2) {
+    animation-delay: 0.2s;
+}
+
+.platform-grid .sd-card:nth-child(3) {
+    animation-delay: 0.3s;
+}
+
+.platform-grid .sd-card:nth-child(4) {
+    animation-delay: 0.4s;
+}
+
+.platform-grid .sd-card:nth-child(5) {
+    animation-delay: 0.5s;
+}
+
+.platform-grid .sd-card:nth-child(6) {
+    animation-delay: 0.6s;
+}
+
+/* Link Styling in Cards */
+.sd-card a.sd-stretched-link {
+    text-decoration: none;
+}
+
+.sd-card:hover a.sd-stretched-link {
+    text-decoration: none;
+}
+
+/* Success/Completion Styling */
+.completion-indicator {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.5rem 1rem;
+    background: #10b981;
+    color: white;
+    border-radius: 9999px;
+    font-weight: 600;
+    font-size: 0.875rem;
+}
+
+/* Timeline Visualization */
+.timeline-step {
+    position: relative;
+    padding-left: 60px;
+    padding-bottom: 2rem;
+}
+
+.timeline-step::after {
+    content: "";
+    position: absolute;
+    left: 24px;
+    top: 45px;
+    width: 2px;
+    height: calc(100% - 35px);
+    background: #e2e8f0;
+}
+
+.timeline-step:last-child::after {
+    display: none;
+}
+
+/* Dark Mode Support */
+@media (prefers-color-scheme: dark) {
+    .platform-card {
+        border-color: #334155;
+    }
+    
+    .step-card.pending::before {
+        background: #334155;
+        border-color: #475569;
+    }
+    
+    .sd-dropdown-title {
+        background: #1e293b;
+        border-color: #334155;
+    }
+    
+    .sd-dropdown-title:hover {
+        background: #334155;
+    }
+}
+
+/* ============================================
+   Skills Showcase - Long Name Handling
+   ============================================ */
+
+/* Skill card title wrapping and overflow handling */
+.sd-card-title {
+    word-wrap: break-word;
+    overflow-wrap: break-word;
+    word-break: break-word;
+    hyphens: auto;
+    line-height: 1.4;
+}
+
+/* Badge wrapping in card footers */
+.sd-card-footer .sd-badge {
+    word-wrap: break-word;
+    overflow-wrap: break-word;
+    word-break: break-word;
+    max-width: 100%;
+    display: inline-block;
+    white-space: normal;
+    text-align: center;
+    line-height: 1.3;
+    padding: 0.35em 0.65em;
+}
+
+/* Ensure grid items don't overflow */
+.sd-grid-item {
+    min-width: 0;
+    overflow: hidden;
+}
+
+/* Card body text wrapping */
+.sd-card-body {
+    word-wrap: break-word;
+    overflow-wrap: break-word;
+}
+
+/* ============================================
+   Skills Showcase - Important Box Styling
+   ============================================ */
+
+/* Remove green background from important admonition in skills showcase */
+.admonition.important {
+    background-color: #f8f9fa !important;
+    border-left: 4px solid #667eea !important;
+}
+
+.admonition.important .admonition-title {
+    background-color: transparent !important;
+    color: #667eea !important;
+    font-weight: 600;
+}
+
+/* Dark mode support */
+@media (prefers-color-scheme: dark) {
+    .admonition.important {
+        background-color: #1e293b !important;
+        border-left: 4px solid #818cf8 !important;
+    }
+    
+    .admonition.important .admonition-title {
+        color: #818cf8 !important;
+    }
+}

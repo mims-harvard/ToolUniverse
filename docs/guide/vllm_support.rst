@@ -146,4 +146,4 @@ See Also
 
 * :doc:`openrouter_support` - Using OpenRouter as an LLM provider
 * :doc:`toolspace` - Space configurations with LLM settings
-* :doc:`../tutorials/agentic_tools_tutorial` - Complete guide to creating agentic tools
+* :doc:`agentic_tools_tutorial` - Complete guide to creating agentic tools

@@ -26,9 +26,9 @@ extensions = [
     "sphinx.ext.autosectionlabel",
     "myst_parser",
     "sphinx_copybutton",
-    "sphinx_tabs.tabs",
+    # "sphinx_tabs.tabs",  # Temporarily disabled due to Sphinx 9.x compatibility issue
     "sphinx_design",
-    "notfound.extension",
+    # "notfound.extension",  # Temporarily disabled due to theme compatibility issue
 ]
 
 templates_path = ["_templates"]
@@ -37,6 +37,7 @@ exclude_patterns = [
     "Thumbs.db",
     ".DS_Store",
     "old_files",
+    "old",  # Exclude backup documentation
 
     "tutorials/aiscientists",
     "translation_tools",
@@ -58,11 +59,15 @@ html_theme_options = {
             "url": "index",
         },
         {
+            "title": "💻 Python",
+            "url": "guide/python_guide",
+        },
+        {
             "title": "📖 Tutorials",
             "url": "guide/index",
         },
         {
-            "title": "🤖 AI Scientists",
+            "title": "🤖 AI Agents",
             "url": "guide/building_ai_scientists/index",
         },
         {
@@ -76,6 +81,10 @@ html_theme_options = {
         {
             "title": "📚 API",
             "url": "api/modules",
+        },
+        {
+            "title": "🔑 API Keys",
+            "url": "guide/api_keys",
         },
     ],
     
@@ -92,11 +101,10 @@ html_theme_options = {
     "dark_logo": "_static/logo.png",
     
     # Sidebar configuration
-    "globaltoc_expand_depth": 2,
-    "toctree_collapse": False,
-    "toctree_maxdepth": 4,
-    "toctree_titles_only": True,
-    "toctree_includehidden": True,
+    "globaltoc_expand_depth": 2,    # Expand 2 levels by default
+    "toctree_collapse": True,       # Allow collapsing sections
+    "toctree_titles_only": False,   # Show full navigation including children
+    "toctree_includehidden": True,  # Include hidden toctrees in navigation
     
     # Social links (disabled)
     "twitter_site": "",
@@ -119,15 +127,21 @@ html_short_title = project
 html_logo = "_static/logo.png" if os.path.exists("_static/logo.png") else None
 html_favicon = "_static/logo_transparent.png" if os.path.exists("_static/logo_transparent.png") else None
 
+# Let Shibuya use its default sidebar layout
+# Left sidebar: global navigation (from toctree, titles only)
+# Right sidebar: page TOC (in-page sections) - handled automatically by Shibuya
+
 # Custom CSS
 html_css_files = [
     "custom.css",
     "language_switcher.css",
+    "custom_modern.css",  # Modern interactive styles
 ]
 
 # Custom JavaScript
 html_js_files = [
     "language_switcher.js",
+    "sidebar_control.js",  # Custom per-section sidebar expansion control
 ]
 
 # -- Autodoc configuration ---------------------------------------------------
@@ -140,10 +154,13 @@ autodoc_default_options = {
     "show-inheritance": True,
 }
 
-# Skip problematic modules that have import issues
+# Skip problematic modules that have import issues or blocking operations
 autodoc_mock_imports = [
     "flask_cors",
     "tooluniverse.web_tools.literature_search_ui",
+    "tooluniverse.visualization_tool",
+    "tooluniverse.tool_graph_web_ui",
+    "tooluniverse.web_search_tool",
 ]
 
 autodoc_typehints = "description"
@@ -177,7 +194,7 @@ myst_enable_extensions = [
     "colon_fence",
     "attrs_inline",
     "attrs_block",
-    "linkify",
+    # "linkify",  # Disabled - requires linkify-it-py
 ]
 
 # Todo extension settings

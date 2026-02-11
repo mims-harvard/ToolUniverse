@@ -588,7 +588,7 @@ Next Steps
 ----------
 
 - **Learn Components**: :doc:`../expand_tooluniverse/architecture` - Understand ToolUniverse architecture
-- **Build AI Scientists**: :doc:`building_ai_scientists/index` - Create autonomous research workflows
+- **Platform Setup**: :doc:`building_ai_scientists/index` - Connect to AI agents
 - **Case Studies**: :doc:`scientific_workflows` - Real composition examples
 
 .. tip::

@@ -46,7 +46,7 @@ Why Use MCP?
 ✅ Integration with existing Python codebase
 
 .. seealso::
-   For Python API usage, see :doc:`coding_api` and :doc:`../getting_started`.
+   For Python API usage, see :doc:`../coding_api` and :doc:`../../getting_started`.
 
 Key Benefits
 ~~~~~~~~~~~~
@@ -270,7 +270,7 @@ Hook Configuration
 Enable intelligent output processing hooks for MCP servers. For comprehensive hook configuration including SummarizationHook and FileSaveHook, see :ref:`hook-configuration`.
 
 .. seealso::
-   **Detailed Guide**: :doc:`hooks/server_stdio_hooks` - Complete hook integration tutorial
+   **Detailed Guide**: :doc:`../hooks/server_stdio_hooks` - Complete hook integration tutorial
 
 Performance Tuning
 ^^^^^^^^^^^^^^^^^^
@@ -288,9 +288,9 @@ Claude Desktop
 Integrate ToolUniverse with Claude Desktop for powerful desktop-based scientific research.
 
 .. seealso::
-   For complete Claude Desktop integration, see :doc:`building_ai_scientists/claude_desktop`
-   
-   **Tutorial**: :doc:`../tutorials/aiscientists/MCP_for_Claude` - Step-by-step Claude Desktop setup
+   For complete Claude Desktop integration, see :doc:`claude_desktop`
+
+   **Tutorial**: :doc:`../../tutorials/aiscientists/MCP_for_Claude` - Step-by-step Claude Desktop setup
 
 ChatGPT API
 ~~~~~~~~~~~
@@ -298,7 +298,7 @@ ChatGPT API
 Connect ToolUniverse to ChatGPT API for programmatic AI-scientist workflows.
 
 .. seealso::
-   For ChatGPT API integration, see :doc:`building_ai_scientists/chatgpt_api`
+   For ChatGPT API integration, see :doc:`chatgpt_api`
 
 Gemini CLI
 ~~~~~~~~~~
@@ -306,9 +306,9 @@ Gemini CLI
 Use ToolUniverse with Gemini CLI for command-line scientific research.
 
 .. seealso::
-   For Gemini CLI integration, see :doc:`building_ai_scientists/gemini_cli`
-   
-   **Tutorial**: :doc:`../tutorials/aiscientists/MCP_for_Gemini_CLI` - Complete Gemini CLI setup guide
+   For Gemini CLI integration, see :doc:`gemini_cli`
+
+   **Tutorial**: :doc:`../../tutorials/aiscientists/MCP_for_Gemini_CLI` - Complete Gemini CLI setup guide
 
 Claude Code
 ~~~~~~~~~~~
@@ -316,7 +316,7 @@ Claude Code
 Integrate ToolUniverse with Claude Code for IDE-based scientific development.
 
 .. seealso::
-   For Claude Code integration, see :doc:`building_ai_scientists/claude_code`
+   For Claude Code integration, see :doc:`claude_code`
 
 Qwen Code
 ~~~~~~~~~
@@ -324,7 +324,7 @@ Qwen Code
 Connect ToolUniverse to Qwen Code for terminal-based scientific workflows.
 
 .. seealso::
-   For Qwen Code integration, see :doc:`building_ai_scientists/qwen_code`
+   For Qwen Code integration, see :doc:`qwen_code`
 
 GPT Codex CLI
 ~~~~~~~~~~~~~
@@ -332,7 +332,7 @@ GPT Codex CLI
 Use ToolUniverse with GPT Codex CLI for advanced command-line research capabilities.
 
 .. seealso::
-   For GPT Codex CLI integration, see :doc:`building_ai_scientists/codex_cli`
+   For GPT Codex CLI integration, see :doc:`codex_cli`
 
 MCP Protocol Details
 --------------------
@@ -438,57 +438,57 @@ Related Documentation
 Core MCP Components
 ~~~~~~~~~~~~~~~~~~~
 
-- :doc:`tool_caller` - Tool execution engine and MCP server implementation
-- :doc:`loading_tools` - Tool loading and MCP server configuration
-- :doc:`interaction_protocol` - ToolUniverse interaction protocol and MCP schema
-- :doc:`../api/modules` - Complete API documentation
+- :doc:`../tool_caller` - Tool execution engine and MCP server implementation
+- :doc:`../loading_tools` - Tool loading and MCP server configuration
+- :doc:`../interaction_protocol` - ToolUniverse interaction protocol and MCP schema
+- :doc:`../../api/modules` - Complete API documentation
 
-AI Scientist Integration
-~~~~~~~~~~~~~~~~~~~~~~~~
+AI Agent Platform Setup
+~~~~~~~~~~~~~~~~~~~~~~~
 
-- :doc:`building_ai_scientists/index` - Complete guide to building AI scientists
-- :doc:`building_ai_scientists/claude_desktop` - Claude Desktop integration
-- :doc:`building_ai_scientists/chatgpt_api` - ChatGPT API integration
-- :doc:`building_ai_scientists/gemini_cli` - Gemini CLI integration
-- :doc:`building_ai_scientists/claude_code` - Claude Code integration
-- :doc:`building_ai_scientists/qwen_code` - Qwen Code integration
-- :doc:`building_ai_scientists/codex_cli` - GPT Codex CLI integration
+- :doc:`index` - Platform setup guide
+- :doc:`claude_desktop` - Claude Desktop setup
+- :doc:`chatgpt_api` - ChatGPT API setup
+- :doc:`gemini_cli` - Gemini CLI setup
+- :doc:`claude_code` - Claude Code setup
+- :doc:`qwen_code` - Qwen Code setup
+- :doc:`codex_cli` - Codex CLI setup
 
 MCP Tutorials and Guides
 ~~~~~~~~~~~~~~~~~~~~~~~~
 
-- :doc:`../tutorials/aiscientists/MCP_Server_Tutorial` - Converting tools to MCP servers
-- :doc:`../tutorials/aiscientists/MCP_for_Claude` - Claude Desktop MCP integration
-- :doc:`../tutorials/aiscientists/MCP_for_Gemini_CLI` - Gemini CLI MCP integration
-- :doc:`../tutorials/aiscientists/adding_mcp_tools` - Adding MCP tools to ToolUniverse
-- :doc:`../tutorials/addtools/mcp_tool_registration_en` - MCP tool registration tutorial
+- :doc:`../../tutorials/aiscientists/MCP_Server_Tutorial` - Converting tools to MCP servers
+- :doc:`../../tutorials/aiscientists/MCP_for_Claude` - Claude Desktop MCP integration
+- :doc:`../../tutorials/aiscientists/MCP_for_Gemini_CLI` - Gemini CLI MCP integration
+- :doc:`../../tutorials/aiscientists/adding_mcp_tools` - Adding MCP tools to ToolUniverse
+- :doc:`../../tutorials/addtools/mcp_tool_registration_en` - MCP tool registration tutorial
 
 Advanced Features
 ~~~~~~~~~~~~~~~~~
 
 - :doc:`compact_mode` - Optimize context window usage by exposing only core tools
-- :doc:`hooks/server_stdio_hooks` - Output processing hooks for MCP servers
-- :doc:`scientific_workflows` - Building complex workflows with MCP
-- :doc:`tool_composition` - Composing tools for advanced research
-- :doc:`streaming_tools` - Streaming support for MCP tools
+- :doc:`../hooks/server_stdio_hooks` - Output processing hooks for MCP servers
+- :doc:`../scientific_workflows` - Building complex workflows with MCP
+- :doc:`../tool_composition` - Composing tools for advanced research
+- :doc:`../streaming_tools` - Streaming support for MCP tools
 
 MCP Tools and Examples
 ~~~~~~~~~~~~~~~~~~~~~~
 
-- :doc:`../tools/mcp_client_tools_example` - MCP client tools example
-- :doc:`../tools/expert_feedback_tools` - Expert feedback MCP tools
-- :doc:`../tools/txagent_client_tools` - TXAgent client MCP tools
+- :doc:`../../tools/mcp_client_tools_example` - MCP client tools example
+- :doc:`../../tools/expert_feedback_tools` - Expert feedback MCP tools
+- :doc:`../../tools/txagent_client_tools` - TXAgent client MCP tools
 
 Examples and Tutorials
 ~~~~~~~~~~~~~~~~~~~~~~
 
-- :doc:`examples` - Practical MCP usage examples
-- :doc:`building_ai_scientists/index` - Comprehensive tutorials for MCP integration with AI systems
+- :doc:`../examples` - Practical MCP usage examples
+- :doc:`index` - Comprehensive tutorials for MCP integration with AI systems
 
 API Reference
 ~~~~~~~~~~~~~
 
-- :doc:`../api/modules` - Complete API documentation
+- :doc:`../../api/modules` - Complete API documentation
 
 External Resources
 ~~~~~~~~~~~~~~~~~~
@@ -510,4 +510,4 @@ Key takeaways:
 - **Production Ready**: High-performance, secure, and reliable
 - **Extensive Documentation**: Complete guides for all major AI platforms
 
-Start with the :doc:`building_ai_scientists/index` guide to begin building your AI scientist, or explore specific integrations for your preferred AI scientist.
+Start with the :doc:`index` guide to connect ToolUniverse to your AI agent platform.

@@ -121,5 +121,5 @@ See Also
 
 - :doc:`reference/cli_tools` - Command-line tools
 - :doc:`reference/environment_variables` - Configuration variables
-- :doc:`api_keys` - API key configuration
+- :doc:`../guide/api_keys` - API key configuration
 - :doc:`guide/interaction_protocol` - AI-Tool Interaction Protocol details

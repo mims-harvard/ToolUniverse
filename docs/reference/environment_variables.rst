@@ -16,7 +16,7 @@ Quick Reference
 - ``TOOLUNIVERSE_LOG_LEVEL`` - Set logging level (default: ``INFO``)
 - ``NCBI_API_KEY`` - Faster PubMed/NCBI access (3x rate limit increase)
 
-For API keys configuration, see :doc:`../api_keys`.
+For API keys configuration, see :doc:`../guide/api_keys`.
 
 Cache Configuration
 -------------------
@@ -184,7 +184,7 @@ Configure Large Language Model providers for agentic tools and LLM-powered featu
 - **Hooks**: LLM-powered output processing hooks
 - **Custom Tools**: Your own tools that leverage LLM capabilities
 
-**See also**: Provider-specific API keys in :doc:`../api_keys`.
+**See also**: Provider-specific API keys in :doc:`../guide/api_keys`.
 
 Performance & System
 --------------------
@@ -293,7 +293,7 @@ For complete API key documentation including:
 - Configuration methods
 - Troubleshooting
 
-See: :doc:`../api_keys`
+See: :doc:`../guide/api_keys`
 
 **Common API keys**::
 
@@ -470,7 +470,7 @@ See Also
 --------
 
 - :doc:`cli_tools` - Command-line tools reference
-- :doc:`../api_keys` - API keys configuration
+- :doc:`../guide/api_keys` - API keys configuration
 - :doc:`../guide/cache_system` - Caching system guide
 - :doc:`../guide/logging` - Logging configuration
 - :doc:`../help/troubleshooting` - Troubleshooting guide
@@ -562,4 +562,4 @@ Complete Variable List
      - Embeddings
    * - API keys
      - (various)
-     - See :doc:`../api_keys`
+     - See :doc:`../guide/api_keys`

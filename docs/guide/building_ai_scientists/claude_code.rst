@@ -1,270 +1,181 @@
-Claude Code
-=============================
+Claude Code Setup
+=================
 
-**Building AI Scientists with Claude Code and ToolUniverse**
+**Connect ToolUniverse to Claude Code in 10 minutes**
 
 Overview
 --------
 
-Claude Code integration enables powerful IDE- or terminal-based scientific research through the Model Context Protocol (MCP). This approach provides a developer-friendly interface for research while leveraging Claude's advanced reasoning and ToolUniverse's 1000+ scientific tools.
+Claude Code integration combines Anthropic's reasoning model with ToolUniverse's 1000+ scientific tools in a development-focused environment.
 
-.. code-block:: text
+.. grid:: 1 1 3 3
+   :gutter: 2
 
-   ┌─────────────────┐
-   │   Claude Code   │ ← IDE/CLI Interface & Reasoning
-   │                 │
-   └─────────┬───────┘
-             │ MCP Protocol
-             │
-   ┌─────────▼───────┐
-   │ ToolUniverse     │ ← MCP Server
-   │   MCP Server     │
-   └─────────┬───────┘
-             │
-   ┌─────────▼───────┐
-   │ 1000+ Scientific │ ← Scientific Tools Ecosystem
-   │     Tools       │
-   └─────────────────┘
+   .. grid-item-card:: ⚡ Setup Time
+      :class-card: hover-lift
+      :shadow: sm
+      
+      **10 minutes**
 
-**Benefits of Claude Code Integration**:
+   .. grid-item-card:: 💻 Difficulty
+      :class-card: hover-lift
+      :shadow: sm
+      
+      **Moderate**
 
-- **Developer Workflow**: Use Claude inside VS Code/JetBrains or terminal
-- **Advanced Reasoning**: Claude's strong multi-step reasoning
-- **Comprehensive Tools**: Access to 1000+ ToolUniverse tools
-- **Automated Execution**: Natural-language to tools, directly in your editor
-- **Batch & Iteration**: Run multi-step research loops effectively
+   .. grid-item-card:: 🎯 Best For
+      :class-card: hover-lift
+      :shadow: sm
+      
+      **Development workflows**
 
 Prerequisites
 -------------
 
-Before setting up Claude Code integration, ensure you have:
+.. important:: ✅ **What you need:**
+   
+   - **Claude Code CLI** - Install via: ``npm install -g @anthropics/claude-code``
+   - **Python 3.10+**
+   - **ToolUniverse** - ``pip install tooluniverse``
 
-- **Claude Code**: Installed in your IDE or CLI
-- **Python 3.10+**: macOS, Windows, or Linux
-- **API Keys** (optional): For specific tools or hooks (e.g., Azure OpenAI for summarization)
+Setup Steps
+-----------
 
-Installation and Setup
-----------------------
+.. card:: Step 1: Install ToolUniverse
+   :class-card: step-card completed
 
-Step 0: Install Claude Code
-~~~~~~~~~~~~~~~~~~~~~~~~~~~
+   .. code-block:: bash
 
-Install Claude Code in your terminal (any OS with Node.js 18+):
+      pip install tooluniverse
 
-.. code-block:: bash
+.. card:: Step 2: Configure MCP Server
+   :class-card: step-card current
 
-   # Standard (recommended)
-   npm install -g @anthropic-ai/claude-code
+   Add ToolUniverse MCP server to Claude Code:
 
-Verify and diagnose your installation:
+   .. code-block:: bash
 
-.. code-block:: bash
+      claude mcp add --transport stdio tooluniverse -- tooluniverse-smcp-stdio --compact-mode
 
-   claude doctor
+   .. dropdown:: 💡 What does this do?
+      :animate: fade-in-slide-down
+      :color: info
 
-Native installer (beta) alternatives:
+      - ``--transport stdio``: Uses standard input/output for communication
+      - ``tooluniverse``: Server name
+      - ``tooluniverse-smcp-stdio``: ToolUniverse's MCP stdio server
+      - ``--compact-mode``: Loads essential tools (prevents context overflow)
 
-.. code-block:: bash
+.. card:: Step 3: Install Agent Skills (Optional)
+   :class-card: step-card pending
 
-   # macOS/Linux/WSL: stable
-   curl -fsSL https://claude.ai/install.sh | bash
-   # latest
-   curl -fsSL https://claude.ai/install.sh | bash -s latest
+   .. code-block:: bash
 
-On Windows PowerShell:
+      npx skills add mims-harvard/ToolUniverse
 
-.. code-block:: powershell
+.. card:: Step 4: Start Claude Code
+   :class-card: step-card pending
 
-   irm https://claude.ai/install.ps1 | iex
+   Launch Claude Code with ToolUniverse:
 
-After installation, you can start Claude Code in a project:
+   .. code-block:: bash
 
-.. code-block:: bash
+      claude
 
-   cd your-project
-   claude
+.. card:: Step 5: Verify Integration
+   :class-card: step-card pending
 
-For details, see: `Anthropic — Set up Claude Code <https://docs.anthropic.com/en/docs/claude-code/setup>`_.
+   Test in Claude Code:
 
-For Windows installation, see: `Anthropic — Windows setup <https://docs.anthropic.com/en/docs/claude-code/setup#windows-setup>`_.
+   .. code-block:: text
 
-Step 1: Install ToolUniverse
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+      "List available ToolUniverse tools"
+      "Find protein P05067 function"
 
-.. code-block:: bash
+   .. success:: ✅ **Working!**
+      
+      Claude Code can now access scientific tools!
 
-   # Using pip
-   pip install tooluniverse
+Example Workflows
+-----------------
 
-   # Or using uv (faster)
-   uv pip install tooluniverse
+.. tab-set::
 
-Step 2: Add ToolUniverse to Claude Code
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+   .. tab-item:: Drug Discovery
 
-.. code-block:: bash
+      .. code-block:: text
 
-   claude mcp add --transport stdio tooluniverse -- tooluniverse-smcp-stdio --compact-mode
+         "Search ChEMBL for compounds similar to aspirin,
+         then analyze their ADMET properties"
 
-   # Verify it was added successfully
-   claude mcp list
+   .. tab-item:: Code Generation
 
-You should see ``tooluniverse`` in the list of MCP servers. The ``--compact-mode`` flag optimizes tool descriptions for better context efficiency.
+      .. code-block:: text
 
-Step 3: Verify in IDE/CLI
-~~~~~~~~~~~~~~~~~~~~~~~~~
+         "Write a Python script that:
+         1. Searches PubMed for COVID-19 papers
+         2. Extracts key findings
+         3. Saves to CSV"
 
-After saving the configuration, verify connectivity:
+   .. tab-item:: Data Analysis
 
-- Terminal (Claude Code CLI)
-  - Launch in your project:
+      .. code-block:: text
 
-    .. code-block:: bash
-
-       cd /path/to/your-project
-       claude
-
-  - In the chat, ask: "What ToolUniverse tools are available?"
-  - If issues occur, run diagnostics:
-
-    .. code-block:: bash
-
-       claude doctor
-
-  - For terminal configuration, see: `Claude Code CLI reference <https://docs.anthropic.com/en/docs/claude-code/cli-reference>`_
-
-- VS Code
-  - Restart VS Code, then open Command Palette and run: "Claude: Open Chat"
-  - Ask: "What ToolUniverse tools are available?"
-  - If tools don't appear, check `.claude/settings.local.json` and reload window
-  - For VS Code setup, see: `Add Claude Code to your IDE <https://docs.anthropic.com/en/docs/claude-code/add-claude-code-to-your-ide>`_
-
-- JetBrains (IntelliJ/PyCharm/etc.)
-  - Restart IDE → open the Claude tool window
-  - Ask: "What ToolUniverse tools are available?"
-  - If tools don't appear, review Tools → Claude Code → MCP Servers settings
-  - For JetBrains setup, see: `Add Claude Code to your IDE <https://docs.anthropic.com/en/docs/claude-code/add-claude-code-to-your-ide>`_
-
-Scientific Research Capabilities
---------------------------------
-
-Drug Discovery and Development
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-Claude Code with ToolUniverse enables comprehensive drug discovery workflows:
-
-**Target Identification**:
-- Disease analysis and EFO ID lookup
-- Target discovery and validation
-- Literature-based target assessment
-
-**Drug Analysis**:
-- Drug information retrieval from multiple databases
-- Safety profile analysis
-- Drug interaction checking
-- Clinical trial data access
-
-Genomics and Molecular Biology
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-Access comprehensive genomics tools for molecular research:
-
-**Gene Analysis**:
-- Gene information from UniProt
-- Protein structure analysis
-- Expression pattern analysis
-- Pathway involvement
-
-**Molecular Interactions**:
-- Protein-protein interactions
-- Drug-target interactions
-- Pathway analysis
-- Functional annotation
-
-Literature Research and Analysis
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-Comprehensive literature search and analysis capabilities:
-
-**Literature Search**:
-- PubMed, Europe PMC, and Semantic Scholar
-- Citation analysis and trend detection
-
-**Content Analysis**:
-- Abstract summarization
-- Key finding extraction
-- Gap identification
-
-Multi-Step Research Workflows
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-Claude Code excels at complex, multi-step research workflows:
-
-**Hypothesis-Driven Research**:
-1. Formulate a hypothesis
-2. Design an approach and select tools
-3. Gather supporting evidence
-4. Validate findings
-5. Generate conclusions
+         "Get gene expression data for BRCA1 from GTEx,
+         analyze tissue specificity, create visualization"
 
 Advanced Configuration
 ----------------------
 
-Tool Selection
-~~~~~~~~~~~~~~
+.. dropdown:: 🎛️ Load Specific Tool Categories
+   :animate: fade-in-slide-down
+   :color: primary
 
-Load only specific tools for focused research domains:
+   .. code-block:: bash
 
-.. code-block:: bash
+      claude mcp add --transport stdio tooluniverse -- \
+        tooluniverse-smcp-stdio \
+        --tool-categories uniprot,chembl,opentarget
 
-   # Add ToolUniverse with specific tools only
-   claude mcp add --transport stdio tooluniverse -- tooluniverse-smcp-stdio --compact-mode --include-tools EuropePMC_search_articles,ChEMBL_search_similar_molecules,openalex_literature_search
+.. dropdown:: 🔑 API Keys
+   :animate: fade-in-slide-down
+   :color: info
 
-Summarization Hook
-~~~~~~~~~~~~~~~~~~
+   Set environment variables:
 
-Enable automatic summarization for long outputs (requires Azure OpenAI):
+   .. code-block:: bash
 
-.. code-block:: bash
-
-   claude mcp add --transport stdio tooluniverse --env AZURE_OPENAI_API_KEY=your-key --env AZURE_OPENAI_ENDPOINT=https://your-resource.openai.azure.com -- tooluniverse-smcp-stdio --compact-mode --hook-type SummarizationHook
-
-Multiple Instances
-~~~~~~~~~~~~~~~~~~
-
-Run separate instances for different purposes:
-
-.. code-block:: bash
-
-   # Literature research instance
-   claude mcp add --transport stdio tooluniverse-literature -- tooluniverse-smcp-stdio --compact-mode --include-tools EuropePMC_search_articles,openalex_literature_search
-
-   # Drug analysis instance
-   claude mcp add --transport stdio tooluniverse-drugs -- tooluniverse-smcp-stdio --compact-mode --include-tools ChEMBL_search_similar_molecules,search_clinical_trials
-
-   # List all servers
-   claude mcp list
-
-   # Remove a server
-   claude mcp remove tooluniverse-literature
+      export NCBI_API_KEY=your_key
+      export SEMANTIC_SCHOLAR_API_KEY=your_key
 
 Troubleshooting
 ---------------
 
-**MCP Server Not Loading**:
+.. dropdown:: ❌ MCP server not found
+   :color: danger
 
-- Verify ToolUniverse is installed: ``python -c "import tooluniverse; print('OK')"``
-- Check server status: ``claude mcp list``
-- Run diagnostics: ``claude doctor``
+   Reinstall ToolUniverse:
 
-**No Tools Discovered**:
+   .. code-block:: bash
 
-- Check if tool filters are too restrictive
-- Verify the command works: ``tooluniverse-smcp-stdio --help``
+      pip install --upgrade tooluniverse
 
-**Tools Not Executing**:
+.. dropdown:: ⚠️ Too many tools warning
+   :color: warning
 
-- Provide required API keys via ``--env`` flags
-- Verify network connectivity
+   Use ``--compact-mode`` flag (see Step 2)
 
-For more help, see: `Claude Code troubleshooting <https://docs.anthropic.com/en/docs/claude-code/troubleshooting>`_.
+Next Steps
+----------
+
+.. button-ref:: index
+   :color: secondary
+   :shadow:
+   :expand:
+
+   ← **Back to Platform Selector**
+
+.. seealso::
+   - :doc:`../finding_tools` - Tool discovery
+   - :doc:`../scientific_workflows` - Workflow patterns
+   - :doc:`../../help/troubleshooting` - Common issues

@@ -42,7 +42,7 @@ Most tools work without API keys! However, some tools require authentication or 
 - **Recommended for better performance**: NCBI, OpenTargets, FDA (3-10x faster)
 - **Required for specific features**: NVIDIA NIM (structure prediction), USPTO (patents), DisGeNET, OMIM
 
-**For complete details**, see :doc:`api_keys` which covers:
+**For complete details**, see :doc:`../guide/api_keys` which covers:
 
 - Which APIs are required vs optional
 - How to obtain each API key
