@@ -7,6 +7,7 @@ What You'll Learn
 -----------------
 
 - 🏠 **Local Tool Development**: Create tools that run within ToolUniverse
+- ⏱️ **Async Tool Development**: Handle long-running operations with AsyncPollingTool
 - 🔗 **Remote Tool Integration**: Connect with external services and APIs
 - 📤 **Community Contributions**: Submit your tools to the ToolUniverse repository
 - 🔧 **Advanced Patterns**: Best practices and advanced development techniques
@@ -20,6 +21,7 @@ Quick Start
 **I want to learn tool development systematically:**
 → Choose your path:
    - **Local tools**: :doc:`local_tools/local_tools_tutorial` - Python classes for API wrappers, data processing
+   - **Async tools**: :doc:`async_tools_guide` - Long-running operations with automatic polling
    - **Remote tools**: :doc:`remote_tools/tutorial` - MCP servers for microservices, heavy computation
 
 **I want to contribute tools to the community:**
