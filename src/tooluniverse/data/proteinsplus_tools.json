@@ -1,0 +1,560 @@
+[
+  {
+    "name": "ProteinsPlus_predict_binding_sites",
+    "description": "Predict druggable binding sites and pockets in protein structures using DoGSiteScorer algorithm. Input can be a PDB ID (e.g., '1A2B') or uploaded PDB file content. Returns predicted binding pockets with druggability scores, volume, surface area, and residue composition. Essential for identifying potential drug binding sites before docking or screening. Complements crystal structure data by identifying potential cryptic pockets and ranking sites by druggability.",
+    "type": "ProteinsPlusRESTTool",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "pdb_id": {
+          "type": "string",
+          "description": "PDB identifier (e.g., '1A2B', '4HHB'). Use either pdb_id or pdb_content, not both."
+        },
+        "pdb_content": {
+          "type": "string",
+          "description": "Raw PDB file content as string (multi-line text starting with 'HEADER'). Use either pdb_id or pdb_content, not both. Example: Upload custom structures not in PDB."
+        },
+        "chain": {
+          "type": "string",
+          "description": "Specific chain to analyze (e.g., 'A'). Optional - if not provided, all chains analyzed."
+        }
+      },
+      "required": []
+    },
+    "fields": {
+      "endpoint": "/dogsite_rest",
+      "method": "POST",
+      "is_async": true,
+      "poll_interval": 15,
+      "max_wait_time": 1800
+    },
+    "execution": {
+      "taskSupport": "required"
+    },
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "object",
+          "properties": {
+            "data": {
+              "type": "object",
+              "properties": {
+                "pockets": {
+                  "type": "array",
+                  "description": "Array of predicted binding pockets, sorted by druggability score (best first)",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "pocket_id": {
+                        "type": "integer",
+                        "description": "Unique pocket identifier (1, 2, 3, ...)"
+                      },
+                      "druggability_score": {
+                        "type": "number",
+                        "description": "Druggability score (0-1), higher is better. >0.5 indicates druggable pocket"
+                      },
+                      "volume": {
+                        "type": "number",
+                        "description": "Pocket volume in Angstrom^3. Typical range: 200-2000"
+                      },
+                      "surface_area": {
+                        "type": "number",
+                        "description": "Pocket surface area in Angstrom^2. Larger values indicate more exposed pockets"
+                      },
+                      "depth": {
+                        "type": "number",
+                        "description": "Pocket depth in Angstroms. Deeper pockets are more buried"
+                      },
+                      "residues": {
+                        "type": "array",
+                        "items": {
+                          "type": "string"
+                        },
+                        "description": "List of residues forming the pocket (e.g., ['TYR123', 'PHE45', 'LEU67'])"
+                      }
+                    }
+                  }
+                }
+              }
+            },
+            "metadata": {
+              "type": "object"
+            }
+          },
+          "required": ["data"]
+        },
+        {
+          "type": "object",
+          "properties": {
+            "error": {
+              "type": "string"
+            }
+          },
+          "required": ["error"]
+        }
+      ]
+    },
+    "test_examples": [
+      {
+        "pdb_id": "2OZR"
+      },
+      {
+        "pdb_id": "4HHB",
+        "chain": "A"
+      }
+    ]
+  },
+  {
+    "name": "ProteinsPlus_predict_binding_sites_v3",
+    "description": "Predict druggable binding sites using DoGSite3 algorithm with ligand-biased grid option. Enhanced version of DoGSiteScorer with improved binding site detection. Input can be a PDB ID with optional reference ligand for biased grid calculations. Returns predicted pockets with druggability scores, geometric properties, and detailed subpocket analysis. Supports ligand-based grid biasing to focus predictions around known binding sites. Useful for comprehensive binding site characterization and structure-based drug design workflows. Example: Analyze 1KZK with ligand JE2_A_701 to identify druggable sites near the co-crystallized ligand.",
+    "type": "ProteinsPlusRESTTool",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "pdb_id": {
+          "type": "string",
+          "description": "PDB identifier (e.g., '1KZK', '2OZR', '4HHB'). Required."
+        },
+        "chain": {
+          "type": "string",
+          "description": "Specific chain to analyze (e.g., 'A'). Optional - if not provided, all chains analyzed."
+        },
+        "ligand": {
+          "type": "string",
+          "description": "Reference ligand identifier in format 'residue_name_residue_chain_residue_number' (e.g., 'JE2_A_701'). Optional - used for ligand-biased grid calculations."
+        },
+        "ligand_bias": {
+          "type": "boolean",
+          "description": "Enable ligand-biased grid calculations (true) or standard detection (false). Requires ligand parameter. Default: false. Example: Use true to focus detection around known binding site."
+        },
+        "analysis_detail": {
+          "type": "string",
+          "description": "Analysis level: '0' for pockets only (faster), '1' for pockets and subpockets (comprehensive). Default: '1'. Example: Use '1' for detailed analysis, '0' for quick screening.",
+          "enum": ["0", "1"]
+        },
+        "druggability": {
+          "type": "string",
+          "description": "Prediction granularity: '0' for geometric properties only, '1' for properties and druggability scores. Default: '1'. Example: Use '1' for drug discovery (includes druggability), '0' for structure analysis only.",
+          "enum": ["0", "1"]
+        }
+      },
+      "required": ["pdb_id"]
+    },
+    "fields": {
+      "endpoint": "/dogsite3_rest",
+      "method": "POST",
+      "is_async": true,
+      "poll_interval": 15,
+      "max_wait_time": 1800
+    },
+    "execution": {
+      "taskSupport": "required"
+    },
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "object",
+          "properties": {
+            "data": {
+              "type": "object",
+              "properties": {
+                "result_table": {
+                  "type": "string",
+                  "description": "CSV formatted table with pocket predictions"
+                },
+                "pockets": {
+                  "type": "array",
+                  "description": "Array of predicted pockets with subpocket information",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "pocket_id": {
+                        "type": "integer",
+                        "description": "Unique pocket identifier"
+                      },
+                      "druggability_score": {
+                        "type": "number",
+                        "description": "Druggability score (0-1), >0.5 indicates druggable"
+                      },
+                      "volume": {
+                        "type": "number",
+                        "description": "Pocket volume in Angstrom^3 (typical: 200-2000)"
+                      },
+                      "surface_area": {
+                        "type": "number",
+                        "description": "Pocket surface area in Angstrom^2"
+                      },
+                      "depth": {
+                        "type": "number",
+                        "description": "Pocket depth in Angstroms (deeper = more buried)"
+                      }
+                    }
+                  }
+                },
+                "residues": {
+                  "type": "object",
+                  "description": "Mapping of pockets to constituent residues. Format: {pocket_id: ['TYR123', 'PHE45', ...]}"
+                },
+                "descriptor_explanation": {
+                  "type": "object",
+                  "description": "Explanations of calculated descriptors"
+                },
+                "parameters": {
+                  "type": "object",
+                  "description": "Parameters used for the analysis"
+                }
+              }
+            },
+            "metadata": {
+              "type": "object"
+            }
+          },
+          "required": ["data"]
+        },
+        {
+          "type": "object",
+          "properties": {
+            "error": {
+              "type": "string"
+            }
+          },
+          "required": ["error"]
+        }
+      ]
+    },
+    "test_examples": [
+      {
+        "pdb_id": "1KZK"
+      },
+      {
+        "pdb_id": "2OZR",
+        "chain": "A",
+        "analysis_detail": "1",
+        "druggability": "1"
+      },
+      {
+        "pdb_id": "1KZK",
+        "ligand": "JE2_A_701",
+        "ligand_bias": true
+      }
+    ]
+  },
+  {
+    "name": "ProteinsPlus_generate_interaction_diagram",
+    "description": "Generate 2D protein-ligand interaction diagrams using PoseView. Creates publication-quality visualizations showing detailed interactions between proteins and small molecules including hydrogen bonds, hydrophobic contacts, pi-stacking, and salt bridges. Input requires a PDB ID and ligand identifier. Returns interaction diagrams in multiple formats (PNG, PDF, SVG) suitable for publications, presentations, and reports. Essential for visualizing and communicating binding mode analysis, structure-activity relationships, and molecular recognition patterns in drug discovery projects. Example: Generate interaction diagram for 1KZK with ligand JE2_A_701 to visualize kinase inhibitor binding mode.",
+    "type": "ProteinsPlusRESTTool",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "pdb_id": {
+          "type": "string",
+          "description": "PDB identifier (e.g., '1KZK', '2OZR', '4HHB'). Required."
+        },
+        "ligand": {
+          "type": "string",
+          "description": "Ligand identifier in format 'residue_name_residue_chain_residue_number' (e.g., 'JE2_A_701'). Required."
+        }
+      },
+      "required": ["pdb_id", "ligand"]
+    },
+    "fields": {
+      "endpoint": "/poseview_rest",
+      "method": "POST",
+      "is_async": true,
+      "poll_interval": 10,
+      "max_wait_time": 600
+    },
+    "execution": {
+      "taskSupport": "required"
+    },
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "object",
+          "properties": {
+            "data": {
+              "type": "object",
+              "properties": {
+                "result_png_picture": {
+                  "type": "string",
+                  "description": "URL or base64-encoded PNG interaction diagram"
+                },
+                "result_pdf_picture": {
+                  "type": "string",
+                  "description": "URL or base64-encoded PDF interaction diagram"
+                },
+                "result_svg_picture": {
+                  "type": "string",
+                  "description": "URL or base64-encoded SVG interaction diagram"
+                }
+              }
+            },
+            "metadata": {
+              "type": "object"
+            }
+          },
+          "required": ["data"]
+        },
+        {
+          "type": "object",
+          "properties": {
+            "error": {
+              "type": "string"
+            }
+          },
+          "required": ["error"]
+        }
+      ]
+    },
+    "test_examples": [
+      {
+        "pdb_id": "1KZK",
+        "ligand": "JE2_A_701"
+      },
+      {
+        "pdb_id": "2OZR",
+        "ligand": "4SP_A_301"
+      }
+    ]
+  },
+  {
+    "name": "ProteinsPlus_analyze_binding_site_similarity",
+    "description": "Analyze binding site similarity and generate structural ensembles using SIENA (Structural Interaction fingerprint for ENsemble Analysis). Performs comprehensive binding site comparison across multiple protein structures to identify similar pockets for ensemble docking, virtual screening, or mutation analysis. Supports multiple modes: flexibility analysis (compare conformations), docking preparation (build ensemble), screening (find similar sites), mutation analysis (assess tolerance), and ligand pose comparison (compare binding modes). Returns aligned structures, binding site similarity scores, and structural ensembles. Critical for accounting for protein flexibility in structure-based drug design, understanding conformational diversity, and improving docking accuracy through ensemble approaches. Example: Use 'screening' mode on 1KZK to find proteins with similar ATP-binding sites.",
+    "type": "ProteinsPlusRESTTool",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "pdb_id": {
+          "type": "string",
+          "description": "PDB identifier (e.g., '1KZK', '2OZR', '4HHB'). Required."
+        },
+        "mode": {
+          "type": "string",
+          "description": "Analysis mode: 'flexibility_analysis' (compare protein conformations), 'docking' (prepare ensemble for docking), 'screening' (find similar binding sites for virtual screening), 'mutation_analysis' (assess mutation tolerance), or 'ligand_pose_comparison' (compare binding poses). Required. Example: Use 'screening' for hit discovery across protein families.",
+          "enum": ["flexibility_analysis", "docking", "screening", "mutation_analysis", "ligand_pose_comparison"]
+        },
+        "ligand": {
+          "type": "string",
+          "description": "Ligand identifier in format 'residue_name_residue_chain_residue_number' (e.g., 'JE2_A_701'). Mutually exclusive with pocket."
+        },
+        "pocket": {
+          "type": "string",
+          "description": "Pocket definition for analysis (alternative to ligand). Example: Define custom pocket region. Mutually exclusive with ligand."
+        },
+        "fragment_length": {
+          "type": "integer",
+          "description": "Fragment length for analysis (3-15). Default: 9. Longer fragments = more specific matching. Example: Use 12 for strict similarity.",
+          "minimum": 3,
+          "maximum": 15
+        },
+        "flexibility_sensitivity": {
+          "type": "number",
+          "description": "Sensitivity for flexibility detection (0.0-1.0). Default: 0.5. Higher = more flexible regions detected. Example: Use 0.7 for highly dynamic proteins.",
+          "minimum": 0.0,
+          "maximum": 1.0
+        },
+        "site_radius": {
+          "type": "number",
+          "description": "Radius around ligand to define binding site (3-15 Angstroms). Requires ligand. Default: 6.5. Example: Use 8.0 for larger binding sites.",
+          "minimum": 3,
+          "maximum": 15
+        },
+        "minimal_site_identity": {
+          "type": "number",
+          "description": "Minimum binding site sequence identity threshold (0.3-1.0). Default: 0.6. Higher = stricter matching. Example: Use 0.8 for closely related proteins.",
+          "minimum": 0.3,
+          "maximum": 1.0
+        },
+        "minimal_site_coverage": {
+          "type": "number",
+          "description": "Minimum binding site coverage required (0.3-1.0). Default: 0.8. Higher = more complete binding site overlap required. Example: Use 0.9 for stringent matches.",
+          "minimum": 0.3,
+          "maximum": 1.0
+        },
+        "maximum_mutations": {
+          "type": "integer",
+          "description": "Maximum number of mutations allowed in mutation analysis mode (0-10). Default: 3. Example: Use 5 for permissive mutation screening.",
+          "minimum": 0,
+          "maximum": 10
+        }
+      },
+      "required": ["pdb_id", "mode"]
+    },
+    "fields": {
+      "endpoint": "/siena_rest",
+      "method": "POST",
+      "is_async": true,
+      "poll_interval": 20,
+      "max_wait_time": 3600
+    },
+    "execution": {
+      "taskSupport": "required"
+    },
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "object",
+          "properties": {
+            "data": {
+              "type": "object",
+              "properties": {
+                "result_table": {
+                  "type": "string",
+                  "description": "CSV table with binding site similarity analysis results"
+                },
+                "pdb_files": {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  },
+                  "description": "Aligned PDB structures in the ensemble"
+                },
+                "ligands": {
+                  "type": "string",
+                  "description": "SDF file with aligned ligands"
+                },
+                "alignment": {
+                  "type": "string",
+                  "description": "Text file with sequence alignment"
+                },
+                "parameters": {
+                  "type": "object",
+                  "description": "Parameters used for the analysis"
+                }
+              }
+            },
+            "metadata": {
+              "type": "object"
+            }
+          },
+          "required": ["data"]
+        },
+        {
+          "type": "object",
+          "properties": {
+            "error": {
+              "type": "string"
+            }
+          },
+          "required": ["error"]
+        }
+      ]
+    },
+    "test_examples": [
+      {
+        "pdb_id": "1KZK",
+        "mode": "screening",
+        "ligand": "JE2_A_701"
+      },
+      {
+        "pdb_id": "2OZR",
+        "mode": "flexibility_analysis",
+        "ligand": "4SP_A_301",
+        "flexibility_sensitivity": 0.7
+      },
+      {
+        "pdb_id": "4HHB",
+        "mode": "docking",
+        "ligand": "HEM_A_142"
+      }
+    ]
+  },
+  {
+    "name": "ProteinsPlus_profile_structure_quality",
+    "description": "Comprehensive protein structure quality assessment and protein-ligand complex profiling using StructureProfiler. Performs thorough validation of protein structures including geometry checks, stereochemistry analysis, clash detection, and ligand binding site quality assessment. Supports multiple validation settings: 'astex' (Astex diverse set criteria), 'iridium' (Iridium validation), 'platinum' (PlatinumQuality set), or 'combined' (comprehensive analysis). Returns detailed quality reports covering protein structure integrity, active site geometry, ligand binding quality, and structural anomalies. Essential for validating structures before molecular modeling, identifying potential artifacts, and ensuring reliability of structure-based drug design results. Example: Use 'combined' setting on 1KZK to assess overall structure quality before docking studies.",
+    "type": "ProteinsPlusRESTTool",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "pdb_id": {
+          "type": "string",
+          "description": "PDB identifier (e.g., '1KZK', '2OZR', '4HHB'). Required."
+        },
+        "setting": {
+          "type": "string",
+          "description": "Validation setting: 'astex' (Astex diverse set criteria), 'iridium' (Iridium validation rules), 'platinum' (PlatinumQuality standards), or 'combined' (all checks). Default: 'combined'. Example: Use 'combined' for thorough validation, 'astex' for docking benchmark standards.",
+          "enum": ["astex", "iridium", "platinum", "combined"]
+        }
+      },
+      "required": ["pdb_id"]
+    },
+    "fields": {
+      "endpoint": "/structurechecker_rest",
+      "method": "POST",
+      "is_async": true,
+      "poll_interval": 10,
+      "max_wait_time": 900
+    },
+    "execution": {
+      "taskSupport": "required"
+    },
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "object",
+          "properties": {
+            "data": {
+              "type": "object",
+              "properties": {
+                "complex": {
+                  "type": "object",
+                  "description": "Overall protein-ligand complex quality metrics"
+                },
+                "activesite": {
+                  "type": "object",
+                  "description": "Active site geometry and quality assessment"
+                },
+                "ligands": {
+                  "type": "array",
+                  "items": {
+                    "type": "object"
+                  },
+                  "description": "Individual ligand quality assessments"
+                },
+                "smarts": {
+                  "type": "object",
+                  "description": "SMARTS patterns for chemical validation"
+                },
+                "hetcode": {
+                  "type": "string",
+                  "description": "Heteroatom residue codes found"
+                },
+                "config": {
+                  "type": "object",
+                  "description": "Configuration and parameters used"
+                }
+              }
+            },
+            "metadata": {
+              "type": "object"
+            }
+          },
+          "required": ["data"]
+        },
+        {
+          "type": "object",
+          "properties": {
+            "error": {
+              "type": "string"
+            }
+          },
+          "required": ["error"]
+        }
+      ]
+    },
+    "test_examples": [
+      {
+        "pdb_id": "1KZK",
+        "setting": "combined"
+      },
+      {
+        "pdb_id": "2OZR",
+        "setting": "astex"
+      },
+      {
+        "pdb_id": "4HHB",
+        "setting": "platinum"
+      }
+    ]
+  }
+]

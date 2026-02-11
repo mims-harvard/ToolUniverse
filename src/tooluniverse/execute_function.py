@@ -24,6 +24,7 @@ Constants:
     tool_type_mappings: Mapping of tool type strings to their implementation classes
 """
 
+import asyncio
 import copy
 import inspect
 import json
@@ -140,6 +141,14 @@ class ToolCallable:
         """
         Execute the tool with the provided keyword arguments.
 
+        Context-aware execution - works in both sync and async contexts.
+
+        In sync context:
+            result = tu.tools.some_tool(param="value")  # Returns result directly
+
+        In async context:
+            result = await tu.tools.some_tool(param="value")  # Returns coroutine
+
         Args:
             stream_callback: Optional callback for streaming responses
             use_cache: Whether to use result caching
@@ -147,10 +156,47 @@ class ToolCallable:
             **kwargs: Tool-specific arguments
 
         Returns:
-            Tool execution result
+            Tool execution result (sync) or coroutine (async)
         """
         function_call = {"name": self.tool_name, "arguments": kwargs}
-        return self.engine.run_one_function(
+
+        # Detect if we're in an async context
+        try:
+            asyncio.get_running_loop()
+            # In async context - return coroutine
+            return self._call_async(function_call, stream_callback, use_cache, validate)
+        except RuntimeError:
+            # Not in async context - execute synchronously
+            return self._call_sync(function_call, stream_callback, use_cache, validate)
+
+    def _call_sync(self, function_call, stream_callback, use_cache, validate):
+        """Synchronous execution - handles both sync and async tools."""
+        # Check if tool is async
+        function_name = function_call.get("name")
+        tool_instance = self.engine._get_tool_instance(function_name, cache=True) if function_name else None
+
+        if tool_instance and inspect.iscoroutinefunction(tool_instance.run):
+            # Async tool in sync context - use asyncio.run()
+            return asyncio.run(
+                self.engine.run_one_function_async(
+                    function_call,
+                    stream_callback=stream_callback,
+                    use_cache=use_cache,
+                    validate=validate,
+                )
+            )
+        else:
+            # Sync tool - use regular execution
+            return self.engine.run_one_function(
+                function_call,
+                stream_callback=stream_callback,
+                use_cache=use_cache,
+                validate=validate,
+            )
+
+    async def _call_async(self, function_call, stream_callback, use_cache, validate):
+        """Asynchronous execution."""
+        return await self.engine.run_one_function_async(
             function_call,
             stream_callback=stream_callback,
             use_cache=use_cache,
@@ -534,13 +580,8 @@ class ToolUniverse:
         return list(self.tool_files.keys())
 
     def _get_api_key(self, key_name: str):
-        """Get API key from environment variables or loaded sources"""
-        # First check environment variables (highest priority)
-        env_value = os.getenv(key_name)
-        if env_value:
-            return env_value
-        else:
-            return None
+        """Get API key from environment variables."""
+        return os.getenv(key_name)
 
     def _check_api_key_requirements(self, tool_config):
         """
@@ -2046,11 +2087,24 @@ class ToolUniverse:
             if semaphore:
                 semaphore.acquire()
             try:
-                result = self.run_one_function(
-                    job.call,
-                    stream_callback=stream_callback,
-                    use_cache=use_cache,
-                )
+                # Check if tool is async
+                tool_instance = self._ensure_tool_instance(job)
+                if tool_instance and inspect.iscoroutinefunction(tool_instance.run):
+                    # Async tool in sync context - use asyncio.run()
+                    result = asyncio.run(
+                        self.run_one_function_async(
+                            job.call,
+                            stream_callback=stream_callback,
+                            use_cache=use_cache,
+                        )
+                    )
+                else:
+                    # Sync tool - use regular execution
+                    result = self.run_one_function(
+                        job.call,
+                        stream_callback=stream_callback,
+                        use_cache=use_cache,
+                    )
             finally:
                 if semaphore:
                     semaphore.release()
@@ -2103,22 +2157,66 @@ class ToolUniverse:
         max_workers: Optional[int] = None,
     ):
         """
-        Execute function calls from input string or data.
+        Context-aware execution - works in both sync and async contexts.
 
-        This method parses function call data, validates it, and executes the corresponding tools.
-        It supports both single function calls and multiple function calls in a list.
+        In sync context:
+            result = tu.run(...)  # Returns result directly (may block for async tools)
+
+        In async context:
+            result = await tu.run(...)  # Returns coroutine, non-blocking
+
+        This method automatically detects the context and behaves appropriately.
 
         Args:
             fcall_str: Input string or data containing function call information.
             return_message (bool, optional): Whether to return formatted messages. Defaults to False.
             verbose (bool, optional): Whether to enable verbose output. Defaults to True.
             format (str, optional): Format type for parsing. Defaults to 'llama'.
+            stream_callback: Optional callback for streaming responses.
+            use_cache (bool, optional): Whether to use result caching. Defaults to False.
+            max_workers (Optional[int]): Max workers for parallel batch execution (sync only).
 
         Returns:
-            list or str or None:
-                - For multiple function calls: List of formatted messages with tool responses
-                - For single function call: Direct result from the tool
-                - None: If the input is not a valid function call
+            Result (sync) or coroutine (async) depending on context.
+        """
+        # Detect if we're in an async context
+        try:
+            asyncio.get_running_loop()
+            # We're in an async context - return coroutine
+            return self._run_async(
+                fcall_str,
+                return_message=return_message,
+                verbose=verbose,
+                format=format,
+                stream_callback=stream_callback,
+                use_cache=use_cache,
+            )
+        except RuntimeError:
+            # Not in async context - run synchronously
+            return self._run_sync(
+                fcall_str,
+                return_message=return_message,
+                verbose=verbose,
+                format=format,
+                stream_callback=stream_callback,
+                use_cache=use_cache,
+                max_workers=max_workers,
+            )
+
+    def _run_sync(
+        self,
+        fcall_str,
+        return_message=False,
+        verbose=True,
+        format="llama",
+        stream_callback=None,
+        use_cache=False,
+        max_workers=None,
+    ):
+        """
+        Synchronous execution implementation (original run logic).
+
+        For async tools, this will create an event loop if needed.
         """
         if return_message:
             function_call_json, message = self.extract_function_call_json(
@@ -2128,46 +2226,151 @@ class ToolUniverse:
             function_call_json = self.extract_function_call_json(
                 fcall_str, return_message=return_message, verbose=verbose, format=format
             )
-            message = ""  # Initialize message for cases where return_message=False
-        if function_call_json is not None:
-            if isinstance(function_call_json, list):
-                # Execute the batch (optionally in parallel) and attach call IDs to maintain downstream compatibility.
-                batch_results = self._execute_function_call_list(
-                    function_call_json,
-                    stream_callback=stream_callback,
-                    use_cache=use_cache,
-                    max_workers=max_workers,
-                )
+            message = ""
 
-                call_results = []
-                for idx, call_result in enumerate(batch_results):
-                    call_id = self.call_id_gen()
-                    function_call_json[idx]["call_id"] = call_id
-                    call_results.append(
-                        {
-                            "role": "tool",
-                            "content": json.dumps(
-                                {"content": call_result, "call_id": call_id}
-                            ),
-                        }
-                    )
-                revised_messages = [
-                    {
-                        "role": "assistant",
-                        "content": message,
-                        "tool_calls": json.dumps(function_call_json),
-                    }
-                ] + call_results
-                return revised_messages
-            else:
-                return self.run_one_function(
-                    function_call_json,
-                    stream_callback=stream_callback,
-                    use_cache=use_cache,
-                )
-        else:
+        if function_call_json is None:
             error("Not a function call")
             return None
+
+        if isinstance(function_call_json, list):
+            batch_results = self._execute_function_call_list(
+                function_call_json,
+                stream_callback=stream_callback,
+                use_cache=use_cache,
+                max_workers=max_workers,
+            )
+            if not return_message:
+                return batch_results
+            return self._format_batch_as_messages(batch_results, function_call_json, message)
+
+        # Single execution - check if tool is async
+        function_name = function_call_json.get("name", "")
+        function_name = self._resolve_tool_name(function_name)
+        tool_instance = self._get_tool_instance(function_name, cache=True) if function_name else None
+
+        if tool_instance and inspect.iscoroutinefunction(tool_instance.run):
+            self.logger.debug(f"Running async tool '{function_name}' in sync context")
+            try:
+                asyncio.get_running_loop()
+                raise RuntimeError(
+                    f"Tool '{function_name}' is async. You're in an async context - use 'await tu.run(...)' instead."
+                )
+            except RuntimeError as e:
+                if "no running event loop" not in str(e).lower():
+                    raise
+                return asyncio.run(
+                    self.run_one_function_async(
+                        function_call_json,
+                        stream_callback=stream_callback,
+                        use_cache=use_cache,
+                    )
+                )
+
+        return self.run_one_function(
+            function_call_json,
+            stream_callback=stream_callback,
+            use_cache=use_cache,
+        )
+
+    def _format_batch_as_messages(self, batch_results, function_call_json, message):
+        """Format batch results as tool/assistant message dicts for return_message mode."""
+        call_results = []
+        for idx, call_result in enumerate(batch_results):
+            call_id = self.call_id_gen()
+            function_call_json[idx]["call_id"] = call_id
+            call_results.append(
+                {
+                    "role": "tool",
+                    "content": json.dumps(
+                        {"content": call_result, "call_id": call_id}
+                    ),
+                }
+            )
+        return [
+            {
+                "role": "assistant",
+                "content": message,
+                "tool_calls": json.dumps(function_call_json),
+            }
+        ] + call_results
+
+    async def _run_async(
+        self,
+        fcall_str,
+        return_message=False,
+        verbose=True,
+        format="llama",
+        stream_callback=None,
+        use_cache=False,
+    ):
+        """
+        Asynchronous execution implementation (non-blocking).
+
+        Handles both sync and async tools in async context.
+        """
+        if return_message:
+            function_call_json, message = self.extract_function_call_json(
+                fcall_str, return_message=return_message, verbose=verbose, format=format
+            )
+        else:
+            function_call_json = self.extract_function_call_json(
+                fcall_str, return_message=return_message, verbose=verbose, format=format
+            )
+            message = ""
+
+        if function_call_json is None:
+            error("Not a function call")
+            return None
+
+        if isinstance(function_call_json, list):
+            batch_results = await self._execute_function_call_list_async(
+                function_call_json,
+                stream_callback=stream_callback,
+                use_cache=use_cache,
+            )
+            if not return_message:
+                return batch_results
+            return self._format_batch_as_messages(batch_results, function_call_json, message)
+
+        return await self.run_one_function_async(
+            function_call_json,
+            stream_callback=stream_callback,
+            use_cache=use_cache,
+        )
+
+    async def _execute_function_call_list_async(
+        self,
+        function_call_list,
+        stream_callback=None,
+        use_cache=False,
+    ):
+        """
+        Execute multiple function calls asynchronously and in parallel.
+
+        Uses return_exceptions=True so one failure does not abort others.
+        """
+        tasks = [
+            self.run_one_function_async(
+                call,
+                stream_callback=stream_callback,
+                use_cache=use_cache,
+            )
+            for call in function_call_list
+        ]
+
+        results = await asyncio.gather(*tasks, return_exceptions=True)
+
+        processed_results = []
+        for idx, result in enumerate(results):
+            if isinstance(result, Exception):
+                function_name = function_call_list[idx].get("name", "unknown")
+                arguments = function_call_list[idx].get("arguments", {})
+                classified_error = self._classify_exception(result, function_name, arguments)
+                processed_results.append(self._create_dual_format_error(classified_error))
+            else:
+                processed_results.append(result)
+
+        return processed_results
 
     def _resolve_tool_name(self, function_name: str) -> str:
         """
@@ -2394,6 +2597,180 @@ class ToolUniverse:
 
             return result
 
+    async def run_one_function_async(
+        self, function_call_json, stream_callback=None, use_cache=False, validate=True
+    ):
+        """
+        Async version of run_one_function.
+
+        Execute a single function call asynchronously (non-blocking).
+        Handles both sync and async tools intelligently.
+        """
+        function_name = function_call_json.get("name", "")
+        arguments = function_call_json.get("arguments", {})
+
+        # Resolve original names to shortened names
+        function_name = self._resolve_tool_name(function_name)
+
+        # Handle malformed queries gracefully
+        if not function_name:
+            return {"error": "Missing or empty function name"}
+
+        if not isinstance(arguments, dict):
+            return {
+                "error": f"Arguments must be a dictionary, got {type(arguments).__name__}"
+            }
+
+        tool_instance = None
+        cache_namespace = None
+        cache_version = None
+        cache_key = None
+        composed_cache_key = None
+
+        cache_enabled = (
+            use_cache and self.cache_manager is not None and self.cache_manager.enabled
+        )
+
+        if cache_enabled:
+            tool_instance = self._get_tool_instance(function_name, cache=True)
+            if (
+                tool_instance
+                and getattr(tool_instance, "supports_caching", lambda: True)()
+            ):
+                cache_namespace = tool_instance.get_cache_namespace()
+                cache_version = tool_instance.get_cache_version()
+                cache_key = self._make_cache_key(
+                    function_name, arguments, tool_instance
+                )
+                composed_cache_key = self.cache_manager.compose_key(
+                    cache_namespace, cache_version, cache_key
+                )
+                cached_value = self.cache_manager.get(
+                    namespace=cache_namespace,
+                    version=cache_version,
+                    cache_key=cache_key,
+                )
+                if cached_value is not None:
+                    self.logger.debug(f"Cache hit for {function_name}")
+                    return cached_value
+            else:
+                cache_enabled = False
+
+        # Note: cache_guard (singleflight) is not async-compatible, skipping for now
+        # In async context, multiple concurrent calls will execute independently
+
+        # Coerce types if lenient coercion is enabled
+        if self.lenient_type_coercion:
+            arguments = self._coerce_arguments_to_schema(function_name, arguments)
+            function_call_json["arguments"] = arguments
+
+        # Validate parameters if requested
+        if validate:
+            validation_error = self._validate_parameters(function_name, arguments)
+            if validation_error:
+                return self._create_dual_format_error(validation_error)
+        else:
+            if function_name not in self.all_tool_dict:
+                return self._create_dual_format_error(
+                    ToolValidationError(
+                        f"Tool '{function_name}' not found",
+                        details={"tool_name": function_name},
+                    )
+                )
+
+        # Execute the tool
+        tool_arguments = arguments
+        try:
+            if tool_instance is None:
+                tool_instance = self._get_tool_instance(function_name, cache=True)
+
+            if tool_instance:
+                result, tool_arguments = await self._execute_tool_with_stream_async(
+                    tool_instance, arguments, stream_callback, use_cache, validate
+                )
+            else:
+                # Try to auto-load tools if dictionary is empty
+                if not self._auto_load_tools_if_empty(function_name):
+                    error_msg = "Failed to auto-load tools"
+                    return self._create_dual_format_error(
+                        ToolUnavailableError(
+                            error_msg,
+                            next_steps=[
+                                "Manually run tu.load_tools()",
+                                "Check tool configuration",
+                            ],
+                        )
+                    )
+
+                # Try to get the tool instance again after loading
+                tool_instance = self._get_tool_instance(function_name, cache=True)
+                if tool_instance:
+                    result, tool_arguments = await self._execute_tool_with_stream_async(
+                        tool_instance,
+                        arguments,
+                        stream_callback,
+                        use_cache,
+                        validate,
+                    )
+                else:
+                    error_msg = (
+                        f"Tool '{function_name}' not found even after loading tools"
+                    )
+                    return self._create_dual_format_error(
+                        ToolUnavailableError(
+                            error_msg,
+                            next_steps=[
+                                "Check tool name spelling",
+                                "Verify tool is available in loaded categories",
+                            ],
+                        )
+                    )
+        except Exception as e:
+            # Classify and return structured error
+            classified_error = self._classify_exception(e, function_name, arguments)
+            return self._create_dual_format_error(classified_error)
+
+        # Apply output hooks if enabled
+        if self.hook_manager:
+            context = {
+                "tool_name": function_name,
+                "tool_type": (
+                    tool_instance.__class__.__name__
+                    if tool_instance is not None
+                    else "unknown"
+                ),
+                "execution_time": time.time(),
+                "arguments": tool_arguments,
+            }
+            result = self.hook_manager.apply_hooks(
+                result, function_name, tool_arguments, context
+            )
+
+        # Cache result if enabled
+        if (
+            cache_enabled
+            and tool_instance
+            and getattr(tool_instance, "supports_caching", lambda: True)()
+        ):
+            if cache_key is None:
+                cache_key = self._make_cache_key(
+                    function_name, arguments, tool_instance
+                )
+            if cache_namespace is None:
+                cache_namespace = tool_instance.get_cache_namespace()
+            if cache_version is None:
+                cache_version = tool_instance.get_cache_version()
+            ttl = tool_instance.get_cache_ttl(result)
+            self.cache_manager.set(
+                namespace=cache_namespace,
+                version=cache_version,
+                cache_key=cache_key,
+                value=result,
+                ttl=ttl,
+            )
+
+        return result
+
     def _execute_tool_with_stream(
         self, tool_instance, arguments, stream_callback, use_cache=False, validate=True
     ):
@@ -2438,6 +2815,54 @@ class ToolUniverse:
             # fall back to simple execution with just arguments
             self.logger.debug(f"Falling back to simple run() call: {e}")
             return tool_instance.run(tool_arguments), tool_arguments
+
+    async def _invoke_tool_async(self, tool_instance, tool_arguments, **kwargs):
+        """Invoke tool.run, using await for async tools or a thread pool for sync tools."""
+        tool_name = getattr(tool_instance, 'name', 'unknown')
+        if inspect.iscoroutinefunction(tool_instance.run):
+            self.logger.debug(f"Executing async tool: {tool_name}")
+            return await tool_instance.run(tool_arguments, **kwargs)
+        self.logger.debug(f"Executing sync tool in thread pool: {tool_name}")
+        return await asyncio.to_thread(tool_instance.run, tool_arguments, **kwargs)
+
+    async def _execute_tool_with_stream_async(
+        self, tool_instance, arguments, stream_callback, use_cache=False, validate=True
+    ):
+        """
+        Async version of _execute_tool_with_stream.
+
+        Handles both sync and async tools: async tools are awaited directly,
+        sync tools run in a thread pool.
+        """
+        tool_arguments = arguments
+        stream_flag_key = (
+            getattr(tool_instance, "STREAM_FLAG_KEY", None) if stream_callback else None
+        )
+
+        if isinstance(arguments, dict):
+            tool_arguments = dict(arguments)
+            if stream_callback and stream_flag_key and stream_flag_key not in tool_arguments:
+                tool_arguments[stream_flag_key] = True
+
+        try:
+            signature = inspect.signature(tool_instance.run)
+            params = signature.parameters
+
+            kwargs = {}
+            if stream_callback is not None and "stream_callback" in params:
+                kwargs["stream_callback"] = stream_callback
+            if "use_cache" in params:
+                kwargs["use_cache"] = use_cache
+            if "validate" in params:
+                kwargs["validate"] = validate
+
+            result = await self._invoke_tool_async(tool_instance, tool_arguments, **kwargs)
+            return result, tool_arguments
+
+        except (ValueError, TypeError) as e:
+            self.logger.debug(f"Falling back to simple run() call: {e}")
+            result = await self._invoke_tool_async(tool_instance, tool_arguments)
+            return result, tool_arguments
 
     def toggle_hooks(self, enabled: bool):
         """

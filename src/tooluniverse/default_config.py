@@ -1,8 +1,6 @@
-"""
-Default tool configuration files mapping.
+"""Default tool configuration files mapping.
 
-This module contains the default mapping of tool categories to their JSON configuration files.
-It's separated from __init__.py to avoid circular imports.
+Separated from __init__.py to avoid circular imports.
 """
 
 import os
@@ -48,6 +46,7 @@ default_tool_files = {
     "dblp": os.path.join(current_dir, "data", "dblp_tools.json"),
     "pubmed": os.path.join(current_dir, "data", "pubmed_tools.json"),
     "ncbi_nucleotide": os.path.join(current_dir, "data", "ncbi_nucleotide_tools.json"),
+    "ncbi_sra": os.path.join(current_dir, "data", "ncbi_sra_tools.json"),
     "doaj": os.path.join(current_dir, "data", "doaj_tools.json"),
     "unpaywall": os.path.join(current_dir, "data", "unpaywall_tools.json"),
     "biorxiv": os.path.join(current_dir, "data", "biorxiv_tools.json"),
@@ -100,6 +99,7 @@ default_tool_files = {
     "pubchem": os.path.join(current_dir, "data", "pubchem_tools.json"),
     "medlineplus": os.path.join(current_dir, "data", "medlineplus_tools.json"),
     "rxnorm": os.path.join(current_dir, "data", "rxnorm_tools.json"),
+    "loinc": os.path.join(current_dir, "data", "loinc_tools.json"),
     "uniprot": os.path.join(current_dir, "data", "uniprot_tools.json"),
     "cellosaurus": os.path.join(current_dir, "data", "cellosaurus_tools.json"),
     # 'software': os.path.join(current_dir, 'data', 'software_tools.json'),
@@ -151,6 +151,7 @@ default_tool_files = {
     "screen": os.path.join(current_dir, "data", "screen_tools.json"),
     "pride": os.path.join(current_dir, "data", "pride_tools.json"),
     "emdb": os.path.join(current_dir, "data", "emdb_tools.json"),
+    "sasbdb": os.path.join(current_dir, "data", "sasbdb_tools.json"),
     "gtopdb": os.path.join(current_dir, "data", "gtopdb_tools.json"),
     "mpd": os.path.join(current_dir, "data", "mpd_tools.json"),
     "worms": os.path.join(current_dir, "data", "worms_tools.json"),
@@ -207,6 +208,7 @@ default_tool_files = {
     "odphp": os.path.join(current_dir, "data", "odphp_tools.json"),
     "who_gho": os.path.join(current_dir, "data", "who_gho_tools.json"),
     "umls": os.path.join(current_dir, "data", "umls_tools.json"),
+    "icd": os.path.join(current_dir, "data", "icd_tools.json"),
     "euhealth": os.path.join(current_dir, "data", "euhealth_tools.json"),
     "markitdown": os.path.join(current_dir, "data", "markitdown_tools.json"),
     # Guideline and health policy tools
@@ -277,6 +279,8 @@ default_tool_files = {
     "bigg_models": os.path.join(current_dir, "data", "bigg_models_tools.json"),
     # Protein-Protein Interaction (PPI) tools - STRING and BioGRID
     "ppi": os.path.join(current_dir, "data", "ppi_tools.json"),
+    # BioGRID - Genetic and Protein Interactions, Chemical-Protein, PTMs
+    "biogrid": os.path.join(current_dir, "data", "biogrid_tools.json"),
     # NVIDIA NIM Healthcare APIs - Structure prediction, molecular docking, genomics
     "nvidia_nim": os.path.join(current_dir, "data", "nvidia_nim_tools.json"),
     # COSMIC - Catalogue of Somatic Mutations in Cancer
@@ -337,6 +341,10 @@ default_tool_files = {
     "expression_atlas": os.path.join(
         current_dir, "data", "expression_atlas_tools.json"
     ),
+    # ProteinsPlus - Protein-ligand docking and binding site analysis
+    "proteinsplus": os.path.join(current_dir, "data", "proteinsplus_tools.json"),
+    # SwissDock - Molecular docking with AutoDock Vina and Attracting Cavities
+    "swissdock": os.path.join(current_dir, "data", "swissdock_tools.json"),
 }
 
 # Auto-load any user-provided tools from ~/.tooluniverse/user_tools/

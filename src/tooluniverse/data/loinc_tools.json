@@ -1,0 +1,325 @@
+[
+  {
+    "type": "LOINCTool",
+    "name": "LOINC_search_tests",
+    "description": "Search LOINC (Logical Observation Identifiers Names and Codes) lab tests and clinical observations by name or keywords. Returns standardized codes for laboratory tests, vital signs, and clinical measurements. Essential for standardizing lab test names across healthcare systems and research studies.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "terms": {
+          "type": "string",
+          "description": "Search terms for lab tests or observations (e.g., 'cholesterol', 'blood glucose', 'hemoglobin', 'creatinine'). Can include test names, components, or abbreviations."
+        },
+        "max_results": {
+          "type": "integer",
+          "description": "Maximum number of results to return (default: 20, max: 500)",
+          "default": 20
+        },
+        "exclude_copyrighted": {
+          "type": "boolean",
+          "description": "Exclude items with external copyright notices (default: true)",
+          "default": true
+        }
+      },
+      "required": [
+        "terms"
+      ]
+    },
+    "label": [
+      "LOINC",
+      "laboratory",
+      "clinical",
+      "observation",
+      "lab test",
+      "standardization",
+      "medical code",
+      "NIH",
+      "NLM"
+    ],
+    "test_examples": [
+      {
+        "terms": "cholesterol",
+        "max_results": 10
+      },
+      {
+        "terms": "hemoglobin A1c",
+        "max_results": 5
+      },
+      {
+        "terms": "blood pressure"
+      }
+    ],
+    "return_schema": {
+      "type": "object",
+      "properties": {
+        "total_count": {
+          "type": "integer"
+        },
+        "count": {
+          "type": "integer"
+        },
+        "search_terms": {
+          "type": "string"
+        },
+        "results": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "code": {
+                "type": "string"
+              },
+              "LOINC_NUM": {
+                "type": "string"
+              },
+              "LONG_COMMON_NAME": {
+                "type": "string"
+              },
+              "COMPONENT": {
+                "type": "string"
+              },
+              "SYSTEM": {
+                "type": "string"
+              },
+              "SCALE_TYP": {
+                "type": "string"
+              },
+              "METHOD_TYP": {
+                "type": "string"
+              },
+              "CLASS": {
+                "type": "string"
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  {
+    "type": "LOINCTool",
+    "name": "LOINC_get_code_details",
+    "description": "Get detailed information for a specific LOINC code including full name, component, property, system, scale, method, and clinical classification. Use this to understand the precise meaning and context of a LOINC code obtained from lab results or clinical data.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "loinc_code": {
+          "type": "string",
+          "description": "LOINC code identifier (e.g., '2093-3' for Cholesterol in Serum/Plasma, '4548-4' for Hemoglobin A1c, '8867-4' for Heart rate). The code should be in standard LOINC format with hyphen."
+        }
+      },
+      "required": [
+        "loinc_code"
+      ]
+    },
+    "label": [
+      "LOINC",
+      "laboratory",
+      "clinical",
+      "code details",
+      "observation",
+      "medical terminology",
+      "standardization"
+    ],
+    "test_examples": [
+      {
+        "loinc_code": "2093-3"
+      },
+      {
+        "loinc_code": "4548-4"
+      },
+      {
+        "loinc_code": "8867-4"
+      }
+    ],
+    "return_schema": {
+      "type": "object",
+      "properties": {
+        "loinc_code": {
+          "type": "string"
+        },
+        "code": {
+          "type": "string"
+        },
+        "LOINC_NUM": {
+          "type": "string"
+        },
+        "LONG_COMMON_NAME": {
+          "type": "string"
+        },
+        "SHORT_NAME": {
+          "type": "string"
+        },
+        "COMPONENT": {
+          "type": "string"
+        },
+        "PROPERTY": {
+          "type": "string"
+        },
+        "TIME_ASPCT": {
+          "type": "string"
+        },
+        "SYSTEM": {
+          "type": "string"
+        },
+        "SCALE_TYP": {
+          "type": "string"
+        },
+        "METHOD_TYP": {
+          "type": "string"
+        },
+        "CLASS": {
+          "type": "string"
+        },
+        "STATUS": {
+          "type": "string"
+        },
+        "COMMON_TEST_RANK": {
+          "type": "string"
+        }
+      }
+    }
+  },
+  {
+    "type": "LOINCTool",
+    "name": "LOINC_get_answer_list",
+    "description": "Get standardized answer list (permissible values) for a LOINC code. Many LOINC codes have predefined answer lists for coded results, such as blood type values (A, B, AB, O), presence/absence findings, or severity scales. Returns the allowed answer codes and their display text.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "loinc_code": {
+          "type": "string",
+          "description": "LOINC code identifier for which to retrieve answer list (e.g., '883-9' for ABO blood group, '11502-2' for laboratory report status). Not all LOINC codes have answer lists - primarily applies to coded/categorical results."
+        }
+      },
+      "required": [
+        "loinc_code"
+      ]
+    },
+    "label": [
+      "LOINC",
+      "answer list",
+      "coded values",
+      "permissible values",
+      "laboratory",
+      "clinical",
+      "standardization",
+      "value set"
+    ],
+    "test_examples": [
+      {
+        "loinc_code": "883-9"
+      },
+      {
+        "loinc_code": "11502-2"
+      }
+    ],
+    "return_schema": {
+      "type": "object",
+      "properties": {
+        "loinc_code": {
+          "type": "string"
+        },
+        "answer_count": {
+          "type": "integer"
+        },
+        "answers": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "code": {
+                "type": "string"
+              },
+              "display": {
+                "type": "string"
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  {
+    "type": "LOINCTool",
+    "name": "LOINC_search_forms",
+    "description": "Search LOINC clinical forms and survey instruments such as standardized questionnaires and assessment tools. Examples include PHQ-9 (depression), GAD-7 (anxiety), MMSE (cognitive), pain scales, and other validated clinical assessment instruments. Returns LOINC codes for complete forms that can be used in electronic health records.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "terms": {
+          "type": "string",
+          "description": "Search terms for clinical forms or survey instruments (e.g., 'PHQ-9', 'depression screening', 'GAD-7', 'anxiety', 'pain scale', 'MMSE', 'cognitive assessment'). Use specific form names or general assessment types."
+        },
+        "max_results": {
+          "type": "integer",
+          "description": "Maximum number of results to return (default: 20, max: 200)",
+          "default": 20
+        }
+      },
+      "required": [
+        "terms"
+      ]
+    },
+    "label": [
+      "LOINC",
+      "clinical forms",
+      "surveys",
+      "questionnaires",
+      "assessment",
+      "screening",
+      "panel",
+      "instrument",
+      "standardization"
+    ],
+    "test_examples": [
+      {
+        "terms": "PHQ-9",
+        "max_results": 5
+      },
+      {
+        "terms": "depression screening"
+      },
+      {
+        "terms": "pain scale"
+      }
+    ],
+    "return_schema": {
+      "type": "object",
+      "properties": {
+        "total_count": {
+          "type": "integer"
+        },
+        "count": {
+          "type": "integer"
+        },
+        "search_terms": {
+          "type": "string"
+        },
+        "results": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "code": {
+                "type": "string"
+              },
+              "LOINC_NUM": {
+                "type": "string"
+              },
+              "LONG_COMMON_NAME": {
+                "type": "string"
+              },
+              "CLASS": {
+                "type": "string"
+              },
+              "STATUS": {
+                "type": "string"
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+]

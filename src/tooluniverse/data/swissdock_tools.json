@@ -1,0 +1,262 @@
+[
+  {
+    "type": "SwissDockTool",
+    "name": "SwissDock_dock_ligand",
+    "description": "Perform protein-ligand molecular docking using SwissDock service with AutoDock Vina or Attracting Cavities 2.0 engines. Predicts binding modes, poses, and energies for small molecules against protein structures. Essential for drug discovery, virtual screening, and structure-based drug design. Supports blind docking (whole protein) or targeted docking (specific binding site). Returns docking scores, poses, and download URL for detailed results. Example: Dock aspirin (CC(=O)Oc1ccccc1C(=O)O) against COX-2 (PDB: 1CX2) to predict binding mode and affinity.",
+    "parameter": {
+      "type": "object",
+      "required": ["ligand_smiles", "pdb_id"],
+      "properties": {
+        "ligand_smiles": {
+          "type": "string",
+          "description": "SMILES string of the ligand/small molecule to dock. Example: 'CC(=O)Oc1ccccc1C(=O)O' for aspirin"
+        },
+        "pdb_id": {
+          "type": "string",
+          "description": "4-character PDB ID of the target protein structure. Example: '1ATP' for protein kinase A"
+        },
+        "exhaustiveness": {
+          "type": "integer",
+          "description": "Search exhaustiveness (1-20). Higher values increase accuracy but take longer. Default: 8. Use 16-20 for publication-quality results. Example: Use 8 for quick screening, 16 for final validation.",
+          "default": 8
+        },
+        "box_center": {
+          "type": "string",
+          "description": "Binding site center coordinates as 'x,y,z' in Angstroms. If not provided, performs blind docking (whole protein). Example: '10.5,20.3,15.8'",
+          "default": null
+        },
+        "box_size": {
+          "type": "string",
+          "description": "Search box dimensions as 'a,b,c' in Angstroms. If not provided, uses default size. Example: '20,20,20' for 20x20x20 Angstrom box.",
+          "default": null
+        },
+        "docking_engine": {
+          "type": "string",
+          "description": "Docking engine: 'attracting_cavities' (cavity-based, default, recommended for blind docking) or 'vina' (AutoDock Vina, faster for targeted docking). Example: Use 'attracting_cavities' for whole-protein screening, 'vina' for known binding site.",
+          "enum": ["attracting_cavities", "vina"],
+          "default": "attracting_cavities"
+        }
+      }
+    },
+    "fields": {
+      "operation": "dock_ligand"
+    },
+    "execution": {
+      "taskSupport": "required"
+    },
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "object",
+          "properties": {
+            "data": {
+              "type": "object",
+              "properties": {
+                "session_id": {
+                  "type": "string",
+                  "description": "Unique session identifier for this docking job"
+                },
+                "download_url": {
+                  "type": "string",
+                  "description": "URL to download complete docking results (tar.gz archive)"
+                },
+                "result_size_bytes": {
+                  "type": "integer",
+                  "description": "Size of result archive in bytes"
+                },
+                "content_type": {
+                  "type": "string",
+                  "description": "MIME type of result file"
+                },
+                "message": {
+                  "type": "string",
+                  "description": "Human-readable status message"
+                }
+              }
+            },
+            "metadata": {
+              "type": "object"
+            }
+          },
+          "required": ["data"]
+        },
+        {
+          "type": "object",
+          "properties": {
+            "error": {
+              "type": "string"
+            }
+          },
+          "required": ["error"]
+        }
+      ]
+    },
+    "test_examples": [
+      {
+        "ligand_smiles": "CC(=O)Oc1ccccc1C(=O)O",
+        "pdb_id": "1CX2",
+        "exhaustiveness": 8,
+        "docking_engine": "attracting_cavities"
+      },
+      {
+        "ligand_smiles": "Cc1ccc(cc1)S(=O)(=O)N",
+        "pdb_id": "3EYG",
+        "exhaustiveness": 10,
+        "box_center": "15.2,20.5,30.1",
+        "box_size": "25,25,25",
+        "docking_engine": "vina"
+      },
+      {
+        "ligand_smiles": "CN1C=NC2=C1C(=O)N(C(=O)N2C)C",
+        "pdb_id": "1ATP",
+        "exhaustiveness": 12
+      }
+    ]
+  },
+  {
+    "type": "SwissDockTool",
+    "name": "SwissDock_check_job_status",
+    "description": "Check the status of a SwissDock docking job using its session ID. Returns current job status: RUNNING (job in progress, keep polling), FINISHED (ready to retrieve results), ERROR (job failed), or NOT_FOUND (invalid session). Use this to monitor long-running docking jobs that were submitted earlier. Poll periodically (every 30-60 seconds) until status is FINISHED, then use retrieve_results to get final output. Example: After submitting dock_ligand, poll this endpoint until completion.",
+    "parameter": {
+      "type": "object",
+      "required": ["session_id"],
+      "properties": {
+        "session_id": {
+          "type": "string",
+          "description": "Session identifier returned from dock_ligand call (format: alphanumeric string). Example: 'abc123def456' from previous dock_ligand response."
+        }
+      }
+    },
+    "fields": {
+      "operation": "check_job_status"
+    },
+    "execution": {
+      "taskSupport": "forbidden"
+    },
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "object",
+          "properties": {
+            "data": {
+              "type": "object",
+              "properties": {
+                "session_id": {
+                  "type": "string",
+                  "description": "Session identifier"
+                },
+                "job_status": {
+                  "type": "string",
+                  "description": "Current job status: RUNNING, FINISHED, ERROR, NOT_FOUND"
+                },
+                "is_finished": {
+                  "type": "boolean",
+                  "description": "True if job has completed successfully"
+                },
+                "has_error": {
+                  "type": "boolean",
+                  "description": "True if job encountered an error"
+                }
+              }
+            },
+            "metadata": {
+              "type": "object"
+            }
+          },
+          "required": ["data"]
+        },
+        {
+          "type": "object",
+          "properties": {
+            "error": {
+              "type": "string"
+            }
+          },
+          "required": ["error"]
+        }
+      ]
+    },
+    "test_examples": [
+      {
+        "session_id": "example_session_123456"
+      }
+    ]
+  },
+  {
+    "type": "SwissDockTool",
+    "name": "SwissDock_retrieve_results",
+    "description": "Retrieve results for a completed SwissDock docking job. Returns download URL and metadata for docking output files. The results archive (tar.gz) contains: predicted binding poses (PDB files), docking scores (energies and rankings), cluster information, and visualization files. Use this only after check_job_status confirms the job is FINISHED. Results are available for several days after completion. Example: Download results to analyze top-ranked poses and binding energies.",
+    "parameter": {
+      "type": "object",
+      "required": ["session_id"],
+      "properties": {
+        "session_id": {
+          "type": "string",
+          "description": "Session identifier from dock_ligand or check_job_status call (same alphanumeric string). Example: Use the session_id from successful dock_ligand submission."
+        }
+      }
+    },
+    "fields": {
+      "operation": "retrieve_results"
+    },
+    "execution": {
+      "taskSupport": "forbidden"
+    },
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "object",
+          "properties": {
+            "data": {
+              "type": "object",
+              "properties": {
+                "session_id": {
+                  "type": "string",
+                  "description": "Session identifier"
+                },
+                "download_url": {
+                  "type": "string",
+                  "description": "URL to download complete docking results"
+                },
+                "result_size_bytes": {
+                  "type": "integer",
+                  "description": "Size of result archive"
+                },
+                "content_type": {
+                  "type": "string",
+                  "description": "MIME type of result file"
+                },
+                "message": {
+                  "type": "string",
+                  "description": "Status message"
+                },
+                "job_status": {
+                  "type": "string",
+                  "description": "Job status if not FINISHED yet"
+                }
+              }
+            },
+            "metadata": {
+              "type": "object"
+            }
+          },
+          "required": ["data"]
+        },
+        {
+          "type": "object",
+          "properties": {
+            "error": {
+              "type": "string"
+            }
+          },
+          "required": ["error"]
+        }
+      ]
+    },
+    "test_examples": [
+      {
+        "session_id": "example_session_123456"
+      }
+    ]
+  }
+]

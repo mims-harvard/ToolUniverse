@@ -90,6 +90,331 @@
     ]
   },
   {
+    "type": "STRINGRESTTool",
+    "name": "STRING_get_interaction_partners",
+    "description": "Get direct interaction partners for a protein with confidence scores from STRING database. Returns a list of proteins that directly interact with the query protein, including interaction confidence scores and evidence channels (experimental, database, text mining, etc.).",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "protein_ids": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "List of protein identifiers (UniProt IDs, gene names, Ensembl IDs)",
+          "minItems": 1
+        },
+        "species": {
+          "type": "integer",
+          "description": "NCBI taxonomy ID (default: 9606 for human, 10090 for mouse)",
+          "default": 9606
+        },
+        "confidence_score": {
+          "type": "number",
+          "description": "Minimum confidence score (0-1, default: 0.4 for medium confidence)",
+          "minimum": 0,
+          "maximum": 1,
+          "default": 0.4
+        },
+        "limit": {
+          "type": "integer",
+          "description": "Maximum number of interaction partners to return (default: 20)",
+          "minimum": 1,
+          "maximum": 500,
+          "default": 20
+        }
+      },
+      "required": ["protein_ids"]
+    },
+    "fields": {
+      "endpoint": "/json/interaction_partners",
+      "return_format": "JSON"
+    },
+    "return_schema": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "stringId_A": {"type": "string"},
+          "stringId_B": {"type": "string"},
+          "preferredName_A": {"type": "string"},
+          "preferredName_B": {"type": "string"},
+          "ncbiTaxonId": {"type": "integer"},
+          "score": {"type": "number"},
+          "nscore": {"type": "number"},
+          "fscore": {"type": "number"},
+          "pscore": {"type": "number"},
+          "ascore": {"type": "number"},
+          "escore": {"type": "number"},
+          "dscore": {"type": "number"},
+          "tscore": {"type": "number"}
+        }
+      }
+    },
+    "test_examples": [
+      {
+        "protein_ids": ["TP53"],
+        "species": 9606,
+        "confidence_score": 0.7,
+        "limit": 10
+      }
+    ]
+  },
+  {
+    "type": "STRINGRESTTool",
+    "name": "STRING_functional_enrichment",
+    "description": "Perform functional enrichment analysis on a set of proteins using STRING. Returns enriched GO terms, KEGG pathways, Reactome pathways, and other functional categories with p-values and FDR corrections. Useful for understanding biological processes, molecular functions, and pathways associated with a protein set.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "protein_ids": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "List of protein identifiers (UniProt IDs, gene names, Ensembl IDs). Minimum 3 proteins recommended for meaningful enrichment.",
+          "minItems": 2
+        },
+        "species": {
+          "type": "integer",
+          "description": "NCBI taxonomy ID (default: 9606 for human)",
+          "default": 9606
+        },
+        "category": {
+          "type": "string",
+          "description": "Enrichment category: 'Process' (GO Biological Process), 'Component' (GO Cellular Component), 'Function' (GO Molecular Function), 'KEGG', 'Reactome', 'WikiPathways', 'COMPARTMENTS', 'TISSUES', 'DISEASES'",
+          "enum": ["Process", "Component", "Function", "KEGG", "Reactome", "WikiPathways", "COMPARTMENTS", "TISSUES", "DISEASES"],
+          "default": "Process"
+        }
+      },
+      "required": ["protein_ids"]
+    },
+    "fields": {
+      "endpoint": "/json/enrichment",
+      "return_format": "JSON"
+    },
+    "return_schema": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "category": {"type": "string"},
+          "term": {"type": "string"},
+          "number_of_genes": {"type": "integer"},
+          "number_of_genes_in_background": {"type": "integer"},
+          "ncbiTaxonId": {"type": "integer"},
+          "inputGenes": {"type": "string"},
+          "preferredNames": {"type": "string"},
+          "p_value": {"type": "number"},
+          "fdr": {"type": "number"},
+          "description": {"type": "string"}
+        }
+      }
+    },
+    "test_examples": [
+      {
+        "protein_ids": ["TP53", "MDM2", "ATM", "CHEK2", "BRCA1"],
+        "species": 9606,
+        "category": "Process"
+      }
+    ]
+  },
+  {
+    "type": "STRINGRESTTool",
+    "name": "STRING_map_identifiers",
+    "description": "Map protein identifiers (UniProt, Ensembl, gene names, etc.) to STRING database IDs. Essential for identifier conversion when working with STRING API. Returns STRING IDs with preferred names and annotations that can be used in other STRING tools.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "protein_ids": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "List of protein identifiers to map (UniProt IDs, gene names, Ensembl IDs, RefSeq IDs)",
+          "minItems": 1
+        },
+        "species": {
+          "type": "integer",
+          "description": "NCBI taxonomy ID (default: 9606 for human, 10090 for mouse)",
+          "default": 9606
+        },
+        "limit": {
+          "type": "integer",
+          "description": "Maximum number of matches per identifier (default: 1)",
+          "minimum": 1,
+          "maximum": 10,
+          "default": 1
+        },
+        "echo_query": {
+          "type": "integer",
+          "description": "Include query identifier in response (1=yes, 0=no, default: 1)",
+          "enum": [0, 1],
+          "default": 1
+        }
+      },
+      "required": ["protein_ids"]
+    },
+    "fields": {
+      "endpoint": "/json/get_string_ids",
+      "return_format": "JSON"
+    },
+    "return_schema": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "queryItem": {"type": "string"},
+          "queryIndex": {"type": "integer"},
+          "stringId": {"type": "string"},
+          "ncbiTaxonId": {"type": "integer"},
+          "taxonName": {"type": "string"},
+          "preferredName": {"type": "string"},
+          "annotation": {"type": "string"}
+        }
+      }
+    },
+    "test_examples": [
+      {
+        "protein_ids": ["TP53", "BRCA1", "P04637"],
+        "species": 9606,
+        "limit": 1,
+        "echo_query": 1
+      }
+    ]
+  },
+  {
+    "type": "STRINGRESTTool",
+    "name": "STRING_get_network",
+    "description": "Retrieve protein-protein interaction network from STRING with full details including confidence scores by evidence channel. Returns network edges with separate scores for neighborhood, gene fusion, cooccurrence, coexpression, experiments, databases, and text mining evidence. Supports regulatory network mode (STRING 12.5+) for directionality.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "protein_ids": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "List of protein identifiers (UniProt IDs, gene names, Ensembl IDs)",
+          "minItems": 1
+        },
+        "species": {
+          "type": "integer",
+          "description": "NCBI taxonomy ID (default: 9606 for human)",
+          "default": 9606
+        },
+        "confidence_score": {
+          "type": "number",
+          "description": "Minimum confidence score (0-1, default: 0.4). Use 0.7 for high confidence, 0.9 for highest confidence.",
+          "minimum": 0,
+          "maximum": 1,
+          "default": 0.4
+        },
+        "add_nodes": {
+          "type": "integer",
+          "description": "Number of additional interacting nodes to add to network (default: 0, max: 100)",
+          "minimum": 0,
+          "maximum": 100,
+          "default": 0
+        },
+        "network_type": {
+          "type": "string",
+          "description": "Type of network: 'functional' (all evidence), 'physical' (physical interactions only), 'regulatory' (STRING 12.5+ regulatory network with directionality)",
+          "enum": ["functional", "physical", "regulatory"],
+          "default": "functional"
+        }
+      },
+      "required": ["protein_ids"]
+    },
+    "fields": {
+      "endpoint": "/json/network",
+      "return_format": "JSON"
+    },
+    "return_schema": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "stringId_A": {"type": "string"},
+          "stringId_B": {"type": "string"},
+          "preferredName_A": {"type": "string"},
+          "preferredName_B": {"type": "string"},
+          "ncbiTaxonId": {"type": "integer"},
+          "score": {"type": "number", "description": "Combined confidence score"},
+          "nscore": {"type": "number", "description": "Neighborhood score"},
+          "fscore": {"type": "number", "description": "Gene fusion score"},
+          "pscore": {"type": "number", "description": "Phylogenetic cooccurrence score"},
+          "ascore": {"type": "number", "description": "Coexpression score"},
+          "escore": {"type": "number", "description": "Experimental score"},
+          "dscore": {"type": "number", "description": "Database score"},
+          "tscore": {"type": "number", "description": "Text mining score"}
+        }
+      }
+    },
+    "test_examples": [
+      {
+        "protein_ids": ["TP53", "MDM2"],
+        "species": 9606,
+        "confidence_score": 0.7,
+        "add_nodes": 5,
+        "network_type": "functional"
+      }
+    ]
+  },
+  {
+    "type": "STRINGRESTTool",
+    "name": "STRING_ppi_enrichment",
+    "description": "Test if a set of proteins have more interactions among themselves than would be expected by chance. Performs PPI enrichment analysis and returns p-value indicating whether the protein set forms a connected network module. Useful for validating disease modules, pathways, or functional clusters.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "protein_ids": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "List of protein identifiers (UniProt IDs, gene names, Ensembl IDs). Minimum 3 proteins required.",
+          "minItems": 3
+        },
+        "species": {
+          "type": "integer",
+          "description": "NCBI taxonomy ID (default: 9606 for human)",
+          "default": 9606
+        },
+        "confidence_score": {
+          "type": "number",
+          "description": "Minimum confidence score for counting interactions (0-1, default: 0.4)",
+          "minimum": 0,
+          "maximum": 1,
+          "default": 0.4
+        }
+      },
+      "required": ["protein_ids"]
+    },
+    "fields": {
+      "endpoint": "/json/ppi_enrichment",
+      "return_format": "JSON"
+    },
+    "return_schema": {
+      "type": "object",
+      "properties": {
+        "number_of_nodes": {"type": "integer"},
+        "number_of_edges": {"type": "integer"},
+        "expected_number_of_edges": {"type": "number"},
+        "p_value": {"type": "number"},
+        "avg_node_degree": {"type": "number"},
+        "local_clustering_coefficient": {"type": "number"}
+      }
+    },
+    "test_examples": [
+      {
+        "protein_ids": ["TP53", "MDM2", "ATM", "CHEK2", "BRCA1", "BRCA2"],
+        "species": 9606,
+        "confidence_score": 0.4
+      }
+    ]
+  },
+  {
     "type": "BioGRIDRESTTool",
     "name": "BioGRID_get_interactions",
     "description": "Query protein and genetic interactions from the BioGRID database. BioGRID is a comprehensive database of physical and genetic interactions with detailed experimental evidence. Requires free BioGRID API key (register at https://webservice.thebiogrid.org/). Set BIOGRID_API_KEY environment variable in .env file.",

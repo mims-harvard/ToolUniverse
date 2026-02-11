@@ -1,0 +1,351 @@
+[
+  {
+    "type": "NCBISRATool",
+    "name": "NCBI_SRA_search_runs",
+    "description": "Search NCBI Sequence Read Archive (SRA) for NGS/RNA-seq sequencing runs by study accession, organism, sequencing strategy (RNA-Seq, WGS, ChIP-Seq), platform (ILLUMINA, OXFORD_NANOPORE), or library source. Returns SRA UIDs which can be used with other SRA tools to retrieve metadata and download links. Essential for discovering high-throughput sequencing data from public repositories. Use this to find relevant sequencing experiments before accessing the actual FASTQ data files.",
+    "parameter": {
+      "type": "object",
+      "required": ["operation"],
+      "properties": {
+        "operation": {
+          "const": "search",
+          "description": "Operation type (fixed: search)"
+        },
+        "study": {
+          "type": "string",
+          "description": "Study accession to search (e.g., 'SRP000001', 'ERP000001', 'DRP000001'). Searches in [Study] field."
+        },
+        "organism": {
+          "type": "string",
+          "description": "Organism name to filter (e.g., 'Homo sapiens', 'Mus musculus', 'SARS-CoV-2'). Searches in [Organism] field."
+        },
+        "strategy": {
+          "type": "string",
+          "description": "Sequencing strategy to filter. Common values: 'RNA-Seq' (transcriptomics), 'WGS' (whole genome), 'WXS' (exome), 'ChIP-Seq' (chromatin), 'ATAC-Seq' (accessibility), 'Bisulfite-Seq' (methylation), 'AMPLICON' (targeted), 'Hi-C' (3D genome)"
+        },
+        "platform": {
+          "type": "string",
+          "description": "Sequencing platform to filter. Common values: 'ILLUMINA', 'OXFORD_NANOPORE', 'PACBIO_SMRT', 'ION_TORRENT', 'BGISEQ'"
+        },
+        "source": {
+          "type": "string",
+          "description": "Library source to filter. Common values: 'GENOMIC' (DNA), 'TRANSCRIPTOMIC' (RNA), 'METAGENOMIC', 'METATRANSCRIPTOMIC', 'SYNTHETIC', 'VIRAL_RNA'"
+        },
+        "query": {
+          "type": "string",
+          "description": "Free-form search query if not using structured filters. Use NCBI query syntax (e.g., '(Homo sapiens[Organism]) AND (RNA-Seq[Strategy])')"
+        },
+        "limit": {
+          "type": "integer",
+          "description": "Maximum number of results to return (default: 20, max: 100)",
+          "default": 20,
+          "minimum": 1,
+          "maximum": 100
+        },
+        "sort": {
+          "type": "string",
+          "enum": ["relevance", "pub_date"],
+          "description": "Sort order for results (default: relevance)",
+          "default": "relevance"
+        }
+      }
+    },
+    "return": {
+      "type": "object",
+      "properties": {
+        "status": {
+          "type": "string",
+          "enum": ["success", "error"]
+        },
+        "data": {
+          "type": "object",
+          "properties": {
+            "uids": {
+              "type": "array",
+              "items": {"type": "string"},
+              "description": "List of SRA UIDs (internal NCBI IDs)"
+            },
+            "count": {
+              "type": "integer",
+              "description": "Total number of matching results"
+            },
+            "returned": {
+              "type": "integer",
+              "description": "Number of UIDs returned (limited by limit parameter)"
+            },
+            "search_term": {
+              "type": "string",
+              "description": "Generated NCBI search term used"
+            }
+          }
+        },
+        "total_count": {
+          "type": "integer"
+        },
+        "error": {
+          "type": "string"
+        }
+      },
+      "required": ["status"]
+    },
+    "test_examples": [
+      {
+        "operation": "search",
+        "organism": "Homo sapiens",
+        "strategy": "RNA-Seq",
+        "limit": 5
+      },
+      {
+        "operation": "search",
+        "study": "SRP000001",
+        "limit": 10
+      },
+      {
+        "operation": "search",
+        "organism": "SARS-CoV-2",
+        "strategy": "WGS",
+        "platform": "ILLUMINA",
+        "limit": 5
+      }
+    ]
+  },
+  {
+    "type": "NCBISRATool",
+    "name": "NCBI_SRA_get_run_info",
+    "description": "Get detailed metadata for SRA run accessions including sequencing platform (ILLUMINA, Oxford Nanopore), instrument model, library strategy (RNA-Seq, WGS), library source (genomic, transcriptomic), library layout (paired/single), sample information, study details, organism, and data statistics (total spots, bases). Essential for understanding experimental design and data characteristics before downloading large FASTQ files. Use SRA run accessions (SRR000001, ERR000001, DRR000001) from NCBI_SRA_search_runs or known accessions.",
+    "parameter": {
+      "type": "object",
+      "required": ["operation", "accessions"],
+      "properties": {
+        "operation": {
+          "const": "get_run_info",
+          "description": "Operation type (fixed: get_run_info)"
+        },
+        "accessions": {
+          "oneOf": [
+            {
+              "type": "array",
+              "items": {"type": "string"}
+            },
+            {
+              "type": "string"
+            }
+          ],
+          "description": "SRA run accession(s) (e.g., 'SRR000001', 'ERR000001', 'DRR000001'). Can be single accession or array of accessions. Use SRR for NCBI, ERR for ENA, DRR for DDBJ."
+        }
+      }
+    },
+    "return": {
+      "type": "object",
+      "properties": {
+        "status": {
+          "type": "string",
+          "enum": ["success", "error"]
+        },
+        "data": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "run_accession": {"type": "string"},
+              "experiment_accession": {"type": "string"},
+              "study_accession": {"type": "string"},
+              "study_title": {"type": "string"},
+              "sample_accession": {"type": "string"},
+              "organism": {"type": "string"},
+              "platform": {"type": "string"},
+              "instrument": {"type": "string"},
+              "library_strategy": {"type": "string"},
+              "library_source": {"type": "string"},
+              "library_selection": {"type": "string"},
+              "library_layout": {"type": "string"},
+              "total_spots": {"type": "string"},
+              "total_bases": {"type": "string"},
+              "published": {"type": "string"}
+            }
+          },
+          "description": "Array of run metadata objects"
+        },
+        "count": {
+          "type": "integer",
+          "description": "Number of runs returned"
+        },
+        "error": {
+          "type": "string"
+        }
+      },
+      "required": ["status"]
+    },
+    "test_examples": [
+      {
+        "operation": "get_run_info",
+        "accessions": "SRR000001"
+      },
+      {
+        "operation": "get_run_info",
+        "accessions": ["SRR000001", "SRR000002"]
+      },
+      {
+        "operation": "get_run_info",
+        "accessions": "ERR000001"
+      }
+    ]
+  },
+  {
+    "type": "NCBISRATool",
+    "name": "NCBI_SRA_get_download_urls",
+    "description": "Get FTP and cloud storage URLs for downloading FASTQ sequencing data from SRA runs. Returns multiple access methods: NCBI FTP URLs for direct .sra file download, AWS S3 URLs for cloud-based access (faster for large-scale analysis), and NCBI web URLs for browser access. Note: Downloaded .sra files require SRA Toolkit (fastq-dump or fasterq-dump) to convert to standard FASTQ format. Essential for programmatic access to petabytes of public sequencing data. Works with SRR (NCBI), ERR (ENA), and DRR (DDBJ) accessions.",
+    "parameter": {
+      "type": "object",
+      "required": ["operation", "accessions"],
+      "properties": {
+        "operation": {
+          "const": "get_download_urls",
+          "description": "Operation type (fixed: get_download_urls)"
+        },
+        "accessions": {
+          "oneOf": [
+            {
+              "type": "array",
+              "items": {"type": "string"}
+            },
+            {
+              "type": "string"
+            }
+          ],
+          "description": "SRA run accession(s) (e.g., 'SRR000001', 'ERR000001', 'DRR000001'). Can be single accession or array of accessions."
+        }
+      }
+    },
+    "return": {
+      "type": "object",
+      "properties": {
+        "status": {
+          "type": "string",
+          "enum": ["success", "error"]
+        },
+        "data": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "accession": {"type": "string"},
+              "ftp_url": {
+                "type": "string",
+                "description": "FTP URL for .sra file download"
+              },
+              "s3_url": {
+                "type": "string",
+                "description": "AWS S3 URL for cloud access"
+              },
+              "ncbi_url": {
+                "type": "string",
+                "description": "NCBI web interface URL"
+              },
+              "note": {
+                "type": "string",
+                "description": "Instructions for file conversion"
+              },
+              "error": {"type": "string"}
+            }
+          },
+          "description": "Array of download URL objects"
+        },
+        "count": {
+          "type": "integer",
+          "description": "Number of accessions processed"
+        },
+        "error": {
+          "type": "string"
+        }
+      },
+      "required": ["status"]
+    },
+    "test_examples": [
+      {
+        "operation": "get_download_urls",
+        "accessions": "SRR000001"
+      },
+      {
+        "operation": "get_download_urls",
+        "accessions": ["SRR000001", "SRR000002", "ERR000001"]
+      }
+    ]
+  },
+  {
+    "type": "NCBISRATool",
+    "name": "NCBI_SRA_link_to_biosample",
+    "description": "Link SRA sequencing runs to their associated BioSample records to access biological sample metadata including sample attributes, tissue type, cell line, treatment conditions, donor information, and collection details. BioSample provides rich contextual information about the biological specimens used in sequencing experiments. Essential for understanding experimental context and sample provenance. Returns BioSample UIDs which can be used with NCBI BioSample API to retrieve detailed sample metadata. Works with SRA UIDs from NCBI_SRA_search_runs.",
+    "parameter": {
+      "type": "object",
+      "required": ["operation", "accessions"],
+      "properties": {
+        "operation": {
+          "const": "link_to_biosample",
+          "description": "Operation type (fixed: link_to_biosample)"
+        },
+        "accessions": {
+          "oneOf": [
+            {
+              "type": "array",
+              "items": {"type": "string"}
+            },
+            {
+              "type": "string"
+            }
+          ],
+          "description": "SRA UID(s) from NCBI_SRA_search_runs. Can be single UID or array of UIDs. These are NCBI internal IDs (numeric), not SRR accessions."
+        }
+      }
+    },
+    "return": {
+      "type": "object",
+      "properties": {
+        "status": {
+          "type": "string",
+          "enum": ["success", "error"]
+        },
+        "data": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "sra_uid": {
+                "type": "string",
+                "description": "SRA UID (NCBI internal ID)"
+              },
+              "biosample_uids": {
+                "type": "array",
+                "items": {"type": "string"},
+                "description": "Array of linked BioSample UIDs"
+              },
+              "biosample_count": {
+                "type": "integer",
+                "description": "Number of linked BioSample records"
+              }
+            }
+          },
+          "description": "Array of SRA-to-BioSample link objects"
+        },
+        "count": {
+          "type": "integer",
+          "description": "Number of SRA records processed"
+        },
+        "error": {
+          "type": "string"
+        }
+      },
+      "required": ["status"]
+    },
+    "test_examples": [
+      {
+        "operation": "link_to_biosample",
+        "accessions": "1"
+      },
+      {
+        "operation": "link_to_biosample",
+        "accessions": ["1", "2", "3"]
+      }
+    ]
+  }
+]

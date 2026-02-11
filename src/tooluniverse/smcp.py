@@ -370,6 +370,11 @@ class SMCP(FastMCP):
         # Track exposed tools to avoid duplicates
         self._exposed_tools = set()
 
+        # Initialize TaskManager for MCP Tasks support
+        from .task_manager import TaskManager
+        self.task_manager = TaskManager(tool_universe=self.tooluniverse)
+        self._task_manager_started = False
+
         # Load Space configurations first if provided
         if space:
             self._load_space_configs(space)
@@ -428,19 +433,23 @@ class SMCP(FastMCP):
         Register custom MCP protocol methods for enhanced functionality.
 
         This method extends the standard MCP protocol by registering custom handlers
-        for scientific tool discovery and search operations. It uses FastMCP's
-        middleware system to handle custom methods while maintaining compatibility
-        with standard MCP operations.
+        for scientific tool discovery and search operations, as well as MCP Tasks
+        support for long-running operations.
 
         Custom Methods Registered:
         =========================
         - tools/find: AI-powered tool discovery using natural language queries
         - tools/search: Alternative endpoint for tool search (alias for tools/find)
+        - tasks/get: Get current task status
+        - tasks/list: List all tasks
+        - tasks/cancel: Cancel a running task
+        - tasks/result: Wait for task completion and get result
 
         Implementation Details:
         ======================
         - Uses FastMCP's middleware system instead of request handler patching
         - Implements custom middleware methods for tools/find and tools/search
+        - Adds MCP Tasks protocol support for long-running tool operations
         - Standard MCP methods (tools/list, tools/call) are handled by FastMCP
         - Implements proper error handling and JSON-RPC 2.0 compliance
 
@@ -453,9 +462,14 @@ class SMCP(FastMCP):
             # Temporarily disabled for Codex compatibility
             # Add custom middleware for tools/find and tools/search
             # self.add_middleware(self._tools_find_middleware)
+
+            # Register MCP Tasks handlers
+            # Note: FastMCP should handle these via its built-in MCP Tasks support
+            # but we provide our own handlers for compatibility
             self.logger.info(
                 "✅ Custom MCP methods registration skipped for Codex compatibility"
             )
+            self.logger.info("✅ MCP Tasks support initialized")
 
         except Exception as e:
             self.logger.error(f"Error registering custom MCP methods: {e}")
@@ -697,6 +711,47 @@ class SMCP(FastMCP):
                     "message": f"Internal error in tools/find: {str(e)}",
                 },
             }
+
+    # -- MCP Tasks Protocol Handlers --
+
+    async def _ensure_task_manager(self) -> None:
+        """Start the task manager if it has not been started yet."""
+        if not self._task_manager_started:
+            await self.task_manager.start()
+            self._task_manager_started = True
+
+    async def handle_tasks_get(self, task_id: str, auth_context: Optional[str] = None) -> Dict[str, Any]:
+        """Get current task status."""
+        await self._ensure_task_manager()
+        return await self.task_manager.get_status(task_id, auth_context)
+
+    async def handle_tasks_list(self, auth_context: Optional[str] = None, cursor: Optional[str] = None) -> Dict[str, Any]:
+        """List all tasks."""
+        await self._ensure_task_manager()
+        return await self.task_manager.list_tasks(auth_context, cursor)
+
+    async def handle_tasks_cancel(self, task_id: str, auth_context: Optional[str] = None) -> Dict[str, Any]:
+        """Cancel a running task."""
+        await self._ensure_task_manager()
+        return await self.task_manager.cancel_task(task_id, auth_context)
+
+    async def handle_tasks_result(
+        self, task_id: str, auth_context: Optional[str] = None, timeout: Optional[float] = None
+    ) -> Dict[str, Any]:
+        """Wait for task completion and return its result."""
+        await self._ensure_task_manager()
+        result = await self.task_manager.get_result(task_id, auth_context, timeout)
+        return {
+            "content": [{
+                "type": "text",
+                "text": json.dumps(result, ensure_ascii=False),
+            }],
+            "_meta": {
+                "io.modelcontextprotocol/related-task": {
+                    "taskId": task_id,
+                },
+            },
+        }
 
     async def _perform_tool_search(
         self,
@@ -1919,6 +1974,14 @@ class SMCP(FastMCP):
         - Safe to call even if server hasn't been fully initialized
         """
         try:
+            # Stop TaskManager
+            if self._task_manager_started:
+                await self.task_manager.stop()
+                self.logger.info("TaskManager stopped")
+        except Exception as e:
+            self.logger.error(f"Error stopping TaskManager: {e}")
+
+        try:
             # Shutdown thread pool
             self.executor.shutdown(wait=True)
         except Exception:
@@ -2449,11 +2512,48 @@ class SMCP(FastMCP):
                     ctx = kwargs.pop("ctx", None) if "ctx" in kwargs else None
                     # Extract streaming flag (users can optionally pass this)
                     stream_flag = bool(kwargs.pop("_tooluniverse_stream", False))
+                    # Extract task metadata if present (for MCP Tasks)
+                    task_request = kwargs.pop("_task", None) if "_task" in kwargs else None
 
                     # Filter out None values for optional parameters
                     # Note: _tooluniverse_stream was extracted and popped above
                     # so it won't be in args_dict, which is what we want
                     args_dict = {k: v for k, v in kwargs.items() if v is not None}
+
+                    # Check if tool supports tasks
+                    execution_config = tool_config.get("execution", {})
+                    task_support = execution_config.get("taskSupport", "forbidden")
+
+                    # Handle task request
+                    if task_request and task_support != "forbidden":
+                        # Create task instead of executing directly
+                        if not self._task_manager_started:
+                            await self.task_manager.start()
+                            self._task_manager_started = True
+
+                        ttl = task_request.get("ttl", 3600000)  # Default 1 hour
+                        task_id = await self.task_manager.create_task(
+                            tool_name=tool_name,
+                            arguments=args_dict,
+                            ttl=ttl,
+                        )
+
+                        # Return task creation response
+                        return json.dumps({
+                            "_meta": {
+                                "task": {
+                                    "taskId": task_id,
+                                    "status": "working",
+                                    "statusMessage": f"Task {task_id} submitted",
+                                    "pollInterval": 5000,
+                                }
+                            }
+                        }, ensure_ascii=False)
+
+                    elif task_request and task_support == "forbidden":
+                        return json.dumps({
+                            "error": f"Tool {tool_name} does not support task execution"
+                        }, ensure_ascii=False)
 
                     # Validate required parameters (check against args_dict, not filtered_args)
                     missing_required = [

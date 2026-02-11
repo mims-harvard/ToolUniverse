@@ -1,13 +1,7 @@
-"""
-STRING Database REST API Tool
-
-This tool provides access to protein-protein interaction data from the STRING
-database. STRING is a database of known and predicted protein-protein
-interactions.
-"""
+"""STRING Database REST API Tool for protein-protein interaction data."""
 
 import requests
-from typing import Dict, Any, List
+from typing import Any, Dict, List
 from .base_tool import BaseTool
 from .tool_registry import register_tool
 
@@ -16,8 +10,7 @@ STRING_BASE_URL = "https://string-db.org/api"
 
 @register_tool("STRINGRESTTool")
 class STRINGRESTTool(BaseTool):
-    """
-    STRING Database REST API tool.
+    """STRING Database REST API tool.
     Generic wrapper for STRING API endpoints defined in ppi_tools.json.
     """
 
@@ -30,10 +23,9 @@ class STRINGRESTTool(BaseTool):
         self.required: List[str] = parameter.get("required", [])
         self.output_format: str = fields.get("return_format", "TSV")
 
-    def _build_url(self, arguments: Dict[str, Any]) -> str | Dict[str, Any]:
+    def _build_url(self) -> str:
         """Build URL for STRING API request."""
-        url_path = self.endpoint_template
-        return STRING_BASE_URL + url_path
+        return STRING_BASE_URL + self.endpoint_template
 
     def _build_params(self, arguments: Dict[str, Any]) -> Dict[str, Any]:
         """Build parameters for STRING API request."""
@@ -57,6 +49,16 @@ class STRINGRESTTool(BaseTool):
         if "network_type" in arguments:
             params["network_type"] = arguments["network_type"]
 
+        # Additional parameters for other endpoints
+        if "caller_identity" in arguments:
+            params["caller_identity"] = arguments["caller_identity"]
+        if "echo_query" in arguments:
+            params["echo_query"] = arguments["echo_query"]
+        if "add_nodes" in arguments:
+            params["add_nodes"] = arguments["add_nodes"]
+        if "category" in arguments:
+            params["category"] = arguments["category"]
+
         return params
 
     def _make_request(self, url: str, params: Dict[str, Any]) -> Dict[str, Any]:
@@ -67,8 +69,13 @@ class STRINGRESTTool(BaseTool):
 
             if self.output_format == "TSV":
                 return self._parse_tsv_response(response.text)
-            else:
+            if self.output_format == "JSON":
                 return response.json()
+
+            try:
+                return response.json()
+            except (ValueError, KeyError):
+                return self._parse_tsv_response(response.text)
 
         except requests.exceptions.RequestException as e:
             return {"error": f"Request failed: {str(e)}"}
@@ -99,30 +106,16 @@ class STRINGRESTTool(BaseTool):
 
     def run(self, arguments: Dict[str, Any]) -> Dict[str, Any]:
         """Execute the tool with given arguments."""
-        # Validate required parameters
         for param in self.required:
             if param not in arguments:
                 error_msg = f"Missing required parameter: {param}"
-                return {
-                    "status": "error",
-                    "data": {"error": error_msg},
-                    "error": error_msg,
-                }
+                return {"status": "error", "data": {"error": error_msg}, "error": error_msg}
 
-        url = self._build_url(arguments)
-        if isinstance(url, dict) and "error" in url:
-            return {"status": "error", "data": url, "error": url.get("error")}
-
+        url = self._build_url()
         params = self._build_params(arguments)
         api_response = self._make_request(url, params)
 
-        # Check if API returned an error
         if "error" in api_response:
-            return {
-                "status": "error",
-                "data": api_response,
-                "error": api_response.get("error"),
-            }
+            return {"status": "error", "data": api_response, "error": api_response.get("error")}
 
-        # Success - wrap the response
         return {"status": "success", "data": api_response}

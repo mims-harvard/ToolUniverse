@@ -1,12 +1,9 @@
-"""
-BioGRID Database REST API Tool
+"""BioGRID Database REST API Tool for protein and genetic interaction data."""
 
-This tool provides access to protein and genetic interaction data from the BioGRID database.
-BioGRID is a comprehensive database of physical and genetic interactions.
-"""
+import os
 
 import requests
-from typing import Dict, Any, List
+from typing import Any, Dict, List
 from .base_tool import BaseTool
 from .tool_registry import register_tool
 
@@ -15,8 +12,7 @@ BIOGRID_BASE_URL = "https://webservice.thebiogrid.org"
 
 @register_tool("BioGRIDRESTTool")
 class BioGRIDRESTTool(BaseTool):
-    """
-    BioGRID Database REST API tool.
+    """BioGRID Database REST API tool.
     Generic wrapper for BioGRID API endpoints defined in ppi_tools.json.
     """
 
@@ -29,27 +25,32 @@ class BioGRIDRESTTool(BaseTool):
         self.required: List[str] = parameter.get("required", [])
         self.output_format: str = fields.get("return_format", "JSON")
 
-    def _build_url(self, arguments: Dict[str, Any]) -> str | Dict[str, Any]:
+    def _build_url(self) -> str:
         """Build URL for BioGRID API request."""
-        url_path = self.endpoint_template
-        return BIOGRID_BASE_URL + url_path
+        return BIOGRID_BASE_URL + self.endpoint_template
+
+    _ORGANISM_MAP = {
+        "homo sapiens": 9606,
+        "mus musculus": 10090,
+        "saccharomyces cerevisiae": 559292,
+    }
 
     def _build_params(self, arguments: Dict[str, Any]) -> Dict[str, Any]:
         """Build parameters for BioGRID API request."""
         params = {"format": "json", "interSpeciesExcluded": "false"}
 
-        # Check for API key
-        api_key = arguments.get("api_key") or arguments.get("accesskey")
-        if not api_key:
-            # Try to get from environment variable
-            import os
-
-            api_key = os.getenv("BIOGRID_API_KEY")
+        api_key = (
+            arguments.get("api_key")
+            or arguments.get("accesskey")
+            or arguments.get("access_key")
+            or os.getenv("BIOGRID_API_KEY")
+            or os.getenv("BIOGRID_ACCESS_KEY")
+        )
 
         if not api_key:
             raise ValueError(
                 "BioGRID API key is required. Please provide 'api_key' parameter "
-                "or set BIOGRID_API_KEY environment variable. "
+                "or set BIOGRID_ACCESS_KEY environment variable. "
                 "Register at: https://webservice.thebiogrid.org/"
             )
 
@@ -63,17 +64,27 @@ class BioGRIDRESTTool(BaseTool):
             else:
                 params["geneList"] = str(gene_names)
 
-        # Add other parameters
-        if "organism" in arguments:
-            # Convert organism name to taxonomy ID
-            organism = arguments["organism"]
-            if organism.lower() == "homo sapiens":
-                params["organism"] = 9606
-            elif organism.lower() == "mus musculus":
-                params["organism"] = 10090
+        # Map chemical names for chemical interaction queries
+        if "chemical_names" in arguments:
+            chemical_names = arguments["chemical_names"]
+            if isinstance(chemical_names, list):
+                params["chemicalList"] = "|".join(chemical_names)
             else:
-                params["organism"] = organism
+                params["chemicalList"] = str(chemical_names)
 
+        # Map PubMed IDs for publication-based queries
+        if "pubmed_ids" in arguments:
+            pubmed_ids = arguments["pubmed_ids"]
+            if isinstance(pubmed_ids, list):
+                params["pubmedList"] = "|".join([str(pid) for pid in pubmed_ids])
+            else:
+                params["pubmedList"] = str(pubmed_ids)
+
+        if "organism" in arguments:
+            organism = arguments["organism"]
+            params["taxId"] = self._ORGANISM_MAP.get(organism.lower(), organism)
+
+        # Handle interaction type filtering
         if "interaction_type" in arguments:
             interaction_type = arguments["interaction_type"]
             if interaction_type == "physical":
@@ -82,8 +93,52 @@ class BioGRIDRESTTool(BaseTool):
                 params["evidenceList"] = "genetic"
             # "both" means no evidence filter
 
+        # Handle PTM type filtering
+        if "ptm_type" in arguments:
+            ptm_type = arguments["ptm_type"]
+            if isinstance(ptm_type, list):
+                params["ptmType"] = "|".join(ptm_type)
+            else:
+                params["ptmType"] = str(ptm_type)
+
+        # Handle residue filtering for PTMs
+        if "residue" in arguments and arguments["residue"]:
+            params["residue"] = arguments["residue"]
+
+        # Handle evidence types filtering
+        if "evidence_types" in arguments and arguments["evidence_types"]:
+            evidence_types = arguments["evidence_types"]
+            if isinstance(evidence_types, list):
+                params["evidenceList"] = "|".join(evidence_types)
+            else:
+                params["evidenceList"] = str(evidence_types)
+
+        # Handle throughput filtering
+        if "throughput" in arguments and arguments["throughput"]:
+            params["throughputTag"] = arguments["throughput"]
+
+        # Handle interaction action for chemical interactions
+        if "interaction_action" in arguments and arguments["interaction_action"]:
+            params["action"] = arguments["interaction_action"]
+
+        # Include evidence details
+        if "include_evidence" in arguments:
+            params["includeEvidence"] = (
+                "true" if arguments["include_evidence"] else "false"
+            )
+
+        # Include enzyme/interactor details
+        if "include_enzymes" in arguments:
+            params["includeInteractors"] = (
+                "true" if arguments["include_enzymes"] else "false"
+            )
+
+        # Set limit
         if "limit" in arguments:
             params["max"] = arguments["limit"]
+
+        # Default search by official gene symbols
+        params["searchNames"] = "true"
 
         return params
 
@@ -105,36 +160,22 @@ class BioGRIDRESTTool(BaseTool):
 
     def run(self, arguments: Dict[str, Any]) -> Dict[str, Any]:
         """Execute the tool with given arguments."""
-        # Validate required parameters
         for param in self.required:
             if param not in arguments:
                 error_msg = f"Missing required parameter: {param}"
-                return {
-                    "status": "error",
-                    "data": {"error": error_msg},
-                    "error": error_msg,
-                }
+                return {"status": "error", "data": {"error": error_msg}, "error": error_msg}
 
-        url = self._build_url(arguments)
-        if isinstance(url, dict) and "error" in url:
-            return {"status": "error", "data": url, "error": url.get("error")}
+        url = self._build_url()
 
         try:
             params = self._build_params(arguments)
         except ValueError as e:
-            # API key missing
-            error_msg = f"Authentication failed: {str(e)}"
+            error_msg = f"Authentication failed: {e}"
             return {"status": "error", "data": {"error": error_msg}, "error": error_msg}
 
         api_response = self._make_request(url, params)
 
-        # Check if API returned an error
         if "error" in api_response:
-            return {
-                "status": "error",
-                "data": api_response,
-                "error": api_response.get("error"),
-            }
+            return {"status": "error", "data": api_response, "error": api_response.get("error")}
 
-        # Success - wrap the response
         return {"status": "success", "data": api_response}

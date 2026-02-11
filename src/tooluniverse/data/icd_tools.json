@@ -1,0 +1,343 @@
+[
+  {
+    "name": "ICD11_search_diseases",
+    "description": "Search ICD-11 for diseases by name, symptoms, or clinical terms. ICD-11 is the WHO's 11th revision of the International Classification of Diseases, the global standard for diagnostic health information. Returns matching disease entities with codes, titles, and descriptions. Supports flexible search across 50+ languages. Requires ICD_CLIENT_ID and ICD_CLIENT_SECRET (register free at https://icd.who.int/icdapi).",
+    "type": "ICDTool",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "query": {
+          "type": "string",
+          "description": "Search query (disease name, symptom, or clinical term, e.g., 'diabetes mellitus', 'hypertension', 'myocardial infarction')"
+        },
+        "linearization": {
+          "type": "string",
+          "description": "ICD-11 linearization to search (default: 'mms' for mortality/morbidity statistics)",
+          "enum": ["mms", "icf", "ichi"],
+          "default": "mms"
+        },
+        "flatResults": {
+          "type": "boolean",
+          "description": "Return flat list of results (true) or hierarchical structure (false)",
+          "default": true
+        },
+        "useFlexisearch": {
+          "type": "boolean",
+          "description": "Use flexible search algorithm for better matching",
+          "default": true
+        },
+        "language": {
+          "type": "string",
+          "description": "Language for results (ISO 639-1 code, e.g., 'en', 'es', 'fr', 'zh')",
+          "default": "en"
+        }
+      },
+      "required": ["query"],
+      "required_api_keys": ["ICD_CLIENT_ID", "ICD_CLIENT_SECRET"]
+    },
+    "fields": {
+      "endpoint": "/release/11/2024-01/{linearization}/search?q={search_term}",
+      "return_format": "JSON",
+      "linearization": "mms"
+    },
+    "return_schema": {
+      "type": "object",
+      "properties": {
+        "data": {
+          "type": "object",
+          "properties": {
+            "destinationEntities": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "id": {"type": "string"},
+                  "title": {"type": "string"},
+                  "score": {"type": "number"},
+                  "chapter": {"type": "string"},
+                  "theCode": {"type": "string"}
+                }
+              }
+            },
+            "guessType": {"type": "object"}
+          }
+        },
+        "metadata": {
+          "type": "object",
+          "properties": {
+            "source": {"type": "string"},
+            "endpoint": {"type": "string"},
+            "linearization": {"type": "string"}
+          }
+        }
+      }
+    },
+    "test_examples": [
+      {
+        "query": "diabetes mellitus",
+        "linearization": "mms",
+        "flatResults": true,
+        "language": "en"
+      },
+      {
+        "query": "essential hypertension",
+        "linearization": "mms",
+        "flatResults": true,
+        "language": "en"
+      },
+      {
+        "query": "chronic obstructive pulmonary disease",
+        "linearization": "mms",
+        "useFlexisearch": true,
+        "language": "en"
+      }
+    ]
+  },
+  {
+    "name": "ICD11_get_entity",
+    "description": "Get detailed information about an ICD-11 disease entity by its unique identifier or code. Returns comprehensive details including full title, definition, inclusions, exclusions, parent/child relationships, diagnostic criteria, and clinical descriptions. Essential for understanding specific disease classifications. Requires ICD_CLIENT_ID and ICD_CLIENT_SECRET.",
+    "type": "ICDTool",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "entity_id": {
+          "type": "string",
+          "description": "ICD-11 entity ID (e.g., '1435254666' for diabetes mellitus) or full URI"
+        },
+        "linearization": {
+          "type": "string",
+          "description": "ICD-11 linearization (default: 'mms')",
+          "enum": ["mms", "icf", "ichi"],
+          "default": "mms"
+        },
+        "language": {
+          "type": "string",
+          "description": "Language for results (ISO 639-1 code)",
+          "default": "en"
+        }
+      },
+      "required": ["entity_id"],
+      "required_api_keys": ["ICD_CLIENT_ID", "ICD_CLIENT_SECRET"]
+    },
+    "fields": {
+      "endpoint": "/release/11/2024-01/{linearization}/{entity_id}",
+      "return_format": "JSON",
+      "linearization": "mms"
+    },
+    "return_schema": {
+      "type": "object",
+      "properties": {
+        "data": {
+          "type": "object",
+          "properties": {
+            "@id": {"type": "string"},
+            "title": {"type": "object"},
+            "definition": {"type": "object"},
+            "longDefinition": {"type": "object"},
+            "fullySpecifiedName": {"type": "object"},
+            "parent": {"type": "array"},
+            "child": {"type": "array"},
+            "inclusion": {"type": "array"},
+            "exclusion": {"type": "array"},
+            "browserUrl": {"type": "string"},
+            "code": {"type": "string"},
+            "codingNote": {"type": "object"}
+          }
+        }
+      }
+    },
+    "test_examples": [
+      {
+        "entity_id": "1435254666",
+        "linearization": "mms",
+        "language": "en"
+      },
+      {
+        "entity_id": "868865918",
+        "linearization": "mms",
+        "language": "en"
+      }
+    ]
+  },
+  {
+    "name": "ICD11_browse_hierarchy",
+    "description": "Navigate the ICD-11 disease classification hierarchy by retrieving child entities of a parent category. ICD-11 organizes diseases in a hierarchical tree structure (chapters → categories → subcategories). This tool returns all child entities under a specified parent, showing the disease classification taxonomy. Useful for exploring disease categories and understanding relationships. Requires ICD_CLIENT_ID and ICD_CLIENT_SECRET.",
+    "type": "ICDTool",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "entity_id": {
+          "type": "string",
+          "description": "Parent entity ID to browse (use empty string or root ID for top-level chapters)"
+        },
+        "linearization": {
+          "type": "string",
+          "description": "ICD-11 linearization to browse",
+          "enum": ["mms", "icf", "ichi"],
+          "default": "mms"
+        },
+        "language": {
+          "type": "string",
+          "description": "Language for results",
+          "default": "en"
+        }
+      },
+      "required": ["entity_id"],
+      "required_api_keys": ["ICD_CLIENT_ID", "ICD_CLIENT_SECRET"]
+    },
+    "fields": {
+      "endpoint": "/release/11/2024-01/{linearization}/{entity_id}",
+      "return_format": "JSON",
+      "linearization": "mms"
+    },
+    "return_schema": {
+      "type": "object",
+      "properties": {
+        "data": {
+          "type": "object",
+          "properties": {
+            "child": {
+              "type": "array",
+              "items": {
+                "type": "string",
+                "description": "Child entity URI"
+              }
+            },
+            "title": {"type": "object"},
+            "code": {"type": "string"}
+          }
+        }
+      }
+    },
+    "test_examples": [
+      {
+        "entity_id": "1435254666",
+        "linearization": "mms",
+        "language": "en"
+      }
+    ]
+  },
+  {
+    "name": "ICD10_search_codes",
+    "description": "Search ICD-10-CM (Clinical Modification) codes by disease name or code. ICD-10-CM is the US clinical modification of ICD-10, the current standard for diagnosis coding in US healthcare (effective through 2025). Returns matching codes with full descriptions. Uses NLM Clinical Tables API (no API key required). This provides 2026 ICD-10-CM codes for backward compatibility while ICD-11 adoption is ongoing.",
+    "type": "ICD10Tool",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "query": {
+          "type": "string",
+          "description": "Search query (disease name or partial ICD-10 code, e.g., 'diabetes', 'E11', 'myocardial infarction')"
+        },
+        "limit": {
+          "type": "integer",
+          "description": "Maximum number of results to return (default: 20, max: 100)",
+          "default": 20
+        }
+      },
+      "required": ["query"]
+    },
+    "fields": {
+      "endpoint": "/icd10cm/v3/search",
+      "return_format": "JSON",
+      "base_url": "https://clinicaltables.nlm.nih.gov/api"
+    },
+    "return_schema": {
+      "type": "object",
+      "properties": {
+        "data": {
+          "type": "object",
+          "properties": {
+            "total": {"type": "integer"},
+            "results": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "code": {"type": "string"},
+                  "name": {"type": "string"}
+                }
+              }
+            }
+          }
+        },
+        "metadata": {
+          "type": "object",
+          "properties": {
+            "source": {"type": "string"},
+            "version": {"type": "string"}
+          }
+        }
+      }
+    },
+    "test_examples": [
+      {
+        "query": "diabetes mellitus type 2",
+        "limit": 10
+      },
+      {
+        "query": "essential hypertension",
+        "limit": 10
+      },
+      {
+        "query": "E11",
+        "limit": 20
+      },
+      {
+        "query": "acute myocardial infarction",
+        "limit": 15
+      }
+    ]
+  },
+  {
+    "name": "ICD10_get_code_info",
+    "description": "Get detailed information about a specific ICD-10-CM code including full description, chapter, and category. ICD-10-CM codes are alphanumeric (e.g., E11.9 for Type 2 diabetes mellitus without complications). This tool provides the official code details from the 2026 ICD-10-CM release. No API key required (uses NLM Clinical Tables).",
+    "type": "ICD10Tool",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "code": {
+          "type": "string",
+          "description": "ICD-10-CM code (e.g., 'E11.9', 'I10', 'J44.0')"
+        }
+      },
+      "required": ["code"]
+    },
+    "fields": {
+      "endpoint": "/icd10cm/v3/search?sf=code&terms={code}",
+      "return_format": "JSON",
+      "base_url": "https://clinicaltables.nlm.nih.gov/api"
+    },
+    "return_schema": {
+      "type": "object",
+      "properties": {
+        "data": {
+          "type": "object",
+          "properties": {
+            "total": {"type": "integer"},
+            "results": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "code": {"type": "string"},
+                  "name": {"type": "string"}
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "test_examples": [
+      {
+        "code": "E11.9"
+      },
+      {
+        "code": "I10"
+      },
+      {
+        "code": "J44.0"
+      }
+    ]
+  }
+]
