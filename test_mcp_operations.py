@@ -286,7 +286,7 @@ def run_all_tests():
     for test_name, test_func in tests:
         try:
             if test_name == "Basic Tool Loading":
-                tu = test_func()
+                _ = test_func()
             else:
                 test_func()
             tests_passed += 1

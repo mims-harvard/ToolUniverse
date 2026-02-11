@@ -286,13 +286,13 @@ def main():
     print("\n" + "="*80)
     print("EXAMPLE 1: Warfarin + Amoxicillin")
     print("="*80)
-    report1 = analyze_ddi(tu, "warfarin", "amoxicillin")
+    _ = analyze_ddi(tu, "warfarin", "amoxicillin")
 
     # Example 2: Statin + Azole (Major DDI)
     print("\n" + "="*80)
     print("EXAMPLE 2: Simvastatin + Ketoconazole (Major DDI)")
     print("="*80)
-    report2 = analyze_ddi(tu, "simvastatin", "ketoconazole")
+    _ = analyze_ddi(tu, "simvastatin", "ketoconazole")
 
     print("\n" + "="*80)
     print("ALL EXAMPLES COMPLETE")

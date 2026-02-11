@@ -43,7 +43,9 @@ class RacyProgressTool:
     }
     fields = {"type": "REST"}
     handle_error = staticmethod(_handle_error)
-    get_batch_concurrency_limit = lambda self: 0
+
+    def get_batch_concurrency_limit(self):
+        return 0
 
     async def run(self, arguments, progress=None):
         iterations = arguments.get("iterations", 100)
@@ -69,7 +71,9 @@ class FailingSometimesTool:
     }
     fields = {"type": "REST"}
     handle_error = staticmethod(_handle_error)
-    get_batch_concurrency_limit = lambda self: 0
+
+    def get_batch_concurrency_limit(self):
+        return 0
 
     async def run(self, arguments):
         if arguments.get("should_fail", False):
@@ -89,7 +93,9 @@ class SlowTool:
     }
     fields = {"type": "REST"}
     handle_error = staticmethod(_handle_error)
-    get_batch_concurrency_limit = lambda self: 0
+
+    def get_batch_concurrency_limit(self):
+        return 0
 
     async def run(self, arguments):
         delay = arguments.get("delay", 1.0)
@@ -280,7 +286,9 @@ async def test_exception_types_in_batch(tu_with_edge_tools):
         }
         fields = {"type": "REST"}
         handle_error = staticmethod(_handle_error)
-        get_batch_concurrency_limit = lambda self: 0
+
+        def get_batch_concurrency_limit(self):
+            return 0
 
         async def run(self, arguments):
             exc_type = arguments.get("exception_type", "value")

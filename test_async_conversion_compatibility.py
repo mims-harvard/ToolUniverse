@@ -231,7 +231,7 @@ def test_5_parameter_validation(tu):
             # Test with missing required parameter
             try:
                 # This should fail validation
-                result = tool.submit_job({})
+                _ = tool.submit_job({})
                 print(f"   ⚠️  Expected validation error but got result")
             except (ValueError, KeyError) as e:
                 print(f"   ✅ Validation works: {str(e)[:50]}...")
@@ -252,7 +252,7 @@ def test_5_parameter_validation(tu):
 
             try:
                 # This should fail validation
-                result = tool.submit_job({})
+                _ = tool.submit_job({})
                 print(f"   ⚠️  Expected validation error but got result")
             except (ValueError, KeyError) as e:
                 print(f"   ✅ Validation works: {str(e)[:50]}...")

@@ -232,8 +232,6 @@ def test_batch_execution_sync_context(tu_with_mock_tools):
 
 def test_context_detection_sync():
     """Verify context detection returns correct type in sync context."""
-    tu = ToolUniverse()
-
     # Should NOT detect async context
     try:
         asyncio.get_running_loop()

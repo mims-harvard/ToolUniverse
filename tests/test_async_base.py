@@ -108,7 +108,7 @@ class TestAsyncPollingTool:
 
         mock_progress.set_message = capture_progress
 
-        result = await tool.run({"input": "test"}, progress=mock_progress)
+        _ = await tool.run({"input": "test"}, progress=mock_progress)
 
         # Should have progress updates
         assert len(progress_messages) >= 2
@@ -313,7 +313,7 @@ class TestAsyncStreamingTool:
 
         mock_progress.set_message = capture_progress
 
-        result = await tool.run({"query": "test"}, progress=mock_progress)
+        _ = await tool.run({"query": "test"}, progress=mock_progress)
 
         # Should have progress updates
         assert len(progress_messages) >= 2

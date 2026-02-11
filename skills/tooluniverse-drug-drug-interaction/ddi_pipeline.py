@@ -441,13 +441,13 @@ def main():
     print("\n" + "=" * 80)
     print("EXAMPLE 1: Warfarin + Amoxicillin")
     print("=" * 80)
-    report1 = analyzer.analyze("warfarin", "amoxicillin")
+    _ = analyzer.analyze("warfarin", "amoxicillin")
 
     # Example 2: Statin + Azole
     print("\n\n" + "=" * 80)
     print("EXAMPLE 2: Simvastatin + Ketoconazole")
     print("=" * 80)
-    report2 = analyzer.analyze("simvastatin", "ketoconazole")
+    _ = analyzer.analyze("simvastatin", "ketoconazole")
 
     print("\n" + "=" * 80)
     print("✅ PIPELINE COMPLETE")

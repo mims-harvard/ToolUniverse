@@ -2453,9 +2453,6 @@ class ToolUniverse:
                 cache_key = self._make_cache_key(
                     function_name, arguments, tool_instance
                 )
-                composed_cache_key = self.cache_manager.compose_key(
-                    cache_namespace, cache_version, cache_key
-                )
                 cached_value = self.cache_manager.get(
                     namespace=cache_namespace,
                     version=cache_version,
@@ -2641,9 +2638,6 @@ class ToolUniverse:
                 cache_version = tool_instance.get_cache_version()
                 cache_key = self._make_cache_key(
                     function_name, arguments, tool_instance
-                )
-                composed_cache_key = self.cache_manager.compose_key(
-                    cache_namespace, cache_version, cache_key
                 )
                 cached_value = self.cache_manager.get(
                     namespace=cache_namespace,

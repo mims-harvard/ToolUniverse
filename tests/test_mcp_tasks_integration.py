@@ -68,25 +68,28 @@ async def _failing_run(arguments, progress=None):
     return {"data": {"result": "success"}}
 
 
-MOCK_LONG_TOOL = lambda: _make_mock_tool(
-    "MockLongRunningTool",
-    "Mock long-running tool",
-    {"type": "object", "properties": {"job_id": {"type": "string"}}, "required": ["job_id"]},
-    _long_running_run,
-)
+def MOCK_LONG_TOOL():
+    return _make_mock_tool(
+        "MockLongRunningTool",
+        "Mock long-running tool",
+        {"type": "object", "properties": {"job_id": {"type": "string"}}, "required": ["job_id"]},
+        _long_running_run,
+    )
 
-MOCK_FAST_TOOL = lambda: _make_mock_tool(
-    "MockFastTool",
-    "Mock fast tool",
-    {"type": "object", "properties": {"param": {"type": "string"}}, "required": ["param"]},
-    _fast_run,
-)
+def MOCK_FAST_TOOL():
+    return _make_mock_tool(
+        "MockFastTool",
+        "Mock fast tool",
+        {"type": "object", "properties": {"param": {"type": "string"}}, "required": ["param"]},
+        _fast_run,
+    )
 
-MOCK_FAILING_TOOL = lambda: _make_mock_tool(
-    "MockFailingTool",
-    "Mock failing tool",
-    {"type": "object", "properties": {"should_fail": {"type": "boolean"}}, "required": []},
-    _failing_run,
+def MOCK_FAILING_TOOL():
+    return _make_mock_tool(
+        "MockFailingTool",
+        "Mock failing tool",
+        {"type": "object", "properties": {"should_fail": {"type": "boolean"}}, "required": []},
+        _failing_run,
 )
 
 
