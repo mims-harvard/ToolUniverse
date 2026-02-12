@@ -392,6 +392,17 @@ Include: What it returns, data source, use case, input format, example
 ❌ Don't use: `"id": "XXXXX"`, `"placeholder": "example_123"`
 ✅ Do use: Real IDs from actual API documentation
 
+### JSON Config Conventions
+
+- The `"type"` field in JSON must match the Python class name from `@register_tool`
+- Include `return_schema` to define tool output structure (not just `return`)
+- Put example inputs in `test_examples` only; **avoid** `examples` blocks inside `parameter`/`return_schema` — they bloat configs and drift from reality
+- For large allow-lists, document values in `description` and enforce in Python (avoid giant schema `enum`)
+- Auto-discovery: tools placed in `src/tooluniverse/` are auto-discovered; no `__init__.py` modification needed
+- Optional: implement `validate_parameters(arguments)` for custom validation
+
+> For the full implementation plan, maintenance checklist, and large API expansion guidance, see [references/implementation-guide.md](references/implementation-guide.md)
+
 ---
 
 ## Testing Strategy
@@ -616,16 +627,19 @@ python3 -c "from tooluniverse import ToolUniverse; tu = ToolUniverse(); tu.load_
 ### Complete Workflow
 
 1. **Create** Python class with `@register_tool`
-2. **Create** JSON config with realistic test_examples
+2. **Create** JSON config with realistic test_examples and `return_schema`
 3. **Add** to `default_config.py` ← CRITICAL
 4. **Generate** wrappers: `tu.load_tools()`
 5. **Test** Level 1 (direct class)
 6. **Test** Level 2 (ToolUniverse interface)
 7. **Test** Level 3 (real API calls)
 8. **Run** `python scripts/test_new_tools.py your_tool -v` ← MANDATORY
-9. **Create** examples file
-10. **Verify** all 3 registration steps
-11. **Document** in verification report
+9. **Run** `python scripts/check_tool_name_lengths.py --test-shortening`
+10. **Create** examples file
+11. **Verify** all 3 registration steps
+12. **Document** in verification report
+
+> For the full development checklist and maintenance phases, see [references/implementation-guide.md](references/implementation-guide.md)
 
 ### Quick Commands
 

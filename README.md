@@ -156,30 +156,10 @@ Please join our [Slack Channel](https://join.slack.com/t/tooluniversehq/shared_i
 - **[AI Agent Skills](https://zitniklab.hms.harvard.edu/ToolUniverse/guide/skills_showcase.html)**: Pre-built research skills for AI agents
 - **[API Keys](https://zitniklab.hms.harvard.edu/ToolUniverse/guide/api_keys.html)**: Configure API keys for external services
 
-<<<<<<< HEAD
-### 🚀 Getting Started
-- **[Quick Start Tutorial](https://zitniklab.hms.harvard.edu/ToolUniverse/quickstart.html)**: 5-minute setup and first query
-- **[Installation](https://zitniklab.hms.harvard.edu/ToolUniverse/installation.html)**: Complete installation options
-- **[Getting Started](https://zitniklab.hms.harvard.edu/ToolUniverse/getting_started.html)**: Step-by-step tutorial
-- **[AI-Tool Protocol](https://zitniklab.hms.harvard.edu/ToolUniverse/guide/interaction_protocol.html)**: Understanding the interaction protocol
-
-### 📖 User Guides
-- **[Loading Tools](https://zitniklab.hms.harvard.edu/ToolUniverse/guide/loading_tools.html)**: Complete Tutorial to loading tools
-- **[Tool Discovery](https://zitniklab.hms.harvard.edu/ToolUniverse/tutorials/finding_tools.html)**: Find tools by keyword, LLM, and embedding search
-- **[Tool Caller](https://zitniklab.hms.harvard.edu/ToolUniverse/guide/tool_caller.html)**: Primary execution engine
-- **[Tool Composition](https://zitniklab.hms.harvard.edu/ToolUniverse/guide/tool_composition.html)**: Chain tools into workflows
-- **[Scientific Workflows](https://zitniklab.hms.harvard.edu/ToolUniverse/guide/scientific_workflows.html)**: Real-world research scenarios
-- **[MCP Support](https://zitniklab.hms.harvard.edu/ToolUniverse/guide/mcp_support.html)**: Model Context Protocol integration
-- **[Logging](https://zitniklab.hms.harvard.edu/ToolUniverse/guide/logging.html)**: Comprehensive logging configuration
-
-### 🛠️ Advanced Features
-- **[MCP Tasks & Async Operations](docs/MCP_TASKS_GUIDE.md)**: Long-running operations with progress tracking, parallel execution, and cancellation support
-=======
 ### 💡 Tutorials & Advanced
 - **[Tutorials Overview](https://zitniklab.hms.harvard.edu/ToolUniverse/guide/index.html)**: Guides for tool discovery, agentic tools, literature search, and more
 - **[AI-Tool Interaction Protocol](https://zitniklab.hms.harvard.edu/ToolUniverse/guide/interaction_protocol.html)**: How AI scientists issue tool requests
 - **[Scientific Workflows](https://zitniklab.hms.harvard.edu/ToolUniverse/guide/scientific_workflows.html)**: Multi-agent tool creation and optimization
->>>>>>> origin/main
 - **[Hooks System](https://zitniklab.hms.harvard.edu/ToolUniverse/guide/hooks/index.html)**: Intelligent output processing
 
 ### 🔧 Expanding ToolUniverse

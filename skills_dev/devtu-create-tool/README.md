@@ -19,7 +19,8 @@ This skill guides you through creating tools for ToolUniverse, covering:
 devtu-create-tool/
 ├── SKILL.md                              # Main skill file with core guidance
 ├── references/                           # Detailed reference documentation
-│   ├── tool-improvement-checklist.md    # 7-phase improvement process
+│   ├── implementation-guide.md          # Full implementation plan & maintenance checklist
+│   ├── tool-improvement-checklist.md    # 7-phase improvement process (detailed)
 │   ├── advanced-patterns.md             # Advanced implementation patterns
 │   └── quick-reference.md               # Quick lookup guide
 └── templates/                            # Ready-to-use templates
@@ -79,7 +80,14 @@ Use this skill when users need to:
 
 ### References Cover
 
-**tool-improvement-checklist.md** (7-phase systematic process):
+**implementation-guide.md** (authoritative source):
+- Guidelines for adding tools (file structure, conventions, auto-discovery)
+- JSON config conventions (`type`, `return_schema`, schema hygiene)
+- Development checklist with all validation steps
+- Full maintenance checklist (7-phase)
+- Large API expansion guidance
+
+**tool-improvement-checklist.md** (7-phase systematic process, detailed):
 - Phase 1: Initial Assessment
 - Phase 2: Functionality Testing
 - Phase 3: Description Improvement
@@ -193,7 +201,7 @@ This skill is designed to work with:
 
 ## Notes
 
-- Based on `tool_implementation_guide.md` from ToolUniverse project
+- The implementation guide (`references/implementation-guide.md`) is the authoritative source, previously maintained as a standalone `tool_implementation_guide.md` at the repo root
 - Follows ToolUniverse best practices and conventions
 - Includes real-world patterns from existing tools
 - Templates are production-ready starting points
@@ -202,5 +210,5 @@ This skill is designed to work with:
 ## Version
 
 Created: 2026-01-31
-Based on: ToolUniverse tool_implementation_guide.md
+Updated: 2026-02-12 — Integrated `tool_implementation_guide.md` into skill as `references/implementation-guide.md`
 Skill Creator Guidelines: Cursor Codex skill-creator

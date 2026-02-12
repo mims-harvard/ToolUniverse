@@ -795,3 +795,12 @@ Quick reference for complete tool improvement:
 - Comprehensive testing
 - Validation checks
 - Documentation updates
+
+**For large API expansions (many endpoints in one category):**
+- [ ] Use a generic REST tool + JSON configs to cover multiple endpoints
+- [ ] Verify real API behavior with live requests (prefer working patterns over docs)
+- [ ] Make `return_schema` match the tool's wrapper and validate upstream payload structure at a useful depth (paging shapes, required IDs, important nested fields)
+- [ ] Use real IDs from search/list endpoints in `test_examples`
+- [ ] Remove tools for endpoints that have no working or replacement API
+- [ ] Design "research-first": include discovery tools (search/list), detail tools (get by ID), and version/release tools for reproducibility
+- [ ] Keep schemas and parameter surfaces LLM-friendly: avoid enormous enums; keep descriptions explicit; enforce strict validation in code
