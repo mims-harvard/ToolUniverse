@@ -373,6 +373,146 @@ git add tests/test_file.py src/module.py
 # Or review with: git add -p
 ```
 
+## What to Push and What NOT to Push
+
+### ✅ ALWAYS Push (Production Code)
+
+**Source Code:**
+- `src/tooluniverse/*.py` - Core library code
+- `tests/*.py` - Test files
+- `examples/*.py` - Example scripts
+- `skills/*/` - Skill files (use `git add -f` if in .gitignore)
+
+**Configuration:**
+- `pyproject.toml` - Project configuration
+- `setup.py` - Package setup
+- `.pre-commit-config.yaml` - Pre-commit configuration
+- `pytest.ini` - Test configuration
+- `.gitignore` - Git ignore rules
+
+**Documentation:**
+- `README.md` - Main documentation
+- `docs/**/*.rst` - Sphinx documentation
+- `docs/**/*.md` - Markdown documentation (NOT temp docs!)
+- `CHANGELOG.md` - Version history
+- `LICENSE` - License file
+
+### ❌ NEVER Push (Temporary/Local Files)
+
+**Temp Folders:**
+- `temp_docs_and_tests/` - Temporary documentation and test files
+- `temp/`, `tmp/` - Any temporary directories
+- `.temp/`, `._temp/` - Hidden temp directories
+
+**Build Artifacts:**
+- `build/`, `dist/` - Package build outputs
+- `*.egg-info/` - Python package metadata
+- `__pycache__/` - Python bytecode cache
+- `*.pyc`, `*.pyo` - Compiled Python files
+
+**IDE and Editor Files:**
+- `.vscode/` - VS Code settings (usually)
+- `.idea/` - PyCharm settings
+- `*.swp`, `*.swo` - Vim swap files
+- `.DS_Store` - macOS finder metadata
+
+**Logs and Data:**
+- `*.log` - Log files
+- `*.sqlite`, `*.db` - Database files (unless example data)
+- `cache/` - Cache directories
+- `*.tmp` - Temporary files
+
+**Environment Files:**
+- `.env` - Environment variables (contains secrets!)
+- `.env.local` - Local environment config
+- `venv/`, `env/` - Virtual environments
+- `.python-version` - Local Python version
+
+**Personal Configuration:**
+- `.claude/` - Claude Code configuration
+- `*.local` - Personal config files
+
+### ⚠️ MAYBE Push (Check First)
+
+**Skills:**
+- `skills/devtu-*/` - Development skills (check `.gitignore`)
+- If creating new devtu skill: use `git add -f skills/devtu-skillname/`
+
+**Data Files:**
+- Small example data: ✅ Push
+- Large datasets: ❌ Don't push (use Git LFS or external storage)
+
+**Configuration:**
+- `.vscode/settings.json` - Only if team shares settings
+- `Makefile` - ✅ Push if used for automation
+
+### How to Check What Will Be Pushed
+
+**Before committing:**
+```bash
+# See what files are staged
+git status --short
+
+# See detailed diff of what will be committed
+git diff --cached
+
+# Check if a file is ignored
+git check-ignore -v filename
+```
+
+**After committing, before pushing:**
+```bash
+# See what commits will be pushed
+git log origin/auto..HEAD
+
+# See files changed in commits that will be pushed
+git diff origin/auto..HEAD --name-status
+```
+
+### Emergency: Accidentally Staged Wrong Files
+
+**Unstage specific file:**
+```bash
+git restore --staged filename
+```
+
+**Unstage all files:**
+```bash
+git restore --staged .
+```
+
+**Undo last commit (keeps changes):**
+```bash
+git reset --soft HEAD~1
+```
+
+**Remove file from git but keep local:**
+```bash
+git rm --cached filename
+```
+
+### Verifying .gitignore Works
+
+**Check if files are ignored:**
+```bash
+# Check specific file
+git check-ignore -v temp_docs_and_tests/somefile.md
+
+# Should output the .gitignore rule that matches
+# Example: .gitignore:152:temp_docs_and_tests/
+```
+
+**List all tracked files (should NOT include temp):**
+```bash
+git ls-files | grep temp_docs_and_tests
+# Should return nothing (0 lines)
+```
+
+**List all ignored files:**
+```bash
+git status --ignored
+```
+
 ## Success Checklist
 
 Before pushing to GitHub, ensure:
