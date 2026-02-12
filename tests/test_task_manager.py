@@ -18,9 +18,23 @@ from tooluniverse.task_progress import TaskProgress
 def mock_tool_universe():
     """Create a mock ToolUniverse instance."""
     mock_tu = Mock()
-    mock_tool = Mock()
-    mock_tool.run = AsyncMock(return_value={"data": {"result": "success"}})
-    mock_tu.all_tool_dict = {"TestTool": mock_tool, "TestTool_Slow": mock_tool}
+
+    # Create separate mock tools to avoid shared state issues
+    mock_tool1 = Mock()
+    mock_tool1.run = AsyncMock(return_value={"data": {"result": "success"}})
+
+    mock_tool2 = Mock()
+    mock_tool2.run = AsyncMock(return_value={"data": {"result": "success"}})
+
+    # Use a real dict to avoid "Mock object is not subscriptable" errors
+    mock_tu.all_tool_dict = {"TestTool": mock_tool1, "TestTool_Slow": mock_tool2}
+
+    # Mock the _get_tool_instance method that TaskManager uses
+    def get_tool_instance(tool_name, cache=True):
+        return mock_tu.all_tool_dict.get(tool_name)
+
+    mock_tu._get_tool_instance = get_tool_instance
+
     return mock_tu
 
 
@@ -178,7 +192,9 @@ async def test_get_result_waits_for_completion(task_manager, mock_tool_universe)
         await asyncio.sleep(0.1)
         return {"data": {"result": "slow_success"}}
 
-    mock_tool_universe.all_tool_dict["TestTool"].run = slow_tool_run
+    # Properly configure the mock to use our async function
+    mock_tool = mock_tool_universe.all_tool_dict["TestTool"]
+    mock_tool.run = AsyncMock(side_effect=slow_tool_run)
 
     task_id = await task_manager.create_task(
         tool_name="TestTool",
