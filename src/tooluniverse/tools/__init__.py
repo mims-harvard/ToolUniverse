@@ -1,7 +1,7 @@
 """
 ToolUniverse Tools
 
-Type-safe Python interface to 1229 scientific tools.
+Type-safe Python interface to 1265 scientific tools.
 Each tool is in its own module for minimal import overhead.
 
 Usage:
@@ -71,6 +71,10 @@ from .BindingDB_get_ligands_by_pdb import BindingDB_get_ligands_by_pdb
 from .BindingDB_get_ligands_by_uniprot import BindingDB_get_ligands_by_uniprot
 from .BindingDB_get_ligands_by_uniprots import BindingDB_get_ligands_by_uniprots
 from .BindingDB_get_targets_by_compound import BindingDB_get_targets_by_compound
+from .BioGRID_get_chemical_interactions import BioGRID_get_chemical_interactions
+from .BioGRID_get_interactions import BioGRID_get_interactions
+from .BioGRID_get_ptms import BioGRID_get_ptms
+from .BioGRID_search_by_pubmed import BioGRID_search_by_pubmed
 from .BioModels_download_model import BioModels_download_model
 from .BioModels_get_model import BioModels_get_model
 from .BioModels_list_files import BioModels_list_files
@@ -686,6 +690,11 @@ from .HPA_get_rna_expression_in_specific_tissues import (
 from .HPA_get_subcellular_location import HPA_get_subcellular_location
 from .HPA_search_genes_by_query import HPA_search_genes_by_query
 from .HypothesisGenerator import HypothesisGenerator
+from .ICD10_get_code_info import ICD10_get_code_info
+from .ICD10_search_codes import ICD10_search_codes
+from .ICD11_browse_hierarchy import ICD11_browse_hierarchy
+from .ICD11_get_entity import ICD11_get_entity
+from .ICD11_search_diseases import ICD11_search_diseases
 from .IMGT_get_gene_info import IMGT_get_gene_info
 from .IMGT_get_sequence import IMGT_get_sequence
 from .IMGT_search_genes import IMGT_search_genes
@@ -702,6 +711,10 @@ from .InterPro_get_protein_domains import InterPro_get_protein_domains
 from .InterPro_search_domains import InterPro_search_domains
 from .JASPAR_get_transcription_factors import JASPAR_get_transcription_factors
 from .KeywordExtractorAgent import KeywordExtractorAgent
+from .LOINC_get_answer_list import LOINC_get_answer_list
+from .LOINC_get_code_details import LOINC_get_code_details
+from .LOINC_search_forms import LOINC_search_forms
+from .LOINC_search_tests import LOINC_search_tests
 from .LabelGenerator import LabelGenerator
 from .LiteratureContextReviewer import LiteratureContextReviewer
 from .LiteratureSearchTool import LiteratureSearchTool
@@ -747,6 +760,10 @@ from .MyGene_get_gene_annotation import MyGene_get_gene_annotation
 from .MyGene_query_genes import MyGene_query_genes
 from .MyVariant_get_variant_annotation import MyVariant_get_variant_annotation
 from .MyVariant_query_variants import MyVariant_query_variants
+from .NCBI_SRA_get_download_urls import NCBI_SRA_get_download_urls
+from .NCBI_SRA_get_run_info import NCBI_SRA_get_run_info
+from .NCBI_SRA_link_to_biosample import NCBI_SRA_link_to_biosample
+from .NCBI_SRA_search_runs import NCBI_SRA_search_runs
 from .NCBI_fetch_accessions import NCBI_fetch_accessions
 from .NCBI_get_sequence import NCBI_get_sequence
 from .NCBI_search_nucleotide import NCBI_search_nucleotide
@@ -957,6 +974,17 @@ from .Pharos_get_disease_targets import Pharos_get_disease_targets
 from .Pharos_get_target import Pharos_get_target
 from .Pharos_get_tdl_summary import Pharos_get_tdl_summary
 from .Pharos_search_targets import Pharos_search_targets
+from .ProteinsPlus_analyze_binding_site_similarity import (
+    ProteinsPlus_analyze_binding_site_similarity,
+)
+from .ProteinsPlus_generate_interaction_diagram import (
+    ProteinsPlus_generate_interaction_diagram,
+)
+from .ProteinsPlus_predict_binding_sites import ProteinsPlus_predict_binding_sites
+from .ProteinsPlus_predict_binding_sites_v3 import ProteinsPlus_predict_binding_sites_v3
+from .ProteinsPlus_profile_structure_quality import (
+    ProteinsPlus_profile_structure_quality,
+)
 from .ProtocolOptimizer import ProtocolOptimizer
 from .PubChem_get_CID_by_SMILES import PubChem_get_CID_by_SMILES
 from .PubChem_get_CID_by_compound_name import PubChem_get_CID_by_compound_name
@@ -1037,6 +1065,11 @@ from .Rfam_get_tree_data import Rfam_get_tree_data
 from .Rfam_id_to_accession import Rfam_id_to_accession
 from .Rfam_search_sequence import Rfam_search_sequence
 from .RxNorm_get_drug_names import RxNorm_get_drug_names
+from .SASBDB_download_data import SASBDB_download_data
+from .SASBDB_get_entry_data import SASBDB_get_entry_data
+from .SASBDB_get_models import SASBDB_get_models
+from .SASBDB_get_scattering_profile import SASBDB_get_scattering_profile
+from .SASBDB_search_entries import SASBDB_search_entries
 from .SAbDab_get_structure import SAbDab_get_structure
 from .SAbDab_get_summary import SAbDab_get_summary
 from .SAbDab_search_structures import SAbDab_search_structures
@@ -1048,13 +1081,21 @@ from .STITCH_get_chemical_protein_interactions import (
 )
 from .STITCH_get_interaction_partners import STITCH_get_interaction_partners
 from .STITCH_resolve_identifier import STITCH_resolve_identifier
+from .STRING_functional_enrichment import STRING_functional_enrichment
+from .STRING_get_interaction_partners import STRING_get_interaction_partners
+from .STRING_get_network import STRING_get_network
 from .STRING_get_protein_interactions import STRING_get_protein_interactions
+from .STRING_map_identifiers import STRING_map_identifiers
+from .STRING_ppi_enrichment import STRING_ppi_enrichment
 from .ScientificTextSummarizer import ScientificTextSummarizer
 from .SemanticScholar_get_pdf_snippets import SemanticScholar_get_pdf_snippets
 from .SemanticScholar_search_papers import SemanticScholar_search_papers
 from .SpliceAI_get_max_delta import SpliceAI_get_max_delta
 from .SpliceAI_predict_pangolin import SpliceAI_predict_pangolin
 from .SpliceAI_predict_splice import SpliceAI_predict_splice
+from .SwissDock_check_job_status import SwissDock_check_job_status
+from .SwissDock_dock_ligand import SwissDock_dock_ligand
+from .SwissDock_retrieve_results import SwissDock_retrieve_results
 from .TRIP_Database_Guidelines_Search import TRIP_Database_Guidelines_Search
 from .TestCaseGenerator import TestCaseGenerator
 from .TestResultsAnalyzer import TestResultsAnalyzer
@@ -1574,6 +1615,7 @@ from .get_xarray_info import get_xarray_info
 from .get_xesmf_info import get_xesmf_info
 from .get_xgboost_info import get_xgboost_info
 from .get_zarr_info import get_zarr_info
+from .ghost_tool import ghost_tool
 from .gnomad_get_gene import gnomad_get_gene
 from .gnomad_get_gene_constraints import gnomad_get_gene_constraints
 from .gnomad_get_region import gnomad_get_region
@@ -1752,6 +1794,10 @@ __all__ = [
     "BindingDB_get_ligands_by_uniprot",
     "BindingDB_get_ligands_by_uniprots",
     "BindingDB_get_targets_by_compound",
+    "BioGRID_get_chemical_interactions",
+    "BioGRID_get_interactions",
+    "BioGRID_get_ptms",
+    "BioGRID_search_by_pubmed",
     "BioModels_download_model",
     "BioModels_get_model",
     "BioModels_list_files",
@@ -2141,6 +2187,11 @@ __all__ = [
     "HPA_get_subcellular_location",
     "HPA_search_genes_by_query",
     "HypothesisGenerator",
+    "ICD10_get_code_info",
+    "ICD10_search_codes",
+    "ICD11_browse_hierarchy",
+    "ICD11_get_entity",
+    "ICD11_search_diseases",
     "IMGT_get_gene_info",
     "IMGT_get_sequence",
     "IMGT_search_genes",
@@ -2157,6 +2208,10 @@ __all__ = [
     "InterPro_search_domains",
     "JASPAR_get_transcription_factors",
     "KeywordExtractorAgent",
+    "LOINC_get_answer_list",
+    "LOINC_get_code_details",
+    "LOINC_search_forms",
+    "LOINC_search_tests",
     "LabelGenerator",
     "LiteratureContextReviewer",
     "LiteratureSearchTool",
@@ -2194,6 +2249,10 @@ __all__ = [
     "MyGene_query_genes",
     "MyVariant_get_variant_annotation",
     "MyVariant_query_variants",
+    "NCBI_SRA_get_download_urls",
+    "NCBI_SRA_get_run_info",
+    "NCBI_SRA_link_to_biosample",
+    "NCBI_SRA_search_runs",
     "NCBI_fetch_accessions",
     "NCBI_get_sequence",
     "NCBI_search_nucleotide",
@@ -2294,6 +2353,11 @@ __all__ = [
     "Pharos_get_target",
     "Pharos_get_tdl_summary",
     "Pharos_search_targets",
+    "ProteinsPlus_analyze_binding_site_similarity",
+    "ProteinsPlus_generate_interaction_diagram",
+    "ProteinsPlus_predict_binding_sites",
+    "ProteinsPlus_predict_binding_sites_v3",
+    "ProteinsPlus_profile_structure_quality",
     "ProtocolOptimizer",
     "PubChem_get_CID_by_SMILES",
     "PubChem_get_CID_by_compound_name",
@@ -2362,6 +2426,11 @@ __all__ = [
     "Rfam_id_to_accession",
     "Rfam_search_sequence",
     "RxNorm_get_drug_names",
+    "SASBDB_download_data",
+    "SASBDB_get_entry_data",
+    "SASBDB_get_models",
+    "SASBDB_get_scattering_profile",
+    "SASBDB_search_entries",
     "SAbDab_get_structure",
     "SAbDab_get_summary",
     "SAbDab_search_structures",
@@ -2371,13 +2440,21 @@ __all__ = [
     "STITCH_get_chemical_protein_interactions",
     "STITCH_get_interaction_partners",
     "STITCH_resolve_identifier",
+    "STRING_functional_enrichment",
+    "STRING_get_interaction_partners",
+    "STRING_get_network",
     "STRING_get_protein_interactions",
+    "STRING_map_identifiers",
+    "STRING_ppi_enrichment",
     "ScientificTextSummarizer",
     "SemanticScholar_get_pdf_snippets",
     "SemanticScholar_search_papers",
     "SpliceAI_get_max_delta",
     "SpliceAI_predict_pangolin",
     "SpliceAI_predict_splice",
+    "SwissDock_check_job_status",
+    "SwissDock_dock_ligand",
+    "SwissDock_retrieve_results",
     "TRIP_Database_Guidelines_Search",
     "TestCaseGenerator",
     "TestResultsAnalyzer",
@@ -2815,6 +2892,7 @@ __all__ = [
     "get_xesmf_info",
     "get_xgboost_info",
     "get_zarr_info",
+    "ghost_tool",
     "gnomad_get_gene",
     "gnomad_get_gene_constraints",
     "gnomad_get_region",
