@@ -274,11 +274,12 @@ class TestRunParameterPassing:
             function_calls,
             use_cache=True,
             max_workers=4,
+            return_message=True,
         )
 
         assert messages[0]["role"] == "assistant"
 
-        tool_messages = [msg for msg in messages[1:] if msg["role"] == "tool"]
+        tool_messages = [msg for msg in messages[1:] if msg.get("role") == "tool"]
         assert len(tool_messages) == len(function_calls)
 
         observed_values = [
