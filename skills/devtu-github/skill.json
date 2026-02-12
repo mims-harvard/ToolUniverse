@@ -1,0 +1,31 @@
+{
+  "name": "devtu-github",
+  "version": "1.0.0",
+  "description": "Debug and fix GitHub CI failures, test issues, and pre-commit hook problems in ToolUniverse development",
+  "trigger_patterns": [
+    "github ci fail",
+    "test fail",
+    "pre-commit",
+    "fix ci",
+    "push fail",
+    "linting error",
+    "tests not passing"
+  ],
+  "author": "ToolUniverse Team",
+  "tags": ["development", "testing", "ci", "github", "debugging"],
+  "instructions_file": "instructions.md",
+  "examples": [
+    {
+      "user": "The GitHub CI is failing with test errors",
+      "assistant": "I'll help you debug and fix the CI failures. Let me start by activating pre-commit hooks and running tests locally."
+    },
+    {
+      "user": "I need to fix linting errors before committing",
+      "assistant": "I'll activate the pre-commit hooks which will automatically run linting checks on commit."
+    },
+    {
+      "user": "Tests are failing with KeyError in messages",
+      "assistant": "This is likely a return_message issue. Let me check if tu.run() calls need return_message=True parameter."
+    }
+  ]
+}
