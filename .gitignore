@@ -150,3 +150,6 @@ src/tooluniverse/web_tools/
 # Auto-generated tool files (moved to temporary folder)
 src/tooluniverse/tools_generated/FILE_ORGANIZATION_LIST.md
 temp_docs_and_tests/
+
+# Claude Code configuration
+.claude/

@@ -2453,6 +2453,9 @@ class ToolUniverse:
                 cache_key = self._make_cache_key(
                     function_name, arguments, tool_instance
                 )
+                composed_cache_key = self.cache_manager.compose_key(
+                    cache_namespace, cache_version, cache_key
+                )
                 cached_value = self.cache_manager.get(
                     namespace=cache_namespace,
                     version=cache_version,
@@ -2622,7 +2625,6 @@ class ToolUniverse:
         cache_namespace = None
         cache_version = None
         cache_key = None
-        composed_cache_key = None
 
         cache_enabled = (
             use_cache and self.cache_manager is not None and self.cache_manager.enabled
