@@ -221,14 +221,14 @@ def test_batch_run_deduplicates_work(tool_config):
                 {"name": "CountingToolTest", "arguments": {"value": 2}},
             ]
 
-            messages = tu.run(batch_calls, use_cache=True, max_workers=4)
+            messages = tu.run(batch_calls, use_cache=True, max_workers=4, return_message=True)
 
             assert CountingTool.call_count == 2  # one execution per unique arguments
 
             tool_payloads = [
                 json.loads(msg["content"])["content"]
                 for msg in messages[1:]
-                if msg["role"] == "tool"
+                if msg.get("role") == "tool"
             ]
             assert [payload["value"] for payload in tool_payloads] == [1, 1, 2, 2]
 
