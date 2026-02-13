@@ -1,199 +1,215 @@
 """
-WFGY PromptBundle Tool (no-LLM, no-external-call)
+WFGY Prompt Bundle Tool for ToolUniverse
 
-This tool provides a structured "prompt bundle" for diagnosing LLM/RAG failures
-using the WFGY 16 Problem Map, without calling any LLM API.
+This tool does NOT call any LLM.
+It returns a reusable prompt bundle (system + user template) for triaging LLM/RAG issues
+and mapping them to WFGY ProblemMap entries "No.1" ... "No.16".
 """
 
 from __future__ import annotations
 
-from dataclasses import dataclass
-from typing import Any, Dict, Optional
+from typing import Any, Dict, List
+
+from tooluniverse.base_tool import BaseTool
+from tooluniverse.tool_registry import register_tool
 
 
-WFGY_PROBLEM_MAP_URL = "https://github.com/onestardao/WFGY/tree/main/ProblemMap#readme"
-WFGY_REPO_URL = "https://github.com/onestardao/WFGY"
-WFGY_DOI_URL = "https://doi.org/10.5281/zenodo.15320188"
-WFGY_TXTOS_URL = "https://raw.githubusercontent.com/onestardao/WFGY/main/OS/TXTOS.txt"
-WFGY_PROBLEM_MAP_RAW_URL = "https://raw.githubusercontent.com/onestardao/WFGY/main/ProblemMap/README.md"
-
-
-DEFAULT_EXAMPLE_1 = """Example 1: retrieval hallucination (No.1 style)
-
-Context:
-I have a RAG chatbot that answers questions from a product FAQ. The FAQ only covers billing rules and does NOT mention crypto.
-
-User prompt:
-"Can I pay my subscription with Bitcoin?"
-
-Retrieved context:
-- "We only accept major credit cards and PayPal."
-- "All payments are processed in USD."
-
-Model answer:
-"Yes, you can pay with Bitcoin. We support several cryptocurrencies..."
-
-Observation:
-The retrieved chunks do not support the answer, yet the model confidently invents info.
-"""
-
-DEFAULT_EXAMPLE_2 = """Example 2: bootstrap ordering / infra race (No.14 style)
-
-Context:
-RAG API has api-gateway, rag-worker, and vector-db (Qdrant). Local docker compose works.
-
-Production:
-Kubernetes deploy. Right after fresh deploy, api-gateway returns 500s for a few minutes.
-Logs show timeouts from api-gateway to vector-db. After 5-10 minutes, it becomes normal.
-
-Observation:
-Likely startup race / readiness / dependency ordering problem.
-"""
-
-DEFAULT_EXAMPLE_3 = """Example 3: secrets / config drift around first deploy (No.16 style)
-
-Context:
-New env var SECRET_RAG_KEY required by middleware.
-
-Local:
-Developers set it in .env, works.
-
-Production:
-Deployed new version but forgot to add SECRET_RAG_KEY to prod environment.
-Requests fail with "missing secret". Hot patch fixes it, but similar issues keep happening.
-
-Observation:
-First-deploy failure due to missing config/secret drift.
-"""
-
-
-def _safe_str(x: Any, max_len: int) -> str:
-    s = "" if x is None else str(x)
-    s = s.replace("\r\n", "\n").replace("\r", "\n")
-    s = s.strip()
-    if len(s) > max_len:
-        return s[: max_len - 12] + "\n...[truncated]"
-    return s
-
-
-def build_prompt_bundle(bug_report: str, max_chars: int = 12000) -> Dict[str, Any]:
-    """
-    Build a prompt bundle that a user can paste into any strong LLM.
-    This function never calls external services.
-    """
-    bug_report = _safe_str(bug_report, max_len=6000)
-
-    system_prompt = """You are an LLM debugger that follows the WFGY 16 Problem Map.
-
-Goal:
-Given a description of a bug or failure in an LLM/RAG/tool pipeline, map it to the closest Problem Map number (No.1 to No.16),
-explain why, and propose a minimal fix.
-
-Output contract:
-1) Return exactly one primary Problem Map number: "Primary: No.X"
-2) Optionally return one secondary candidate: "Secondary: No.Y (optional)"
-3) Explain the reasoning in plain language (short but concrete)
-4) Provide a minimal patch plan (steps the engineer can actually do)
-5) Provide a verification checklist (how to confirm the fix)
-
-Rules:
-- Prefer minimal structural patches over generic advice.
-- Do not invent logs or facts. If missing, ask for the minimal missing evidence.
-- If multiple failures exist, pick the most root-cause-like failure mode as Primary.
-
-User will provide:
-- Bug report (symptoms, prompt, retrieved context if any, answer, logs, environment)
-"""
-
-    user_template = f"""Bug report:
-{bug_report}
-
-Now do:
-- Primary: No.X
-- Secondary: No.Y (optional)
-- Why this mapping
-- Minimal fix plan
-- Verification checklist
-- One line: "Open ProblemMap: {WFGY_PROBLEM_MAP_URL}"
-"""
-
-    how_to_use = [
-        "Paste the 'system_prompt' and 'user_prompt' into any strong LLM (ChatGPT/Claude/etc.).",
-        "If you have RAG, include: user prompt, retrieved chunks, model answer, and any logs.",
-        "Ask the model to follow the output contract exactly (Primary No.X, minimal patch plan, verification checklist).",
-        f"Then open the WFGY ProblemMap for the full fix details: {WFGY_PROBLEM_MAP_URL}",
-    ]
-
-    bundle: Dict[str, Any] = {
-        "mode": "prompt_bundle_only",
-        "system_prompt": system_prompt,
-        "user_prompt": user_template,
-        "how_to_use": how_to_use,
-        "links": {
-            "problem_map": WFGY_PROBLEM_MAP_URL,
-            "repo": WFGY_REPO_URL,
-            "doi": WFGY_DOI_URL,
-            "txtos_raw": WFGY_TXTOS_URL,
-            "problem_map_raw": WFGY_PROBLEM_MAP_RAW_URL,
+TOOL_CONFIG: Dict[str, Any] = {
+    "name": "wfgy_promptbundle_triage",
+    "type": "WFGYPromptBundleTool",
+    "description": (
+        "Return a pure prompt bundle (no LLM call) to triage an LLM/RAG failure and map it "
+        "to WFGY ProblemMap No.1..No.16, with a minimal-fix checklist and reference links."
+    ),
+    "parameter": {
+        "type": "object",
+        "properties": {
+            "bug_description": {
+                "type": "string",
+                "description": (
+                    "Short description of the LLM/RAG failure. Include prompt, retrieved context, "
+                    "model answer, and logs if available."
+                ),
+            },
+            "audience": {
+                "type": "string",
+                "description": "Target audience for the returned prompt bundle.",
+                "enum": ["beginner", "engineer", "infra"],
+                "default": "engineer",
+            },
         },
-        "examples": [DEFAULT_EXAMPLE_1, DEFAULT_EXAMPLE_2, DEFAULT_EXAMPLE_3],
-        "notes": [
-            "This tool does not call any LLM API.",
-            "It provides a reusable prompt bundle for triage and diagnosis.",
-            "Primary/Secondary mapping references WFGY ProblemMap No.1..No.16.",
-        ],
-    }
-
-    # Enforce overall size limit.
-    compact = str(bundle)
-    if len(compact) > max_chars:
-        # If oversized, drop examples first.
-        bundle["examples"] = ["[omitted: bundle size limit]"]
-    return bundle
-
-
-@dataclass
-class WFGYPromptBundleTool:
-    """
-    Minimal ToolUniverse-compatible wrapper.
-
-    Some ToolUniverse setups instantiate tools by class name.
-    We provide a simple 'run' method returning a JSON-serializable dict.
-    """
-
-    name: str = "WFGY_ProblemMap_PromptBundle"
-
-    def run(self, bug_report: Optional[str] = None, max_chars: int = 12000) -> Dict[str, Any]:
-        """
-        Run the tool.
-
-        Args:
-            bug_report: A plain text description of the LLM/RAG failure.
-            max_chars: Safety cap for output size.
-
-        Returns:
-            Dict payload with prompt bundle and links.
-        """
-        bug_report_text = _safe_str(bug_report, max_len=6000)
-        if not bug_report_text:
-            bug_report_text = (
-                "No bug_report provided.\n\n"
-                "Please paste:\n"
-                "- user prompt\n"
-                "- retrieved context (if any)\n"
-                "- model answer\n"
-                "- logs / environment details\n"
-            )
-
-        payload = {
-            "status": "success",
-            "tool": self.name,
-            "result": build_prompt_bundle(bug_report_text, max_chars=max_chars),
+        "required": ["bug_description"],
+    },
+    "return_schema": {
+        "type": "object",
+        "description": "Structured prompt bundle for triage (no tool chaining required).",
+        "properties": {
+            "success": {
+                "type": "boolean",
+                "description": "Whether the prompt bundle was created successfully.",
+            },
+            "status": {
+                "type": "string",
+                "description": "Text status code, e.g. 'ok' or 'error'.",
+            },
+            "tool": {
+                "type": "string",
+                "description": "Tool name used for this response.",
+            },
+            "result": {
+                "type": "object",
+                "description": "Prompt bundle payload or error information.",
+            },
+        },
+    },
+    "test_examples": [
+        {
+            "bug_description": (
+                "RAG chatbot answers with facts not present in retrieved context. "
+                "Retrieved chunks talk about credit cards only, but model claims Bitcoin is supported."
+            ),
+            "audience": "engineer",
         }
-        return payload
+    ],
+}
 
 
-# Optional module-level convenience for frameworks that call a function directly.
-def wfgy_promptbundle(bug_report: Optional[str] = None, max_chars: int = 12000) -> Dict[str, Any]:
-    tool = WFGYPromptBundleTool()
-    return tool.run(bug_report=bug_report, max_chars=max_chars)
+@register_tool("WFGYPromptBundleTool", config=TOOL_CONFIG)
+class WFGYPromptBundleTool(BaseTool):
+    """Return a system+user prompt bundle for WFGY ProblemMap triage."""
+
+    def run(self, arguments: Dict[str, Any] | None = None) -> Dict[str, Any]:
+        arguments = arguments or {}
+
+        bug = (arguments.get("bug_description") or "").strip()
+        if not bug:
+            return {
+                "success": False,
+                "status": "error",
+                "tool": TOOL_CONFIG["name"],
+                "result": {"error": "bug_description is required"},
+            }
+
+        audience = (arguments.get("audience") or "engineer").strip().lower()
+        if audience not in {"beginner", "engineer", "infra"}:
+            audience = "engineer"
+
+        links: Dict[str, str] = {
+            "wfgy_repo": "https://github.com/onestardao/WFGY",
+            "problem_map": "https://github.com/onestardao/WFGY/tree/main/ProblemMap#readme",
+            "problem_map_readme_raw": (
+                "https://raw.githubusercontent.com/onestardao/WFGY/main/ProblemMap/README.md"
+            ),
+            "txtos_raw": (
+                "https://raw.githubusercontent.com/onestardao/WFGY/main/OS/TXTOS.txt"
+            ),
+            # Main technical report DOI for WFGY 1.0
+            "doi": "https://doi.org/10.5281/zenodo.15320188",
+        }
+
+        system_prompt = self._build_system_prompt(audience=audience, links=links)
+        user_prompt = self._build_user_prompt(bug_description=bug)
+
+        examples: List[str] = [
+            "Example A (No.1 style): retrieval hallucination – retrieved chunks deny feature X, model claims feature X is supported.",
+            "Example B (No.14 style): bootstrap ordering / infra race – fresh deploy causes temporary 500s until vector DB or search stack is ready.",
+            "Example C (No.16 style): secret / config drift – missing env var after first deploy causes runtime failure, fixed by hot patch.",
+        ]
+
+        return {
+            "success": True,
+            "status": "ok",
+            "tool": TOOL_CONFIG["name"],
+            "result": {
+                "mode": "prompt_bundle_only",
+                "system_prompt": system_prompt,
+                "user_prompt": user_prompt,
+                "how_to_use": [
+                    "Copy system_prompt into your LLM as the system / instruction message.",
+                    "Copy user_prompt and replace the INCIDENT block with your real incident report.",
+                    "Ask the LLM to output: primary WFGY ProblemMap No.X, optional secondary No.Y, minimal fix steps, and verification steps.",
+                    "Open the ProblemMap link in the response for concrete remediation details.",
+                ],
+                "checklist": [
+                    "Include the exact user prompt that triggered the failure.",
+                    "Include retrieved context (top-k) verbatim.",
+                    "Include the model answer verbatim.",
+                    "Include logs / errors / timestamps if available.",
+                    "State what the correct or expected behavior should be.",
+                ],
+                "links": links,
+                "examples": examples,
+            },
+        }
+
+    @staticmethod
+    def _build_system_prompt(audience: str, links: Dict[str, str]) -> str:
+        if audience == "beginner":
+            tone = "Use simple language. Avoid jargon. Give concrete, small steps."
+        elif audience == "infra":
+            tone = "Be strict and ops-focused. Include rollout, gating, monitoring, and rollback checks."
+        else:
+            tone = "Be concise and diagnostic. Prefer minimal structural patches over vague advice."
+
+        lines: List[str] = [
+            "You are a triage assistant for LLM and RAG failures.",
+            "Your job is to map each incident to exactly one primary WFGY ProblemMap code: No.1 .. No.16.",
+            "You may optionally list ONE secondary candidate if it is extremely close, but always choose a single primary.",
+            "",
+            "Output format (strict):",
+            "1) Primary: No.X",
+            "2) Secondary (optional): No.Y or 'None'",
+            "3) Why this mapping (3–7 bullet points)",
+            "4) Minimal fix (concrete, ordered steps, not generic advice)",
+            "5) Verification (how to prove the fix worked in practice)",
+            "6) References (plain-text links to ProblemMap / DOI only)",
+            "",
+            f"Style: {tone}",
+            "",
+            "Important behavioral rules:",
+            "- Stay within WFGY ProblemMap No.1..No.16, do not invent new codes.",
+            "- Prefer structural and configuration-level fixes over prompt-only tuning.",
+            "- Be honest about uncertainty; if the mapping is not perfect, say so and explain.",
+            "",
+            "References:",
+            f"- WFGY ProblemMap overview: {links['problem_map']}",
+            f"- Main WFGY 1.0 technical report (PDF, DOI): {links['doi']}",
+        ]
+        return "\n".join(lines)
+
+    @staticmethod
+    def _build_user_prompt(bug_description: str) -> str:
+        lines: List[str] = [
+            "Here is an incident report from an LLM or RAG system.",
+            "Diagnose it using WFGY ProblemMap No.1..No.16.",
+            "",
+            "INCIDENT REPORT START",
+            bug_description,
+            "INCIDENT REPORT END",
+            "",
+            "Remember:",
+            "- Pick exactly one primary No.X.",
+            "- Optionally mention one secondary No.Y if very close.",
+            "- Propose a minimal structural fix and a verification plan.",
+        ]
+        return "\n".join(lines)
+
+
+def wfgy_promptbundle_triage(bug_description: str, audience: str = "engineer") -> Dict[str, Any]:
+    """
+    Convenience function so users can call this tool directly in Python
+    without going through the full ToolUniverse runtime.
+
+    Example:
+        from wfgy_promptbundle_tool import wfgy_promptbundle_triage
+
+        bundle = wfgy_promptbundle_triage(
+            bug_description=\"\"\"
+            RAG chatbot answers with facts not in retrieved context.
+            Chunks say "credit cards only", model claims "Bitcoin supported".
+            \"\"\",
+            audience="engineer",
+        )
+    """
+    tool = WFGYPromptBundleTool(TOOL_CONFIG)
+    return tool.run({"bug_description": bug_description, "audience": audience})
