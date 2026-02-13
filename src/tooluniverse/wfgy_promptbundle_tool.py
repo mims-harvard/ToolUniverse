@@ -138,13 +138,13 @@ class WFGYPromptBundleTool:
                 "3) Why this mapping (3-7 bullets)",
                 "4) Minimal fix (concrete, ordered steps)",
                 "5) Verification (how to prove it is fixed)",
-                "6) Links (ProblemMap, DOI) in plain text",
+                "6) Links (ProblemMap / WFGY repo) in plain text",
                 "",
                 f"Style: {tone}",
                 "",
                 "References:",
                 f"- ProblemMap: {links['problem_map']}",
-                f"- DOI: {links['doi']}",
+                f"- WFGY repo: {links['wfgy_repo']}",
             ]
         )
 
