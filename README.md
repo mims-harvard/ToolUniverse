@@ -29,17 +29,19 @@
     }
   }
 }
-```
+````
 
 </td>
 <td width="45%" valign="top">
 
 **2️⃣ Install Agent Skills**
+
 ```bash
 npx skills add mims-harvard/ToolUniverse
 ```
 
 **3️⃣ Install Package** (Optional)
+
 ```bash
 uv pip install tooluniverse
 ```
@@ -50,8 +52,8 @@ uv pip install tooluniverse
 
 > **Guided Setup:** Install skills first with `npx skills add mims-harvard/ToolUniverse`, then ask your AI coding agent **"setup tooluniverse"**. The `setup-tooluniverse` skill will walk you through MCP configuration, API keys, and validation step by step.
 
-- **[Python Developer Guide](https://zitniklab.hms.harvard.edu/ToolUniverse/guide/python_guide.html)**: Build AI scientists with the Python SDK
-- **[AI Agent Platforms](https://zitniklab.hms.harvard.edu/ToolUniverse/guide/building_ai_scientists/index.html)**: Set up ToolUniverse with Cursor, Claude, Windsurf, Gemini, and more
+* **[Python Developer Guide](https://zitniklab.hms.harvard.edu/ToolUniverse/guide/python_guide.html)**: Build AI scientists with the Python SDK
+* **[AI Agent Platforms](https://zitniklab.hms.harvard.edu/ToolUniverse/guide/building_ai_scientists/index.html)**: Set up ToolUniverse with Cursor, Claude, Windsurf, Gemini, and more
 
 ## 🤖 Building AI Scientists with ToolUniverse in 5 minutes
 
@@ -73,21 +75,21 @@ ToolUniverse addresses this challenge by providing a standardized ecosystem that
 
 **Key Features:**
 
-- [**AI-Tool Interaction Protocol**](https://zitniklab.hms.harvard.edu/ToolUniverse/guide/interaction_protocol.html): Standardized interface governing how AI scientists issue tool requests and receive results
-- [**Universal AI Model Support**](https://zitniklab.hms.harvard.edu/ToolUniverse/guide/building_ai_scientists/index.html): Works with any LLM, AI agent, or large reasoning model (GPT5, Claude, Gemini, Qwen, Deepseek, open models)
-- [**OpenRouter Integration**](https://zitniklab.hms.harvard.edu/ToolUniverse/guide/openrouter_support.html): Access 100+ models from OpenAI, Anthropic, Google, Qwen, and more through a single API
-- [**MCP Tasks for Async Operations**](docs/MCP_TASKS_GUIDE.md): Native support for long-running operations (protein docking, molecular simulations) with automatic progress tracking, parallel execution, and cancellation
-- [**Easy to Load & Find & Call Tool**](https://zitniklab.hms.harvard.edu/ToolUniverse/guide/index.html) (*[WebService](https://aiscientist.tools/), [PythonAPI](https://zitniklab.hms.harvard.edu/ToolUniverse/api/modules.html), [MCP](https://zitniklab.hms.harvard.edu/ToolUniverse/guide/building_ai_scientists/mcp_support.html)*): Maps natural-language descriptions to tool specifications and executes tools with structured results
-- [**Tool Composition & Scientific Workflows**](https://zitniklab.hms.harvard.edu/ToolUniverse/guide/tool_composition.html): Chains tools for sequential or parallel execution in self-directed scientific workflows
-- [**Continuous Expansion**](https://zitniklab.hms.harvard.edu/ToolUniverse/expand_tooluniverse/index.html): New tools can be easily registered locally or remotely without additional configuration
-- [**Multi-Agent Tool Creation & Optimization**](https://zitniklab.hms.harvard.edu/ToolUniverse/guide/scientific_workflows.html): Multi-agent powered tool construction and iterative tool optimization
-- [**20+ Pre-Built AI Scientist Skills**](https://zitniklab.hms.harvard.edu/ToolUniverse/guide/skills_showcase.html): End-to-end research workflows for drug discovery, precision oncology, rare disease diagnosis, pharmacovigilance, and more — installable with one command
-- [**Compact Mode**](https://zitniklab.hms.harvard.edu/ToolUniverse/guide/building_ai_scientists/compact_mode.html): Reduces 1000+ tools to 4-5 core discovery tools, saving ~99% context window while maintaining full capability
-- [**Two-Tier Result Caching**](https://zitniklab.hms.harvard.edu/ToolUniverse/guide/cache_system.html): In-memory LRU + SQLite persistence with per-tool fingerprinting for 10x speedup, offline support, and reproducibility
-- [**Literature Search Across 11+ Databases**](https://zitniklab.hms.harvard.edu/ToolUniverse/guide/literature_search_tools_tutorial.html): Unified search across PubMed, Semantic Scholar, ArXiv, BioRxiv, Europe PMC, and more with AI-powered query expansion
-- [**Human Expert Feedback**](https://zitniklab.hms.harvard.edu/ToolUniverse/guide/expert_feedback.html): Human-in-the-loop consultation where AI agents can escalate to domain experts in real-time via a web dashboard
-- [**Scientific Visualization**](https://zitniklab.hms.harvard.edu/ToolUniverse/guide/visualization_tutorial.html): Interactive 3D protein structures and 2D/3D molecule visualizations rendered as HTML
-- [**Make Your Data Agent-Searchable**](https://zitniklab.hms.harvard.edu/ToolUniverse/guide/make_your_data_agent_searchable.html): Turn any text or JSON data into an agent-searchable collection with one CLI command, shareable on HuggingFace
+* [**AI-Tool Interaction Protocol**](https://zitniklab.hms.harvard.edu/ToolUniverse/guide/interaction_protocol.html): Standardized interface governing how AI scientists issue tool requests and receive results
+* [**Universal AI Model Support**](https://zitniklab.hms.harvard.edu/ToolUniverse/guide/building_ai_scientists/index.html): Works with any LLM, AI agent, or large reasoning model (GPT5, Claude, Gemini, Qwen, Deepseek, open models)
+* [**OpenRouter Integration**](https://zitniklab.hms.harvard.edu/ToolUniverse/guide/openrouter_support.html): Access 100+ models from OpenAI, Anthropic, Google, Qwen, and more through a single API
+* [**MCP Tasks for Async Operations**](docs/MCP_TASKS_GUIDE.md): Native support for long-running operations (protein docking, molecular simulations) with automatic progress tracking, parallel execution, and cancellation
+* [**Easy to Load & Find & Call Tool**](https://zitniklab.hms.harvard.edu/ToolUniverse/guide/index.html) (*[WebService](https://aiscientist.tools/), [PythonAPI](https://zitniklab.hms.harvard.edu/ToolUniverse/api/modules.html), [MCP](https://zitniklab.hms.harvard.edu/ToolUniverse/guide/building_ai_scientists/mcp_support.html)*): Maps natural-language descriptions to tool specifications and executes tools with structured results
+* [**Tool Composition & Scientific Workflows**](https://zitniklab.hms.harvard.edu/ToolUniverse/guide/tool_composition.html): Chains tools for sequential or parallel execution in self-directed scientific workflows
+* [**Continuous Expansion**](https://zitniklab.hms.harvard.edu/ToolUniverse/expand_tooluniverse/index.html): New tools can be easily registered locally or remotely without additional configuration
+* [**Multi-Agent Tool Creation & Optimization**](https://zitniklab.hms.harvard.edu/ToolUniverse/guide/scientific_workflows.html): Multi-agent powered tool construction and iterative tool optimization
+* [**20+ Pre-Built AI Scientist Skills**](https://zitniklab.hms.harvard.edu/ToolUniverse/guide/skills_showcase.html): End-to-end research workflows for drug discovery, precision oncology, rare disease diagnosis, pharmacovigilance, and more — installable with one command
+* [**Compact Mode**](https://zitniklab.hms.harvard.edu/ToolUniverse/guide/building_ai_scientists/compact_mode.html): Reduces 1000+ tools to 4-5 core discovery tools, saving ~99% context window while maintaining full capability
+* [**Two-Tier Result Caching**](https://zitniklab.hms.harvard.edu/ToolUniverse/guide/cache_system.html): In-memory LRU + SQLite persistence with per-tool fingerprinting for 10x speedup, offline support, and reproducibility
+* [**Literature Search Across 11+ Databases**](https://zitniklab.hms.harvard.edu/ToolUniverse/guide/literature_search_tools_tutorial.html): Unified search across PubMed, Semantic Scholar, ArXiv, BioRxiv, Europe PMC, and more with AI-powered query expansion
+* [**Human Expert Feedback**](https://zitniklab.hms.harvard.edu/ToolUniverse/guide/expert_feedback.html): Human-in-the-loop consultation where AI agents can escalate to domain experts in real-time via a web dashboard
+* [**Scientific Visualization**](https://zitniklab.hms.harvard.edu/ToolUniverse/guide/visualization_tutorial.html): Interactive 3D protein structures and 2D/3D molecule visualizations rendered as HTML
+* [**Make Your Data Agent-Searchable**](https://zitniklab.hms.harvard.edu/ToolUniverse/guide/make_your_data_agent_searchable.html): Turn any text or JSON data into an agent-searchable collection with one CLI command, shareable on HuggingFace
 
 <p align="center">
   <img src="https://github.com/user-attachments/assets/eb15bd7c-4e73-464b-8d65-733877c96a51" width="888" />
@@ -95,23 +97,30 @@ ToolUniverse addresses this challenge by providing a standardized ecosystem that
 
 ## 🔧 Usage & Integration
 
-- **[Python SDK](https://zitniklab.hms.harvard.edu/ToolUniverse/guide/python_guide.html)**: Load, find, and call 1000+ tools via Python
-- **[MCP Support](https://zitniklab.hms.harvard.edu/ToolUniverse/guide/building_ai_scientists/mcp_support.html)**: Model Context Protocol integration for AI agents
-- **[MCPB](https://zitniklab.hms.harvard.edu/ToolUniverse/guide/building_ai_scientists/mcpb_introduction.html)**: Standalone executable MCP server bundle
-- **[HTTP API](https://zitniklab.hms.harvard.edu/ToolUniverse/guide/http_api.html)**: Deploy remotely and access all methods with minimal client dependencies
-
+* **[Python SDK](https://zitniklab.hms.harvard.edu/ToolUniverse/guide/python_guide.html)**: Load, find, and call 1000+ tools via Python
+* **[MCP Support](https://zitniklab.hms.harvard.edu/ToolUniverse/guide/building_ai_scientists/mcp_support.html)**: Model Context Protocol integration for AI agents
+* **[MCPB](https://zitniklab.hms.harvard.edu/ToolUniverse/guide/building_ai_scientists/mcpb_introduction.html)**: Standalone executable MCP server bundle
+* **[HTTP API](https://zitniklab.hms.harvard.edu/ToolUniverse/guide/http_api.html)**: Deploy remotely and access all methods with minimal client dependencies
 
 ## 🚀 AI Scientists Projects Powered by ToolUniverse
 
 *Building your own project with ToolUniverse? We'd love to feature it here! Submit your project via [GitHub Pull Request](https://github.com/mims-harvard/ToolUniverse/pulls) or contact us.*
 
 ---
-**TxAgent: AI Agent for Therapeutic Reasoning** [[Project]](https://zitniklab.hms.harvard.edu/TxAgent) [[Paper]](https://arxiv.org/pdf/2503.10970) [[PiPy]](https://pypi.org/project/txagent/) [[Github]](https://github.com/mims-harvard/TxAgent) [[HuggingFace]](https://huggingface.co/collections/mims-harvard/txagent-67c8e54a9d03a429bb0c622c)
-> **TxAgent** is an AI agent for therapeutic reasoning that leverages ToolUniverse's comprehensive scientific tool ecosystem to solve complex therapeutic reasoning tasks. 
 
+**TxAgent: AI Agent for Therapeutic Reasoning** [[Project]](https://zitniklab.hms.harvard.edu/TxAgent) [[Paper]](https://arxiv.org/pdf/2503.10970) [[PiPy]](https://pypi.org/project/txagent/) [[Github]](https://github.com/mims-harvard/TxAgent) [[HuggingFace]](https://huggingface.co/collections/mims-harvard/txagent-67c8e54a9d03a429bb0c622c)
+
+> **TxAgent** is an AI agent for therapeutic reasoning that leverages ToolUniverse's comprehensive scientific tool ecosystem to solve complex therapeutic reasoning tasks.
 
 ---
+
 **Hypercholesterolemia Drug Discovery** [[Tutorial]](https://zitniklab.hms.harvard.edu/ToolUniverse/guide/tooluniverse_case_study.html) [[Code]](https://colab.research.google.com/drive/1UwJ6RwyUoqI5risKQ365EeFdDQWOeOCv?usp=sharing)
+
+---
+
+**WFGY ProblemMap LLM Debugger (RAG / infra triage)** [[Project]](https://github.com/onestardao/WFGY/tree/main/ProblemMap#readme) [[GitHub]](https://github.com/onestardao/WFGY)
+
+> **WFGY ProblemMap** is an open-source, MIT-licensed framework for debugging LLM and RAG systems across 16 failure modes (retrieval hallucination, bootstrap ordering races, config drift, and more). This project adds a ToolUniverse-compatible prompt bundle tool that maps incidents to ProblemMap codes (No.1–No.16) and suggests minimal structural fixes that engineers can apply in their own stacks.
 
 
 ## 🤝 Contribution and Community
@@ -123,56 +132,58 @@ Please join our [Slack Channel](https://join.slack.com/t/tooluniversehq/shared_i
 
 **Get Involved:**
 
-- **Report Issues**: [GitHub Issues](https://github.com/mims-harvard/ToolUniverse/issues)
-- **Join Discussions**: [Slack Channel](https://github.com/mims-harvard/ToolUniverse/discussions)
-- **Contact**: Reach out to [Shanghua Gao](shanghuagao@gmail.com)/[Marinka Zitnik](marinka@hms.harvard.edu)
-- **Contribute**: See our [Contributing Guide](https://zitniklab.hms.harvard.edu/ToolUniverse/expand_tooluniverse/contributing/index.html)
+* **Report Issues**: [GitHub Issues](https://github.com/mims-harvard/ToolUniverse/issues)
+* **Join Discussions**: [Slack Channel](https://github.com/mims-harvard/ToolUniverse/discussions)
+* **Contact**: Reach out to [Shanghua Gao](shanghuagao@gmail.com)/[Marinka Zitnik](marinka@hms.harvard.edu)
+* **Contribute**: See our [Contributing Guide](https://zitniklab.hms.harvard.edu/ToolUniverse/expand_tooluniverse/contributing/index.html)
 
+### Leaders
 
-### Leaders 
-- **[Shanghua Gao](https://shgao.site)**
-- **[Marinka Zitnik](https://zitniklab.hms.harvard.edu/)**
+* **[Shanghua Gao](https://shgao.site)**
+* **[Marinka Zitnik](https://zitniklab.hms.harvard.edu/)**
 
 ### Contributors
 
-- **[Shanghua Gao](https://shgao.site)**
-- **[Richard Zhu](https://www.linkedin.com/in/richard-zhu-4236901a7/)**
-- **[Pengwei Sui](https://psui3905.github.io/)**
-- **[Zhenglun Kong](https://zlkong.github.io/homepage/)**
-- **[Sufian Aldogom](mailto:saldogom@mit.edu)**
-- **[Yepeng Huang](https://yepeng.notion.site/Yepeng-Huang-16ad8dd1740080c28d4bd3e3d7c1080c)**
-- **[Ayush Noori](https://www.ayushnoori.com/)**
-- **[Reza Shamji](mailto:reza_shamji@hms.harvard.edu)**
-- **[Krishna Parvataneni](mailto:krishna_parvataneni@hms.harvard.edu)**
-- **[Theodoros Tsiligkaridis](https://sites.google.com/view/theo-t)**
-- **[Marinka Zitnik](https://zitniklab.hms.harvard.edu/)**
-
+* **[Shanghua Gao](https://shgao.site)**
+* **[Richard Zhu](https://www.linkedin.com/in/richard-zhu-4236901a7/)**
+* **[Pengwei Sui](https://psui3905.github.io/)**
+* **[Zhenglun Kong](https://zlkong.github.io/homepage/)**
+* **[Sufian Aldogom](mailto:saldogom@mit.edu)**
+* **[Yepeng Huang](https://yepeng.notion.site/Yepeng-Huang-16ad8dd1740080c28d4bd3e3d7c1080c)**
+* **[Ayush Noori](https://www.ayushnoori.com/)**
+* **[Reza Shamji](mailto:reza_shamji@hms.harvard.edu)**
+* **[Krishna Parvataneni](mailto:krishna_parvataneni@hms.harvard.edu)**
+* **[Theodoros Tsiligkaridis](https://sites.google.com/view/theo-t)**
+* **[Marinka Zitnik](https://zitniklab.hms.harvard.edu/)**
 
 ## 📚 Documentation
 
 ### 🚀 Get Started
-- **[Python Developer Guide](https://zitniklab.hms.harvard.edu/ToolUniverse/guide/python_guide.html)**: Installation, SDK usage, and API reference
-- **[AI Agent Platforms](https://zitniklab.hms.harvard.edu/ToolUniverse/guide/building_ai_scientists/index.html)**: Set up ToolUniverse with Cursor, Claude, Windsurf, and more
-- **[AI Agent Skills](https://zitniklab.hms.harvard.edu/ToolUniverse/guide/skills_showcase.html)**: Pre-built research skills for AI agents
-- **[API Keys](https://zitniklab.hms.harvard.edu/ToolUniverse/guide/api_keys.html)**: Configure API keys for external services
+
+* **[Python Developer Guide](https://zitniklab.hms.harvard.edu/ToolUniverse/guide/python_guide.html)**: Installation, SDK usage, and API reference
+* **[AI Agent Platforms](https://zitniklab.hms.harvard.edu/ToolUniverse/guide/building_ai_scientists/index.html)**: Set up ToolUniverse with Cursor, Claude, Windsurf, and more
+* **[AI Agent Skills](https://zitniklab.hms.harvard.edu/ToolUniverse/guide/skills_showcase.html)**: Pre-built research skills for AI agents
+* **[API Keys](https://zitniklab.hms.harvard.edu/ToolUniverse/guide/api_keys.html)**: Configure API keys for external services
 
 ### 💡 Tutorials & Advanced
-- **[Tutorials Overview](https://zitniklab.hms.harvard.edu/ToolUniverse/guide/index.html)**: Guides for tool discovery, agentic tools, literature search, and more
-- **[AI-Tool Interaction Protocol](https://zitniklab.hms.harvard.edu/ToolUniverse/guide/interaction_protocol.html)**: How AI scientists issue tool requests
-- **[Scientific Workflows](https://zitniklab.hms.harvard.edu/ToolUniverse/guide/scientific_workflows.html)**: Multi-agent tool creation and optimization
-- **[Hooks System](https://zitniklab.hms.harvard.edu/ToolUniverse/guide/hooks/index.html)**: Intelligent output processing
+
+* **[Tutorials Overview](https://zitniklab.hms.harvard.edu/ToolUniverse/guide/index.html)**: Guides for tool discovery, agentic tools, literature search, and more
+* **[AI-Tool Interaction Protocol](https://zitniklab.hms.harvard.edu/ToolUniverse/guide/interaction_protocol.html)**: How AI scientists issue tool requests
+* **[Scientific Workflows](https://zitniklab.hms.harvard.edu/ToolUniverse/guide/scientific_workflows.html)**: Multi-agent tool creation and optimization
+* **[Hooks System](https://zitniklab.hms.harvard.edu/ToolUniverse/guide/hooks/index.html)**: Intelligent output processing
 
 ### 🔧 Expanding ToolUniverse
-- **[Contributing Guide](https://zitniklab.hms.harvard.edu/ToolUniverse/expand_tooluniverse/contributing/index.html)**: How to contribute new tools
-- **[Local Tools](https://zitniklab.hms.harvard.edu/ToolUniverse/expand_tooluniverse/local_tools/index.html)**: Create and register custom local tools
-- **[Remote Tools](https://zitniklab.hms.harvard.edu/ToolUniverse/expand_tooluniverse/remote_tools/index.html)**: Integrate external services as tools
-- **[Architecture](https://zitniklab.hms.harvard.edu/ToolUniverse/expand_tooluniverse/architecture.html)**: System architecture overview
+
+* **[Contributing Guide](https://zitniklab.hms.harvard.edu/ToolUniverse/expand_tooluniverse/contributing/index.html)**: How to contribute new tools
+* **[Local Tools](https://zitniklab.hms.harvard.edu/ToolUniverse/expand_tooluniverse/local_tools/index.html)**: Create and register custom local tools
+* **[Remote Tools](https://zitniklab.hms.harvard.edu/ToolUniverse/expand_tooluniverse/remote_tools/index.html)**: Integrate external services as tools
+* **[Architecture](https://zitniklab.hms.harvard.edu/ToolUniverse/expand_tooluniverse/architecture.html)**: System architecture overview
 
 ### 📚 API Reference
-- **[API Modules](https://zitniklab.hms.harvard.edu/ToolUniverse/api/modules.html)**: Complete Python API reference
+
+* **[API Modules](https://zitniklab.hms.harvard.edu/ToolUniverse/api/modules.html)**: Complete Python API reference
 
 → **Browse All Documentation**: [ToolUniverse Documentation](https://zitniklab.hms.harvard.edu/ToolUniverse/)
-
 
 ### Citation
 
