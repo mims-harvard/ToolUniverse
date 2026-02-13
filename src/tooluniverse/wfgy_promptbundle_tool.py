@@ -82,7 +82,6 @@ class WFGYPromptBundleTool:
             "wfgy_repo": "https://github.com/onestardao/WFGY",
             "problem_map": "https://github.com/onestardao/WFGY/tree/main/ProblemMap#readme",
             "problem_map_readme_raw": "https://raw.githubusercontent.com/onestardao/WFGY/main/ProblemMap/README.md",
-            "doi": "https://doi.org/10.5281/zenodo.15003187",
         }
 
         system_prompt = self._build_system_prompt(audience=audience, links=links)
