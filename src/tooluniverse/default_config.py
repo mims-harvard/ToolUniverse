@@ -479,6 +479,14 @@ default_tool_files = {
     "ebi_proteins_ext": os.path.join(
         current_dir, "data", "ebi_proteins_ext_tools.json"
     ),
+    # PDBe-KB Graph API - Aggregated structural knowledge base (ligand sites, PPI interfaces, stats)
+    "pdbe_kb": os.path.join(current_dir, "data", "pdbe_kb_tools.json"),
+    # UniProt Reference Datasets - Diseases, keywords, and proteomes controlled vocabularies
+    "uniprot_ref": os.path.join(current_dir, "data", "uniprot_ref_tools.json"),
+    # Disease Ontology - Standardized human disease classification (DO terms, hierarchy, cross-refs)
+    "disease_ontology": os.path.join(
+        current_dir, "data", "disease_ontology_tools.json"
+    ),
 }
 
 # Auto-load any user-provided tools from ~/.tooluniverse/user_tools/

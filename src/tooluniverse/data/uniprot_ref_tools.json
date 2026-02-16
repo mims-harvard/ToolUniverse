@@ -1,0 +1,569 @@
+[
+    {
+        "name": "UniProtRef_search_diseases",
+        "description": "Search the UniProt controlled disease vocabulary for disease definitions. Returns disease entries with OMIM, MeSH, MedGen, and SNOMED cross-references plus the number of reviewed proteins associated with each disease. Use this to find UniProt disease IDs (DI-XXXXX) for downstream analysis. Example: searching 'breast cancer' returns DI-03803 (lobular breast cancer), DI-01559 (familial breast-ovarian cancer 1), DI-02603 (familial breast-ovarian cancer 2).",
+        "parameter": {
+            "type": "object",
+            "properties": {
+                "query": {
+                    "type": "string",
+                    "description": "Search query for diseases. Can be disease name, symptom keyword, or gene name. Examples: 'breast cancer', 'diabetes', 'Alzheimer', 'cystic fibrosis', 'TP53'."
+                },
+                "size": {
+                    "type": "integer",
+                    "description": "Maximum number of results to return (default: 10, max: 25)."
+                }
+            },
+            "required": [
+                "query"
+            ]
+        },
+        "fields": {
+            "endpoint": "search_diseases"
+        },
+        "type": "UniProtRefTool",
+        "test_examples": [
+            {
+                "query": "breast cancer"
+            },
+            {
+                "query": "diabetes",
+                "size": 5
+            }
+        ],
+        "return_schema": {
+            "oneOf": [
+                {
+                    "type": "object",
+                    "properties": {
+                        "data": {
+                            "type": "array",
+                            "items": {
+                                "type": "object",
+                                "properties": {
+                                    "id": {
+                                        "type": "string",
+                                        "description": "UniProt disease ID (e.g. DI-01559)"
+                                    },
+                                    "name": {
+                                        "type": ["string", "null"],
+                                        "description": "Disease name"
+                                    },
+                                    "acronym": {
+                                        "type": ["string", "null"],
+                                        "description": "Disease acronym"
+                                    },
+                                    "definition": {
+                                        "type": ["string", "null"],
+                                        "description": "Disease definition"
+                                    },
+                                    "alternative_names": {
+                                        "type": "array",
+                                        "items": {"type": "string"},
+                                        "description": "Alternative disease names"
+                                    },
+                                    "cross_references": {
+                                        "type": "array",
+                                        "items": {
+                                            "type": "object",
+                                            "properties": {
+                                                "database": {"type": "string"},
+                                                "id": {"type": "string"}
+                                            }
+                                        },
+                                        "description": "Cross-references to OMIM, MeSH, MedGen, SNOMED"
+                                    },
+                                    "reviewed_protein_count": {
+                                        "type": ["integer", "null"],
+                                        "description": "Number of reviewed (Swiss-Prot) proteins linked to this disease"
+                                    }
+                                }
+                            }
+                        },
+                        "metadata": {
+                            "type": "object",
+                            "properties": {
+                                "source": {"type": "string"},
+                                "query": {"type": "string"},
+                                "total_results": {"type": "integer"}
+                            }
+                        }
+                    }
+                },
+                {
+                    "type": "object",
+                    "properties": {
+                        "error": {"type": "string"}
+                    },
+                    "required": ["error"]
+                }
+            ]
+        }
+    },
+    {
+        "name": "UniProtRef_get_disease",
+        "description": "Get detailed information about a specific disease from the UniProt controlled disease vocabulary by its ID. Returns the full disease definition, alternative names, cross-references to OMIM/MeSH/MedGen/SNOMED, and protein association counts. Example: DI-01559 returns 'Breast-ovarian cancer, familial, 1' with links to OMIM:604370 and MeSH:D001943.",
+        "parameter": {
+            "type": "object",
+            "properties": {
+                "disease_id": {
+                    "type": "string",
+                    "description": "UniProt disease ID in format DI-XXXXX. Get IDs from UniProtRef_search_diseases. Examples: 'DI-01559' (familial breast-ovarian cancer 1), 'DI-01465' (Cystathioninuria)."
+                }
+            },
+            "required": [
+                "disease_id"
+            ]
+        },
+        "fields": {
+            "endpoint": "get_disease"
+        },
+        "type": "UniProtRefTool",
+        "test_examples": [
+            {
+                "disease_id": "DI-01559"
+            },
+            {
+                "disease_id": "DI-01465"
+            }
+        ],
+        "return_schema": {
+            "oneOf": [
+                {
+                    "type": "object",
+                    "properties": {
+                        "data": {
+                            "type": "object",
+                            "properties": {
+                                "id": {
+                                    "type": "string",
+                                    "description": "UniProt disease ID"
+                                },
+                                "name": {
+                                    "type": ["string", "null"],
+                                    "description": "Disease name"
+                                },
+                                "acronym": {
+                                    "type": ["string", "null"],
+                                    "description": "Disease acronym"
+                                },
+                                "definition": {
+                                    "type": ["string", "null"],
+                                    "description": "Full disease definition"
+                                },
+                                "alternative_names": {
+                                    "type": "array",
+                                    "items": {"type": "string"},
+                                    "description": "Alternative disease names"
+                                },
+                                "cross_references": {
+                                    "type": "array",
+                                    "items": {
+                                        "type": "object",
+                                        "properties": {
+                                            "database": {"type": "string"},
+                                            "id": {"type": "string"},
+                                            "properties": {
+                                                "type": "array",
+                                                "items": {"type": "string"}
+                                            }
+                                        }
+                                    },
+                                    "description": "Cross-references to external databases"
+                                },
+                                "reviewed_protein_count": {
+                                    "type": ["integer", "null"],
+                                    "description": "Number of reviewed proteins linked to this disease"
+                                },
+                                "unreviewed_protein_count": {
+                                    "type": ["integer", "null"],
+                                    "description": "Number of unreviewed (TrEMBL) proteins linked"
+                                }
+                            }
+                        },
+                        "metadata": {
+                            "type": "object",
+                            "properties": {
+                                "source": {"type": "string"}
+                            }
+                        }
+                    }
+                },
+                {
+                    "type": "object",
+                    "properties": {
+                        "error": {"type": "string"}
+                    },
+                    "required": ["error"]
+                }
+            ]
+        }
+    },
+    {
+        "name": "UniProtRef_search_keywords",
+        "description": "Search the UniProt keyword controlled vocabulary. Keywords are standardized terms used to annotate protein functions, biological processes, cellular components, diseases, and technical features in UniProt. Returns keyword IDs, categories, definitions, and protein counts. Example: searching 'kinase' returns KW-0418 (Kinase), KW-0723 (Serine/threonine-protein kinase), etc. with their definitions and how many proteins carry each keyword.",
+        "parameter": {
+            "type": "object",
+            "properties": {
+                "query": {
+                    "type": "string",
+                    "description": "Search query for keywords. Examples: 'kinase', 'apoptosis', 'membrane', 'phosphorylation', 'zinc finger'."
+                },
+                "size": {
+                    "type": "integer",
+                    "description": "Maximum number of results to return (default: 10, max: 25)."
+                }
+            },
+            "required": [
+                "query"
+            ]
+        },
+        "fields": {
+            "endpoint": "search_keywords"
+        },
+        "type": "UniProtRefTool",
+        "test_examples": [
+            {
+                "query": "apoptosis"
+            },
+            {
+                "query": "kinase",
+                "size": 5
+            }
+        ],
+        "return_schema": {
+            "oneOf": [
+                {
+                    "type": "object",
+                    "properties": {
+                        "data": {
+                            "type": "array",
+                            "items": {
+                                "type": "object",
+                                "properties": {
+                                    "id": {
+                                        "type": "string",
+                                        "description": "Keyword ID (e.g. KW-0053)"
+                                    },
+                                    "name": {
+                                        "type": ["string", "null"],
+                                        "description": "Keyword name"
+                                    },
+                                    "category": {
+                                        "type": ["string", "null"],
+                                        "description": "Category: Biological process, Molecular function, Cellular component, Disease, etc."
+                                    },
+                                    "definition": {
+                                        "type": ["string", "null"],
+                                        "description": "Keyword definition"
+                                    },
+                                    "reviewed_protein_count": {
+                                        "type": ["integer", "null"],
+                                        "description": "Number of reviewed proteins with this keyword"
+                                    }
+                                }
+                            }
+                        },
+                        "metadata": {
+                            "type": "object",
+                            "properties": {
+                                "source": {"type": "string"},
+                                "query": {"type": "string"},
+                                "total_results": {"type": "integer"}
+                            }
+                        }
+                    }
+                },
+                {
+                    "type": "object",
+                    "properties": {
+                        "error": {"type": "string"}
+                    },
+                    "required": ["error"]
+                }
+            ]
+        }
+    },
+    {
+        "name": "UniProtRef_get_keyword",
+        "description": "Get detailed information about a specific UniProt keyword by its ID. Returns the full definition, category (Biological process, Molecular function, Cellular component, Disease, etc.), parent keywords in the hierarchy, GO term mappings, and protein counts. Example: KW-0053 returns 'Apoptosis' in the 'Biological process' category with GO:0006915 mapping and count of annotated proteins.",
+        "parameter": {
+            "type": "object",
+            "properties": {
+                "keyword_id": {
+                    "type": "string",
+                    "description": "UniProt keyword ID in format KW-XXXX. Get IDs from UniProtRef_search_keywords. Examples: 'KW-0053' (Apoptosis), 'KW-0418' (Kinase), 'KW-0002' (3D-structure)."
+                }
+            },
+            "required": [
+                "keyword_id"
+            ]
+        },
+        "fields": {
+            "endpoint": "get_keyword"
+        },
+        "type": "UniProtRefTool",
+        "test_examples": [
+            {
+                "keyword_id": "KW-0053"
+            },
+            {
+                "keyword_id": "KW-0418"
+            }
+        ],
+        "return_schema": {
+            "oneOf": [
+                {
+                    "type": "object",
+                    "properties": {
+                        "data": {
+                            "type": "object",
+                            "properties": {
+                                "id": {
+                                    "type": "string",
+                                    "description": "Keyword ID"
+                                },
+                                "name": {
+                                    "type": ["string", "null"],
+                                    "description": "Keyword name"
+                                },
+                                "category": {
+                                    "type": ["string", "null"],
+                                    "description": "Keyword category"
+                                },
+                                "definition": {
+                                    "type": ["string", "null"],
+                                    "description": "Full keyword definition"
+                                },
+                                "parents": {
+                                    "type": "array",
+                                    "items": {
+                                        "type": "object",
+                                        "properties": {
+                                            "id": {"type": "string"},
+                                            "name": {"type": "string"}
+                                        }
+                                    },
+                                    "description": "Parent keywords in hierarchy"
+                                },
+                                "go_mappings": {
+                                    "type": "array",
+                                    "items": {
+                                        "type": "object",
+                                        "properties": {
+                                            "go_id": {"type": "string"},
+                                            "name": {"type": "string"}
+                                        }
+                                    },
+                                    "description": "Mapped Gene Ontology terms"
+                                },
+                                "reviewed_protein_count": {
+                                    "type": ["integer", "null"],
+                                    "description": "Number of reviewed proteins annotated with this keyword"
+                                },
+                                "unreviewed_protein_count": {
+                                    "type": ["integer", "null"],
+                                    "description": "Number of unreviewed proteins annotated with this keyword"
+                                }
+                            }
+                        },
+                        "metadata": {
+                            "type": "object",
+                            "properties": {
+                                "source": {"type": "string"}
+                            }
+                        }
+                    }
+                },
+                {
+                    "type": "object",
+                    "properties": {
+                        "error": {"type": "string"}
+                    },
+                    "required": ["error"]
+                }
+            ]
+        }
+    },
+    {
+        "name": "UniProtRef_get_proteome",
+        "description": "Get reference proteome information from UniProt by proteome ID. Returns the proteome description, organism taxonomy, assembly information, chromosome-level protein counts, and genome annotation sources. Essential for understanding the protein complement of a species. Example: UP000005640 returns the human reference proteome (Homo sapiens, GRCh38.p14) with 24 chromosomes + mitochondrion and ~80K total proteins.",
+        "parameter": {
+            "type": "object",
+            "properties": {
+                "proteome_id": {
+                    "type": "string",
+                    "description": "UniProt proteome ID. Examples: 'UP000005640' (human), 'UP000000589' (mouse), 'UP000002311' (yeast), 'UP000000625' (E. coli K-12)."
+                }
+            },
+            "required": [
+                "proteome_id"
+            ]
+        },
+        "fields": {
+            "endpoint": "get_proteome"
+        },
+        "type": "UniProtRefTool",
+        "test_examples": [
+            {
+                "proteome_id": "UP000005640"
+            },
+            {
+                "proteome_id": "UP000000625"
+            }
+        ],
+        "return_schema": {
+            "oneOf": [
+                {
+                    "type": "object",
+                    "properties": {
+                        "data": {
+                            "type": "object",
+                            "properties": {
+                                "id": {
+                                    "type": "string",
+                                    "description": "Proteome ID"
+                                },
+                                "description": {
+                                    "type": ["string", "null"],
+                                    "description": "Proteome description"
+                                },
+                                "organism": {
+                                    "type": "object",
+                                    "properties": {
+                                        "scientific_name": {"type": ["string", "null"]},
+                                        "common_name": {"type": ["string", "null"]},
+                                        "taxon_id": {"type": ["integer", "null"]}
+                                    },
+                                    "description": "Organism taxonomy information"
+                                },
+                                "proteome_type": {
+                                    "type": ["string", "null"],
+                                    "description": "Type: Reference and representative proteome, Representative proteome, etc."
+                                },
+                                "components": {
+                                    "type": "array",
+                                    "items": {
+                                        "type": "object",
+                                        "properties": {
+                                            "name": {"type": "string"},
+                                            "protein_count": {"type": ["integer", "null"]},
+                                            "genome_accession": {"type": ["string", "null"]}
+                                        }
+                                    },
+                                    "description": "Chromosome/component level protein counts"
+                                },
+                                "total_protein_count": {
+                                    "type": ["integer", "null"],
+                                    "description": "Total number of proteins in proteome"
+                                }
+                            }
+                        },
+                        "metadata": {
+                            "type": "object",
+                            "properties": {
+                                "source": {"type": "string"}
+                            }
+                        }
+                    }
+                },
+                {
+                    "type": "object",
+                    "properties": {
+                        "error": {"type": "string"}
+                    },
+                    "required": ["error"]
+                }
+            ]
+        }
+    },
+    {
+        "name": "UniProtRef_search_proteomes",
+        "description": "Search UniProt reference proteomes by organism name, taxon ID, or keyword. Returns proteome IDs, organism names, proteome types, and total protein counts. Use this to find the reference proteome ID for an organism before using UniProtRef_get_proteome for detailed data. Example: searching 'Arabidopsis thaliana' returns UP000006548 (reference proteome with 39K+ proteins).",
+        "parameter": {
+            "type": "object",
+            "properties": {
+                "query": {
+                    "type": "string",
+                    "description": "Search query for proteomes. Can be organism name or taxon ID. Examples: 'homo sapiens', 'mouse', 'Arabidopsis thaliana', '9606', 'Escherichia coli'."
+                },
+                "size": {
+                    "type": "integer",
+                    "description": "Maximum number of results to return (default: 10, max: 25)."
+                }
+            },
+            "required": [
+                "query"
+            ]
+        },
+        "fields": {
+            "endpoint": "search_proteomes"
+        },
+        "type": "UniProtRefTool",
+        "test_examples": [
+            {
+                "query": "Arabidopsis thaliana"
+            },
+            {
+                "query": "Escherichia coli",
+                "size": 5
+            }
+        ],
+        "return_schema": {
+            "oneOf": [
+                {
+                    "type": "object",
+                    "properties": {
+                        "data": {
+                            "type": "array",
+                            "items": {
+                                "type": "object",
+                                "properties": {
+                                    "id": {
+                                        "type": "string",
+                                        "description": "Proteome ID"
+                                    },
+                                    "organism": {
+                                        "type": ["string", "null"],
+                                        "description": "Organism scientific name"
+                                    },
+                                    "common_name": {
+                                        "type": ["string", "null"],
+                                        "description": "Organism common name"
+                                    },
+                                    "taxon_id": {
+                                        "type": ["integer", "null"],
+                                        "description": "NCBI taxonomy ID"
+                                    },
+                                    "proteome_type": {
+                                        "type": ["string", "null"],
+                                        "description": "Proteome type classification"
+                                    },
+                                    "protein_count": {
+                                        "type": ["integer", "null"],
+                                        "description": "Total number of proteins"
+                                    }
+                                }
+                            }
+                        },
+                        "metadata": {
+                            "type": "object",
+                            "properties": {
+                                "source": {"type": "string"},
+                                "query": {"type": "string"},
+                                "total_results": {"type": "integer"}
+                            }
+                        }
+                    }
+                },
+                {
+                    "type": "object",
+                    "properties": {
+                        "error": {"type": "string"}
+                    },
+                    "required": ["error"]
+                }
+            ]
+        }
+    }
+]
