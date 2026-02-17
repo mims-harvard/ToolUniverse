@@ -2,17 +2,17 @@
 ESM Cambrian (ESMC) Protein Embedding Tool - MCP Server
 
 This module provides an MCP (Model Context Protocol) server for generating
-protein sequence embeddings using Meta's ESM-C models. ESM-C uses transformer
-architecture trained on billions of diverse protein sequences to learn
-contextualized protein representations that capture biologically meaningful
-information about protein structure and function.
+protein sequence embeddings using EvolutionaryScale's ESM-C models. ESM-C uses
+transformer architecture trained on billions of diverse protein sequences to
+learn contextualized protein representations that capture biologically
+meaningful information about protein structure and function.
 
 The tool provides access to multiple ESM-C model sizes:
 - esmc_300m: 300M parameters (recommended for most use cases)
 - esmc_600m: 600M parameters (higher quality embeddings)
 - esmc_6b: 6B parameters (best quality, requires significant resources)
 
-Embeddings are 1280-dimensional vectors that enable:
+Embeddings are 960-dimensional vectors (mean-pooled across tokens) that enable:
 - Protein similarity analysis
 - Functional annotation and prediction
 - Structural property inference

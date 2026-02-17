@@ -2,7 +2,7 @@
 
 ## Overview
 
-The [ESM Cambrian (ESMC)](https://github.com/meta-llama/esm) tool provides contextualized protein embeddings using Meta's state-of-the-art protein language models. ESM-C uses transformer architecture trained on billions of diverse protein sequences to generate high-quality 960-dimensional embeddings (mean-pooled across tokens) that capture biologically meaningful information about protein structure and function.
+The [ESM Cambrian (ESMC)](https://github.com/evolutionaryscale/esm) tool from EvolutionaryScale provides contextualized protein embeddings using state-of-the-art protein language models. ESM-C uses transformer architecture trained on billions of diverse protein sequences to generate high-quality 960-dimensional embeddings (mean-pooled across tokens) that capture biologically meaningful information about protein structure and function.
 
 ### Available Models
 
