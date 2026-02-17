@@ -85,7 +85,7 @@ def esm_embed_sequence(sequence: str):
     Returns:
         Dictionary containing:
         - model: Model identifier (esmc_300m)
-        - embedding_dim: Dimension of embedding (1280)
+        - embedding_dim: Dimension of embedding (960, mean-pooled across tokens)
         - embedding: List of float values representing the embedding
     """
     embedding = compute_embedding(sequence)

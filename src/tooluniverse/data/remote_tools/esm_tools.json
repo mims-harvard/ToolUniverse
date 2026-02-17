@@ -18,7 +18,7 @@
       "properties": {
         "model": {
           "type": "string",
-          "description": "Model identifier used for embedding generation (esmc_300m, esmc_600m, or esmc_6b)"
+          "description": "Model identifier used for embedding generation (esmc_300m)"
         },
         "embedding_dim": {
           "type": "integer",
@@ -29,7 +29,7 @@
           "items": {
             "type": "number"
           },
-          "description": "The embedding vector as a list of float values, normalized to [-1, 1] range"
+          "description": "The embedding vector as a list of 960 float32 values, mean-pooled across tokens"
         }
       }
     },
