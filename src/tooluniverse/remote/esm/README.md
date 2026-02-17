@@ -194,10 +194,10 @@ if __name__ == "__main__":
 
 ## References
 
-- [ESM GitHub Repository](https://github.com/meta-llama/esm)
-- [ESM-C Model Card](https://huggingface.co/facebook/esm-c_300m)
-- [FastMCP Documentation](https://github.com/anthropics/fast-mcp)
-- [Model Context Protocol](https://modelcontextprotocol.io/)
+- **ESM Cambrian Blog Post**: https://www.evolutionaryscale.ai/blog/esm-cambrian
+- **Official ESM Repository**: https://github.com/evolutionaryscale/esm
+- **ESM-C Models on Hugging Face**: https://huggingface.co/EvolutionaryScale
+- **Model Context Protocol**: https://modelcontextprotocol.io/
 
 ## Citation
 
