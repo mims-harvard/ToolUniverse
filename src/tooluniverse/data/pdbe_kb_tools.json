@@ -323,5 +323,102 @@
                 }
             ]
         }
+    },
+    {
+        "name": "PDBe_KB_get_superposition_clusters",
+        "description": "Get structural superposition clusters for a UniProt protein from PDBe-KB. Returns protein segments with structurally aligned PDB chains grouped into clusters based on 3D structural similarity. Each cluster has a representative structure and aligned member structures. Useful for understanding structural coverage across different conformational states, identifying the best representative structure for each domain, and comparing structural fragments from different crystal structures. Example: P04637 (TP53) shows clusters covering residues 1-93 (transactivation domain) and 94-312 (DNA-binding domain); P00533 (EGFR) has 5 segments with multiple clusters covering the extracellular and kinase domains.",
+        "parameter": {
+            "type": "object",
+            "properties": {
+                "uniprot_accession": {
+                    "type": "string",
+                    "description": "UniProt accession ID for the protein. Examples: 'P04637' (TP53), 'P00533' (EGFR), 'P38398' (BRCA1)."
+                }
+            },
+            "required": ["uniprot_accession"]
+        },
+        "fields": {
+            "endpoint": "superposition"
+        },
+        "type": "PDBe_KB_Tool",
+        "test_examples": [
+            {
+                "uniprot_accession": "P04637"
+            },
+            {
+                "uniprot_accession": "P00533"
+            }
+        ],
+        "return_schema": {
+            "oneOf": [
+                {
+                    "type": "object",
+                    "properties": {
+                        "data": {
+                            "type": "object",
+                            "properties": {
+                                "uniprot_accession": {"type": "string"},
+                                "segments": {
+                                    "type": "array",
+                                    "items": {
+                                        "type": "object",
+                                        "properties": {
+                                            "segment_start": {"type": "integer", "description": "Start residue position (UniProt numbering)"},
+                                            "segment_end": {"type": "integer", "description": "End residue position"},
+                                            "num_clusters": {"type": "integer", "description": "Number of structural clusters"},
+                                            "clusters": {
+                                                "type": "array",
+                                                "items": {
+                                                    "type": "object",
+                                                    "properties": {
+                                                        "representative": {
+                                                            "type": ["object", "null"],
+                                                            "properties": {
+                                                                "pdb_id": {"type": "string"},
+                                                                "auth_asym_id": {"type": "string"},
+                                                                "is_representative": {"type": "boolean"}
+                                                            },
+                                                            "description": "Representative structure for this cluster"
+                                                        },
+                                                        "total_members": {"type": "integer"},
+                                                        "members": {
+                                                            "type": "array",
+                                                            "items": {
+                                                                "type": "object",
+                                                                "properties": {
+                                                                    "pdb_id": {"type": "string"},
+                                                                    "auth_asym_id": {"type": "string"},
+                                                                    "entity_id": {"type": "integer"},
+                                                                    "is_representative": {"type": "boolean"}
+                                                                }
+                                                            }
+                                                        }
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    }
+                                },
+                                "total_segments": {"type": "integer"}
+                            }
+                        },
+                        "metadata": {
+                            "type": "object",
+                            "properties": {
+                                "source": {"type": "string"}
+                            }
+                        }
+                    },
+                    "required": ["data"]
+                },
+                {
+                    "type": "object",
+                    "properties": {
+                        "error": {"type": "string"}
+                    },
+                    "required": ["error"]
+                }
+            ]
+        }
     }
 ]

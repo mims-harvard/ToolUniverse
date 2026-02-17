@@ -1,7 +1,7 @@
 """
 ToolUniverse Tools
 
-Type-safe Python interface to 1512 scientific tools.
+Type-safe Python interface to 1551 scientific tools.
 Each tool is in its own module for minimal import overhead.
 
 Usage:
@@ -215,10 +215,15 @@ from .DepMap_search_cell_lines import DepMap_search_cell_lines
 from .DepMap_search_genes import DepMap_search_genes
 from .DescriptionAnalyzer import DescriptionAnalyzer
 from .DescriptionQualityEvaluator import DescriptionQualityEvaluator
+from .Dfam_get_annotations import Dfam_get_annotations
+from .Dfam_get_family import Dfam_get_family
+from .Dfam_search_families import Dfam_search_families
 from .DigiKey_get_categories import DigiKey_get_categories
 from .DigiKey_get_manufacturers import DigiKey_get_manufacturers
 from .DigiKey_get_product_details import DigiKey_get_product_details
 from .DigiKey_search_by_keyword import DigiKey_search_by_keyword
+from .DisProt_get_entry import DisProt_get_entry
+from .DisProt_search import DisProt_search
 from .DiseaseAnalyzerAgent import DiseaseAnalyzerAgent
 from .DiseaseOntology_get_parents import DiseaseOntology_get_parents
 from .DiseaseOntology_get_term import DiseaseOntology_get_term
@@ -227,9 +232,12 @@ from .DrugInteractionAnalyzerAgent import DrugInteractionAnalyzerAgent
 from .DrugOptimizationAgent import DrugOptimizationAgent
 from .DrugSafetyAnalyzer import DrugSafetyAnalyzer
 from .EBIProteins_get_antigen import EBIProteins_get_antigen
+from .EBIProteins_get_coordinate_mapping import EBIProteins_get_coordinate_mapping
 from .EBIProteins_get_coordinates import EBIProteins_get_coordinates
 from .EBIProteins_get_epitopes import EBIProteins_get_epitopes
 from .EBIProteins_get_features import EBIProteins_get_features
+from .EBIProteins_get_interaction_details import EBIProteins_get_interaction_details
+from .EBIProteins_get_interactions import EBIProteins_get_interactions
 from .EBIProteins_get_mutagenesis import EBIProteins_get_mutagenesis
 from .EBIProteins_get_proteomics_peptides import EBIProteins_get_proteomics_peptides
 from .EBIProteins_get_proteomics_ptm import EBIProteins_get_proteomics_ptm
@@ -265,6 +273,8 @@ from .EnsemblCompara_get_orthologues import EnsemblCompara_get_orthologues
 from .EnsemblCompara_get_paralogues import EnsemblCompara_get_paralogues
 from .EnsemblLD_get_ld_pairwise import EnsemblLD_get_ld_pairwise
 from .EnsemblLD_get_ld_variants import EnsemblLD_get_ld_variants
+from .EnsemblMap_convert_coordinates import EnsemblMap_convert_coordinates
+from .EnsemblMap_translate_coordinates import EnsemblMap_translate_coordinates
 from .EnsemblPheno_get_by_gene import EnsemblPheno_get_by_gene
 from .EnsemblPheno_get_by_region import EnsemblPheno_get_by_region
 from .EnsemblPheno_get_by_variant import EnsemblPheno_get_by_variant
@@ -274,6 +284,12 @@ from .EnsemblReg_get_motif_features import EnsemblReg_get_motif_features
 from .EnsemblVEP_annotate_hgvs import EnsemblVEP_annotate_hgvs
 from .EnsemblVEP_annotate_rsid import EnsemblVEP_annotate_rsid
 from .EnsemblVEP_variant_recoder import EnsemblVEP_variant_recoder
+from .EnsemblVar_get_population_frequencies import EnsemblVar_get_population_frequencies
+from .EnsemblVar_get_variant_consequences import EnsemblVar_get_variant_consequences
+from .Ensembl_get_cross_references import Ensembl_get_cross_references
+from .Ensembl_get_gene_overlapping_features import Ensembl_get_gene_overlapping_features
+from .Ensembl_get_region_features import Ensembl_get_region_features
+from .Ensembl_lookup_gene_by_symbol import Ensembl_lookup_gene_by_symbol
 from .EthicalComplianceReviewer import EthicalComplianceReviewer
 from .EuroPMCAnnot_get_annotations_by_type import EuroPMCAnnot_get_annotations_by_type
 from .EuroPMCAnnot_get_article_annotations import EuroPMCAnnot_get_article_annotations
@@ -740,6 +756,10 @@ from .GTEx_get_tissue_sites import GTEx_get_tissue_sites
 from .GTEx_get_top_expressed_genes import GTEx_get_top_expressed_genes
 from .GTEx_query_eqtl import GTEx_query_eqtl
 from .GWAS_search_associations_by_gene import GWAS_search_associations_by_gene
+from .GenomeNexus_annotate_mutation import GenomeNexus_annotate_mutation
+from .GenomeNexus_annotate_variant import GenomeNexus_annotate_variant
+from .GenomeNexus_get_cancer_hotspots import GenomeNexus_get_cancer_hotspots
+from .GenomeNexus_get_canonical_transcript import GenomeNexus_get_canonical_transcript
 from .GlyGen_get_glycan import GlyGen_get_glycan
 from .GlyGen_get_glycoprotein import GlyGen_get_glycoprotein
 from .GlyGen_get_site import GlyGen_get_site
@@ -788,6 +808,8 @@ from .HPA_search_genes_by_query import HPA_search_genes_by_query
 from .HPO_get_term import HPO_get_term
 from .HPO_get_term_hierarchy import HPO_get_term_hierarchy
 from .HPO_search_terms import HPO_search_terms
+from .Harmonizome_get_gene import Harmonizome_get_gene
+from .Harmonizome_list_datasets import Harmonizome_list_datasets
 from .HypothesisGenerator import HypothesisGenerator
 from .ICD10_get_code_info import ICD10_get_code_info
 from .ICD10_search_codes import ICD10_search_codes
@@ -870,6 +892,8 @@ from .MetabolomicsWorkbench_search_compound_by_name import (
     MetabolomicsWorkbench_search_compound_by_name,
 )
 from .MethodologyRigorReviewer import MethodologyRigorReviewer
+from .MobiDB_get_consensus import MobiDB_get_consensus
+from .MobiDB_get_protein import MobiDB_get_protein
 from .MonarchV3_get_associations import MonarchV3_get_associations
 from .MonarchV3_get_entity import MonarchV3_get_entity
 from .MonarchV3_search import MonarchV3_search
@@ -1144,9 +1168,16 @@ from .PDBeSIFTS_get_pdb_to_uniprot import PDBeSIFTS_get_pdb_to_uniprot
 from .PDBeSearch_get_compound import PDBeSearch_get_compound
 from .PDBeSearch_search_by_organism import PDBeSearch_search_by_organism
 from .PDBeSearch_search_structures import PDBeSearch_search_structures
+from .PDBeValidation_get_outlier_residues import PDBeValidation_get_outlier_residues
+from .PDBeValidation_get_quality_scores import PDBeValidation_get_quality_scores
 from .PDBe_KB_get_interface_residues import PDBe_KB_get_interface_residues
 from .PDBe_KB_get_ligand_sites import PDBe_KB_get_ligand_sites
 from .PDBe_KB_get_summary_stats import PDBe_KB_get_summary_stats
+from .PDBe_KB_get_superposition_clusters import PDBe_KB_get_superposition_clusters
+from .PDBe_get_compound_structures import PDBe_get_compound_structures
+from .PDBe_get_compound_summary import PDBe_get_compound_summary
+from .PDBe_get_residue_listing import PDBe_get_residue_listing
+from .PDBe_get_structure_ligands import PDBe_get_structure_ligands
 from .PMC_search_papers import PMC_search_papers
 from .PRIDE_get_project import PRIDE_get_project
 from .PRIDE_get_project_files import PRIDE_get_project_files
@@ -1355,6 +1386,8 @@ from .UCSC_get_track import UCSC_get_track
 from .UCSC_search import UCSC_search
 from .UniChem_list_sources import UniChem_list_sources
 from .UniChem_search_compound import UniChem_search_compound
+from .UniParc_get_entry import UniParc_get_entry
+from .UniParc_search import UniParc_search
 from .UniProtIDMap_convert_ids import UniProtIDMap_convert_ids
 from .UniProtIDMap_gene_to_uniprot import UniProtIDMap_gene_to_uniprot
 from .UniProtIDMap_list_databases import UniProtIDMap_list_databases
@@ -1367,6 +1400,8 @@ from .UniProtRef_get_proteome import UniProtRef_get_proteome
 from .UniProtRef_search_diseases import UniProtRef_search_diseases
 from .UniProtRef_search_keywords import UniProtRef_search_keywords
 from .UniProtRef_search_proteomes import UniProtRef_search_proteomes
+from .UniProtTaxonomy_get_taxon import UniProtTaxonomy_get_taxon
+from .UniProtTaxonomy_search import UniProtTaxonomy_search
 from .UniProt_get_alternative_names_by_accession import (
     UniProt_get_alternative_names_by_accession,
 )
@@ -1631,6 +1666,10 @@ from .expression_atlas_disease_target_score import expression_atlas_disease_targ
 from .extract_clinical_trial_adverse_events import extract_clinical_trial_adverse_events
 from .extract_clinical_trial_outcomes import extract_clinical_trial_outcomes
 from .fda_pharmacogenomic_biomarkers import fda_pharmacogenomic_biomarkers
+from .gProfiler_annotate_snps import gProfiler_annotate_snps
+from .gProfiler_convert_ids import gProfiler_convert_ids
+from .gProfiler_enrichment import gProfiler_enrichment
+from .gProfiler_find_orthologs import gProfiler_find_orthologs
 from .genomics_england_disease_target_score import genomics_england_disease_target_score
 from .geo_get_dataset_info import geo_get_dataset_info
 from .geo_get_sample_info import geo_get_sample_info
@@ -2199,10 +2238,15 @@ __all__ = [
     "DepMap_search_genes",
     "DescriptionAnalyzer",
     "DescriptionQualityEvaluator",
+    "Dfam_get_annotations",
+    "Dfam_get_family",
+    "Dfam_search_families",
     "DigiKey_get_categories",
     "DigiKey_get_manufacturers",
     "DigiKey_get_product_details",
     "DigiKey_search_by_keyword",
+    "DisProt_get_entry",
+    "DisProt_search",
     "DiseaseAnalyzerAgent",
     "DiseaseOntology_get_parents",
     "DiseaseOntology_get_term",
@@ -2211,9 +2255,12 @@ __all__ = [
     "DrugOptimizationAgent",
     "DrugSafetyAnalyzer",
     "EBIProteins_get_antigen",
+    "EBIProteins_get_coordinate_mapping",
     "EBIProteins_get_coordinates",
     "EBIProteins_get_epitopes",
     "EBIProteins_get_features",
+    "EBIProteins_get_interaction_details",
+    "EBIProteins_get_interactions",
     "EBIProteins_get_mutagenesis",
     "EBIProteins_get_proteomics_peptides",
     "EBIProteins_get_proteomics_ptm",
@@ -2249,6 +2296,8 @@ __all__ = [
     "EnsemblCompara_get_paralogues",
     "EnsemblLD_get_ld_pairwise",
     "EnsemblLD_get_ld_variants",
+    "EnsemblMap_convert_coordinates",
+    "EnsemblMap_translate_coordinates",
     "EnsemblPheno_get_by_gene",
     "EnsemblPheno_get_by_region",
     "EnsemblPheno_get_by_variant",
@@ -2258,6 +2307,12 @@ __all__ = [
     "EnsemblVEP_annotate_hgvs",
     "EnsemblVEP_annotate_rsid",
     "EnsemblVEP_variant_recoder",
+    "EnsemblVar_get_population_frequencies",
+    "EnsemblVar_get_variant_consequences",
+    "Ensembl_get_cross_references",
+    "Ensembl_get_gene_overlapping_features",
+    "Ensembl_get_region_features",
+    "Ensembl_lookup_gene_by_symbol",
     "EthicalComplianceReviewer",
     "EuroPMCAnnot_get_annotations_by_type",
     "EuroPMCAnnot_get_article_annotations",
@@ -2508,6 +2563,10 @@ __all__ = [
     "GTEx_get_top_expressed_genes",
     "GTEx_query_eqtl",
     "GWAS_search_associations_by_gene",
+    "GenomeNexus_annotate_mutation",
+    "GenomeNexus_annotate_variant",
+    "GenomeNexus_get_cancer_hotspots",
+    "GenomeNexus_get_canonical_transcript",
     "GlyGen_get_glycan",
     "GlyGen_get_glycoprotein",
     "GlyGen_get_site",
@@ -2546,6 +2605,8 @@ __all__ = [
     "HPO_get_term",
     "HPO_get_term_hierarchy",
     "HPO_search_terms",
+    "Harmonizome_get_gene",
+    "Harmonizome_list_datasets",
     "HypothesisGenerator",
     "ICD10_get_code_info",
     "ICD10_search_codes",
@@ -2620,6 +2681,8 @@ __all__ = [
     "MetabolomicsWorkbench_search_by_mz",
     "MetabolomicsWorkbench_search_compound_by_name",
     "MethodologyRigorReviewer",
+    "MobiDB_get_consensus",
+    "MobiDB_get_protein",
     "MonarchV3_get_associations",
     "MonarchV3_get_entity",
     "MonarchV3_search",
@@ -2774,9 +2837,16 @@ __all__ = [
     "PDBeSearch_get_compound",
     "PDBeSearch_search_by_organism",
     "PDBeSearch_search_structures",
+    "PDBeValidation_get_outlier_residues",
+    "PDBeValidation_get_quality_scores",
     "PDBe_KB_get_interface_residues",
     "PDBe_KB_get_ligand_sites",
     "PDBe_KB_get_summary_stats",
+    "PDBe_KB_get_superposition_clusters",
+    "PDBe_get_compound_structures",
+    "PDBe_get_compound_summary",
+    "PDBe_get_residue_listing",
+    "PDBe_get_structure_ligands",
     "PMC_search_papers",
     "PRIDE_get_project",
     "PRIDE_get_project_files",
@@ -2961,6 +3031,8 @@ __all__ = [
     "UCSC_search",
     "UniChem_list_sources",
     "UniChem_search_compound",
+    "UniParc_get_entry",
+    "UniParc_search",
     "UniProtIDMap_convert_ids",
     "UniProtIDMap_gene_to_uniprot",
     "UniProtIDMap_list_databases",
@@ -2973,6 +3045,8 @@ __all__ = [
     "UniProtRef_search_diseases",
     "UniProtRef_search_keywords",
     "UniProtRef_search_proteomes",
+    "UniProtTaxonomy_get_taxon",
+    "UniProtTaxonomy_search",
     "UniProt_get_alternative_names_by_accession",
     "UniProt_get_disease_variants_by_accession",
     "UniProt_get_entry_by_accession",
@@ -3177,6 +3251,10 @@ __all__ = [
     "extract_clinical_trial_adverse_events",
     "extract_clinical_trial_outcomes",
     "fda_pharmacogenomic_biomarkers",
+    "gProfiler_annotate_snps",
+    "gProfiler_convert_ids",
+    "gProfiler_enrichment",
+    "gProfiler_find_orthologs",
     "genomics_england_disease_target_score",
     "geo_get_dataset_info",
     "geo_get_sample_info",

@@ -66,6 +66,8 @@ class PDBe_KB_Tool(BaseTool):
             return self._get_ligand_sites(arguments)
         elif self.endpoint == "interface_residues":
             return self._get_interface_residues(arguments)
+        elif self.endpoint == "superposition":
+            return self._get_superposition(arguments)
         else:
             return {"error": f"Unknown endpoint: {self.endpoint}"}
 
@@ -195,6 +197,77 @@ class PDBe_KB_Tool(BaseTool):
                 "protein_length": protein_data.get("length"),
                 "interaction_partners": partners,
                 "total_partners": len(protein_data.get("data", [])),
+            },
+            "metadata": {
+                "source": "PDBe-KB (PDBe Knowledge Base) Graph API",
+            },
+        }
+
+    def _get_superposition(self, arguments: Dict[str, Any]) -> Dict[str, Any]:
+        """Get structural superposition clusters for a protein.
+
+        Returns clusters of structurally superposed PDB chains grouped by
+        protein segments. Each cluster contains a representative structure
+        and aligned member structures.
+        """
+        acc = arguments.get("uniprot_accession", "")
+        if not acc:
+            return {
+                "error": "uniprot_accession parameter is required (e.g., 'P04637' for TP53, 'P00533' for EGFR)."
+            }
+
+        url = f"{PDBE_KB_BASE_URL}/uniprot/superposition/{acc}"
+        response = requests.get(url, timeout=self.timeout)
+        response.raise_for_status()
+        data = response.json()
+
+        if acc not in data:
+            return {"error": f"No superposition data for {acc}"}
+
+        segments_data = data[acc]
+        segments = []
+
+        for seg in segments_data[:10]:
+            clusters = seg.get("clusters", [])
+            cluster_results = []
+
+            for cluster in clusters[:10]:
+                members = []
+                representative = None
+                for member in cluster[:20]:
+                    entry = {
+                        "pdb_id": member.get("pdb_id"),
+                        "auth_asym_id": member.get("auth_asym_id"),
+                        "struct_asym_id": member.get("struct_asym_id"),
+                        "entity_id": member.get("entity_id"),
+                        "is_representative": member.get("is_representative", False),
+                    }
+                    if entry["is_representative"]:
+                        representative = entry
+                    members.append(entry)
+
+                cluster_results.append(
+                    {
+                        "representative": representative,
+                        "total_members": len(cluster),
+                        "members": members,
+                    }
+                )
+
+            segments.append(
+                {
+                    "segment_start": seg.get("segment_start"),
+                    "segment_end": seg.get("segment_end"),
+                    "num_clusters": len(clusters),
+                    "clusters": cluster_results,
+                }
+            )
+
+        return {
+            "data": {
+                "uniprot_accession": acc,
+                "segments": segments,
+                "total_segments": len(segments_data),
             },
             "metadata": {
                 "source": "PDBe-KB (PDBe Knowledge Base) Graph API",

@@ -1,0 +1,169 @@
+[
+    {
+        "name": "Ensembl_get_region_features",
+        "description": "Get all genomic features overlapping a specified chromosomal region. Returns genes, transcripts, regulatory elements, constrained elements, and other features within the coordinates. Essential for understanding the functional landscape of a genomic region, finding genes near a variant, or identifying regulatory elements in a locus. Supports multiple feature types in one query. Example: region '7:140424943-140524564' (BRAF locus) returns 5 genes, 20 regulatory elements, and 82 constrained elements; region '17:7661779-7687546' (TP53 locus) returns genes, enhancers, CTCF binding sites, and promoters.",
+        "parameter": {
+            "type": "object",
+            "properties": {
+                "species": {
+                    "type": "string",
+                    "description": "Species name. Default: 'human'. Examples: 'human', 'mouse', 'rat', 'zebrafish'."
+                },
+                "region": {
+                    "type": "string",
+                    "description": "Genomic region in format 'chr:start-end'. Examples: '17:7661779-7687546' (TP53), '7:140424943-140524564' (BRAF), '13:32315086-32400266' (BRCA2). Max region size ~5Mb."
+                },
+                "feature_types": {
+                    "type": "string",
+                    "description": "Comma-separated feature types to retrieve. Options: 'gene', 'transcript', 'regulatory', 'constrained', 'variation', 'repeat', 'motif'. Default: 'gene'. Example: 'gene,regulatory,constrained'."
+                }
+            },
+            "required": ["region"]
+        },
+        "fields": {
+            "endpoint": "region"
+        },
+        "type": "EnsemblOverlapTool",
+        "test_examples": [
+            {
+                "species": "human",
+                "region": "7:140424943-140524564",
+                "feature_types": "gene,regulatory,constrained"
+            },
+            {
+                "species": "human",
+                "region": "17:7661779-7687546",
+                "feature_types": "gene,regulatory"
+            }
+        ],
+        "return_schema": {
+            "oneOf": [
+                {
+                    "type": "object",
+                    "properties": {
+                        "data": {
+                            "type": "object",
+                            "properties": {
+                                "region": {"type": "string"},
+                                "species": {"type": "string"},
+                                "features": {
+                                    "type": "array",
+                                    "items": {
+                                        "type": "object",
+                                        "properties": {
+                                            "feature_type": {"type": "string"},
+                                            "id": {"type": "string"},
+                                            "start": {"type": "integer"},
+                                            "end": {"type": "integer"},
+                                            "strand": {"type": "integer"},
+                                            "biotype": {"type": ["string", "null"]},
+                                            "external_name": {"type": ["string", "null"]},
+                                            "description": {"type": ["string", "null"]}
+                                        }
+                                    }
+                                },
+                                "type_summary": {
+                                    "type": "object",
+                                    "description": "Count of features by type"
+                                }
+                            }
+                        },
+                        "metadata": {
+                            "type": "object",
+                            "properties": {
+                                "source": {"type": "string"},
+                                "total_features": {"type": "integer"}
+                            }
+                        }
+                    },
+                    "required": ["data"]
+                },
+                {
+                    "type": "object",
+                    "properties": {
+                        "error": {"type": "string"}
+                    },
+                    "required": ["error"]
+                }
+            ]
+        }
+    },
+    {
+        "name": "Ensembl_get_gene_overlapping_features",
+        "description": "Get features overlapping an Ensembl gene by gene ID. Returns all genomic features co-located with the gene, including neighboring genes, overlapping transcripts, regulatory elements, and antisense transcripts. Useful for finding overlapping genes, identifying all transcript isoforms in a locus, or discovering regulatory features at a gene. Example: 'ENSG00000141510' (TP53) returns 2 overlapping genes (TP53 and WRAP53), 42 transcripts across 4 biotypes (protein_coding, nonsense_mediated_decay, retained_intron, protein_coding_CDS_not_defined), and 9 regulatory features.",
+        "parameter": {
+            "type": "object",
+            "properties": {
+                "gene_id": {
+                    "type": "string",
+                    "description": "Ensembl gene ID. Examples: 'ENSG00000141510' (TP53), 'ENSG00000012048' (BRCA1), 'ENSG00000157764' (BRAF)."
+                },
+                "feature_types": {
+                    "type": "string",
+                    "description": "Comma-separated feature types. Options: 'gene', 'transcript', 'regulatory', 'constrained', 'variation', 'repeat'. Default: 'gene'."
+                }
+            },
+            "required": ["gene_id"]
+        },
+        "fields": {
+            "endpoint": "gene_id"
+        },
+        "type": "EnsemblOverlapTool",
+        "test_examples": [
+            {
+                "gene_id": "ENSG00000141510",
+                "feature_types": "gene"
+            },
+            {
+                "gene_id": "ENSG00000141510",
+                "feature_types": "transcript"
+            }
+        ],
+        "return_schema": {
+            "oneOf": [
+                {
+                    "type": "object",
+                    "properties": {
+                        "data": {
+                            "type": "object",
+                            "properties": {
+                                "gene_id": {"type": "string"},
+                                "features": {
+                                    "type": "array",
+                                    "items": {
+                                        "type": "object",
+                                        "properties": {
+                                            "feature_type": {"type": "string"},
+                                            "id": {"type": "string"},
+                                            "start": {"type": "integer"},
+                                            "end": {"type": "integer"},
+                                            "biotype": {"type": ["string", "null"]},
+                                            "external_name": {"type": ["string", "null"]},
+                                            "transcript_id": {"type": ["string", "null"]}
+                                        }
+                                    }
+                                },
+                                "type_summary": {"type": "object"}
+                            }
+                        },
+                        "metadata": {
+                            "type": "object",
+                            "properties": {
+                                "source": {"type": "string"},
+                                "total_features": {"type": "integer"}
+                            }
+                        }
+                    },
+                    "required": ["data"]
+                },
+                {
+                    "type": "object",
+                    "properties": {
+                        "error": {"type": "string"}
+                    },
+                    "required": ["error"]
+                }
+            ]
+        }
+    }
+]

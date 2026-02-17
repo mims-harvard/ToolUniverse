@@ -1,0 +1,98 @@
+[
+    {
+        "name": "EBIProteins_get_coordinate_mapping",
+        "description": "Map UniProt protein positions to genomic coordinates at exon-level resolution. Returns chromosome, strand, and per-exon mappings between protein residue positions and chromosomal coordinates for all transcript isoforms. Essential for translating protein variant positions (e.g., 'p.R273H at position 273') to genomic coordinates for variant analysis, connecting protein annotations to genome browsers, or understanding exon-intron structure at the protein level. Example: 'P04637' (TP53) returns 6 transcript mappings on chromosome 17 (reverse strand) with 10 exons spanning positions 7669612-7676594; 'P00533' (EGFR) maps to chromosome 7.",
+        "parameter": {
+            "type": "object",
+            "properties": {
+                "accession": {
+                    "type": "string",
+                    "description": "UniProt accession. Examples: 'P04637' (TP53), 'P00533' (EGFR), 'P38398' (BRCA1), 'P01308' (Insulin), 'P69905' (HBA1 hemoglobin alpha)."
+                }
+            },
+            "required": ["accession"]
+        },
+        "fields": {
+            "endpoint": "get_coordinates"
+        },
+        "type": "EBIProteinsCoordinatesTool",
+        "test_examples": [
+            {
+                "accession": "P04637"
+            },
+            {
+                "accession": "P00533"
+            }
+        ],
+        "return_schema": {
+            "oneOf": [
+                {
+                    "type": "object",
+                    "properties": {
+                        "data": {
+                            "type": "object",
+                            "properties": {
+                                "accession": {"type": "string"},
+                                "protein_name": {"type": ["string", "null"]},
+                                "taxid": {"type": "integer"},
+                                "gene": {
+                                    "type": "array",
+                                    "items": {
+                                        "type": "object",
+                                        "properties": {
+                                            "value": {"type": "string"},
+                                            "type": {"type": "string"}
+                                        }
+                                    }
+                                },
+                                "coordinate_mappings": {
+                                    "type": "array",
+                                    "items": {
+                                        "type": "object",
+                                        "properties": {
+                                            "ensembl_gene_id": {"type": ["string", "null"]},
+                                            "ensembl_transcript_id": {"type": ["string", "null"]},
+                                            "chromosome": {"type": ["string", "null"]},
+                                            "start": {"type": ["integer", "null"]},
+                                            "end": {"type": ["integer", "null"]},
+                                            "reverse_strand": {"type": ["boolean", "null"]},
+                                            "num_exons": {"type": "integer"},
+                                            "exons": {
+                                                "type": "array",
+                                                "items": {
+                                                    "type": "object",
+                                                    "properties": {
+                                                        "exon_id": {"type": ["string", "null"]},
+                                                        "protein_start": {"type": ["integer", "null"]},
+                                                        "protein_end": {"type": ["integer", "null"]},
+                                                        "genome_start": {"type": ["integer", "null"]},
+                                                        "genome_end": {"type": ["integer", "null"]}
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        },
+                        "metadata": {
+                            "type": "object",
+                            "properties": {
+                                "source": {"type": "string"},
+                                "total_transcript_mappings": {"type": "integer"}
+                            }
+                        }
+                    },
+                    "required": ["data"]
+                },
+                {
+                    "type": "object",
+                    "properties": {
+                        "error": {"type": "string"}
+                    },
+                    "required": ["error"]
+                }
+            ]
+        }
+    }
+]

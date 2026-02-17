@@ -523,6 +523,48 @@ default_tool_files = {
     ),
     # UniProt UniRef Clusters - Protein sequence clustering at 50/90/100% identity
     "uniref": os.path.join(current_dir, "data", "uniref_tools.json"),
+    # Ensembl Assembly Mapping - Coordinate conversion between genome assemblies and protein/cDNA to genomic
+    "ensembl_map": os.path.join(current_dir, "data", "ensembl_map_tools.json"),
+    # Ensembl Variation Extended - Variant population frequencies and detailed variant records
+    "ensembl_variation_ext": os.path.join(
+        current_dir, "data", "ensembl_variation_ext_tools.json"
+    ),
+    # PDBe Validation - Structure quality percentile scores and residue-level outliers
+    "pdbe_validation": os.path.join(current_dir, "data", "pdbe_validation_tools.json"),
+    # UniProt Taxonomy - Species taxonomy details, lineage, protein statistics, and search
+    "uniprot_taxonomy": os.path.join(
+        current_dir, "data", "uniprot_taxonomy_tools.json"
+    ),
+    # Harmonizome - Gene information from 100+ integrated genomics datasets (Ma'ayan Lab)
+    "harmonizome": os.path.join(current_dir, "data", "harmonizome_tools.json"),
+    # EBI Proteins Interactions - Protein-protein interactions from IntAct via EBI Proteins API
+    "ebi_proteins_interactions": os.path.join(
+        current_dir, "data", "ebi_proteins_interactions_tools.json"
+    ),
+    # Genome Nexus - Cancer variant annotation aggregator (MSK: VEP + SIFT + PolyPhen + AlphaMissense + cancer hotspots)
+    "genome_nexus": os.path.join(current_dir, "data", "genome_nexus_tools.json"),
+    # g:Profiler - Functional enrichment analysis, gene ID conversion, ortholog mapping (University of Tartu)
+    "gprofiler": os.path.join(current_dir, "data", "gprofiler_tools.json"),
+    # Dfam - Transposable element / repeat element families, consensus sequences, genome annotations
+    "dfam": os.path.join(current_dir, "data", "dfam_tools.json"),
+    # DisProt - Intrinsically disordered proteins, experimentally validated disorder regions
+    "disprot": os.path.join(current_dir, "data", "disprot_tools.json"),
+    # MobiDB - Protein disorder predictions, binding modes, phase separation, PTMs
+    "mobidb": os.path.join(current_dir, "data", "mobidb_tools.json"),
+    # UniProt UniParc - Non-redundant protein sequence archive across all databases
+    "uniparc": os.path.join(current_dir, "data", "uniparc_tools.json"),
+    # PDBe Compound - Chemical compound details from PDB (formula, SMILES, cross-refs)
+    "pdbe_compound": os.path.join(current_dir, "data", "pdbe_compound_tools.json"),
+    # PDBe Ligands - Structure-bound ligands and per-residue listing
+    "pdbe_ligands": os.path.join(current_dir, "data", "pdbe_ligands_tools.json"),
+    # Ensembl Overlap - Genomic features overlapping regions or genes
+    "ensembl_overlap": os.path.join(current_dir, "data", "ensembl_overlap_tools.json"),
+    # Ensembl Cross-references - External database links for Ensembl IDs
+    "ensembl_xrefs": os.path.join(current_dir, "data", "ensembl_xrefs_tools.json"),
+    # EBI Proteins Coordinates - Protein-to-genomic coordinate mapping (exon-level)
+    "ebi_proteins_coordinates": os.path.join(
+        current_dir, "data", "ebi_proteins_coordinates_tools.json"
+    ),
 }
 
 # Auto-load any user-provided tools from ~/.tooluniverse/user_tools/

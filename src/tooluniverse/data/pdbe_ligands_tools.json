@@ -1,0 +1,176 @@
+[
+    {
+        "name": "PDBe_get_structure_ligands",
+        "description": "Get all ligands (drug-like molecules, cofactors, ions) bound in a PDB crystal structure. Returns chemical component IDs, names, molecular weights, chain assignments, and drug-likeness annotations with interacting protein entity information. Essential for studying protein-ligand interactions, identifying bound drugs/inhibitors, or analyzing binding site occupancy. Example: '4hhb' returns 6 HEM (heme) ligands bound to hemoglobin alpha and beta chains; '3ert' returns 4-hydroxytamoxifen (OHT, 387 Da) bound to estrogen receptor alpha; '1m17' returns erlotinib bound to EGFR kinase domain.",
+        "parameter": {
+            "type": "object",
+            "properties": {
+                "pdb_id": {
+                    "type": "string",
+                    "description": "PDB entry ID (4-character code). Examples: '4hhb' (hemoglobin), '3ert' (estrogen receptor + tamoxifen), '1m17' (EGFR + erlotinib), '6lu7' (SARS-CoV-2 main protease + inhibitor). Case-insensitive."
+                }
+            },
+            "required": ["pdb_id"]
+        },
+        "fields": {
+            "endpoint": "ligand_monomers"
+        },
+        "type": "PDBeLigandsTool",
+        "test_examples": [
+            {
+                "pdb_id": "4hhb"
+            },
+            {
+                "pdb_id": "3ert"
+            }
+        ],
+        "return_schema": {
+            "oneOf": [
+                {
+                    "type": "object",
+                    "properties": {
+                        "data": {
+                            "type": "object",
+                            "properties": {
+                                "pdb_id": {"type": "string"},
+                                "ligands": {
+                                    "type": "array",
+                                    "items": {
+                                        "type": "object",
+                                        "properties": {
+                                            "chem_comp_id": {"type": "string", "description": "3-letter chemical component code"},
+                                            "chem_comp_name": {"type": "string", "description": "Full chemical name"},
+                                            "weight": {"type": "number", "description": "Molecular weight in Da"},
+                                            "chain_id": {"type": "string"},
+                                            "entity_id": {"type": "integer"},
+                                            "author_residue_number": {"type": "integer"},
+                                            "carbohydrate_polymer": {"type": "boolean"},
+                                            "annotations": {
+                                                "type": "array",
+                                                "items": {
+                                                    "type": "object",
+                                                    "properties": {
+                                                        "type": {"type": ["string", "null"]},
+                                                        "interacting_chain": {"type": ["string", "null"]},
+                                                        "interacting_uniprot": {"type": ["string", "null"]}
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    }
+                                },
+                                "total_ligands": {"type": "integer"}
+                            }
+                        },
+                        "metadata": {
+                            "type": "object",
+                            "properties": {
+                                "source": {"type": "string"}
+                            }
+                        }
+                    },
+                    "required": ["data"]
+                },
+                {
+                    "type": "object",
+                    "properties": {
+                        "error": {"type": "string"}
+                    },
+                    "required": ["error"]
+                }
+            ]
+        }
+    },
+    {
+        "name": "PDBe_get_residue_listing",
+        "description": "Get per-residue information for a PDB structure, optionally filtered by chain. Returns residue numbers (both PDB sequential and author-assigned), residue names (3-letter amino acid codes), and observed ratio (fraction of models where this residue has electron density). Useful for analyzing protein chain composition, identifying disordered/missing regions (observed_ratio < 1.0), or mapping between PDB and author numbering schemes. Example: '4hhb' chain A returns 141 residues (alpha globin) all with 1.0 observed ratio; '3ert' chain A returns 261 residues (estrogen receptor) starting at author residue 294.",
+        "parameter": {
+            "type": "object",
+            "properties": {
+                "pdb_id": {
+                    "type": "string",
+                    "description": "PDB entry ID (4-character code). Examples: '4hhb', '3ert', '1tup', '6lu7'. Case-insensitive."
+                },
+                "chain_id": {
+                    "type": ["string", "null"],
+                    "description": "Optional chain ID to filter (e.g., 'A', 'B'). If not provided, all chains are returned."
+                }
+            },
+            "required": ["pdb_id"]
+        },
+        "fields": {
+            "endpoint": "residue_listing"
+        },
+        "type": "PDBeLigandsTool",
+        "test_examples": [
+            {
+                "pdb_id": "4hhb",
+                "chain_id": "A"
+            },
+            {
+                "pdb_id": "3ert"
+            }
+        ],
+        "return_schema": {
+            "oneOf": [
+                {
+                    "type": "object",
+                    "properties": {
+                        "data": {
+                            "type": "object",
+                            "properties": {
+                                "pdb_id": {"type": "string"},
+                                "molecules": {
+                                    "type": "array",
+                                    "items": {
+                                        "type": "object",
+                                        "properties": {
+                                            "entity_id": {"type": "integer"},
+                                            "chains": {
+                                                "type": "array",
+                                                "items": {
+                                                    "type": "object",
+                                                    "properties": {
+                                                        "chain_id": {"type": "string"},
+                                                        "total_residues": {"type": "integer"},
+                                                        "residues": {
+                                                            "type": "array",
+                                                            "items": {
+                                                                "type": "object",
+                                                                "properties": {
+                                                                    "residue_number": {"type": "integer"},
+                                                                    "residue_name": {"type": "string"},
+                                                                    "author_residue_number": {"type": "integer"},
+                                                                    "observed_ratio": {"type": "number"}
+                                                                }
+                                                            }
+                                                        }
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    }
+                                },
+                                "total_molecules": {"type": "integer"}
+                            }
+                        },
+                        "metadata": {
+                            "type": "object",
+                            "properties": {
+                                "source": {"type": "string"}
+                            }
+                        }
+                    },
+                    "required": ["data"]
+                },
+                {
+                    "type": "object",
+                    "properties": {
+                        "error": {"type": "string"}
+                    },
+                    "required": ["error"]
+                }
+            ]
+        }
+    }
+]
