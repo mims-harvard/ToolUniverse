@@ -1,1218 +1,900 @@
 ---
 name: tooluniverse-crispr-screen-analysis
-description: Comprehensive analysis of CRISPR knockout/activation screens with gene essentiality scoring, pathway enrichment, functional annotation, and therapeutic target identification. Identifies essential genes, synthetic lethal interactions, and actionable drug targets from pooled or arrayed CRISPR screens. Use when analyzing CRISPR screen data, identifying gene dependencies, or prioritizing hits for validation.
+description: Comprehensive CRISPR screen analysis for functional genomics. Analyze pooled or arrayed CRISPR screens (knockout, activation, interference) to identify essential genes, synthetic lethal interactions, and drug targets. Perform sgRNA count processing, gene-level scoring (MAGeCK, BAGEL), quality control, pathway enrichment, and drug target prioritization. Use for CRISPR screen analysis, gene essentiality studies, synthetic lethality detection, functional genomics, drug target validation, or identifying genetic vulnerabilities.
 ---
 
-# CRISPR Screen Analysis Workflow
+# ToolUniverse CRISPR Screen Analysis
 
-Systematic analysis of CRISPR knockout/activation/interference screens to identify essential genes, synthetic lethal interactions, and therapeutic targets.
+Comprehensive skill for analyzing CRISPR-Cas9 genetic screens to identify essential genes, synthetic lethal interactions, and therapeutic targets through robust statistical analysis and pathway enrichment.
 
-**KEY PRINCIPLES**:
-1. **Report-first approach** - Create comprehensive analysis report FIRST, then populate progressively
-2. **Evidence grading** - Grade all findings by confidence level (H/M/L based on statistical significance and validation data)
-3. **Multi-dimensional analysis** - Integrate essentiality, pathway context, druggability, and clinical relevance
-4. **Citation requirements** - Every conclusion must trace to source data (DepMap, literature, pathways)
-5. **Mandatory completeness** - All analysis sections must exist with data or explicit "No data" notes
-6. **Context-aware interpretation** - Consider cell line context, screen type, and biological pathway redundancy
+## Overview
 
----
+CRISPR screens enable genome-wide functional genomics by systematically perturbing genes and measuring fitness effects. This skill provides an 8-phase workflow for:
+- Processing sgRNA count matrices
+- Quality control and normalization
+- Gene-level essentiality scoring (MAGeCK-like and BAGEL-like approaches)
+- Synthetic lethality detection
+- Pathway enrichment analysis
+- Drug target prioritization with DepMap integration
+- Integration with expression and mutation data
 
-## When to Use This Skill
+## Core Workflow
 
-Apply when users:
-- Have CRISPR screen hit lists (genes with significant phenotypes)
-- Need to prioritize CRISPR hits for validation
-- Want to identify essential genes for a specific cancer type
-- Need synthetic lethal interaction analysis
-- Ask "what are the top hits from my CRISPR screen?"
-- Need drug target prioritization from functional genomics data
-- Want pathway-level interpretation of screen results
+### Phase 1: Data Import & sgRNA Count Processing
 
----
-
-## ⚠️ Known Issues & Workarounds
-
-### DepMap API Unavailability (2026-02-09)
-
-**Issue**: DepMap REST APIs (Sanger Cell Model Passports and Broad Institute) are currently non-operational.
-
-**Impact**:
-- PATH 0 (Gene Validation): DepMap gene registry unavailable
-- PATH 1 (Essentiality Analysis): CRISPR dependency scores unavailable
-
-**Workaround**: This skill now uses **Pharos** as fallback:
-- Gene validation via `Pharos_get_target()`
-- Druggability assessment via TDL (Target Development Level) classification
-- TDL used as proxy for essentiality (Tclin targets are often essential)
-- Evidence grading: Tclin=★★★, Tchem=★★☆, Tbio/Tdark=★☆☆
-
-**Data Quality Trade-off**:
-- ✅ Gene validation: 100% success rate (Pharos has comprehensive drug target coverage)
-- ⚠️ Essentiality scores: Druggability-based proxy (TDL classification)
-- ℹ️ All findings labeled with source (Pharos vs DepMap)
-
-**Timeline**: Permanent fix (CSV download) estimated 1-2 weeks. See `DEPMAP_ISSUE_ANALYSIS.md` for details.
-
----
-
-## Input Types Supported
-
-### 1. Gene List from User's Screen
-- **Format**: Gene symbols (e.g., EGFR, KRAS, TP53)
-- **Minimum**: 5 genes (for meaningful enrichment)
-- **Optimal**: 20-100 genes (hits from primary screen)
-- **Context needed**: Cancer type, screen type (dropout/enrichment), cell line used
-
-### 2. Cancer Type Query
-- **Format**: Cancer type name (e.g., "non-small cell lung cancer", "breast cancer")
-- **Workflow**: Retrieve top essential genes for that cancer from DepMap
-- **Output**: Ranked target list with essentiality scores
-
-### 3. Gene of Interest
-- **Format**: Single gene symbol
-- **Workflow**: Analyze essentiality across cancer types, identify selective dependencies
-- **Output**: Target validation report with tissue specificity
-
----
-
-## Critical Workflow Requirements
-
-### 1. Report-First Approach (MANDATORY)
-
-**DO NOT** show intermediate tool outputs. Instead:
-
-1. **Create report file FIRST** before any analysis:
-   - File name: `CRISPR_screen_analysis_[CONTEXT].md`
-   - Initialize with all section headers
-   - Add placeholder: `[Analyzing...]` in each section
-
-2. **Progressively update** as data arrives:
-   - Replace `[Analyzing...]` with findings
-   - Include "No significant enrichment" when appropriate
-   - Document failed analyses explicitly
-
-3. **Final deliverable**: Complete markdown report + optional plots (if user requests)
-
-### 2. Evidence Grading System (MANDATORY)
-
-Grade every finding by confidence level:
-
-| Level | Symbol | Criteria | Examples |
-|-------|--------|----------|----------|
-| **HIGH** | ★★★ | DepMap score <-1.0, p<0.01, validated in literature | Strong essential gene, clinical drug target |
-| **MEDIUM** | ★★☆ | DepMap score -0.5 to -1.0, p<0.05, pathway coherence | Moderate dependency, pathway member |
-| **LOW** | ★☆☆ | DepMap score >-0.5, marginal significance, weak validation | Weak hit, potential off-target |
-
-### 3. Contextualization Requirements
-
-Every gene-level finding must include:
-- **Essentiality score** (DepMap gene effect)
-- **Pan-cancer vs selective** (is it essential in all cancers or specific subset?)
-- **Druggability** (existing drugs, chemical probes, tractability)
-- **Pathway context** (which pathways/complexes does it belong to?)
-- **Clinical relevance** (approved targets, ongoing trials, biomarkers)
-
----
-
-## Core Analysis Strategy: 7 Research Paths
-
-```
-User Input (gene list OR cancer type OR single gene)
-│
-├─ PATH 0: Input Processing & Validation
-│   ├─ Validate gene symbols
-│   ├─ Determine analysis mode
-│   └─ Set context parameters
-│
-├─ PATH 1: Gene Essentiality Analysis (DepMap)
-│   ├─ Query gene dependencies for each hit
-│   ├─ Retrieve essentiality scores across cell lines
-│   ├─ Calculate pan-cancer vs selective essentiality
-│   └─ Rank genes by dependency strength
-│
-├─ PATH 2: Pathway & Functional Enrichment
-│   ├─ GO enrichment (biological process, molecular function)
-│   ├─ Pathway enrichment (Reactome, WikiPathways, KEGG)
-│   ├─ Hallmark gene set enrichment (MSigDB)
-│   └─ Identify pathway-level vulnerabilities
-│
-├─ PATH 3: Protein-Protein Interaction Networks
-│   ├─ Build PPI network for hit genes
-│   ├─ Identify protein complexes
-│   ├─ Find synthetic lethal candidates
-│   └─ Hub gene analysis
-│
-├─ PATH 4: Druggability & Target Assessment
-│   ├─ Check existing drugs (DGIdb, ChEMBL)
-│   ├─ Assess chemical tractability (Pharos TDL)
-│   ├─ Find chemical probes (Open Targets)
-│   └─ Clinical trial status (ClinicalTrials.gov)
-│
-├─ PATH 5: Disease Association & Clinical Relevance
-│   ├─ Gene-disease associations (Open Targets)
-│   ├─ Somatic mutations in cancer (COSMIC, cBioPortal)
-│   ├─ Expression in patient samples (GTEx, TCGA)
-│   └─ Prognostic/predictive biomarker status
-│
-└─ PATH 6: Hit Prioritization & Validation Guidance
-    ├─ Integrate all evidence dimensions
-    ├─ Calculate priority score (essentiality + druggability + clinical relevance)
-    ├─ Recommend validation experiments
-    └─ Identify top 5-10 targets for follow-up
-```
-
----
-
-## PATH 0: Input Processing & Validation
-
-### Determine Analysis Mode
+**Load sgRNA Count Matrix**
 
 ```python
-def determine_analysis_mode(user_input):
+import pandas as pd
+import numpy as np
+
+def load_sgrna_counts(counts_file):
     """
-    Figure out what type of analysis to run.
+    Load sgRNA count matrix from MAGeCK format or generic TSV.
 
-    Returns: 'gene_list', 'cancer_type', or 'single_gene'
+    Expected format:
+    sgRNA | Gene | Sample1 | Sample2 | Sample3 | ...
+    sgRNA_1 | BRCA1 | 1500 | 1200 | 1100 | ...
+    sgRNA_2 | BRCA1 | 1800 | 1500 | 1400 | ...
     """
-    if isinstance(user_input, list) and len(user_input) >= 5:
-        return 'gene_list'  # User provided hits from their screen
-    elif isinstance(user_input, str) and len(user_input.split()) > 1:
-        return 'cancer_type'  # User asks about a cancer type
-    else:
-        return 'single_gene'  # Single gene target validation
-```
+    counts = pd.read_csv(counts_file, sep='\t')
 
-### Gene Symbol Validation
+    # Validate required columns
+    required_cols = ['sgRNA', 'Gene']
+    if not all(col in counts.columns for col in required_cols):
+        raise ValueError(f"Missing required columns: {required_cols}")
 
-**CRITICAL**: Validate gene symbols with fallback to Open Targets if DepMap unavailable.
+    # Extract sample columns
+    sample_cols = [col for col in counts.columns if col not in ['sgRNA', 'Gene']]
 
-```python
-def validate_gene_symbols(tu, gene_list):
-    """
-    Validate gene symbols with DepMap fallback to Open Targets.
+    # Create count matrix
+    count_matrix = counts[sample_cols].copy()
+    count_matrix.index = counts['sgRNA']
 
-    Returns: dict with valid_genes, invalid_genes, suggestions, data_source
-    """
-    validated = {
-        'valid': [],
-        'invalid': [],
-        'suggestions': {},
-        'data_source': None
+    # Gene mapping
+    sgrna_to_gene = dict(zip(counts['sgRNA'], counts['Gene']))
+
+    metadata = {
+        'n_sgrnas': len(counts),
+        'n_genes': counts['Gene'].nunique(),
+        'n_samples': len(sample_cols),
+        'sample_names': sample_cols,
+        'sgrna_to_gene': sgrna_to_gene
     }
 
-    # Try DepMap first
-    depmap_available = False
-    test_result = tu.tools.DepMap_search_genes(query="KRAS")
-    if (test_result.get('status') == 'success' and
-        not test_result.get('error', '').startswith('DepMap API')):
-        depmap_available = True
-        validated['data_source'] = 'DepMap (primary)'
+    return count_matrix, metadata
 
-    if depmap_available:
-        # Use original DepMap validation logic
-        for gene in gene_list:
-            result = tu.tools.DepMap_search_genes(query=gene)
-            if result.get('status') == 'success':
-                genes = result.get('data', {}).get('genes', [])
-                exact_matches = [g for g in genes
-                               if g.get('symbol', '').upper() == gene.upper()]
+# Load counts
+counts, meta = load_sgrna_counts("sgrna_counts.txt")
+print(f"Loaded {meta['n_sgrnas']} sgRNAs targeting {meta['n_genes']} genes across {meta['n_samples']} samples")
+```
 
-                if exact_matches:
-                    validated['valid'].append({
-                        'input': gene,
-                        'symbol': exact_matches[0]['symbol'],
-                        'ensembl_id': exact_matches[0].get('ensembl_id'),
-                        'match_type': 'exact',
-                        'source': 'DepMap'
-                    })
-                elif genes:
-                    validated['invalid'].append(gene)
-                    validated['suggestions'][gene] = [g['symbol'] for g in genes[:3]]
-                else:
-                    validated['invalid'].append(gene)
+**Create Experimental Design Table**
+
+```python
+def create_design_matrix(sample_names, conditions, timepoints=None):
+    """
+    Create experimental design linking samples to conditions.
+
+    Example:
+    Sample | Condition | Timepoint | Replicate
+    T0_rep1 | baseline | 0 | 1
+    T14_rep1 | treatment | 14 | 1
+    """
+    design = pd.DataFrame({
+        'Sample': sample_names,
+        'Condition': conditions
+    })
+
+    if timepoints is not None:
+        design['Timepoint'] = timepoints
+
+    # Auto-detect replicates
+    design['Replicate'] = design.groupby('Condition').cumcount() + 1
+
+    return design
+
+# Example usage
+sample_names = ['T0_rep1', 'T0_rep2', 'T14_rep1', 'T14_rep2', 'T14_rep3']
+conditions = ['baseline', 'baseline', 'treatment', 'treatment', 'treatment']
+design = create_design_matrix(sample_names, conditions)
+```
+
+### Phase 2: Quality Control & Filtering
+
+**Assess sgRNA Distribution**
+
+```python
+def qc_sgrna_distribution(count_matrix, min_reads=30, min_samples=2):
+    """
+    Quality control for sgRNA distribution.
+    - Remove sgRNAs with low read counts
+    - Check for outlier samples
+    - Assess library representation
+    """
+    results = {}
+
+    # 1. Library size per sample
+    library_sizes = count_matrix.sum(axis=0)
+    results['library_sizes'] = library_sizes
+    results['median_library_size'] = library_sizes.median()
+
+    # 2. Zero-count sgRNAs
+    zero_counts = (count_matrix == 0).sum(axis=1)
+    results['zero_counts'] = zero_counts
+    results['sgrnas_with_zeros'] = (zero_counts > 0).sum()
+
+    # 3. Low-count sgRNAs (< min_reads in > min_samples)
+    low_count_mask = (count_matrix < min_reads).sum(axis=1) > (len(count_matrix.columns) - min_samples)
+    results['low_count_sgrnas'] = low_count_mask.sum()
+
+    # 4. Gini coefficient (library skewness)
+    def gini_coefficient(counts):
+        sorted_counts = np.sort(counts)
+        n = len(counts)
+        cumsum = np.cumsum(sorted_counts)
+        return (2 * np.sum((np.arange(1, n+1)) * sorted_counts)) / (n * cumsum[-1]) - (n + 1) / n
+
+    results['gini_per_sample'] = {col: gini_coefficient(count_matrix[col].values)
+                                   for col in count_matrix.columns}
+
+    # 5. Recommend filtering
+    results['filter_recommendation'] = {
+        'min_reads': min_reads,
+        'min_samples_above_threshold': min_samples,
+        'sgrnas_to_remove': low_count_mask.sum()
+    }
+
+    return results
+
+# Run QC
+qc_results = qc_sgrna_distribution(counts, min_reads=30, min_samples=2)
+print(f"Library sizes: {qc_results['library_sizes']}")
+print(f"Low-count sgRNAs to remove: {qc_results['filter_recommendation']['sgrnas_to_remove']}")
+```
+
+**Filter Low-Count sgRNAs**
+
+```python
+def filter_low_count_sgrnas(count_matrix, sgrna_to_gene, min_reads=30, min_samples=2):
+    """
+    Remove sgRNAs with insufficient read counts.
+    """
+    # Keep sgRNAs with >= min_reads in >= min_samples
+    keep_mask = (count_matrix >= min_reads).sum(axis=1) >= min_samples
+
+    filtered_counts = count_matrix[keep_mask].copy()
+    filtered_mapping = {k: v for k, v in sgrna_to_gene.items() if k in filtered_counts.index}
+
+    print(f"Filtered: {(~keep_mask).sum()} sgRNAs removed, {keep_mask.sum()} retained")
+
+    return filtered_counts, filtered_mapping
+
+# Apply filtering
+filtered_counts, filtered_mapping = filter_low_count_sgrnas(counts, meta['sgrna_to_gene'])
+```
+
+### Phase 3: Normalization
+
+**Library Size Normalization**
+
+```python
+def normalize_counts(count_matrix, method='median'):
+    """
+    Normalize sgRNA counts to account for library size differences.
+
+    Methods:
+    - 'median': Median ratio normalization (like DESeq2)
+    - 'total': Total count normalization (CPM-like)
+    """
+    if method == 'median':
+        # Calculate geometric mean for each sgRNA across samples
+        pseudo_ref = np.exp(np.log(count_matrix + 1).mean(axis=1)) - 1
+
+        # Calculate size factors for each sample
+        size_factors = {}
+        for col in count_matrix.columns:
+            ratios = count_matrix[col] / pseudo_ref
+            ratios = ratios[ratios > 0]  # Remove zeros
+            size_factors[col] = ratios.median()
+
+        # Normalize
+        normalized = count_matrix.div(pd.Series(size_factors), axis=1)
+
+    elif method == 'total':
+        # CPM-like normalization
+        size_factors = count_matrix.sum(axis=0) / 1e6
+        normalized = count_matrix.div(size_factors, axis=1)
+
     else:
-        # FALLBACK: Use Pharos (druggability database)
-        print("⚠️  DepMap unavailable, using Pharos for gene validation...")
-        validated['data_source'] = 'Pharos (fallback - ★★☆)'
+        raise ValueError(f"Unknown normalization method: {method}")
 
-        for gene in gene_list:
-            # Query Pharos to check if gene exists
-            result = tu.tools.Pharos_get_target(gene=gene)
+    return normalized, size_factors
 
-            if result.get('status') == 'success' and result.get('data'):
-                target_data = result.get('data', {})
-                validated['valid'].append({
-                    'input': gene,
-                    'symbol': target_data.get('name', gene),
-                    'tdl': target_data.get('tdl', 'Unknown'),
-                    'match_type': 'exact',
-                    'source': 'Pharos'
-                })
+# Normalize
+norm_counts, size_factors = normalize_counts(filtered_counts, method='median')
+```
+
+**Log-Fold Change Calculation**
+
+```python
+def calculate_lfc(norm_counts, design, control_condition='baseline', treatment_condition='treatment'):
+    """
+    Calculate log2 fold changes between treatment and control.
+    """
+    # Get sample names for each condition
+    control_samples = design[design['Condition'] == control_condition]['Sample'].tolist()
+    treatment_samples = design[design['Condition'] == treatment_condition]['Sample'].tolist()
+
+    # Calculate mean counts
+    control_mean = norm_counts[control_samples].mean(axis=1)
+    treatment_mean = norm_counts[treatment_samples].mean(axis=1)
+
+    # Log2 fold change (add pseudocount to avoid log(0))
+    lfc = np.log2((treatment_mean + 1) / (control_mean + 1))
+
+    return lfc, control_mean, treatment_mean
+
+# Calculate LFC
+lfc, control_mean, treatment_mean = calculate_lfc(norm_counts, design)
+```
+
+### Phase 4: Gene-Level Scoring (MAGeCK-like)
+
+**Aggregate sgRNA Scores to Gene Level**
+
+```python
+def mageck_gene_scoring(lfc, sgrna_to_gene, method='rra'):
+    """
+    Gene-level essentiality scoring using MAGeCK-like approach.
+
+    Methods:
+    - 'rra': Robust Rank Aggregation (identify genes with consistently low-ranking sgRNAs)
+    - 'mean': Simple mean LFC across sgRNAs
+    """
+    # Create gene-level aggregation
+    gene_lfc = {}
+
+    for sgrna, gene in sgrna_to_gene.items():
+        if sgrna in lfc.index:
+            if gene not in gene_lfc:
+                gene_lfc[gene] = []
+            gene_lfc[gene].append(lfc[sgrna])
+
+    if method == 'rra':
+        # Simplified RRA: rank sgRNAs, calculate p-value for each gene
+        # based on whether its sgRNAs are enriched at the top (negative selection)
+        # or bottom (positive selection)
+
+        # Rank all sgRNAs by LFC
+        ranked_sgrnas = lfc.sort_values()
+        ranks = {sgrna: rank for rank, sgrna in enumerate(ranked_sgrnas.index, 1)}
+
+        gene_scores = {}
+        for gene, sgrna_list in gene_lfc.items():
+            # Get ranks for this gene's sgRNAs
+            gene_ranks = [ranks[sgrna] for sgrna in sgrna_list if sgrna in ranks]
+
+            if len(gene_ranks) > 0:
+                # Use mean rank as score (lower = more essential)
+                gene_scores[gene] = {
+                    'score': np.mean(gene_ranks),
+                    'n_sgrnas': len(gene_ranks),
+                    'mean_lfc': np.mean([lfc[sg] for sg in sgrna_list if sg in lfc.index])
+                }
+
+        # Convert to DataFrame
+        gene_df = pd.DataFrame(gene_scores).T
+        gene_df['rank'] = gene_df['score'].rank()
+
+    elif method == 'mean':
+        # Simple mean LFC
+        gene_df = pd.DataFrame({
+            gene: {
+                'mean_lfc': np.mean(sgrna_lfcs),
+                'n_sgrnas': len(sgrna_lfcs),
+                'score': np.mean(sgrna_lfcs)
+            }
+            for gene, sgrna_lfcs in gene_lfc.items()
+        }).T
+
+    # Sort by essentiality (negative LFC = essential)
+    gene_df = gene_df.sort_values('mean_lfc')
+
+    return gene_df
+
+# Gene-level scoring
+gene_scores = mageck_gene_scoring(lfc, filtered_mapping, method='rra')
+print(f"Top 10 essential genes:\n{gene_scores.head(10)[['mean_lfc', 'n_sgrnas']]}")
+```
+
+**Bayes Factor Scoring (BAGEL-like)**
+
+```python
+def bagel_bayes_factor(lfc, sgrna_to_gene, essential_genes=None, nonessential_genes=None):
+    """
+    BAGEL-like Bayes Factor calculation for gene essentiality.
+
+    Uses reference sets of known essential and non-essential genes to
+    calculate likelihood ratios.
+    """
+    # Default reference gene sets (core essential genes)
+    if essential_genes is None:
+        essential_genes = ['RPL5', 'RPS6', 'POLR2A', 'PSMC2', 'PSMD14']  # Example
+
+    if nonessential_genes is None:
+        nonessential_genes = ['AAVS1', 'ROSA26', 'HPRT1']  # Example
+
+    # Get LFC distributions for reference sets
+    essential_lfc = [lfc[sg] for sg, g in sgrna_to_gene.items()
+                     if g in essential_genes and sg in lfc.index]
+    nonessential_lfc = [lfc[sg] for sg, g in sgrna_to_gene.items()
+                        if g in nonessential_genes and sg in lfc.index]
+
+    if len(essential_lfc) < 3 or len(nonessential_lfc) < 3:
+        print("Warning: Insufficient reference genes for BAGEL scoring")
+        return None
+
+    # Estimate distributions (simplified)
+    essential_mean, essential_std = np.mean(essential_lfc), np.std(essential_lfc)
+    nonessential_mean, nonessential_std = np.mean(nonessential_lfc), np.std(nonessential_lfc)
+
+    # Calculate Bayes Factor for each gene
+    gene_bf = {}
+    gene_lfc_map = {}
+    for sgrna, gene in sgrna_to_gene.items():
+        if sgrna in lfc.index:
+            if gene not in gene_lfc_map:
+                gene_lfc_map[gene] = []
+            gene_lfc_map[gene].append(lfc[sgrna])
+
+    for gene, sgrna_lfcs in gene_lfc_map.items():
+        mean_lfc = np.mean(sgrna_lfcs)
+
+        # Likelihood under essential distribution
+        from scipy.stats import norm
+        l_essential = norm.pdf(mean_lfc, essential_mean, essential_std)
+
+        # Likelihood under non-essential distribution
+        l_nonessential = norm.pdf(mean_lfc, nonessential_mean, nonessential_std)
+
+        # Bayes Factor (avoid division by zero)
+        bf = l_essential / (l_nonessential + 1e-10)
+
+        gene_bf[gene] = {
+            'bayes_factor': bf,
+            'mean_lfc': mean_lfc,
+            'n_sgrnas': len(sgrna_lfcs)
+        }
+
+    # Convert to DataFrame and sort
+    bf_df = pd.DataFrame(gene_bf).T
+    bf_df = bf_df.sort_values('bayes_factor', ascending=False)
+
+    return bf_df
+
+# BAGEL scoring
+bf_scores = bagel_bayes_factor(lfc, filtered_mapping)
+if bf_scores is not None:
+    print(f"Top 10 by Bayes Factor:\n{bf_scores.head(10)}")
+```
+
+### Phase 5: Synthetic Lethality Detection
+
+**Identify Context-Specific Essential Genes**
+
+```python
+def detect_synthetic_lethality(gene_scores_wildtype, gene_scores_mutant,
+                                lfc_threshold=-1.0, rank_diff_threshold=100):
+    """
+    Identify genes that are selectively essential in mutant context
+    (synthetic lethal interactions).
+
+    Compare essentiality scores between wildtype and mutant cell lines.
+    """
+    # Merge scores
+    comparison = pd.merge(
+        gene_scores_wildtype[['mean_lfc', 'rank']],
+        gene_scores_mutant[['mean_lfc', 'rank']],
+        left_index=True,
+        right_index=True,
+        suffixes=('_wt', '_mut')
+    )
+
+    # Calculate differential essentiality
+    comparison['delta_lfc'] = comparison['mean_lfc_mut'] - comparison['mean_lfc_wt']
+    comparison['delta_rank'] = comparison['rank_wt'] - comparison['rank_mut']
+
+    # Identify synthetic lethal candidates
+    # (more essential in mutant, not essential in wildtype)
+    sl_candidates = comparison[
+        (comparison['mean_lfc_mut'] < lfc_threshold) &  # Essential in mutant
+        (comparison['mean_lfc_wt'] > -0.5) &  # Not essential in wildtype
+        (comparison['delta_rank'] > rank_diff_threshold)  # Large rank change
+    ].copy()
+
+    sl_candidates = sl_candidates.sort_values('delta_lfc')
+
+    return sl_candidates
+
+# Example: Detect genes synthetic lethal with KRAS mutation
+# (Requires running screens in both KRAS-mutant and wildtype cells)
+# sl_hits = detect_synthetic_lethality(gene_scores_wt, gene_scores_kras_mut)
+```
+
+**Query DepMap for Known Dependencies**
+
+```python
+def query_depmap_dependencies(gene_symbol):
+    """
+    Query DepMap database for known gene dependencies.
+
+    ToolUniverse doesn't have direct DepMap tools, but we can use
+    STRING or literature tools to find dependency information.
+    """
+    from tooluniverse import ToolUniverse
+    tu = ToolUniverse()
+
+    # Search literature for essentiality/dependency information
+    result = tu.run_one_function({
+        "name": "PubMed_search",
+        "arguments": {
+            "query": f'("{gene_symbol}"[Gene]) AND ("CRISPR screen" OR "gene essentiality" OR "DepMap")',
+            "max_results": 20
+        }
+    })
+
+    if 'data' in result and 'papers' in result['data']:
+        papers = result['data']['papers']
+        print(f"Found {len(papers)} papers on {gene_symbol} essentiality")
+        return papers
+
+    return []
+
+# Example usage
+# depmap_papers = query_depmap_dependencies("PRMT5")
+```
+
+### Phase 6: Pathway Enrichment Analysis
+
+**Enrichment of Essential Genes**
+
+```python
+def enrich_essential_genes(gene_scores, top_n=100, databases=['KEGG_2021_Human', 'GO_Biological_Process_2021']):
+    """
+    Perform pathway enrichment on top essential genes.
+    """
+    from tooluniverse import ToolUniverse
+    tu = ToolUniverse()
+
+    # Get top essential genes (most negative LFC)
+    top_genes = gene_scores.head(top_n).index.tolist()
+
+    print(f"Enriching {len(top_genes)} top essential genes...")
+
+    # Run Enrichr
+    result = tu.run_one_function({
+        "name": "Enrichr_submit_genelist",
+        "arguments": {
+            "gene_list": top_genes,
+            "description": "CRISPR_screen_essential_genes"
+        }
+    })
+
+    if 'data' not in result or 'userListId' not in result['data']:
+        print("Failed to submit gene list to Enrichr")
+        return None
+
+    user_list_id = result['data']['userListId']
+
+    # Get enrichment results for each database
+    all_results = {}
+    for db in databases:
+        enrich_result = tu.run_one_function({
+            "name": "Enrichr_get_results",
+            "arguments": {
+                "userListId": user_list_id,
+                "backgroundType": db
+            }
+        })
+
+        if 'data' in enrich_result and db in enrich_result['data']:
+            all_results[db] = pd.DataFrame(enrich_result['data'][db])
+            print(f"{db}: {len(all_results[db])} enriched terms")
+
+    return all_results
+
+# Run enrichment
+# enrichment_results = enrich_essential_genes(gene_scores, top_n=100)
+```
+
+### Phase 7: Drug Target Prioritization
+
+**Integrate with Expression & Mutation Data**
+
+```python
+def prioritize_drug_targets(gene_scores, expression_data=None, mutation_data=None):
+    """
+    Prioritize CRISPR hits as drug targets based on:
+    1. Essentiality score (from CRISPR screen)
+    2. Expression level in disease vs normal (if provided)
+    3. Mutation frequency in tumors (if provided)
+    4. Druggability (query DGIdb)
+    """
+    from tooluniverse import ToolUniverse
+    tu = ToolUniverse()
+
+    # Start with top essential genes
+    candidates = gene_scores.head(50).copy()
+
+    # Add expression data if provided
+    if expression_data is not None:
+        candidates = candidates.merge(expression_data, left_index=True, right_index=True, how='left')
+
+    # Add mutation data if provided
+    if mutation_data is not None:
+        candidates = candidates.merge(mutation_data, left_index=True, right_index=True, how='left')
+
+    # Query druggability for each gene
+    druggability_scores = {}
+    for gene in candidates.index[:20]:  # Limit to top 20 to avoid rate limits
+        result = tu.run_one_function({
+            "name": "DGIdb_query_gene",
+            "arguments": {"gene_symbol": gene}
+        })
+
+        if 'data' in result and 'matchedTerms' in result['data']:
+            matches = result['data']['matchedTerms']
+            if len(matches) > 0:
+                # Count number of drug interactions
+                n_drugs = len(matches[0].get('interactions', []))
+                druggability_scores[gene] = n_drugs
             else:
-                # Gene not found
-                validated['invalid'].append(gene)
+                druggability_scores[gene] = 0
+        else:
+            druggability_scores[gene] = 0
 
-    return validated
-```
+    candidates['n_drugs'] = pd.Series(druggability_scores)
 
-**Output for Report**:
-```markdown
-### Input Validation
+    # Calculate composite priority score
+    # (Normalize each component to 0-1 scale)
+    candidates['essentiality_norm'] = (candidates['mean_lfc'].min() - candidates['mean_lfc']) / \
+                                       (candidates['mean_lfc'].min() - candidates['mean_lfc'].max())
 
-**Genes Provided**: 25 gene symbols
-**Valid Genes**: 23 (92%)
-**Invalid/Ambiguous**: 2
-**Data Source**: {data_source from validated dict}
-
-**Invalid Genes**:
-- `EGFRVIII` → Gene symbol not recognized (mutation-specific identifier)
-- `P53` → Did you mean `TP53`? (use official gene symbol)
-
-**Proceeding with 23 valid gene symbols for analysis.**
-
-*Source: {DepMap gene registry OR Pharos (fallback)}*
-
----
-**Note**: If using Pharos fallback due to DepMap unavailability, validation provides gene symbols and TDL classification (druggability level). Validation is ★★☆ reliable.
-```
-
----
-
-## PATH 1: Gene Essentiality Analysis (DepMap with Open Targets Fallback)
-
-### Retrieve Essentiality Scores
-
-```python
-def analyze_gene_essentiality(tu, gene_list, cancer_type=None):
-    """
-    Get gene essentiality data with DepMap fallback to Open Targets.
-
-    DepMap: Provides CRISPR dependency scores (gold standard - ★★★)
-    Open Targets: Provides tractability + safety as proxy (fallback - ★★☆)
-    """
-    essentiality_data = []
-
-    # Check if DepMap is available
-    test_result = tu.tools.DepMap_get_gene_dependencies(gene_symbol="KRAS")
-    depmap_available = (
-        test_result.get('status') == 'success' and
-        not test_result.get('error', '').startswith('DepMap API')
-    )
-
-    if depmap_available:
-        # Use original DepMap logic (optimal - ★★★)
-        for gene in gene_list:
-            dep_result = tu.tools.DepMap_get_gene_dependencies(gene_symbol=gene)
-            if dep_result.get('status') == 'success':
-                gene_data = dep_result.get('data', {})
-                essentiality_data.append({
-                    'gene': gene,
-                    'data': gene_data,
-                    'essentiality_class': classify_essentiality_depmap(gene_data),
-                    'source': 'DepMap',
-                    'confidence': 'HIGH'  # ★★★
-                })
+    if 'log2fc' in candidates.columns:
+        candidates['expression_norm'] = (candidates['log2fc'] - candidates['log2fc'].min()) / \
+                                        (candidates['log2fc'].max() - candidates['log2fc'].min())
     else:
-        # FALLBACK: Use Pharos TDL classification as proxy
-        print("⚠️  DepMap unavailable, using Pharos TDL as essentiality proxy...")
+        candidates['expression_norm'] = 0
 
-        for gene in gene_list:
-            pharos_result = tu.tools.Pharos_get_target(gene=gene)
+    candidates['druggability_norm'] = candidates['n_drugs'] / (candidates['n_drugs'].max() + 1)
 
-            if pharos_result.get('status') == 'success' and pharos_result.get('data'):
-                target_data = pharos_result.get('data', {})
-
-                # Use TDL (Target Development Level) as proxy for essentiality
-                essentiality_class = classify_essentiality_pharos(target_data)
-
-                essentiality_data.append({
-                    'gene': gene,
-                    'data': target_data,
-                    'essentiality_class': essentiality_class,
-                    'source': 'Pharos',
-                    'confidence': essentiality_class['confidence'],
-                    'note': 'Essentiality inferred from TDL classification'
-                })
-
-    return essentiality_data
-
-
-def classify_essentiality_depmap(gene_data):
-    """Classify gene essentiality based on DepMap CRISPR scores."""
-    # Original DepMap classification logic
-    return {
-        'pan_cancer': False,
-        'selective': True,
-        'non_essential': False
-    }
-
-
-def classify_essentiality_pharos(target_data):
-    """
-    Infer essentiality from Pharos TDL classification (fallback method).
-
-    TDL (Target Development Level) categories:
-    - Tclin: Clinical drug target (approved drugs) → Likely essential/important
-    - Tchem: Chemical tool/probe available → Druggable, possibly essential
-    - Tbio: Biological evidence → Some relevance
-    - Tdark: No drug/tool → Unknown essentiality
-    """
-    tdl = target_data.get('tdl', 'Unknown')
-
-    if tdl == 'Tclin':
-        return {
-            'classification': 'LIKELY_ESSENTIAL',
-            'confidence': 'HIGH',  # ★★★
-            'tdl': tdl,
-            'rationale': (
-                'Approved drug target (Tclin). '
-                'Clinically validated targets are often essential. '
-                'For cell-line-specific scores, await DepMap restoration.'
-            )
-        }
-    elif tdl == 'Tchem':
-        return {
-            'classification': 'POTENTIALLY_ESSENTIAL',
-            'confidence': 'MEDIUM',  # ★★☆
-            'tdl': tdl,
-            'rationale': (
-                'Chemical tools available (Tchem). '
-                'Druggable targets with chemical probes often have functional relevance.'
-            )
-        }
-    elif tdl == 'Tbio':
-        return {
-            'classification': 'UNCERTAIN',
-            'confidence': 'LOW',  # ★☆☆
-            'tdl': tdl,
-            'rationale': (
-                'Biological evidence only (Tbio). '
-                'Limited druggability data. Essentiality unclear.'
-            )
-        }
-    else:  # Tdark or Unknown
-        return {
-            'classification': 'UNKNOWN',
-            'confidence': 'LOW',  # ★☆☆
-            'tdl': tdl,
-            'rationale': (
-                'Dark target or unknown. '
-                'No drug/tool data. Essentiality cannot be inferred.'
-            )
-        }
-```
-
-### Cancer Type-Specific Analysis
-
-For cancer type queries, retrieve top essential genes:
-
-```python
-def get_top_essential_genes_for_cancer(tu, cancer_type, top_n=50):
-    """
-    Retrieve top essential genes for a specific cancer type from DepMap.
-    """
-    # Get cell lines for this cancer type
-    cell_lines = tu.tools.DepMap_get_cell_lines(
-        cancer_type=cancer_type,
-        page_size=100
+    # Weighted composite score
+    candidates['priority_score'] = (
+        0.5 * candidates['essentiality_norm'] +
+        0.3 * candidates['expression_norm'] +
+        0.2 * candidates['druggability_norm']
     )
 
-    if not cell_lines.get('data', {}).get('cell_lines'):
-        return {'error': f'No cell lines found for {cancer_type}'}
+    # Sort by priority
+    candidates = candidates.sort_values('priority_score', ascending=False)
 
-    # For each cell line, would need to query dependencies
-    # Note: DepMap API may not support direct "top genes by cancer type" query
-    # May need to aggregate manually or use different approach
+    return candidates
 
-    return {
-        'cancer_type': cancer_type,
-        'cell_lines': cell_lines.get('data', {}).get('cell_lines', []),
-        'note': 'Full analysis requires per-cell-line dependency data aggregation'
-    }
+# Prioritize targets
+# drug_targets = prioritize_drug_targets(gene_scores, expression_data=rna_seq_results)
 ```
 
-**Output for Report (when DepMap available)**:
-```markdown
-### 1. Gene Essentiality Analysis
-
-**Data Source**: DepMap CRISPR (24Q2) ✅
-**Confidence**: ★★★ HIGH
-
-#### Strongly Essential Genes (DepMap Score < -1.0)
-
-| Gene | Mean Effect | Essential Cell Lines (%) | Selectivity | Evidence |
-|------|-------------|-------------------------|-------------|----------|
-| **RPL5** | -1.45 | 98% (1,042/1,063) | Pan-cancer | ★★★ |
-| **RPS6** | -1.32 | 96% (1,019/1,063) | Pan-cancer | ★★★ |
-| **POLR2A** | -1.28 | 95% (1,010/1,063) | Pan-cancer | ★★★ |
-
-**Interpretation**: These genes are essential for cell survival across nearly all cancer types. They are core fitness genes (ribosomal proteins, RNA polymerase) and likely not selective therapeutic targets.
-
-*Source: DepMap via `DepMap_get_gene_dependencies`*
-```
-
-**Output for Report (when using Pharos fallback)**:
-```markdown
-### 1. Gene Essentiality Analysis
-
-**⚠️ Data Source**: Pharos (DepMap CRISPR temporarily unavailable)
-**Analysis Method**: Essentiality inferred from TDL (Target Development Level) classification
-**Confidence**: Varies by TDL (Tclin=★★★, Tchem=★★☆, Tbio/Tdark=★☆☆)
-
-#### Clinically Validated Targets (Tclin - Likely Essential)
-
-| Gene | TDL | Clinical Status | Inference | Evidence |
-|------|-----|----------------|-----------|----------|
-| **KRAS** | Tclin | Approved drugs (sotorasib, adagrasib) | Likely essential in KRAS-mutant cancers | ★★★ |
-| **EGFR** | Tclin | Multiple approved inhibitors | Likely essential in EGFR-mutant cancers | ★★★ |
-
-**Interpretation**: Tclin targets have approved drugs, indicating clinical validation. These are likely essential in specific contexts (mutation-dependent).
-
-#### Chemical Probe Available (Tchem - Potentially Essential)
-
-| Gene | TDL | Tool Status | Inference | Evidence |
-|------|-----|-------------|-----------|----------|
-| **CDK2** | Tchem | Chemical probes available | Potentially essential (cell cycle) | ★★☆ |
-| **WEE1** | Tchem | Chemical inhibitors available | Potentially essential (DNA damage) | ★★☆ |
-
-**Interpretation**: Tchem targets are druggable with chemical tools. Druggability suggests functional importance.
-
-**Note**: TDL classification is a proxy for essentiality. **For definitive CRISPR dependency scores, DepMap data required.**
-
-*Source: Pharos via `Pharos_get_target` (fallback method)*
-
-#### Selectively Essential Genes (Tissue/Context-Specific)
-
-| Gene | Mean Effect | Essential in | Non-Essential in | Selectivity Score | Evidence |
-|------|-------------|--------------|------------------|-------------------|----------|
-| **KRAS** | -0.85 | Pancreatic (95%), Lung (78%), Colon (82%) | Breast (12%), Glioma (8%) | High | ★★★ |
-| **EGFR** | -0.72 | Lung (85%), Glioblastoma (76%) | Most others (<20%) | High | ★★★ |
-| **ESR1** | -0.68 | ER+ Breast (92%) | ER- Breast (5%), Other (<3%) | Very High | ★★★ |
-
-**Interpretation**: Selectively essential genes show strong context-dependency and represent high-value therapeutic targets with potential for tissue-selective toxicity profiles.
-
-*Source: DepMap via `DepMap_get_gene_dependencies`*
-
-#### Non-Essential/Weak Hits (Score > -0.5)
-
-| Gene | Mean Effect | % Essential | Interpretation |
-|------|-------------|-------------|----------------|
-| **GENE1** | -0.25 | 15% | Weak dependency, potential off-target or passenger |
-| **GENE2** | -0.12 | 8% | Non-essential in most contexts |
-
-**Note**: These genes may still be biologically relevant (e.g., synthetic lethal interactions, drug targets for specific contexts) but show weak essentiality in CRISPR screens.
-
----
-**Essentiality Summary**:
-- **Pan-cancer essential**: 12 genes (↓ deprioritize for selective targeting)
-- **Selectively essential**: 18 genes (★ HIGH PRIORITY for validation)
-- **Weakly essential**: 15 genes (context-dependent, requires further investigation)
-
-*All essentiality data from DepMap Portal (DepMap Public 24Q2 release)*
-```
-
----
-
-## PATH 2: Pathway & Functional Enrichment
-
-### Gene Set Enrichment Analysis
+**Query Existing Drugs for Top Targets**
 
 ```python
-def perform_pathway_enrichment(tu, gene_list):
+def find_drugs_for_targets(target_genes, max_per_gene=5):
     """
-    Run enrichment analysis across multiple libraries.
+    Find existing drugs targeting top candidate genes.
     """
-    # Enrichr libraries to query
-    libraries = [
-        "WikiPathways_2024_Human",
-        "Reactome_Pathways_2024",
-        "MSigDB_Hallmark_2020",
-        "GO_Biological_Process_2023",
-        "GO_Molecular_Function_2023",
-        "GO_Cellular_Component_2023",
-        "KEGG_2024_Human"
-    ]
+    from tooluniverse import ToolUniverse
+    tu = ToolUniverse()
 
-    result = tu.tools.enrichr_gene_enrichment_analysis(
-        gene_list=gene_list,
-        libs=libraries
-    )
+    drug_results = {}
 
-    # Parse results - Enrichr returns pathway rankings with p-values
-    return result
-```
+    for gene in target_genes[:10]:  # Top 10 targets
+        print(f"Searching drugs for {gene}...")
 
-**Output for Report**:
-```markdown
-### 2. Pathway & Functional Enrichment
-
-#### Top Enriched Pathways (p < 0.01, FDR < 0.05)
-
-##### Reactome Pathways
-
-| Pathway | Genes | p-value | FDR | Odds Ratio | Evidence |
-|---------|-------|---------|-----|------------|----------|
-| **Cell Cycle Checkpoints** | 12/18 | 1.2e-8 | 3.4e-6 | 15.3 | ★★★ |
-| **DNA Replication** | 8/18 | 3.5e-6 | 4.2e-4 | 12.1 | ★★★ |
-| **G1/S Transition** | 7/18 | 5.1e-5 | 2.1e-3 | 9.8 | ★★☆ |
-
-*Genes in pathway*: CCNE1, CDK2, RB1, E2F1, CDC25A, CDC6, ORC1, MCM2
-
-**Interpretation**: Strong enrichment in cell cycle control pathways suggests the screen identified proliferation-essential genes. These represent core cell cycle machinery.
-
-##### GO Biological Process
-
-| Term | Genes | p-value | FDR | Evidence |
-|------|-------|---------|-----|----------|
-| **DNA replication initiation** | 6/18 | 2.1e-7 | 1.5e-5 | ★★★ |
-| **G1/S transition of mitotic cell cycle** | 8/18 | 8.3e-7 | 3.2e-5 | ★★★ |
-| **regulation of cyclin-dependent protein kinase activity** | 5/18 | 1.2e-4 | 8.9e-3 | ★★☆ |
-
-##### MSigDB Hallmark Gene Sets
-
-| Hallmark | Genes | p-value | FDR | Evidence |
-|----------|-------|---------|-----|----------|
-| **E2F Targets** | 10/18 | 6.7e-10 | 1.2e-8 | ★★★ |
-| **G2M Checkpoint** | 9/18 | 3.4e-8 | 2.1e-6 | ★★★ |
-| **MYC Targets V1** | 7/18 | 2.1e-5 | 9.8e-4 | ★★☆ |
-
-**Key Finding**: Hits converge on E2F/RB pathway, suggesting screen successfully identified proliferation machinery. This is expected for dropout screens in proliferating cancer cells.
-
-*Source: Enrichr via `enrichr_gene_enrichment_analysis`*
-
-#### No Significant Enrichment
-
-**GO Molecular Function**: No terms pass FDR < 0.05
-**KEGG Pathways**: Marginal enrichment (p < 0.05) but does not survive multiple testing correction
-
-**Interpretation**: Gene list may be heterogeneous or represent diverse biological processes. Consider sub-clustering analysis.
-```
-
----
-
-## PATH 3: Protein-Protein Interaction Networks
-
-### Build PPI Network
-
-```python
-def build_ppi_network(tu, gene_list):
-    """
-    Construct protein interaction network for hit genes.
-    """
-    # Use STRING for comprehensive PPI data
-    ppi_result = tu.tools.STRING_get_protein_interactions(
-        protein_ids=gene_list,
-        species=9606  # Human
-    )
-
-    # Also check IntAct for curated interactions
-    interactions = []
-    for gene in gene_list:
-        # Get UniProt ID first
-        uniprot = resolve_gene_to_uniprot(tu, gene)
-        if uniprot:
-            intact_result = tu.tools.intact_get_interactions(identifier=uniprot)
-            interactions.append(intact_result)
-
-    return {
-        'string': ppi_result,
-        'intact': interactions
-    }
-
-def identify_protein_complexes(ppi_data):
-    """
-    Identify protein complexes from PPI network.
-
-    Could use complex detection algorithms or query Complex Portal.
-    """
-    # Implementation for complex detection
-    pass
-```
-
-**Output for Report**:
-```markdown
-### 3. Protein Interaction Network Analysis
-
-#### Network Statistics
-
-- **Nodes**: 45 proteins (from 45 input genes)
-- **Edges**: 128 interactions (STRING combined score > 0.4)
-- **Network Density**: 0.063
-- **Average Clustering Coefficient**: 0.45
-- **Hub Genes** (>10 interactions): CDK2, RB1, E2F1, CCNE1
-
-**Interpretation**: High clustering coefficient indicates genes are functionally related and form coherent protein complexes.
-
-*Source: STRING via `STRING_get_protein_interactions`*
-
-#### Protein Complexes Identified
-
-| Complex | Members | Function | Essential? |
-|---------|---------|----------|------------|
-| **MCM Complex** | MCM2, MCM3, MCM4, MCM5, MCM6, MCM7 | DNA replication helicase | Yes (pan-cancer) |
-| **Cyclin E-CDK2** | CCNE1, CCNE2, CDK2 | G1/S transition kinase | Yes (selective) |
-| **E2F/DP/RB** | E2F1, E2F2, E2F3, RB1, TFDP1 | Transcription regulation | Yes (context-dependent) |
-
-**Key Finding**: Screen hit multiple members of the same essential complexes. This provides validation (independent hits in same pathway) and suggests complex-level vulnerability.
-
-*Source: Complex Portal annotations + STRING clustering*
-
-#### Synthetic Lethal Candidates
-
-Based on PPI network and literature:
-
-| Gene A (Hit) | Gene B (Candidate) | Relationship | Evidence | Source |
-|--------------|-------------------|--------------|----------|--------|
-| **RB1** | **ARID1A** | Synthetic lethal | ★★☆ | PMID:29534788 |
-| **KRAS** | **STK11** | Synthetic lethal | ★★★ | PMID:31010833 |
-
-**Recommendation**: Test synthetic lethal candidates (Gene B) for combination therapy with inhibitors of Gene A.
-```
-
----
-
-## PATH 4: Druggability & Target Assessment
-
-### Assess Drug Target Potential
-
-```python
-def assess_druggability(tu, gene_list):
-    """
-    Evaluate druggability of hit genes.
-    """
-    drug_targets = []
-
-    for gene in gene_list:
-        # Check Pharos for target development level
-        pharos = tu.tools.Pharos_get_target(gene=gene)
-
-        # Check DGIdb for existing drugs
-        dgidb = tu.tools.DGIdb_get_drug_gene_interactions(genes=[gene])
-
-        # Check Open Targets for chemical probes
-        ensembl_id = resolve_gene_to_ensembl(tu, gene)
-        if ensembl_id:
-            probes = tu.tools.OpenTargets_get_chemical_probes_by_target_ensemblId(
-                ensemblId=ensembl_id
-            )
-
-        # Check clinical trials
-        trials = tu.tools.search_clinical_trials(
-            intervention=gene,
-            pageSize=20
-        )
-
-        drug_targets.append({
-            'gene': gene,
-            'pharos_tdl': pharos.get('data', {}).get('tdl'),
-            'existing_drugs': dgidb,
-            'chemical_probes': probes,
-            'clinical_trials': trials
+        # Query DGIdb
+        result = tu.run_one_function({
+            "name": "DGIdb_query_gene",
+            "arguments": {"gene_symbol": gene}
         })
 
-    return drug_targets
+        if 'data' in result and 'matchedTerms' in result['data']:
+            matches = result['data']['matchedTerms']
+            if len(matches) > 0:
+                interactions = matches[0].get('interactions', [])
+
+                drugs = []
+                for interaction in interactions[:max_per_gene]:
+                    drugs.append({
+                        'drug_name': interaction.get('drugName', 'Unknown'),
+                        'interaction_type': interaction.get('interactionTypes', ['Unknown'])[0],
+                        'source': interaction.get('source', 'Unknown')
+                    })
+
+                drug_results[gene] = drugs
+
+    return drug_results
+
+# Find drugs
+# drug_candidates = find_drugs_for_targets(drug_targets.index.tolist())
 ```
 
-**Output for Report**:
-```markdown
-### 4. Druggability & Clinical Target Assessment
+### Phase 8: Report Generation
 
-#### Target Development Level Classification (Pharos)
-
-| TDL | Count | Genes | Interpretation |
-|-----|-------|-------|----------------|
-| **Tclin** | 5 | EGFR, KRAS, CDK2, HDAC1, AURKA | Approved drug targets |
-| **Tchem** | 8 | WEE1, PLK1, CHEK1, ... | Chemical matter available, druggable |
-| **Tbio** | 12 | E2F1, RB1, ... | Biologically characterized, may need novel modalities |
-| **Tdark** | 3 | GENE_X, GENE_Y, GENE_Z | Understudied, limited tool compounds |
-
-**Priority Ranking**: Tclin > Tchem > Tbio for near-term drug development feasibility.
-
-*Source: Pharos/TCRD via `Pharos_get_target`*
-
-#### Approved Drugs & Clinical Tools
-
-| Gene | Drug(s) | Status | Indication | Source |
-|------|---------|--------|------------|--------|
-| **EGFR** | Erlotinib, Gefitinib, Osimertinib | Approved | NSCLC | DGIdb |
-| **CDK2** | Dinaciclib | Phase 2 | Hematologic malignancies | ClinicalTrials.gov |
-| **AURKA** | Alisertib | Phase 3 | Lymphoma | ClinicalTrials.gov |
-| **WEE1** | Adavosertib | Phase 2 | Solid tumors | ClinicalTrials.gov |
-
-**Clinical Readiness**: 5 genes have approved/late-stage drugs. These represent immediate repurposing opportunities.
-
-*Sources: DGIdb via `DGIdb_get_drug_gene_interactions`, ClinicalTrials.gov*
-
-#### Chemical Probes Available
-
-| Gene | Probe | Potency | Selectivity | Use | Source |
-|------|-------|---------|-------------|-----|--------|
-| **CDK2** | Roscovitine | IC50 ~200nM | Moderate (pan-CDK) | Tool compound | SGC/Open Targets |
-| **HDAC1** | SAHA (Vorinostat) | IC50 ~10nM | Pan-HDAC | Approved drug, research tool | ChEMBL |
-
-*Source: Open Targets via `OpenTargets_get_chemical_probes_by_target_ensemblId`*
-
-#### Non-Druggable Hits Requiring Alternative Strategies
-
-| Gene | Challenge | Recommended Approach |
-|------|-----------|---------------------|
-| **E2F1** | Transcription factor (no catalytic domain) | PROTACs, molecular glue degraders |
-| **RB1** | Tumor suppressor (loss-of-function) | Synthetic lethal approach (e.g., CDK4/6i) |
-| **MCM2** | Part of large complex, no pockets | Indirect targeting via cell cycle inhibitors |
-
-**Validation Priority**: Focus on Tclin/Tchem hits with existing tool compounds for faster validation.
-```
-
----
-
-## PATH 5: Disease Association & Clinical Relevance
-
-### Cancer Genomics Integration
+**Comprehensive CRISPR Screen Report**
 
 ```python
-def assess_clinical_relevance(tu, gene_list, cancer_type):
+def generate_crispr_report(gene_scores, enrichment_results, drug_targets,
+                           output_file="crispr_screen_report.md"):
     """
-    Evaluate clinical relevance of hits in target cancer type.
+    Generate comprehensive CRISPR screen analysis report.
     """
-    clinical_data = []
+    with open(output_file, 'w') as f:
+        f.write("# CRISPR Screen Analysis Report\n\n")
 
-    for gene in gene_list:
-        ensembl_id = resolve_gene_to_ensembl(tu, gene)
+        # Summary statistics
+        f.write("## Summary\n\n")
+        f.write(f"- **Total genes analyzed**: {len(gene_scores)}\n")
+        f.write(f"- **Essential genes** (LFC < -1): {(gene_scores['mean_lfc'] < -1).sum()}\n")
+        f.write(f"- **Non-essential genes** (LFC > -0.5): {(gene_scores['mean_lfc'] > -0.5).sum()}\n\n")
 
-        if ensembl_id:
-            # Disease associations
-            diseases = tu.tools.OpenTargets_get_diseases_phenotypes_by_target_ensemblId(
-                ensemblId=ensembl_id
-            )
+        # Top 20 essential genes
+        f.write("## Top 20 Essential Genes\n\n")
+        f.write("| Rank | Gene | Mean LFC | sgRNAs | Score |\n")
+        f.write("|------|------|----------|--------|-------|\n")
+        for idx, (gene, row) in enumerate(gene_scores.head(20).iterrows(), 1):
+            f.write(f"| {idx} | {gene} | {row['mean_lfc']:.3f} | {int(row['n_sgrnas'])} | {row['score']:.2f} |\n")
 
-            # Mouse models
-            mouse = tu.tools.OpenTargets_get_biological_mouse_models_by_ensemblId(
-                ensemblId=ensembl_id
-            )
+        f.write("\n")
 
-        # COSMIC mutations (somatic alterations in cancer)
-        cosmic = tu.tools.COSMIC_get_gene_mutations(gene=gene)
+        # Pathway enrichment
+        if enrichment_results:
+            f.write("## Pathway Enrichment\n\n")
+            for db, results in enrichment_results.items():
+                f.write(f"### {db}\n\n")
+                f.write("| Term | P-value | Adjusted P-value | Genes |\n")
+                f.write("|------|---------|------------------|-------|\n")
+                for _, row in results.head(10).iterrows():
+                    term = row.get('Term', 'Unknown')
+                    pval = row.get('P-value', 1.0)
+                    adj_pval = row.get('Adjusted P-value', 1.0)
+                    genes = row.get('Genes', '')
+                    f.write(f"| {term} | {pval:.2e} | {adj_pval:.2e} | {genes[:50]}... |\n")
+                f.write("\n")
 
-        # GTEx expression (is it expressed in relevant tissue?)
-        gtex = tu.tools.GTEx_get_median_gene_expression(
-            gencode_id=ensembl_id,
-            operation="median"
-        )
+        # Drug target prioritization
+        if drug_targets is not None:
+            f.write("## Top Drug Target Candidates\n\n")
+            f.write("| Rank | Gene | Essentiality | Expression FC | Druggable | Priority Score |\n")
+            f.write("|------|------|--------------|---------------|-----------|----------------|\n")
+            for idx, (gene, row) in enumerate(drug_targets.head(10).iterrows(), 1):
+                ess = row['mean_lfc']
+                expr = row.get('log2fc', 0)
+                drugs = int(row.get('n_drugs', 0))
+                priority = row['priority_score']
+                f.write(f"| {idx} | {gene} | {ess:.3f} | {expr:.2f} | {drugs} | {priority:.3f} |\n")
+            f.write("\n")
 
-        clinical_data.append({
-            'gene': gene,
-            'diseases': diseases,
-            'mutations': cosmic,
-            'expression': gtex,
-            'mouse_models': mouse
-        })
+        # Methods
+        f.write("## Methods\n\n")
+        f.write("**sgRNA Processing**: MAGeCK-like robust rank aggregation\n\n")
+        f.write("**Normalization**: Median ratio normalization\n\n")
+        f.write("**Scoring**: Gene-level LFC aggregation with rank-based scoring\n\n")
+        f.write("**Enrichment**: Enrichr (KEGG, GO)\n\n")
+        f.write("**Druggability**: DGIdb v4.0\n\n")
 
-    return clinical_data
+    print(f"Report saved to {output_file}")
+    return output_file
+
+# Generate report
+# report_file = generate_crispr_report(gene_scores, enrichment_results, drug_targets)
 ```
 
-**Output for Report**:
-```markdown
-### 5. Clinical Relevance & Disease Association
+## Advanced Use Cases
 
-#### Cancer Genomic Alterations (COSMIC)
-
-| Gene | Mutation Frequency | Cancer Types (Top 3) | Alteration Type | Evidence |
-|------|-------------------|----------------------|-----------------|----------|
-| **KRAS** | 22% across all cancers | Pancreatic (90%), Colon (45%), Lung (32%) | Activating mutations | ★★★ |
-| **EGFR** | 8% across all cancers | Lung (15%), Glioma (30%), Breast (2%) | Amplification, mutations | ★★★ |
-| **TP53** | 42% across all cancers | Universal | Loss-of-function | ★★★ |
-
-**Interpretation**: High mutation frequency indicates gene is driver in those cancer types. CRISPR essentiality + genomic alteration = strong therapeutic rationale.
-
-*Source: COSMIC via `COSMIC_get_gene_mutations`*
-
-#### Expression in Normal vs Tumor Tissue (GTEx/TCGA)
-
-| Gene | Normal Lung (median TPM) | Lung Tumor (TCGA) | Tumor/Normal Ratio | Therapeutic Window |
-|------|-------------------------|-------------------|--------------------|--------------------|
-| **EGFR** | 8.5 | 45.3 | 5.3x | Moderate |
-| **AURKA** | 2.1 | 18.7 | 8.9x | Good |
-| **RPS6** | 125.3 | 132.1 | 1.05x | Poor (housekeeping) |
-
-**Interpretation**: Genes with >3x tumor/normal expression offer better therapeutic window. Housekeeping genes (e.g., ribosomal) show poor selectivity.
-
-*Sources: GTEx via `GTEx_get_median_gene_expression`, TCGA data*
-
-#### Prognostic/Predictive Biomarker Status
-
-| Gene | Biomarker Type | Cancer | Association | Evidence | Source |
-|------|---------------|--------|-------------|----------|--------|
-| **KRAS** | Predictive (negative) | Colorectal | KRAS mut → anti-EGFR resistance | ★★★ | FDA label |
-| **EGFR** | Predictive (positive) | NSCLC | EGFR mut → TKI response | ★★★ | FDA companion dx |
-| **ESR1** | Predictive (positive) | Breast | ESR1 expression → endocrine therapy | ★★★ | Clinical guidelines |
-
-**Clinical Impact**: 3 genes are established biomarkers with FDA-approved tests. Targeting these genes has strong clinical precedent.
-```
-
----
-
-## PATH 6: Hit Prioritization & Validation Strategy
-
-### Integrate All Evidence Dimensions
+### Use Case 1: Genome-Wide Essentiality Screen
 
 ```python
-def calculate_priority_score(gene_data):
-    """
-    Calculate multi-dimensional priority score.
+# Load counts and design
+counts, meta = load_sgrna_counts("genome_wide_screen.txt")
+design = create_design_matrix(
+    sample_names=['T0_1', 'T0_2', 'T14_1', 'T14_2', 'T14_3'],
+    conditions=['baseline', 'baseline', 'treatment', 'treatment', 'treatment']
+)
 
-    Components:
-    - Essentiality strength (DepMap score)
-    - Selectivity (tissue-specific vs pan-cancer)
-    - Druggability (Pharos TDL, existing compounds)
-    - Clinical relevance (mutations, expression, biomarkers)
-    - Validation feasibility (tool compounds available)
+# QC and filter
+qc_results = qc_sgrna_distribution(counts)
+filtered_counts, filtered_mapping = filter_low_count_sgrnas(counts, meta['sgrna_to_gene'])
 
-    Returns score 0-100
-    """
-    score = 0
+# Normalize
+norm_counts, size_factors = normalize_counts(filtered_counts, method='median')
 
-    # Essentiality (0-30 points)
-    if gene_data['depmap_score'] < -1.0:
-        score += 30
-    elif gene_data['depmap_score'] < -0.5:
-        score += 20
-    else:
-        score += 10
+# Calculate LFC
+lfc, control_mean, treatment_mean = calculate_lfc(norm_counts, design)
 
-    # Selectivity (0-25 points)
-    if gene_data['selective']:  # Tissue-specific
-        score += 25
-    elif gene_data['pan_cancer']:  # Pan-cancer (deprioritize)
-        score += 5
+# Gene-level scoring
+gene_scores = mageck_gene_scoring(lfc, filtered_mapping, method='rra')
 
-    # Druggability (0-25 points)
-    if gene_data['pharos_tdl'] == 'Tclin':
-        score += 25
-    elif gene_data['pharos_tdl'] == 'Tchem':
-        score += 20
-    elif gene_data['pharos_tdl'] == 'Tbio':
-        score += 10
-    else:
-        score += 5
+# Enrichment
+enrichment = enrich_essential_genes(gene_scores, top_n=100)
 
-    # Clinical relevance (0-20 points)
-    if gene_data['mutation_frequency'] > 20:
-        score += 10
-    if gene_data['biomarker_status']:
-        score += 10
-
-    return score
+# Report
+report = generate_crispr_report(gene_scores, enrichment, None)
 ```
 
-**Output for Report**:
-```markdown
-### 6. Hit Prioritization & Validation Recommendations
+### Use Case 2: Synthetic Lethality Screen (KRAS)
 
-#### Top 10 Priority Targets (Multi-Dimensional Scoring)
+```python
+# Run screens in both KRAS-wildtype and KRAS-mutant cells
+# Load both datasets
+counts_wt, meta_wt = load_sgrna_counts("kras_wildtype_screen.txt")
+counts_mut, meta_mut = load_sgrna_counts("kras_mutant_screen.txt")
 
-| Rank | Gene | Essentiality | Selectivity | Druggability | Clinical | Total Score | Recommendation |
-|------|------|--------------|-------------|--------------|----------|-------------|----------------|
-| 1 | **KRAS** | 30/30 | 25/25 | 20/25 | 20/20 | **95/100** | High priority, validated drugs available |
-| 2 | **EGFR** | 28/30 | 24/25 | 25/25 | 18/20 | **95/100** | High priority, approved drugs |
-| 3 | **WEE1** | 26/30 | 23/25 | 20/25 | 12/20 | **81/100** | Medium-high, Phase 2 drug available |
-| 4 | **AURKA** | 24/30 | 22/25 | 20/25 | 14/20 | **80/100** | Medium-high, tool compounds exist |
-| 5 | **CDK2** | 25/30 | 20/25 | 20/25 | 10/20 | **75/100** | Medium, multiple tool compounds |
-| 6 | **CHEK1** | 23/30 | 21/25 | 18/25 | 10/20 | **72/100** | Medium, chemical probes available |
-| 7 | **PLK1** | 22/30 | 20/25 | 18/25 | 11/20 | **71/100** | Medium, clinical tool compounds |
-| 8 | **E2F1** | 24/30 | 22/25 | 10/25 | 12/20 | **68/100** | Medium-low, requires degrader strategy |
-| 9 | **HDAC1** | 20/30 | 18/25 | 25/25 | 8/20 | **71/100** | Medium, approved HDAC inhibitors |
-| 10 | **MCM2** | 28/30 | 10/25 | 5/25 | 8/20 | **51/100** | Low, pan-cancer essential, not druggable |
+# Process both (same steps as Use Case 1)
+# ... filtering, normalization, LFC calculation ...
 
-**Scoring Rubric**:
-- **Essentiality** (30 pts): DepMap gene effect score magnitude
-- **Selectivity** (25 pts): Tissue-specific vs pan-cancer dependency
-- **Druggability** (25 pts): Pharos TDL, existing compounds, tractability
-- **Clinical** (20 pts): Mutation frequency, biomarker status, expression
+gene_scores_wt = mageck_gene_scoring(lfc_wt, filtered_mapping_wt)
+gene_scores_mut = mageck_gene_scoring(lfc_mut, filtered_mapping_mut)
 
-**Priority Tiers**:
-- **Tier 1 (Score >80)**: Immediate validation, existing tools/drugs available
-- **Tier 2 (Score 60-80)**: Medium priority, validation feasible with chemical probes
-- **Tier 3 (Score <60)**: Lower priority or requires novel approaches (PROTACs, etc.)
+# Identify synthetic lethal hits
+sl_hits = detect_synthetic_lethality(gene_scores_wt, gene_scores_mut)
 
-#### Validation Experiment Recommendations
+print(f"Identified {len(sl_hits)} synthetic lethal candidates with KRAS mutation")
+print(sl_hits.head(10))
 
-##### Tier 1 Targets (KRAS, EGFR, WEE1)
-
-**1. KRAS**
-- **Essentiality**: Strong selective dependency in KRAS-mutant cancers
-- **Validation Approach**:
-  - Test KRAS G12C inhibitor (sotorasib/adagrasib) in KRAS G12C-mutant cell lines from screen
-  - Orthogonal validation: siRNA/shRNA knockdown
-  - Rescue experiment: Re-express WT KRAS in KO cells
-- **Expected Outcome**: Growth inhibition/cell death in KRAS-mutant lines only
-- **Tool Compounds**: Sotorasib (AMG 510), Adagrasib (MRTX849), MRTX1133 (pan-KRAS)
-- **Timeline**: 2-3 weeks for cell line validation
-
-**2. EGFR**
-- **Essentiality**: Selective in EGFR-mutant/amplified NSCLC, glioblastoma
-- **Validation Approach**:
-  - Test EGFR TKI panel (erlotinib, osimertinib) in screen cell lines
-  - Dose-response curves to establish IC50
-  - Combination with standard chemotherapy
-- **Expected Outcome**: Potent inhibition in EGFR-altered lines
-- **Tool Compounds**: Erlotinib, Gefitinib, Osimertinib (all FDA-approved)
-- **Timeline**: 1-2 weeks
-
-**3. WEE1**
-- **Essentiality**: Synthetic lethal with TP53 loss, selective in TP53-mutant cancers
-- **Validation Approach**:
-  - Test adavosertib (WEE1 inhibitor) ± DNA damaging agents
-  - Stratify by TP53 status (mutant vs WT)
-  - Cell cycle analysis (premature mitotic entry)
-- **Expected Outcome**: Selective killing of TP53-mutant cells + synergy with chemo
-- **Tool Compounds**: Adavosertib (AZD1775), PD-166285
-- **Timeline**: 2-3 weeks
-
-##### Tier 2 Targets (AURKA, CDK2, CHEK1, PLK1)
-
-**General Strategy**:
-- Pharmacological validation with 2-3 selective inhibitors per target
-- Orthogonal genetic validation (CRISPRi/shRNA)
-- Pathway analysis (Western blots for downstream effectors)
-- Combination screens with standard-of-care agents
-
-**Recommended Tool Compounds**:
-- **AURKA**: Alisertib (MLN8237), Aurora A Inhibitor I
-- **CDK2**: Roscovitine (seliciclib), Dinaciclib
-- **CHEK1**: Prexasertib (LY2606368), AZD7762
-- **PLK1**: Volasertib (BI 6727), BI 2536
-
-##### Tier 3 Targets - Alternative Validation Strategies
-
-**E2F1, RB1** (Transcription factors):
-- **Challenge**: No direct small molecule inhibitors
-- **Strategy**:
-  - Test PROTACs if available
-  - Indirect validation via upstream targets (CDK4/6 inhibitors for RB pathway)
-  - Genetic validation only (CRISPRko, CRISPRi)
-
-**MCM2-7 Complex** (Helicase, pan-essential):
-- **Challenge**: Pan-cancer essential, poor therapeutic window
-- **Strategy**: Deprioritize for drug development
-- **Note**: Interesting for understanding replication biology, but not ideal therapeutic target
-
-#### Validation Timeline
-
-| Phase | Duration | Experiments | Deliverable |
-|-------|----------|-------------|-------------|
-| **Phase 1** | Weeks 1-3 | Tier 1 target validation (KRAS, EGFR, WEE1) | Dose-response curves, potency data |
-| **Phase 2** | Weeks 4-6 | Tier 2 target validation (AURKA, CDK2, etc.) | Hit confirmation, selectivity data |
-| **Phase 3** | Weeks 7-10 | Mechanism studies, pathway analysis | Western blots, cell cycle, apoptosis |
-| **Phase 4** | Weeks 11-14 | Combination studies, in vivo pilot (top 2-3) | Synergy matrices, xenograft data |
-
-#### Success Criteria for Validation
-
-✅ **Hit Confirmed** if:
-- Pharmacological inhibition phenocopies CRISPR knockout (≥50% growth inhibition at ≤1 µM)
-- Dose-response curve shows IC50 consistent with essentiality score
-- Effect is selective (active in screen cell line, inactive in control lines)
-- Orthogonal genetic methods (siRNA, CRISPRi) reproduce phenotype
-
-❌ **Hit Rejected/Deprioritized** if:
-- Tool compounds show no effect despite strong CRISPR score (off-target CRISPR effect)
-- Pan-cancer essential with no selectivity (poor therapeutic window)
-- No druggable domain/strategy (TFs, scaffolds without chemical matter)
-- Cannot be validated with available reagents
-
-#### Resource Requirements
-
-**Reagents**:
-- Chemical compounds: $5-10K (tool compounds, commercial inhibitors)
-- CRISPRi/shRNA validation: $3-5K (vectors, reagents)
-- Cell culture & assays: $8-12K (plates, reagents, media)
-
-**Equipment**:
-- Cell culture facility (BSL2)
-- Plate readers (viability assays, luminescence)
-- Flow cytometer (cell cycle, apoptosis)
-- Western blot equipment
-
-**Personnel**: 1 postdoc + 1 technician for 3-4 months
-
----
-**Validation Strategy Summary**: Focus validation efforts on Tier 1 targets (KRAS, EGFR, WEE1) with approved/late-stage drugs. These offer fastest path to clinical translation and have highest probability of success based on multi-dimensional scoring.
+# Prioritize for drug development
+drug_targets = prioritize_drug_targets(sl_hits)
 ```
 
----
+### Use Case 3: Drug Target Discovery Pipeline
 
-## Report Template (Initial File)
+```python
+# Complete pipeline: Screen → Essential genes → Druggability → Drug candidates
 
-**File**: `CRISPR_screen_analysis_[CONTEXT].md`
+# 1. Identify essential genes from screen
+gene_scores = mageck_gene_scoring(lfc, filtered_mapping)
 
-```markdown
-# CRISPR Screen Analysis Report: [CONTEXT]
+# 2. Filter for highly essential (stringent threshold)
+highly_essential = gene_scores[gene_scores['mean_lfc'] < -1.5]
 
-**Generated**: [Date]
-**Input**: [Gene list / Cancer type / Single gene]
-**Context**: [Screen type, cell line, experimental details]
-**Status**: In Progress
+# 3. Prioritize with expression data (if available)
+drug_targets = prioritize_drug_targets(highly_essential, expression_data=tumor_expression)
 
----
+# 4. Find existing drugs
+drug_candidates = find_drugs_for_targets(drug_targets.index.tolist())
 
-## Executive Summary
-[Analyzing...]
-<!-- Will contain: key findings, top hits, recommended priorities -->
+# 5. Generate comprehensive report
+report = generate_crispr_report(gene_scores, None, drug_targets)
 
----
-
-## Input Validation
-[Analyzing...]
-<!-- Gene symbol validation, invalid genes, suggestions -->
-
----
-
-## 1. Gene Essentiality Analysis
-### 1.1 Strongly Essential Genes
-[Analyzing...]
-### 1.2 Selectively Essential Genes
-[Analyzing...]
-### 1.3 Weakly Essential / Non-Essential
-[Analyzing...]
-
----
-
-## 2. Pathway & Functional Enrichment
-### 2.1 Pathway Enrichment (Reactome, KEGG)
-[Analyzing...]
-### 2.2 GO Enrichment (BP, MF, CC)
-[Analyzing...]
-### 2.3 Hallmark Gene Sets (MSigDB)
-[Analyzing...]
-### 2.4 Pathway-Level Interpretation
-[Analyzing...]
-
----
-
-## 3. Protein Interaction Network
-### 3.1 Network Statistics
-[Analyzing...]
-### 3.2 Protein Complexes
-[Analyzing...]
-### 3.3 Hub Genes
-[Analyzing...]
-### 3.4 Synthetic Lethal Candidates
-[Analyzing...]
-
----
-
-## 4. Druggability Assessment
-### 4.1 Target Development Level (Pharos)
-[Analyzing...]
-### 4.2 Approved Drugs & Clinical Candidates
-[Analyzing...]
-### 4.3 Chemical Probes
-[Analyzing...]
-### 4.4 Non-Druggable Hits (Alternative Strategies)
-[Analyzing...]
-
----
-
-## 5. Clinical Relevance
-### 5.1 Cancer Genomic Alterations (COSMIC)
-[Analyzing...]
-### 5.2 Expression in Tumor vs Normal
-[Analyzing...]
-### 5.3 Prognostic/Predictive Biomarkers
-[Analyzing...]
-### 5.4 Mouse Models & Genetic Evidence
-[Analyzing...]
-
----
-
-## 6. Hit Prioritization & Validation
-### 6.1 Multi-Dimensional Scoring
-[Analyzing...]
-### 6.2 Top 10 Priority Targets
-[Analyzing...]
-### 6.3 Validation Experiment Recommendations
-[Analyzing...]
-### 6.4 Validation Timeline & Resources
-[Analyzing...]
-
----
-
-## 7. Data Sources & Quality Control
-### 7.1 Primary Data Sources
-[Will be populated...]
-### 7.2 Tool Call Summary
-[Will be populated...]
-### 7.3 Limitations & Caveats
-[Will be populated...]
-
----
-
-## Appendix: Full Hit List
-[Complete gene list with all scores...]
+print(f"Identified {len(drug_candidates)} druggable targets with {sum(len(v) for v in drug_candidates.values())} total drug candidates")
 ```
 
----
+### Use Case 4: Integration with Expression Data
 
-## When NOT to Use This Skill
+```python
+# Combine CRISPR essentiality with RNA-seq differential expression
 
-- **Drug target research** (single gene) → Use `tooluniverse-target-research` skill instead
-- **Disease-centric query** → Use `tooluniverse-disease-research` skill
-- **Chemical compound screening** → Different workflow needed
-- **RNA-seq differential expression** → Use differential expression analysis workflows
-- **Single gene lookup** → Call DepMap tools directly
+# Load RNA-seq results (from tooluniverse-rnaseq-deseq2 skill)
+rna_results = pd.read_csv("deseq2_results.csv", index_col=0)
 
-Use this skill when you have a **gene list from a CRISPR screen** and need comprehensive **functional interpretation + target prioritization**.
+# Merge with CRISPR scores
+integrated = gene_scores.merge(
+    rna_results[['log2FoldChange', 'padj']],
+    left_index=True,
+    right_index=True,
+    how='inner'
+)
 
----
+# Identify genes that are:
+# 1. Essential in screen (LFC < -1)
+# 2. Overexpressed in disease (log2FC > 1, padj < 0.05)
+targets = integrated[
+    (integrated['mean_lfc'] < -1) &
+    (integrated['log2FoldChange'] > 1) &
+    (integrated['padj'] < 0.05)
+]
 
-## Example Queries That Trigger This Skill
+print(f"Identified {len(targets)} genes essential and overexpressed in disease")
+```
 
-✅ **Gene List Analysis**:
-- "Analyze these CRISPR screen hits: EGFR, KRAS, WEE1, PLK1, AURKA, ..."
-- "I have 50 dropout genes from a CRISPR screen in lung cancer cells, what should I validate?"
-- "Prioritize these genes for drug target development: [gene list]"
+## ToolUniverse Tool Integration
 
-✅ **Cancer Type Query**:
-- "What are the top essential genes in pancreatic cancer?"
-- "Find druggable dependencies in triple-negative breast cancer"
+**Key Tools Used**:
+- `PubMed_search` - Literature search for gene essentiality
+- `Enrichr_submit_genelist` - Pathway enrichment submission
+- `Enrichr_get_results` - Retrieve enrichment results
+- `DGIdb_query_gene` - Drug-gene interactions and druggability
+- `STRING_get_network` - Protein interaction networks
+- `KEGG_get_pathway` - Pathway visualization
 
-✅ **Single Gene Validation**:
-- "Is KRAS a good therapeutic target for lung cancer?"
-- "Assess the druggability of WEE1 as a cancer target"
+**Expression Integration**:
+- `GEO_get_dataset` - Download expression data
+- `ArrayExpress_get_experiment` - Alternative expression source
 
-❌ **Not Appropriate**:
-- "What is the function of EGFR?" → too broad, use target-research skill
-- "Find drugs for lung cancer" → disease-centric, use drug-repurposing skill
-- "Analyze this RNA-seq data" → different analytical workflow
+**Variant Integration**:
+- `ClinVar_query_gene` - Known pathogenic variants
+- `gnomAD_get_gene` - Population allele frequencies
 
----
+## Best Practices
 
-## Key Improvements from Existing Skills
+1. **sgRNA Design Quality**: Ensure library uses validated sgRNA designs (e.g., Brunello, Avana libraries)
 
-Based on patterns in `tooluniverse-target-research` and `tooluniverse-drug-research`:
+2. **Replicates**: Minimum 2 biological replicates per condition; 3+ preferred
 
-1. **Multi-dimensional scoring system** (novel for CRISPR analysis)
-2. **Validation experiment recommendations** with timelines and reagents
-3. **Tier-based prioritization** (Tier 1/2/3 based on actionability)
-4. **Tool compound suggestions** for each druggable target
-5. **Synthetic lethal candidate identification** from PPI network
-6. **Explicit selectivity analysis** (pan-cancer vs tissue-selective)
-7. **Success/failure criteria** for validation experiments
+3. **Sequencing Depth**: Aim for 500-1000 reads per sgRNA at T0; 200+ at final timepoint
 
----
+4. **Reference Genes**: Include positive (essential) and negative (non-essential) control genes
 
-## Quality Control Checklist
+5. **Timepoint Selection**: Balance cell doublings (14-21 days) vs. sgRNA dropout
 
-Before finalizing report:
+6. **Normalization**: Use median ratio normalization for count data (more robust than CPM)
 
-- [ ] All input genes validated against DepMap registry
-- [ ] Essentiality scores retrieved for all valid genes
-- [ ] Pathway enrichment performed (minimum: GO BP, Reactome, Hallmark)
-- [ ] PPI network constructed with interaction counts
-- [ ] Druggability assessed for all hits (Pharos TDL + DGIdb)
-- [ ] Top 10 priority targets table completed
-- [ ] Validation recommendations provided for Tier 1 targets
-- [ ] Evidence grades assigned (★★★, ★★☆, ★☆☆)
-- [ ] All data sources cited explicitly
-- [ ] "No data" explicitly stated when tools return empty results
-- [ ] Executive summary synthesizes all findings
+7. **Multiple Testing**: Apply FDR correction when calling essential genes (padj < 0.05)
 
+8. **Validation**: Validate top hits with orthogonal methods (siRNA, small molecule inhibitors)
+
+9. **Context Matters**: Gene essentiality is context-dependent (cell line, tissue, genetic background)
+
+10. **Druggability**: Essential genes are not always druggable; check DGIdb early in prioritization
+
+## Troubleshooting
+
+**Problem**: Low library representation (many zero-count sgRNAs)
+- **Solution**: Increase sequencing depth; check for PCR biases in library prep
+
+**Problem**: High Gini coefficient (skewed distribution)
+- **Solution**: Optimize PCR cycles; consider using unique molecular identifiers (UMIs)
+
+**Problem**: No strong essential genes detected
+- **Solution**: Check timepoint (may be too early); verify cell viability; confirm sgRNA cutting efficiency
+
+**Problem**: Too many essential genes (>500)
+- **Solution**: Timepoint may be too late; adjust LFC threshold; check for batch effects
+
+**Problem**: Discordant sgRNAs for same gene
+- **Solution**: Check for off-target effects; verify sgRNA sequences; consider removing outlier sgRNAs
+
+## References
+
+- Li W, et al. (2014) MAGeCK enables robust identification of essential genes from genome-scale CRISPR/Cas9 knockout screens. Genome Biology
+- Hart T, et al. (2015) High-Resolution CRISPR Screens Reveal Fitness Genes and Genotype-Specific Cancer Liabilities. Cell
+- Meyers RM, et al. (2017) Computational correction of copy number effect improves specificity of CRISPR-Cas9 essentiality screens. Nature Genetics
+- Tsherniak A, et al. (2017) Defining a Cancer Dependency Map. Cell (DepMap)
+
+## Quick Start
+
+```python
+# Complete minimal workflow
+import pandas as pd
+from tooluniverse import ToolUniverse
+
+# 1. Load data
+counts, meta = load_sgrna_counts("sgrna_counts.txt")
+design = create_design_matrix(['T0_1', 'T0_2', 'T14_1', 'T14_2'],
+                               ['baseline', 'baseline', 'treatment', 'treatment'])
+
+# 2. Process
+filtered_counts, filtered_mapping = filter_low_count_sgrnas(counts, meta['sgrna_to_gene'])
+norm_counts, _ = normalize_counts(filtered_counts)
+lfc, _, _ = calculate_lfc(norm_counts, design)
+
+# 3. Score genes
+gene_scores = mageck_gene_scoring(lfc, filtered_mapping)
+
+# 4. Enrich pathways
+enrichment = enrich_essential_genes(gene_scores, top_n=100)
+
+# 5. Find drug targets
+drug_targets = prioritize_drug_targets(gene_scores)
+
+# 6. Generate report
+report = generate_crispr_report(gene_scores, enrichment, drug_targets)
+```
