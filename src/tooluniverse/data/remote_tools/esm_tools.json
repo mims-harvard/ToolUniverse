@@ -1,0 +1,49 @@
+[
+  {
+    "type": "RemoteTool",
+    "name": "esm_embed_sequence",
+    "description": "Generate protein sequence embeddings using ESM-C (Cambrian). ESM-C uses transformer architecture trained on billions of diverse protein sequences to generate high-quality embeddings that capture biologically meaningful information about protein structure and function.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "sequence": {
+          "type": "string",
+          "description": "Protein amino acid sequence using standard 20 amino acids (A, C, D, E, F, G, H, I, K, L, M, N, P, Q, R, S, T, V, W, Y)"
+        }
+      },
+      "required": ["sequence"]
+    },
+    "return_schema": {
+      "type": "object",
+      "properties": {
+        "model": {
+          "type": "string",
+          "description": "Model identifier used for embedding generation (esmc_300m, esmc_600m, or esmc_6b)"
+        },
+        "embedding_dim": {
+          "type": "integer",
+          "description": "Dimension of the embedding vector (960 for ESM-C mean-pooled embeddings)"
+        },
+        "embedding": {
+          "type": "array",
+          "items": {
+            "type": "number"
+          },
+          "description": "The embedding vector as a list of float values, normalized to [-1, 1] range"
+        }
+      }
+    },
+    "remote_info": {
+      "server_type": "MCP",
+      "transport": "http",
+      "url": "http://localhost:8008/mcp",
+      "code_url": "https://github.com/mims-harvard/ToolUniverse/tree/main/src/tooluniverse/remote/esm",
+      "mcp_tool_name": "esm_embed_sequence"
+    },
+    "test_examples": [
+      {
+        "sequence": "MKTAYIAKQRQISFVKSHFSRQLEERLGLIEVQAPILSRVGDGTQDNLSGAEKAVQVKVKALPDAQFEVV"
+      }
+    ]
+  }
+]
