@@ -1,0 +1,5 @@
+fastmcp>=0.4.0
+esm>=2.0.0
+torch>=2.0.0
+numpy>=1.24.0
+scipy>=1.11.0
