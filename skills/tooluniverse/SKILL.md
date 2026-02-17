@@ -1,6 +1,6 @@
 ---
 name: tooluniverse
-description: Router skill for ToolUniverse tasks. First checks if specialized tooluniverse skills (41+ skills covering disease/drug/target research, clinical decision support, genomics, transcriptomics, single-cell analysis, variant analysis, phylogenetics, statistical modeling, image analysis, epigenomics, chemical safety, systems biology, and more) can solve the problem, then falls back to general strategies for using 1400+ scientific tools. Covers tool discovery, multi-hop queries, comprehensive research workflows, disambiguation, evidence grading, and report generation. Use when users need to research any scientific topic, find biological data, or explore drug/target/disease relationships.
+description: Router skill for ToolUniverse tasks. First checks if specialized tooluniverse skills (54 skills covering disease/drug/target research, clinical decision support, genomics, transcriptomics, single-cell analysis, variant analysis, phylogenetics, statistical modeling, image analysis, epigenomics, chemical safety, systems biology, multi-omics integration, proteomics, metabolomics, spatial omics, immune repertoire analysis, and more) can solve the problem, then falls back to general strategies for using 1400+ scientific tools. Covers tool discovery, multi-hop queries, comprehensive research workflows, disambiguation, evidence grading, and report generation. Use when users need to research any scientific topic, find biological data, or explore drug/target/disease relationships.
 ---
 
 # ToolUniverse Router & General Strategies
@@ -64,6 +64,7 @@ If no specialized skill matches, **EXECUTE** the general strategies (not just de
 | User Question Keywords | ACTION: Invoke This Skill |
 |------------------------|---------------------------|
 | "research", "profile", "tell me about", "**disease**", "syndrome", "disorder", "illness", "comprehensive report on [disease]" | **DO NOW**: `Skill(skill="tooluniverse-disease-research", args="[disease name]")` |
+| "**multiomic disease characterization**", "molecular profile of disease", "disease omics", "comprehensive disease analysis" | **DO NOW**: `Skill(skill="tooluniverse-multiomic-disease-characterization", args="[disease]")` |
 | "research", "profile", "**drug**", "medication", "therapeutic agent", "medicine", "tell me about [drug]" | **DO NOW**: `Skill(skill="tooluniverse-drug-research", args="[drug name]")` |
 | "**literature review**", "papers about", "publications on", "research articles", "synthesize literature", "recent studies" | **DO NOW**: `Skill(skill="tooluniverse-literature-deep-research", args="[topic]")` |
 | "research", "profile", "**target**", "protein target", "gene target", "target validation", "tell me about [protein/gene]" | **DO NOW**: `Skill(skill="tooluniverse-target-research", args="[target name]")` |
@@ -75,10 +76,15 @@ If no specialized skill matches, **EXECUTE** the general strategies (not just de
 | User Question Keywords | ACTION: Invoke This Skill |
 |------------------------|---------------------------|
 | "**drug safety**", "adverse events", "side effects", "pharmacovigilance", "FAERS", "black box warning", "drug toxicity" | **DO NOW**: `Skill(skill="tooluniverse-pharmacovigilance", args="[drug name]")` |
+| "**adverse event detection**", "AE prediction", "safety signal", "drug adverse reaction", "pharmacovigilance analysis" | **DO NOW**: `Skill(skill="tooluniverse-adverse-event-detection", args="[drug name]")` |
 | "**chemical safety**", "toxicity prediction", "ADMET", "chemical toxicity", "environmental toxicity", "safety assessment", "toxic effects", "chemical risk" | **DO NOW**: `Skill(skill="tooluniverse-chemical-safety", args="[chemical name or SMILES]")` |
 | "**cancer treatment**", "precision oncology", "tumor mutation", "targeted therapy", "EGFR", "KRAS", "BRAF", "therapy for [mutation]" | **DO NOW**: `Skill(skill="tooluniverse-precision-oncology", args="[mutation or cancer type]")` |
+| "**cancer variant**", "somatic mutation interpretation", "oncogenic variant", "tumor variant classification" | **DO NOW**: `Skill(skill="tooluniverse-cancer-variant-interpretation", args="[variant]")` |
+| "**clinical trial matching**", "trial eligibility", "recruit patients", "trial enrollment", "match patient to trial" | **DO NOW**: `Skill(skill="tooluniverse-clinical-trial-matching", args="[patient criteria]")` |
+| "**immunotherapy response**", "checkpoint inhibitor", "PD-1", "PD-L1", "predict response to immunotherapy", "IO biomarkers" | **DO NOW**: `Skill(skill="tooluniverse-immunotherapy-response-prediction", args="[patient data]")` |
 | "**rare disease diagnosis**", "differential diagnosis", "phenotype matching", "HPO", "genetic diagnosis", "patient with [symptoms]" | **DO NOW**: `Skill(skill="tooluniverse-rare-disease-diagnosis", args="[symptoms or phenotypes]")` |
 | "**variant interpretation**", "VUS", "pathogenicity", "clinical significance", "genetic variant", "is [variant] pathogenic" | **DO NOW**: `Skill(skill="tooluniverse-variant-interpretation", args="[variant ID]")` |
+| "**precision medicine stratification**", "patient stratification", "molecular subtyping", "personalized treatment", "biomarker-based stratification" | **DO NOW**: `Skill(skill="tooluniverse-precision-medicine-stratification", args="[patient cohort]")` |
 
 #### 4. Discovery & Design Tasks
 
@@ -88,6 +94,7 @@ If no specialized skill matches, **EXECUTE** the general strategies (not just de
 |------------------------|---------------------------|
 | "**find binders**", "small molecule discovery", "virtual screening", "hit identification", "compounds for [target]" | **DO NOW**: `Skill(skill="tooluniverse-binder-discovery", args="[target name]")` |
 | "**drug repurposing**", "new indication", "existing drugs for [disease]", "off-label use", "repurpose [drug]" | **DO NOW**: `Skill(skill="tooluniverse-drug-repurposing", args="[drug or disease]")` |
+| "**drug target validation**", "validate target", "target druggability", "target tractability", "is [protein] druggable" | **DO NOW**: `Skill(skill="tooluniverse-drug-target-validation", args="[target]")` |
 | "**design protein**", "protein binder", "de novo protein", "RFdiffusion", "ProteinMPNN", "therapeutic protein" | **DO NOW**: `Skill(skill="tooluniverse-protein-therapeutic-design", args="[design specifications]")` |
 | "**antibody engineering**", "antibody design", "humanization", "affinity maturation", "design antibody for [target]" | **DO NOW**: `Skill(skill="tooluniverse-antibody-engineering", args="[target]")` |
 
@@ -112,12 +119,13 @@ If no specialized skill matches, **EXECUTE** the general strategies (not just de
 | User Question Keywords | ACTION: Invoke This Skill |
 |------------------------|---------------------------|
 | "**protein interactions**", "PPI", "interactome", "binding partners", "protein complexes", "interactions of [protein]" | **DO NOW**: `Skill(skill="tooluniverse-protein-interactions", args="[protein name]")` |
-| "**systems biology**", "pathway analysis", "network analysis", "gene set enrichment", "multi-omics integration" | **DO NOW**: `Skill(skill="tooluniverse-systems-biology", args="[gene list or pathway]")` |
+| "**systems biology**", "pathway analysis", "network analysis", "gene set enrichment" | **DO NOW**: `Skill(skill="tooluniverse-systems-biology", args="[gene list or pathway]")` |
 | "**gene enrichment**", "pathway enrichment", "GO enrichment", "KEGG", "Reactome", "enrichr", "ORA", "GSEA", "overrepresentation" | **DO NOW**: `Skill(skill="tooluniverse-gene-enrichment", args="[gene list]")` |
 | "**metabolomics**", "metabolite identification", "metabolic pathway", "small molecule metabolism" | **DO NOW**: `Skill(skill="tooluniverse-metabolomics", args="[metabolite or pathway]")` |
-| "**epigenomics**", "gene regulation", "transcription factor", "TF binding", "enhancers", "chromatin", "histone modification", "ATAC-seq", "ChIP-seq", "regulatory elements", "methylation", "CpG", "DMP" | **DO NOW**: `Skill(skill="tooluniverse-epigenomics", args="[gene or region]")` |
+| "**epigenomics**", "gene regulation", "transcription factor", "TF binding", "enhancers", "chromatin", "histone modification", "ATAC-seq", "ChIP-seq", "regulatory elements" | **DO NOW**: `Skill(skill="tooluniverse-epigenomics", args="[gene or region]")` |
+| "**network pharmacology**", "drug-target network", "polypharmacology", "multi-target drugs", "systems pharmacology" | **DO NOW**: `Skill(skill="tooluniverse-network-pharmacology", args="[drug or targets]")` |
 
-#### 7. Transcriptomics & Single-cell Analysis Tasks
+#### 7. Omics Analysis Tasks
 
 **IF** user keywords match → **THEN** invoke skill immediately:
 
@@ -125,6 +133,12 @@ If no specialized skill matches, **EXECUTE** the general strategies (not just de
 |------------------------|---------------------------|
 | "**RNA-seq**", "differential expression", "DESeq2", "DEG", "gene expression", "count matrix", "padj", "log2FoldChange", "bulk RNA-seq" | **DO NOW**: `Skill(skill="tooluniverse-rnaseq-deseq2", args="[count file or dataset]")` |
 | "**single-cell**", "scRNA-seq", "cell clustering", "UMAP", "t-SNE", "cell type", "scanpy", "Seurat", "per-cell-type DE", "marker genes" | **DO NOW**: `Skill(skill="tooluniverse-single-cell", args="[h5ad file or dataset]")` |
+| "**proteomics**", "protein quantification", "mass spec", "MS/MS", "peptide identification", "protein abundance" | **DO NOW**: `Skill(skill="tooluniverse-proteomics-analysis", args="[proteomics data]")` |
+| "**metabolomics analysis**", "untargeted metabolomics", "metabolite profiling", "peak annotation", "metabolic features" | **DO NOW**: `Skill(skill="tooluniverse-metabolomics-analysis", args="[metabolomics data]")` |
+| "**spatial transcriptomics**", "Visium", "spatial gene expression", "tissue architecture", "spatially resolved", "spot-level expression" | **DO NOW**: `Skill(skill="tooluniverse-spatial-transcriptomics", args="[spatial data]")` |
+| "**spatial omics**", "spatial proteomics", "imaging mass cytometry", "CODEX", "multiplexed imaging", "spatial multi-omics" | **DO NOW**: `Skill(skill="tooluniverse-spatial-omics-analysis", args="[spatial omics data]")` |
+| "**multi-omics integration**", "integrate omics", "multi-level analysis", "cross-omics", "omics fusion", "combine RNA-seq and proteomics" | **DO NOW**: `Skill(skill="tooluniverse-multi-omics-integration", args="[omics datasets]")` |
+| "**immune repertoire**", "TCR-seq", "BCR-seq", "V(D)J", "CDR3", "antibody repertoire", "clonotype analysis" | **DO NOW**: `Skill(skill="tooluniverse-immune-repertoire-analysis", args="[repertoire data]")` |
 
 #### 8. Screening & Functional Genomics Tasks
 
@@ -132,7 +146,7 @@ If no specialized skill matches, **EXECUTE** the general strategies (not just de
 
 | User Question Keywords | ACTION: Invoke This Skill |
 |------------------------|---------------------------|
-| "**CRISPR screen**", "genetic screen", "screen hits", "essential genes", "analyze screen data" | **DO NOW**: `Skill(skill="tooluniverse-crispr-screen-analysis", args="[screen data]")` |
+| "**CRISPR screen**", "genetic screen", "screen hits", "essential genes", "analyze screen data", "MAGeCK", "RIGER" | **DO NOW**: `Skill(skill="tooluniverse-crispr-screen-analysis", args="[screen data]")` |
 | "**drug-drug interaction**", "DDI", "drug combination", "polypharmacy", "interactions between [drug1] and [drug2]" | **DO NOW**: `Skill(skill="tooluniverse-drug-drug-interaction", args="[drug1, drug2]")` |
 
 #### 9. Phylogenetics & Evolutionary Analysis Tasks
@@ -216,6 +230,48 @@ If multiple skills could handle the query:
 - ✅ User explicitly says "**don't use specialized skills**"
 
 **CRITICAL**: If ANY specialized skill matches, **INVOKE IT**. Don't use general strategies.
+
+---
+
+## Fallback Strategy for Missing Specialized Skills
+
+**Some research areas do not yet have specialized skills.** When a user asks about topics not covered in the routing table:
+
+### Known Coverage Gaps
+
+| Topic Area | Missing Skill | Fallback Approach |
+|------------|---------------|-------------------|
+| "**methylation analysis**", "CpG islands", "DMR", "differential methylation" | ⚠️ No methylation-specific skill | Use **epigenomics** skill for regulatory context OR use **biostatistics workflows** with methylation tools (search Tool_Finder for "methylation") |
+| "**microbiome**", "16S", "metagenomics", "gut microbiome" | ⚠️ No microbiome skill | Use general strategies: Tool_Finder for "microbiome" + "16S" + execute workflows |
+| "**lipidomics**", "lipid profiling" | ⚠️ No lipidomics skill | Use **metabolomics-analysis** as closest match OR general strategies with lipid-specific tools |
+| "**glycomics**", "glycosylation" | ⚠️ No glycomics skill | Use general strategies: Tool_Finder for "glycan" + execute workflows |
+| "**flow cytometry**", "FACS analysis" | ⚠️ No flow cytometry skill | Use **image-analysis** for general cytometry OR general strategies |
+
+### Fallback Workflow (When No Specialized Skill Exists)
+
+When you determine no specialized skill covers the user's request:
+
+1. **Acknowledge the gap**: "There isn't a specialized skill for [topic] yet."
+2. **Identify closest skill**: "The closest match is [skill-name], which covers [overlap]."
+3. **Offer general approach**: "I can use ToolUniverse's general strategies to:"
+   - Search for relevant tools using Tool_Finder
+   - Execute multi-hop workflows with discovered tools
+   - Generate a comprehensive report
+4. **Ask user preference**: "Would you like me to: (A) Use general strategies, or (B) Use [closest-skill] and supplement with additional tools?"
+
+### Example Fallback Response
+
+**User**: "Analyze my methylation data for differentially methylated regions"
+
+**Your Response**:
+```
+There isn't a specialized methylation analysis skill yet. However, I can help using two approaches:
+
+(A) Use the **epigenomics** skill for regulatory context, then supplement with methylation-specific tools
+(B) Use general strategies to discover methylation tools (like RnBeads, DSS, methylKit) and build a custom workflow
+
+Which would you prefer?
+```
 
 ---
 
