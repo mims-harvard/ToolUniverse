@@ -289,7 +289,7 @@ Phase 7: Structural Variant & CNV Analysis (NEW - if SV/CNV detected)
 - VCF files with SVTYPE=DEL/DUP/INV/BND in INFO field
 - BED files with CNV regions (chrom, start, end, type)
 - Coordinate strings: "chr17:43044295-43070295"
-- Gene-based queries: "What SVs affect BRCA1?"
+- Gene-based queries: "What SVs affect [gene_symbol]?" (e.g., TP53, PTEN, ATM)
 
 **SV/CNV Analysis Workflow**:
 
@@ -313,7 +313,7 @@ Use gnomAD SV tools to determine if SV is common or rare:
 
 ```python
 # Option A: Query by gene symbol
-gnomad_sv = gnomad_get_sv_by_gene(gene_symbol="BRCA1")
+gnomad_sv = gnomad_get_sv_by_gene(gene_symbol="TP53")  # Or any gene symbol
 # Returns: List of SVs affecting gene with population frequencies
 
 # Option B: Query by genomic region
