@@ -1,6 +1,6 @@
 ---
 name: tooluniverse
-description: Router skill for ToolUniverse tasks. First checks if specialized tooluniverse skills (34+ skills covering disease/drug/target research, clinical decision support, genomics, epigenomics, chemical safety, systems biology, and more) can solve the problem, then falls back to general strategies for using 1400+ scientific tools. Covers tool discovery, multi-hop queries, comprehensive research workflows, disambiguation, evidence grading, and report generation. Use when users need to research any scientific topic, find biological data, or explore drug/target/disease relationships.
+description: Router skill for ToolUniverse tasks. First checks if specialized tooluniverse skills (41+ skills covering disease/drug/target research, clinical decision support, genomics, transcriptomics, single-cell analysis, variant analysis, phylogenetics, statistical modeling, image analysis, epigenomics, chemical safety, systems biology, and more) can solve the problem, then falls back to general strategies for using 1400+ scientific tools. Covers tool discovery, multi-hop queries, comprehensive research workflows, disambiguation, evidence grading, and report generation. Use when users need to research any scientific topic, find biological data, or explore drug/target/disease relationships.
 ---
 
 # ToolUniverse Router & General Strategies
@@ -97,6 +97,7 @@ If no specialized skill matches, **EXECUTE** the general strategies (not just de
 
 | User Question Keywords | ACTION: Invoke This Skill |
 |------------------------|---------------------------|
+| "**variant analysis**", "VCF", "mutation analysis", "VAF", "consequence prediction", "VEP", "annotation", "missense", "nonsense", "frameshift" | **DO NOW**: `Skill(skill="tooluniverse-variant-analysis", args="[VCF file or variant]")` |
 | "**GWAS study**", "genome-wide association", "GWAS catalog", "genetic associations", "GWAS for [trait]" | **DO NOW**: `Skill(skill="tooluniverse-gwas-study-explorer", args="[trait]")` |
 | "**GWAS trait to gene**", "trait-associated genes", "GWAS genes", "causal genes", "genes for [trait]" | **DO NOW**: `Skill(skill="tooluniverse-gwas-trait-to-gene", args="[trait]")` |
 | "**fine-mapping**", "finemapping", "credible sets", "causal variants", "statistical refinement" | **DO NOW**: `Skill(skill="tooluniverse-gwas-finemapping", args="[region or study]")` |
@@ -112,10 +113,20 @@ If no specialized skill matches, **EXECUTE** the general strategies (not just de
 |------------------------|---------------------------|
 | "**protein interactions**", "PPI", "interactome", "binding partners", "protein complexes", "interactions of [protein]" | **DO NOW**: `Skill(skill="tooluniverse-protein-interactions", args="[protein name]")` |
 | "**systems biology**", "pathway analysis", "network analysis", "gene set enrichment", "multi-omics integration" | **DO NOW**: `Skill(skill="tooluniverse-systems-biology", args="[gene list or pathway]")` |
+| "**gene enrichment**", "pathway enrichment", "GO enrichment", "KEGG", "Reactome", "enrichr", "ORA", "GSEA", "overrepresentation" | **DO NOW**: `Skill(skill="tooluniverse-gene-enrichment", args="[gene list]")` |
 | "**metabolomics**", "metabolite identification", "metabolic pathway", "small molecule metabolism" | **DO NOW**: `Skill(skill="tooluniverse-metabolomics", args="[metabolite or pathway]")` |
-| "**epigenomics**", "gene regulation", "transcription factor", "TF binding", "enhancers", "chromatin", "histone modification", "ATAC-seq", "ChIP-seq", "regulatory elements" | **DO NOW**: `Skill(skill="tooluniverse-epigenomics", args="[gene or region]")` |
+| "**epigenomics**", "gene regulation", "transcription factor", "TF binding", "enhancers", "chromatin", "histone modification", "ATAC-seq", "ChIP-seq", "regulatory elements", "methylation", "CpG", "DMP" | **DO NOW**: `Skill(skill="tooluniverse-epigenomics", args="[gene or region]")` |
 
-#### 7. Screening & Functional Genomics Tasks
+#### 7. Transcriptomics & Single-cell Analysis Tasks
+
+**IF** user keywords match → **THEN** invoke skill immediately:
+
+| User Question Keywords | ACTION: Invoke This Skill |
+|------------------------|---------------------------|
+| "**RNA-seq**", "differential expression", "DESeq2", "DEG", "gene expression", "count matrix", "padj", "log2FoldChange", "bulk RNA-seq" | **DO NOW**: `Skill(skill="tooluniverse-rnaseq-deseq2", args="[count file or dataset]")` |
+| "**single-cell**", "scRNA-seq", "cell clustering", "UMAP", "t-SNE", "cell type", "scanpy", "Seurat", "per-cell-type DE", "marker genes" | **DO NOW**: `Skill(skill="tooluniverse-single-cell", args="[h5ad file or dataset]")` |
+
+#### 8. Screening & Functional Genomics Tasks
 
 **IF** user keywords match → **THEN** invoke skill immediately:
 
@@ -124,7 +135,31 @@ If no specialized skill matches, **EXECUTE** the general strategies (not just de
 | "**CRISPR screen**", "genetic screen", "screen hits", "essential genes", "analyze screen data" | **DO NOW**: `Skill(skill="tooluniverse-crispr-screen-analysis", args="[screen data]")` |
 | "**drug-drug interaction**", "DDI", "drug combination", "polypharmacy", "interactions between [drug1] and [drug2]" | **DO NOW**: `Skill(skill="tooluniverse-drug-drug-interaction", args="[drug1, drug2]")` |
 
-#### 8. Clinical Trial & Study Design Tasks
+#### 9. Phylogenetics & Evolutionary Analysis Tasks
+
+**IF** user keywords match → **THEN** invoke skill immediately:
+
+| User Question Keywords | ACTION: Invoke This Skill |
+|------------------------|---------------------------|
+| "**phylogenetics**", "phylogenetic tree", "treeness", "RCV", "DVMC", "parsimony informative", "tree length", "evolutionary rate", "PhyKIT", "alignment", "Newick" | **DO NOW**: `Skill(skill="tooluniverse-phylogenetics", args="[alignment or tree file]")` |
+
+#### 10. Statistical Modeling & Regression Tasks
+
+**IF** user keywords match → **THEN** invoke skill immediately:
+
+| User Question Keywords | ACTION: Invoke This Skill |
+|------------------------|---------------------------|
+| "**statistical modeling**", "regression", "logistic regression", "Cox PH", "survival analysis", "Kaplan-Meier", "odds ratio", "hazard ratio", "mixed effects", "ordinal regression", "multinomial" | **DO NOW**: `Skill(skill="tooluniverse-statistical-modeling", args="[dataset and model type]")` |
+
+#### 11. Image Analysis & Microscopy Tasks
+
+**IF** user keywords match → **THEN** invoke skill immediately:
+
+| User Question Keywords | ACTION: Invoke This Skill |
+|------------------------|---------------------------|
+| "**image analysis**", "microscopy", "cell counting", "colony morphometry", "fluorescence quantification", "Dunnett's test", "Cohen's d", "natural spline", "image statistics" | **DO NOW**: `Skill(skill="tooluniverse-image-analysis", args="[image file or measurements]")` |
+
+#### 12. Clinical Trial & Study Design Tasks
 
 **IF** user keywords match → **THEN** invoke skill immediately:
 
@@ -133,7 +168,7 @@ If no specialized skill matches, **EXECUTE** the general strategies (not just de
 | "**clinical trial design**", "trial protocol", "study design", "endpoint selection", "design trial for [drug/disease]" | **DO NOW**: `Skill(skill="tooluniverse-clinical-trial-design", args="[drug or disease]")` |
 | "**GWAS drug discovery**", "genetic target validation", "GWAS to drug", "genetic evidence for drug" | **DO NOW**: `Skill(skill="tooluniverse-gwas-drug-discovery", args="[trait or gene]")` |
 
-#### 9. Outbreak Response Tasks
+#### 13. Outbreak Response Tasks
 
 **IF** user keywords match → **THEN** invoke skill immediately:
 
@@ -141,7 +176,7 @@ If no specialized skill matches, **EXECUTE** the general strategies (not just de
 |------------------------|---------------------------|
 | "**pathogen**", "infectious disease", "outbreak", "emerging infection", "novel virus", "novel bacteria" | **DO NOW**: `Skill(skill="tooluniverse-infectious-disease", args="[pathogen name]")` |
 
-#### 10. Infrastructure & Development Tasks
+#### 14. Infrastructure & Development Tasks
 
 **IF** user keywords match → **THEN** invoke skill immediately:
 
@@ -648,7 +683,7 @@ If you're using these general strategies and realize the task matches a speciali
 ### Complete List of Specialized Skills
 
 See **Step 0: Route to Specialized Skills First** at the top of this document for:
-- 34+ specialized tooluniverse skills
+- 41+ specialized tooluniverse skills
 - Routing decision tree by task type
 - Keyword-based routing table
 - When to use vs. when to fallback
