@@ -52,9 +52,7 @@ uv pip install -r requirements.txt
 #### Output Properties
 - **Dimensionality**: 960-dimensional vectors (mean-pooled across tokens)
 - **Format**: List of float32 values
-- **Range**: Generally normalized to approximately [-1, 1]
-- **Precision**: Float32 for optimal balance of accuracy and efficiency
-- **Invariance**: Embeddings are invariant to protein orientation (rotation/translation independent)
+- **Data Type**: float32
 
 ## MCP Server Setup
 
@@ -77,19 +75,11 @@ The server will:
 - **Transport**: `http` (stateless HTTP for scalability)
 - **Model**: esmc_300m (can be modified in `get_client()` function)
 
-### Performance Characteristics
+### Performance Notes
 
-Performance varies significantly depending on:
-- Hardware (CPU vs GPU, GPU model and VRAM)
-- Sequence length (longer sequences require more computation)
-- Model size (larger models require more memory and compute)
-
-**On NVIDIA T4 GPU (example):**
-- Model lazy-loads on first request (~10-30 seconds for initial download and setup)
-- Typical inference: sub-second for most sequences on GPU, slower on CPU
-- GPU Memory: Estimated 8GB+ for esmc_300m
-
-For detailed benchmarks on your specific hardware, we recommend testing with sample sequences from the [ESM repository](https://github.com/evolutionaryscale/esm).
+- Model lazy-loads on first request (initial model download and initialization)
+- Performance depends on hardware (GPU vs CPU), sequence length, and model size
+- For performance benchmarks, refer to the [ESM repository](https://github.com/evolutionaryscale/esm)
 
 ## Usage Examples
 
@@ -150,19 +140,15 @@ print(json.dumps(embedding_result, indent=2))
 
 ### Model Download Fails
 - Check internet connection
-- Verify disk space (at least 10GB free)
+- Verify sufficient disk space
 - Models are cached in `~/.cache/huggingface/hub/` after first download
 - Subsequent runs will load from cache
 
 ### GPU Out of Memory
 - Use smaller model size (esmc_300m instead of esmc_600m)
-- Reduce batch size if processing multiple sequences
-- Consider reducing max sequence length
 
 ### Slow Embeddings
 - Verify GPU is being used: Check NVIDIA output with `nvidia-smi`
-- Large sequences (>2000 amino acids) will be slower
-- CPU-only mode will be 10-100x slower than GPU
 
 ### Connection Refused
 - Verify server is running: `python esm_tool.py`
@@ -209,13 +195,4 @@ if __name__ == "__main__":
 
 ## Citation
 
-If you use ESM-C embeddings in your research, please cite:
-
-```bibtex
-@article{lin2024esmc,
-  title={ESM-C: Contextualized protein embeddings},
-  author={Lin, Zhengyang and others},
-  journal={bioRxiv},
-  year={2024}
-}
-```
+For information on how to cite ESM-C, please refer to the [official EvolutionaryScale announcement](https://www.evolutionaryscale.ai/blog/esm-cambrian) and [ESM repository](https://github.com/evolutionaryscale/esm).
