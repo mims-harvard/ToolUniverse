@@ -942,3 +942,374 @@ NOW!  WHICH?  NOW!  NOW!
 ```
 
 **THE KEY**: Whatever the outcome, **TAKE ACTION**. Don't just show documentation.
+
+---
+
+## Strategy 11: Cross-Skill Workflow Orchestration (NEW)
+
+**CRITICAL**: For complex multi-step analyses, automatically chain multiple specialized skills together to create end-to-end pipelines.
+
+### When to Use Workflow Orchestration
+
+Detect workflow requests by identifying multi-step language:
+- "from X to Y" (e.g., "from GWAS to drugs")
+- "comprehensive analysis" spanning multiple domains
+- "integrate X and Y" requiring multiple skills
+- Questions that naturally span 3+ skill domains
+
+### Pre-Defined Workflow Templates
+
+#### Workflow 1: GWAS to Function to Therapeutics
+
+**Trigger words**: "GWAS", "trait", "from variants to drugs", "genetic risk to therapy"
+
+**Pipeline**:
+```
+User provides: GWAS trait or significant SNPs
+
+Step 1: Genetic Discovery (variant-analysis)
+→ Input: GWAS summary stats or SNP list
+→ Output: Associated genes with evidence scores
+
+Step 2: Target Validation (target-research)
+→ Input: Gene list from Step 1
+→ Output: Protein function, pathways, druggability
+
+Step 3: Expression Context (rnaseq-deseq2 or expression-data-retrieval)
+→ Input: Gene list
+→ Output: Tissue-specific expression, disease relevance
+
+Step 4: Pathway Analysis (gene-enrichment)
+→ Input: Gene list
+→ Output: Enriched pathways, biological processes
+
+Step 5: Drug Discovery (drug-repurposing or binder-discovery)
+→ Input: Targets + pathways from previous steps
+→ Output: Candidate therapeutics, mechanism of action
+
+Final Output: Unified report connecting genetic variants → genes →
+function → pathways → druggable targets → therapeutic candidates
+```
+
+**Example execution**:
+```python
+# User: "What drugs could treat genetic risk for Type 2 Diabetes?"
+
+# Step 1: Get GWAS genes
+genes = Skill("tooluniverse-gwas-trait-to-gene", "Type 2 Diabetes")
+# Returns: TCF7L2, PPARG, KCNJ11, etc.
+
+# Step 2: Research each target
+target_profiles = []
+for gene in genes[:5]:  # Top 5
+    profile = Skill("tooluniverse-target-research", gene)
+    target_profiles.append(profile)
+
+# Step 3: Get expression patterns
+expression = Skill("tooluniverse-expression-data-retrieval",
+                   f"pancreas {', '.join(genes[:5])}")
+
+# Step 4: Pathway enrichment
+pathways = Skill("tooluniverse-gene-enrichment",
+                 f"genes={','.join(genes)}")
+
+# Step 5: Find drugs
+drugs = Skill("tooluniverse-drug-repurposing",
+              f"targets={','.join(genes[:5])} disease=Type 2 Diabetes")
+
+# Generate unified report with all findings
+```
+
+#### Workflow 2: Variant to Clinical Action
+
+**Trigger words**: "VCF", "mutations", "clinical interpretation", "treatment options", "variant to therapy"
+
+**Pipeline**:
+```
+User provides: VCF file or variant list
+
+Step 1: Variant Annotation (variant-analysis)
+→ Input: VCF file
+→ Output: Annotated variants with consequences, frequencies
+
+Step 2: Pathogenicity Assessment (variant-interpretation)
+→ Input: Variants from Step 1
+→ Output: Clinical significance, ACMG criteria
+
+Step 3: Treatment Matching (precision-oncology)
+→ Input: Actionable mutations
+→ Output: FDA-approved therapies, clinical trials
+
+Step 4: Drug Safety (pharmacovigilance)
+→ Input: Recommended drugs from Step 3
+→ Output: Adverse events, contraindications
+
+Step 5: Pharmacogenomics
+→ Input: Variants + drugs
+→ Output: Drug metabolism predictions, dosing recommendations
+
+Final Output: Clinical report with variant interpretations, treatment
+options, safety profiles, and actionable recommendations
+```
+
+#### Workflow 3: Multi-Omics Disease Characterization
+
+**Trigger words**: "multi-omics", "integrate omics", "comprehensive molecular profile", "transcriptome and proteome"
+
+**Pipeline**:
+```
+User provides: Disease name or patient omics data
+
+Step 1: Disease Background (disease-research)
+→ Input: Disease name
+→ Output: Pathophysiology, known genes, biomarkers
+
+Step 2: Expression Analysis (rnaseq-deseq2)
+→ Input: RNA-seq data or public datasets
+→ Output: Differentially expressed genes
+
+Step 3: Epigenetic Analysis (epigenomics)
+→ Input: Methylation data
+→ Output: Differentially methylated regions
+
+Step 4: Variant Analysis (variant-analysis)
+→ Input: VCF with SNVs/CNVs
+→ Output: Disease-associated variants
+
+Step 5: Multi-Omics Integration (multi-omics-integration)
+→ Input: Results from Steps 2-4
+→ Output: Cross-omics correlations, patient subtypes
+
+Step 6: Pathway Integration (gene-enrichment)
+→ Input: Multi-omics gene lists
+→ Output: Dysregulated pathways across omics
+
+Step 7: Therapeutic Discovery (drug-repurposing)
+→ Input: Target pathways + disease
+→ Output: Drug candidates
+
+Final Output: Comprehensive disease characterization with molecular
+mechanisms across omics layers and therapeutic opportunities
+```
+
+#### Workflow 4: Protein Function to Drug Design
+
+**Trigger words**: "design inhibitor", "therapeutic protein", "target to drug", "structure-based design"
+
+**Pipeline**:
+```
+User provides: Target protein name
+
+Step 1: Target Research (target-research)
+→ Input: Protein name
+→ Output: Function, pathways, disease relevance
+
+Step 2: Structure Retrieval (protein-structure-retrieval)
+→ Input: Protein name/UniProt ID
+→ Output: PDB structures, AlphaFold model
+
+Step 3: Binding Site Analysis (protein-interactions)
+→ Input: Structure + known interactors
+→ Output: Binding sites, functional residues
+
+Step 4: Virtual Screening (binder-discovery)
+→ Input: Target structure + binding site
+→ Output: Hit compounds from screening
+
+Step 5: ADMET Prediction (chemical-safety)
+→ Input: Hit compounds
+→ Output: Toxicity, bioavailability predictions
+
+Step 6: Literature Validation (literature-deep-research)
+→ Input: Target + hit compounds
+→ Output: Published evidence, similar approaches
+
+Final Output: Drug design report with validated target, binding sites,
+screened compounds, ADMET profiles, and literature support
+```
+
+#### Workflow 5: Single-Cell to Cell Communication to Therapeutics
+
+**Trigger words**: "single-cell", "cell-cell communication", "tumor microenvironment", "ligand-receptor"
+
+**Pipeline**:
+```
+User provides: Single-cell RNA-seq data
+
+Step 1: Cell Type Identification (single-cell)
+→ Input: scRNA-seq AnnData
+→ Output: Clusters, cell type annotations, marker genes
+
+Step 2: Cell Communication Analysis (single-cell Phase 10)
+→ Input: Annotated AnnData + cell types
+→ Output: Ligand-receptor interactions, cell-type pairs
+
+Step 3: Target Validation (target-research)
+→ Input: Key ligands/receptors from Step 2
+→ Output: Druggability, clinical relevance
+
+Step 4: Drug Repurposing (drug-repurposing)
+→ Input: Communication targets
+→ Output: Drugs targeting L-R pairs
+
+Step 5: Clinical Trials (clinical trials search via ToolUniverse)
+→ Input: Drug candidates + indication
+→ Output: Ongoing trials, evidence
+
+Final Output: Cell communication map with therapeutic opportunities
+targeting specific cell-cell interactions
+```
+
+#### Workflow 6: Structural Variant to Clinical Report
+
+**Trigger words**: "CNV", "deletion", "duplication", "structural variant", "SV interpretation"
+
+**Pipeline**:
+```
+User provides: SV/CNV VCF or coordinates
+
+Step 1: SV Annotation (variant-analysis Phase 7)
+→ Input: SV VCF or coordinates
+→ Output: Population frequencies, affected genes
+
+Step 2: Dosage Sensitivity (via ClinGen tools in variant-analysis)
+→ Input: Affected genes
+→ Output: Haploinsufficiency/triplosensitivity scores
+
+Step 3: Gene Function (target-research)
+→ Input: Dosage-sensitive genes
+→ Output: Gene function, disease associations
+
+Step 4: Clinical Interpretation
+→ Input: All evidence from Steps 1-3
+→ Output: ACMG/ClinGen classification
+
+Step 5: Literature Evidence (literature-deep-research)
+→ Input: Genes + phenotype
+→ Output: Case reports, published CNVs
+
+Final Output: Clinical SV report with pathogenicity assessment,
+gene dosage effects, and evidence-based recommendations
+```
+
+### Workflow Execution Pattern
+
+When you detect a workflow request:
+
+1. **Identify the workflow** - Match keywords to pre-defined templates
+2. **Confirm with user** (if ambiguous) - Ask which workflow they want
+3. **Execute sequentially** - Run each skill in order, passing data forward
+4. **Track intermediate results** - Store outputs from each step
+5. **Generate unified report** - Synthesize all findings into coherent narrative
+
+### Data Passing Between Skills
+
+**Pattern**: Extract relevant data from each skill's output and pass to next skill.
+
+```python
+# Example: GWAS to Drug workflow
+
+# Step 1: Get genes from GWAS
+gwas_result = Skill("tooluniverse-gwas-trait-to-gene", "hypertension")
+genes = extract_gene_list(gwas_result)  # ['AGT', 'ACE', 'NOS3', ...]
+
+# Step 2: Research top genes (pass gene list)
+target_info = {}
+for gene in genes[:5]:
+    result = Skill("tooluniverse-target-research", gene)
+    target_info[gene] = result
+
+# Step 3: Pathway enrichment (pass gene list)
+pathways = Skill("tooluniverse-gene-enrichment",
+                 f"genes={','.join(genes)}")
+top_pathways = extract_top_pathways(pathways)
+
+# Step 4: Drug repurposing (pass genes + pathways)
+drugs = Skill("tooluniverse-drug-repurposing",
+              f"targets={','.join(genes[:5])} pathways={','.join(top_pathways)}")
+
+# Final: Synthesize report
+report = generate_unified_report(genes, target_info, pathways, drugs)
+```
+
+### Parallel Execution in Workflows
+
+When steps are independent, execute in parallel:
+
+```python
+# Steps that can run in parallel:
+
+# After getting gene list from GWAS, these are independent:
+parallel_results = run_in_parallel([
+    Skill("tooluniverse-target-research", genes[0]),  # Gene 1
+    Skill("tooluniverse-target-research", genes[1]),  # Gene 2
+    Skill("tooluniverse-target-research", genes[2]),  # Gene 3
+    Skill("tooluniverse-expression-data-retrieval", "tissue expression"),
+    Skill("tooluniverse-literature-deep-research", "gene function")
+])
+
+# Then continue with steps that depend on these results
+```
+
+### Error Handling in Workflows
+
+If a step fails, implement graceful degradation:
+
+1. **Log the failure** - Document which step failed
+2. **Try alternative** - Use backup skill or tool if available
+3. **Continue if possible** - Skip failed step if not critical
+4. **Inform user** - Note limitations in final report
+
+```python
+# Example error handling
+try:
+    expression_data = Skill("tooluniverse-expression-data-retrieval", genes)
+except SkillError:
+    # Fallback: Use GTEx tools directly
+    expression_data = fallback_gtex_query(genes)
+    # Note in report: "Expression data from GTEx API (skill unavailable)"
+```
+
+### Workflow Customization
+
+Allow users to customize workflows:
+
+```python
+# User: "Run GWAS to drug workflow, but skip pathway enrichment"
+
+# Modified workflow execution:
+execute_workflow("gwas_to_drug", exclude_steps=["pathway_enrichment"])
+```
+
+### When NOT to Use Workflows
+
+Single-skill tasks should use direct routing:
+- ❌ "Research BRCA1" → Don't use workflow, just call target-research
+- ❌ "Analyze this VCF" → Don't use workflow, just call variant-analysis
+- ✅ "From GWAS to drugs" → Use workflow (multi-step)
+- ✅ "Comprehensive multi-omics analysis" → Use workflow (complex)
+
+### Workflow Success Criteria
+
+A successful workflow execution includes:
+- ✅ All critical steps completed
+- ✅ Data passed correctly between steps
+- ✅ Intermediate results documented
+- ✅ Unified final report generated
+- ✅ Clear narrative connecting all steps
+- ✅ Actionable conclusions provided
+
+---
+
+## Workflow Orchestration Summary
+
+| Workflow | Skills Used | Output |
+|----------|-------------|--------|
+| **GWAS to Therapeutics** | variant-analysis, target-research, gene-enrichment, drug-repurposing | Gene-to-drug report |
+| **Variant to Clinical** | variant-analysis, variant-interpretation, precision-oncology, pharmacovigilance | Clinical action report |
+| **Multi-Omics Disease** | disease-research, rnaseq-deseq2, epigenomics, variant-analysis, multi-omics-integration, gene-enrichment, drug-repurposing | Comprehensive molecular profile |
+| **Protein to Drug** | target-research, protein-structure-retrieval, binder-discovery, chemical-safety, literature-deep-research | Drug design report |
+| **Single-Cell Communication** | single-cell, target-research, drug-repurposing | Cell communication + therapeutics |
+| **SV Clinical Report** | variant-analysis (Phase 7), target-research, literature-deep-research | SV pathogenicity report |
+
+**THE KEY**: Recognize multi-step requests and execute workflows automatically, passing data between skills to create comprehensive end-to-end analyses.
