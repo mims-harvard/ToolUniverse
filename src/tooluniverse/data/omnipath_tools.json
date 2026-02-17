@@ -1,0 +1,685 @@
+[
+    {
+        "name": "OmniPath_get_ligand_receptor_interactions",
+        "description": "Get ligand-receptor interaction pairs from OmniPath, the largest integrated intercellular communication database. Combines data from CellPhoneDB, CellChatDB, CellTalkDB, connectomeDB, Ramilowski2015, Guide2Pharma, HPMR, and 20+ other curated resources. Returns source/target proteins with directionality, stimulation/inhibition flags, supporting databases, and curation effort scores. Essential for cell-cell communication analysis in single-cell transcriptomics (CellPhoneDB/CellChat/LIANA workflows). Example: querying TGFB1 returns 30 ligand-receptor interactions including TGFB1->TGFBR2 (135 curation effort, 34 databases), TGFB1->ACVRL1 (14 curation effort, 26 databases); querying CD274 (PD-L1) finds CD274->PDCD1 immune checkpoint interaction supported by 22 databases.",
+        "parameter": {
+            "type": "object",
+            "properties": {
+                "partners": {
+                    "type": ["string", "null"],
+                    "description": "Gene symbol(s) or UniProt ID(s) to query as interaction partners (either source or target). Comma-separated for multiple. Examples: 'TGFB1', 'CD274,PDCD1', 'EGFR', 'P01137'."
+                },
+                "sources": {
+                    "type": ["string", "null"],
+                    "description": "Gene symbol(s) or UniProt ID(s) for source (ligand) proteins only. Use instead of 'partners' to get outgoing interactions. Examples: 'TGFB1', 'WNT3A'."
+                },
+                "targets": {
+                    "type": ["string", "null"],
+                    "description": "Gene symbol(s) or UniProt ID(s) for target (receptor) proteins only. Use instead of 'partners' to get incoming interactions. Examples: 'EGFR', 'PDCD1'."
+                },
+                "databases": {
+                    "type": ["string", "null"],
+                    "description": "Filter by specific source database(s), comma-separated. Options include: CellPhoneDB, CellChatDB, CellTalkDB, connectomeDB2020, Ramilowski2015, Guide2Pharma, HPMR, iTALK, scConnect, Baccin2019, ICELLNET, LRdb, Cellinker. Default: all databases."
+                },
+                "organisms": {
+                    "type": ["integer", "null"],
+                    "description": "NCBI taxonomy ID for species filter. Default: 9606 (human). Options: 9606 (human), 10090 (mouse), 10116 (rat)."
+                },
+                "limit": {
+                    "type": ["integer", "null"],
+                    "description": "Maximum number of interactions to return. Default: no limit (returns all)."
+                }
+            },
+            "required": []
+        },
+        "fields": {
+            "endpoint": "ligand_receptor"
+        },
+        "type": "OmniPathTool",
+        "test_examples": [
+            {
+                "partners": "TGFB1"
+            },
+            {
+                "partners": "CD274,PDCD1"
+            },
+            {
+                "sources": "EGFR"
+            }
+        ],
+        "return_schema": {
+            "oneOf": [
+                {
+                    "type": "object",
+                    "properties": {
+                        "data": {
+                            "type": "array",
+                            "items": {
+                                "type": "object",
+                                "properties": {
+                                    "source_uniprot": {
+                                        "type": ["string", "null"],
+                                        "description": "Source protein UniProt accession"
+                                    },
+                                    "target_uniprot": {
+                                        "type": ["string", "null"],
+                                        "description": "Target protein UniProt accession"
+                                    },
+                                    "source_genesymbol": {
+                                        "type": ["string", "null"],
+                                        "description": "Source protein gene symbol"
+                                    },
+                                    "target_genesymbol": {
+                                        "type": ["string", "null"],
+                                        "description": "Target protein gene symbol"
+                                    },
+                                    "is_directed": {
+                                        "type": "boolean",
+                                        "description": "Whether the interaction has a known direction"
+                                    },
+                                    "is_stimulation": {
+                                        "type": "boolean",
+                                        "description": "Whether the interaction is stimulatory/activating"
+                                    },
+                                    "is_inhibition": {
+                                        "type": "boolean",
+                                        "description": "Whether the interaction is inhibitory"
+                                    },
+                                    "sources": {
+                                        "type": "array",
+                                        "items": {"type": "string"},
+                                        "description": "List of supporting databases/resources"
+                                    },
+                                    "curation_effort": {
+                                        "type": ["integer", "null"],
+                                        "description": "Number of curated references supporting this interaction"
+                                    },
+                                    "type": {
+                                        "type": ["string", "null"],
+                                        "description": "Interaction type: post_translational, transcriptional, etc."
+                                    }
+                                }
+                            }
+                        },
+                        "metadata": {
+                            "type": "object"
+                        }
+                    }
+                },
+                {
+                    "type": "object",
+                    "properties": {
+                        "error": {"type": "string"}
+                    },
+                    "required": ["error"]
+                }
+            ]
+        }
+    },
+    {
+        "name": "OmniPath_get_intercell_roles",
+        "description": "Get intercellular communication roles for proteins from OmniPath. Classifies proteins as ligands, receptors, transmembrane proteins, secreted factors, or extracellular matrix components based on evidence from 40+ databases. Returns functional categories (ligand/receptor/adhesion/transporter), locational annotations (secreted/transmembrane/peripheral), consensus scores, and supporting databases. Critical for identifying which genes act as senders vs receivers in cell-cell communication. Example: querying EGFR shows it is classified as 'receptor' by 10 databases with consensus_score 7, plasma_membrane_transmembrane=true; querying TGFB1 shows it is a 'ligand' (secreted=true, transmitter=true).",
+        "parameter": {
+            "type": "object",
+            "properties": {
+                "proteins": {
+                    "type": ["string", "null"],
+                    "description": "Gene symbol(s) or UniProt ID(s), comma-separated. Examples: 'EGFR', 'TGFB1,PDCD1', 'P00533,P01137'."
+                },
+                "categories": {
+                    "type": ["string", "null"],
+                    "description": "Filter by intercellular role category. Examples: 'ligand', 'receptor', 'adhesion', 'transporter', 'ecm', 'transmembrane'. Comma-separated for multiple."
+                },
+                "scope": {
+                    "type": ["string", "null"],
+                    "description": "Filter by annotation scope: 'generic' (general role) or 'specific' (cell-type specific). Default: all."
+                },
+                "transmitter": {
+                    "type": ["boolean", "null"],
+                    "description": "Filter for transmitter/sender proteins (true) or non-transmitters (false)."
+                },
+                "receiver": {
+                    "type": ["boolean", "null"],
+                    "description": "Filter for receiver proteins (true) or non-receivers (false)."
+                },
+                "secreted": {
+                    "type": ["boolean", "null"],
+                    "description": "Filter for secreted proteins (true) or non-secreted (false)."
+                },
+                "limit": {
+                    "type": ["integer", "null"],
+                    "description": "Maximum number of results to return. Default: no limit."
+                }
+            },
+            "required": []
+        },
+        "fields": {
+            "endpoint": "intercell"
+        },
+        "type": "OmniPathTool",
+        "test_examples": [
+            {
+                "proteins": "EGFR"
+            },
+            {
+                "categories": "ligand",
+                "scope": "generic",
+                "limit": 20
+            },
+            {
+                "proteins": "PDCD1",
+                "categories": "receptor"
+            }
+        ],
+        "return_schema": {
+            "oneOf": [
+                {
+                    "type": "object",
+                    "properties": {
+                        "data": {
+                            "type": "array",
+                            "items": {
+                                "type": "object",
+                                "properties": {
+                                    "uniprot": {
+                                        "type": ["string", "null"],
+                                        "description": "UniProt accession"
+                                    },
+                                    "genesymbol": {
+                                        "type": ["string", "null"],
+                                        "description": "Gene symbol"
+                                    },
+                                    "category": {
+                                        "type": ["string", "null"],
+                                        "description": "Intercellular role category (ligand, receptor, adhesion, etc.)"
+                                    },
+                                    "parent": {
+                                        "type": ["string", "null"],
+                                        "description": "Parent category"
+                                    },
+                                    "database": {
+                                        "type": ["string", "null"],
+                                        "description": "Source database for this annotation"
+                                    },
+                                    "scope": {
+                                        "type": ["string", "null"],
+                                        "description": "generic or specific"
+                                    },
+                                    "aspect": {
+                                        "type": ["string", "null"],
+                                        "description": "functional or locational"
+                                    },
+                                    "consensus_score": {
+                                        "type": ["integer", "null"],
+                                        "description": "Consensus score across databases (higher = more confident)"
+                                    },
+                                    "transmitter": {
+                                        "type": "boolean",
+                                        "description": "Whether protein acts as signal transmitter/sender"
+                                    },
+                                    "receiver": {
+                                        "type": "boolean",
+                                        "description": "Whether protein acts as signal receiver"
+                                    },
+                                    "secreted": {
+                                        "type": "boolean",
+                                        "description": "Whether protein is secreted"
+                                    },
+                                    "plasma_membrane_transmembrane": {
+                                        "type": "boolean",
+                                        "description": "Whether protein is plasma membrane transmembrane"
+                                    }
+                                }
+                            }
+                        },
+                        "metadata": {
+                            "type": "object"
+                        }
+                    }
+                },
+                {
+                    "type": "object",
+                    "properties": {
+                        "error": {"type": "string"}
+                    },
+                    "required": ["error"]
+                }
+            ]
+        }
+    },
+    {
+        "name": "OmniPath_get_signaling_interactions",
+        "description": "Get intracellular signaling pathway interactions from OmniPath's curated datasets. Supports querying the main OmniPath signaling network (literature-curated, directed PPI), pathwayextra (activity flow from Reactome/KEGG/WikiPathways), kinaseextra (kinase-substrate from PhosphoSite/dbPTM), and more. Returns directed, signed interactions with stimulation/inhibition annotations and supporting evidence. Useful for reconstructing signaling cascades downstream of receptor activation. Example: NOTCH1 has 110 directed signaling interactions; SRC kinase connects to 200+ downstream substrates; TP53 has 500+ pathway interactions.",
+        "parameter": {
+            "type": "object",
+            "properties": {
+                "partners": {
+                    "type": ["string", "null"],
+                    "description": "Gene symbol(s) or UniProt ID(s) to query. Comma-separated for multiple. Examples: 'TP53', 'NOTCH1', 'SRC,ABL1'."
+                },
+                "sources": {
+                    "type": ["string", "null"],
+                    "description": "Gene symbol(s) or UniProt ID(s) for source/upstream proteins only."
+                },
+                "targets": {
+                    "type": ["string", "null"],
+                    "description": "Gene symbol(s) or UniProt ID(s) for target/downstream proteins only."
+                },
+                "datasets": {
+                    "type": ["string", "null"],
+                    "description": "Which OmniPath dataset(s) to query, comma-separated. Options: 'omnipath' (curated signaling, default), 'pathwayextra' (activity flow from pathway DBs), 'kinaseextra' (kinase-substrate), 'dorothea' (TF-target), 'tf_target' (TF regulation), 'mirnatarget' (miRNA targets), 'lncrna_mrna' (lncRNA regulation). Default: 'omnipath'."
+                },
+                "directed": {
+                    "type": ["boolean", "null"],
+                    "description": "Filter for directed interactions only (default: true for signaling)."
+                },
+                "signed": {
+                    "type": ["boolean", "null"],
+                    "description": "Filter for interactions with known stimulation/inhibition sign."
+                },
+                "organisms": {
+                    "type": ["integer", "null"],
+                    "description": "NCBI taxonomy ID. Default: 9606 (human). Options: 9606, 10090, 10116."
+                },
+                "limit": {
+                    "type": ["integer", "null"],
+                    "description": "Maximum number of interactions to return."
+                }
+            },
+            "required": []
+        },
+        "fields": {
+            "endpoint": "signaling"
+        },
+        "type": "OmniPathTool",
+        "test_examples": [
+            {
+                "partners": "NOTCH1",
+                "directed": true
+            },
+            {
+                "sources": "TP53",
+                "datasets": "omnipath",
+                "signed": true
+            },
+            {
+                "partners": "STAT3",
+                "datasets": "omnipath,pathwayextra"
+            }
+        ],
+        "return_schema": {
+            "oneOf": [
+                {
+                    "type": "object",
+                    "properties": {
+                        "data": {
+                            "type": "array",
+                            "items": {
+                                "type": "object",
+                                "properties": {
+                                    "source_uniprot": {
+                                        "type": ["string", "null"],
+                                        "description": "Source protein UniProt accession"
+                                    },
+                                    "target_uniprot": {
+                                        "type": ["string", "null"],
+                                        "description": "Target protein UniProt accession"
+                                    },
+                                    "source_genesymbol": {
+                                        "type": ["string", "null"],
+                                        "description": "Source protein gene symbol"
+                                    },
+                                    "target_genesymbol": {
+                                        "type": ["string", "null"],
+                                        "description": "Target protein gene symbol"
+                                    },
+                                    "is_directed": {
+                                        "type": "boolean",
+                                        "description": "Whether the interaction direction is known"
+                                    },
+                                    "is_stimulation": {
+                                        "type": "boolean",
+                                        "description": "Whether the interaction is stimulatory"
+                                    },
+                                    "is_inhibition": {
+                                        "type": "boolean",
+                                        "description": "Whether the interaction is inhibitory"
+                                    },
+                                    "consensus_direction": {
+                                        "type": "boolean",
+                                        "description": "Whether multiple databases agree on direction"
+                                    },
+                                    "consensus_stimulation": {
+                                        "type": "boolean",
+                                        "description": "Whether multiple databases agree on stimulation"
+                                    },
+                                    "consensus_inhibition": {
+                                        "type": "boolean",
+                                        "description": "Whether multiple databases agree on inhibition"
+                                    },
+                                    "sources": {
+                                        "type": "array",
+                                        "items": {"type": "string"},
+                                        "description": "List of supporting databases"
+                                    },
+                                    "curation_effort": {
+                                        "type": ["integer", "null"],
+                                        "description": "Number of curated references"
+                                    },
+                                    "type": {
+                                        "type": ["string", "null"],
+                                        "description": "Interaction type"
+                                    }
+                                }
+                            }
+                        },
+                        "metadata": {
+                            "type": "object"
+                        }
+                    }
+                },
+                {
+                    "type": "object",
+                    "properties": {
+                        "error": {"type": "string"}
+                    },
+                    "required": ["error"]
+                }
+            ]
+        }
+    },
+    {
+        "name": "OmniPath_get_complexes",
+        "description": "Get protein complex compositions from OmniPath's comprehensive complex database. Integrates 22,000+ complexes from CORUM, CellPhoneDB, CellChatDB, ComplexPortal, PDB, Guide2Pharma, SIGNOR, KEGG, and other resources. Returns complex names, component proteins with gene symbols, stoichiometry, and database identifiers. Essential for understanding multi-subunit ligand-receptor complexes in cell communication (e.g., heteromeric cytokine receptors). Example: TGFB1 (P01137) participates in 24 complexes including 'TGF-beta receptor II-TGF-beta1 complex' (TGFB1+TGFBR2) and 'ITGAV-ITGB8-MMP14-TGFB1 complex'.",
+        "parameter": {
+            "type": "object",
+            "properties": {
+                "proteins": {
+                    "type": "string",
+                    "description": "UniProt accession(s), comma-separated. Note: gene symbols are NOT supported for this endpoint; use UniProt IDs. Examples: 'P01137' (TGFB1), 'P00533' (EGFR), 'P01137,P37173' (TGFB1+TGFBR2)."
+                },
+                "databases": {
+                    "type": ["string", "null"],
+                    "description": "Filter by source database(s), comma-separated. Options: CORUM, CellPhoneDB, CellChatDB, ComplexPortal, Guide2Pharma, PDB, SIGNOR, KEGG-MEDICUS, Cellinker, ICELLNET, hu.MAP, Compleat. Default: all."
+                }
+            },
+            "required": ["proteins"]
+        },
+        "fields": {
+            "endpoint": "complexes"
+        },
+        "type": "OmniPathTool",
+        "test_examples": [
+            {
+                "proteins": "P01137"
+            },
+            {
+                "proteins": "P00533"
+            },
+            {
+                "proteins": "Q15116",
+                "databases": "CellPhoneDB,CORUM"
+            }
+        ],
+        "return_schema": {
+            "oneOf": [
+                {
+                    "type": "object",
+                    "properties": {
+                        "data": {
+                            "type": "array",
+                            "items": {
+                                "type": "object",
+                                "properties": {
+                                    "name": {
+                                        "type": ["string", "null"],
+                                        "description": "Complex name"
+                                    },
+                                    "components": {
+                                        "type": ["string", "null"],
+                                        "description": "UniProt accessions of components, underscore-separated"
+                                    },
+                                    "components_genesymbols": {
+                                        "type": ["string", "null"],
+                                        "description": "Gene symbols of components, underscore-separated"
+                                    },
+                                    "stoichiometry": {
+                                        "type": ["string", "null"],
+                                        "description": "Component stoichiometry (e.g., '1:1:1')"
+                                    },
+                                    "sources": {
+                                        "type": "array",
+                                        "items": {"type": "string"},
+                                        "description": "Source databases for this complex"
+                                    },
+                                    "references": {
+                                        "type": ["array", "null"],
+                                        "items": {"type": "integer"},
+                                        "description": "PubMed IDs supporting this complex"
+                                    },
+                                    "identifiers": {
+                                        "type": ["string", "null"],
+                                        "description": "Database-specific complex IDs (e.g., CORUM:2342)"
+                                    }
+                                }
+                            }
+                        },
+                        "metadata": {
+                            "type": "object"
+                        }
+                    }
+                },
+                {
+                    "type": "object",
+                    "properties": {
+                        "error": {"type": "string"}
+                    },
+                    "required": ["error"]
+                }
+            ]
+        }
+    },
+    {
+        "name": "OmniPath_get_cell_communication_annotations",
+        "description": "Get cell-cell communication annotations for proteins from databases like CellPhoneDB, CellChatDB, CellTalkDB, ICELLNET, and other curated resources integrated into OmniPath. Returns role classifications (ligand/receptor), signaling pathway assignments, categories (Secreted Signaling, Cell-Cell Contact, ECM-Receptor), and other cell communication metadata. Useful for understanding the functional context of proteins in intercellular signaling. Example: TGFB1 (P01137) is annotated as 'ligand' in CellChatDB pathway 'TGFb' category 'Secreted Signaling'; TGFBR2 (P37173) is annotated as 'receptor' in multiple pathways.",
+        "parameter": {
+            "type": "object",
+            "properties": {
+                "proteins": {
+                    "type": "string",
+                    "description": "UniProt accession(s) or gene symbol(s), comma-separated. Examples: 'P01137,P37173', 'TGFB1,EGFR', 'P00533'."
+                },
+                "databases": {
+                    "type": ["string", "null"],
+                    "description": "Filter by annotation database(s), comma-separated. Cell communication databases: CellPhoneDB, CellChatDB, CellTalkDB, ICELLNET, iTALK, scConnect, Cellinker, connectomeDB2020, Ramilowski2015, Baccin2019, LRdb, HPMR. Other databases: HPA_tissue, UniProt_tissue, PanglaoDB, CellTypist, DGIdb, Guide2Pharma. Default: CellPhoneDB,CellChatDB."
+                },
+                "genesymbols": {
+                    "type": ["boolean", "null"],
+                    "description": "Whether to include gene symbols in output (default: true)."
+                }
+            },
+            "required": ["proteins"]
+        },
+        "fields": {
+            "endpoint": "annotations"
+        },
+        "type": "OmniPathTool",
+        "test_examples": [
+            {
+                "proteins": "P01137,P37173"
+            },
+            {
+                "proteins": "EGFR",
+                "databases": "CellPhoneDB,CellChatDB,CellTalkDB"
+            },
+            {
+                "proteins": "P04637",
+                "databases": "CellPhoneDB,CellChatDB,ICELLNET,iTALK"
+            }
+        ],
+        "return_schema": {
+            "oneOf": [
+                {
+                    "type": "object",
+                    "properties": {
+                        "data": {
+                            "type": "array",
+                            "items": {
+                                "type": "object",
+                                "properties": {
+                                    "uniprot": {
+                                        "type": ["string", "null"],
+                                        "description": "UniProt accession"
+                                    },
+                                    "genesymbol": {
+                                        "type": ["string", "null"],
+                                        "description": "Gene symbol"
+                                    },
+                                    "entity_type": {
+                                        "type": ["string", "null"],
+                                        "description": "Entity type (protein, complex, etc.)"
+                                    },
+                                    "source": {
+                                        "type": ["string", "null"],
+                                        "description": "Source database name"
+                                    },
+                                    "label": {
+                                        "type": ["string", "null"],
+                                        "description": "Annotation label/key (role, pathway, category, etc.)"
+                                    },
+                                    "value": {
+                                        "type": ["string", "null"],
+                                        "description": "Annotation value (ligand, receptor, TGFb, Secreted Signaling, etc.)"
+                                    },
+                                    "record_id": {
+                                        "type": ["integer", "null"],
+                                        "description": "Record identifier within the source database"
+                                    }
+                                }
+                            }
+                        },
+                        "metadata": {
+                            "type": "object"
+                        }
+                    }
+                },
+                {
+                    "type": "object",
+                    "properties": {
+                        "error": {"type": "string"}
+                    },
+                    "required": ["error"]
+                }
+            ]
+        }
+    },
+    {
+        "name": "OmniPath_get_enzyme_substrate",
+        "description": "Get enzyme-substrate (post-translational modification) interactions from OmniPath. Integrates data from PhosphoSite, phosphoELM, dbPTM, SIGNOR, HPRD, KEA, and other PTM databases. Returns kinase/phosphatase->substrate relationships with specific residue positions, modification types, and supporting evidence. Critical for understanding signaling cascades downstream of receptor activation (e.g., RTK->SRC->downstream phosphorylation targets). Example: SRC kinase (P12931) has 200+ substrates with phosphorylation sites; LCK (P06239) phosphorylates SOCS3 at Y204 and Y221.",
+        "parameter": {
+            "type": "object",
+            "properties": {
+                "enzymes": {
+                    "type": ["string", "null"],
+                    "description": "Gene symbol(s) or UniProt ID(s) for enzyme/kinase. Comma-separated for multiple. Examples: 'SRC', 'P12931', 'LCK,FYN'."
+                },
+                "substrates": {
+                    "type": ["string", "null"],
+                    "description": "Gene symbol(s) or UniProt ID(s) for substrate. Examples: 'STAT3', 'P40763'."
+                },
+                "types": {
+                    "type": ["string", "null"],
+                    "description": "Modification type filter. Options include: phosphorylation, ubiquitination, acetylation, methylation, sumoylation, glycosylation. Default: all types."
+                },
+                "organisms": {
+                    "type": ["integer", "null"],
+                    "description": "NCBI taxonomy ID. Default: 9606 (human)."
+                },
+                "limit": {
+                    "type": ["integer", "null"],
+                    "description": "Maximum number of results to return."
+                }
+            },
+            "required": []
+        },
+        "fields": {
+            "endpoint": "enz_sub"
+        },
+        "type": "OmniPathTool",
+        "test_examples": [
+            {
+                "enzymes": "SRC",
+                "limit": 20
+            },
+            {
+                "enzymes": "LCK",
+                "substrates": "SOCS3"
+            },
+            {
+                "enzymes": "EGFR",
+                "types": "phosphorylation",
+                "limit": 15
+            }
+        ],
+        "return_schema": {
+            "oneOf": [
+                {
+                    "type": "object",
+                    "properties": {
+                        "data": {
+                            "type": "array",
+                            "items": {
+                                "type": "object",
+                                "properties": {
+                                    "enzyme_uniprot": {
+                                        "type": ["string", "null"],
+                                        "description": "Enzyme UniProt accession"
+                                    },
+                                    "substrate_uniprot": {
+                                        "type": ["string", "null"],
+                                        "description": "Substrate UniProt accession"
+                                    },
+                                    "enzyme_genesymbol": {
+                                        "type": ["string", "null"],
+                                        "description": "Enzyme gene symbol"
+                                    },
+                                    "substrate_genesymbol": {
+                                        "type": ["string", "null"],
+                                        "description": "Substrate gene symbol"
+                                    },
+                                    "residue_type": {
+                                        "type": ["string", "null"],
+                                        "description": "Modified residue type (Y, S, T, K, etc.)"
+                                    },
+                                    "residue_offset": {
+                                        "type": ["integer", "null"],
+                                        "description": "Position of modified residue in substrate sequence"
+                                    },
+                                    "modification": {
+                                        "type": ["string", "null"],
+                                        "description": "Type of modification (phosphorylation, ubiquitination, etc.)"
+                                    },
+                                    "sources": {
+                                        "type": "array",
+                                        "items": {"type": "string"},
+                                        "description": "Supporting databases"
+                                    }
+                                }
+                            }
+                        },
+                        "metadata": {
+                            "type": "object"
+                        }
+                    }
+                },
+                {
+                    "type": "object",
+                    "properties": {
+                        "error": {"type": "string"}
+                    },
+                    "required": ["error"]
+                }
+            ]
+        }
+    }
+]

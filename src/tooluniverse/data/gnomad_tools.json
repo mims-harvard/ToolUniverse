@@ -433,5 +433,257 @@
         "dataset": "gnomad_r3"
       }
     ]
+  },
+  {
+    "type": "gnomADGraphQLQueryTool",
+    "name": "gnomad_get_sv_by_gene",
+    "description": "Get structural variants (SVs) from gnomAD v4 for a gene. Returns deletions, duplications, inversions, translocations, and complex SVs with population allele frequencies, SV type, consequence, and homozygote counts. Essential for interpreting CNVs in clinical genomics.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "gene_symbol": {
+          "type": "string",
+          "description": "Gene symbol (e.g., 'BRCA1', 'TP53', 'MECP2')"
+        },
+        "reference_genome": {
+          "type": "string",
+          "enum": ["GRCh37", "GRCh38"],
+          "default": "GRCh38",
+          "description": "Reference genome assembly."
+        }
+      },
+      "required": ["gene_symbol"]
+    },
+    "fields": {
+      "endpoint": "https://gnomad.broadinstitute.org/api",
+      "return_format": "JSON",
+      "query_schema": "query($geneSymbol: String!, $referenceGenome: ReferenceGenomeId!) { gene(gene_symbol: $geneSymbol, reference_genome: $referenceGenome) { symbol gene_id chrom start stop structural_variants(dataset: gnomad_sv_r4) { variant_id chrom pos end type length ac an af homozygote_count major_consequence filters } } }",
+      "variable_map": {
+        "gene_symbol": "geneSymbol",
+        "reference_genome": "referenceGenome"
+      },
+      "default_variables": { "referenceGenome": "GRCh38" }
+    },
+    "return_schema": {
+      "type": "object",
+      "description": "gnomAD GraphQL response with structural variants for a gene.",
+      "required": ["data"],
+      "properties": {
+        "data": {
+          "type": "object",
+          "required": ["gene"],
+          "properties": {
+            "gene": {
+              "type": ["object", "null"],
+              "properties": {
+                "symbol": { "type": "string" },
+                "gene_id": { "type": "string" },
+                "chrom": { "type": ["string", "null"] },
+                "start": { "type": ["integer", "null"] },
+                "stop": { "type": ["integer", "null"] },
+                "structural_variants": {
+                  "type": ["array", "null"],
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "variant_id": { "type": "string", "description": "gnomAD SV ID (e.g., DEL_chr17_24e4872b)" },
+                      "chrom": { "type": "string" },
+                      "pos": { "type": "integer", "description": "Start position (1-based)" },
+                      "end": { "type": "integer", "description": "End position" },
+                      "type": { "type": "string", "description": "SV type: DEL, DUP, INV, INS, BND, CPX, CTX, CNV" },
+                      "length": { "type": ["integer", "null"], "description": "SV length in bp (-1 for BND)" },
+                      "ac": { "type": "integer", "description": "Allele count" },
+                      "an": { "type": "integer", "description": "Allele number (total chromosomes)" },
+                      "af": { "type": "number", "description": "Allele frequency" },
+                      "homozygote_count": { "type": ["integer", "null"] },
+                      "major_consequence": { "type": ["string", "null"], "description": "Most severe consequence (lof, copy_gain, intronic, etc.)" },
+                      "filters": { "type": ["array", "null"], "items": { "type": "string" } }
+                    },
+                    "additionalProperties": true
+                  }
+                }
+              },
+              "additionalProperties": true
+            }
+          },
+          "additionalProperties": true
+        }
+      },
+      "additionalProperties": true
+    },
+    "test_examples": [
+      { "gene_symbol": "BRCA1", "reference_genome": "GRCh38" }
+    ],
+    "metadata": {
+      "tags": ["structural variants", "CNV", "deletion", "duplication", "population frequency", "gnomAD", "clinical genomics"],
+      "difficulty_level": "intermediate",
+      "estimated_execution_time": "< 5 seconds"
+    }
+  },
+  {
+    "type": "gnomADGraphQLQueryTool",
+    "name": "gnomad_get_sv_by_region",
+    "description": "Get structural variants (SVs) from gnomAD v4 overlapping a genomic region. Returns DEL/DUP/INV/BND/CPX variants with allele frequencies and consequences. Use for CNV interpretation in specific chromosomal regions. Region should be < 5Mb.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "chrom": { "type": "string", "description": "Chromosome (e.g., '17', 'X')." },
+        "start": { "type": "integer", "description": "Start position (1-based, GRCh38 by default)." },
+        "stop": { "type": "integer", "description": "Stop position." },
+        "reference_genome": {
+          "type": "string",
+          "enum": ["GRCh37", "GRCh38"],
+          "default": "GRCh38",
+          "description": "Reference genome assembly."
+        }
+      },
+      "required": ["chrom", "start", "stop"]
+    },
+    "fields": {
+      "endpoint": "https://gnomad.broadinstitute.org/api",
+      "return_format": "JSON",
+      "query_schema": "query($chrom: String!, $start: Int!, $stop: Int!, $referenceGenome: ReferenceGenomeId!) { region(chrom: $chrom, start: $start, stop: $stop, reference_genome: $referenceGenome) { chrom start stop genes { gene_id symbol } structural_variants(dataset: gnomad_sv_r4) { variant_id chrom pos end type length ac an af homozygote_count major_consequence filters } } }",
+      "variable_map": { "reference_genome": "referenceGenome" },
+      "default_variables": { "referenceGenome": "GRCh38" }
+    },
+    "return_schema": {
+      "type": "object",
+      "description": "gnomAD GraphQL response with structural variants in a region.",
+      "required": ["data"],
+      "properties": {
+        "data": {
+          "type": "object",
+          "required": ["region"],
+          "properties": {
+            "region": {
+              "type": ["object", "null"],
+              "properties": {
+                "chrom": { "type": ["string", "null"] },
+                "start": { "type": ["integer", "null"] },
+                "stop": { "type": ["integer", "null"] },
+                "genes": {
+                  "type": ["array", "null"],
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "gene_id": { "type": ["string", "null"] },
+                      "symbol": { "type": ["string", "null"] }
+                    },
+                    "additionalProperties": true
+                  }
+                },
+                "structural_variants": {
+                  "type": ["array", "null"],
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "variant_id": { "type": "string" },
+                      "chrom": { "type": "string" },
+                      "pos": { "type": "integer" },
+                      "end": { "type": "integer" },
+                      "type": { "type": "string" },
+                      "length": { "type": ["integer", "null"] },
+                      "ac": { "type": "integer" },
+                      "an": { "type": "integer" },
+                      "af": { "type": "number" },
+                      "homozygote_count": { "type": ["integer", "null"] },
+                      "major_consequence": { "type": ["string", "null"] },
+                      "filters": { "type": ["array", "null"], "items": { "type": "string" } }
+                    },
+                    "additionalProperties": true
+                  }
+                }
+              },
+              "additionalProperties": true
+            }
+          },
+          "additionalProperties": true
+        }
+      },
+      "additionalProperties": true
+    },
+    "test_examples": [
+      {
+        "chrom": "17",
+        "start": 43044295,
+        "stop": 43070295,
+        "reference_genome": "GRCh38"
+      }
+    ],
+    "metadata": {
+      "tags": ["structural variants", "CNV", "region query", "population frequency", "gnomAD"],
+      "difficulty_level": "intermediate",
+      "estimated_execution_time": "< 10 seconds"
+    }
+  },
+  {
+    "type": "gnomADGraphQLQueryTool",
+    "name": "gnomad_get_sv_detail",
+    "description": "Get detailed information for a specific gnomAD structural variant by its ID (e.g., DEL_chr17_24e4872b). Returns SV coordinates, type, length, population allele frequency, consequence, and filter status. Use gnomad_get_sv_by_gene or gnomad_get_sv_by_region to discover variant IDs first.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "variant_id": {
+          "type": "string",
+          "description": "gnomAD structural variant ID (e.g., 'DEL_chr17_24e4872b', 'DUP_chr22_abc12345')."
+        }
+      },
+      "required": ["variant_id"]
+    },
+    "fields": {
+      "endpoint": "https://gnomad.broadinstitute.org/api",
+      "return_format": "JSON",
+      "query_schema": "query($variantId: String!) { structural_variant(dataset: gnomad_sv_r4, variantId: $variantId) { variant_id chrom pos end type length ac an af homozygote_count hemizygote_count major_consequence consequence reference_genome filters chrom2 pos2 end2 ac_hom ac_hemi } }",
+      "variable_map": { "variant_id": "variantId" }
+    },
+    "return_schema": {
+      "type": "object",
+      "description": "gnomAD GraphQL response with structural variant details.",
+      "required": ["data"],
+      "properties": {
+        "data": {
+          "type": "object",
+          "required": ["structural_variant"],
+          "properties": {
+            "structural_variant": {
+              "type": ["object", "null"],
+              "properties": {
+                "variant_id": { "type": "string" },
+                "chrom": { "type": "string" },
+                "pos": { "type": "integer" },
+                "end": { "type": "integer" },
+                "type": { "type": "string", "description": "SV type: DEL, DUP, INV, INS, BND, CPX, CTX, CNV" },
+                "length": { "type": ["integer", "null"] },
+                "ac": { "type": "integer", "description": "Allele count" },
+                "an": { "type": "integer", "description": "Allele number" },
+                "af": { "type": "number", "description": "Allele frequency in gnomAD" },
+                "homozygote_count": { "type": ["integer", "null"] },
+                "hemizygote_count": { "type": ["integer", "null"] },
+                "major_consequence": { "type": ["string", "null"] },
+                "consequence": { "type": ["string", "null"] },
+                "reference_genome": { "type": ["string", "null"] },
+                "filters": { "type": ["array", "null"], "items": { "type": "string" } },
+                "chrom2": { "type": ["string", "null"], "description": "Second chromosome for translocations" },
+                "pos2": { "type": ["integer", "null"] },
+                "end2": { "type": ["integer", "null"] },
+                "ac_hom": { "type": ["integer", "null"] },
+                "ac_hemi": { "type": ["integer", "null"] }
+              },
+              "additionalProperties": true
+            }
+          },
+          "additionalProperties": true
+        }
+      },
+      "additionalProperties": true
+    },
+    "test_examples": [
+      { "variant_id": "DEL_chr17_24e4872b" }
+    ],
+    "metadata": {
+      "tags": ["structural variants", "CNV", "variant detail", "gnomAD", "clinical interpretation"],
+      "difficulty_level": "beginner",
+      "estimated_execution_time": "< 3 seconds"
+    }
   }
 ]

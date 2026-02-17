@@ -1,0 +1,147 @@
+[
+  {
+    "type": "ClinGenDosageTool",
+    "name": "ClinGen_dosage_by_gene",
+    "description": "Get ClinGen dosage sensitivity curation for a specific gene using the JSON API. Returns haploinsufficiency (HI) and triplosensitivity (TS) assertion scores with genomic coordinates in both GRCh37 and GRCh38. Scores: 0=No evidence, 1=Little evidence, 2=Emerging evidence, 3=Sufficient evidence, 30=Gene associated with autosomal recessive phenotype, 40=Dosage sensitivity unlikely. Also includes pLI score, HI prediction score, and associated diseases with MONDO IDs.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "gene": {
+          "type": "string",
+          "description": "Gene symbol to search for (e.g., 'BRCA1', 'MECP2', 'TP53'). Case-insensitive."
+        }
+      },
+      "required": ["gene"]
+    },
+    "fields": {
+      "operation": "dosage_by_gene",
+      "timeout": 30
+    },
+    "return_schema": {
+      "type": "object",
+      "description": "ClinGen dosage sensitivity data for a gene.",
+      "properties": {
+        "data": {
+          "type": ["array", "null"],
+          "items": {
+            "type": "object",
+            "properties": {
+              "symbol": { "type": "string", "description": "Gene symbol" },
+              "hgnc_id": { "type": "string", "description": "HGNC ID (e.g., HGNC:1100)" },
+              "location": { "type": ["string", "null"], "description": "Cytogenetic band (e.g., 17q21.31)" },
+              "grch37": { "type": ["string", "null"], "description": "GRCh37 coordinates (e.g., chr17:41196312-41277500)" },
+              "grch38": { "type": ["string", "null"], "description": "GRCh38 coordinates (e.g., chr17:43044295-43125370)" },
+              "haplo_assertion": { "type": ["integer", "null"], "description": "Haploinsufficiency score: 0=None, 1=Little, 2=Emerging, 3=Sufficient, 30=AR, 40=Unlikely" },
+              "triplo_assertion": { "type": ["integer", "null"], "description": "Triplosensitivity score: 0=None, 1=Little, 2=Emerging, 3=Sufficient, 40=Unlikely" },
+              "pli": { "type": ["number", "null"], "description": "gnomAD pLI score (probability of LoF intolerance)" },
+              "hi": { "type": ["number", "null"], "description": "Haploinsufficiency prediction score (%)" },
+              "plof": { "type": ["number", "null"], "description": "pLoF (observed/expected ratio for loss-of-function variants)" },
+              "haplo_disease": { "type": ["string", "null"], "description": "Disease associated with haploinsufficiency" },
+              "haplo_disease_id": { "type": ["string", "null"], "description": "MONDO ID for haplo disease" },
+              "triplo_disease": { "type": ["string", "null"], "description": "Disease associated with triplosensitivity" },
+              "triplo_disease_id": { "type": ["string", "null"], "description": "MONDO ID for triplo disease" },
+              "omim": { "type": ["string", "null"], "description": "Whether gene has OMIM entry (Yes/No)" },
+              "omimlink": { "type": ["string", "null"], "description": "OMIM gene ID" },
+              "morbid": { "type": ["string", "null"], "description": "Whether gene is in OMIM morbid map" },
+              "acmgsf": { "type": ["integer", "null"], "description": "ACMG secondary findings gene (1=yes, 0=no)" },
+              "locus": { "type": ["string", "null"], "description": "Locus type (e.g., protein-coding gene)" },
+              "date": { "type": ["string", "null"], "description": "Last curation date" }
+            },
+            "additionalProperties": true
+          }
+        },
+        "total": { "type": "integer", "description": "Number of matching genes" },
+        "gene_searched": { "type": "string" },
+        "source": { "type": "string" }
+      },
+      "additionalProperties": true
+    },
+    "test_examples": [
+      { "gene": "BRCA1" },
+      { "gene": "MECP2" }
+    ],
+    "metadata": {
+      "tags": ["dosage sensitivity", "haploinsufficiency", "triplosensitivity", "CNV interpretation", "ClinGen", "clinical genomics", "pLI"],
+      "difficulty_level": "beginner",
+      "estimated_execution_time": "< 5 seconds"
+    }
+  },
+  {
+    "type": "ClinGenDosageTool",
+    "name": "ClinGen_dosage_region_search",
+    "description": "Search ClinGen dosage sensitivity curations by genomic region. Returns all genes and recurrent CNV regions with dosage sensitivity curations overlapping the specified chromosomal coordinates. Supports both GRCh37 and GRCh38. Results include haploinsufficiency and triplosensitivity scores. Useful for interpreting the clinical significance of deletions and duplications detected by chromosomal microarray.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "chromosome": {
+          "type": "string",
+          "description": "Chromosome (e.g., '17', 'X')."
+        },
+        "start": {
+          "type": "integer",
+          "description": "Start position."
+        },
+        "end": {
+          "type": "integer",
+          "description": "End position."
+        },
+        "assembly": {
+          "type": "string",
+          "enum": ["GRCh37", "GRCh38"],
+          "default": "GRCh38",
+          "description": "Genome assembly version."
+        }
+      },
+      "required": ["chromosome", "start", "end"]
+    },
+    "fields": {
+      "operation": "dosage_region_search",
+      "timeout": 30
+    },
+    "return_schema": {
+      "type": "object",
+      "description": "ClinGen dosage curations overlapping a genomic region.",
+      "properties": {
+        "data": {
+          "type": ["array", "null"],
+          "items": {
+            "type": "object",
+            "properties": {
+              "symbol": { "type": "string" },
+              "hgnc_id": { "type": "string" },
+              "type": { "type": ["integer", "null"], "description": "0=gene, 1=region" },
+              "location": { "type": ["string", "null"] },
+              "grch37": { "type": ["string", "null"] },
+              "grch38": { "type": ["string", "null"] },
+              "haplo_assertion": { "type": ["integer", "null"] },
+              "triplo_assertion": { "type": ["integer", "null"] },
+              "pli": { "type": ["number", "null"] },
+              "hi": { "type": ["number", "null"] },
+              "haplo_disease": { "type": ["string", "null"] },
+              "triplo_disease": { "type": ["string", "null"] }
+            },
+            "additionalProperties": true
+          }
+        },
+        "total": { "type": "integer" },
+        "region_queried": { "type": "string" },
+        "assembly": { "type": "string" },
+        "source": { "type": "string" }
+      },
+      "additionalProperties": true
+    },
+    "test_examples": [
+      {
+        "chromosome": "17",
+        "start": 43044295,
+        "end": 43125370,
+        "assembly": "GRCh38"
+      }
+    ],
+    "metadata": {
+      "tags": ["dosage sensitivity", "CNV interpretation", "region query", "ClinGen", "clinical genomics", "microarray"],
+      "difficulty_level": "intermediate",
+      "estimated_execution_time": "< 5 seconds"
+    }
+  }
+]

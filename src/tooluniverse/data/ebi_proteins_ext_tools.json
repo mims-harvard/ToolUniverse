@@ -264,5 +264,553 @@
                 }
             ]
         }
+    },
+    {
+        "name": "EBIProteins_get_variation",
+        "description": "Get all known protein sequence variants for a UniProt protein from the EBI Proteins API. Returns variants from multiple sources including COSMIC (somatic mutations in cancer), ClinVar (clinical significance), gnomAD/ExAC (population frequencies), and UniProt (curated). Includes disease associations, clinical significance classifications, and cross-references. Essential for variant impact analysis and clinical interpretation. Example: P04637 (TP53) returns 3469 variants with cancer associations and clinical classifications.",
+        "parameter": {
+            "type": "object",
+            "properties": {
+                "accession": {
+                    "type": "string",
+                    "description": "UniProt accession. Examples: 'P04637' (TP53), 'P00533' (EGFR), 'P38398' (BRCA1)."
+                },
+                "source_type": {
+                    "type": ["string", "null"],
+                    "description": "Filter by variant source. Options: 'large_scale_study' (COSMIC, gnomAD), 'mixed' (multiple sources), 'uniprot' (curated). Null returns all."
+                },
+                "disease_only": {
+                    "type": "boolean",
+                    "description": "If true, return only variants with disease associations. Default: false."
+                }
+            },
+            "required": [
+                "accession"
+            ]
+        },
+        "fields": {
+            "endpoint": "variation"
+        },
+        "type": "EBIProteinsExtTool",
+        "test_examples": [
+            {
+                "accession": "P04637"
+            },
+            {
+                "accession": "P00533",
+                "disease_only": true
+            }
+        ],
+        "return_schema": {
+            "oneOf": [
+                {
+                    "type": "object",
+                    "properties": {
+                        "data": {
+                            "type": "object",
+                            "properties": {
+                                "accession": {
+                                    "type": ["string", "null"],
+                                    "description": "UniProt accession"
+                                },
+                                "entry_name": {
+                                    "type": ["string", "null"],
+                                    "description": "UniProt entry name"
+                                },
+                                "variants": {
+                                    "type": "array",
+                                    "items": {
+                                        "type": "object",
+                                        "properties": {
+                                            "position_start": {
+                                                "type": ["string", "null"],
+                                                "description": "Start residue position"
+                                            },
+                                            "position_end": {
+                                                "type": ["string", "null"],
+                                                "description": "End residue position"
+                                            },
+                                            "wild_type": {
+                                                "type": ["string", "null"],
+                                                "description": "Wild-type amino acid"
+                                            },
+                                            "alternative": {
+                                                "type": ["string", "null"],
+                                                "description": "Alternative amino acid (mutant)"
+                                            },
+                                            "source_type": {
+                                                "type": ["string", "null"],
+                                                "description": "Variant source (large_scale_study, mixed, uniprot)"
+                                            },
+                                            "clinical_significances": {
+                                                "type": ["array", "null"],
+                                                "items": {"type": "object"},
+                                                "description": "Clinical significance (pathogenic, benign, VUS, etc.)"
+                                            },
+                                            "associations": {
+                                                "type": ["array", "null"],
+                                                "items": {"type": "object"},
+                                                "description": "Disease/phenotype associations"
+                                            },
+                                            "xrefs": {
+                                                "type": ["array", "null"],
+                                                "items": {"type": "object"},
+                                                "description": "Cross-references (dbSNP, COSMIC, ClinVar)"
+                                            }
+                                        }
+                                    },
+                                    "description": "Protein sequence variants (max 100)"
+                                },
+                                "total_variants": {
+                                    "type": "integer",
+                                    "description": "Total variants matching filter"
+                                },
+                                "total_all_sources": {
+                                    "type": "integer",
+                                    "description": "Total variants across all sources"
+                                },
+                                "source_counts": {
+                                    "type": "object",
+                                    "description": "Count of variants by source type"
+                                }
+                            }
+                        },
+                        "metadata": {
+                            "type": "object",
+                            "properties": {
+                                "source": {"type": "string"},
+                                "accession": {"type": "string"}
+                            }
+                        }
+                    }
+                },
+                {
+                    "type": "object",
+                    "properties": {
+                        "error": {"type": "string"}
+                    },
+                    "required": ["error"]
+                }
+            ]
+        }
+    },
+    {
+        "name": "EBIProteins_get_features",
+        "description": "Get protein features filtered by category from the EBI Proteins API. Categories include DOMAINS_AND_SITES (domains, binding sites, active sites, motifs), MOLECULE_PROCESSING (signal peptides, transit peptides, chains), PTM (glycosylation, phosphorylation, disulfide bonds), STRUCTURAL (helices, strands, turns), TOPOLOGY (transmembrane, extracellular, cytoplasmic), and VARIANTS. Provides a consolidated view of all UniProt-annotated features. Example: P04637 (TP53) with DOMAINS_AND_SITES returns 31 features including DNA-binding domain, transactivation regions.",
+        "parameter": {
+            "type": "object",
+            "properties": {
+                "accession": {
+                    "type": "string",
+                    "description": "UniProt accession. Examples: 'P04637' (TP53), 'P00533' (EGFR), 'P01308' (Insulin)."
+                },
+                "category": {
+                    "type": "string",
+                    "description": "Feature category. Options: 'DOMAINS_AND_SITES', 'MOLECULE_PROCESSING', 'PTM', 'STRUCTURAL', 'TOPOLOGY', 'VARIANTS', 'MUTAGENESIS'. Default: 'DOMAINS_AND_SITES'."
+                }
+            },
+            "required": [
+                "accession"
+            ]
+        },
+        "fields": {
+            "endpoint": "features"
+        },
+        "type": "EBIProteinsExtTool",
+        "test_examples": [
+            {
+                "accession": "P04637",
+                "category": "DOMAINS_AND_SITES"
+            },
+            {
+                "accession": "P00533",
+                "category": "STRUCTURAL"
+            }
+        ],
+        "return_schema": {
+            "oneOf": [
+                {
+                    "type": "object",
+                    "properties": {
+                        "data": {
+                            "type": "object",
+                            "properties": {
+                                "accession": {
+                                    "type": ["string", "null"],
+                                    "description": "UniProt accession"
+                                },
+                                "entry_name": {
+                                    "type": ["string", "null"],
+                                    "description": "UniProt entry name"
+                                },
+                                "sequence_length": {
+                                    "type": ["string", "null"],
+                                    "description": "Protein sequence length"
+                                },
+                                "category_queried": {
+                                    "type": "string",
+                                    "description": "Category that was queried"
+                                },
+                                "features": {
+                                    "type": "array",
+                                    "items": {
+                                        "type": "object",
+                                        "properties": {
+                                            "type": {
+                                                "type": ["string", "null"],
+                                                "description": "Feature type (DOMAIN, BINDING, REGION, etc.)"
+                                            },
+                                            "category": {
+                                                "type": ["string", "null"],
+                                                "description": "Feature category"
+                                            },
+                                            "position_start": {
+                                                "type": ["string", "null"],
+                                                "description": "Start position"
+                                            },
+                                            "position_end": {
+                                                "type": ["string", "null"],
+                                                "description": "End position"
+                                            },
+                                            "description": {
+                                                "type": ["string", "null"],
+                                                "description": "Feature description"
+                                            },
+                                            "evidences": {
+                                                "type": ["array", "null"],
+                                                "items": {"type": "object"},
+                                                "description": "Evidence references"
+                                            }
+                                        }
+                                    },
+                                    "description": "Protein features (max 100)"
+                                },
+                                "total_features": {
+                                    "type": "integer",
+                                    "description": "Total features in category"
+                                }
+                            }
+                        },
+                        "metadata": {
+                            "type": "object",
+                            "properties": {
+                                "source": {"type": "string"},
+                                "accession": {"type": "string"}
+                            }
+                        }
+                    }
+                },
+                {
+                    "type": "object",
+                    "properties": {
+                        "error": {"type": "string"}
+                    },
+                    "required": ["error"]
+                }
+            ]
+        }
+    },
+    {
+        "name": "EBIProteins_get_antigen",
+        "description": "Get predicted antigenic regions for a protein from the EBI Proteins API. Returns regions of the protein sequence predicted to be immunogenic and suitable for antibody generation. Includes match scores indicating prediction confidence. Critical for antibody design, vaccine development, and immunology research. Example: P04637 (TP53) returns 2 antigenic regions at positions 291-379 and 5-64 with 100% match scores.",
+        "parameter": {
+            "type": "object",
+            "properties": {
+                "accession": {
+                    "type": "string",
+                    "description": "UniProt accession. Examples: 'P04637' (TP53), 'P00533' (EGFR), 'P01308' (Insulin)."
+                }
+            },
+            "required": [
+                "accession"
+            ]
+        },
+        "fields": {
+            "endpoint": "antigen"
+        },
+        "type": "EBIProteinsExtTool",
+        "test_examples": [
+            {
+                "accession": "P04637"
+            },
+            {
+                "accession": "P00533"
+            }
+        ],
+        "return_schema": {
+            "oneOf": [
+                {
+                    "type": "object",
+                    "properties": {
+                        "data": {
+                            "type": "object",
+                            "properties": {
+                                "accession": {
+                                    "type": ["string", "null"],
+                                    "description": "UniProt accession"
+                                },
+                                "entry_name": {
+                                    "type": ["string", "null"],
+                                    "description": "UniProt entry name"
+                                },
+                                "antigenic_regions": {
+                                    "type": "array",
+                                    "items": {
+                                        "type": "object",
+                                        "properties": {
+                                            "type": {
+                                                "type": ["string", "null"],
+                                                "description": "Feature type (ANTIGEN)"
+                                            },
+                                            "position_start": {
+                                                "type": ["string", "null"],
+                                                "description": "Start position"
+                                            },
+                                            "position_end": {
+                                                "type": ["string", "null"],
+                                                "description": "End position"
+                                            },
+                                            "match_score": {
+                                                "type": ["integer", "null"],
+                                                "description": "Match score (0-100)"
+                                            },
+                                            "antigen_sequence": {
+                                                "type": ["string", "null"],
+                                                "description": "Antigen sequence"
+                                            }
+                                        }
+                                    },
+                                    "description": "Antigenic regions"
+                                },
+                                "total_regions": {
+                                    "type": "integer",
+                                    "description": "Total antigenic regions"
+                                }
+                            }
+                        },
+                        "metadata": {
+                            "type": "object",
+                            "properties": {
+                                "source": {"type": "string"},
+                                "accession": {"type": "string"}
+                            }
+                        }
+                    }
+                },
+                {
+                    "type": "object",
+                    "properties": {
+                        "error": {"type": "string"}
+                    },
+                    "required": ["error"]
+                }
+            ]
+        }
+    },
+    {
+        "name": "EBIProteins_get_coordinates",
+        "description": "Get genomic coordinate mappings for a protein from the EBI Proteins API. Maps UniProt protein to genomic coordinates including Ensembl gene/transcript IDs, chromosome location, strand, and exon structure. Essential for cross-referencing protein features with genomic data, variant mapping between coordinate systems, and genome browser integration. Example: P04637 (TP53) maps to ENSG00000141510 on chr17.",
+        "parameter": {
+            "type": "object",
+            "properties": {
+                "accession": {
+                    "type": "string",
+                    "description": "UniProt accession. Examples: 'P04637' (TP53), 'P00533' (EGFR), 'P38398' (BRCA1)."
+                }
+            },
+            "required": [
+                "accession"
+            ]
+        },
+        "fields": {
+            "endpoint": "coordinates"
+        },
+        "type": "EBIProteinsExtTool",
+        "test_examples": [
+            {
+                "accession": "P04637"
+            },
+            {
+                "accession": "P00533"
+            }
+        ],
+        "return_schema": {
+            "oneOf": [
+                {
+                    "type": "object",
+                    "properties": {
+                        "data": {
+                            "type": "object",
+                            "properties": {
+                                "accession": {
+                                    "type": ["string", "null"],
+                                    "description": "UniProt accession"
+                                },
+                                "name": {
+                                    "type": ["string", "null"],
+                                    "description": "Protein name"
+                                },
+                                "sequence_length": {
+                                    "type": ["integer", "null"],
+                                    "description": "Protein sequence length"
+                                },
+                                "genomic_mappings": {
+                                    "type": "array",
+                                    "items": {
+                                        "type": "object",
+                                        "properties": {
+                                            "ensembl_gene_id": {
+                                                "type": ["string", "null"],
+                                                "description": "Ensembl gene ID"
+                                            },
+                                            "ensembl_transcript_id": {
+                                                "type": ["string", "null"],
+                                                "description": "Ensembl transcript ID"
+                                            },
+                                            "chromosome": {
+                                                "type": ["string", "null"],
+                                                "description": "Chromosome number"
+                                            },
+                                            "start": {
+                                                "type": ["integer", "null"],
+                                                "description": "Genomic start position"
+                                            },
+                                            "end": {
+                                                "type": ["integer", "null"],
+                                                "description": "Genomic end position"
+                                            },
+                                            "reverseStrand": {
+                                                "type": ["boolean", "null"],
+                                                "description": "Whether on reverse strand"
+                                            },
+                                            "num_exons": {
+                                                "type": ["integer", "null"],
+                                                "description": "Number of exons"
+                                            }
+                                        }
+                                    },
+                                    "description": "Genomic coordinate mappings"
+                                },
+                                "total_mappings": {
+                                    "type": "integer",
+                                    "description": "Total number of coordinate mappings"
+                                }
+                            }
+                        },
+                        "metadata": {
+                            "type": "object",
+                            "properties": {
+                                "source": {"type": "string"},
+                                "accession": {"type": "string"}
+                            }
+                        }
+                    }
+                },
+                {
+                    "type": "object",
+                    "properties": {
+                        "error": {"type": "string"}
+                    },
+                    "required": ["error"]
+                }
+            ]
+        }
+    },
+    {
+        "name": "EBIProteins_get_proteomics_peptides",
+        "description": "Get mass spectrometry proteomics peptide evidence for a protein from the EBI Proteins API. Returns detected peptides with their positions, uniqueness status, and source databases (PeptideAtlas, ProteomicsDB, MaxQB, EPD). Shows which parts of the protein have been experimentally confirmed by mass spectrometry. Useful for validating protein expression and mapping coverage. Example: P04637 (TP53) returns 64 detected peptides, P00533 (EGFR) returns 241 peptides.",
+        "parameter": {
+            "type": "object",
+            "properties": {
+                "accession": {
+                    "type": "string",
+                    "description": "UniProt accession. Examples: 'P04637' (TP53), 'P00533' (EGFR), 'P38398' (BRCA1)."
+                }
+            },
+            "required": [
+                "accession"
+            ]
+        },
+        "fields": {
+            "endpoint": "proteomics"
+        },
+        "type": "EBIProteinsExtTool",
+        "test_examples": [
+            {
+                "accession": "P04637"
+            },
+            {
+                "accession": "P00533"
+            }
+        ],
+        "return_schema": {
+            "oneOf": [
+                {
+                    "type": "object",
+                    "properties": {
+                        "data": {
+                            "type": "object",
+                            "properties": {
+                                "accession": {
+                                    "type": ["string", "null"],
+                                    "description": "UniProt accession"
+                                },
+                                "entry_name": {
+                                    "type": ["string", "null"],
+                                    "description": "UniProt entry name"
+                                },
+                                "peptides": {
+                                    "type": "array",
+                                    "items": {
+                                        "type": "object",
+                                        "properties": {
+                                            "type": {
+                                                "type": ["string", "null"],
+                                                "description": "Feature type (PROTEOMICS)"
+                                            },
+                                            "position_start": {
+                                                "type": ["string", "null"],
+                                                "description": "Peptide start position"
+                                            },
+                                            "position_end": {
+                                                "type": ["string", "null"],
+                                                "description": "Peptide end position"
+                                            },
+                                            "peptide": {
+                                                "type": ["string", "null"],
+                                                "description": "Peptide sequence"
+                                            },
+                                            "unique": {
+                                                "type": ["boolean", "null"],
+                                                "description": "Whether peptide is unique to this protein"
+                                            }
+                                        }
+                                    },
+                                    "description": "Detected peptides (max 100)"
+                                },
+                                "total_peptides": {
+                                    "type": "integer",
+                                    "description": "Total number of detected peptides"
+                                }
+                            }
+                        },
+                        "metadata": {
+                            "type": "object",
+                            "properties": {
+                                "source": {"type": "string"},
+                                "accession": {"type": "string"}
+                            }
+                        }
+                    }
+                },
+                {
+                    "type": "object",
+                    "properties": {
+                        "error": {"type": "string"}
+                    },
+                    "required": ["error"]
+                }
+            ]
+        }
     }
 ]

@@ -487,6 +487,42 @@ default_tool_files = {
     "disease_ontology": os.path.join(
         current_dir, "data", "disease_ontology_tools.json"
     ),
+    # PDBe SIFTS - UniProt-to-PDB structure mapping (best structures, chain mapping, coverage)
+    "pdbe_sifts": os.path.join(current_dir, "data", "pdbe_sifts_tools.json"),
+    # OrthoDB v12 - Orthologous groups at different taxonomic levels (search, details, members)
+    "orthodb": os.path.join(current_dir, "data", "orthodb_tools.json"),
+    # BioPortal (NCBO) - Cross-ontology search, concept details, text annotation, hierarchy browsing (900+ ontologies)
+    "bioportal": os.path.join(current_dir, "data", "bioportal_tools.json"),
+    # SynBioHub - Synthetic biology parts repository (iGEM BioBricks, SBOL genetic designs)
+    "synbiohub": os.path.join(current_dir, "data", "synbiohub_tools.json"),
+    # EBI Proteins Epitopes - Experimentally-determined immune epitope regions (from IEDB)
+    "ebi_proteins_epitope": os.path.join(
+        current_dir, "data", "ebi_proteins_epitope_tools.json"
+    ),
+    # Reactome Interactors - Protein-protein interactions and entity pathway discovery
+    "reactome_interactors": os.path.join(
+        current_dir, "data", "reactome_interactors_tools.json"
+    ),
+    # Ensembl Structural Variants - SV overlap queries and detailed SV info (DGVa, ClinGen)
+    "ensembl_sv": os.path.join(current_dir, "data", "ensembl_sv_tools.json"),
+    # ClinGen Dosage API - JSON API for dosage sensitivity (haploinsufficiency, triplosensitivity)
+    "clingen_dosage_api": os.path.join(
+        current_dir, "data", "clingen_dosage_api_tools.json"
+    ),
+    # OmniPath - Integrated intercellular signaling (ligand-receptor, signaling, complexes, PTMs)
+    "omnipath": os.path.join(current_dir, "data", "omnipath_tools.json"),
+    # RCSB PDB Advanced Search - Multi-attribute structure search (organism, resolution, method, motif)
+    "rcsb_advanced_search": os.path.join(
+        current_dir, "data", "rcsb_advanced_search_tools.json"
+    ),
+    # RCSB PDB GraphQL Data API - Rich structure details, ligand info, polymer entities
+    "rcsb_graphql": os.path.join(current_dir, "data", "rcsb_graphql_tools.json"),
+    # UniProt Subcellular Locations - Cell compartment definitions and protein localization
+    "uniprot_locations": os.path.join(
+        current_dir, "data", "uniprot_locations_tools.json"
+    ),
+    # UniProt UniRef Clusters - Protein sequence clustering at 50/90/100% identity
+    "uniref": os.path.join(current_dir, "data", "uniref_tools.json"),
 }
 
 # Auto-load any user-provided tools from ~/.tooluniverse/user_tools/
