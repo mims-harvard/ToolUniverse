@@ -1,7 +1,7 @@
 """
 ToolUniverse Tools
 
-Type-safe Python interface to 1546 scientific tools.
+Type-safe Python interface to 1566 scientific tools.
 Each tool is in its own module for minimal import overhead.
 
 Usage:
@@ -189,6 +189,9 @@ from .Crossref_get_work import Crossref_get_work
 from .Crossref_list_funders import Crossref_list_funders
 from .Crossref_list_types import Crossref_list_types
 from .Crossref_search_works import Crossref_search_works
+from .CxGDisc_get_collection import CxGDisc_get_collection
+from .CxGDisc_list_collections import CxGDisc_list_collections
+from .CxGDisc_search_datasets import CxGDisc_search_datasets
 from .DBLP_search_publications import DBLP_search_publications
 from .DBpedia_SPARQL_query import DBpedia_SPARQL_query
 from .DGIdb_get_drug_gene_interactions import DGIdb_get_drug_gene_interactions
@@ -269,6 +272,8 @@ from .Enamine_get_compound import Enamine_get_compound
 from .Enamine_get_libraries import Enamine_get_libraries
 from .Enamine_search_catalog import Enamine_search_catalog
 from .Enamine_search_smiles import Enamine_search_smiles
+from .EnsemblArchive_batch_lookup import EnsemblArchive_batch_lookup
+from .EnsemblArchive_get_id_history import EnsemblArchive_get_id_history
 from .EnsemblCompara_get_gene_tree import EnsemblCompara_get_gene_tree
 from .EnsemblCompara_get_orthologues import EnsemblCompara_get_orthologues
 from .EnsemblCompara_get_paralogues import EnsemblCompara_get_paralogues
@@ -770,6 +775,9 @@ from .GtoPdb_get_targets import GtoPdb_get_targets
 from .GtoPdb_list_diseases import GtoPdb_list_diseases
 from .GtoPdb_list_ligands import GtoPdb_list_ligands
 from .GtoPdb_search_interactions import GtoPdb_search_interactions
+from .GxA_get_experiment_expression import GxA_get_experiment_expression
+from .GxA_get_experiment_info import GxA_get_experiment_info
+from .GxA_list_experiments import GxA_list_experiments
 from .HAL_search_archive import HAL_search_archive
 from .HGNC_fetch_gene_by_id import HGNC_fetch_gene_by_id
 from .HGNC_fetch_gene_by_symbol import HGNC_fetch_gene_by_symbol
@@ -826,10 +834,15 @@ from .IntentAnalyzerAgent import IntentAnalyzerAgent
 from .InterProScan_get_job_results import InterProScan_get_job_results
 from .InterProScan_get_job_status import InterProScan_get_job_status
 from .InterProScan_scan_sequence import InterProScan_scan_sequence
+from .InterPro_get_clan_members import InterPro_get_clan_members
 from .InterPro_get_domain_details import InterPro_get_domain_details
 from .InterPro_get_entries_for_protein import InterPro_get_entries_for_protein
+from .InterPro_get_protein_domain_architecture import (
+    InterPro_get_protein_domain_architecture,
+)
 from .InterPro_get_protein_domains import InterPro_get_protein_domains
 from .InterPro_get_proteins_by_domain import InterPro_get_proteins_by_domain
+from .InterPro_get_structures_for_domain import InterPro_get_structures_for_domain
 from .InterPro_search_domains import InterPro_search_domains
 from .InterPro_search_entries import InterPro_search_entries
 from .JASPAR_get_transcription_factors import JASPAR_get_transcription_factors
@@ -841,6 +854,9 @@ from .JLCSearch_search_leds import JLCSearch_search_leds
 from .JLCSearch_search_microcontrollers import JLCSearch_search_microcontrollers
 from .JLCSearch_search_resistors import JLCSearch_search_resistors
 from .JLCSearch_search_voltage_regulators import JLCSearch_search_voltage_regulators
+from .KEGG_get_compound import KEGG_get_compound
+from .KEGG_get_gene_pathways import KEGG_get_gene_pathways
+from .KEGG_get_pathway_genes import KEGG_get_pathway_genes
 from .KeywordExtractorAgent import KeywordExtractorAgent
 from .LOINC_get_answer_list import LOINC_get_answer_list
 from .LOINC_get_code_details import LOINC_get_code_details
@@ -907,6 +923,8 @@ from .Mouser_search_by_part_number import Mouser_search_by_part_number
 from .MultiAgentLiteratureSearch import MultiAgentLiteratureSearch
 from .MyChem_get_chemical_annotation import MyChem_get_chemical_annotation
 from .MyChem_query_chemicals import MyChem_query_chemicals
+from .MyDisease_get_disease import MyDisease_get_disease
+from .MyDisease_search_diseases import MyDisease_search_diseases
 from .MyGene_batch_query import MyGene_batch_query
 from .MyGene_get_gene_annotation import MyGene_get_gene_annotation
 from .MyGene_query_genes import MyGene_query_genes
@@ -1161,6 +1179,8 @@ from .Orphanet_search_by_name import Orphanet_search_by_name
 from .Orphanet_search_diseases import Orphanet_search_diseases
 from .OutputSummarizationComposer import OutputSummarizationComposer
 from .OverallSummaryAgent import OverallSummaryAgent
+from .OxO_get_ontology_mappings import OxO_get_ontology_mappings
+from .OxO_search_ontology_mappings import OxO_search_ontology_mappings
 from .PANTHER_enrichment import PANTHER_enrichment
 from .PANTHER_gene_info import PANTHER_gene_info
 from .PANTHER_ortholog import PANTHER_ortholog
@@ -1418,7 +1438,9 @@ from .UnifiedToolGenerator import UnifiedToolGenerator
 from .Unpaywall_check_oa_status import Unpaywall_check_oa_status
 from .WHO_Guideline_Full_Text import WHO_Guideline_Full_Text
 from .WHO_Guidelines_Search import WHO_Guidelines_Search
+from .WikiPathways_find_pathways_by_gene import WikiPathways_find_pathways_by_gene
 from .WikiPathways_get_pathway import WikiPathways_get_pathway
+from .WikiPathways_get_pathway_genes import WikiPathways_get_pathway_genes
 from .WikiPathways_search import WikiPathways_search
 from .Wikidata_SPARQL_query import Wikidata_SPARQL_query
 from .Wikipedia_get_content import Wikipedia_get_content
@@ -2199,6 +2221,9 @@ __all__ = [
     "Crossref_list_funders",
     "Crossref_list_types",
     "Crossref_search_works",
+    "CxGDisc_get_collection",
+    "CxGDisc_list_collections",
+    "CxGDisc_search_datasets",
     "DBLP_search_publications",
     "DBpedia_SPARQL_query",
     "DGIdb_get_drug_gene_interactions",
@@ -2279,6 +2304,8 @@ __all__ = [
     "Enamine_get_libraries",
     "Enamine_search_catalog",
     "Enamine_search_smiles",
+    "EnsemblArchive_batch_lookup",
+    "EnsemblArchive_get_id_history",
     "EnsemblCompara_get_gene_tree",
     "EnsemblCompara_get_orthologues",
     "EnsemblCompara_get_paralogues",
@@ -2564,6 +2591,9 @@ __all__ = [
     "GtoPdb_list_diseases",
     "GtoPdb_list_ligands",
     "GtoPdb_search_interactions",
+    "GxA_get_experiment_expression",
+    "GxA_get_experiment_info",
+    "GxA_list_experiments",
     "HAL_search_archive",
     "HGNC_fetch_gene_by_id",
     "HGNC_fetch_gene_by_symbol",
@@ -2610,10 +2640,13 @@ __all__ = [
     "InterProScan_get_job_results",
     "InterProScan_get_job_status",
     "InterProScan_scan_sequence",
+    "InterPro_get_clan_members",
     "InterPro_get_domain_details",
     "InterPro_get_entries_for_protein",
+    "InterPro_get_protein_domain_architecture",
     "InterPro_get_protein_domains",
     "InterPro_get_proteins_by_domain",
+    "InterPro_get_structures_for_domain",
     "InterPro_search_domains",
     "InterPro_search_entries",
     "JASPAR_get_transcription_factors",
@@ -2625,6 +2658,9 @@ __all__ = [
     "JLCSearch_search_microcontrollers",
     "JLCSearch_search_resistors",
     "JLCSearch_search_voltage_regulators",
+    "KEGG_get_compound",
+    "KEGG_get_gene_pathways",
+    "KEGG_get_pathway_genes",
     "KeywordExtractorAgent",
     "LOINC_get_answer_list",
     "LOINC_get_code_details",
@@ -2679,6 +2715,8 @@ __all__ = [
     "MultiAgentLiteratureSearch",
     "MyChem_get_chemical_annotation",
     "MyChem_query_chemicals",
+    "MyDisease_get_disease",
+    "MyDisease_search_diseases",
     "MyGene_batch_query",
     "MyGene_get_gene_annotation",
     "MyGene_query_genes",
@@ -2821,6 +2859,8 @@ __all__ = [
     "Orphanet_search_diseases",
     "OutputSummarizationComposer",
     "OverallSummaryAgent",
+    "OxO_get_ontology_mappings",
+    "OxO_search_ontology_mappings",
     "PANTHER_enrichment",
     "PANTHER_gene_info",
     "PANTHER_ortholog",
@@ -3048,7 +3088,9 @@ __all__ = [
     "Unpaywall_check_oa_status",
     "WHO_Guideline_Full_Text",
     "WHO_Guidelines_Search",
+    "WikiPathways_find_pathways_by_gene",
     "WikiPathways_get_pathway",
+    "WikiPathways_get_pathway_genes",
     "WikiPathways_search",
     "Wikidata_SPARQL_query",
     "Wikipedia_get_content",

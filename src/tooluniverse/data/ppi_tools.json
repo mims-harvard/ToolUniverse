@@ -81,7 +81,10 @@
     },
     "test_examples": [
       {
-        "protein_ids": ["TP53", "MDM2"],
+        "protein_ids": [
+          "TP53",
+          "MDM2"
+        ],
         "species": 9606,
         "confidence_score": 0.4,
         "limit": 50,
@@ -124,7 +127,9 @@
           "default": 20
         }
       },
-      "required": ["protein_ids"]
+      "required": [
+        "protein_ids"
+      ]
     },
     "fields": {
       "endpoint": "/json/interaction_partners",
@@ -135,25 +140,53 @@
       "items": {
         "type": "object",
         "properties": {
-          "stringId_A": {"type": "string"},
-          "stringId_B": {"type": "string"},
-          "preferredName_A": {"type": "string"},
-          "preferredName_B": {"type": "string"},
-          "ncbiTaxonId": {"type": "integer"},
-          "score": {"type": "number"},
-          "nscore": {"type": "number"},
-          "fscore": {"type": "number"},
-          "pscore": {"type": "number"},
-          "ascore": {"type": "number"},
-          "escore": {"type": "number"},
-          "dscore": {"type": "number"},
-          "tscore": {"type": "number"}
+          "stringId_A": {
+            "type": "string"
+          },
+          "stringId_B": {
+            "type": "string"
+          },
+          "preferredName_A": {
+            "type": "string"
+          },
+          "preferredName_B": {
+            "type": "string"
+          },
+          "ncbiTaxonId": {
+            "type": "integer"
+          },
+          "score": {
+            "type": "number"
+          },
+          "nscore": {
+            "type": "number"
+          },
+          "fscore": {
+            "type": "number"
+          },
+          "pscore": {
+            "type": "number"
+          },
+          "ascore": {
+            "type": "number"
+          },
+          "escore": {
+            "type": "number"
+          },
+          "dscore": {
+            "type": "number"
+          },
+          "tscore": {
+            "type": "number"
+          }
         }
       }
     },
     "test_examples": [
       {
-        "protein_ids": ["TP53"],
+        "protein_ids": [
+          "TP53"
+        ],
         "species": 9606,
         "confidence_score": 0.7,
         "limit": 10
@@ -183,11 +216,23 @@
         "category": {
           "type": "string",
           "description": "Enrichment category: 'Process' (GO Biological Process), 'Component' (GO Cellular Component), 'Function' (GO Molecular Function), 'KEGG', 'Reactome', 'WikiPathways', 'COMPARTMENTS', 'TISSUES', 'DISEASES'",
-          "enum": ["Process", "Component", "Function", "KEGG", "Reactome", "WikiPathways", "COMPARTMENTS", "TISSUES", "DISEASES"],
+          "enum": [
+            "Process",
+            "Component",
+            "Function",
+            "KEGG",
+            "Reactome",
+            "WikiPathways",
+            "COMPARTMENTS",
+            "TISSUES",
+            "DISEASES"
+          ],
           "default": "Process"
         }
       },
-      "required": ["protein_ids"]
+      "required": [
+        "protein_ids"
+      ]
     },
     "fields": {
       "endpoint": "/json/enrichment",
@@ -198,22 +243,48 @@
       "items": {
         "type": "object",
         "properties": {
-          "category": {"type": "string"},
-          "term": {"type": "string"},
-          "number_of_genes": {"type": "integer"},
-          "number_of_genes_in_background": {"type": "integer"},
-          "ncbiTaxonId": {"type": "integer"},
-          "inputGenes": {"type": "string"},
-          "preferredNames": {"type": "string"},
-          "p_value": {"type": "number"},
-          "fdr": {"type": "number"},
-          "description": {"type": "string"}
+          "category": {
+            "type": "string"
+          },
+          "term": {
+            "type": "string"
+          },
+          "number_of_genes": {
+            "type": "integer"
+          },
+          "number_of_genes_in_background": {
+            "type": "integer"
+          },
+          "ncbiTaxonId": {
+            "type": "integer"
+          },
+          "inputGenes": {
+            "type": "string"
+          },
+          "preferredNames": {
+            "type": "string"
+          },
+          "p_value": {
+            "type": "number"
+          },
+          "fdr": {
+            "type": "number"
+          },
+          "description": {
+            "type": "string"
+          }
         }
       }
     },
     "test_examples": [
       {
-        "protein_ids": ["TP53", "MDM2", "ATM", "CHEK2", "BRCA1"],
+        "protein_ids": [
+          "TP53",
+          "MDM2",
+          "ATM",
+          "CHEK2",
+          "BRCA1"
+        ],
         "species": 9606,
         "category": "Process"
       }
@@ -249,11 +320,16 @@
         "echo_query": {
           "type": "integer",
           "description": "Include query identifier in response (1=yes, 0=no, default: 1)",
-          "enum": [0, 1],
+          "enum": [
+            0,
+            1
+          ],
           "default": 1
         }
       },
-      "required": ["protein_ids"]
+      "required": [
+        "protein_ids"
+      ]
     },
     "fields": {
       "endpoint": "/json/get_string_ids",
@@ -264,19 +340,37 @@
       "items": {
         "type": "object",
         "properties": {
-          "queryItem": {"type": "string"},
-          "queryIndex": {"type": "integer"},
-          "stringId": {"type": "string"},
-          "ncbiTaxonId": {"type": "integer"},
-          "taxonName": {"type": "string"},
-          "preferredName": {"type": "string"},
-          "annotation": {"type": "string"}
+          "queryItem": {
+            "type": "string"
+          },
+          "queryIndex": {
+            "type": "integer"
+          },
+          "stringId": {
+            "type": "string"
+          },
+          "ncbiTaxonId": {
+            "type": "integer"
+          },
+          "taxonName": {
+            "type": "string"
+          },
+          "preferredName": {
+            "type": "string"
+          },
+          "annotation": {
+            "type": "string"
+          }
         }
       }
     },
     "test_examples": [
       {
-        "protein_ids": ["TP53", "BRCA1", "P04637"],
+        "protein_ids": [
+          "TP53",
+          "BRCA1",
+          "P04637"
+        ],
         "species": 9606,
         "limit": 1,
         "echo_query": 1
@@ -320,11 +414,17 @@
         "network_type": {
           "type": "string",
           "description": "Type of network: 'functional' (all evidence), 'physical' (physical interactions only), 'regulatory' (STRING 12.5+ regulatory network with directionality)",
-          "enum": ["functional", "physical", "regulatory"],
+          "enum": [
+            "functional",
+            "physical",
+            "regulatory"
+          ],
           "default": "functional"
         }
       },
-      "required": ["protein_ids"]
+      "required": [
+        "protein_ids"
+      ]
     },
     "fields": {
       "endpoint": "/json/network",
@@ -335,25 +435,62 @@
       "items": {
         "type": "object",
         "properties": {
-          "stringId_A": {"type": "string"},
-          "stringId_B": {"type": "string"},
-          "preferredName_A": {"type": "string"},
-          "preferredName_B": {"type": "string"},
-          "ncbiTaxonId": {"type": "integer"},
-          "score": {"type": "number", "description": "Combined confidence score"},
-          "nscore": {"type": "number", "description": "Neighborhood score"},
-          "fscore": {"type": "number", "description": "Gene fusion score"},
-          "pscore": {"type": "number", "description": "Phylogenetic cooccurrence score"},
-          "ascore": {"type": "number", "description": "Coexpression score"},
-          "escore": {"type": "number", "description": "Experimental score"},
-          "dscore": {"type": "number", "description": "Database score"},
-          "tscore": {"type": "number", "description": "Text mining score"}
+          "stringId_A": {
+            "type": "string"
+          },
+          "stringId_B": {
+            "type": "string"
+          },
+          "preferredName_A": {
+            "type": "string"
+          },
+          "preferredName_B": {
+            "type": "string"
+          },
+          "ncbiTaxonId": {
+            "type": "integer"
+          },
+          "score": {
+            "type": "number",
+            "description": "Combined confidence score"
+          },
+          "nscore": {
+            "type": "number",
+            "description": "Neighborhood score"
+          },
+          "fscore": {
+            "type": "number",
+            "description": "Gene fusion score"
+          },
+          "pscore": {
+            "type": "number",
+            "description": "Phylogenetic cooccurrence score"
+          },
+          "ascore": {
+            "type": "number",
+            "description": "Coexpression score"
+          },
+          "escore": {
+            "type": "number",
+            "description": "Experimental score"
+          },
+          "dscore": {
+            "type": "number",
+            "description": "Database score"
+          },
+          "tscore": {
+            "type": "number",
+            "description": "Text mining score"
+          }
         }
       }
     },
     "test_examples": [
       {
-        "protein_ids": ["TP53", "MDM2"],
+        "protein_ids": [
+          "TP53",
+          "MDM2"
+        ],
         "species": 9606,
         "confidence_score": 0.7,
         "add_nodes": 5,
@@ -389,7 +526,9 @@
           "default": 0.4
         }
       },
-      "required": ["protein_ids"]
+      "required": [
+        "protein_ids"
+      ]
     },
     "fields": {
       "endpoint": "/json/ppi_enrichment",
@@ -398,99 +537,38 @@
     "return_schema": {
       "type": "object",
       "properties": {
-        "number_of_nodes": {"type": "integer"},
-        "number_of_edges": {"type": "integer"},
-        "expected_number_of_edges": {"type": "number"},
-        "p_value": {"type": "number"},
-        "avg_node_degree": {"type": "number"},
-        "local_clustering_coefficient": {"type": "number"}
+        "number_of_nodes": {
+          "type": "integer"
+        },
+        "number_of_edges": {
+          "type": "integer"
+        },
+        "expected_number_of_edges": {
+          "type": "number"
+        },
+        "p_value": {
+          "type": "number"
+        },
+        "avg_node_degree": {
+          "type": "number"
+        },
+        "local_clustering_coefficient": {
+          "type": "number"
+        }
       }
     },
     "test_examples": [
       {
-        "protein_ids": ["TP53", "MDM2", "ATM", "CHEK2", "BRCA1", "BRCA2"],
+        "protein_ids": [
+          "TP53",
+          "MDM2",
+          "ATM",
+          "CHEK2",
+          "BRCA1",
+          "BRCA2"
+        ],
         "species": 9606,
         "confidence_score": 0.4
-      }
-    ]
-  },
-  {
-    "type": "BioGRIDRESTTool",
-    "name": "BioGRID_get_interactions",
-    "description": "Query protein and genetic interactions from the BioGRID database. BioGRID is a comprehensive database of physical and genetic interactions with detailed experimental evidence. Requires free BioGRID API key (register at https://webservice.thebiogrid.org/). Set BIOGRID_API_KEY environment variable in .env file.",
-    "parameter": {
-      "type": "object",
-      "properties": {
-        "gene_names": {
-          "type": "array",
-          "items": {
-            "type": "string"
-          },
-          "description": "List of gene names or protein identifiers",
-          "minItems": 1
-        },
-        "organism": {
-          "type": "string",
-          "description": "Organism name (e.g., 'Homo sapiens', 'Mus musculus') or NCBI taxonomy ID (e.g., '9606' for human)",
-          "default": "Homo sapiens"
-        },
-        "interaction_type": {
-          "type": "string",
-          "description": "Type of interaction ('physical', 'genetic', 'both')",
-          "enum": [
-            "physical",
-            "genetic",
-            "both"
-          ],
-          "default": "both"
-        },
-        "evidence_types": {
-          "type": "array",
-          "items": {
-            "type": "string"
-          },
-          "description": "List of evidence types to include"
-        },
-        "limit": {
-          "type": "integer",
-          "description": "Maximum number of interactions to return (default: 100)",
-          "minimum": 1,
-          "maximum": 1000,
-          "default": 100
-        },
-        "format": {
-          "type": "string",
-          "description": "Output format ('json' or 'tab', default: 'json')",
-          "enum": [
-            "json",
-            "tab"
-          ],
-          "default": "json"
-        }
-      },
-      "required": [
-        "gene_names"
-      ]
-    },
-    "required_api_keys": [
-      "BIOGRID_API_KEY"
-    ],
-    "return_schema": {
-      "type": ["object", "array"],
-      "description": "BioGRID API response - can be an object with interaction data or an array of interactions"
-    },
-    "fields": {
-      "endpoint": "/interactions/",
-      "return_format": "JSON"
-    },
-    "test_examples": [
-      {
-        "gene_names": ["TP53"],
-        "organism": "9606",
-        "interaction_type": "physical",
-        "evidence_types": [],
-        "limit": 1,
-        "format": "json"
       }
     ]
   }

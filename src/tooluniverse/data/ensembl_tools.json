@@ -103,7 +103,10 @@
       ]
     },
     "return_schema": {
-      "type": ["array", "object"],
+      "type": [
+        "array",
+        "object"
+      ],
       "description": "Array of sequence objects or single sequence object",
       "items": {
         "type": "object",
@@ -237,7 +240,10 @@
           "description": "Variation ID"
         },
         "minor_allele": {
-          "type": ["string", "null"],
+          "type": [
+            "string",
+            "null"
+          ],
           "description": "Minor allele"
         },
         "var_class": {
@@ -249,7 +255,10 @@
           "description": "Genomic mappings"
         },
         "MAF": {
-          "type": ["string", "null"],
+          "type": [
+            "string",
+            "null"
+          ],
           "description": "Minor allele frequency"
         },
         "most_severe_consequence": {
@@ -383,10 +392,13 @@
             "type": "string",
             "description": "Display ID"
           },
-        "description": {
-          "type": ["string", "null"],
-          "description": "Description"
-        },
+          "description": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "description": "Description"
+          },
           "info_type": {
             "type": "string",
             "description": "Information type"
@@ -580,7 +592,10 @@
           "description": "Tree type"
         },
         "rooted": {
-          "type": ["boolean", "integer"],
+          "type": [
+            "boolean",
+            "integer"
+          ],
           "description": "Whether tree is rooted (boolean or integer 0/1)"
         },
         "tree": {
@@ -651,7 +666,10 @@
       ]
     },
     "return_schema": {
-      "type": ["array", "object"],
+      "type": [
+        "array",
+        "object"
+      ],
       "items": {
         "type": "object",
         "properties": {
@@ -870,7 +888,10 @@
       ]
     },
     "return_schema": {
-      "type": ["array", "object"],
+      "type": [
+        "array",
+        "object"
+      ],
       "items": {
         "type": "object",
         "properties": {
@@ -1226,5 +1247,271 @@
         "allele": "T"
       }
     ]
+  },
+  {
+    "type": "EnsemblRESTTool",
+    "name": "ensembl_get_structural_variants",
+    "description": "Get structural variants overlapping a genomic region from Ensembl. Returns known SVs from DGVa (Database of Genomic Variants archive), ClinGen, and other sources. Each SV includes its ID (nsv/esv accession), coordinates, and feature type. Use ensembl_get_sv_detail to get clinical significance, variant class (CNV, deletion, duplication, inversion), and supporting evidence for specific variants. Region must be < 5Mb.",
+    "endpoint": "/overlap/region/{species}/{region}",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "species": {
+          "type": "string",
+          "default": "human",
+          "description": "Species name (e.g., 'human', 'homo_sapiens')."
+        },
+        "region": {
+          "type": "string",
+          "description": "Genomic region in format 'chr:start-end' (e.g., '17:43044295-43125370'). Maximum 5Mb."
+        },
+        "feature": {
+          "type": "string",
+          "default": "structural_variation",
+          "description": "Feature type to retrieve. Fixed to 'structural_variation' for this tool."
+        }
+      },
+      "required": [
+        "species",
+        "region"
+      ]
+    },
+    "timeout": 45,
+    "return_schema": {
+      "type": "array",
+      "description": "Array of structural variants overlapping the region.",
+      "items": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "Structural variant accession (nsv or esv ID from DGVa/dbVar)"
+          },
+          "seq_region_name": {
+            "type": "string",
+            "description": "Chromosome number"
+          },
+          "start": {
+            "type": "integer",
+            "description": "Start coordinate (GRCh38)"
+          },
+          "end": {
+            "type": "integer",
+            "description": "End coordinate (GRCh38)"
+          },
+          "strand": {
+            "type": "integer",
+            "description": "Strand (1 or -1)"
+          },
+          "feature_type": {
+            "type": "string",
+            "description": "Always 'structural_variation'"
+          },
+          "assembly_name": {
+            "type": "string",
+            "description": "Genome assembly (e.g., GRCh38)"
+          }
+        },
+        "additionalProperties": true
+      }
+    },
+    "test_examples": [
+      {
+        "species": "human",
+        "region": "22:27000000-27050000"
+      }
+    ],
+    "metadata": {
+      "tags": [
+        "structural variants",
+        "CNV",
+        "DGV",
+        "DGVa",
+        "Ensembl",
+        "clinical genomics",
+        "region query"
+      ],
+      "difficulty_level": "intermediate",
+      "estimated_execution_time": "< 10 seconds"
+    }
+  },
+  {
+    "type": "EnsemblRESTTool",
+    "name": "ensembl_get_sv_detail",
+    "description": "Get detailed information for a specific structural variant from Ensembl by its accession (nsv/esv ID). Returns variant class (CNV, deletion, duplication, inversion, gain, loss), clinical significance (pathogenic, benign, etc.), source database, supporting evidence with individual sample observations, study information, and genomic mappings. Essential for CNV clinical interpretation.",
+    "endpoint": "/variation/{species}/{id}",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "species": {
+          "type": "string",
+          "default": "human",
+          "description": "Species name (e.g., 'human', 'homo_sapiens')."
+        },
+        "id": {
+          "type": "string",
+          "description": "Structural variant accession from Ensembl/DGVa (e.g., 'nsv2769779', 'esv3647486'). Use ensembl_get_structural_variants to find IDs."
+        }
+      },
+      "required": [
+        "species",
+        "id"
+      ]
+    },
+    "return_schema": {
+      "type": "object",
+      "description": "Detailed structural variant information.",
+      "properties": {
+        "name": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Variant name/accession"
+        },
+        "var_class": {
+          "type": "string",
+          "description": "Variant class: CNV, deletion, duplication, inversion, insertion, gain, loss, tandem_duplication, complex_structural_alteration"
+        },
+        "source": {
+          "type": "string",
+          "description": "Source database (e.g., 'Database of Genomic Variants Archive')"
+        },
+        "clinical_significance": {
+          "type": [
+            "array",
+            "null"
+          ],
+          "items": {
+            "type": "string"
+          },
+          "description": "Clinical significance: pathogenic, likely pathogenic, benign, likely benign, uncertain significance"
+        },
+        "alias": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Alternative name or alias"
+        },
+        "supporting_evidence": {
+          "type": [
+            "array",
+            "null"
+          ],
+          "description": "Individual sample-level supporting evidence",
+          "items": {
+            "type": "object",
+            "properties": {
+              "name": {
+                "type": "string",
+                "description": "Supporting variant accession (nssv/essv)"
+              },
+              "var_class": {
+                "type": "string",
+                "description": "Observed variant class (gain, loss, deletion, etc.)"
+              },
+              "source": {
+                "type": "string"
+              },
+              "clinical_significance": {
+                "type": [
+                  "array",
+                  "null"
+                ],
+                "items": {
+                  "type": "string"
+                }
+              },
+              "copy_number": {
+                "type": [
+                  "integer",
+                  "null"
+                ]
+              },
+              "study": {
+                "type": [
+                  "object",
+                  "null"
+                ],
+                "properties": {
+                  "name": {
+                    "type": "string",
+                    "description": "Study accession (e.g., estd214, nstd37)"
+                  },
+                  "description": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "url": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  }
+                },
+                "additionalProperties": true
+              },
+              "mappings": {
+                "type": [
+                  "array",
+                  "null"
+                ],
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "location": {
+                      "type": "string"
+                    },
+                    "seq_region_name": {
+                      "type": "string"
+                    },
+                    "start": {
+                      "type": "integer"
+                    },
+                    "end": {
+                      "type": "integer"
+                    },
+                    "assembly_name": {
+                      "type": "string"
+                    },
+                    "genomic_size": {
+                      "type": [
+                        "integer",
+                        "null"
+                      ]
+                    }
+                  },
+                  "additionalProperties": true
+                }
+              }
+            },
+            "additionalProperties": true
+          }
+        }
+      },
+      "additionalProperties": true
+    },
+    "test_examples": [
+      {
+        "species": "human",
+        "id": "esv3647486"
+      }
+    ],
+    "metadata": {
+      "tags": [
+        "structural variants",
+        "CNV",
+        "clinical significance",
+        "DGV",
+        "DGVa",
+        "pathogenicity",
+        "Ensembl"
+      ],
+      "difficulty_level": "intermediate",
+      "estimated_execution_time": "< 5 seconds"
+    }
   }
 ]

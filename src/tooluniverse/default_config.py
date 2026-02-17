@@ -513,6 +513,102 @@ default_tool_files = {
     "ensembl_sequence": os.path.join(
         current_dir, "data", "ensembl_sequence_tools.json"
     ),
+    # MyDisease.info - BioThings disease annotation aggregator (MONDO, DO, CTD, HPO, DisGeNET)
+    "mydisease": os.path.join(current_dir, "data", "mydisease_tools.json"),
+    # EBI OxO - Ontology cross-reference mappings across biomedical databases
+    "oxo": os.path.join(current_dir, "data", "oxo_tools.json"),
+    # InterPro Domain Architecture - Protein domain positions, structure mapping, clan members
+    "interpro_domain_arch": os.path.join(
+        current_dir, "data", "interpro_domain_arch_tools.json"
+    ),
+    # WikiPathways Extended - Gene lists from pathways and gene-to-pathway lookups
+    "wikipathways_ext": os.path.join(
+        current_dir, "data", "wikipathways_ext_tools.json"
+    ),
+    # EBI Gene Expression Atlas (GxA) - Baseline/differential gene expression experiments
+    "gxa": os.path.join(current_dir, "data", "gxa_tools.json"),
+    # CellxGene Discovery - Single-cell RNA-seq dataset/collection browsing
+    "cellxgene_discovery": os.path.join(
+        current_dir, "data", "cellxgene_discovery_tools.json"
+    ),
+    # Ensembl Archive - Stable ID versioning and history tracking
+    "ensembl_archive": os.path.join(current_dir, "data", "ensembl_archive_tools.json"),
+    # KEGG Extended - Gene-pathway links, pathway gene lists, compound details
+    "kegg_ext": os.path.join(current_dir, "data", "kegg_ext_tools.json"),
+    # Ensembl Map - Coordinate system conversion and assembly mapping
+    "ensembl_map": os.path.join(current_dir, "data", "ensembl_map_tools.json"),
+    # Ensembl Overlap - Features overlapping a genomic region (genes, variants, regulatory)
+    "ensembl_overlap": os.path.join(current_dir, "data", "ensembl_overlap_tools.json"),
+    # Ensembl Xrefs - External database cross-references for genes and proteins
+    "ensembl_xrefs": os.path.join(current_dir, "data", "ensembl_xrefs_tools.json"),
+    # Ensembl Variation Extended - Population genetics, linkage disequilibrium, haplotypes
+    "ensembl_variation_ext": os.path.join(
+        current_dir, "data", "ensembl_variation_ext_tools.json"
+    ),
+    # EBI Proteins Coordinates - Protein 3D structural coordinates
+    "ebi_proteins_coordinates": os.path.join(
+        current_dir, "data", "ebi_proteins_coordinates_tools.json"
+    ),
+    # EBI Proteins Epitope - Immunological epitope annotations
+    "ebi_proteins_epitope": os.path.join(
+        current_dir, "data", "ebi_proteins_epitope_tools.json"
+    ),
+    # EBI Proteins Interactions - Protein-protein interaction evidence
+    "ebi_proteins_interactions": os.path.join(
+        current_dir, "data", "ebi_proteins_interactions_tools.json"
+    ),
+    # PDBe Compound - Small molecule compound summaries and cross-references
+    "pdbe_compound": os.path.join(current_dir, "data", "pdbe_compound_tools.json"),
+    # PDBe Ligands - Structure-level ligand lists and residue details
+    "pdbe_ligands": os.path.join(current_dir, "data", "pdbe_ligands_tools.json"),
+    # PDBe SIFTS - Structure-to-sequence mappings (UniProt, Pfam, CATH, EC)
+    "pdbe_sifts": os.path.join(current_dir, "data", "pdbe_sifts_tools.json"),
+    # PDBe Validation - Experimental validation reports (R-factor, clashscore, geometry)
+    "pdbe_validation": os.path.join(current_dir, "data", "pdbe_validation_tools.json"),
+    # RCSB Advanced Search - Complex multi-attribute PDB queries
+    "rcsb_advanced_search": os.path.join(
+        current_dir, "data", "rcsb_advanced_search_tools.json"
+    ),
+    # RCSB GraphQL - Flexible PDB data retrieval via GraphQL schema
+    "rcsb_graphql": os.path.join(current_dir, "data", "rcsb_graphql_tools.json"),
+    # Reactome Interactors - Protein interaction data from IntAct/ChEMBL
+    "reactome_interactors": os.path.join(
+        current_dir, "data", "reactome_interactors_tools.json"
+    ),
+    # UniParc - UniProt Archive cross-references across sequence databases
+    "uniparc": os.path.join(current_dir, "data", "uniparc_tools.json"),
+    # UniProt Locations - Subcellular location controlled vocabulary
+    "uniprot_locations": os.path.join(
+        current_dir, "data", "uniprot_locations_tools.json"
+    ),
+    # UniProt Taxonomy - Taxonomy nodes and lineage data from UniProt
+    "uniprot_taxonomy": os.path.join(
+        current_dir, "data", "uniprot_taxonomy_tools.json"
+    ),
+    # UniRef - UniProt Reference Clusters (100/90/50 identity clusters)
+    "uniref": os.path.join(current_dir, "data", "uniref_tools.json"),
+    # ClinGen Dosage Sensitivity - Haploinsufficiency and triplosensitivity scores
+    "clingen_dosage": os.path.join(
+        current_dir, "data", "clingen_dosage_api_tools.json"
+    ),
+    # Dfam - Repetitive DNA element database (transposons, SINEs, LINEs)
+    "dfam": os.path.join(current_dir, "data", "dfam_tools.json"),
+    # DisProt - Intrinsically disordered protein regions database
+    "disprot": os.path.join(current_dir, "data", "disprot_tools.json"),
+    # Genome Nexus - Cancer variant annotation aggregator (VEP, COSMIC, ClinVar)
+    "genome_nexus": os.path.join(current_dir, "data", "genome_nexus_tools.json"),
+    # g:Profiler - Functional enrichment, gene ID conversion, ortholog mapping
+    "gprofiler": os.path.join(current_dir, "data", "gprofiler_tools.json"),
+    # Harmonizome - Aggregated gene-attribute associations from 114 datasets
+    "harmonizome": os.path.join(current_dir, "data", "harmonizome_tools.json"),
+    # MobiDB - Intrinsic disorder and mobility annotations for proteins
+    "mobidb": os.path.join(current_dir, "data", "mobidb_tools.json"),
+    # OmniPath - Signaling network (ligand-receptor, enzyme-substrate, complexes)
+    "omnipath": os.path.join(current_dir, "data", "omnipath_tools.json"),
+    # OrthoDB - Hierarchical orthology database (orthologs, paralogs across 1,300+ species)
+    "orthodb": os.path.join(current_dir, "data", "orthodb_tools.json"),
+    # SynBioHub - Synthetic biology parts and designs repository (SBOL standard)
+    "synbiohub": os.path.join(current_dir, "data", "synbiohub_tools.json"),
 }
 
 # Auto-load any user-provided tools from ~/.tooluniverse/user_tools/
