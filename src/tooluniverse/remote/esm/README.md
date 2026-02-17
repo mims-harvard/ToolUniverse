@@ -6,9 +6,9 @@ The [ESM Cambrian (ESMC)](https://github.com/evolutionaryscale/esm) tool from Ev
 
 ### Available Models
 
-- **esmc_300m** - 300M parameters (recommended for most use cases, ~500MB download)
-- **esmc_600m** - 600M parameters (higher quality embeddings, ~1.2GB download)
-- **esmc_6b** - 6B parameters (best quality, requires significant GPU resources, ~12GB download)
+- **esmc_300m** - 300M parameters (recommended for most use cases, open weight)
+- **esmc_600m** - 600M parameters (higher quality embeddings, open weight)
+- **esmc_6b** - 6B parameters (highest quality, requires Forge for academic use or AWS SageMaker for commercial use)
 
 ## Installation
 
@@ -16,7 +16,8 @@ The [ESM Cambrian (ESMC)](https://github.com/evolutionaryscale/esm) tool from Ev
 
 - Python 3.10+
 - CUDA 11.8+ (for GPU acceleration, optional but recommended)
-- 10GB+ free disk space (for model weights)
+- Sufficient disk space for model weights (size varies by model selected)
+- For GPU acceleration: NVIDIA GPU with sufficient VRAM (8GB+ recommended for esmc_300m)
 
 ### Setup
 
@@ -78,10 +79,17 @@ The server will:
 
 ### Performance Characteristics
 
-- **First Request**: ~15-30 seconds (includes model download and initialization)
-- **Subsequent Requests**: ~0.5-2 seconds per sequence (depends on sequence length and hardware)
-- **GPU Memory**: ~2GB for esmc_300m, ~4GB for esmc_600m, ~10GB for esmc_6b
-- **CPU Memory**: ~1GB additional
+Performance varies significantly depending on:
+- Hardware (CPU vs GPU, GPU model and VRAM)
+- Sequence length (longer sequences require more computation)
+- Model size (larger models require more memory and compute)
+
+**On NVIDIA T4 GPU (example):**
+- Model lazy-loads on first request (~10-30 seconds for initial download and setup)
+- Typical inference: sub-second for most sequences on GPU, slower on CPU
+- GPU Memory: Estimated 8GB+ for esmc_300m
+
+For detailed benchmarks on your specific hardware, we recommend testing with sample sequences from the [ESM repository](https://github.com/evolutionaryscale/esm).
 
 ## Usage Examples
 
