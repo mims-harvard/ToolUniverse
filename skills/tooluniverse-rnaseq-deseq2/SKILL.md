@@ -77,6 +77,37 @@ pip install pydeseq2 gseapy pandas numpy scipy anndata
 
 See [references/question_parsing.md](references/question_parsing.md) for detailed parsing patterns.
 
+### Step 1.5: Design Formula Decision Tree ⚠️ CRITICAL
+
+**ALWAYS inspect metadata for ALL variables, not just what the question mentions!**
+
+Many experiments have hidden batch effects (media conditions, sequencing batches, time points) that MUST be included as covariates. Failing to account for these reduces statistical power and can lead to incorrect results.
+
+**Decision process**:
+1. **List ALL metadata columns** (don't skip any!)
+2. **Categorize each column**:
+   - **Biological interest**: The factor you're testing (strain, treatment, genotype, condition)
+   - **Batch/Block**: Systematic covariates (media, batch, sequencing_run, time, plate)
+   - **Irrelevant**: Sample IDs, notes, file names
+3. **Design formula**:
+   - Single factor: `~condition` (only if no batch variables exist)
+   - With covariates: `~batch1 + batch2 + condition` (covariates first!)
+   - Interaction: `~batch + factor1 + factor2 + factor1:factor2`
+
+**Example** (critical real-world case):
+```
+Metadata columns: [Strain, Media, Replicate]
+Question asks: "strain effects"
+
+❌ WRONG: design="~Strain" (ignores Media!)
+✅ CORRECT: design="~Media + Strain" (accounts for media variation)
+
+Why: Even though question doesn't mention media, it systematically
+affects expression. DESeq2 must remove media effects to properly test strain.
+```
+
+**Rule of thumb**: If a column has 2+ levels and represents an experimental condition (not sample ID), include it in design.
+
 ### Step 2: Data Loading & Validation
 
 Load count matrix and metadata, then validate alignment:
@@ -100,6 +131,31 @@ counts, metadata, issues = validate_inputs(counts, metadata)
 - Remove zero-count genes
 
 See [references/data_loading.md](references/data_loading.md) for detailed data handling.
+
+### Step 2.5: Inspect Metadata Structure ⚠️ REQUIRED
+
+Before choosing design formula, ALWAYS inspect metadata to identify all experimental factors:
+
+```python
+# Print metadata structure
+print("Metadata columns and levels:")
+for col in metadata.columns:
+    unique_vals = metadata[col].unique()
+    print(f"  {col}: {len(unique_vals)} levels → {list(unique_vals)[:5]}")
+
+# Example output:
+#   Strain: 4 levels → ['1', '97', '98', '99']
+#   Media: 3 levels → ['MMGluFeMinus', 'MMGluFePlus', 'Succinate']
+#   Replicate: 3 levels → ['A', 'B', 'C']
+
+# Decision:
+#   - Strain: Biological factor (testing)
+#   - Media: Batch/covariate (MUST include!)
+#   - Replicate: Biological replicate (don't include as factor)
+# Design: ~Media + Strain
+```
+
+This step prevents missing hidden batch effects that could invalidate your analysis.
 
 ### Step 3: Run PyDESeq2
 
@@ -135,12 +191,49 @@ stat_res.lfc_shrink(coeff='condition[T.treatment]')
 results = stat_res.results_df
 ```
 
+#### Multi-Factor Design (Common Real-World Case)
+
+When metadata has multiple experimental variables (e.g., strain + media conditions), ALWAYS include covariates:
+
+```python
+# Inspect metadata (from Step 2.5) showed:
+#   - Strain: 4 levels (factor of interest)
+#   - Media: 3 levels (batch effect - MUST include!)
+
+# Set reference levels for BOTH factors
+metadata['media'] = pd.Categorical(
+    metadata['media'],
+    categories=['MMGluFeMinus', 'MMGluFePlus', 'Succinate']  # First = reference
+)
+metadata['strain'] = pd.Categorical(
+    metadata['strain'],
+    categories=['1', '97', '98', '99']  # First = reference (JBX1)
+)
+
+# Include covariate in design formula
+dds = DeseqDataSet(
+    counts=counts,
+    metadata=metadata,
+    design="~media + strain",  # Covariate first, then factor!
+    quiet=True
+)
+dds.deseq2()
+
+# Extract strain effect (controlling for media)
+stat_res = DeseqStats(dds, contrast=['strain', '98', '1'], quiet=True)
+stat_res.run_wald_test()
+stat_res.summary()
+results = stat_res.results_df
+```
+
+**Why this matters**: DESeq2 will model media effects separately, removing media-driven variance before testing strain differences. This increases statistical power and prevents false positives/negatives.
+
 **When to use what**:
 - **Python (PyDESeq2)**: Use for ALL DESeq2 analysis (normalization, testing, filtering)
 - **ToolUniverse**: Use ONLY for gene annotation (ID conversion, pathway context)
 - **gseapy**: Use for enrichment analysis (GO/KEGG/Reactome)
 
-See [references/pydeseq2_workflow.md](references/pydeseq2_workflow.md) for complete PyDESeq2 patterns.
+See [references/pydeseq2_workflow.md](references/pydeseq2_workflow.md) for complete PyDESeq2 patterns including batch effects, interaction terms, and complex designs.
 
 ### Step 4: Filter Results
 

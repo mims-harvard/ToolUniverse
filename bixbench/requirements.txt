@@ -1,0 +1,14 @@
+# BixBench Testing Requirements
+
+# Core dependencies
+datasets>=2.14.0
+huggingface-hub>=0.19.0
+
+# For potential skill invocation
+# (These would be needed when actually calling skills, not just testing data loading)
+# tooluniverse  # When integrated
+# pandas
+# numpy
+# pydeseq2
+# scanpy
+# pysam
