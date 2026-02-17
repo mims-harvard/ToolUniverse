@@ -1,30 +1,33 @@
 """
-gProfiler_annotate_snps
+GEO_search_chipseq_datasets
 
-Map SNP rsIDs to genes and annotate their functional consequences using g:Profiler (g:SNPense) fr...
+Search NCBI GEO for ChIP-seq (Chromatin Immunoprecipitation followed by sequencing) datasets. ChI...
 """
 
 from typing import Any, Optional, Callable
 from ._shared_client import get_shared_client
 
 
-def gProfiler_annotate_snps(
-    snp_list: str,
-    organism: Optional[str] = None,
+def GEO_search_chipseq_datasets(
+    query: str,
+    organism: Optional[str] = "Homo sapiens",
+    limit: Optional[int] = 20,
     *,
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
 ) -> Any:
     """
-    Map SNP rsIDs to genes and annotate their functional consequences using g:Profiler (g:SNPense) fr...
+    Search NCBI GEO for ChIP-seq (Chromatin Immunoprecipitation followed by sequencing) datasets. ChI...
 
     Parameters
     ----------
-    snp_list : str
-        Comma-separated list of SNP rsIDs. Examples: 'rs11540652,rs429358,rs7903146' ...
+    query : str
+        Search terms for ChIP-seq datasets (e.g., 'H3K27ac liver', 'CTCF cancer', 'p5...
     organism : str
-        Organism identifier. Default: 'hsapiens'. Examples: 'hsapiens' (human), 'mmus...
+        Organism filter.
+    limit : int
+        Maximum number of dataset IDs to return.
     stream_callback : Callable, optional
         Callback for streaming output
     use_cache : bool, default False
@@ -40,8 +43,8 @@ def gProfiler_annotate_snps(
 
     return get_shared_client().run_one_function(
         {
-            "name": "gProfiler_annotate_snps",
-            "arguments": {"snp_list": snp_list, "organism": organism},
+            "name": "GEO_search_chipseq_datasets",
+            "arguments": {"query": query, "organism": organism, "limit": limit},
         },
         stream_callback=stream_callback,
         use_cache=use_cache,
@@ -49,4 +52,4 @@ def gProfiler_annotate_snps(
     )
 
 
-__all__ = ["gProfiler_annotate_snps"]
+__all__ = ["GEO_search_chipseq_datasets"]

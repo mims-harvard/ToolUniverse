@@ -1,0 +1,932 @@
+[
+    {
+        "name": "ENCODE_search_histone_experiments",
+        "type": "EpigenomicsTool",
+        "description": "Search ENCODE histone ChIP-seq experiments by histone modification mark, biosample, or organism. Returns experiment accessions, histone marks (H3K4me3, H3K27ac, H3K27me3, H3K36me3, H3K4me1, H3K9me3), biosample summaries, and metadata. Use this to find histone modification profiling data for specific marks or tissues. Common marks: H3K4me3 (active promoters), H3K27ac (active enhancers), H3K27me3 (polycomb repression), H3K4me1 (poised enhancers), H3K36me3 (gene bodies), H3K9me3 (heterochromatin).",
+        "parameter": {
+            "type": "object",
+            "properties": {
+                "histone_mark": {
+                    "type": ["string", "null"],
+                    "description": "Histone modification mark to filter by (e.g., 'H3K4me3', 'H3K27ac', 'H3K27me3', 'H3K4me1', 'H3K36me3', 'H3K9me3'). Leave empty to search all histone marks."
+                },
+                "biosample_term_name": {
+                    "type": ["string", "null"],
+                    "description": "Biosample name filter (e.g., 'K562', 'HepG2', 'GM12878', 'liver', 'brain'). Leave empty to search all biosamples."
+                },
+                "organism": {
+                    "type": "string",
+                    "default": "Homo sapiens",
+                    "description": "Organism scientific name (e.g., 'Homo sapiens', 'Mus musculus')."
+                },
+                "limit": {
+                    "type": "integer",
+                    "default": 25,
+                    "minimum": 1,
+                    "maximum": 100,
+                    "description": "Maximum number of results to return (1-100)."
+                }
+            }
+        },
+        "fields": {
+            "endpoint": "histone_chipseq"
+        },
+        "return_schema": {
+            "oneOf": [
+                {
+                    "type": "object",
+                    "properties": {
+                        "data": {
+                            "type": "object",
+                            "properties": {
+                                "total": {"type": "integer"},
+                                "experiments": {
+                                    "type": "array",
+                                    "items": {
+                                        "type": "object",
+                                        "properties": {
+                                            "accession": {"type": "string"},
+                                            "histone_mark": {"type": "string"},
+                                            "biosample_summary": {"type": "string"},
+                                            "status": {"type": "string"},
+                                            "lab": {"type": "string"},
+                                            "date_released": {"type": ["string", "null"]}
+                                        }
+                                    }
+                                }
+                            }
+                        },
+                        "metadata": {"type": "object"}
+                    }
+                },
+                {
+                    "type": "object",
+                    "properties": {
+                        "error": {"type": "string"}
+                    },
+                    "required": ["error"]
+                }
+            ]
+        },
+        "test_examples": [
+            {"histone_mark": "H3K27ac", "organism": "Homo sapiens", "limit": 3},
+            {"histone_mark": "H3K4me3", "limit": 2}
+        ],
+        "label": ["ENCODE", "Histone", "ChIP-seq", "Epigenomics"],
+        "metadata": {
+            "tags": ["epigenomics", "histone-modification", "chip-seq", "chromatin"],
+            "estimated_execution_time": "< 5 seconds"
+        }
+    },
+    {
+        "name": "ENCODE_search_methylation_experiments",
+        "type": "EpigenomicsTool",
+        "description": "Search ENCODE whole-genome bisulfite sequencing (WGBS) and reduced-representation bisulfite sequencing (RRBS) experiments for DNA methylation profiling. Returns experiment accessions, biosample information, methylation assay type, and metadata. DNA methylation (5mC) at CpG sites is a key epigenetic mark regulating gene silencing, genomic imprinting, and X-inactivation. Use this to find methylation data for specific tissues, cell lines, or developmental stages.",
+        "parameter": {
+            "type": "object",
+            "properties": {
+                "assay_type": {
+                    "type": "string",
+                    "default": "WGBS",
+                    "description": "Methylation assay type: 'WGBS' (whole-genome bisulfite sequencing, comprehensive CpG coverage) or 'RRBS' (reduced-representation, enriched for CpG islands)."
+                },
+                "biosample_term_name": {
+                    "type": ["string", "null"],
+                    "description": "Biosample name filter (e.g., 'K562', 'liver', 'brain', 'motor neuron'). Leave empty for all."
+                },
+                "organism": {
+                    "type": "string",
+                    "default": "Homo sapiens",
+                    "description": "Organism scientific name."
+                },
+                "limit": {
+                    "type": "integer",
+                    "default": 25,
+                    "minimum": 1,
+                    "maximum": 100,
+                    "description": "Maximum number of results to return."
+                }
+            }
+        },
+        "fields": {
+            "endpoint": "methylation"
+        },
+        "return_schema": {
+            "oneOf": [
+                {
+                    "type": "object",
+                    "properties": {
+                        "data": {
+                            "type": "object",
+                            "properties": {
+                                "total": {"type": "integer"},
+                                "experiments": {
+                                    "type": "array",
+                                    "items": {
+                                        "type": "object",
+                                        "properties": {
+                                            "accession": {"type": "string"},
+                                            "assay_title": {"type": "string"},
+                                            "biosample_summary": {"type": "string"},
+                                            "status": {"type": "string"},
+                                            "lab": {"type": "string"}
+                                        }
+                                    }
+                                }
+                            }
+                        },
+                        "metadata": {"type": "object"}
+                    }
+                },
+                {
+                    "type": "object",
+                    "properties": {
+                        "error": {"type": "string"}
+                    },
+                    "required": ["error"]
+                }
+            ]
+        },
+        "test_examples": [
+            {"assay_type": "WGBS", "organism": "Homo sapiens", "limit": 3},
+            {"assay_type": "RRBS", "limit": 2}
+        ],
+        "label": ["ENCODE", "Methylation", "WGBS", "Epigenomics"],
+        "metadata": {
+            "tags": ["epigenomics", "dna-methylation", "bisulfite-sequencing", "cpg"],
+            "estimated_execution_time": "< 5 seconds"
+        }
+    },
+    {
+        "name": "ENCODE_search_chromatin_accessibility",
+        "type": "EpigenomicsTool",
+        "description": "Search ENCODE chromatin accessibility experiments (ATAC-seq and DNase-seq). ATAC-seq and DNase-seq identify open chromatin regions including promoters, enhancers, and other regulatory elements. Returns experiment accessions, biosample details, and accessibility assay metadata. Open chromatin regions are sites of active gene regulation where transcription factors can bind. Use this to find chromatin accessibility data for specific tissues or cell types.",
+        "parameter": {
+            "type": "object",
+            "properties": {
+                "assay_type": {
+                    "type": "string",
+                    "default": "ATAC-seq",
+                    "description": "Chromatin accessibility assay: 'ATAC-seq' (Assay for Transposase-Accessible Chromatin, newer/preferred) or 'DNase-seq' (DNase I hypersensitive sites, larger dataset)."
+                },
+                "biosample_term_name": {
+                    "type": ["string", "null"],
+                    "description": "Biosample name filter (e.g., 'K562', 'GM12878', 'liver'). Leave empty for all."
+                },
+                "organism": {
+                    "type": "string",
+                    "default": "Homo sapiens",
+                    "description": "Organism scientific name."
+                },
+                "limit": {
+                    "type": "integer",
+                    "default": 25,
+                    "minimum": 1,
+                    "maximum": 100,
+                    "description": "Maximum number of results to return."
+                }
+            }
+        },
+        "fields": {
+            "endpoint": "chromatin_accessibility"
+        },
+        "return_schema": {
+            "oneOf": [
+                {
+                    "type": "object",
+                    "properties": {
+                        "data": {
+                            "type": "object",
+                            "properties": {
+                                "total": {"type": "integer"},
+                                "experiments": {
+                                    "type": "array",
+                                    "items": {
+                                        "type": "object",
+                                        "properties": {
+                                            "accession": {"type": "string"},
+                                            "assay_title": {"type": "string"},
+                                            "biosample_summary": {"type": "string"},
+                                            "status": {"type": "string"},
+                                            "lab": {"type": "string"}
+                                        }
+                                    }
+                                }
+                            }
+                        },
+                        "metadata": {"type": "object"}
+                    }
+                },
+                {
+                    "type": "object",
+                    "properties": {
+                        "error": {"type": "string"}
+                    },
+                    "required": ["error"]
+                }
+            ]
+        },
+        "test_examples": [
+            {"assay_type": "ATAC-seq", "organism": "Homo sapiens", "limit": 3},
+            {"assay_type": "DNase-seq", "limit": 2}
+        ],
+        "label": ["ENCODE", "ATAC-seq", "DNase-seq", "Chromatin", "Epigenomics"],
+        "metadata": {
+            "tags": ["epigenomics", "chromatin-accessibility", "atac-seq", "dnase-seq", "open-chromatin"],
+            "estimated_execution_time": "< 5 seconds"
+        }
+    },
+    {
+        "name": "ENCODE_search_annotations",
+        "type": "EpigenomicsTool",
+        "description": "Search ENCODE annotations including candidate cis-Regulatory Elements (cCREs), chromatin states, and imputed signals. cCREs are classified as promoter-like (PLS), proximal enhancer-like (pELS), distal enhancer-like (dELS), DNase-H3K4me3 (DNase-H3K4me3), and CTCF-only. Chromatin state annotations use ChromHMM models to segment the genome into functional states. Use this to find regulatory element annotations for specific biosamples or genome assemblies.",
+        "parameter": {
+            "type": "object",
+            "properties": {
+                "annotation_type": {
+                    "type": "string",
+                    "default": "candidate Cis-Regulatory Elements",
+                    "description": "Annotation type filter. Options: 'candidate Cis-Regulatory Elements' (cCREs), 'chromatin state' (ChromHMM), 'imputed signal' (predicted epigenetic marks). Default: cCREs."
+                },
+                "biosample_term_name": {
+                    "type": ["string", "null"],
+                    "description": "Biosample filter (e.g., 'K562', 'HepG2'). Leave empty for all."
+                },
+                "organism": {
+                    "type": "string",
+                    "default": "Homo sapiens",
+                    "description": "Organism scientific name."
+                },
+                "assembly": {
+                    "type": "string",
+                    "default": "GRCh38",
+                    "description": "Genome assembly (e.g., 'GRCh38', 'hg19', 'mm10')."
+                },
+                "limit": {
+                    "type": "integer",
+                    "default": 25,
+                    "minimum": 1,
+                    "maximum": 100,
+                    "description": "Maximum number of results."
+                }
+            }
+        },
+        "fields": {
+            "endpoint": "annotations"
+        },
+        "return_schema": {
+            "oneOf": [
+                {
+                    "type": "object",
+                    "properties": {
+                        "data": {
+                            "type": "object",
+                            "properties": {
+                                "total": {"type": "integer"},
+                                "annotations": {
+                                    "type": "array",
+                                    "items": {
+                                        "type": "object",
+                                        "properties": {
+                                            "accession": {"type": "string"},
+                                            "annotation_type": {"type": ["string", "null"]},
+                                            "description": {"type": "string"},
+                                            "biosample_summary": {"type": ["string", "null"]},
+                                            "status": {"type": "string"}
+                                        }
+                                    }
+                                }
+                            }
+                        },
+                        "metadata": {"type": "object"}
+                    }
+                },
+                {
+                    "type": "object",
+                    "properties": {
+                        "error": {"type": "string"}
+                    },
+                    "required": ["error"]
+                }
+            ]
+        },
+        "test_examples": [
+            {"annotation_type": "candidate Cis-Regulatory Elements", "organism": "Homo sapiens", "limit": 3},
+            {"annotation_type": "chromatin state", "limit": 2}
+        ],
+        "label": ["ENCODE", "Annotation", "cCRE", "Chromatin State", "Epigenomics"],
+        "metadata": {
+            "tags": ["epigenomics", "regulatory-elements", "ccre", "chromatin-state"],
+            "estimated_execution_time": "< 5 seconds"
+        }
+    },
+    {
+        "name": "UCSC_get_cpg_islands",
+        "type": "UCSCEpigenomicsTool",
+        "description": "Get CpG island annotations for a genomic region from UCSC Genome Browser. CpG islands are genomic regions with high CpG dinucleotide density, often found at gene promoters. Methylation of CpG islands is associated with gene silencing. Returns CpG island locations, length, CpG count, GC content, and observed/expected CpG ratio. Use this to identify CpG islands near genes of interest for methylation analysis, or to characterize the regulatory landscape of a genomic region.",
+        "parameter": {
+            "type": "object",
+            "properties": {
+                "genome": {
+                    "type": "string",
+                    "default": "hg38",
+                    "description": "Genome assembly (e.g., 'hg38', 'hg19', 'mm10', 'mm39')."
+                },
+                "chrom": {
+                    "type": "string",
+                    "description": "Chromosome name (e.g., 'chr17', 'chr1', 'chrX')."
+                },
+                "start": {
+                    "type": "integer",
+                    "description": "Start position (0-based, inclusive)."
+                },
+                "end": {
+                    "type": "integer",
+                    "description": "End position (0-based, exclusive)."
+                }
+            },
+            "required": ["chrom", "start", "end"]
+        },
+        "fields": {
+            "endpoint": "cpg_islands"
+        },
+        "return_schema": {
+            "oneOf": [
+                {
+                    "type": "object",
+                    "properties": {
+                        "data": {
+                            "type": "object",
+                            "properties": {
+                                "genome": {"type": "string"},
+                                "region": {"type": "string"},
+                                "cpg_island_count": {"type": "integer"},
+                                "cpg_islands": {
+                                    "type": "array",
+                                    "items": {
+                                        "type": "object",
+                                        "properties": {
+                                            "chrom": {"type": "string"},
+                                            "chromStart": {"type": "integer"},
+                                            "chromEnd": {"type": "integer"},
+                                            "name": {"type": "string"},
+                                            "length": {"type": "integer"},
+                                            "cpgNum": {"type": "integer"},
+                                            "gcNum": {"type": "integer"},
+                                            "perCpg": {"type": "number"},
+                                            "perGc": {"type": "number"},
+                                            "obsExp": {"type": "number"}
+                                        }
+                                    }
+                                }
+                            }
+                        },
+                        "metadata": {"type": "object"}
+                    }
+                },
+                {
+                    "type": "object",
+                    "properties": {
+                        "error": {"type": "string"}
+                    },
+                    "required": ["error"]
+                }
+            ]
+        },
+        "test_examples": [
+            {"genome": "hg38", "chrom": "chr17", "start": 7668421, "end": 7687490},
+            {"genome": "hg38", "chrom": "chr1", "start": 11000000, "end": 11100000}
+        ],
+        "label": ["UCSC", "CpG Islands", "Methylation", "Epigenomics"],
+        "metadata": {
+            "tags": ["epigenomics", "cpg-islands", "methylation", "promoters"],
+            "estimated_execution_time": "< 3 seconds"
+        }
+    },
+    {
+        "name": "UCSC_get_encode_cCREs",
+        "type": "UCSCEpigenomicsTool",
+        "description": "Get ENCODE4 candidate cis-Regulatory Elements (cCREs) for a genomic region from UCSC Genome Browser. cCREs are classified by epigenetic signatures into: Promoter-like (PLS, red), Proximal enhancer-like (pELS, orange), Distal enhancer-like (dELS, yellow), DNase-H3K4me3 (blue), CTCF-only/CTCF-bound (green). Each cCRE includes max Z-scores for DNase, H3K4me3, H3K27ac, and CTCF signals across biosamples. Use this to identify regulatory elements in a region of interest for functional genomics or GWAS variant interpretation.",
+        "parameter": {
+            "type": "object",
+            "properties": {
+                "genome": {
+                    "type": "string",
+                    "default": "hg38",
+                    "description": "Genome assembly (e.g., 'hg38', 'mm10')."
+                },
+                "chrom": {
+                    "type": "string",
+                    "description": "Chromosome name (e.g., 'chr17')."
+                },
+                "start": {
+                    "type": "integer",
+                    "description": "Start position (0-based)."
+                },
+                "end": {
+                    "type": "integer",
+                    "description": "End position (0-based)."
+                }
+            },
+            "required": ["chrom", "start", "end"]
+        },
+        "fields": {
+            "endpoint": "encode_ccres"
+        },
+        "return_schema": {
+            "oneOf": [
+                {
+                    "type": "object",
+                    "properties": {
+                        "data": {
+                            "type": "object",
+                            "properties": {
+                                "genome": {"type": "string"},
+                                "region": {"type": "string"},
+                                "ccre_count": {"type": "integer"},
+                                "ccres": {
+                                    "type": "array",
+                                    "items": {
+                                        "type": "object",
+                                        "properties": {
+                                            "name": {"type": "string"},
+                                            "chrom": {"type": "string"},
+                                            "chromStart": {"type": "integer"},
+                                            "chromEnd": {"type": "integer"},
+                                            "cCRE_class": {"type": "string"},
+                                            "DNase_maxZ": {"type": "number"},
+                                            "H3K4me3_maxZ": {"type": "number"},
+                                            "H3K27ac_maxZ": {"type": "number"},
+                                            "CTCF_maxZ": {"type": "number"}
+                                        }
+                                    }
+                                }
+                            }
+                        },
+                        "metadata": {"type": "object"}
+                    }
+                },
+                {
+                    "type": "object",
+                    "properties": {
+                        "error": {"type": "string"}
+                    },
+                    "required": ["error"]
+                }
+            ]
+        },
+        "test_examples": [
+            {"genome": "hg38", "chrom": "chr17", "start": 7668421, "end": 7687490},
+            {"genome": "hg38", "chrom": "chr7", "start": 140424943, "end": 140524564}
+        ],
+        "label": ["UCSC", "ENCODE", "cCRE", "Regulatory Elements", "Epigenomics"],
+        "metadata": {
+            "tags": ["epigenomics", "regulatory-elements", "ccre", "encode", "enhancers", "promoters"],
+            "estimated_execution_time": "< 3 seconds"
+        }
+    },
+    {
+        "name": "UCSC_get_tf_binding_clusters",
+        "type": "UCSCEpigenomicsTool",
+        "description": "Get Transcription Factor ChIP-seq Clusters from ENCODE3 for a genomic region via UCSC Genome Browser. Returns clusters of TF binding sites from 340 factors across 129 cell types, aggregated from ENCODE3 ChIP-seq peak data. Each cluster shows the transcription factor name, peak score, and number of source experiments. Use this to identify which transcription factors bind to a specific genomic region, discover regulatory hotspots, or interpret GWAS variants by finding overlapping TF binding sites.",
+        "parameter": {
+            "type": "object",
+            "properties": {
+                "genome": {
+                    "type": "string",
+                    "default": "hg38",
+                    "description": "Genome assembly (e.g., 'hg38', 'hg19')."
+                },
+                "chrom": {
+                    "type": "string",
+                    "description": "Chromosome name (e.g., 'chr17')."
+                },
+                "start": {
+                    "type": "integer",
+                    "description": "Start position (0-based)."
+                },
+                "end": {
+                    "type": "integer",
+                    "description": "End position (0-based)."
+                }
+            },
+            "required": ["chrom", "start", "end"]
+        },
+        "fields": {
+            "endpoint": "tf_binding"
+        },
+        "return_schema": {
+            "oneOf": [
+                {
+                    "type": "object",
+                    "properties": {
+                        "data": {
+                            "type": "object",
+                            "properties": {
+                                "genome": {"type": "string"},
+                                "region": {"type": "string"},
+                                "tf_cluster_count": {"type": "integer"},
+                                "tf_clusters": {
+                                    "type": "array",
+                                    "items": {
+                                        "type": "object",
+                                        "properties": {
+                                            "name": {"type": "string"},
+                                            "chrom": {"type": "string"},
+                                            "chromStart": {"type": "integer"},
+                                            "chromEnd": {"type": "integer"},
+                                            "score": {"type": "integer"},
+                                            "sourceCount": {"type": "integer"}
+                                        }
+                                    }
+                                }
+                            }
+                        },
+                        "metadata": {"type": "object"}
+                    }
+                },
+                {
+                    "type": "object",
+                    "properties": {
+                        "error": {"type": "string"}
+                    },
+                    "required": ["error"]
+                }
+            ]
+        },
+        "test_examples": [
+            {"genome": "hg38", "chrom": "chr17", "start": 7668421, "end": 7687490},
+            {"genome": "hg38", "chrom": "chr7", "start": 140424943, "end": 140524564}
+        ],
+        "label": ["UCSC", "ENCODE", "TF Binding", "ChIP-seq", "Epigenomics"],
+        "metadata": {
+            "tags": ["epigenomics", "transcription-factors", "chip-seq", "binding-sites"],
+            "estimated_execution_time": "< 3 seconds"
+        }
+    },
+    {
+        "name": "GEO_search_methylation_datasets",
+        "type": "EpigenomicsTool",
+        "description": "Search NCBI GEO for DNA methylation array datasets, including Illumina 450K, EPIC (850K), and other methylation profiling platforms. Returns dataset accessions (GSE IDs), titles, summaries, platform information, sample counts, and organisms. DNA methylation arrays measure methylation levels at hundreds of thousands of CpG sites genome-wide. Use this to find published methylation studies for specific conditions, tissues, or diseases. Follow up with GEO_get_dataset_details for full metadata.",
+        "parameter": {
+            "type": "object",
+            "properties": {
+                "query": {
+                    "type": "string",
+                    "description": "Search terms for methylation datasets (e.g., 'breast cancer methylation', 'brain methylation aging', 'CpG island methylation'). Combined with methylation platform filter."
+                },
+                "organism": {
+                    "type": "string",
+                    "default": "Homo sapiens",
+                    "description": "Organism filter (e.g., 'Homo sapiens', 'Mus musculus')."
+                },
+                "limit": {
+                    "type": "integer",
+                    "default": 20,
+                    "minimum": 1,
+                    "maximum": 100,
+                    "description": "Maximum number of dataset IDs to return."
+                }
+            },
+            "required": ["query"]
+        },
+        "fields": {
+            "endpoint": "geo_methylation_search"
+        },
+        "return_schema": {
+            "oneOf": [
+                {
+                    "type": "object",
+                    "properties": {
+                        "data": {
+                            "type": "object",
+                            "properties": {
+                                "total": {"type": "integer"},
+                                "datasets": {
+                                    "type": "array",
+                                    "items": {
+                                        "type": "object",
+                                        "properties": {
+                                            "accession": {"type": "string"},
+                                            "title": {"type": "string"},
+                                            "summary": {"type": "string"},
+                                            "platform": {"type": ["string", "null"]},
+                                            "organism": {"type": "string"},
+                                            "n_samples": {"type": "integer"},
+                                            "date_published": {"type": ["string", "null"]}
+                                        }
+                                    }
+                                }
+                            }
+                        },
+                        "metadata": {"type": "object"}
+                    }
+                },
+                {
+                    "type": "object",
+                    "properties": {
+                        "error": {"type": "string"}
+                    },
+                    "required": ["error"]
+                }
+            ]
+        },
+        "test_examples": [
+            {"query": "breast cancer methylation 450K", "organism": "Homo sapiens", "limit": 5},
+            {"query": "brain aging methylation EPIC", "limit": 3}
+        ],
+        "label": ["GEO", "Methylation", "Array", "Epigenomics"],
+        "metadata": {
+            "tags": ["epigenomics", "methylation-array", "450k", "epic", "geo"],
+            "estimated_execution_time": "< 5 seconds"
+        }
+    },
+    {
+        "name": "GEO_search_chipseq_datasets",
+        "type": "EpigenomicsTool",
+        "description": "Search NCBI GEO for ChIP-seq (Chromatin Immunoprecipitation followed by sequencing) datasets. ChIP-seq profiles genome-wide binding of proteins (transcription factors, histones) to DNA. Returns dataset accessions, titles, summaries, and sample counts. Use this to find ChIP-seq studies for specific transcription factors, histone marks, or in specific cell types/diseases.",
+        "parameter": {
+            "type": "object",
+            "properties": {
+                "query": {
+                    "type": "string",
+                    "description": "Search terms for ChIP-seq datasets (e.g., 'H3K27ac liver', 'CTCF cancer', 'p53 ChIP-seq')."
+                },
+                "organism": {
+                    "type": "string",
+                    "default": "Homo sapiens",
+                    "description": "Organism filter."
+                },
+                "limit": {
+                    "type": "integer",
+                    "default": 20,
+                    "minimum": 1,
+                    "maximum": 100,
+                    "description": "Maximum number of dataset IDs to return."
+                }
+            },
+            "required": ["query"]
+        },
+        "fields": {
+            "endpoint": "geo_chipseq_search"
+        },
+        "return_schema": {
+            "oneOf": [
+                {
+                    "type": "object",
+                    "properties": {
+                        "data": {
+                            "type": "object",
+                            "properties": {
+                                "total": {"type": "integer"},
+                                "datasets": {
+                                    "type": "array",
+                                    "items": {
+                                        "type": "object",
+                                        "properties": {
+                                            "accession": {"type": "string"},
+                                            "title": {"type": "string"},
+                                            "summary": {"type": "string"},
+                                            "organism": {"type": "string"},
+                                            "n_samples": {"type": "integer"},
+                                            "date_published": {"type": ["string", "null"]}
+                                        }
+                                    }
+                                }
+                            }
+                        },
+                        "metadata": {"type": "object"}
+                    }
+                },
+                {
+                    "type": "object",
+                    "properties": {
+                        "error": {"type": "string"}
+                    },
+                    "required": ["error"]
+                }
+            ]
+        },
+        "test_examples": [
+            {"query": "H3K27ac liver", "organism": "Homo sapiens", "limit": 5},
+            {"query": "CTCF ChIP-seq cancer", "limit": 3}
+        ],
+        "label": ["GEO", "ChIP-seq", "Epigenomics"],
+        "metadata": {
+            "tags": ["epigenomics", "chip-seq", "histone", "transcription-factor"],
+            "estimated_execution_time": "< 5 seconds"
+        }
+    },
+    {
+        "name": "GEO_get_dataset_details",
+        "type": "EpigenomicsTool",
+        "description": "Get detailed metadata for a specific GEO dataset by its accession (GSE ID). Returns comprehensive information including title, summary, experiment type, platform, organism, sample count, publication date, and supplementary data links. Use this after searching with GEO_search_methylation_datasets or GEO_search_chipseq_datasets to get full details about a dataset of interest.",
+        "parameter": {
+            "type": "object",
+            "properties": {
+                "geo_id": {
+                    "type": "string",
+                    "description": "GEO dataset accession (numeric part only, e.g., '200291249' for GSE291249). Get IDs from GEO search results."
+                }
+            },
+            "required": ["geo_id"]
+        },
+        "fields": {
+            "endpoint": "geo_dataset_details"
+        },
+        "return_schema": {
+            "oneOf": [
+                {
+                    "type": "object",
+                    "properties": {
+                        "data": {
+                            "type": "object",
+                            "properties": {
+                                "accession": {"type": "string"},
+                                "title": {"type": "string"},
+                                "summary": {"type": "string"},
+                                "experiment_type": {"type": ["string", "null"]},
+                                "platform": {"type": ["string", "null"]},
+                                "organism": {"type": "string"},
+                                "n_samples": {"type": "integer"},
+                                "date_published": {"type": ["string", "null"]},
+                                "supplementary_data": {"type": ["array", "null"]}
+                            }
+                        },
+                        "metadata": {"type": "object"}
+                    }
+                },
+                {
+                    "type": "object",
+                    "properties": {
+                        "error": {"type": "string"}
+                    },
+                    "required": ["error"]
+                }
+            ]
+        },
+        "test_examples": [
+            {"geo_id": "200291249"},
+            {"geo_id": "200236530"}
+        ],
+        "label": ["GEO", "Dataset", "Details", "Epigenomics"],
+        "metadata": {
+            "tags": ["epigenomics", "geo", "dataset-metadata"],
+            "estimated_execution_time": "< 3 seconds"
+        }
+    },
+    {
+        "name": "EnsemblReg_get_regulatory_elements",
+        "type": "EpigenomicsTool",
+        "description": "Get Ensembl regulatory features (enhancers, promoters, CTCF binding sites, open chromatin, TF binding sites) for a genomic region from the Ensembl Regulatory Build. The Ensembl Regulatory Build integrates epigenomic data from ENCODE, Roadmap Epigenomics, and BLUEPRINT to annotate regulatory elements across the human genome. Returns feature IDs, types, coordinates, and extended bounds. Use this to identify known regulatory elements in a region of interest for epigenomic analysis or variant interpretation.",
+        "parameter": {
+            "type": "object",
+            "properties": {
+                "species": {
+                    "type": "string",
+                    "default": "homo_sapiens",
+                    "description": "Species name (e.g., 'homo_sapiens', 'mus_musculus')."
+                },
+                "chrom": {
+                    "type": "string",
+                    "description": "Chromosome number without 'chr' prefix (e.g., '17', '7', 'X')."
+                },
+                "start": {
+                    "type": "integer",
+                    "description": "Start position (1-based)."
+                },
+                "end": {
+                    "type": "integer",
+                    "description": "End position (1-based)."
+                }
+            },
+            "required": ["chrom", "start", "end"]
+        },
+        "fields": {
+            "endpoint": "ensembl_regulatory"
+        },
+        "return_schema": {
+            "oneOf": [
+                {
+                    "type": "object",
+                    "properties": {
+                        "data": {
+                            "type": "object",
+                            "properties": {
+                                "species": {"type": "string"},
+                                "region": {"type": "string"},
+                                "feature_count": {"type": "integer"},
+                                "regulatory_features": {
+                                    "type": "array",
+                                    "items": {
+                                        "type": "object",
+                                        "properties": {
+                                            "id": {"type": "string"},
+                                            "description": {"type": "string"},
+                                            "feature_type": {"type": "string"},
+                                            "start": {"type": "integer"},
+                                            "end": {"type": "integer"},
+                                            "strand": {"type": "integer"},
+                                            "seq_region_name": {"type": "string"}
+                                        }
+                                    }
+                                }
+                            }
+                        },
+                        "metadata": {"type": "object"}
+                    }
+                },
+                {
+                    "type": "object",
+                    "properties": {
+                        "error": {"type": "string"}
+                    },
+                    "required": ["error"]
+                }
+            ]
+        },
+        "test_examples": [
+            {"species": "homo_sapiens", "chrom": "17", "start": 7668421, "end": 7687490},
+            {"species": "homo_sapiens", "chrom": "7", "start": 140424943, "end": 140524564}
+        ],
+        "label": ["Ensembl", "Regulatory", "Enhancer", "Promoter", "Epigenomics"],
+        "metadata": {
+            "tags": ["epigenomics", "regulatory-elements", "ensembl", "enhancers", "promoters"],
+            "estimated_execution_time": "< 5 seconds"
+        }
+    },
+    {
+        "name": "ENCODE_get_chromatin_state",
+        "type": "EpigenomicsTool",
+        "description": "Search ENCODE chromatin state annotations (ChromHMM segmentations) for specific biosamples or tissues. Chromatin states are genome-wide annotations that classify each genomic position into a functional state (e.g., active TSS, flanking active TSS, strong transcription, weak transcription, genic enhancers, active enhancers, bivalent enhancer, bivalent/poised TSS, flanking bivalent TSS, repressed polycomb, weak repressed polycomb, quiescent, heterochromatin) based on combinatorial patterns of histone marks. Use this to understand the chromatin landscape of specific cell types.",
+        "parameter": {
+            "type": "object",
+            "properties": {
+                "biosample_term_name": {
+                    "type": ["string", "null"],
+                    "description": "Biosample name (e.g., 'K562', 'HepG2', 'GM12878', 'liver'). Leave empty for all."
+                },
+                "organism": {
+                    "type": "string",
+                    "default": "Homo sapiens",
+                    "description": "Organism scientific name."
+                },
+                "limit": {
+                    "type": "integer",
+                    "default": 25,
+                    "minimum": 1,
+                    "maximum": 100,
+                    "description": "Maximum number of results."
+                }
+            }
+        },
+        "fields": {
+            "endpoint": "chromatin_state"
+        },
+        "return_schema": {
+            "oneOf": [
+                {
+                    "type": "object",
+                    "properties": {
+                        "data": {
+                            "type": "object",
+                            "properties": {
+                                "total": {"type": "integer"},
+                                "annotations": {
+                                    "type": "array",
+                                    "items": {
+                                        "type": "object",
+                                        "properties": {
+                                            "accession": {"type": "string"},
+                                            "annotation_type": {"type": ["string", "null"]},
+                                            "description": {"type": "string"},
+                                            "biosample_summary": {"type": ["string", "null"]},
+                                            "status": {"type": "string"}
+                                        }
+                                    }
+                                }
+                            }
+                        },
+                        "metadata": {"type": "object"}
+                    }
+                },
+                {
+                    "type": "object",
+                    "properties": {
+                        "error": {"type": "string"}
+                    },
+                    "required": ["error"]
+                }
+            ]
+        },
+        "test_examples": [
+            {"biosample_term_name": "K562", "organism": "Homo sapiens", "limit": 3},
+            {"organism": "Homo sapiens", "limit": 5}
+        ],
+        "label": ["ENCODE", "Chromatin State", "ChromHMM", "Epigenomics"],
+        "metadata": {
+            "tags": ["epigenomics", "chromatin-state", "chromhmm", "functional-annotation"],
+            "estimated_execution_time": "< 5 seconds"
+        }
+    }
+]

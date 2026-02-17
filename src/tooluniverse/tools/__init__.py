@@ -1,7 +1,7 @@
 """
 ToolUniverse Tools
 
-Type-safe Python interface to 1551 scientific tools.
+Type-safe Python interface to 1546 scientific tools.
 Each tool is in its own module for minimal import overhead.
 
 Usage:
@@ -68,7 +68,10 @@ from .ArXiv_search_papers import ArXiv_search_papers
 from .ArgumentDescriptionOptimizer import ArgumentDescriptionOptimizer
 from .BLAST_nucleotide_search import BLAST_nucleotide_search
 from .BLAST_protein_search import BLAST_protein_search
+from .BRENDA_get_enzyme_info import BRENDA_get_enzyme_info
 from .BRENDA_get_inhibitors import BRENDA_get_inhibitors
+from .BRENDA_get_kcat import BRENDA_get_kcat
+from .BRENDA_get_km import BRENDA_get_km
 from .BVBRC_get_genome import BVBRC_get_genome
 from .BVBRC_search_amr import BVBRC_search_amr
 from .BVBRC_search_genome_features import BVBRC_search_genome_features
@@ -98,10 +101,6 @@ from .BioModels_download_model import BioModels_download_model
 from .BioModels_get_model import BioModels_get_model
 from .BioModels_list_files import BioModels_list_files
 from .BioModels_search_parameters import BioModels_search_parameters
-from .BioPortal_annotate_text import BioPortal_annotate_text
-from .BioPortal_get_concept import BioPortal_get_concept
-from .BioPortal_get_hierarchy import BioPortal_get_hierarchy
-from .BioPortal_search_ontology_terms import BioPortal_search_ontology_terms
 from .BioRxiv_get_preprint import BioRxiv_get_preprint
 from .BioSamples_get_sample import BioSamples_get_sample
 from .BioSamples_search import BioSamples_search
@@ -170,8 +169,6 @@ from .ChIPAtlas_get_peak_data import ChIPAtlas_get_peak_data
 from .ChIPAtlas_search_datasets import ChIPAtlas_search_datasets
 from .ClinGenAR_get_external_records import ClinGenAR_get_external_records
 from .ClinGenAR_lookup_allele import ClinGenAR_lookup_allele
-from .ClinGen_dosage_by_gene import ClinGen_dosage_by_gene
-from .ClinGen_dosage_region_search import ClinGen_dosage_region_search
 from .ClinGen_get_actionability_adult import ClinGen_get_actionability_adult
 from .ClinGen_get_actionability_pediatric import ClinGen_get_actionability_pediatric
 from .ClinGen_get_dosage_sensitivity import ClinGen_get_dosage_sensitivity
@@ -215,15 +212,15 @@ from .DepMap_search_cell_lines import DepMap_search_cell_lines
 from .DepMap_search_genes import DepMap_search_genes
 from .DescriptionAnalyzer import DescriptionAnalyzer
 from .DescriptionQualityEvaluator import DescriptionQualityEvaluator
-from .Dfam_get_annotations import Dfam_get_annotations
-from .Dfam_get_family import Dfam_get_family
-from .Dfam_search_families import Dfam_search_families
 from .DigiKey_get_categories import DigiKey_get_categories
 from .DigiKey_get_manufacturers import DigiKey_get_manufacturers
 from .DigiKey_get_product_details import DigiKey_get_product_details
 from .DigiKey_search_by_keyword import DigiKey_search_by_keyword
-from .DisProt_get_entry import DisProt_get_entry
-from .DisProt_search import DisProt_search
+from .DisGeNET_get_disease_genes import DisGeNET_get_disease_genes
+from .DisGeNET_get_gda import DisGeNET_get_gda
+from .DisGeNET_get_vda import DisGeNET_get_vda
+from .DisGeNET_search_disease import DisGeNET_search_disease
+from .DisGeNET_search_gene import DisGeNET_search_gene
 from .DiseaseAnalyzerAgent import DiseaseAnalyzerAgent
 from .DiseaseOntology_get_parents import DiseaseOntology_get_parents
 from .DiseaseOntology_get_term import DiseaseOntology_get_term
@@ -232,15 +229,14 @@ from .DrugInteractionAnalyzerAgent import DrugInteractionAnalyzerAgent
 from .DrugOptimizationAgent import DrugOptimizationAgent
 from .DrugSafetyAnalyzer import DrugSafetyAnalyzer
 from .EBIProteins_get_antigen import EBIProteins_get_antigen
-from .EBIProteins_get_coordinate_mapping import EBIProteins_get_coordinate_mapping
 from .EBIProteins_get_coordinates import EBIProteins_get_coordinates
-from .EBIProteins_get_epitopes import EBIProteins_get_epitopes
+from .EBIProteins_get_domains_sites import EBIProteins_get_domains_sites
 from .EBIProteins_get_features import EBIProteins_get_features
-from .EBIProteins_get_interaction_details import EBIProteins_get_interaction_details
-from .EBIProteins_get_interactions import EBIProteins_get_interactions
+from .EBIProteins_get_molecule_processing import EBIProteins_get_molecule_processing
 from .EBIProteins_get_mutagenesis import EBIProteins_get_mutagenesis
 from .EBIProteins_get_proteomics_peptides import EBIProteins_get_proteomics_peptides
 from .EBIProteins_get_proteomics_ptm import EBIProteins_get_proteomics_ptm
+from .EBIProteins_get_structural_features import EBIProteins_get_structural_features
 from .EBIProteins_get_variation import EBIProteins_get_variation
 from .EBITaxonomy_get_by_id import EBITaxonomy_get_by_id
 from .EBITaxonomy_get_by_scientific_name import EBITaxonomy_get_by_scientific_name
@@ -257,11 +253,16 @@ from .ENAPortal_count_records import ENAPortal_count_records
 from .ENAPortal_search_samples import ENAPortal_search_samples
 from .ENAPortal_search_studies import ENAPortal_search_studies
 from .ENCODE_get_biosample import ENCODE_get_biosample
+from .ENCODE_get_chromatin_state import ENCODE_get_chromatin_state
 from .ENCODE_get_experiment import ENCODE_get_experiment
 from .ENCODE_get_file import ENCODE_get_file
 from .ENCODE_list_files import ENCODE_list_files
+from .ENCODE_search_annotations import ENCODE_search_annotations
 from .ENCODE_search_biosamples import ENCODE_search_biosamples
+from .ENCODE_search_chromatin_accessibility import ENCODE_search_chromatin_accessibility
 from .ENCODE_search_experiments import ENCODE_search_experiments
+from .ENCODE_search_histone_experiments import ENCODE_search_histone_experiments
+from .ENCODE_search_methylation_experiments import ENCODE_search_methylation_experiments
 from .EVE_get_gene_info import EVE_get_gene_info
 from .EVE_get_variant_score import EVE_get_variant_score
 from .Enamine_get_compound import Enamine_get_compound
@@ -273,23 +274,20 @@ from .EnsemblCompara_get_orthologues import EnsemblCompara_get_orthologues
 from .EnsemblCompara_get_paralogues import EnsemblCompara_get_paralogues
 from .EnsemblLD_get_ld_pairwise import EnsemblLD_get_ld_pairwise
 from .EnsemblLD_get_ld_variants import EnsemblLD_get_ld_variants
-from .EnsemblMap_convert_coordinates import EnsemblMap_convert_coordinates
-from .EnsemblMap_translate_coordinates import EnsemblMap_translate_coordinates
 from .EnsemblPheno_get_by_gene import EnsemblPheno_get_by_gene
 from .EnsemblPheno_get_by_region import EnsemblPheno_get_by_region
 from .EnsemblPheno_get_by_variant import EnsemblPheno_get_by_variant
 from .EnsemblReg_get_binding_matrix import EnsemblReg_get_binding_matrix
 from .EnsemblReg_get_constrained_elements import EnsemblReg_get_constrained_elements
 from .EnsemblReg_get_motif_features import EnsemblReg_get_motif_features
+from .EnsemblReg_get_regulatory_elements import EnsemblReg_get_regulatory_elements
+from .EnsemblSeq_get_id_sequence import EnsemblSeq_get_id_sequence
+from .EnsemblSeq_get_region_sequence import EnsemblSeq_get_region_sequence
 from .EnsemblVEP_annotate_hgvs import EnsemblVEP_annotate_hgvs
 from .EnsemblVEP_annotate_rsid import EnsemblVEP_annotate_rsid
 from .EnsemblVEP_variant_recoder import EnsemblVEP_variant_recoder
-from .EnsemblVar_get_population_frequencies import EnsemblVar_get_population_frequencies
-from .EnsemblVar_get_variant_consequences import EnsemblVar_get_variant_consequences
-from .Ensembl_get_cross_references import Ensembl_get_cross_references
-from .Ensembl_get_gene_overlapping_features import Ensembl_get_gene_overlapping_features
-from .Ensembl_get_region_features import Ensembl_get_region_features
-from .Ensembl_lookup_gene_by_symbol import Ensembl_lookup_gene_by_symbol
+from .Ensembl_get_assembly_info import Ensembl_get_assembly_info
+from .Ensembl_get_species_info import Ensembl_get_species_info
 from .EthicalComplianceReviewer import EthicalComplianceReviewer
 from .EuroPMCAnnot_get_annotations_by_type import EuroPMCAnnot_get_annotations_by_type
 from .EuroPMCAnnot_get_article_annotations import EuroPMCAnnot_get_article_annotations
@@ -727,6 +725,9 @@ from .GDC_get_ssm_by_gene import GDC_get_ssm_by_gene
 from .GDC_list_files import GDC_list_files
 from .GDC_list_projects import GDC_list_projects
 from .GDC_search_cases import GDC_search_cases
+from .GEO_get_dataset_details import GEO_get_dataset_details
+from .GEO_search_chipseq_datasets import GEO_search_chipseq_datasets
+from .GEO_search_methylation_datasets import GEO_search_methylation_datasets
 from .GIN_Guidelines_Search import GIN_Guidelines_Search
 from .GNPS_compare_spectra import GNPS_compare_spectra
 from .GNPS_get_spectrum import GNPS_get_spectrum
@@ -756,10 +757,6 @@ from .GTEx_get_tissue_sites import GTEx_get_tissue_sites
 from .GTEx_get_top_expressed_genes import GTEx_get_top_expressed_genes
 from .GTEx_query_eqtl import GTEx_query_eqtl
 from .GWAS_search_associations_by_gene import GWAS_search_associations_by_gene
-from .GenomeNexus_annotate_mutation import GenomeNexus_annotate_mutation
-from .GenomeNexus_annotate_variant import GenomeNexus_annotate_variant
-from .GenomeNexus_get_cancer_hotspots import GenomeNexus_get_cancer_hotspots
-from .GenomeNexus_get_canonical_transcript import GenomeNexus_get_canonical_transcript
 from .GlyGen_get_glycan import GlyGen_get_glycan
 from .GlyGen_get_glycoprotein import GlyGen_get_glycoprotein
 from .GlyGen_get_site import GlyGen_get_site
@@ -808,8 +805,6 @@ from .HPA_search_genes_by_query import HPA_search_genes_by_query
 from .HPO_get_term import HPO_get_term
 from .HPO_get_term_hierarchy import HPO_get_term_hierarchy
 from .HPO_search_terms import HPO_search_terms
-from .Harmonizome_get_gene import Harmonizome_get_gene
-from .Harmonizome_list_datasets import Harmonizome_list_datasets
 from .HypothesisGenerator import HypothesisGenerator
 from .ICD10_get_code_info import ICD10_get_code_info
 from .ICD10_search_codes import ICD10_search_codes
@@ -832,8 +827,11 @@ from .InterProScan_get_job_results import InterProScan_get_job_results
 from .InterProScan_get_job_status import InterProScan_get_job_status
 from .InterProScan_scan_sequence import InterProScan_scan_sequence
 from .InterPro_get_domain_details import InterPro_get_domain_details
+from .InterPro_get_entries_for_protein import InterPro_get_entries_for_protein
 from .InterPro_get_protein_domains import InterPro_get_protein_domains
+from .InterPro_get_proteins_by_domain import InterPro_get_proteins_by_domain
 from .InterPro_search_domains import InterPro_search_domains
+from .InterPro_search_entries import InterPro_search_entries
 from .JASPAR_get_transcription_factors import JASPAR_get_transcription_factors
 from .JLCSearch_list_categories import JLCSearch_list_categories
 from .JLCSearch_search_capacitors import JLCSearch_search_capacitors
@@ -892,8 +890,6 @@ from .MetabolomicsWorkbench_search_compound_by_name import (
     MetabolomicsWorkbench_search_compound_by_name,
 )
 from .MethodologyRigorReviewer import MethodologyRigorReviewer
-from .MobiDB_get_consensus import MobiDB_get_consensus
-from .MobiDB_get_protein import MobiDB_get_protein
 from .MonarchV3_get_associations import MonarchV3_get_associations
 from .MonarchV3_get_entity import MonarchV3_get_entity
 from .MonarchV3_search import MonarchV3_search
@@ -943,24 +939,34 @@ from .NeuroMorpho_search_neurons import NeuroMorpho_search_neurons
 from .Nextstrain_get_dataset import Nextstrain_get_dataset
 from .Nextstrain_list_datasets import Nextstrain_list_datasets
 from .NoveltySignificanceReviewer import NoveltySignificanceReviewer
+from .NvidiaNIM_alphafold2 import NvidiaNIM_alphafold2
+from .NvidiaNIM_alphafold2_multimer import NvidiaNIM_alphafold2_multimer
+from .NvidiaNIM_boltz2 import NvidiaNIM_boltz2
+from .NvidiaNIM_diffdock import NvidiaNIM_diffdock
+from .NvidiaNIM_esm2_650m import NvidiaNIM_esm2_650m
+from .NvidiaNIM_esmfold import NvidiaNIM_esmfold
+from .NvidiaNIM_evo2 import NvidiaNIM_evo2
+from .NvidiaNIM_genmol import NvidiaNIM_genmol
+from .NvidiaNIM_maisi import NvidiaNIM_maisi
+from .NvidiaNIM_molmim import NvidiaNIM_molmim
+from .NvidiaNIM_msa_search import NvidiaNIM_msa_search
+from .NvidiaNIM_openfold2 import NvidiaNIM_openfold2
+from .NvidiaNIM_openfold3 import NvidiaNIM_openfold3
+from .NvidiaNIM_proteinmpnn import NvidiaNIM_proteinmpnn
+from .NvidiaNIM_rfdiffusion import NvidiaNIM_rfdiffusion
+from .NvidiaNIM_vista3d import NvidiaNIM_vista3d
 from .OBIS_search_occurrences import OBIS_search_occurrences
 from .OBIS_search_taxa import OBIS_search_taxa
 from .OMA_get_group import OMA_get_group
 from .OMA_get_hog import OMA_get_hog
 from .OMA_get_orthologs import OMA_get_orthologs
 from .OMA_get_protein import OMA_get_protein
+from .OMIM_get_clinical_synopsis import OMIM_get_clinical_synopsis
+from .OMIM_get_entry import OMIM_get_entry
+from .OMIM_get_gene_map import OMIM_get_gene_map
+from .OMIM_search import OMIM_search
 from .OSF_search_preprints import OSF_search_preprints
 from .OSL_get_efo_id_by_disease_name import OSL_get_efo_id_by_disease_name
-from .OmniPath_get_cell_communication_annotations import (
-    OmniPath_get_cell_communication_annotations,
-)
-from .OmniPath_get_complexes import OmniPath_get_complexes
-from .OmniPath_get_enzyme_substrate import OmniPath_get_enzyme_substrate
-from .OmniPath_get_intercell_roles import OmniPath_get_intercell_roles
-from .OmniPath_get_ligand_receptor_interactions import (
-    OmniPath_get_ligand_receptor_interactions,
-)
-from .OmniPath_get_signaling_interactions import OmniPath_get_signaling_interactions
 from .OncoKB_annotate_copy_number import OncoKB_annotate_copy_number
 from .OncoKB_annotate_variant import OncoKB_annotate_variant
 from .OncoKB_get_cancer_genes import OncoKB_get_cancer_genes
@@ -1153,31 +1159,19 @@ from .Orphanet_get_disease import Orphanet_get_disease
 from .Orphanet_get_genes import Orphanet_get_genes
 from .Orphanet_search_by_name import Orphanet_search_by_name
 from .Orphanet_search_diseases import Orphanet_search_diseases
-from .OrthoDB_get_group_details import OrthoDB_get_group_details
-from .OrthoDB_get_orthologs import OrthoDB_get_orthologs
-from .OrthoDB_search_groups import OrthoDB_search_groups
 from .OutputSummarizationComposer import OutputSummarizationComposer
 from .OverallSummaryAgent import OverallSummaryAgent
 from .PANTHER_enrichment import PANTHER_enrichment
 from .PANTHER_gene_info import PANTHER_gene_info
 from .PANTHER_ortholog import PANTHER_ortholog
 from .PDB_search_similar_structures import PDB_search_similar_structures
-from .PDBeSIFTS_get_all_structures import PDBeSIFTS_get_all_structures
-from .PDBeSIFTS_get_best_structures import PDBeSIFTS_get_best_structures
-from .PDBeSIFTS_get_pdb_to_uniprot import PDBeSIFTS_get_pdb_to_uniprot
 from .PDBeSearch_get_compound import PDBeSearch_get_compound
 from .PDBeSearch_search_by_organism import PDBeSearch_search_by_organism
 from .PDBeSearch_search_structures import PDBeSearch_search_structures
-from .PDBeValidation_get_outlier_residues import PDBeValidation_get_outlier_residues
-from .PDBeValidation_get_quality_scores import PDBeValidation_get_quality_scores
 from .PDBe_KB_get_interface_residues import PDBe_KB_get_interface_residues
 from .PDBe_KB_get_ligand_sites import PDBe_KB_get_ligand_sites
 from .PDBe_KB_get_summary_stats import PDBe_KB_get_summary_stats
 from .PDBe_KB_get_superposition_clusters import PDBe_KB_get_superposition_clusters
-from .PDBe_get_compound_structures import PDBe_get_compound_structures
-from .PDBe_get_compound_summary import PDBe_get_compound_summary
-from .PDBe_get_residue_listing import PDBe_get_residue_listing
-from .PDBe_get_structure_ligands import PDBe_get_structure_ligands
 from .PMC_search_papers import PMC_search_papers
 from .PRIDE_get_project import PRIDE_get_project
 from .PRIDE_get_project_files import PRIDE_get_project_files
@@ -1259,11 +1253,9 @@ from .QuickGO_annotations_by_gene import QuickGO_annotations_by_gene
 from .QuickGO_annotations_by_goterm import QuickGO_annotations_by_goterm
 from .QuickGO_get_term_children import QuickGO_get_term_children
 from .QuickGO_get_term_detail import QuickGO_get_term_detail
-from .RCSBAdvSearch_search_by_motif import RCSBAdvSearch_search_by_motif
-from .RCSBAdvSearch_search_structures import RCSBAdvSearch_search_structures
-from .RCSBGraphQL_get_ligand_info import RCSBGraphQL_get_ligand_info
-from .RCSBGraphQL_get_polymer_entity import RCSBGraphQL_get_polymer_entity
-from .RCSBGraphQL_get_structure_summary import RCSBGraphQL_get_structure_summary
+from .RCSBData_get_assembly import RCSBData_get_assembly
+from .RCSBData_get_entry import RCSBData_get_entry
+from .RCSBData_get_nonpolymer_entity import RCSBData_get_nonpolymer_entity
 from .RNAcentral_get_by_accession import RNAcentral_get_by_accession
 from .RNAcentral_search import RNAcentral_search
 from .ReMap_get_transcription_factor_binding import (
@@ -1272,13 +1264,9 @@ from .ReMap_get_transcription_factor_binding import (
 from .ReactomeAnalysis_pathway_enrichment import ReactomeAnalysis_pathway_enrichment
 from .ReactomeAnalysis_species_comparison import ReactomeAnalysis_species_comparison
 from .ReactomeAnalysis_token_result import ReactomeAnalysis_token_result
-from .ReactomeInteractors_get_entity_pathways import (
-    ReactomeInteractors_get_entity_pathways,
-)
-from .ReactomeInteractors_get_protein_interactors import (
-    ReactomeInteractors_get_protein_interactors,
-)
-from .ReactomeInteractors_search_entity import ReactomeInteractors_search_entity
+from .ReactomeContent_get_contained_events import ReactomeContent_get_contained_events
+from .ReactomeContent_get_enhanced_pathway import ReactomeContent_get_enhanced_pathway
+from .ReactomeContent_search import ReactomeContent_search
 from .Reactome_get_complex import Reactome_get_complex
 from .Reactome_get_database_version import Reactome_get_database_version
 from .Reactome_get_diseases import Reactome_get_diseases
@@ -1341,6 +1329,7 @@ from .STITCH_get_chemical_protein_interactions import (
 from .STITCH_get_interaction_partners import STITCH_get_interaction_partners
 from .STITCH_resolve_identifier import STITCH_resolve_identifier
 from .STRING_functional_enrichment import STRING_functional_enrichment
+from .STRING_get_functional_annotations import STRING_get_functional_annotations
 from .STRING_get_interaction_partners import STRING_get_interaction_partners
 from .STRING_get_network import STRING_get_network
 from .STRING_get_protein_interactions import STRING_get_protein_interactions
@@ -1357,15 +1346,14 @@ from .SwissDock_dock_ligand import SwissDock_dock_ligand
 from .SwissDock_retrieve_results import SwissDock_retrieve_results
 from .SwissModel_get_models import SwissModel_get_models
 from .SwissModel_get_summary import SwissModel_get_summary
-from .SynBioHub_get_collections import SynBioHub_get_collections
-from .SynBioHub_get_part import SynBioHub_get_part
-from .SynBioHub_search_parts import SynBioHub_search_parts
 from .TRIP_Database_Guidelines_Search import TRIP_Database_Guidelines_Search
 from .TestCaseGenerator import TestCaseGenerator
 from .TestResultsAnalyzer import TestResultsAnalyzer
 from .TheraSAbDab_get_all_therapeutics import TheraSAbDab_get_all_therapeutics
 from .TheraSAbDab_search_by_target import TheraSAbDab_search_by_target
 from .TheraSAbDab_search_therapeutics import TheraSAbDab_search_therapeutics
+from .ThreeDBeacons_get_structure_summary import ThreeDBeacons_get_structure_summary
+from .ThreeDBeacons_get_structures import ThreeDBeacons_get_structures
 from .ToolCompatibilityAnalyzer import ToolCompatibilityAnalyzer
 from .ToolDescriptionOptimizer import ToolDescriptionOptimizer
 from .ToolDiscover import ToolDiscover
@@ -1381,27 +1369,24 @@ from .Tool_Finder import Tool_Finder
 from .Tool_Finder_Keyword import Tool_Finder_Keyword
 from .Tool_Finder_LLM import Tool_Finder_LLM
 from .Tool_RAG import Tool_RAG
+from .UCSC_get_cpg_islands import UCSC_get_cpg_islands
+from .UCSC_get_encode_cCREs import UCSC_get_encode_cCREs
 from .UCSC_get_sequence import UCSC_get_sequence
+from .UCSC_get_tf_binding_clusters import UCSC_get_tf_binding_clusters
 from .UCSC_get_track import UCSC_get_track
 from .UCSC_search import UCSC_search
 from .UniChem_list_sources import UniChem_list_sources
 from .UniChem_search_compound import UniChem_search_compound
-from .UniParc_get_entry import UniParc_get_entry
-from .UniParc_search import UniParc_search
 from .UniProtIDMap_convert_ids import UniProtIDMap_convert_ids
 from .UniProtIDMap_gene_to_uniprot import UniProtIDMap_gene_to_uniprot
 from .UniProtIDMap_list_databases import UniProtIDMap_list_databases
 from .UniProtIDMap_to_pdb import UniProtIDMap_to_pdb
-from .UniProtLocations_get_location import UniProtLocations_get_location
-from .UniProtLocations_search import UniProtLocations_search
 from .UniProtRef_get_disease import UniProtRef_get_disease
 from .UniProtRef_get_keyword import UniProtRef_get_keyword
 from .UniProtRef_get_proteome import UniProtRef_get_proteome
 from .UniProtRef_search_diseases import UniProtRef_search_diseases
 from .UniProtRef_search_keywords import UniProtRef_search_keywords
 from .UniProtRef_search_proteomes import UniProtRef_search_proteomes
-from .UniProtTaxonomy_get_taxon import UniProtTaxonomy_get_taxon
-from .UniProtTaxonomy_search import UniProtTaxonomy_search
 from .UniProt_get_alternative_names_by_accession import (
     UniProt_get_alternative_names_by_accession,
 )
@@ -1429,8 +1414,6 @@ from .UniProt_id_mapping import UniProt_id_mapping
 from .UniProt_search import UniProt_search
 from .UniProt_search_uniparc import UniProt_search_uniparc
 from .UniProt_search_uniref import UniProt_search_uniref
-from .UniRef_get_cluster import UniRef_get_cluster
-from .UniRef_search_clusters import UniRef_search_clusters
 from .UnifiedToolGenerator import UnifiedToolGenerator
 from .Unpaywall_check_oa_status import Unpaywall_check_oa_status
 from .WHO_Guideline_Full_Text import WHO_Guideline_Full_Text
@@ -1609,8 +1592,6 @@ from .ensembl_get_overlap_features import ensembl_get_overlap_features
 from .ensembl_get_regulatory_features import ensembl_get_regulatory_features
 from .ensembl_get_sequence import ensembl_get_sequence
 from .ensembl_get_species import ensembl_get_species
-from .ensembl_get_structural_variants import ensembl_get_structural_variants
-from .ensembl_get_sv_detail import ensembl_get_sv_detail
 from .ensembl_get_taxonomy import ensembl_get_taxonomy
 from .ensembl_get_variants import ensembl_get_variants
 from .ensembl_get_variation import ensembl_get_variation
@@ -1666,10 +1647,6 @@ from .expression_atlas_disease_target_score import expression_atlas_disease_targ
 from .extract_clinical_trial_adverse_events import extract_clinical_trial_adverse_events
 from .extract_clinical_trial_outcomes import extract_clinical_trial_outcomes
 from .fda_pharmacogenomic_biomarkers import fda_pharmacogenomic_biomarkers
-from .gProfiler_annotate_snps import gProfiler_annotate_snps
-from .gProfiler_convert_ids import gProfiler_convert_ids
-from .gProfiler_enrichment import gProfiler_enrichment
-from .gProfiler_find_orthologs import gProfiler_find_orthologs
 from .genomics_england_disease_target_score import genomics_england_disease_target_score
 from .geo_get_dataset_info import geo_get_dataset_info
 from .geo_get_sample_info import geo_get_sample_info
@@ -1683,6 +1660,7 @@ from .get_arxiv_info import get_arxiv_info
 from .get_ase_info import get_ase_info
 from .get_assembly_info_by_pdb_id import get_assembly_info_by_pdb_id
 from .get_assembly_summary import get_assembly_summary
+from .get_associated_documents_metadata import get_associated_documents_metadata
 from .get_astropy_info import get_astropy_info
 from .get_binding_affinity_by_pdb_id import get_binding_affinity_by_pdb_id
 from .get_biopandas_info import get_biopandas_info
@@ -1809,6 +1787,11 @@ from .get_optlang_info import get_optlang_info
 from .get_optuna_info import get_optuna_info
 from .get_palantir_info import get_palantir_info
 from .get_pandas_info import get_pandas_info
+from .get_patent_application_metadata import get_patent_application_metadata
+from .get_patent_continuity_data import get_patent_continuity_data
+from .get_patent_foreign_priority_data import get_patent_foreign_priority_data
+from .get_patent_overview_by_text_query import get_patent_overview_by_text_query
+from .get_patent_term_adjustment_data import get_patent_term_adjustment_data
 from .get_patsy_info import get_patsy_info
 from .get_pdbfixer_info import get_pdbfixer_info
 from .get_phenotype_by_HPO_ID import get_phenotype_by_HPO_ID
@@ -1976,6 +1959,10 @@ from .kegg_list_organisms import kegg_list_organisms
 from .kegg_search_pathway import kegg_search_pathway
 from .list_tools import list_tools
 from .loinc_search_codes import loinc_search_codes
+from .mcp_auto_loader_boltz import mcp_auto_loader_boltz
+from .mcp_auto_loader_expert_feedback import mcp_auto_loader_expert_feedback
+from .mcp_auto_loader_txagent import mcp_auto_loader_txagent
+from .mcp_auto_loader_uspto_downloader import mcp_auto_loader_uspto_downloader
 from .mesh_get_subjects_by_pharmacological_action import (
     mesh_get_subjects_by_pharmacological_action,
 )
@@ -2093,7 +2080,10 @@ __all__ = [
     "ArgumentDescriptionOptimizer",
     "BLAST_nucleotide_search",
     "BLAST_protein_search",
+    "BRENDA_get_enzyme_info",
     "BRENDA_get_inhibitors",
+    "BRENDA_get_kcat",
+    "BRENDA_get_km",
     "BVBRC_get_genome",
     "BVBRC_search_amr",
     "BVBRC_search_genome_features",
@@ -2123,10 +2113,6 @@ __all__ = [
     "BioModels_get_model",
     "BioModels_list_files",
     "BioModels_search_parameters",
-    "BioPortal_annotate_text",
-    "BioPortal_get_concept",
-    "BioPortal_get_hierarchy",
-    "BioPortal_search_ontology_terms",
     "BioRxiv_get_preprint",
     "BioSamples_get_sample",
     "BioSamples_search",
@@ -2193,8 +2179,6 @@ __all__ = [
     "ChIPAtlas_search_datasets",
     "ClinGenAR_get_external_records",
     "ClinGenAR_lookup_allele",
-    "ClinGen_dosage_by_gene",
-    "ClinGen_dosage_region_search",
     "ClinGen_get_actionability_adult",
     "ClinGen_get_actionability_pediatric",
     "ClinGen_get_dosage_sensitivity",
@@ -2238,15 +2222,15 @@ __all__ = [
     "DepMap_search_genes",
     "DescriptionAnalyzer",
     "DescriptionQualityEvaluator",
-    "Dfam_get_annotations",
-    "Dfam_get_family",
-    "Dfam_search_families",
     "DigiKey_get_categories",
     "DigiKey_get_manufacturers",
     "DigiKey_get_product_details",
     "DigiKey_search_by_keyword",
-    "DisProt_get_entry",
-    "DisProt_search",
+    "DisGeNET_get_disease_genes",
+    "DisGeNET_get_gda",
+    "DisGeNET_get_vda",
+    "DisGeNET_search_disease",
+    "DisGeNET_search_gene",
     "DiseaseAnalyzerAgent",
     "DiseaseOntology_get_parents",
     "DiseaseOntology_get_term",
@@ -2255,15 +2239,14 @@ __all__ = [
     "DrugOptimizationAgent",
     "DrugSafetyAnalyzer",
     "EBIProteins_get_antigen",
-    "EBIProteins_get_coordinate_mapping",
     "EBIProteins_get_coordinates",
-    "EBIProteins_get_epitopes",
+    "EBIProteins_get_domains_sites",
     "EBIProteins_get_features",
-    "EBIProteins_get_interaction_details",
-    "EBIProteins_get_interactions",
+    "EBIProteins_get_molecule_processing",
     "EBIProteins_get_mutagenesis",
     "EBIProteins_get_proteomics_peptides",
     "EBIProteins_get_proteomics_ptm",
+    "EBIProteins_get_structural_features",
     "EBIProteins_get_variation",
     "EBITaxonomy_get_by_id",
     "EBITaxonomy_get_by_scientific_name",
@@ -2280,11 +2263,16 @@ __all__ = [
     "ENAPortal_search_samples",
     "ENAPortal_search_studies",
     "ENCODE_get_biosample",
+    "ENCODE_get_chromatin_state",
     "ENCODE_get_experiment",
     "ENCODE_get_file",
     "ENCODE_list_files",
+    "ENCODE_search_annotations",
     "ENCODE_search_biosamples",
+    "ENCODE_search_chromatin_accessibility",
     "ENCODE_search_experiments",
+    "ENCODE_search_histone_experiments",
+    "ENCODE_search_methylation_experiments",
     "EVE_get_gene_info",
     "EVE_get_variant_score",
     "Enamine_get_compound",
@@ -2296,23 +2284,20 @@ __all__ = [
     "EnsemblCompara_get_paralogues",
     "EnsemblLD_get_ld_pairwise",
     "EnsemblLD_get_ld_variants",
-    "EnsemblMap_convert_coordinates",
-    "EnsemblMap_translate_coordinates",
     "EnsemblPheno_get_by_gene",
     "EnsemblPheno_get_by_region",
     "EnsemblPheno_get_by_variant",
     "EnsemblReg_get_binding_matrix",
     "EnsemblReg_get_constrained_elements",
     "EnsemblReg_get_motif_features",
+    "EnsemblReg_get_regulatory_elements",
+    "EnsemblSeq_get_id_sequence",
+    "EnsemblSeq_get_region_sequence",
     "EnsemblVEP_annotate_hgvs",
     "EnsemblVEP_annotate_rsid",
     "EnsemblVEP_variant_recoder",
-    "EnsemblVar_get_population_frequencies",
-    "EnsemblVar_get_variant_consequences",
-    "Ensembl_get_cross_references",
-    "Ensembl_get_gene_overlapping_features",
-    "Ensembl_get_region_features",
-    "Ensembl_lookup_gene_by_symbol",
+    "Ensembl_get_assembly_info",
+    "Ensembl_get_species_info",
     "EthicalComplianceReviewer",
     "EuroPMCAnnot_get_annotations_by_type",
     "EuroPMCAnnot_get_article_annotations",
@@ -2534,6 +2519,9 @@ __all__ = [
     "GDC_list_files",
     "GDC_list_projects",
     "GDC_search_cases",
+    "GEO_get_dataset_details",
+    "GEO_search_chipseq_datasets",
+    "GEO_search_methylation_datasets",
     "GIN_Guidelines_Search",
     "GNPS_compare_spectra",
     "GNPS_get_spectrum",
@@ -2563,10 +2551,6 @@ __all__ = [
     "GTEx_get_top_expressed_genes",
     "GTEx_query_eqtl",
     "GWAS_search_associations_by_gene",
-    "GenomeNexus_annotate_mutation",
-    "GenomeNexus_annotate_variant",
-    "GenomeNexus_get_cancer_hotspots",
-    "GenomeNexus_get_canonical_transcript",
     "GlyGen_get_glycan",
     "GlyGen_get_glycoprotein",
     "GlyGen_get_site",
@@ -2605,8 +2589,6 @@ __all__ = [
     "HPO_get_term",
     "HPO_get_term_hierarchy",
     "HPO_search_terms",
-    "Harmonizome_get_gene",
-    "Harmonizome_list_datasets",
     "HypothesisGenerator",
     "ICD10_get_code_info",
     "ICD10_search_codes",
@@ -2629,8 +2611,11 @@ __all__ = [
     "InterProScan_get_job_status",
     "InterProScan_scan_sequence",
     "InterPro_get_domain_details",
+    "InterPro_get_entries_for_protein",
     "InterPro_get_protein_domains",
+    "InterPro_get_proteins_by_domain",
     "InterPro_search_domains",
+    "InterPro_search_entries",
     "JASPAR_get_transcription_factors",
     "JLCSearch_list_categories",
     "JLCSearch_search_capacitors",
@@ -2681,8 +2666,6 @@ __all__ = [
     "MetabolomicsWorkbench_search_by_mz",
     "MetabolomicsWorkbench_search_compound_by_name",
     "MethodologyRigorReviewer",
-    "MobiDB_get_consensus",
-    "MobiDB_get_protein",
     "MonarchV3_get_associations",
     "MonarchV3_get_entity",
     "MonarchV3_search",
@@ -2728,20 +2711,34 @@ __all__ = [
     "Nextstrain_get_dataset",
     "Nextstrain_list_datasets",
     "NoveltySignificanceReviewer",
+    "NvidiaNIM_alphafold2",
+    "NvidiaNIM_alphafold2_multimer",
+    "NvidiaNIM_boltz2",
+    "NvidiaNIM_diffdock",
+    "NvidiaNIM_esm2_650m",
+    "NvidiaNIM_esmfold",
+    "NvidiaNIM_evo2",
+    "NvidiaNIM_genmol",
+    "NvidiaNIM_maisi",
+    "NvidiaNIM_molmim",
+    "NvidiaNIM_msa_search",
+    "NvidiaNIM_openfold2",
+    "NvidiaNIM_openfold3",
+    "NvidiaNIM_proteinmpnn",
+    "NvidiaNIM_rfdiffusion",
+    "NvidiaNIM_vista3d",
     "OBIS_search_occurrences",
     "OBIS_search_taxa",
     "OMA_get_group",
     "OMA_get_hog",
     "OMA_get_orthologs",
     "OMA_get_protein",
+    "OMIM_get_clinical_synopsis",
+    "OMIM_get_entry",
+    "OMIM_get_gene_map",
+    "OMIM_search",
     "OSF_search_preprints",
     "OSL_get_efo_id_by_disease_name",
-    "OmniPath_get_cell_communication_annotations",
-    "OmniPath_get_complexes",
-    "OmniPath_get_enzyme_substrate",
-    "OmniPath_get_intercell_roles",
-    "OmniPath_get_ligand_receptor_interactions",
-    "OmniPath_get_signaling_interactions",
     "OncoKB_annotate_copy_number",
     "OncoKB_annotate_variant",
     "OncoKB_get_cancer_genes",
@@ -2822,31 +2819,19 @@ __all__ = [
     "Orphanet_get_genes",
     "Orphanet_search_by_name",
     "Orphanet_search_diseases",
-    "OrthoDB_get_group_details",
-    "OrthoDB_get_orthologs",
-    "OrthoDB_search_groups",
     "OutputSummarizationComposer",
     "OverallSummaryAgent",
     "PANTHER_enrichment",
     "PANTHER_gene_info",
     "PANTHER_ortholog",
     "PDB_search_similar_structures",
-    "PDBeSIFTS_get_all_structures",
-    "PDBeSIFTS_get_best_structures",
-    "PDBeSIFTS_get_pdb_to_uniprot",
     "PDBeSearch_get_compound",
     "PDBeSearch_search_by_organism",
     "PDBeSearch_search_structures",
-    "PDBeValidation_get_outlier_residues",
-    "PDBeValidation_get_quality_scores",
     "PDBe_KB_get_interface_residues",
     "PDBe_KB_get_ligand_sites",
     "PDBe_KB_get_summary_stats",
     "PDBe_KB_get_superposition_clusters",
-    "PDBe_get_compound_structures",
-    "PDBe_get_compound_summary",
-    "PDBe_get_residue_listing",
-    "PDBe_get_structure_ligands",
     "PMC_search_papers",
     "PRIDE_get_project",
     "PRIDE_get_project_files",
@@ -2914,20 +2899,18 @@ __all__ = [
     "QuickGO_annotations_by_goterm",
     "QuickGO_get_term_children",
     "QuickGO_get_term_detail",
-    "RCSBAdvSearch_search_by_motif",
-    "RCSBAdvSearch_search_structures",
-    "RCSBGraphQL_get_ligand_info",
-    "RCSBGraphQL_get_polymer_entity",
-    "RCSBGraphQL_get_structure_summary",
+    "RCSBData_get_assembly",
+    "RCSBData_get_entry",
+    "RCSBData_get_nonpolymer_entity",
     "RNAcentral_get_by_accession",
     "RNAcentral_search",
     "ReMap_get_transcription_factor_binding",
     "ReactomeAnalysis_pathway_enrichment",
     "ReactomeAnalysis_species_comparison",
     "ReactomeAnalysis_token_result",
-    "ReactomeInteractors_get_entity_pathways",
-    "ReactomeInteractors_get_protein_interactors",
-    "ReactomeInteractors_search_entity",
+    "ReactomeContent_get_contained_events",
+    "ReactomeContent_get_enhanced_pathway",
+    "ReactomeContent_search",
     "Reactome_get_complex",
     "Reactome_get_database_version",
     "Reactome_get_diseases",
@@ -2986,6 +2969,7 @@ __all__ = [
     "STITCH_get_interaction_partners",
     "STITCH_resolve_identifier",
     "STRING_functional_enrichment",
+    "STRING_get_functional_annotations",
     "STRING_get_interaction_partners",
     "STRING_get_network",
     "STRING_get_protein_interactions",
@@ -3002,15 +2986,14 @@ __all__ = [
     "SwissDock_retrieve_results",
     "SwissModel_get_models",
     "SwissModel_get_summary",
-    "SynBioHub_get_collections",
-    "SynBioHub_get_part",
-    "SynBioHub_search_parts",
     "TRIP_Database_Guidelines_Search",
     "TestCaseGenerator",
     "TestResultsAnalyzer",
     "TheraSAbDab_get_all_therapeutics",
     "TheraSAbDab_search_by_target",
     "TheraSAbDab_search_therapeutics",
+    "ThreeDBeacons_get_structure_summary",
+    "ThreeDBeacons_get_structures",
     "ToolCompatibilityAnalyzer",
     "ToolDescriptionOptimizer",
     "ToolDiscover",
@@ -3026,27 +3009,24 @@ __all__ = [
     "Tool_Finder_Keyword",
     "Tool_Finder_LLM",
     "Tool_RAG",
+    "UCSC_get_cpg_islands",
+    "UCSC_get_encode_cCREs",
     "UCSC_get_sequence",
+    "UCSC_get_tf_binding_clusters",
     "UCSC_get_track",
     "UCSC_search",
     "UniChem_list_sources",
     "UniChem_search_compound",
-    "UniParc_get_entry",
-    "UniParc_search",
     "UniProtIDMap_convert_ids",
     "UniProtIDMap_gene_to_uniprot",
     "UniProtIDMap_list_databases",
     "UniProtIDMap_to_pdb",
-    "UniProtLocations_get_location",
-    "UniProtLocations_search",
     "UniProtRef_get_disease",
     "UniProtRef_get_keyword",
     "UniProtRef_get_proteome",
     "UniProtRef_search_diseases",
     "UniProtRef_search_keywords",
     "UniProtRef_search_proteomes",
-    "UniProtTaxonomy_get_taxon",
-    "UniProtTaxonomy_search",
     "UniProt_get_alternative_names_by_accession",
     "UniProt_get_disease_variants_by_accession",
     "UniProt_get_entry_by_accession",
@@ -3064,8 +3044,6 @@ __all__ = [
     "UniProt_search",
     "UniProt_search_uniparc",
     "UniProt_search_uniref",
-    "UniRef_get_cluster",
-    "UniRef_search_clusters",
     "UnifiedToolGenerator",
     "Unpaywall_check_oa_status",
     "WHO_Guideline_Full_Text",
@@ -3212,8 +3190,6 @@ __all__ = [
     "ensembl_get_regulatory_features",
     "ensembl_get_sequence",
     "ensembl_get_species",
-    "ensembl_get_structural_variants",
-    "ensembl_get_sv_detail",
     "ensembl_get_taxonomy",
     "ensembl_get_variants",
     "ensembl_get_variation",
@@ -3251,10 +3227,6 @@ __all__ = [
     "extract_clinical_trial_adverse_events",
     "extract_clinical_trial_outcomes",
     "fda_pharmacogenomic_biomarkers",
-    "gProfiler_annotate_snps",
-    "gProfiler_convert_ids",
-    "gProfiler_enrichment",
-    "gProfiler_find_orthologs",
     "genomics_england_disease_target_score",
     "geo_get_dataset_info",
     "geo_get_sample_info",
@@ -3268,6 +3240,7 @@ __all__ = [
     "get_ase_info",
     "get_assembly_info_by_pdb_id",
     "get_assembly_summary",
+    "get_associated_documents_metadata",
     "get_astropy_info",
     "get_binding_affinity_by_pdb_id",
     "get_biopandas_info",
@@ -3380,6 +3353,11 @@ __all__ = [
     "get_optuna_info",
     "get_palantir_info",
     "get_pandas_info",
+    "get_patent_application_metadata",
+    "get_patent_continuity_data",
+    "get_patent_foreign_priority_data",
+    "get_patent_overview_by_text_query",
+    "get_patent_term_adjustment_data",
     "get_patsy_info",
     "get_pdbfixer_info",
     "get_phenotype_by_HPO_ID",
@@ -3537,6 +3515,10 @@ __all__ = [
     "kegg_search_pathway",
     "list_tools",
     "loinc_search_codes",
+    "mcp_auto_loader_boltz",
+    "mcp_auto_loader_expert_feedback",
+    "mcp_auto_loader_txagent",
+    "mcp_auto_loader_uspto_downloader",
     "mesh_get_subjects_by_pharmacological_action",
     "mesh_get_subjects_by_subject_id",
     "mesh_get_subjects_by_subject_name",

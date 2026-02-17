@@ -487,83 +487,31 @@ default_tool_files = {
     "disease_ontology": os.path.join(
         current_dir, "data", "disease_ontology_tools.json"
     ),
-    # PDBe SIFTS - UniProt-to-PDB structure mapping (best structures, chain mapping, coverage)
-    "pdbe_sifts": os.path.join(current_dir, "data", "pdbe_sifts_tools.json"),
-    # OrthoDB v12 - Orthologous groups at different taxonomic levels (search, details, members)
-    "orthodb": os.path.join(current_dir, "data", "orthodb_tools.json"),
-    # BioPortal (NCBO) - Cross-ontology search, concept details, text annotation, hierarchy browsing (900+ ontologies)
-    "bioportal": os.path.join(current_dir, "data", "bioportal_tools.json"),
-    # SynBioHub - Synthetic biology parts repository (iGEM BioBricks, SBOL genetic designs)
-    "synbiohub": os.path.join(current_dir, "data", "synbiohub_tools.json"),
-    # EBI Proteins Epitopes - Experimentally-determined immune epitope regions (from IEDB)
-    "ebi_proteins_epitope": os.path.join(
-        current_dir, "data", "ebi_proteins_epitope_tools.json"
+    # RCSB PDB Data API - Direct REST access to PDB entry details, assemblies, non-polymer entities
+    "rcsb_data": os.path.join(current_dir, "data", "rcsb_data_tools.json"),
+    # EBI Proteins Features - Domain/site annotations, molecule processing, secondary structure
+    "ebi_proteins_features": os.path.join(
+        current_dir, "data", "ebi_proteins_features_tools.json"
     ),
-    # Reactome Interactors - Protein-protein interactions and entity pathway discovery
-    "reactome_interactors": os.path.join(
-        current_dir, "data", "reactome_interactors_tools.json"
+    # InterPro Extended - Reverse lookup: find proteins containing a specific domain
+    "interpro_ext": os.path.join(current_dir, "data", "interpro_ext_tools.json"),
+    # STRING Extended - Per-protein functional annotations (GO, KEGG, disease, tissue)
+    "string_ext": os.path.join(current_dir, "data", "string_ext_tools.json"),
+    # Ensembl Info - Genome assembly metadata and species catalog
+    "ensembl_info": os.path.join(current_dir, "data", "ensembl_info_tools.json"),
+    # Epigenomics - Histone marks, DNA methylation, chromatin accessibility, regulatory elements
+    "epigenomics": os.path.join(current_dir, "data", "epigenomics_tools.json"),
+    # 3D Beacons - Aggregated 3D structure models from PDBe, AlphaFold, SWISS-MODEL, PED
+    "three_d_beacons": os.path.join(current_dir, "data", "three_d_beacons_tools.json"),
+    # Reactome Content Service - Pathway search, contained events, enhanced details
+    "reactome_content": os.path.join(
+        current_dir, "data", "reactome_content_tools.json"
     ),
-    # Ensembl Structural Variants - SV overlap queries and detailed SV info (DGVa, ClinGen)
-    "ensembl_sv": os.path.join(current_dir, "data", "ensembl_sv_tools.json"),
-    # ClinGen Dosage API - JSON API for dosage sensitivity (haploinsufficiency, triplosensitivity)
-    "clingen_dosage_api": os.path.join(
-        current_dir, "data", "clingen_dosage_api_tools.json"
-    ),
-    # OmniPath - Integrated intercellular signaling (ligand-receptor, signaling, complexes, PTMs)
-    "omnipath": os.path.join(current_dir, "data", "omnipath_tools.json"),
-    # RCSB PDB Advanced Search - Multi-attribute structure search (organism, resolution, method, motif)
-    "rcsb_advanced_search": os.path.join(
-        current_dir, "data", "rcsb_advanced_search_tools.json"
-    ),
-    # RCSB PDB GraphQL Data API - Rich structure details, ligand info, polymer entities
-    "rcsb_graphql": os.path.join(current_dir, "data", "rcsb_graphql_tools.json"),
-    # UniProt Subcellular Locations - Cell compartment definitions and protein localization
-    "uniprot_locations": os.path.join(
-        current_dir, "data", "uniprot_locations_tools.json"
-    ),
-    # UniProt UniRef Clusters - Protein sequence clustering at 50/90/100% identity
-    "uniref": os.path.join(current_dir, "data", "uniref_tools.json"),
-    # Ensembl Assembly Mapping - Coordinate conversion between genome assemblies and protein/cDNA to genomic
-    "ensembl_map": os.path.join(current_dir, "data", "ensembl_map_tools.json"),
-    # Ensembl Variation Extended - Variant population frequencies and detailed variant records
-    "ensembl_variation_ext": os.path.join(
-        current_dir, "data", "ensembl_variation_ext_tools.json"
-    ),
-    # PDBe Validation - Structure quality percentile scores and residue-level outliers
-    "pdbe_validation": os.path.join(current_dir, "data", "pdbe_validation_tools.json"),
-    # UniProt Taxonomy - Species taxonomy details, lineage, protein statistics, and search
-    "uniprot_taxonomy": os.path.join(
-        current_dir, "data", "uniprot_taxonomy_tools.json"
-    ),
-    # Harmonizome - Gene information from 100+ integrated genomics datasets (Ma'ayan Lab)
-    "harmonizome": os.path.join(current_dir, "data", "harmonizome_tools.json"),
-    # EBI Proteins Interactions - Protein-protein interactions from IntAct via EBI Proteins API
-    "ebi_proteins_interactions": os.path.join(
-        current_dir, "data", "ebi_proteins_interactions_tools.json"
-    ),
-    # Genome Nexus - Cancer variant annotation aggregator (MSK: VEP + SIFT + PolyPhen + AlphaMissense + cancer hotspots)
-    "genome_nexus": os.path.join(current_dir, "data", "genome_nexus_tools.json"),
-    # g:Profiler - Functional enrichment analysis, gene ID conversion, ortholog mapping (University of Tartu)
-    "gprofiler": os.path.join(current_dir, "data", "gprofiler_tools.json"),
-    # Dfam - Transposable element / repeat element families, consensus sequences, genome annotations
-    "dfam": os.path.join(current_dir, "data", "dfam_tools.json"),
-    # DisProt - Intrinsically disordered proteins, experimentally validated disorder regions
-    "disprot": os.path.join(current_dir, "data", "disprot_tools.json"),
-    # MobiDB - Protein disorder predictions, binding modes, phase separation, PTMs
-    "mobidb": os.path.join(current_dir, "data", "mobidb_tools.json"),
-    # UniProt UniParc - Non-redundant protein sequence archive across all databases
-    "uniparc": os.path.join(current_dir, "data", "uniparc_tools.json"),
-    # PDBe Compound - Chemical compound details from PDB (formula, SMILES, cross-refs)
-    "pdbe_compound": os.path.join(current_dir, "data", "pdbe_compound_tools.json"),
-    # PDBe Ligands - Structure-bound ligands and per-residue listing
-    "pdbe_ligands": os.path.join(current_dir, "data", "pdbe_ligands_tools.json"),
-    # Ensembl Overlap - Genomic features overlapping regions or genes
-    "ensembl_overlap": os.path.join(current_dir, "data", "ensembl_overlap_tools.json"),
-    # Ensembl Cross-references - External database links for Ensembl IDs
-    "ensembl_xrefs": os.path.join(current_dir, "data", "ensembl_xrefs_tools.json"),
-    # EBI Proteins Coordinates - Protein-to-genomic coordinate mapping (exon-level)
-    "ebi_proteins_coordinates": os.path.join(
-        current_dir, "data", "ebi_proteins_coordinates_tools.json"
+    # InterPro Entry - Protein-to-domain mappings and keyword-based entry search
+    "interpro_entry": os.path.join(current_dir, "data", "interpro_entry_tools.json"),
+    # Ensembl Sequence - Region DNA and ID-based protein/cDNA sequence retrieval
+    "ensembl_sequence": os.path.join(
+        current_dir, "data", "ensembl_sequence_tools.json"
     ),
 }
 

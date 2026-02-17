@@ -1,33 +1,36 @@
 """
-Ensembl_get_region_features
+EnsemblReg_get_regulatory_elements
 
-Get all genomic features overlapping a specified chromosomal region. Returns genes, transcripts, ...
+Get Ensembl regulatory features (enhancers, promoters, CTCF binding sites, open chromatin, TF bin...
 """
 
 from typing import Any, Optional, Callable
 from ._shared_client import get_shared_client
 
 
-def Ensembl_get_region_features(
-    region: str,
-    species: Optional[str] = None,
-    feature_types: Optional[str] = None,
+def EnsemblReg_get_regulatory_elements(
+    chrom: str,
+    start: int,
+    end: int,
+    species: Optional[str] = "homo_sapiens",
     *,
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
 ) -> Any:
     """
-    Get all genomic features overlapping a specified chromosomal region. Returns genes, transcripts, ...
+    Get Ensembl regulatory features (enhancers, promoters, CTCF binding sites, open chromatin, TF bin...
 
     Parameters
     ----------
     species : str
-        Species name. Default: 'human'. Examples: 'human', 'mouse', 'rat', 'zebrafish'.
-    region : str
-        Genomic region in format 'chr:start-end'. Examples: '17:7661779-7687546' (TP5...
-    feature_types : str
-        Comma-separated feature types to retrieve. Options: 'gene', 'transcript', 're...
+        Species name (e.g., 'homo_sapiens', 'mus_musculus').
+    chrom : str
+        Chromosome number without 'chr' prefix (e.g., '17', '7', 'X').
+    start : int
+        Start position (1-based).
+    end : int
+        End position (1-based).
     stream_callback : Callable, optional
         Callback for streaming output
     use_cache : bool, default False
@@ -43,11 +46,12 @@ def Ensembl_get_region_features(
 
     return get_shared_client().run_one_function(
         {
-            "name": "Ensembl_get_region_features",
+            "name": "EnsemblReg_get_regulatory_elements",
             "arguments": {
                 "species": species,
-                "region": region,
-                "feature_types": feature_types,
+                "chrom": chrom,
+                "start": start,
+                "end": end,
             },
         },
         stream_callback=stream_callback,
@@ -56,4 +60,4 @@ def Ensembl_get_region_features(
     )
 
 
-__all__ = ["Ensembl_get_region_features"]
+__all__ = ["EnsemblReg_get_regulatory_elements"]

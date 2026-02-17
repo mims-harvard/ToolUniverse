@@ -1,30 +1,36 @@
 """
-Ensembl_get_cross_references
+UCSC_get_encode_cCREs
 
-Get all external database cross-references for an Ensembl stable identifier. Returns linked recor...
+Get ENCODE4 candidate cis-Regulatory Elements (cCREs) for a genomic region from UCSC Genome Brows...
 """
 
 from typing import Any, Optional, Callable
 from ._shared_client import get_shared_client
 
 
-def Ensembl_get_cross_references(
-    ensembl_id: str,
-    external_db: Optional[str | Any] = None,
+def UCSC_get_encode_cCREs(
+    chrom: str,
+    start: int,
+    end: int,
+    genome: Optional[str] = "hg38",
     *,
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
 ) -> Any:
     """
-    Get all external database cross-references for an Ensembl stable identifier. Returns linked recor...
+    Get ENCODE4 candidate cis-Regulatory Elements (cCREs) for a genomic region from UCSC Genome Brows...
 
     Parameters
     ----------
-    ensembl_id : str
-        Ensembl stable identifier. Can be gene (ENSG*), transcript (ENST*), or transl...
-    external_db : str | Any
-        Optional: filter by external database name. Examples: 'HGNC', 'EntrezGene', '...
+    genome : str
+        Genome assembly (e.g., 'hg38', 'mm10').
+    chrom : str
+        Chromosome name (e.g., 'chr17').
+    start : int
+        Start position (0-based).
+    end : int
+        End position (0-based).
     stream_callback : Callable, optional
         Callback for streaming output
     use_cache : bool, default False
@@ -40,8 +46,8 @@ def Ensembl_get_cross_references(
 
     return get_shared_client().run_one_function(
         {
-            "name": "Ensembl_get_cross_references",
-            "arguments": {"ensembl_id": ensembl_id, "external_db": external_db},
+            "name": "UCSC_get_encode_cCREs",
+            "arguments": {"genome": genome, "chrom": chrom, "start": start, "end": end},
         },
         stream_callback=stream_callback,
         use_cache=use_cache,
@@ -49,4 +55,4 @@ def Ensembl_get_cross_references(
     )
 
 
-__all__ = ["Ensembl_get_cross_references"]
+__all__ = ["UCSC_get_encode_cCREs"]
