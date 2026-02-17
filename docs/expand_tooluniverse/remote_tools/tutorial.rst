@@ -3,6 +3,12 @@ Remote Tools Tutorial
 
 Learn how to create and integrate remote tools with ToolUniverse using the `@register_mcp_tool` decorator. Remote tools run on separate servers and are automatically discovered and loaded via configuration files.
 
+.. note::
+   **MCPAutoLoaderTool vs RemoteTool**: This tutorial uses MCPAutoLoaderTool, which dynamically discovers and auto-registers tools from an MCP server. For an alternative approach using static tool registration, see the :doc:`../contributing/remote_tools` guide which uses RemoteTool. Both execute tools remotely; choose based on your use case:
+
+   - **MCPAutoLoaderTool** (this tutorial): Dynamic discovery of tools from MCP server. Good for external MCP servers or rapid prototyping where you don't control the tool list.
+   - **RemoteTool** (contributing guide): Static JSON configuration with explicit parameter schemas. Better for production tools where you want to define a stable contract between ToolUniverse and the remote tool.
+
 What are Remote Tools?
 ----------------------
 
