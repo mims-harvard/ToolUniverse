@@ -178,6 +178,8 @@ exclude = [
     ".venv",
     "docs",
     "examples",
+    "skills",
+    "temp_docs_and_tests",
 ]
 unsafe-fixes = true
 

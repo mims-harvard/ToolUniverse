@@ -413,8 +413,6 @@ def test_13_differential_methylation_wilcoxon():
     g2[:10, :] += 0.25
     g2 = np.clip(g2, 0, 1)
 
-    probes = [f"cg{str(i).zfill(8)}" for i in range(n_probes)]
-
     pvals = []
     for i in range(n_probes):
         _, pval = stats.mannwhitneyu(g1[i], g2[i], alternative='two-sided')
@@ -861,7 +859,6 @@ def test_32_methylation_expression_correlation():
     """Multi-Omics: Methylation-expression correlation"""
     np.random.seed(42)
     n_samples = 30
-    samples = [f"S{i}" for i in range(n_samples)]
 
     # Generate correlated methylation and expression
     noise = np.random.normal(0, 0.1, n_samples)
@@ -879,7 +876,6 @@ def test_33_multi_probe_gene_correlation():
     np.random.seed(42)
     n_samples = 30
     n_pairs = 50
-    samples = [f"S{i}" for i in range(n_samples)]
 
     pvals = []
     for i in range(n_pairs):
