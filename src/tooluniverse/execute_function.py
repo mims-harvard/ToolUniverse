@@ -62,6 +62,13 @@ tool_type_mappings = {
 }
 
 
+class _Cache(dict):
+    """dict subclass that also supports a Redis-compatible `.set(key, value)` API."""
+
+    def set(self, key, value):
+        self[key] = value
+
+
 class _ToolsNamespace:
     """Proxy namespace for dynamic tool calling: tu.tools.ToolName(...)."""
 
@@ -86,7 +93,15 @@ class _ToolsNamespace:
         tu = object.__getattribute__(self, "_tu")
         for name in names:
             if name in tu.all_tool_dict:
-                tu.init_tool(tu.all_tool_dict[name], add_to_cache=True)
+                try:
+                    tu.init_tool(tu.all_tool_dict[name], add_to_cache=True)
+                except (KeyError, TypeError, ImportError):
+                    pass
+
+
+# Public alias so tests and external code can do:
+# from tooluniverse.execute_function import ToolNamespace
+ToolNamespace = _ToolsNamespace
 
 
 class ToolUniverse:
@@ -97,28 +112,60 @@ class ToolUniverse:
         self.all_tools = []
         self.all_tool_dict = {}
         self.tool_category_dicts = {}
-        self._cache = {}
+        self._cache = _Cache()
         if tool_files is None:
             tool_files = default_tool_files
         elif keep_default_tools:
             default_tool_files.update(tool_files)
             tool_files = default_tool_files
         self.tool_files = tool_files
-        print("Tool files:")
-        print(tool_files)
         self.callable_functions = {}
         self.tools = _ToolsNamespace(self)
 
+    def tool_specification(self, name, return_prompt=False):
+        """Return the tool specification dict for *name*, or None if not found."""
+        if not name:
+            return None
+        return self.all_tool_dict.get(name)
+
     def close(self):
         """Release resources (no-op; provided for API compatibility)."""
+
+    def refresh_tools(self):
+        """Refresh tool name/description index (no-op if tools already loaded)."""
+        if self.all_tools:
+            self.refresh_tool_name_desc()
+
+    def eager_load_tools(self, names):
+        """Pre-initialise tool instances for the given names."""
+        self.tools.eager_load(names)
 
     def clear_cache(self):
         """Clear the result cache."""
         self._cache.clear()
         self.callable_functions.clear()
 
+    def register_custom_tool(self, tool_class, tool_config):
+        """Register a custom tool class with the given configuration."""
+        name = tool_config["name"]
+        tool_type = tool_config.get("type", name)
+        self.all_tools.append(tool_config)
+        self.all_tool_dict[name] = tool_config
+        # Register type mapping so init_tool can find it
+        if tool_type not in tool_type_mappings:
+            tool_type_mappings[tool_type] = tool_class
+        # Cache the instance immediately
+        self.callable_functions[name] = tool_class(tool_config=tool_config)
+
+    def _get_tool_instance(self, name, cache=True):
+        """Get a tool instance by name, optionally caching it."""
+        if name in self.callable_functions:
+            return self.callable_functions[name]
+        if name in self.all_tool_dict:
+            return self.init_tool(self.all_tool_dict[name], add_to_cache=cache)
+        return None
+
     def load_tools(self, tool_type=None, **kwargs):
-        print(f"Number of tools before load tools: {len(self.all_tools)}")
         if tool_type is None:
             for each in self.tool_files:
                 loaded_tool_list = read_json_list(self.tool_files[each])
@@ -138,8 +185,6 @@ class ToolUniverse:
                 dedup_all_tools.append(each)
         self.all_tools = dedup_all_tools
         self.refresh_tool_name_desc()
-
-        print(f"Number of tools after load tools: {len(self.all_tools)}")
 
     def return_all_loaded_tools(self):
         return copy.deepcopy(self.all_tools)
@@ -230,7 +275,15 @@ class ToolUniverse:
     def call_id_gen(self):
         return "".join(random.choices(string.ascii_letters + string.digits, k=9))
 
-    def run(self, fcall_str, return_message=False, verbose=True):
+    def run(
+        self,
+        fcall_str,
+        return_message=False,
+        verbose=True,
+        use_cache=False,
+        max_workers=1,
+        **kwargs,
+    ):
         if return_message:
             function_call_json, message = self.extract_function_call_json(
                 fcall_str, return_message=return_message, verbose=verbose
@@ -241,10 +294,19 @@ class ToolUniverse:
             )
         if function_call_json is not None:
             if isinstance(function_call_json, list):
+                if max_workers > 1:
+                    return self._run_batch_concurrent(
+                        function_call_json,
+                        message=message if return_message else None,
+                        max_workers=max_workers,
+                        use_cache=use_cache,
+                    )
                 # return the function call+result message with call id.
                 call_results = []
                 for i in range(len(function_call_json)):
-                    call_result = self.run_one_function(function_call_json[i])
+                    call_result = self.run_one_function(
+                        function_call_json[i], use_cache=use_cache
+                    )
                     call_id = self.call_id_gen()
                     function_call_json[i]["call_id"] = call_id
                     call_results.append(
@@ -255,35 +317,101 @@ class ToolUniverse:
                             ),
                         }
                     )
-                revised_messages = [
-                    {
-                        "role": "assistant",
-                        "content": message,
-                        "tool_calls": json.dumps(function_call_json),
-                    }
-                ] + call_results
-                return revised_messages
+                if return_message:
+                    revised_messages = [
+                        {
+                            "role": "assistant",
+                            "content": message,
+                            "tool_calls": json.dumps(function_call_json),
+                        }
+                    ] + call_results
+                    return revised_messages
+                return call_results
             else:
-                return self.run_one_function(function_call_json)
+                return self.run_one_function(function_call_json, use_cache=use_cache)
         else:
-            print("\033[91mNot a function call\033[0m")
             return None
+
+    def _run_batch_concurrent(
+        self, calls, message=None, max_workers=4, use_cache=False
+    ):
+        """Run a batch of function calls concurrently, respecting per-tool batch_max_concurrency."""
+        import threading
+        from concurrent.futures import ThreadPoolExecutor, as_completed
+
+        # Build per-tool semaphores from batch_max_concurrency
+        _semaphores = {}
+
+        def _get_semaphore(name):
+            if name not in _semaphores:
+                instance = self._get_tool_instance(name, cache=True)
+                limit = 0
+                if instance is not None and hasattr(
+                    instance, "get_batch_concurrency_limit"
+                ):
+                    limit = instance.get_batch_concurrency_limit()
+                _semaphores[name] = threading.Semaphore(limit) if limit > 0 else None
+            return _semaphores[name]
+
+        call_results = [None] * len(calls)
+
+        def _run_one(idx, call):
+            name = call.get("name", "")
+            sem = _get_semaphore(name)
+            if sem:
+                sem.acquire()
+            try:
+                result = self.run_one_function(call, use_cache=use_cache)
+            finally:
+                if sem:
+                    sem.release()
+            return idx, result
+
+        with ThreadPoolExecutor(max_workers=max_workers) as executor:
+            futures = {
+                executor.submit(_run_one, i, call): i for i, call in enumerate(calls)
+            }
+            for future in as_completed(futures):
+                idx, result = future.result()
+                call_id = self.call_id_gen()
+                calls[idx]["call_id"] = call_id
+                call_results[idx] = {
+                    "role": "tool",
+                    "content": json.dumps({"content": result, "call_id": call_id}),
+                }
+
+        if message is not None:
+            return [
+                {
+                    "role": "assistant",
+                    "content": message,
+                    "tool_calls": json.dumps(calls),
+                }
+            ] + call_results
+        return call_results
 
     def run_one_function(self, function_call_json, use_cache=False, validate=False):
         check_status, check_message = self.check_function_call(function_call_json)
         if check_status is False:
-            return (
-                "Invalid function call: " + check_message
-            )  # + "  You must correct your invalid function call!"
+            tool_name = (
+                function_call_json.get("name", "unknown")
+                if isinstance(function_call_json, dict)
+                else "unknown"
+            )
+            return {
+                "error": f"Tool '{tool_name}' not found or invalid call: {check_message}",
+                "error_details": {
+                    "type": "ToolNotFoundError",
+                    "message": check_message,
+                },
+            }
         function_name = function_call_json["name"]
-        arguments = function_call_json["arguments"]
+        raw_args = function_call_json.get("arguments")
+        arguments = raw_args if isinstance(raw_args, dict) else {}
         if function_name in self.callable_functions:
             return self.callable_functions[function_name].run(arguments)
         else:
             if function_name in self.all_tool_dict:
-                print(
-                    "\033[92mInitiating callable_function from loaded tool dicts.\033[0m"
-                )
                 tool = self.init_tool(
                     self.all_tool_dict[function_name], add_to_cache=True
                 )
@@ -332,12 +460,15 @@ class ToolUniverse:
 
     def check_function_call(self, fcall_str, function_config=None):
         function_call_json = self.extract_function_call_json(fcall_str)
-        print("loaded function call json", function_call_json)
         if function_call_json is not None:
             if function_config is not None:
                 return evaluate_function_call(function_config, function_call_json)
-            function_name = function_call_json["name"]
-            if function_name not in self.all_tool_dict:
+            function_name = (
+                function_call_json.get("name", "")
+                if isinstance(function_call_json, dict)
+                else ""
+            )
+            if not function_name or function_name not in self.all_tool_dict:
                 return (
                     False,
                     f"Function name {function_name} not found in loaded tools.",

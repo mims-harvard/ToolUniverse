@@ -147,6 +147,12 @@ def evaluate_function_call(tool_definition, function_call):
         "pydantic": ModelMetaclass,
     }
 
+    # Normalise arguments: missing key, None, or non-dict types all become {}
+    raw_args = function_call.get("arguments")
+    if not isinstance(raw_args, dict):
+        function_call = dict(function_call)  # shallow copy so we don't mutate caller
+        function_call["arguments"] = {}
+
     # Check if the function name matches
     if tool_definition["name"] != function_call["name"]:
         return False, "Function name does not match."

@@ -19,7 +19,11 @@ from pathlib import Path
 from unittest.mock import patch
 
 # Add src to path
-sys.path.insert(0, str(Path(__file__).parent.parent.parent / "src"))
+_SRC_PATH = str(Path(__file__).parent.parent.parent / "src")
+sys.path.insert(0, _SRC_PATH)
+
+# Use the same Python interpreter that's running pytest
+_PYTHON = sys.executable
 
 from tooluniverse.smcp_server import run_stdio_server
 from tooluniverse.logging_config import reconfigure_for_stdio
@@ -53,9 +57,9 @@ class TestStdioMode:
         """Test complete MCP handshake over stdio"""
         # Start server in subprocess
         process = subprocess.Popen(
-            ["python", "-c", """
+            [_PYTHON, "-c", f"""
 import sys
-sys.path.insert(0, 'src')
+sys.path.insert(0, {_SRC_PATH!r})
 from tooluniverse.smcp_server import run_stdio_server
 import os
 os.environ['TOOLUNIVERSE_STDIO_MODE'] = '1'
@@ -158,9 +162,9 @@ run_stdio_server()
         """Test tool call over stdio"""
         # Start server in subprocess
         process = subprocess.Popen(
-            ["python", "-c", """
+            [_PYTHON, "-c", f"""
 import sys
-sys.path.insert(0, 'src')
+sys.path.insert(0, {_SRC_PATH!r})
 from tooluniverse.smcp_server import run_stdio_server
 import os
 os.environ['TOOLUNIVERSE_STDIO_MODE'] = '1'
@@ -236,9 +240,9 @@ run_stdio_server()
         """Test stdio mode with hooks enabled"""
         # Start server in subprocess with hooks
         process = subprocess.Popen(
-            ["python", "-c", """
+            [_PYTHON, "-c", f"""
 import sys
-sys.path.insert(0, 'src')
+sys.path.insert(0, {_SRC_PATH!r})
 from tooluniverse.smcp_server import run_stdio_server
 import os
 os.environ['TOOLUNIVERSE_STDIO_MODE'] = '1'
@@ -319,9 +323,9 @@ run_stdio_server()
         """Test that stdio mode doesn't pollute stdout with logs"""
         # Start server in subprocess
         process = subprocess.Popen(
-            ["python", "-c", """
+            [_PYTHON, "-c", f"""
 import sys
-sys.path.insert(0, 'src')
+sys.path.insert(0, {_SRC_PATH!r})
 from tooluniverse.smcp_server import run_stdio_server
 import os
 os.environ['TOOLUNIVERSE_STDIO_MODE'] = '1'
@@ -371,9 +375,9 @@ run_stdio_server()
         """Test stdio mode error handling"""
         # Start server in subprocess
         process = subprocess.Popen(
-            ["python", "-c", """
+            [_PYTHON, "-c", f"""
 import sys
-sys.path.insert(0, 'src')
+sys.path.insert(0, {_SRC_PATH!r})
 from tooluniverse.smcp_server import run_stdio_server
 import os
 os.environ['TOOLUNIVERSE_STDIO_MODE'] = '1'
