@@ -41,13 +41,9 @@ class DisProtTool(BaseTool):
         try:
             return self._query(arguments)
         except requests.exceptions.Timeout:
-            return {
-                "error": f"DisProt API timed out after {self.timeout}s. The server (disprot.org) may be temporarily unreachable from your network."
-            }
+            return {"error": f"DisProt API timed out after {self.timeout}s."}
         except requests.exceptions.ConnectionError:
-            return {
-                "error": "Failed to connect to DisProt API (disprot.org). The server may be temporarily unreachable from your network."
-            }
+            return {"error": "Failed to connect to DisProt API (disprot.org)."}
         except requests.exceptions.HTTPError as e:
             status = e.response.status_code if e.response is not None else "unknown"
             if status == 404:
@@ -118,10 +114,21 @@ class DisProtTool(BaseTool):
                 "error": "accession is required. Use DisProt ID (e.g., 'DP00086') or UniProt accession (e.g., 'P04637')."
             }
 
-        url = f"{DISPROT_BASE_URL}/{accession}"
-        response = requests.get(url, timeout=self.timeout)
+        # Determine whether it's a DisProt ID (DP*) or UniProt accession
+        url = f"{DISPROT_BASE_URL}/search"
+        if accession.upper().startswith("DP"):
+            params = {"disprot_id": accession.upper(), "page_size": 1}
+        else:
+            params = {"acc": accession, "page_size": 1}
+
+        response = requests.get(url, params=params, timeout=self.timeout)
         response.raise_for_status()
-        data = response.json()
+        search_result = response.json()
+
+        results = search_result.get("data", [])
+        if not results:
+            return {"error": f"Entry not found in DisProt for accession '{accession}'."}
+        data = results[0]
 
         # Extract regions
         regions = []
