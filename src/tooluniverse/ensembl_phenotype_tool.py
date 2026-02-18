@@ -20,6 +20,7 @@ from .base_tool import BaseTool
 from .tool_registry import register_tool
 
 ENSEMBL_BASE_URL = "https://rest.ensembl.org"
+ENSEMBL_HEADERS = {"User-Agent": "ToolUniverse/1.0", "Accept": "application/json"}
 
 
 @register_tool("EnsemblPhenotypeTool")
@@ -82,7 +83,9 @@ class EnsemblPhenotypeTool(BaseTool):
         url = f"{ENSEMBL_BASE_URL}/phenotype/gene/{species}/{gene}"
         params = {"content-type": "application/json"}
 
-        response = requests.get(url, params=params, timeout=self.timeout)
+        response = requests.get(
+            url, params=params, headers=ENSEMBL_HEADERS, timeout=self.timeout
+        )
         response.raise_for_status()
         raw = response.json()
 
@@ -139,7 +142,9 @@ class EnsemblPhenotypeTool(BaseTool):
         if feature_type:
             params["feature_type"] = feature_type
 
-        response = requests.get(url, params=params, timeout=self.timeout)
+        response = requests.get(
+            url, params=params, headers=ENSEMBL_HEADERS, timeout=self.timeout
+        )
         response.raise_for_status()
         raw = response.json()
 
@@ -193,7 +198,9 @@ class EnsemblPhenotypeTool(BaseTool):
         url = f"{ENSEMBL_BASE_URL}/variation/{species}/{variant_id}"
         params = {"content-type": "application/json", "phenotypes": 1}
 
-        response = requests.get(url, params=params, timeout=self.timeout)
+        response = requests.get(
+            url, params=params, headers=ENSEMBL_HEADERS, timeout=self.timeout
+        )
         response.raise_for_status()
         raw = response.json()
 

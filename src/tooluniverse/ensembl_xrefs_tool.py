@@ -17,6 +17,7 @@ from .base_tool import BaseTool
 from .tool_registry import register_tool
 
 ENSEMBL_REST_BASE = "https://rest.ensembl.org"
+ENSEMBL_HEADERS = {"User-Agent": "ToolUniverse/1.0", "Accept": "application/json"}
 
 
 @register_tool("EnsemblXrefsTool")
@@ -80,7 +81,7 @@ class EnsemblXrefsTool(BaseTool):
             params_parts.append(f"external_db={external_db}")
 
         full_url = f"{url}?{';'.join(params_parts)}"
-        response = requests.get(full_url, timeout=self.timeout)
+        response = requests.get(full_url, headers=ENSEMBL_HEADERS, timeout=self.timeout)
         response.raise_for_status()
         data = response.json()
 
@@ -136,7 +137,7 @@ class EnsemblXrefsTool(BaseTool):
             params_parts.append(f"external_db={external_db}")
 
         full_url = f"{url}?{';'.join(params_parts)}"
-        response = requests.get(full_url, timeout=self.timeout)
+        response = requests.get(full_url, headers=ENSEMBL_HEADERS, timeout=self.timeout)
         response.raise_for_status()
         data = response.json()
 

@@ -19,6 +19,7 @@ from .base_tool import BaseTool
 from .tool_registry import register_tool
 
 ENSEMBL_BASE_URL = "https://rest.ensembl.org"
+ENSEMBL_HEADERS = {"User-Agent": "ToolUniverse/1.0", "Accept": "application/json"}
 
 
 @register_tool("EnsemblLDTool")
@@ -87,7 +88,9 @@ class EnsemblLDTool(BaseTool):
         if d_prime_threshold is not None:
             params["d_prime"] = d_prime_threshold
 
-        response = requests.get(url, params=params, timeout=self.timeout)
+        response = requests.get(
+            url, params=params, headers=ENSEMBL_HEADERS, timeout=self.timeout
+        )
         response.raise_for_status()
         raw = response.json()
 
@@ -149,7 +152,9 @@ class EnsemblLDTool(BaseTool):
         url = f"{ENSEMBL_BASE_URL}/ld/human/pairwise/{variant1}/{variant2}"
         params = {"content-type": "application/json"}
 
-        response = requests.get(url, params=params, timeout=self.timeout)
+        response = requests.get(
+            url, params=params, headers=ENSEMBL_HEADERS, timeout=self.timeout
+        )
         response.raise_for_status()
         raw = response.json()
 

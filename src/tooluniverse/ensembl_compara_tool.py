@@ -15,6 +15,7 @@ from .base_tool import BaseTool
 from .tool_registry import register_tool
 
 ENSEMBL_BASE_URL = "https://rest.ensembl.org"
+ENSEMBL_HEADERS = {"User-Agent": "ToolUniverse/1.0", "Accept": "application/json"}
 
 
 @register_tool("EnsemblComparaTool")
@@ -84,7 +85,7 @@ class EnsemblComparaTool(BaseTool):
         if target_taxon:
             params["target_taxon"] = target_taxon
 
-        headers = {"Content-Type": "application/json"}
+        headers = {**ENSEMBL_HEADERS, "Content-Type": "application/json"}
         response = requests.get(
             url, params=params, headers=headers, timeout=self.timeout
         )
@@ -131,7 +132,7 @@ class EnsemblComparaTool(BaseTool):
             url = f"{ENSEMBL_BASE_URL}/homology/symbol/{species}/{gene}"
 
         params = {"type": "paralogues", "format": "condensed"}
-        headers = {"Content-Type": "application/json"}
+        headers = {**ENSEMBL_HEADERS, "Content-Type": "application/json"}
 
         response = requests.get(
             url, params=params, headers=headers, timeout=self.timeout
@@ -179,7 +180,7 @@ class EnsemblComparaTool(BaseTool):
             url = f"{ENSEMBL_BASE_URL}/genetree/member/symbol/{species}/{gene}"
 
         params = {"nh_format": "simple"}
-        headers = {"Content-Type": "application/json"}
+        headers = {**ENSEMBL_HEADERS, "Content-Type": "application/json"}
 
         response = requests.get(
             url, params=params, headers=headers, timeout=self.timeout

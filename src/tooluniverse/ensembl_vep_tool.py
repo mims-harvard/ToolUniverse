@@ -16,6 +16,7 @@ from .base_tool import BaseTool
 from .tool_registry import register_tool
 
 ENSEMBL_BASE_URL = "https://rest.ensembl.org"
+ENSEMBL_HEADERS = {"User-Agent": "ToolUniverse/1.0", "Accept": "application/json"}
 
 
 @register_tool("EnsemblVEPTool")
@@ -77,7 +78,9 @@ class EnsemblVEPTool(BaseTool):
         url = f"{ENSEMBL_BASE_URL}/vep/{species}/hgvs/{hgvs}"
         params = {"content-type": "application/json"}
 
-        response = requests.get(url, params=params, timeout=self.timeout)
+        response = requests.get(
+            url, params=params, headers=ENSEMBL_HEADERS, timeout=self.timeout
+        )
         response.raise_for_status()
 
         data = response.json()
@@ -112,7 +115,9 @@ class EnsemblVEPTool(BaseTool):
         url = f"{ENSEMBL_BASE_URL}/vep/{species}/id/{variant_id}"
         params = {"content-type": "application/json"}
 
-        response = requests.get(url, params=params, timeout=self.timeout)
+        response = requests.get(
+            url, params=params, headers=ENSEMBL_HEADERS, timeout=self.timeout
+        )
         response.raise_for_status()
 
         data = response.json()
@@ -147,7 +152,9 @@ class EnsemblVEPTool(BaseTool):
         url = f"{ENSEMBL_BASE_URL}/variant_recoder/{species}/{variant_id}"
         params = {"content-type": "application/json"}
 
-        response = requests.get(url, params=params, timeout=self.timeout)
+        response = requests.get(
+            url, params=params, headers=ENSEMBL_HEADERS, timeout=self.timeout
+        )
         response.raise_for_status()
 
         data = response.json()

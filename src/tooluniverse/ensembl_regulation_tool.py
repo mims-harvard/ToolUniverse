@@ -20,6 +20,7 @@ from .base_tool import BaseTool
 from .tool_registry import register_tool
 
 ENSEMBL_BASE_URL = "https://rest.ensembl.org"
+ENSEMBL_HEADERS = {"User-Agent": "ToolUniverse/1.0", "Accept": "application/json"}
 
 
 @register_tool("EnsemblRegulationTool")
@@ -77,7 +78,9 @@ class EnsemblRegulationTool(BaseTool):
         url = f"{ENSEMBL_BASE_URL}/overlap/region/{species}/{region}"
         params = {"feature": "motif", "content-type": "application/json"}
 
-        response = requests.get(url, params=params, timeout=self.timeout)
+        response = requests.get(
+            url, params=params, headers=ENSEMBL_HEADERS, timeout=self.timeout
+        )
         response.raise_for_status()
         raw = response.json()
 
@@ -125,7 +128,9 @@ class EnsemblRegulationTool(BaseTool):
         url = f"{ENSEMBL_BASE_URL}/overlap/region/{species}/{region}"
         params = {"feature": "constrained", "content-type": "application/json"}
 
-        response = requests.get(url, params=params, timeout=self.timeout)
+        response = requests.get(
+            url, params=params, headers=ENSEMBL_HEADERS, timeout=self.timeout
+        )
         response.raise_for_status()
         raw = response.json()
 
@@ -172,7 +177,9 @@ class EnsemblRegulationTool(BaseTool):
         url = f"{ENSEMBL_BASE_URL}/species/{species}/binding_matrix/{matrix_id}"
         params = {"content-type": "application/json"}
 
-        response = requests.get(url, params=params, timeout=self.timeout)
+        response = requests.get(
+            url, params=params, headers=ENSEMBL_HEADERS, timeout=self.timeout
+        )
         response.raise_for_status()
         raw = response.json()
 

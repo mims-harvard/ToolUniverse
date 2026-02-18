@@ -17,6 +17,7 @@ from .base_tool import BaseTool
 from .tool_registry import register_tool
 
 ENSEMBL_REST_BASE = "https://rest.ensembl.org"
+ENSEMBL_HEADERS = {"User-Agent": "ToolUniverse/1.0", "Accept": "application/json"}
 
 
 @register_tool("EnsemblOverlapTool")
@@ -97,7 +98,7 @@ class EnsemblOverlapTool(BaseTool):
         feature_str = ";".join([f"feature={f}" for f in features])
         full_url = f"{url}?{feature_str};content-type=application/json"
 
-        response = requests.get(full_url, timeout=self.timeout)
+        response = requests.get(full_url, headers=ENSEMBL_HEADERS, timeout=self.timeout)
         response.raise_for_status()
         data = response.json()
 
@@ -160,7 +161,7 @@ class EnsemblOverlapTool(BaseTool):
         feature_str = ";".join([f"feature={f}" for f in features])
         url = f"{ENSEMBL_REST_BASE}/overlap/id/{gene_id}?{feature_str};content-type=application/json"
 
-        response = requests.get(url, timeout=self.timeout)
+        response = requests.get(url, headers=ENSEMBL_HEADERS, timeout=self.timeout)
         response.raise_for_status()
         data = response.json()
 
