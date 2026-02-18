@@ -51,13 +51,40 @@ it lives at `huggingface.co/<your_username>/euhealth`.
 
 ---
 
+Codex Configuration
+---------------------------------------------------
+
+To enable embedding/hybrid search in Codex, configure the MCP server:
+
+1. Edit ``~/.codex/config.toml``
+2. Add the ToolUniverse MCP server block with Azure credentials:
+
+.. code-block:: toml
+
+   [mcp_servers.tooluniverse]
+   command = "/path/to/your/.venv/bin/tooluniverse-smcp-stdio"
+   args = []
+   env = {
+     "AZURE_OPENAI_API_KEY" = "your-key-here",
+     "AZURE_OPENAI_ENDPOINT" = "https://your-endpoint.openai.azure.com",
+     "EMBED_PROVIDER" = "azure",
+     "EMBED_MODEL" = "text-embedding-3-small",
+     "OPENAI_API_VERSION" = "2024-12-01-preview"
+   }
+
+3. Restart Codex.
+
+Without this config, searches fall back to keyword (still works, just slower).
+
+---
+
 Use it
 ------
 
 With ToolUniverse
 -----------------
 
-In codex, just talk to your agent in plain English. Examples:
+In Codex (after MCP setup above), just talk to your agent in plain English. Examples:
 
 * “**Find cancer datasets for Germany**.”
   → The agent may use the *euhealth cancer search* tool and returns a list.
@@ -228,9 +255,8 @@ Common questions
 
   If not, use the **Quick start** download or the **Build it yourself** step.
 
-* **Why did embedding fall back to keyword?**  
-Because the shared library requires Azure + text-embedding-3-small.  
-If you don’t configure that, the system safely uses keyword.
+* **Why did embedding fall back to keyword?**
+Either the Codex MCP config (above) isn't set, or your environment doesn't have Azure + text-embedding-3-small configured. Add the config block to `~/.codex/config.toml` and restart Codex to enable embedding search.
 
 * **Where does my data upload now?**
   When you run `tu-datastore sync-hf upload --collection euhealth`, ToolUniverse automatically detects your `HF_TOKEN` and uploads to **your own Hugging Face namespace** (`your_username/euhealth`).
