@@ -1,0 +1,165 @@
+[
+    {
+        "name": "UniRef_get_cluster",
+        "description": "Get detailed information about a UniProt UniRef protein sequence cluster. UniRef clusters group related protein sequences at different identity thresholds: UniRef100 (identical sequences + sub-fragments), UniRef90 (90%+ identity), UniRef50 (50%+ identity). Returns cluster name, member count, representative member details (protein name, organism, accession, sequence length), common taxon, seed sequence, update date, and full protein sequence. Use this to understand protein sequence families and find representative sequences.",
+        "parameter": {
+            "type": "object",
+            "properties": {
+                "cluster_id": {
+                    "type": "string",
+                    "description": "UniRef cluster ID. Format: UniRefNN_ACCESSION. Examples: 'UniRef90_P04637' (p53 cluster at 90% identity, 160 members), 'UniRef50_P04637' (p53 at 50% identity), 'UniRef100_P04637' (identical to p53), 'UniRef90_P00533' (EGFR at 90%)."
+                }
+            },
+            "required": ["cluster_id"]
+        },
+        "fields": {
+            "endpoint": "get_cluster"
+        },
+        "type": "UniRefTool",
+        "test_examples": [
+            {
+                "cluster_id": "UniRef90_P04637"
+            },
+            {
+                "cluster_id": "UniRef50_P00533"
+            }
+        ],
+        "return_schema": {
+            "oneOf": [
+                {
+                    "type": "object",
+                    "properties": {
+                        "data": {
+                            "type": "object",
+                            "properties": {
+                                "cluster_id": {"type": ["string", "null"], "description": "UniRef cluster ID"},
+                                "name": {"type": ["string", "null"], "description": "Cluster name (usually 'Cluster: protein_name')"},
+                                "entry_type": {"type": ["string", "null"], "description": "Cluster type (UniRef100, UniRef90, UniRef50)"},
+                                "member_count": {"type": ["integer", "null"], "description": "Number of sequences in the cluster"},
+                                "updated": {"type": ["string", "null"], "description": "Last update date"},
+                                "seed_id": {"type": ["string", "null"], "description": "Seed sequence identifier"},
+                                "common_taxon": {
+                                    "type": "object",
+                                    "properties": {
+                                        "scientific_name": {"type": ["string", "null"]},
+                                        "taxon_id": {"type": ["integer", "null"]}
+                                    },
+                                    "description": "Most specific taxon common to all members"
+                                },
+                                "representative_member": {
+                                    "type": "object",
+                                    "properties": {
+                                        "member_id": {"type": ["string", "null"]},
+                                        "member_id_type": {"type": ["string", "null"]},
+                                        "organism_name": {"type": ["string", "null"]},
+                                        "organism_tax_id": {"type": ["integer", "null"]},
+                                        "sequence_length": {"type": ["integer", "null"]},
+                                        "protein_name": {"type": ["string", "null"]},
+                                        "accessions": {"type": "array", "items": {"type": "string"}}
+                                    },
+                                    "description": "Representative (longest) member details"
+                                },
+                                "sequence": {"type": ["string", "null"], "description": "Representative protein sequence"},
+                                "sequence_length": {"type": ["integer", "null"], "description": "Sequence length"}
+                            }
+                        },
+                        "metadata": {
+                            "type": "object",
+                            "properties": {
+                                "source": {"type": "string"},
+                                "cluster_id": {"type": "string"}
+                            }
+                        }
+                    }
+                },
+                {
+                    "type": "object",
+                    "properties": {
+                        "error": {"type": "string"}
+                    },
+                    "required": ["error"]
+                }
+            ]
+        }
+    },
+    {
+        "name": "UniRef_search_clusters",
+        "description": "Search UniProt UniRef protein sequence clusters by protein name, gene, organism, or keyword. UniRef clusters group related sequences to reduce redundancy: UniRef90 (default, 90% identity) clusters ~250 million sequences into ~150 million clusters. Useful for finding protein families, identifying sequence redundancy, and obtaining representative sequences for a protein of interest.",
+        "parameter": {
+            "type": "object",
+            "properties": {
+                "query": {
+                    "type": "string",
+                    "description": "Search query. Examples: 'p53', 'insulin', 'kinase Homo sapiens', 'BRCA1', 'hemoglobin'. Supports protein names, gene symbols, organism names."
+                },
+                "cluster_type": {
+                    "type": "string",
+                    "description": "Cluster identity level: 'UniRef100' (identical), 'UniRef90' (90% identity, default), 'UniRef50' (50% identity). Lower identity = fewer, larger clusters."
+                },
+                "size": {
+                    "type": "integer",
+                    "description": "Maximum number of results to return (default: 10, max: 25)."
+                }
+            },
+            "required": ["query"]
+        },
+        "fields": {
+            "endpoint": "search_clusters"
+        },
+        "type": "UniRefTool",
+        "test_examples": [
+            {
+                "query": "p53",
+                "cluster_type": "UniRef90",
+                "size": 5
+            },
+            {
+                "query": "insulin",
+                "size": 5
+            }
+        ],
+        "return_schema": {
+            "oneOf": [
+                {
+                    "type": "object",
+                    "properties": {
+                        "data": {
+                            "type": "array",
+                            "items": {
+                                "type": "object",
+                                "properties": {
+                                    "cluster_id": {"type": ["string", "null"], "description": "UniRef cluster ID"},
+                                    "name": {"type": ["string", "null"], "description": "Cluster name"},
+                                    "entry_type": {"type": ["string", "null"], "description": "Cluster type"},
+                                    "member_count": {"type": ["integer", "null"], "description": "Number of members"},
+                                    "updated": {"type": ["string", "null"], "description": "Last update date"},
+                                    "representative_member_id": {"type": ["string", "null"], "description": "Representative member ID"},
+                                    "representative_organism": {"type": ["string", "null"], "description": "Organism of representative"},
+                                    "representative_protein": {"type": ["string", "null"], "description": "Protein name of representative"},
+                                    "representative_sequence_length": {"type": ["integer", "null"], "description": "Sequence length of representative"},
+                                    "common_taxon": {"type": ["string", "null"], "description": "Common taxon scientific name"}
+                                }
+                            }
+                        },
+                        "metadata": {
+                            "type": "object",
+                            "properties": {
+                                "source": {"type": "string"},
+                                "query": {"type": "string"},
+                                "cluster_type": {"type": "string"},
+                                "returned": {"type": "integer"}
+                            }
+                        }
+                    }
+                },
+                {
+                    "type": "object",
+                    "properties": {
+                        "error": {"type": "string"}
+                    },
+                    "required": ["error"]
+                }
+            ]
+        }
+    }
+]

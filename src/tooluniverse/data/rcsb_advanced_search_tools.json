@@ -1,0 +1,194 @@
+[
+    {
+        "name": "RCSBAdvSearch_search_structures",
+        "description": "Advanced search of RCSB Protein Data Bank structures by combining multiple attribute filters. Filter by organism (species), resolution, experimental method (X-RAY DIFFRACTION, ELECTRON MICROSCOPY, SOLUTION NMR), polymer description, and deposition date. Also supports free-text search combined with attribute filters. Use this when you need to find PDB structures matching specific criteria (e.g., all human cryo-EM structures below 3 Angstrom resolution). Returns PDB IDs sorted by resolution or date.",
+        "parameter": {
+            "type": "object",
+            "properties": {
+                "query": {
+                    "type": ["string", "null"],
+                    "description": "Free-text search query. Examples: 'insulin receptor', 'CRISPR-Cas9', 'COVID spike protein'. Can be combined with other attribute filters."
+                },
+                "organism": {
+                    "type": ["string", "null"],
+                    "description": "Filter by source organism (exact match). Examples: 'Homo sapiens', 'Mus musculus', 'Escherichia coli', 'Saccharomyces cerevisiae', 'SARS-CoV-2'."
+                },
+                "max_resolution": {
+                    "type": ["number", "null"],
+                    "description": "Maximum resolution in Angstroms. Lower values mean higher resolution. Examples: 1.5 (very high), 2.0 (high), 3.0 (moderate), 4.0 (low). Only applies to X-ray and cryo-EM structures."
+                },
+                "experimental_method": {
+                    "type": ["string", "null"],
+                    "description": "Filter by experimental method. Must be EXACT value: 'X-RAY DIFFRACTION', 'ELECTRON MICROSCOPY', 'SOLUTION NMR', 'NEUTRON DIFFRACTION', 'ELECTRON CRYSTALLOGRAPHY'."
+                },
+                "polymer_description": {
+                    "type": ["string", "null"],
+                    "description": "Filter by polymer entity description (contains words). Examples: 'kinase', 'hemoglobin', 'antibody', 'DNA polymerase'."
+                },
+                "min_deposition_date": {
+                    "type": ["string", "null"],
+                    "description": "Only structures deposited after this date. Format: YYYY-MM-DD. Example: '2023-01-01' for structures deposited in 2023 or later."
+                },
+                "rows": {
+                    "type": "integer",
+                    "description": "Number of results to return (default: 10, max: 50)."
+                },
+                "sort_by": {
+                    "type": ["string", "null"],
+                    "description": "Sort results by: 'resolution' (best resolution first, default), 'date' (newest first), 'weight' (smallest first)."
+                }
+            },
+            "required": []
+        },
+        "fields": {
+            "endpoint": "advanced_search"
+        },
+        "type": "RCSBAdvancedSearchTool",
+        "test_examples": [
+            {
+                "organism": "Homo sapiens",
+                "max_resolution": 1.5,
+                "rows": 5
+            },
+            {
+                "query": "insulin receptor",
+                "organism": "Homo sapiens",
+                "experimental_method": "ELECTRON MICROSCOPY",
+                "max_resolution": 3.0,
+                "rows": 5
+            }
+        ],
+        "return_schema": {
+            "oneOf": [
+                {
+                    "type": "object",
+                    "properties": {
+                        "data": {
+                            "type": "array",
+                            "items": {
+                                "type": "object",
+                                "properties": {
+                                    "pdb_id": {
+                                        "type": ["string", "null"],
+                                        "description": "4-character PDB identifier"
+                                    },
+                                    "score": {
+                                        "type": ["number", "null"],
+                                        "description": "Search relevance score"
+                                    }
+                                }
+                            }
+                        },
+                        "metadata": {
+                            "type": "object",
+                            "properties": {
+                                "source": {"type": "string"},
+                                "total_count": {"type": "integer", "description": "Total matching structures in PDB"},
+                                "returned": {"type": "integer"}
+                            }
+                        }
+                    }
+                },
+                {
+                    "type": "object",
+                    "properties": {
+                        "error": {"type": "string"}
+                    },
+                    "required": ["error"]
+                }
+            ]
+        }
+    },
+    {
+        "name": "RCSBAdvSearch_search_by_motif",
+        "description": "Search RCSB PDB for protein structures containing a specific sequence motif pattern. Supports PROSITE patterns, regular expressions, and simple patterns. Useful for finding structures with specific functional motifs like zinc fingers, kinase domains, or any sequence pattern of interest. Returns polymer entity identifiers (PDB_ID + entity number).",
+        "parameter": {
+            "type": "object",
+            "properties": {
+                "pattern": {
+                    "type": "string",
+                    "description": "Sequence motif pattern. PROSITE format examples: 'C-x(2,4)-C-x(3)-[LIVMFYWC]-x(8)-H-x(3,5)-H' (zinc finger), 'G-x(4)-GK-[ST]' (P-loop NTP binding). Regex format: 'C.{2,4}C.{3}[LIVMFYWC].{8}H.{3,5}H'. Simple format: 'CXXCXXXH' (X=any amino acid)."
+                },
+                "pattern_type": {
+                    "type": "string",
+                    "description": "Pattern format: 'prosite' (default, PROSITE-style), 'regex' (regular expression), 'simple' (X=any)."
+                },
+                "sequence_type": {
+                    "type": "string",
+                    "description": "Sequence type: 'protein' (default) or 'dna' or 'rna'."
+                },
+                "rows": {
+                    "type": "integer",
+                    "description": "Number of results to return (default: 10, max: 50)."
+                }
+            },
+            "required": ["pattern"]
+        },
+        "fields": {
+            "endpoint": "motif_search"
+        },
+        "type": "RCSBAdvancedSearchTool",
+        "test_examples": [
+            {
+                "pattern": "C-x(2,4)-C-x(3)-[LIVMFYWC]-x(8)-H-x(3,5)-H",
+                "pattern_type": "prosite",
+                "rows": 5
+            },
+            {
+                "pattern": "G-x(4)-GK-[ST]",
+                "pattern_type": "prosite",
+                "rows": 5
+            }
+        ],
+        "return_schema": {
+            "oneOf": [
+                {
+                    "type": "object",
+                    "properties": {
+                        "data": {
+                            "type": "array",
+                            "items": {
+                                "type": "object",
+                                "properties": {
+                                    "pdb_id": {
+                                        "type": ["string", "null"],
+                                        "description": "4-character PDB identifier"
+                                    },
+                                    "entity_id": {
+                                        "type": ["string", "null"],
+                                        "description": "Polymer entity number within the PDB entry"
+                                    },
+                                    "identifier": {
+                                        "type": ["string", "null"],
+                                        "description": "Full identifier (PDB_ID + entity, e.g., '1A1F_3')"
+                                    },
+                                    "score": {
+                                        "type": ["number", "null"],
+                                        "description": "Match score"
+                                    }
+                                }
+                            }
+                        },
+                        "metadata": {
+                            "type": "object",
+                            "properties": {
+                                "source": {"type": "string"},
+                                "total_count": {"type": "integer"},
+                                "returned": {"type": "integer"},
+                                "pattern": {"type": "string"},
+                                "pattern_type": {"type": "string"}
+                            }
+                        }
+                    }
+                },
+                {
+                    "type": "object",
+                    "properties": {
+                        "error": {"type": "string"}
+                    },
+                    "required": ["error"]
+                }
+            ]
+        }
+    }
+]

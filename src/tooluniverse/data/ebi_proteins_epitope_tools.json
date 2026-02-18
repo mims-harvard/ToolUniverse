@@ -1,0 +1,108 @@
+[
+    {
+        "name": "EBIProteins_get_epitopes",
+        "description": "Get experimentally-determined immune epitope regions for a protein using the EBI Proteins API. Returns epitope positions, sequences, and supporting literature from the Immune Epitope Database (IEDB). Epitopes are regions of proteins recognized by antibodies or T-cells. Critical for vaccine design, therapeutic antibody development, immunogenicity assessment, and understanding immune responses. Example: get epitopes for P04637 (TP53) returns 62 experimentally-mapped epitope regions; P00533 (EGFR) returns epitopes relevant to cancer immunotherapy.",
+        "parameter": {
+            "type": "object",
+            "properties": {
+                "accession": {
+                    "type": "string",
+                    "description": "UniProt accession number for the protein. Examples: 'P04637' (TP53), 'P00533' (EGFR), 'P01308' (insulin), 'P0DTC2' (SARS-CoV-2 spike protein)."
+                }
+            },
+            "required": ["accession"]
+        },
+        "fields": {},
+        "type": "EBIProteinsEpitopeTool",
+        "test_examples": [
+            {
+                "accession": "P04637"
+            },
+            {
+                "accession": "P00533"
+            }
+        ],
+        "return_schema": {
+            "oneOf": [
+                {
+                    "type": "object",
+                    "properties": {
+                        "data": {
+                            "type": "object",
+                            "properties": {
+                                "accession": {
+                                    "type": ["string", "null"],
+                                    "description": "UniProt accession"
+                                },
+                                "entry_name": {
+                                    "type": ["string", "null"],
+                                    "description": "UniProt entry name"
+                                },
+                                "taxid": {
+                                    "type": ["integer", "null"],
+                                    "description": "NCBI taxonomy ID"
+                                },
+                                "total_epitopes": {
+                                    "type": "integer",
+                                    "description": "Total number of epitope regions"
+                                },
+                                "epitopes": {
+                                    "type": "array",
+                                    "items": {
+                                        "type": "object",
+                                        "properties": {
+                                            "type": {
+                                                "type": ["string", "null"],
+                                                "description": "Feature type (EPITOPE)"
+                                            },
+                                            "begin": {
+                                                "type": ["integer", "null"],
+                                                "description": "Start position on protein sequence"
+                                            },
+                                            "end": {
+                                                "type": ["integer", "null"],
+                                                "description": "End position on protein sequence"
+                                            },
+                                            "sequence": {
+                                                "type": ["string", "null"],
+                                                "description": "Epitope amino acid sequence"
+                                            },
+                                            "match_score": {
+                                                "type": ["number", "null"],
+                                                "description": "Epitope match score"
+                                            },
+                                            "description": {
+                                                "type": ["string", "null"],
+                                                "description": "Additional description"
+                                            },
+                                            "pmids": {
+                                                "type": "array",
+                                                "items": {"type": "string"},
+                                                "description": "PubMed IDs of supporting publications"
+                                            },
+                                            "iedb_ids": {
+                                                "type": "array",
+                                                "items": {"type": "string"},
+                                                "description": "IEDB epitope identifiers"
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        },
+                        "metadata": {
+                            "type": "object"
+                        }
+                    }
+                },
+                {
+                    "type": "object",
+                    "properties": {
+                        "error": {"type": "string"}
+                    },
+                    "required": ["error"]
+                }
+            ]
+        }
+    }
+]

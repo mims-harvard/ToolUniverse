@@ -1,0 +1,231 @@
+[
+    {
+        "name": "KEGG_get_gene_pathways",
+        "description": "Get all KEGG pathways that a gene participates in. Returns pathway IDs and names for a given KEGG gene identifier. Example: hsa:7157 (human TP53) participates in 51 pathways including p53 signaling pathway (hsa04115), apoptosis (hsa04210), cell cycle (hsa04110), and 48 disease pathways (various cancers, viral infections). Requires KEGG organism:id format.",
+        "parameter": {
+            "type": "object",
+            "properties": {
+                "gene_id": {
+                    "type": "string",
+                    "description": "KEGG gene identifier in organism:id format. Examples: 'hsa:7157' (human TP53), 'hsa:672' (human BRCA1), 'mmu:22059' (mouse Trp53). Use organism prefix: hsa=human, mmu=mouse, rno=rat, dme=fly, sce=yeast."
+                }
+            },
+            "required": ["gene_id"]
+        },
+        "fields": {
+            "endpoint": "get_gene_pathways"
+        },
+        "type": "KEGGExtTool",
+        "test_examples": [
+            {
+                "gene_id": "hsa:7157"
+            },
+            {
+                "gene_id": "hsa:672"
+            }
+        ],
+        "return_schema": {
+            "oneOf": [
+                {
+                    "type": "object",
+                    "properties": {
+                        "data": {
+                            "type": "object",
+                            "properties": {
+                                "gene_id": {
+                                    "type": "string",
+                                    "description": "Queried KEGG gene ID"
+                                },
+                                "pathway_count": {
+                                    "type": "integer",
+                                    "description": "Number of pathways the gene participates in"
+                                },
+                                "pathways": {
+                                    "type": "array",
+                                    "description": "List of KEGG pathways with IDs and names",
+                                    "items": {
+                                        "type": "object",
+                                        "properties": {
+                                            "pathway_id": {"type": "string"},
+                                            "pathway_name": {"type": "string"}
+                                        }
+                                    }
+                                }
+                            }
+                        },
+                        "metadata": {
+                            "type": "object"
+                        }
+                    },
+                    "required": ["data"]
+                },
+                {
+                    "type": "object",
+                    "properties": {
+                        "error": {
+                            "type": "string"
+                        }
+                    },
+                    "required": ["error"]
+                }
+            ]
+        }
+    },
+    {
+        "name": "KEGG_get_pathway_genes",
+        "description": "Get all genes in a KEGG pathway. Returns gene IDs for all member genes of a specific pathway. Example: hsa04115 (p53 signaling pathway) contains genes including CDK2 (hsa:1017), CDK4 (hsa:1019), CDK6 (hsa:1021), CDKN1A (hsa:1026), CDKN2A (hsa:1029), and many more involved in p53-mediated cell cycle arrest, apoptosis, and senescence.",
+        "parameter": {
+            "type": "object",
+            "properties": {
+                "pathway_id": {
+                    "type": "string",
+                    "description": "KEGG pathway identifier (e.g., 'hsa04115' for p53 signaling pathway, 'hsa04110' for cell cycle, 'hsa04210' for apoptosis). Use organism prefix: hsa=human, mmu=mouse."
+                }
+            },
+            "required": ["pathway_id"]
+        },
+        "fields": {
+            "endpoint": "get_pathway_genes"
+        },
+        "type": "KEGGExtTool",
+        "test_examples": [
+            {
+                "pathway_id": "hsa04115"
+            },
+            {
+                "pathway_id": "hsa04210"
+            }
+        ],
+        "return_schema": {
+            "oneOf": [
+                {
+                    "type": "object",
+                    "properties": {
+                        "data": {
+                            "type": "object",
+                            "properties": {
+                                "pathway_id": {
+                                    "type": "string",
+                                    "description": "KEGG pathway ID"
+                                },
+                                "pathway_name": {
+                                    "type": "string",
+                                    "description": "Pathway name and species"
+                                },
+                                "gene_count": {
+                                    "type": "integer",
+                                    "description": "Number of genes in the pathway"
+                                },
+                                "genes": {
+                                    "type": "array",
+                                    "description": "List of KEGG gene IDs in the pathway",
+                                    "items": {"type": "string"}
+                                }
+                            }
+                        },
+                        "metadata": {
+                            "type": "object"
+                        }
+                    },
+                    "required": ["data"]
+                },
+                {
+                    "type": "object",
+                    "properties": {
+                        "error": {
+                            "type": "string"
+                        }
+                    },
+                    "required": ["error"]
+                }
+            ]
+        }
+    },
+    {
+        "name": "KEGG_get_compound",
+        "description": "Get KEGG compound/metabolite details including names, formula, molecular weight, associated pathways, enzymes, and database cross-references. Example: C00002 (ATP) has formula C10H16N5O13P3, molecular weight 507.18, and is involved in hundreds of metabolic reactions and pathways. Covers metabolites, cofactors, drugs, and other small molecules in the KEGG COMPOUND database.",
+        "parameter": {
+            "type": "object",
+            "properties": {
+                "compound_id": {
+                    "type": "string",
+                    "description": "KEGG compound ID (e.g., 'C00002' for ATP, 'C00031' for D-Glucose, 'C00033' for Acetate, 'C00186' for Ethanol). Always starts with 'C' followed by 5 digits."
+                }
+            },
+            "required": ["compound_id"]
+        },
+        "fields": {
+            "endpoint": "get_compound"
+        },
+        "type": "KEGGExtTool",
+        "test_examples": [
+            {
+                "compound_id": "C00002"
+            },
+            {
+                "compound_id": "C00031"
+            }
+        ],
+        "return_schema": {
+            "oneOf": [
+                {
+                    "type": "object",
+                    "properties": {
+                        "data": {
+                            "type": "object",
+                            "properties": {
+                                "compound_id": {
+                                    "type": "string",
+                                    "description": "KEGG compound ID"
+                                },
+                                "names": {
+                                    "type": "array",
+                                    "description": "Compound names (common and systematic)",
+                                    "items": {"type": "string"}
+                                },
+                                "formula": {
+                                    "type": ["string", "null"],
+                                    "description": "Chemical formula"
+                                },
+                                "exact_mass": {
+                                    "type": ["number", "null"],
+                                    "description": "Exact mass in Da"
+                                },
+                                "mol_weight": {
+                                    "type": ["number", "null"],
+                                    "description": "Molecular weight in Da"
+                                },
+                                "pathways": {
+                                    "type": "object",
+                                    "description": "Map of pathway IDs to names"
+                                },
+                                "enzymes": {
+                                    "type": "array",
+                                    "description": "EC numbers of enzymes using this compound",
+                                    "items": {"type": "string"}
+                                },
+                                "dblinks": {
+                                    "type": "object",
+                                    "description": "Cross-references to other databases (PubChem, ChEBI, DrugBank, etc.)"
+                                }
+                            }
+                        },
+                        "metadata": {
+                            "type": "object"
+                        }
+                    },
+                    "required": ["data"]
+                },
+                {
+                    "type": "object",
+                    "properties": {
+                        "error": {
+                            "type": "string"
+                        }
+                    },
+                    "required": ["error"]
+                }
+            ]
+        }
+    }
+]

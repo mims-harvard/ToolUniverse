@@ -1,0 +1,255 @@
+[
+    {
+        "name": "ReactomeInteractors_get_protein_interactors",
+        "description": "Get protein-protein interaction partners for a specific protein from Reactome's IntAct-derived interaction data. Returns interactor accessions, gene names, confidence scores, and evidence counts. Interactions are curated from experimental data with molecular interaction (MI) scores. Example: get interactors for P04637 (TP53) returns 248 interactors including MDM2 (score 0.995, 119 evidences), EP300 (score 0.976), BRCA1 (score 0.944); for Q04206 (NF-kB p65/RELA) returns 105 interactors.",
+        "parameter": {
+            "type": "object",
+            "properties": {
+                "accession": {
+                    "type": "string",
+                    "description": "UniProt accession number for the query protein. Examples: 'P04637' (TP53), 'Q04206' (NF-kB p65), 'P00533' (EGFR), 'P38398' (BRCA1)."
+                },
+                "page_size": {
+                    "type": ["integer", "null"],
+                    "description": "Maximum number of interactors to return (default: 20, max: 100)."
+                }
+            },
+            "required": ["accession"]
+        },
+        "fields": {
+            "endpoint": "interactors"
+        },
+        "type": "ReactomeInteractorsTool",
+        "test_examples": [
+            {
+                "accession": "P04637",
+                "page_size": 10
+            },
+            {
+                "accession": "Q04206",
+                "page_size": 10
+            }
+        ],
+        "return_schema": {
+            "oneOf": [
+                {
+                    "type": "object",
+                    "properties": {
+                        "data": {
+                            "type": "object",
+                            "properties": {
+                                "accession": {
+                                    "type": ["string", "null"],
+                                    "description": "Query protein UniProt accession"
+                                },
+                                "total_interactors": {
+                                    "type": ["integer", "null"],
+                                    "description": "Total number of known interactors"
+                                },
+                                "interactors": {
+                                    "type": "array",
+                                    "items": {
+                                        "type": "object",
+                                        "properties": {
+                                            "accession": {
+                                                "type": ["string", "null"],
+                                                "description": "Interactor UniProt accession"
+                                            },
+                                            "alias": {
+                                                "type": ["string", "null"],
+                                                "description": "Gene name/alias of interactor"
+                                            },
+                                            "score": {
+                                                "type": ["number", "null"],
+                                                "description": "Interaction confidence score (0-1, higher = more confident)"
+                                            },
+                                            "evidences": {
+                                                "type": ["integer", "null"],
+                                                "description": "Number of experimental evidences supporting this interaction"
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        },
+                        "metadata": {
+                            "type": "object"
+                        }
+                    }
+                },
+                {
+                    "type": "object",
+                    "properties": {
+                        "error": {"type": "string"}
+                    },
+                    "required": ["error"]
+                }
+            ]
+        }
+    },
+    {
+        "name": "ReactomeInteractors_get_entity_pathways",
+        "description": "Find Reactome biological pathways that contain a specific molecular entity. Returns pathway stable IDs, names, and whether they are disease-associated. Use Reactome stable IDs (e.g., R-HSA-199420 for PTEN) obtained from ReactomeInteractors_search_entity. Example: R-HSA-199420 (PTEN) participates in 10 pathways including PI3K/AKT signaling, PTEN regulation, and TCR signaling.",
+        "parameter": {
+            "type": "object",
+            "properties": {
+                "entity_id": {
+                    "type": "string",
+                    "description": "Reactome stable identifier for the entity. Use ReactomeInteractors_search_entity to find IDs. Examples: 'R-HSA-199420' (PTEN), 'R-HSA-69541' (TP53 tetramer), 'R-HSA-8869337' (TP53)."
+                },
+                "species": {
+                    "type": ["integer", "null"],
+                    "description": "NCBI taxonomy ID for species filter (default: 9606 for human). Examples: 9606 (human), 10090 (mouse)."
+                }
+            },
+            "required": ["entity_id"]
+        },
+        "fields": {
+            "endpoint": "entity_pathways"
+        },
+        "type": "ReactomeInteractorsTool",
+        "test_examples": [
+            {
+                "entity_id": "R-HSA-199420"
+            },
+            {
+                "entity_id": "R-HSA-8869337"
+            }
+        ],
+        "return_schema": {
+            "oneOf": [
+                {
+                    "type": "object",
+                    "properties": {
+                        "data": {
+                            "type": "array",
+                            "items": {
+                                "type": "object",
+                                "properties": {
+                                    "stable_id": {
+                                        "type": ["string", "null"],
+                                        "description": "Reactome pathway stable identifier"
+                                    },
+                                    "name": {
+                                        "type": ["string", "null"],
+                                        "description": "Pathway name"
+                                    },
+                                    "species": {
+                                        "type": ["string", "null"],
+                                        "description": "Species name"
+                                    },
+                                    "is_disease": {
+                                        "type": "boolean",
+                                        "description": "Whether pathway is disease-associated"
+                                    },
+                                    "has_diagram": {
+                                        "type": "boolean",
+                                        "description": "Whether pathway has a diagram available"
+                                    }
+                                }
+                            }
+                        },
+                        "metadata": {
+                            "type": "object"
+                        }
+                    }
+                },
+                {
+                    "type": "object",
+                    "properties": {
+                        "error": {"type": "string"}
+                    },
+                    "required": ["error"]
+                }
+            ]
+        }
+    },
+    {
+        "name": "ReactomeInteractors_search_entity",
+        "description": "Search Reactome for biological entities (proteins, complexes, reactions, pathways) by name or identifier. Returns Reactome stable IDs, entity names, types, and species. Use this to find Reactome IDs for proteins before querying their interactors or pathways. Results are grouped by entity type (Protein, Complex, Reaction, Pathway). Example: search 'TP53' returns TP53 protein entities with stable IDs like R-HSA-69488; search 'apoptosis' returns apoptosis-related reactions and pathways.",
+        "parameter": {
+            "type": "object",
+            "properties": {
+                "query": {
+                    "type": "string",
+                    "description": "Search query - gene name, protein name, pathway name, or Reactome ID. Examples: 'TP53', 'BRCA1', 'apoptosis', 'insulin signaling', 'cell cycle'."
+                },
+                "species": {
+                    "type": ["string", "null"],
+                    "description": "Species name filter (default: 'Homo sapiens'). Examples: 'Homo sapiens', 'Mus musculus', 'Rattus norvegicus'."
+                },
+                "types": {
+                    "type": ["string", "null"],
+                    "description": "Entity type filter. Options: 'Protein', 'Complex', 'Reaction', 'Pathway', 'SmallMolecule'. If null, returns all types."
+                }
+            },
+            "required": ["query"]
+        },
+        "fields": {
+            "endpoint": "search_entity"
+        },
+        "type": "ReactomeInteractorsTool",
+        "test_examples": [
+            {
+                "query": "TP53",
+                "types": "Protein"
+            },
+            {
+                "query": "apoptosis"
+            }
+        ],
+        "return_schema": {
+            "oneOf": [
+                {
+                    "type": "object",
+                    "properties": {
+                        "data": {
+                            "type": "array",
+                            "items": {
+                                "type": "object",
+                                "properties": {
+                                    "stable_id": {
+                                        "type": ["string", "null"],
+                                        "description": "Reactome stable identifier (e.g., R-HSA-69488)"
+                                    },
+                                    "name": {
+                                        "type": ["string", "null"],
+                                        "description": "Entity name"
+                                    },
+                                    "type": {
+                                        "type": ["string", "null"],
+                                        "description": "Entity type: Protein, Complex, Reaction, Pathway, etc."
+                                    },
+                                    "species": {
+                                        "type": ["array", "null"],
+                                        "items": {"type": "string"},
+                                        "description": "Species list"
+                                    },
+                                    "exact_type": {
+                                        "type": ["string", "null"],
+                                        "description": "Exact Reactome entity type"
+                                    },
+                                    "compartment_names": {
+                                        "type": ["array", "null"],
+                                        "items": {"type": "string"},
+                                        "description": "Cellular compartment locations"
+                                    }
+                                }
+                            }
+                        },
+                        "metadata": {
+                            "type": "object"
+                        }
+                    }
+                },
+                {
+                    "type": "object",
+                    "properties": {
+                        "error": {"type": "string"}
+                    },
+                    "required": ["error"]
+                }
+            ]
+        }
+    }
+]

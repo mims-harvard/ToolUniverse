@@ -1,0 +1,184 @@
+[
+    {
+        "name": "EnsemblVar_get_population_frequencies",
+        "description": "Get allele frequency data for a variant (SNP/indel) across global populations from gnomAD and 1000 Genomes via Ensembl. Returns allele frequencies broken down by population (e.g., gnomADe:ALL, gnomADe:nfe, 1000GENOMES:phase_3:CEU, etc.). Essential for assessing variant rarity in different ethnic groups, interpreting clinical significance, and population genetics studies. Example: rs429358 (APOE epsilon-4 allele) shows C allele frequency of 14.8% globally (gnomAD), 22.7% in African populations, 9.8% in East Asian populations.",
+        "parameter": {
+            "type": "object",
+            "properties": {
+                "variant_id": {
+                    "type": "string",
+                    "description": "dbSNP rsID of the variant. Examples: 'rs429358' (APOE), 'rs7903146' (TCF7L2), 'rs1042779'."
+                },
+                "species": {
+                    "type": "string",
+                    "description": "Species name. Default 'human'. Examples: 'human', 'homo_sapiens'."
+                }
+            },
+            "required": ["variant_id"]
+        },
+        "fields": {
+            "endpoint": "population_frequencies"
+        },
+        "type": "EnsemblVariationExtTool",
+        "test_examples": [
+            {
+                "variant_id": "rs429358"
+            },
+            {
+                "variant_id": "rs7903146",
+                "species": "human"
+            }
+        ],
+        "return_schema": {
+            "oneOf": [
+                {
+                    "type": "object",
+                    "properties": {
+                        "data": {
+                            "type": "object",
+                            "properties": {
+                                "variant_id": {"type": "string"},
+                                "most_severe_consequence": {"type": ["string", "null"]},
+                                "source": {"type": ["string", "null"]},
+                                "location": {
+                                    "type": "object",
+                                    "properties": {
+                                        "chromosome": {"type": "string"},
+                                        "start": {"type": "integer"},
+                                        "allele_string": {"type": "string"},
+                                        "assembly": {"type": "string"}
+                                    }
+                                },
+                                "populations": {
+                                    "type": "array",
+                                    "items": {
+                                        "type": "object",
+                                        "properties": {
+                                            "population": {"type": "string", "description": "Population name (e.g., gnomADe:ALL, 1000GENOMES:phase_3:CEU)"},
+                                            "allele": {"type": "string", "description": "Allele base(s)"},
+                                            "frequency": {"type": "number", "description": "Allele frequency (0-1)"},
+                                            "allele_count": {"type": ["integer", "null"]},
+                                            "count": {"type": ["integer", "null"]}
+                                        }
+                                    },
+                                    "description": "Allele frequency data across global populations"
+                                }
+                            }
+                        },
+                        "metadata": {
+                            "type": "object",
+                            "properties": {
+                                "source": {"type": "string"},
+                                "total_population_entries": {"type": "integer"},
+                                "unique_populations": {"type": "integer"}
+                            }
+                        }
+                    },
+                    "required": ["data"]
+                },
+                {
+                    "type": "object",
+                    "properties": {
+                        "error": {"type": "string"}
+                    },
+                    "required": ["error"]
+                }
+            ]
+        }
+    },
+    {
+        "name": "EnsemblVar_get_variant_consequences",
+        "description": "Get detailed variant information including consequence type, clinical significance, synonyms, evidence attributes, and allele mappings from Ensembl. More comprehensive than VEP - returns the full variant record with all known synonyms, mapped positions, ancestral allele, and minor allele data. Example: rs429358 returns most_severe_consequence='missense_variant', 27 synonyms, mapped to chr19:44908684 (GRCh38), and is classified as a missense_variant affecting APOE.",
+        "parameter": {
+            "type": "object",
+            "properties": {
+                "variant_id": {
+                    "type": "string",
+                    "description": "dbSNP rsID of the variant. Examples: 'rs429358' (APOE), 'rs7903146' (TCF7L2), 'rs1042779'."
+                },
+                "species": {
+                    "type": "string",
+                    "description": "Species name. Default 'human'. Examples: 'human', 'homo_sapiens'."
+                }
+            },
+            "required": ["variant_id"]
+        },
+        "fields": {
+            "endpoint": "variant_detail"
+        },
+        "type": "EnsemblVariationExtTool",
+        "test_examples": [
+            {
+                "variant_id": "rs429358"
+            },
+            {
+                "variant_id": "rs7903146"
+            }
+        ],
+        "return_schema": {
+            "oneOf": [
+                {
+                    "type": "object",
+                    "properties": {
+                        "data": {
+                            "type": "object",
+                            "properties": {
+                                "name": {"type": "string"},
+                                "source": {"type": ["string", "null"]},
+                                "most_severe_consequence": {"type": ["string", "null"]},
+                                "ancestral_allele": {"type": ["string", "null"]},
+                                "minor_allele": {"type": ["string", "null"]},
+                                "MAF": {"type": ["number", "null"]},
+                                "synonyms": {
+                                    "type": "array",
+                                    "items": {"type": "string"},
+                                    "description": "Alternative variant identifiers"
+                                },
+                                "mappings": {
+                                    "type": "array",
+                                    "items": {
+                                        "type": "object",
+                                        "properties": {
+                                            "seq_region_name": {"type": "string"},
+                                            "start": {"type": "integer"},
+                                            "end": {"type": "integer"},
+                                            "allele_string": {"type": "string"},
+                                            "strand": {"type": "integer"},
+                                            "assembly_name": {"type": "string"}
+                                        }
+                                    }
+                                },
+                                "evidence": {
+                                    "type": "array",
+                                    "items": {"type": "string"},
+                                    "description": "Evidence tags (e.g., 1000Genomes, gnomAD, Cited)"
+                                },
+                                "clinical_significance": {
+                                    "type": "array",
+                                    "items": {"type": "string"},
+                                    "description": "Clinical significance annotations"
+                                }
+                            }
+                        },
+                        "metadata": {
+                            "type": "object",
+                            "properties": {
+                                "source": {"type": "string"},
+                                "total_synonyms": {"type": "integer"},
+                                "total_mappings": {"type": "integer"}
+                            }
+                        }
+                    },
+                    "required": ["data"]
+                },
+                {
+                    "type": "object",
+                    "properties": {
+                        "error": {"type": "string"}
+                    },
+                    "required": ["error"]
+                }
+            ]
+        }
+    }
+]

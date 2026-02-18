@@ -1,0 +1,263 @@
+[
+    {
+        "name": "InterPro_get_protein_domain_architecture",
+        "description": "Get the complete Pfam domain architecture for a protein with exact residue positions using the InterPro API. Returns all Pfam domains mapped to the protein with start/end coordinates, E-values, and integrated InterPro entries. Much more detailed than simple domain lists - includes precise domain boundaries essential for understanding protein function. Example: P04637 (TP53, 393aa) has 4 Pfam domains: PF00870 (P53 DNA-binding, 100-288), PF07710 (tetramerisation, 319-357), PF08563 (transactivation, 6-30), PF18521 (transactivation domain 2, 35-59).",
+        "parameter": {
+            "type": "object",
+            "properties": {
+                "accession": {
+                    "type": "string",
+                    "description": "UniProt protein accession. Examples: 'P04637' (TP53, 4 Pfam domains), 'P00533' (EGFR), 'P38398' (BRCA1), 'P01308' (Insulin)."
+                }
+            },
+            "required": [
+                "accession"
+            ]
+        },
+        "fields": {
+            "endpoint": "protein_domain_architecture"
+        },
+        "type": "InterProDomainArchTool",
+        "test_examples": [
+            {
+                "accession": "P04637"
+            },
+            {
+                "accession": "P00533"
+            }
+        ],
+        "return_schema": {
+            "oneOf": [
+                {
+                    "type": "object",
+                    "properties": {
+                        "data": {
+                            "type": "object",
+                            "properties": {
+                                "accession": {
+                                    "type": "string",
+                                    "description": "UniProt accession queried"
+                                },
+                                "protein_length": {
+                                    "type": ["integer", "null"],
+                                    "description": "Full protein sequence length"
+                                },
+                                "domain_count": {
+                                    "type": "integer",
+                                    "description": "Number of Pfam domains found"
+                                },
+                                "domains": {
+                                    "type": "array",
+                                    "description": "List of Pfam domains with positions",
+                                    "items": {
+                                        "type": "object",
+                                        "properties": {
+                                            "pfam_accession": {"type": "string"},
+                                            "name": {"type": "string"},
+                                            "type": {"type": "string"},
+                                            "integrated_interpro": {"type": ["string", "null"]},
+                                            "start": {"type": "integer"},
+                                            "end": {"type": "integer"},
+                                            "score": {"type": ["number", "null"]}
+                                        }
+                                    }
+                                }
+                            }
+                        },
+                        "metadata": {
+                            "type": "object"
+                        }
+                    },
+                    "required": ["data"]
+                },
+                {
+                    "type": "object",
+                    "properties": {
+                        "error": {
+                            "type": "string"
+                        }
+                    },
+                    "required": ["error"]
+                }
+            ]
+        }
+    },
+    {
+        "name": "InterPro_get_structures_for_domain",
+        "description": "Find all PDB structures containing a specific Pfam domain using the InterPro API. Returns experimental structures (X-ray, cryo-EM, NMR) that contain the specified domain, with resolution and experiment type. Useful for finding structural templates for a domain of interest. Example: PF00870 (P53 DNA-binding domain) has 215 PDB structures; PF00069 (Protein kinase) has 5,238 structures. Results sorted by most recent.",
+        "parameter": {
+            "type": "object",
+            "properties": {
+                "pfam_accession": {
+                    "type": "string",
+                    "description": "Pfam domain accession. Examples: 'PF00870' (P53 DNA-binding, 215 structures), 'PF00069' (Protein kinase, 5238 structures), 'PF07710' (P53 tetramerisation), 'PF00046' (Homeodomain)."
+                },
+                "max_results": {
+                    "type": "integer",
+                    "description": "Maximum number of PDB structures to return (default 20, max 200).",
+                    "default": 20
+                }
+            },
+            "required": [
+                "pfam_accession"
+            ]
+        },
+        "fields": {
+            "endpoint": "structures_for_domain"
+        },
+        "type": "InterProDomainArchTool",
+        "test_examples": [
+            {
+                "pfam_accession": "PF00870",
+                "max_results": 10
+            },
+            {
+                "pfam_accession": "PF00069",
+                "max_results": 5
+            }
+        ],
+        "return_schema": {
+            "oneOf": [
+                {
+                    "type": "object",
+                    "properties": {
+                        "data": {
+                            "type": "object",
+                            "properties": {
+                                "pfam_accession": {
+                                    "type": "string",
+                                    "description": "Pfam accession queried"
+                                },
+                                "total_structures": {
+                                    "type": "integer",
+                                    "description": "Total number of PDB structures containing this domain"
+                                },
+                                "returned": {
+                                    "type": "integer",
+                                    "description": "Number of structures returned"
+                                },
+                                "structures": {
+                                    "type": "array",
+                                    "description": "PDB structures containing the domain",
+                                    "items": {
+                                        "type": "object",
+                                        "properties": {
+                                            "pdb_id": {"type": "string"},
+                                            "name": {"type": ["string", "null"]},
+                                            "experiment_type": {"type": ["string", "null"]},
+                                            "resolution": {"type": ["number", "null"]}
+                                        }
+                                    }
+                                }
+                            }
+                        },
+                        "metadata": {
+                            "type": "object"
+                        }
+                    },
+                    "required": ["data"]
+                },
+                {
+                    "type": "object",
+                    "properties": {
+                        "error": {
+                            "type": "string"
+                        }
+                    },
+                    "required": ["error"]
+                }
+            ]
+        }
+    },
+    {
+        "name": "InterPro_get_clan_members",
+        "description": "Get all member families in a Pfam clan (superfamily) using the InterPro API. Pfam clans group related families that share a common evolutionary origin. Returns member family accessions, names, types, and relationship scores. Example: CL0016 (PKinase) contains 30+ member families including PF00069 (Protein kinase), PF03770 (Inositol polyphosphate kinase), PF02958 (EcKL), and many others. Useful for understanding domain superfamily relationships and finding distantly related proteins.",
+        "parameter": {
+            "type": "object",
+            "properties": {
+                "clan_accession": {
+                    "type": "string",
+                    "description": "Pfam clan accession. Examples: 'CL0016' (PKinase superfamily, 30+ families), 'CL0023' (P53-like transcription factor), 'CL0004' (EGF superfamily), 'CL0159' (E2 superfamily)."
+                },
+                "max_results": {
+                    "type": "integer",
+                    "description": "Maximum number of member families to return (default 50, max 200).",
+                    "default": 50
+                }
+            },
+            "required": [
+                "clan_accession"
+            ]
+        },
+        "fields": {
+            "endpoint": "clan_members"
+        },
+        "type": "InterProDomainArchTool",
+        "test_examples": [
+            {
+                "clan_accession": "CL0016"
+            },
+            {
+                "clan_accession": "CL0023",
+                "max_results": 20
+            }
+        ],
+        "return_schema": {
+            "oneOf": [
+                {
+                    "type": "object",
+                    "properties": {
+                        "data": {
+                            "type": "object",
+                            "properties": {
+                                "clan_accession": {
+                                    "type": "string",
+                                    "description": "Pfam clan accession"
+                                },
+                                "clan_name": {
+                                    "type": ["string", "null"],
+                                    "description": "Name of the clan/superfamily"
+                                },
+                                "description": {
+                                    "type": ["string", "null"],
+                                    "description": "Description of the superfamily"
+                                },
+                                "member_count": {
+                                    "type": "integer",
+                                    "description": "Total number of member families"
+                                },
+                                "members": {
+                                    "type": "array",
+                                    "description": "Member Pfam families in this clan",
+                                    "items": {
+                                        "type": "object",
+                                        "properties": {
+                                            "accession": {"type": "string"},
+                                            "short_name": {"type": ["string", "null"]},
+                                            "name": {"type": ["string", "null"]},
+                                            "type": {"type": ["string", "null"]},
+                                            "score": {"type": ["number", "null"]}
+                                        }
+                                    }
+                                }
+                            }
+                        },
+                        "metadata": {
+                            "type": "object"
+                        }
+                    },
+                    "required": ["data"]
+                },
+                {
+                    "type": "object",
+                    "properties": {
+                        "error": {
+                            "type": "string"
+                        }
+                    },
+                    "required": ["error"]
+                }
+            ]
+        }
+    }
+]

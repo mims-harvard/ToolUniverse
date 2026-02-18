@@ -1,0 +1,255 @@
+[
+    {
+        "name": "SynBioHub_search_parts",
+        "description": "Search the SynBioHub synthetic biology parts repository for genetic parts and designs by keyword. SynBioHub hosts the iGEM Registry of Standard Biological Parts (20,000+ BioBricks) and other public SBOL collections. Parts include promoters, coding sequences (CDS/genes), terminators, ribosome binding sites (RBS), reporters (GFP, RFP, LacZ), regulatory elements, and composite genetic devices. Returns part IDs, names, descriptions, SBOL types, and functional roles. Example: search 'GFP' finds green fluorescent protein parts; search 'lac promoter' finds lac operon regulatory parts.",
+        "parameter": {
+            "type": "object",
+            "properties": {
+                "query": {
+                    "type": "string",
+                    "description": "Search query for finding genetic parts. Can include gene names, part functions, BioBrick IDs, or biological descriptions. Examples: 'GFP', 'lac promoter', 'BBa_E0040', 'terminator', 'riboswitch', 'CRISPR', 'T7 promoter'."
+                },
+                "offset": {
+                    "type": ["integer", "null"],
+                    "description": "Offset for pagination (default: 0)."
+                },
+                "limit": {
+                    "type": ["integer", "null"],
+                    "description": "Maximum number of results to return (default: 10, max: 50)."
+                }
+            },
+            "required": ["query"]
+        },
+        "fields": {
+            "endpoint": "search"
+        },
+        "type": "SynBioHubTool",
+        "test_examples": [
+            {
+                "query": "GFP",
+                "limit": 5
+            },
+            {
+                "query": "lac promoter",
+                "limit": 3
+            }
+        ],
+        "return_schema": {
+            "oneOf": [
+                {
+                    "type": "object",
+                    "properties": {
+                        "data": {
+                            "type": "array",
+                            "items": {
+                                "type": "object",
+                                "properties": {
+                                    "display_id": {
+                                        "type": ["string", "null"],
+                                        "description": "Part identifier (e.g., BBa_E0040)"
+                                    },
+                                    "name": {
+                                        "type": ["string", "null"],
+                                        "description": "Human-readable part name"
+                                    },
+                                    "description": {
+                                        "type": ["string", "null"],
+                                        "description": "Part description"
+                                    },
+                                    "uri": {
+                                        "type": ["string", "null"],
+                                        "description": "SynBioHub URI for the part (use with SynBioHub_get_part)"
+                                    },
+                                    "version": {
+                                        "type": ["string", "null"],
+                                        "description": "Part version number"
+                                    },
+                                    "sbol_type": {
+                                        "type": ["string", "null"],
+                                        "description": "SBOL type: ComponentDefinition, Sequence, etc."
+                                    },
+                                    "role": {
+                                        "type": ["string", "null"],
+                                        "description": "Functional role: promoter, CDS, terminator, RBS, etc."
+                                    }
+                                }
+                            }
+                        },
+                        "metadata": {
+                            "type": "object"
+                        }
+                    }
+                },
+                {
+                    "type": "object",
+                    "properties": {
+                        "error": {"type": "string"}
+                    },
+                    "required": ["error"]
+                }
+            ]
+        }
+    },
+    {
+        "name": "SynBioHub_get_collections",
+        "description": "List all public collections available on SynBioHub. Collections are curated sets of genetic parts and designs, including the iGEM Parts Registry, CIDAR Lab parts, Free Genes feature libraries, and organism-specific collections. Returns collection names, descriptions, URIs, and member counts. Use this to discover available part libraries before searching for specific parts.",
+        "parameter": {
+            "type": "object",
+            "properties": {},
+            "required": []
+        },
+        "fields": {
+            "endpoint": "get_collections"
+        },
+        "type": "SynBioHubTool",
+        "test_examples": [
+            {}
+        ],
+        "return_schema": {
+            "oneOf": [
+                {
+                    "type": "object",
+                    "properties": {
+                        "data": {
+                            "type": "array",
+                            "items": {
+                                "type": "object",
+                                "properties": {
+                                    "name": {
+                                        "type": ["string", "null"],
+                                        "description": "Collection name"
+                                    },
+                                    "description": {
+                                        "type": ["string", "null"],
+                                        "description": "Collection description"
+                                    },
+                                    "display_id": {
+                                        "type": ["string", "null"],
+                                        "description": "Collection identifier"
+                                    },
+                                    "uri": {
+                                        "type": ["string", "null"],
+                                        "description": "Collection URI"
+                                    },
+                                    "version": {
+                                        "type": ["string", "null"],
+                                        "description": "Collection version"
+                                    },
+                                    "member_count": {
+                                        "type": ["integer", "null"],
+                                        "description": "Number of parts in collection"
+                                    }
+                                }
+                            }
+                        },
+                        "metadata": {
+                            "type": "object"
+                        }
+                    }
+                },
+                {
+                    "type": "object",
+                    "properties": {
+                        "error": {"type": "string"}
+                    },
+                    "required": ["error"]
+                }
+            ]
+        }
+    },
+    {
+        "name": "SynBioHub_get_part",
+        "description": "Get detailed SBOL (Synthetic Biology Open Language) information for a specific genetic part from SynBioHub. Returns the part's title, description, DNA sequence, sequence length, functional roles, creation date, and provenance. Can look up by full URI or by iGEM BioBrick display ID (e.g., BBa_E0040 for GFP). Example: get details for BBa_E0040 (GFP coding sequence, 720bp) including its full DNA sequence.",
+        "parameter": {
+            "type": "object",
+            "properties": {
+                "display_id": {
+                    "type": ["string", "null"],
+                    "description": "BioBrick/part display ID from the iGEM collection. Examples: 'BBa_E0040' (GFP), 'BBa_R0010' (lac promoter), 'BBa_B0034' (RBS). If not from iGEM, use part_uri instead."
+                },
+                "part_uri": {
+                    "type": ["string", "null"],
+                    "description": "Full SynBioHub URI for the part (from search results). Example: 'https://synbiohub.org/public/igem/BBa_E0040/1'. Use this for parts not in iGEM collection."
+                }
+            },
+            "required": []
+        },
+        "fields": {
+            "endpoint": "get_part"
+        },
+        "type": "SynBioHubTool",
+        "test_examples": [
+            {
+                "display_id": "BBa_E0040"
+            },
+            {
+                "display_id": "BBa_R0010"
+            }
+        ],
+        "return_schema": {
+            "oneOf": [
+                {
+                    "type": "object",
+                    "properties": {
+                        "data": {
+                            "type": "object",
+                            "properties": {
+                                "display_id": {
+                                    "type": ["string", "null"],
+                                    "description": "Part display identifier"
+                                },
+                                "title": {
+                                    "type": ["string", "null"],
+                                    "description": "Human-readable part title"
+                                },
+                                "description": {
+                                    "type": ["string", "null"],
+                                    "description": "Part description"
+                                },
+                                "type": {
+                                    "type": ["string", "null"],
+                                    "description": "SBOL biological type (e.g., DnaRegion)"
+                                },
+                                "role": {
+                                    "type": ["array", "null"],
+                                    "items": {"type": "string"},
+                                    "description": "Functional roles (SO terms and iGEM part types)"
+                                },
+                                "sequence": {
+                                    "type": ["string", "null"],
+                                    "description": "DNA sequence (first 500 characters)"
+                                },
+                                "sequence_length": {
+                                    "type": ["integer", "null"],
+                                    "description": "Full sequence length in base pairs"
+                                },
+                                "created": {
+                                    "type": ["string", "null"],
+                                    "description": "Creation date"
+                                },
+                                "modified": {
+                                    "type": ["string", "null"],
+                                    "description": "Last modification date"
+                                },
+                                "derived_from": {
+                                    "type": ["string", "null"],
+                                    "description": "Original source URI (e.g., iGEM registry URL)"
+                                }
+                            }
+                        },
+                        "metadata": {
+                            "type": "object"
+                        }
+                    }
+                },
+                {
+                    "type": "object",
+                    "properties": {
+                        "error": {"type": "string"}
+                    },
+                    "required": ["error"]
+                }
+            ]
+        }
+    }
+]

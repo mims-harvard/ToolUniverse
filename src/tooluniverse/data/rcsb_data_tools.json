@@ -1,0 +1,325 @@
+[
+    {
+        "name": "RCSBData_get_entry",
+        "description": "Get comprehensive structure metadata for a PDB entry from the RCSB Data API. Returns experimental method, resolution, deposition/release dates, polymer/nonpolymer entity counts, molecular weight, assembly count, space group, and unit cell dimensions. This is the direct REST endpoint for PDB entry details, complementing GraphQL-based tools. Example: '4HHB' returns hemoglobin at 1.74A by X-ray diffraction, deposited 1984-03-07, 2 polymer entities.",
+        "parameter": {
+            "type": "object",
+            "properties": {
+                "pdb_id": {
+                    "type": "string",
+                    "description": "PDB entry ID (4 characters). Examples: '4HHB' (hemoglobin), '1TUP' (p53-DNA complex), '1M17' (EGFR kinase), '6LU7' (SARS-CoV-2 main protease)."
+                }
+            },
+            "required": [
+                "pdb_id"
+            ]
+        },
+        "fields": {
+            "endpoint": "entry"
+        },
+        "type": "RCSBDataTool",
+        "test_examples": [
+            {
+                "pdb_id": "4HHB"
+            },
+            {
+                "pdb_id": "1TUP"
+            }
+        ],
+        "return_schema": {
+            "oneOf": [
+                {
+                    "type": "object",
+                    "properties": {
+                        "data": {
+                            "type": "object",
+                            "properties": {
+                                "pdb_id": {
+                                    "type": ["string", "null"],
+                                    "description": "PDB entry ID"
+                                },
+                                "title": {
+                                    "type": ["string", "null"],
+                                    "description": "Structure title"
+                                },
+                                "method": {
+                                    "type": ["string", "null"],
+                                    "description": "Experimental method (X-RAY DIFFRACTION, ELECTRON MICROSCOPY, NMR, etc.)"
+                                },
+                                "resolution": {
+                                    "type": ["number", "null"],
+                                    "description": "Resolution in Angstroms"
+                                },
+                                "deposit_date": {
+                                    "type": ["string", "null"],
+                                    "description": "Deposition date"
+                                },
+                                "release_date": {
+                                    "type": ["string", "null"],
+                                    "description": "Initial release date"
+                                },
+                                "revision_date": {
+                                    "type": ["string", "null"],
+                                    "description": "Last revision date"
+                                },
+                                "polymer_entity_count": {
+                                    "type": ["integer", "null"],
+                                    "description": "Number of polymer entities (proteins, nucleic acids)"
+                                },
+                                "nonpolymer_entity_count": {
+                                    "type": ["integer", "null"],
+                                    "description": "Number of non-polymer entities (ligands, ions)"
+                                },
+                                "deposited_atom_count": {
+                                    "type": ["integer", "null"],
+                                    "description": "Total deposited atom count"
+                                },
+                                "deposited_model_count": {
+                                    "type": ["integer", "null"],
+                                    "description": "Deposited modeled polymer monomer count"
+                                },
+                                "molecular_weight": {
+                                    "type": ["number", "null"],
+                                    "description": "Total molecular weight in kDa"
+                                },
+                                "assembly_count": {
+                                    "type": ["integer", "null"],
+                                    "description": "Number of biological assemblies"
+                                },
+                                "space_group": {
+                                    "type": ["string", "null"],
+                                    "description": "Crystal space group"
+                                },
+                                "unit_cell": {
+                                    "type": ["object", "null"],
+                                    "description": "Unit cell dimensions (a, b, c, alpha, beta, gamma)"
+                                }
+                            }
+                        },
+                        "metadata": {
+                            "type": "object",
+                            "properties": {
+                                "source": {"type": "string"},
+                                "pdb_id": {"type": "string"}
+                            }
+                        }
+                    }
+                },
+                {
+                    "type": "object",
+                    "properties": {
+                        "error": {"type": "string"}
+                    },
+                    "required": ["error"]
+                }
+            ]
+        }
+    },
+    {
+        "name": "RCSBData_get_assembly",
+        "description": "Get biological assembly details for a PDB structure from the RCSB Data API. Returns oligomeric state (monomeric, dimeric, tetrameric, etc.), stoichiometry, polymer/nonpolymer entity counts in the assembly, symmetry operations, and evidence for the biological relevance of the assembly. Example: '4HHB' assembly 1 returns 'tetrameric' with 2 polymer entities (alpha and beta hemoglobin).",
+        "parameter": {
+            "type": "object",
+            "properties": {
+                "pdb_id": {
+                    "type": "string",
+                    "description": "PDB entry ID (4 characters). Examples: '4HHB' (hemoglobin tetramer), '1TUP' (p53 dimer), '3PQR' (insulin hexamer)."
+                },
+                "assembly_id": {
+                    "type": "string",
+                    "description": "Assembly identifier (default '1' for the first/preferred assembly). Most structures have assembly 1 as the biologically relevant form.",
+                    "default": "1"
+                }
+            },
+            "required": [
+                "pdb_id"
+            ]
+        },
+        "fields": {
+            "endpoint": "assembly"
+        },
+        "type": "RCSBDataTool",
+        "test_examples": [
+            {
+                "pdb_id": "4HHB",
+                "assembly_id": "1"
+            },
+            {
+                "pdb_id": "1TUP"
+            }
+        ],
+        "return_schema": {
+            "oneOf": [
+                {
+                    "type": "object",
+                    "properties": {
+                        "data": {
+                            "type": "object",
+                            "properties": {
+                                "pdb_id": {
+                                    "type": ["string", "null"],
+                                    "description": "PDB entry ID"
+                                },
+                                "assembly_id": {
+                                    "type": ["string", "null"],
+                                    "description": "Assembly identifier"
+                                },
+                                "oligomeric_details": {
+                                    "type": ["string", "null"],
+                                    "description": "Oligomeric state description (e.g., 'tetrameric', 'dimeric')"
+                                },
+                                "oligomeric_count": {
+                                    "type": ["integer", "null"],
+                                    "description": "Number of polymer chains in assembly"
+                                },
+                                "method_details": {
+                                    "type": ["string", "null"],
+                                    "description": "Method used to determine assembly (PISA, author, etc.)"
+                                },
+                                "polymer_entity_count": {
+                                    "type": ["integer", "null"],
+                                    "description": "Unique polymer entity types in assembly"
+                                },
+                                "nonpolymer_entity_count": {
+                                    "type": ["integer", "null"],
+                                    "description": "Unique non-polymer entity types in assembly"
+                                },
+                                "polymer_entity_instance_count": {
+                                    "type": ["integer", "null"],
+                                    "description": "Total polymer chain instances in assembly"
+                                },
+                                "total_polymer_monomer_count": {
+                                    "type": ["integer", "null"],
+                                    "description": "Total residues across all polymer chains"
+                                },
+                                "operations": {
+                                    "type": "array",
+                                    "items": {"type": "object"},
+                                    "description": "Symmetry operations defining the assembly"
+                                },
+                                "evidence": {
+                                    "type": "array",
+                                    "items": {"type": "object"},
+                                    "description": "Evidence for biological relevance"
+                                }
+                            }
+                        },
+                        "metadata": {
+                            "type": "object",
+                            "properties": {
+                                "source": {"type": "string"},
+                                "pdb_id": {"type": "string"},
+                                "assembly_id": {"type": "string"}
+                            }
+                        }
+                    }
+                },
+                {
+                    "type": "object",
+                    "properties": {
+                        "error": {"type": "string"}
+                    },
+                    "required": ["error"]
+                }
+            ]
+        }
+    },
+    {
+        "name": "RCSBData_get_nonpolymer_entity",
+        "description": "Get non-polymer entity (ligand/small molecule) details from a PDB structure via the RCSB Data API. Returns the chemical name, component ID, formula weight, chain assignments, and any DrugBank or other database annotations. Useful for identifying what ligands, cofactors, or ions are bound in a structure. Example: '4HHB' entity 3 returns 'PROTOPORPHYRIN IX CONTAINING FE' (HEM), the heme group bound to hemoglobin.",
+        "parameter": {
+            "type": "object",
+            "properties": {
+                "pdb_id": {
+                    "type": "string",
+                    "description": "PDB entry ID (4 characters). Examples: '4HHB' (hemoglobin + heme), '3ERT' (estrogen receptor + tamoxifen), '6LU7' (SARS-CoV-2 + inhibitor)."
+                },
+                "entity_id": {
+                    "type": "string",
+                    "description": "Entity ID within the PDB entry. Non-polymer entities typically start after the polymer entities. Use pdbe_get_entry_molecules or RCSBGraphQL_get_structure_summary to discover entity IDs."
+                }
+            },
+            "required": [
+                "pdb_id",
+                "entity_id"
+            ]
+        },
+        "fields": {
+            "endpoint": "nonpolymer_entity"
+        },
+        "type": "RCSBDataTool",
+        "test_examples": [
+            {
+                "pdb_id": "4HHB",
+                "entity_id": "3"
+            },
+            {
+                "pdb_id": "4HHB",
+                "entity_id": "4"
+            }
+        ],
+        "return_schema": {
+            "oneOf": [
+                {
+                    "type": "object",
+                    "properties": {
+                        "data": {
+                            "type": "object",
+                            "properties": {
+                                "pdb_id": {
+                                    "type": ["string", "null"],
+                                    "description": "PDB entry ID"
+                                },
+                                "entity_id": {
+                                    "type": ["string", "null"],
+                                    "description": "Entity identifier"
+                                },
+                                "name": {
+                                    "type": ["string", "null"],
+                                    "description": "Chemical name of the non-polymer entity"
+                                },
+                                "comp_id": {
+                                    "type": ["string", "null"],
+                                    "description": "Chemical component ID (e.g., HEM, ATP, ZN)"
+                                },
+                                "formula_weight": {
+                                    "type": ["number", "null"],
+                                    "description": "Formula weight in kDa"
+                                },
+                                "details": {
+                                    "type": ["string", "null"],
+                                    "description": "Additional details"
+                                },
+                                "auth_asym_ids": {
+                                    "type": "array",
+                                    "items": {"type": "string"},
+                                    "description": "Chain IDs where this entity is found"
+                                },
+                                "annotations": {
+                                    "type": "array",
+                                    "items": {"type": "object"},
+                                    "description": "Database annotations (DrugBank, etc.)"
+                                }
+                            }
+                        },
+                        "metadata": {
+                            "type": "object",
+                            "properties": {
+                                "source": {"type": "string"},
+                                "pdb_id": {"type": "string"},
+                                "entity_id": {"type": "string"}
+                            }
+                        }
+                    }
+                },
+                {
+                    "type": "object",
+                    "properties": {
+                        "error": {"type": "string"}
+                    },
+                    "required": ["error"]
+                }
+            ]
+        }
+    }
+]

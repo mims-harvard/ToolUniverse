@@ -1,0 +1,178 @@
+[
+    {
+        "name": "OxO_get_ontology_mappings",
+        "description": "Get cross-reference mappings between ontology terms using the EBI Ontology Xref Service (OxO). Maps identifiers across biomedical ontologies including Disease Ontology (DOID), HPO, MeSH, SNOMED-CT, UMLS, OMIM, ICD-10, NCIt, and more. Supports configurable mapping distance (1=direct, 2=via intermediary, 3=two hops). Example: HP:0001250 (seizures) maps to 9 terms across MeSH (D012640, D004827), SNOMED-CT (128613002, 91175000), and UMLS (C0014544). Useful for translating between terminologies in clinical and biomedical data integration.",
+        "parameter": {
+            "type": "object",
+            "properties": {
+                "term_id": {
+                    "type": "string",
+                    "description": "Ontology term identifier to map. Format: PREFIX:ID. Examples: 'HP:0001250' (seizures), 'DOID:9352' (type 2 diabetes), 'GO:0006915' (apoptosis), 'CHEBI:15365' (aspirin), 'OMIM:114480' (breast cancer)."
+                },
+                "distance": {
+                    "type": "integer",
+                    "description": "Maximum mapping distance. 1=direct mappings only, 2=via one intermediary, 3=via two intermediaries. Higher distance finds more mappings but may be less precise. Default: 1.",
+                    "default": 1
+                },
+                "size": {
+                    "type": "integer",
+                    "description": "Maximum number of mappings to return (default 20, max 100).",
+                    "default": 20
+                }
+            },
+            "required": [
+                "term_id"
+            ]
+        },
+        "fields": {
+            "endpoint": "get_mappings"
+        },
+        "type": "OxOTool",
+        "test_examples": [
+            {
+                "term_id": "HP:0001250",
+                "distance": 1
+            },
+            {
+                "term_id": "DOID:9352",
+                "distance": 2,
+                "size": 10
+            }
+        ],
+        "return_schema": {
+            "oneOf": [
+                {
+                    "type": "object",
+                    "properties": {
+                        "data": {
+                            "type": "object",
+                            "properties": {
+                                "query_id": {
+                                    "type": "string",
+                                    "description": "The ontology term that was queried"
+                                },
+                                "query_label": {
+                                    "type": ["string", "null"],
+                                    "description": "Human-readable label for the queried term"
+                                },
+                                "total_mappings": {
+                                    "type": "integer",
+                                    "description": "Total number of cross-reference mappings found"
+                                },
+                                "mappings": {
+                                    "type": "array",
+                                    "description": "List of mapped terms with database prefix, CURIE identifier, label, distance, and mapping source",
+                                    "items": {
+                                        "type": "object",
+                                        "properties": {
+                                            "curie": {"type": "string"},
+                                            "label": {"type": ["string", "null"]},
+                                            "prefix": {"type": "string"},
+                                            "distance": {"type": "integer"},
+                                            "source_type": {"type": ["string", "null"]}
+                                        }
+                                    }
+                                }
+                            }
+                        },
+                        "metadata": {
+                            "type": "object"
+                        }
+                    },
+                    "required": ["data"]
+                },
+                {
+                    "type": "object",
+                    "properties": {
+                        "error": {
+                            "type": "string"
+                        }
+                    },
+                    "required": ["error"]
+                }
+            ]
+        }
+    },
+    {
+        "name": "OxO_search_ontology_mappings",
+        "description": "Search for cross-reference mappings for multiple ontology terms at once using the EBI OxO service. Supports batch queries to map multiple terms across biomedical ontologies. Can filter by target ontology prefix (e.g., only return MeSH mappings). Example: mapping HP:0001250 and HP:0001263 simultaneously returns MeSH, SNOMED-CT, and UMLS equivalents for both seizure-related phenotypes.",
+        "parameter": {
+            "type": "object",
+            "properties": {
+                "term_ids": {
+                    "type": "string",
+                    "description": "Comma-separated list of ontology term IDs to map. Examples: 'HP:0001250,HP:0001263' (seizures and delayed motor development), 'DOID:9352,DOID:162' (T2DM and cancer)."
+                },
+                "distance": {
+                    "type": "integer",
+                    "description": "Maximum mapping distance (1-3). Default: 1.",
+                    "default": 1
+                },
+                "target_prefix": {
+                    "type": "string",
+                    "description": "Filter mappings to a specific ontology prefix. Examples: 'MeSH' (Medical Subject Headings), 'SNOMEDCT' (clinical terms), 'UMLS' (unified medical language), 'ICD10' (diagnostic codes), 'OMIM' (genetic disorders)."
+                }
+            },
+            "required": [
+                "term_ids"
+            ]
+        },
+        "fields": {
+            "endpoint": "search_mappings"
+        },
+        "type": "OxOTool",
+        "test_examples": [
+            {
+                "term_ids": "HP:0001250,HP:0001263",
+                "distance": 1
+            },
+            {
+                "term_ids": "DOID:9352",
+                "target_prefix": "MeSH"
+            }
+        ],
+        "return_schema": {
+            "oneOf": [
+                {
+                    "type": "object",
+                    "properties": {
+                        "data": {
+                            "type": "object",
+                            "properties": {
+                                "queries": {
+                                    "type": "integer",
+                                    "description": "Number of terms queried"
+                                },
+                                "results": {
+                                    "type": "array",
+                                    "description": "Mapping results for each queried term",
+                                    "items": {
+                                        "type": "object",
+                                        "properties": {
+                                            "query_id": {"type": "string"},
+                                            "mappings_count": {"type": "integer"},
+                                            "mappings": {"type": "array"}
+                                        }
+                                    }
+                                }
+                            }
+                        },
+                        "metadata": {
+                            "type": "object"
+                        }
+                    },
+                    "required": ["data"]
+                },
+                {
+                    "type": "object",
+                    "properties": {
+                        "error": {
+                            "type": "string"
+                        }
+                    },
+                    "required": ["error"]
+                }
+            ]
+        }
+    }
+]

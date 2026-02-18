@@ -1,0 +1,207 @@
+[
+    {
+        "name": "InterPro_get_entries_for_protein",
+        "description": "Get all InterPro domain and family entries annotated on a specific protein. Performs a reverse lookup from a UniProt protein accession to all InterPro entries (domains, families, homologous superfamilies, conserved sites) that have been detected on that protein. Example: P04637 (TP53) has 9 InterPro entries including IPR002117 (p53 family), IPR011615 (p53 DNA-binding domain), IPR010991 (p53 tetramerisation domain), IPR013872 (p53 transactivation domain).",
+        "parameter": {
+            "type": "object",
+            "properties": {
+                "accession": {
+                    "type": "string",
+                    "description": "UniProt protein accession. Examples: 'P04637' (TP53, 9 entries), 'P00533' (EGFR), 'P01308' (Insulin), 'P38398' (BRCA1)."
+                }
+            },
+            "required": [
+                "accession"
+            ]
+        },
+        "fields": {
+            "endpoint": "entries_for_protein"
+        },
+        "type": "InterProEntryTool",
+        "test_examples": [
+            {
+                "accession": "P04637"
+            },
+            {
+                "accession": "P00533"
+            }
+        ],
+        "return_schema": {
+            "oneOf": [
+                {
+                    "type": "object",
+                    "properties": {
+                        "data": {
+                            "type": "object",
+                            "properties": {
+                                "protein_accession": {
+                                    "type": "string",
+                                    "description": "UniProt accession queried"
+                                },
+                                "total_entries": {
+                                    "type": "integer",
+                                    "description": "Total number of InterPro entries for this protein"
+                                },
+                                "entries": {
+                                    "type": "array",
+                                    "items": {
+                                        "type": "object",
+                                        "properties": {
+                                            "accession": {
+                                                "type": ["string", "null"],
+                                                "description": "InterPro accession (e.g., IPR011615)"
+                                            },
+                                            "name": {
+                                                "type": ["string", "null"],
+                                                "description": "Entry full name"
+                                            },
+                                            "short_name": {
+                                                "type": ["string", "null"],
+                                                "description": "Entry short name"
+                                            },
+                                            "type": {
+                                                "type": ["string", "null"],
+                                                "description": "Entry type (domain, family, homologous_superfamily, conserved_site)"
+                                            },
+                                            "source_database": {
+                                                "type": ["string", "null"],
+                                                "description": "Source database (interpro)"
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        },
+                        "metadata": {
+                            "type": "object"
+                        }
+                    },
+                    "required": ["data"]
+                },
+                {
+                    "type": "object",
+                    "properties": {
+                        "error": {
+                            "type": "string"
+                        }
+                    },
+                    "required": ["error"]
+                }
+            ]
+        }
+    },
+    {
+        "name": "InterPro_search_entries",
+        "description": "Search InterPro entries (domains, families, sites) by keyword. Returns matching InterPro entries with accession, name, type, and statistics (protein count, structure count, taxa count). Useful for discovering protein domains and families by name or function. Example: searching 'zinc finger' returns 466 entries including IPR000058 (AN1-type), IPR000306 (FYVE zinc finger), IPR000315 (B-box-type). Searching 'kinase' returns domain and family entries for protein kinases.",
+        "parameter": {
+            "type": "object",
+            "properties": {
+                "query": {
+                    "type": "string",
+                    "description": "Search keyword. Examples: 'zinc finger' (466 entries), 'kinase', 'immunoglobulin', 'helicase', 'protease', 'p53'."
+                },
+                "entry_type": {
+                    "type": "string",
+                    "description": "Filter by entry type. Options: 'domain', 'family', 'homologous_superfamily', 'repeat', 'conserved_site', 'active_site', 'binding_site', 'ptm'."
+                },
+                "page_size": {
+                    "type": "integer",
+                    "description": "Number of results to return (1-50, default 20).",
+                    "default": 20
+                }
+            },
+            "required": [
+                "query"
+            ]
+        },
+        "fields": {
+            "endpoint": "search_entries"
+        },
+        "type": "InterProEntryTool",
+        "test_examples": [
+            {
+                "query": "zinc finger"
+            },
+            {
+                "query": "kinase",
+                "entry_type": "domain",
+                "page_size": 10
+            }
+        ],
+        "return_schema": {
+            "oneOf": [
+                {
+                    "type": "object",
+                    "properties": {
+                        "data": {
+                            "type": "object",
+                            "properties": {
+                                "query": {
+                                    "type": "string",
+                                    "description": "Search query used"
+                                },
+                                "total_results": {
+                                    "type": "integer",
+                                    "description": "Total number of matching entries"
+                                },
+                                "returned": {
+                                    "type": "integer",
+                                    "description": "Number of entries returned"
+                                },
+                                "entries": {
+                                    "type": "array",
+                                    "items": {
+                                        "type": "object",
+                                        "properties": {
+                                            "accession": {
+                                                "type": ["string", "null"],
+                                                "description": "InterPro accession"
+                                            },
+                                            "name": {
+                                                "type": ["string", "null"],
+                                                "description": "Entry name"
+                                            },
+                                            "short_name": {
+                                                "type": ["string", "null"],
+                                                "description": "Short name"
+                                            },
+                                            "type": {
+                                                "type": ["string", "null"],
+                                                "description": "Entry type"
+                                            },
+                                            "protein_count": {
+                                                "type": ["integer", "null"],
+                                                "description": "Number of proteins with this entry"
+                                            },
+                                            "structure_count": {
+                                                "type": ["integer", "null"],
+                                                "description": "Number of associated structures"
+                                            },
+                                            "taxa_count": {
+                                                "type": ["integer", "null"],
+                                                "description": "Number of species with this entry"
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        },
+                        "metadata": {
+                            "type": "object"
+                        }
+                    },
+                    "required": ["data"]
+                },
+                {
+                    "type": "object",
+                    "properties": {
+                        "error": {
+                            "type": "string"
+                        }
+                    },
+                    "required": ["error"]
+                }
+            ]
+        }
+    }
+]

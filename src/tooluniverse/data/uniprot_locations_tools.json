@@ -1,0 +1,182 @@
+[
+    {
+        "name": "UniProtLocations_get_location",
+        "description": "Get detailed information about a UniProt subcellular location by its ID. Returns the location name, definition, category (Cellular component, Topology, Orientation), Gene Ontology mappings, associated UniProt keyword, protein count statistics (reviewed/unreviewed), hierarchical relationships (parent and child locations), and synonyms. Use this to understand where proteins are localized within cells.",
+        "parameter": {
+            "type": "object",
+            "properties": {
+                "location_id": {
+                    "type": "string",
+                    "description": "UniProt subcellular location ID. Format: SL-XXXX. Examples: 'SL-0091' (Cytosol), 'SL-0191' (Nucleus), 'SL-0173' (Mitochondrion), 'SL-0204' (Plasma membrane), 'SL-0147' (Endomembrane system), 'SL-0123' (Golgi apparatus)."
+                }
+            },
+            "required": ["location_id"]
+        },
+        "fields": {
+            "endpoint": "get_location"
+        },
+        "type": "UniProtLocationsTool",
+        "test_examples": [
+            {
+                "location_id": "SL-0091"
+            },
+            {
+                "location_id": "SL-0173"
+            }
+        ],
+        "return_schema": {
+            "oneOf": [
+                {
+                    "type": "object",
+                    "properties": {
+                        "data": {
+                            "type": "object",
+                            "properties": {
+                                "id": {"type": ["string", "null"], "description": "Location ID (SL-XXXX)"},
+                                "name": {"type": ["string", "null"], "description": "Location name"},
+                                "definition": {"type": ["string", "null"], "description": "Full text definition"},
+                                "content": {"type": ["string", "null"], "description": "Content descriptor"},
+                                "category": {"type": ["string", "null"], "description": "Category (Cellular component, Topology, Orientation)"},
+                                "note": {"type": ["string", "null"], "description": "Additional notes"},
+                                "synonyms": {"type": "array", "items": {"type": "string"}, "description": "Alternative names"},
+                                "keyword": {
+                                    "type": ["object", "null"],
+                                    "properties": {
+                                        "id": {"type": "string"},
+                                        "name": {"type": "string"}
+                                    },
+                                    "description": "Associated UniProt keyword"
+                                },
+                                "gene_ontologies": {
+                                    "type": "array",
+                                    "items": {
+                                        "type": "object",
+                                        "properties": {
+                                            "go_id": {"type": "string"},
+                                            "name": {"type": "string"}
+                                        }
+                                    },
+                                    "description": "Mapped Gene Ontology terms"
+                                },
+                                "reviewed_protein_count": {"type": ["integer", "null"], "description": "Number of reviewed (Swiss-Prot) proteins in this location"},
+                                "unreviewed_protein_count": {"type": ["integer", "null"], "description": "Number of unreviewed (TrEMBL) proteins"},
+                                "part_of": {
+                                    "type": "array",
+                                    "items": {
+                                        "type": "object",
+                                        "properties": {
+                                            "id": {"type": "string"},
+                                            "name": {"type": "string"}
+                                        }
+                                    },
+                                    "description": "Parent locations"
+                                },
+                                "children": {
+                                    "type": "array",
+                                    "items": {
+                                        "type": "object",
+                                        "properties": {
+                                            "id": {"type": "string"},
+                                            "name": {"type": "string"}
+                                        }
+                                    },
+                                    "description": "Child (sub-)locations"
+                                }
+                            }
+                        },
+                        "metadata": {
+                            "type": "object",
+                            "properties": {
+                                "source": {"type": "string"}
+                            }
+                        }
+                    }
+                },
+                {
+                    "type": "object",
+                    "properties": {
+                        "error": {"type": "string"}
+                    },
+                    "required": ["error"]
+                }
+            ]
+        }
+    },
+    {
+        "name": "UniProtLocations_search",
+        "description": "Search UniProt subcellular locations by name or keyword. Find cellular compartments, organelles, membrane locations, and other subcellular structures. Returns matching locations with IDs, definitions, categories, GO mappings, and protein count statistics. Use this to discover relevant subcellular locations for cell biology research.",
+        "parameter": {
+            "type": "object",
+            "properties": {
+                "query": {
+                    "type": "string",
+                    "description": "Search query for subcellular locations. Examples: 'nucleus', 'membrane', 'mitochondria', 'endoplasmic reticulum', 'lysosome', 'extracellular', 'cytoskeleton'."
+                },
+                "size": {
+                    "type": "integer",
+                    "description": "Maximum number of results to return (default: 10, max: 50)."
+                }
+            },
+            "required": ["query"]
+        },
+        "fields": {
+            "endpoint": "search_locations"
+        },
+        "type": "UniProtLocationsTool",
+        "test_examples": [
+            {
+                "query": "nucleus",
+                "size": 5
+            },
+            {
+                "query": "mitochondria",
+                "size": 5
+            }
+        ],
+        "return_schema": {
+            "oneOf": [
+                {
+                    "type": "object",
+                    "properties": {
+                        "data": {
+                            "type": "array",
+                            "items": {
+                                "type": "object",
+                                "properties": {
+                                    "id": {"type": ["string", "null"], "description": "Location ID"},
+                                    "name": {"type": ["string", "null"], "description": "Location name"},
+                                    "definition": {"type": ["string", "null"], "description": "Definition"},
+                                    "content": {"type": ["string", "null"], "description": "Content descriptor"},
+                                    "category": {"type": ["string", "null"], "description": "Category"},
+                                    "note": {"type": ["string", "null"]},
+                                    "synonyms": {"type": "array", "items": {"type": "string"}},
+                                    "keyword": {"type": ["object", "null"]},
+                                    "gene_ontologies": {"type": "array"},
+                                    "reviewed_protein_count": {"type": ["integer", "null"]},
+                                    "unreviewed_protein_count": {"type": ["integer", "null"]},
+                                    "part_of": {"type": "array"},
+                                    "children": {"type": "array"}
+                                }
+                            }
+                        },
+                        "metadata": {
+                            "type": "object",
+                            "properties": {
+                                "source": {"type": "string"},
+                                "query": {"type": "string"},
+                                "returned": {"type": "integer"}
+                            }
+                        }
+                    }
+                },
+                {
+                    "type": "object",
+                    "properties": {
+                        "error": {"type": "string"}
+                    },
+                    "required": ["error"]
+                }
+            ]
+        }
+    }
+]

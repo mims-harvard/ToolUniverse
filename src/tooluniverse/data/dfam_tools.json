@@ -1,0 +1,261 @@
+[
+    {
+        "name": "Dfam_search_families",
+        "description": "Search Dfam for transposable element (TE) / repeat element families by name prefix, taxonomic clade, or repeat type. Dfam is the authoritative database of repetitive DNA, including SINEs (Alu), LINEs (L1), DNA transposons, LTR retrotransposons, and satellites. Returns family accession, name, length, classification, and repeat type. Useful for identifying repeat families in a genome or studying transposon evolution. Example: searching name_prefix='AluS' returns Alu SINE subfamilies (AluSc, AluSx, etc.) found in primates; clade=9606 with repeat_type='SINE' returns human-specific SINEs.",
+        "parameter": {
+            "type": "object",
+            "properties": {
+                "name_prefix": {
+                    "type": "string",
+                    "description": "TE family name prefix to search (e.g., 'AluS', 'L1M', 'SVA', 'MER'). Case-sensitive."
+                },
+                "clade": {
+                    "type": "string",
+                    "description": "Taxonomic clade filter as NCBI taxon ID (e.g., '9606' for human, '40674' for Mammalia, '7227' for Drosophila)."
+                },
+                "repeat_type": {
+                    "type": "string",
+                    "description": "Repeat type filter. Options: 'SINE', 'LINE', 'LTR', 'DNA', 'Satellite', 'RC', 'Other'."
+                },
+                "limit": {
+                    "type": "integer",
+                    "description": "Maximum number of results (default 20, max 50)."
+                }
+            },
+            "required": []
+        },
+        "fields": {
+            "endpoint": "search_families"
+        },
+        "type": "DfamTool",
+        "test_examples": [
+            {
+                "name_prefix": "AluS"
+            },
+            {
+                "clade": "9606",
+                "repeat_type": "SINE",
+                "limit": 5
+            }
+        ],
+        "return_schema": {
+            "oneOf": [
+                {
+                    "type": "object",
+                    "properties": {
+                        "data": {
+                            "type": "array",
+                            "items": {
+                                "type": "object",
+                                "properties": {
+                                    "accession": {"type": "string", "description": "Dfam accession (e.g., DF000000003)"},
+                                    "name": {"type": "string", "description": "Family name (e.g., AluSc)"},
+                                    "title": {"type": ["string", "null"]},
+                                    "description": {"type": ["string", "null"]},
+                                    "length": {"type": "integer", "description": "Consensus sequence length in bp"},
+                                    "repeat_type": {"type": "string", "description": "Major type (SINE, LINE, DNA, LTR, etc.)"},
+                                    "repeat_subtype": {"type": ["string", "null"], "description": "Subtype (Alu, L1, ERV, etc.)"},
+                                    "classification": {"type": "string"}
+                                }
+                            },
+                            "description": "List of matching TE families"
+                        },
+                        "metadata": {
+                            "type": "object",
+                            "properties": {
+                                "source": {"type": "string"},
+                                "total_count": {"type": "integer"},
+                                "returned": {"type": "integer"}
+                            }
+                        }
+                    },
+                    "required": ["data"]
+                },
+                {
+                    "type": "object",
+                    "properties": {
+                        "error": {"type": "string"}
+                    },
+                    "required": ["error"]
+                }
+            ]
+        }
+    },
+    {
+        "name": "Dfam_get_family",
+        "description": "Get detailed information for a specific Dfam transposable element family by accession. Returns consensus sequence, taxonomic classification, repeat type/subtype, clade distribution, author, citations, and curation state. Useful for studying TE biology, understanding repeat element structure, or getting consensus sequences for bioinformatics analysis. Example: DF000000003 returns AluSc (309bp SINE/Alu, consensus sequence, found in primates, published Jurka 1988).",
+        "parameter": {
+            "type": "object",
+            "properties": {
+                "accession": {
+                    "type": "string",
+                    "description": "Dfam family accession (e.g., 'DF000000003' for AluSc, 'DF000000053' for AluYa5)."
+                }
+            },
+            "required": ["accession"]
+        },
+        "fields": {
+            "endpoint": "get_family"
+        },
+        "type": "DfamTool",
+        "test_examples": [
+            {
+                "accession": "DF000000003"
+            },
+            {
+                "accession": "DF000000053"
+            }
+        ],
+        "return_schema": {
+            "oneOf": [
+                {
+                    "type": "object",
+                    "properties": {
+                        "data": {
+                            "type": "object",
+                            "properties": {
+                                "accession": {"type": "string"},
+                                "name": {"type": "string"},
+                                "title": {"type": ["string", "null"]},
+                                "description": {"type": ["string", "null"]},
+                                "length": {"type": "integer"},
+                                "classification": {"type": "string"},
+                                "repeat_type": {"type": "string"},
+                                "repeat_subtype": {"type": ["string", "null"]},
+                                "consensus_sequence": {"type": "string", "description": "Full consensus nucleotide sequence"},
+                                "author": {"type": ["string", "null"]},
+                                "date_created": {"type": ["string", "null"]},
+                                "date_modified": {"type": ["string", "null"]},
+                                "curation_state": {"type": ["string", "null"]},
+                                "clades": {"type": "array", "items": {"type": "string"}},
+                                "citations": {
+                                    "type": "array",
+                                    "items": {
+                                        "type": "object",
+                                        "properties": {
+                                            "pmid": {"type": ["integer", "null"]},
+                                            "title": {"type": ["string", "null"]},
+                                            "authors": {"type": ["string", "null"]}
+                                        }
+                                    }
+                                },
+                                "aliases": {"type": "array"}
+                            }
+                        },
+                        "metadata": {
+                            "type": "object",
+                            "properties": {
+                                "source": {"type": "string"}
+                            }
+                        }
+                    },
+                    "required": ["data"]
+                },
+                {
+                    "type": "object",
+                    "properties": {
+                        "error": {"type": "string"}
+                    },
+                    "required": ["error"]
+                }
+            ]
+        }
+    },
+    {
+        "name": "Dfam_get_annotations",
+        "description": "Get transposable element (TE) annotations for a genomic region from Dfam. Returns all TE/repeat element hits in the specified chromosomal region including family name, type (SINE, LINE, DNA, LTR, Satellite), strand, bit score, E-value, and alignment coordinates. Useful for analyzing repeat content of a genomic locus, identifying TEs near genes, or studying TE distribution. Example: chr1:10000-50000 in hg38 returns hits including TAR1 satellites, L1MC4a LINEs, MER5B DNA transposons, MIR1 SINEs.",
+        "parameter": {
+            "type": "object",
+            "properties": {
+                "assembly": {
+                    "type": "string",
+                    "description": "Genome assembly name (default 'hg38'). Options: 'hg38', 'hg19', 'mm10', 'mm39', 'dm6', etc."
+                },
+                "chrom": {
+                    "type": "string",
+                    "description": "Chromosome name (e.g., 'chr1', 'chr17', 'chrX')."
+                },
+                "start": {
+                    "type": "integer",
+                    "description": "Start position (0-based)."
+                },
+                "end": {
+                    "type": "integer",
+                    "description": "End position."
+                },
+                "nrph": {
+                    "type": "boolean",
+                    "description": "Non-redundant profile hits only (default true). Set false for all hits."
+                }
+            },
+            "required": ["chrom", "start", "end"]
+        },
+        "fields": {
+            "endpoint": "get_annotations"
+        },
+        "type": "DfamTool",
+        "test_examples": [
+            {
+                "assembly": "hg38",
+                "chrom": "chr1",
+                "start": 10000,
+                "end": 50000
+            },
+            {
+                "assembly": "hg38",
+                "chrom": "chr17",
+                "start": 7661779,
+                "end": 7687538,
+                "nrph": true
+            }
+        ],
+        "return_schema": {
+            "oneOf": [
+                {
+                    "type": "object",
+                    "properties": {
+                        "data": {
+                            "type": "array",
+                            "items": {
+                                "type": "object",
+                                "properties": {
+                                    "accession": {"type": "string", "description": "Dfam family accession"},
+                                    "query": {"type": "string", "description": "Family name (e.g., AluSx, L1M5)"},
+                                    "type": {"type": "string", "description": "Repeat type (SINE, LINE, DNA, LTR, Satellite, etc.)"},
+                                    "strand": {"type": "string"},
+                                    "bit_score": {"type": "string"},
+                                    "e_value": {"type": "string"},
+                                    "seq_start": {"type": "string"},
+                                    "seq_end": {"type": "string"},
+                                    "ali_start": {"type": "string"},
+                                    "ali_end": {"type": "string"},
+                                    "model_start": {"type": "string"},
+                                    "model_end": {"type": "string"}
+                                }
+                            },
+                            "description": "TE annotation hits in the genomic region"
+                        },
+                        "metadata": {
+                            "type": "object",
+                            "properties": {
+                                "source": {"type": "string"},
+                                "assembly": {"type": "string"},
+                                "region": {"type": "string"},
+                                "total_hits": {"type": "integer"},
+                                "returned": {"type": "integer"}
+                            }
+                        }
+                    },
+                    "required": ["data"]
+                },
+                {
+                    "type": "object",
+                    "properties": {
+                        "error": {"type": "string"}
+                    },
+                    "required": ["error"]
+                }
+            ]
+        }
+    }
+]

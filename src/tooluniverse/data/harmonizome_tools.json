@@ -1,0 +1,128 @@
+[
+    {
+        "name": "Harmonizome_get_gene",
+        "description": "Get comprehensive gene information from Harmonizome (Ma'ayan Lab), which integrates data from 100+ genomics datasets covering gene expression, protein interactions, pathways, diseases, drug targets, and more. Returns gene symbol, name, NCBI Entrez ID, description, synonyms, and linked protein identifiers. Useful as a quick gene summary with curated descriptions from RefSeq. Example: TP53 returns description about tumor suppressor protein, NCBI ID 7157, synonyms [TRP53, LFS1, P53, BMFS5, BCC7], and linked UniProt protein P53_HUMAN.",
+        "parameter": {
+            "type": "object",
+            "properties": {
+                "gene_symbol": {
+                    "type": "string",
+                    "description": "Official gene symbol (case-insensitive). Examples: 'TP53', 'BRCA1', 'EGFR', 'KRAS', 'CDK2'."
+                }
+            },
+            "required": ["gene_symbol"]
+        },
+        "fields": {
+            "endpoint": "get_gene"
+        },
+        "type": "HarmonizomeTool",
+        "test_examples": [
+            {
+                "gene_symbol": "TP53"
+            },
+            {
+                "gene_symbol": "BRCA1"
+            }
+        ],
+        "return_schema": {
+            "oneOf": [
+                {
+                    "type": "object",
+                    "properties": {
+                        "data": {
+                            "type": "object",
+                            "properties": {
+                                "symbol": {"type": "string"},
+                                "name": {"type": "string"},
+                                "ncbi_entrez_gene_id": {"type": "integer"},
+                                "ncbi_entrez_gene_url": {"type": "string"},
+                                "description": {"type": ["string", "null"], "description": "Gene description from RefSeq"},
+                                "synonyms": {
+                                    "type": "array",
+                                    "items": {"type": "string"},
+                                    "description": "Alternative gene symbols"
+                                },
+                                "proteins": {
+                                    "type": "array",
+                                    "items": {
+                                        "type": "object",
+                                        "properties": {
+                                            "symbol": {"type": "string"},
+                                            "href": {"type": "string"}
+                                        }
+                                    },
+                                    "description": "Linked UniProt protein entries"
+                                }
+                            }
+                        },
+                        "metadata": {
+                            "type": "object",
+                            "properties": {
+                                "source": {"type": "string"}
+                            }
+                        }
+                    },
+                    "required": ["data"]
+                },
+                {
+                    "type": "object",
+                    "properties": {
+                        "error": {"type": "string"}
+                    },
+                    "required": ["error"]
+                }
+            ]
+        }
+    },
+    {
+        "name": "Harmonizome_list_datasets",
+        "description": "List all 100+ integrated genomics datasets available in Harmonizome (Ma'ayan Lab). Returns dataset names that can be used to explore gene-gene set associations. Covers gene expression (Allen Brain Atlas, GTEx, BioGPS, CCLE, TCGA), pathways (BioCarta, KEGG, Reactome, WikiPathways), protein interactions (BioGRID, PPI Hub), gene regulation (ChEA, ENCODE, JASPAR), drug targets (DrugBank, CTD), disease associations (OMIM, ClinVar, GAD, GWAS), phenotypes (MGI, HPO), and more. Provides a high-level catalog of all data sources integrated in Harmonizome.",
+        "parameter": {
+            "type": "object",
+            "properties": {},
+            "required": []
+        },
+        "fields": {
+            "endpoint": "list_datasets"
+        },
+        "type": "HarmonizomeTool",
+        "test_examples": [
+            {}
+        ],
+        "return_schema": {
+            "oneOf": [
+                {
+                    "type": "object",
+                    "properties": {
+                        "data": {
+                            "type": "array",
+                            "items": {
+                                "type": "object",
+                                "properties": {
+                                    "name": {"type": "string", "description": "Dataset name"},
+                                    "href": {"type": "string", "description": "API URL for dataset details"}
+                                }
+                            },
+                            "description": "List of all available Harmonizome datasets"
+                        },
+                        "metadata": {
+                            "type": "object",
+                            "properties": {
+                                "source": {"type": "string"},
+                                "total_datasets": {"type": "integer"}
+                            }
+                        }
+                    },
+                    "required": ["data"]
+                },
+                {
+                    "type": "object",
+                    "properties": {
+                        "error": {"type": "string"}
+                    },
+                    "required": ["error"]
+                }
+            ]
+        }
+    }
+]

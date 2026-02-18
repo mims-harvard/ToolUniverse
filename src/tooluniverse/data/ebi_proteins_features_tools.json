@@ -1,0 +1,318 @@
+[
+    {
+        "name": "EBIProteins_get_domains_sites",
+        "description": "Get domain and site features for a protein from the EBI Proteins API. Returns binding sites, DNA-binding regions, active sites, motifs, regions of interest, and zinc finger domains annotated in UniProtKB. Complements InterPro domain annotations by providing more granular functional site information. Example: P04637 (TP53) returns 31 features including DNA-binding domain (residues 102-292), interaction regions with MDM2/CCAR2/HRMT1L2, zinc binding sites, and p53 transactivation motifs.",
+        "parameter": {
+            "type": "object",
+            "properties": {
+                "accession": {
+                    "type": "string",
+                    "description": "UniProt accession. Examples: 'P04637' (TP53/p53), 'P00533' (EGFR), 'P01308' (Insulin), 'P31749' (AKT1)."
+                }
+            },
+            "required": [
+                "accession"
+            ]
+        },
+        "fields": {
+            "category": "DOMAINS_AND_SITES"
+        },
+        "type": "EBIProteinsFeaturesTool",
+        "test_examples": [
+            {
+                "accession": "P04637"
+            },
+            {
+                "accession": "P00533"
+            }
+        ],
+        "return_schema": {
+            "oneOf": [
+                {
+                    "type": "object",
+                    "properties": {
+                        "data": {
+                            "type": "object",
+                            "properties": {
+                                "accession": {
+                                    "type": ["string", "null"],
+                                    "description": "UniProt accession"
+                                },
+                                "entry_name": {
+                                    "type": ["string", "null"],
+                                    "description": "UniProt entry name"
+                                },
+                                "sequence_length": {
+                                    "type": "integer",
+                                    "description": "Protein sequence length"
+                                },
+                                "features": {
+                                    "type": "array",
+                                    "items": {
+                                        "type": "object",
+                                        "properties": {
+                                            "type": {
+                                                "type": ["string", "null"],
+                                                "description": "Feature type (DNA_BIND, BINDING, REGION, MOTIF, SITE, etc.)"
+                                            },
+                                            "position_start": {
+                                                "type": ["string", "null"],
+                                                "description": "Start residue position"
+                                            },
+                                            "position_end": {
+                                                "type": ["string", "null"],
+                                                "description": "End residue position"
+                                            },
+                                            "description": {
+                                                "type": ["string", "null"],
+                                                "description": "Feature description (interaction partner, binding specificity, etc.)"
+                                            },
+                                            "evidences": {
+                                                "type": "array",
+                                                "items": {"type": "object"},
+                                                "description": "Literature evidence"
+                                            }
+                                        }
+                                    },
+                                    "description": "Domain/site features (max 100)"
+                                },
+                                "total_features": {
+                                    "type": "integer",
+                                    "description": "Total feature count"
+                                },
+                                "feature_type_counts": {
+                                    "type": "object",
+                                    "description": "Count of each feature type (DNA_BIND, BINDING, REGION, MOTIF, SITE)"
+                                }
+                            }
+                        },
+                        "metadata": {
+                            "type": "object",
+                            "properties": {
+                                "source": {"type": "string"},
+                                "accession": {"type": "string"},
+                                "category": {"type": "string"}
+                            }
+                        }
+                    }
+                },
+                {
+                    "type": "object",
+                    "properties": {
+                        "error": {"type": "string"}
+                    },
+                    "required": ["error"]
+                }
+            ]
+        }
+    },
+    {
+        "name": "EBIProteins_get_molecule_processing",
+        "description": "Get molecule processing features for a protein from the EBI Proteins API. Returns signal peptides, transit peptides, mature protein chains, propeptides, and initiator methionine annotations. Essential for understanding how a protein precursor is processed into its functional form. Example: P01308 (Insulin) returns signal peptide (1-24), B chain (25-54), C peptide (57-87), and A chain (90-110) showing the complete insulin processing pathway.",
+        "parameter": {
+            "type": "object",
+            "properties": {
+                "accession": {
+                    "type": "string",
+                    "description": "UniProt accession. Examples: 'P01308' (Insulin - classic example), 'P01375' (TNF-alpha), 'P01189' (POMC - multiple peptides), 'P06213' (Insulin receptor)."
+                }
+            },
+            "required": [
+                "accession"
+            ]
+        },
+        "fields": {
+            "category": "MOLECULE_PROCESSING"
+        },
+        "type": "EBIProteinsFeaturesTool",
+        "test_examples": [
+            {
+                "accession": "P01308"
+            },
+            {
+                "accession": "P01375"
+            }
+        ],
+        "return_schema": {
+            "oneOf": [
+                {
+                    "type": "object",
+                    "properties": {
+                        "data": {
+                            "type": "object",
+                            "properties": {
+                                "accession": {
+                                    "type": ["string", "null"],
+                                    "description": "UniProt accession"
+                                },
+                                "entry_name": {
+                                    "type": ["string", "null"],
+                                    "description": "UniProt entry name"
+                                },
+                                "sequence_length": {
+                                    "type": "integer",
+                                    "description": "Full precursor sequence length"
+                                },
+                                "features": {
+                                    "type": "array",
+                                    "items": {
+                                        "type": "object",
+                                        "properties": {
+                                            "type": {
+                                                "type": ["string", "null"],
+                                                "description": "Feature type (SIGNAL, TRANSIT, CHAIN, PEPTIDE, PROPEP, INIT_MET)"
+                                            },
+                                            "position_start": {
+                                                "type": ["string", "null"],
+                                                "description": "Start residue position"
+                                            },
+                                            "position_end": {
+                                                "type": ["string", "null"],
+                                                "description": "End residue position"
+                                            },
+                                            "description": {
+                                                "type": ["string", "null"],
+                                                "description": "Chain/peptide name or processing description"
+                                            },
+                                            "evidences": {
+                                                "type": "array",
+                                                "items": {"type": "object"},
+                                                "description": "Evidence references"
+                                            }
+                                        }
+                                    },
+                                    "description": "Molecule processing features"
+                                },
+                                "total_features": {
+                                    "type": "integer",
+                                    "description": "Total feature count"
+                                },
+                                "feature_type_counts": {
+                                    "type": "object",
+                                    "description": "Count of each processing type (SIGNAL, CHAIN, PEPTIDE, PROPEP, etc.)"
+                                }
+                            }
+                        },
+                        "metadata": {
+                            "type": "object",
+                            "properties": {
+                                "source": {"type": "string"},
+                                "accession": {"type": "string"},
+                                "category": {"type": "string"}
+                            }
+                        }
+                    }
+                },
+                {
+                    "type": "object",
+                    "properties": {
+                        "error": {"type": "string"}
+                    },
+                    "required": ["error"]
+                }
+            ]
+        }
+    },
+    {
+        "name": "EBIProteins_get_structural_features",
+        "description": "Get secondary structure annotations for a protein from the EBI Proteins API. Returns helix, beta strand, and turn assignments mapped to the UniProt protein sequence. These are derived from experimental 3D structures and mapped to the canonical sequence, providing a comprehensive secondary structure profile. Example: P04637 (TP53) returns 40 structural features including helices (residues 19-29, 165-172, etc.), strands (residues 112-114, 141-143, etc.), and turns.",
+        "parameter": {
+            "type": "object",
+            "properties": {
+                "accession": {
+                    "type": "string",
+                    "description": "UniProt accession. Examples: 'P04637' (TP53/p53), 'P69905' (Hemoglobin alpha), 'P00533' (EGFR), 'P38398' (BRCA1)."
+                }
+            },
+            "required": [
+                "accession"
+            ]
+        },
+        "fields": {
+            "category": "STRUCTURAL"
+        },
+        "type": "EBIProteinsFeaturesTool",
+        "test_examples": [
+            {
+                "accession": "P04637"
+            },
+            {
+                "accession": "P69905"
+            }
+        ],
+        "return_schema": {
+            "oneOf": [
+                {
+                    "type": "object",
+                    "properties": {
+                        "data": {
+                            "type": "object",
+                            "properties": {
+                                "accession": {
+                                    "type": ["string", "null"],
+                                    "description": "UniProt accession"
+                                },
+                                "entry_name": {
+                                    "type": ["string", "null"],
+                                    "description": "UniProt entry name"
+                                },
+                                "sequence_length": {
+                                    "type": "integer",
+                                    "description": "Protein sequence length"
+                                },
+                                "features": {
+                                    "type": "array",
+                                    "items": {
+                                        "type": "object",
+                                        "properties": {
+                                            "type": {
+                                                "type": ["string", "null"],
+                                                "description": "Secondary structure type (HELIX, STRAND, TURN)"
+                                            },
+                                            "position_start": {
+                                                "type": ["string", "null"],
+                                                "description": "Start residue position"
+                                            },
+                                            "position_end": {
+                                                "type": ["string", "null"],
+                                                "description": "End residue position"
+                                            },
+                                            "description": {
+                                                "type": ["string", "null"],
+                                                "description": "Additional description"
+                                            }
+                                        }
+                                    },
+                                    "description": "Secondary structure elements (max 100)"
+                                },
+                                "total_features": {
+                                    "type": "integer",
+                                    "description": "Total secondary structure element count"
+                                },
+                                "feature_type_counts": {
+                                    "type": "object",
+                                    "description": "Count of each type (HELIX, STRAND, TURN)"
+                                }
+                            }
+                        },
+                        "metadata": {
+                            "type": "object",
+                            "properties": {
+                                "source": {"type": "string"},
+                                "accession": {"type": "string"},
+                                "category": {"type": "string"}
+                            }
+                        }
+                    }
+                },
+                {
+                    "type": "object",
+                    "properties": {
+                        "error": {"type": "string"}
+                    },
+                    "required": ["error"]
+                }
+            ]
+        }
+    }
+]

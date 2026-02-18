@@ -1,0 +1,322 @@
+[
+    {
+        "name": "OrthoDB_search_groups",
+        "description": "Search for orthologous groups by gene/protein name in OrthoDB v12. OrthoDB catalogs orthologous groups at different taxonomic levels (vertebrates, metazoa, eukaryotes, etc.), enabling evolutionary analysis of gene conservation. Returns group IDs that can be queried for details. Complements OMA and Ensembl Compara with group-level orthology at deep evolutionary scales. Example: searching 'BRCA1' with species=9606 returns orthologous groups containing BRCA1 at various taxonomic levels.",
+        "parameter": {
+            "type": "object",
+            "properties": {
+                "query": {
+                    "type": "string",
+                    "description": "Gene or protein name to search. Examples: 'BRCA1', 'TP53', 'insulin', 'EGFR'."
+                },
+                "species": {
+                    "type": ["integer", "null"],
+                    "description": "NCBI taxonomy ID to filter by species. Examples: 9606 (human), 10090 (mouse), 7227 (fly). Null for all species."
+                },
+                "level": {
+                    "type": ["integer", "null"],
+                    "description": "Taxonomic level for group definition. Examples: 7742 (Vertebrata), 33208 (Metazoa), 2759 (Eukaryota). Null for all levels."
+                },
+                "limit": {
+                    "type": "integer",
+                    "description": "Maximum number of groups to return (1-50). Default: 10."
+                }
+            },
+            "required": [
+                "query"
+            ]
+        },
+        "fields": {
+            "endpoint": "search"
+        },
+        "type": "OrthoDBTool",
+        "test_examples": [
+            {
+                "query": "BRCA1",
+                "species": 9606,
+                "limit": 5
+            },
+            {
+                "query": "insulin",
+                "level": 7742,
+                "limit": 5
+            }
+        ],
+        "return_schema": {
+            "oneOf": [
+                {
+                    "type": "object",
+                    "properties": {
+                        "data": {
+                            "type": "object",
+                            "properties": {
+                                "query": {
+                                    "type": "string",
+                                    "description": "Search query used"
+                                },
+                                "groups": {
+                                    "type": "array",
+                                    "items": {
+                                        "type": "object",
+                                        "properties": {
+                                            "group_id": {
+                                                "type": "string",
+                                                "description": "OrthoDB group ID (e.g., '727649at7742')"
+                                            },
+                                            "name": {
+                                                "type": ["string", "null"],
+                                                "description": "Group name (for first result)"
+                                            },
+                                            "level_taxid": {
+                                                "type": ["string", "null"],
+                                                "description": "Taxonomic level ID"
+                                            }
+                                        }
+                                    },
+                                    "description": "Orthologous groups matching query"
+                                },
+                                "total_groups": {
+                                    "type": "integer",
+                                    "description": "Total groups found"
+                                }
+                            }
+                        },
+                        "metadata": {
+                            "type": "object",
+                            "properties": {
+                                "source": {"type": "string"},
+                                "query": {"type": "string"}
+                            }
+                        }
+                    }
+                },
+                {
+                    "type": "object",
+                    "properties": {
+                        "error": {"type": "string"}
+                    },
+                    "required": ["error"]
+                }
+            ]
+        }
+    },
+    {
+        "name": "OrthoDB_get_group_details",
+        "description": "Get detailed information about an OrthoDB orthologous group including functional annotations. Returns KEGG pathway associations, GO terms, and InterPro domain annotations for the group. Useful for understanding the evolutionary conservation and function of gene families. Example: group '727649at7742' shows olfactory receptor group at Vertebrata level with associated KEGG pathways for signal transduction.",
+        "parameter": {
+            "type": "object",
+            "properties": {
+                "group_id": {
+                    "type": "string",
+                    "description": "OrthoDB group ID. Format: 'numberATtaxid'. Examples: '727649at7742' (Vertebrata level), '59506at9443' (Primates level). Get IDs from OrthoDB_search_groups."
+                }
+            },
+            "required": [
+                "group_id"
+            ]
+        },
+        "fields": {
+            "endpoint": "group"
+        },
+        "type": "OrthoDBTool",
+        "test_examples": [
+            {
+                "group_id": "727649at7742"
+            },
+            {
+                "group_id": "59506at9443"
+            }
+        ],
+        "return_schema": {
+            "oneOf": [
+                {
+                    "type": "object",
+                    "properties": {
+                        "data": {
+                            "type": "object",
+                            "properties": {
+                                "group_id": {
+                                    "type": ["string", "null"],
+                                    "description": "OrthoDB group ID"
+                                },
+                                "name": {
+                                    "type": ["string", "null"],
+                                    "description": "Group consensus name"
+                                },
+                                "level_name": {
+                                    "type": ["string", "null"],
+                                    "description": "Taxonomic level name (Vertebrata, Metazoa, etc.)"
+                                },
+                                "tax_id": {
+                                    "type": ["integer", "null"],
+                                    "description": "Taxonomic level ID"
+                                },
+                                "go_terms": {
+                                    "type": ["array", "null"],
+                                    "items": {
+                                        "type": "object",
+                                        "properties": {
+                                            "id": {"type": ["string", "null"]},
+                                            "description": {"type": ["string", "null"]},
+                                            "category": {"type": ["string", "null"]},
+                                            "count": {"type": ["integer", "null"]}
+                                        }
+                                    },
+                                    "description": "GO term annotations"
+                                },
+                                "kegg_pathways": {
+                                    "type": ["array", "null"],
+                                    "items": {
+                                        "type": "object",
+                                        "properties": {
+                                            "id": {"type": ["string", "null"]},
+                                            "description": {"type": ["string", "null"]},
+                                            "count": {"type": ["integer", "null"]}
+                                        }
+                                    },
+                                    "description": "KEGG pathway associations"
+                                },
+                                "interpro_domains": {
+                                    "type": ["array", "null"],
+                                    "items": {
+                                        "type": "object",
+                                        "properties": {
+                                            "id": {"type": ["string", "null"]},
+                                            "description": {"type": ["string", "null"]},
+                                            "count": {"type": ["integer", "null"]}
+                                        }
+                                    },
+                                    "description": "InterPro domain annotations"
+                                }
+                            }
+                        },
+                        "metadata": {
+                            "type": "object",
+                            "properties": {
+                                "source": {"type": "string"},
+                                "group_id": {"type": "string"}
+                            }
+                        }
+                    }
+                },
+                {
+                    "type": "object",
+                    "properties": {
+                        "error": {"type": "string"}
+                    },
+                    "required": ["error"]
+                }
+            ]
+        }
+    },
+    {
+        "name": "OrthoDB_get_orthologs",
+        "description": "Get orthologous genes from an OrthoDB group, optionally filtered by species. Returns gene IDs, organism names, and descriptions for all members of an orthologous group. Useful for finding orthologs across species, evolutionary conservation analysis, and functional annotation transfer. Example: group '727649at7742' with species=9606 returns human genes in that orthologous group.",
+        "parameter": {
+            "type": "object",
+            "properties": {
+                "group_id": {
+                    "type": "string",
+                    "description": "OrthoDB group ID. Format: 'numberATtaxid'. Get IDs from OrthoDB_search_groups."
+                },
+                "species": {
+                    "type": ["string", "null"],
+                    "description": "Comma-separated NCBI taxonomy IDs to filter. Examples: '9606' (human only), '9606,10090' (human+mouse). Null for all species."
+                }
+            },
+            "required": [
+                "group_id"
+            ]
+        },
+        "fields": {
+            "endpoint": "orthologs"
+        },
+        "type": "OrthoDBTool",
+        "test_examples": [
+            {
+                "group_id": "727649at7742",
+                "species": "9606"
+            },
+            {
+                "group_id": "59506at9443"
+            }
+        ],
+        "return_schema": {
+            "oneOf": [
+                {
+                    "type": "object",
+                    "properties": {
+                        "data": {
+                            "type": "object",
+                            "properties": {
+                                "group_id": {
+                                    "type": "string",
+                                    "description": "OrthoDB group ID"
+                                },
+                                "orthologs": {
+                                    "type": "array",
+                                    "items": {
+                                        "type": "object",
+                                        "properties": {
+                                            "group_id": {
+                                                "type": ["string", "null"],
+                                                "description": "Ortholog group ID"
+                                            },
+                                            "group_name": {
+                                                "type": ["string", "null"],
+                                                "description": "Group name"
+                                            },
+                                            "level_taxid": {
+                                                "type": ["string", "null"],
+                                                "description": "Taxonomic level"
+                                            },
+                                            "organism_taxid": {
+                                                "type": ["string", "null"],
+                                                "description": "Organism taxonomy ID"
+                                            },
+                                            "organism_name": {
+                                                "type": ["string", "null"],
+                                                "description": "Organism scientific name"
+                                            },
+                                            "gene_id": {
+                                                "type": ["string", "null"],
+                                                "description": "Gene identifier"
+                                            },
+                                            "description": {
+                                                "type": ["string", "null"],
+                                                "description": "Gene/protein description"
+                                            }
+                                        }
+                                    },
+                                    "description": "Orthologous genes (max 100)"
+                                },
+                                "total_orthologs": {
+                                    "type": "integer",
+                                    "description": "Total orthologs returned"
+                                },
+                                "organisms_summary": {
+                                    "type": "object",
+                                    "description": "Count of genes per organism"
+                                }
+                            }
+                        },
+                        "metadata": {
+                            "type": "object",
+                            "properties": {
+                                "source": {"type": "string"},
+                                "group_id": {"type": "string"}
+                            }
+                        }
+                    }
+                },
+                {
+                    "type": "object",
+                    "properties": {
+                        "error": {"type": "string"}
+                    },
+                    "required": ["error"]
+                }
+            ]
+        }
+    }
+]

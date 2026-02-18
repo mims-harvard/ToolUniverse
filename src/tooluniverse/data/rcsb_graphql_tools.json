@@ -1,0 +1,256 @@
+[
+    {
+        "name": "RCSBGraphQL_get_structure_summary",
+        "description": "Get comprehensive structure summary for one or more PDB entries using the RCSB PDB Data API (GraphQL). Returns title, resolution, molecular weight, experimental method, deposition/release dates, primary citation (PubMed ID, journal, year), atom count, entity counts, and unit cell dimensions. Supports batch queries for multiple PDB IDs at once. Use this when you need detailed metadata about specific PDB structures beyond what basic PDB tools provide.",
+        "parameter": {
+            "type": "object",
+            "properties": {
+                "pdb_id": {
+                    "type": ["string", "null"],
+                    "description": "Single PDB ID. Example: '4HHB' (hemoglobin), '1TUP' (p53-DNA complex), '6LU7' (SARS-CoV-2 main protease)."
+                },
+                "pdb_ids": {
+                    "type": ["string", "null"],
+                    "description": "Comma-separated list of PDB IDs for batch query. Example: '4HHB,1TUP,6LU7'. Maximum ~20 IDs per query."
+                }
+            },
+            "required": []
+        },
+        "fields": {
+            "endpoint": "structure_summary"
+        },
+        "type": "RCSBGraphQLTool",
+        "test_examples": [
+            {
+                "pdb_id": "4HHB"
+            },
+            {
+                "pdb_ids": "4HHB,1TUP,6LU7"
+            }
+        ],
+        "return_schema": {
+            "oneOf": [
+                {
+                    "type": "object",
+                    "properties": {
+                        "data": {
+                            "type": "array",
+                            "items": {
+                                "type": "object",
+                                "properties": {
+                                    "pdb_id": {"type": ["string", "null"], "description": "PDB identifier"},
+                                    "title": {"type": ["string", "null"], "description": "Structure title"},
+                                    "resolution": {"type": ["number", "null"], "description": "Resolution in Angstroms"},
+                                    "molecular_weight_kda": {"type": ["number", "null"], "description": "Molecular weight in kDa"},
+                                    "atom_count": {"type": ["integer", "null"], "description": "Number of deposited atoms"},
+                                    "polymer_entity_count": {"type": ["integer", "null"], "description": "Number of polymer entities"},
+                                    "nonpolymer_entity_count": {"type": ["integer", "null"], "description": "Number of non-polymer entities (ligands)"},
+                                    "experimental_method": {"type": ["string", "null"], "description": "Experimental method"},
+                                    "deposit_date": {"type": ["string", "null"], "description": "Deposition date"},
+                                    "release_date": {"type": ["string", "null"], "description": "Initial release date"},
+                                    "citation_pubmed_id": {"type": ["integer", "null"], "description": "PubMed ID of primary citation"},
+                                    "citation_title": {"type": ["string", "null"], "description": "Title of primary citation"},
+                                    "citation_journal": {"type": ["string", "null"], "description": "Journal abbreviation"},
+                                    "citation_year": {"type": ["integer", "null"], "description": "Publication year"},
+                                    "unit_cell_a": {"type": ["number", "null"], "description": "Unit cell dimension a"},
+                                    "unit_cell_b": {"type": ["number", "null"], "description": "Unit cell dimension b"},
+                                    "unit_cell_c": {"type": ["number", "null"], "description": "Unit cell dimension c"}
+                                }
+                            }
+                        },
+                        "metadata": {
+                            "type": "object",
+                            "properties": {
+                                "source": {"type": "string"},
+                                "requested_ids": {"type": "array", "items": {"type": "string"}},
+                                "returned": {"type": "integer"}
+                            }
+                        }
+                    }
+                },
+                {
+                    "type": "object",
+                    "properties": {
+                        "error": {"type": "string"}
+                    },
+                    "required": ["error"]
+                }
+            ]
+        }
+    },
+    {
+        "name": "RCSBGraphQL_get_ligand_info",
+        "description": "Get detailed chemical component (ligand) information from the PDB using the RCSB Data API. Returns the ligand name, molecular formula, molecular weight, SMILES, InChIKey, type (non-polymer, peptide-like, etc.), and known drug targets with their actions (inhibitor, substrate, cofactor, etc.) from DrugBank. Use this to look up small molecules, cofactors, or drugs found in PDB structures.",
+        "parameter": {
+            "type": "object",
+            "properties": {
+                "comp_id": {
+                    "type": "string",
+                    "description": "PDB chemical component identifier (3-letter code). Examples: 'ATP' (adenosine triphosphate), 'HEM' (heme), 'NAG' (N-acetylglucosamine), 'STI' (imatinib/Gleevec), 'ZMA' (zinc ion with methylamine), 'FAD' (flavin adenine dinucleotide), 'NAD' (nicotinamide adenine dinucleotide)."
+                }
+            },
+            "required": ["comp_id"]
+        },
+        "fields": {
+            "endpoint": "ligand_info"
+        },
+        "type": "RCSBGraphQLTool",
+        "test_examples": [
+            {
+                "comp_id": "ATP"
+            },
+            {
+                "comp_id": "HEM"
+            }
+        ],
+        "return_schema": {
+            "oneOf": [
+                {
+                    "type": "object",
+                    "properties": {
+                        "data": {
+                            "type": "object",
+                            "properties": {
+                                "comp_id": {"type": ["string", "null"], "description": "Chemical component identifier"},
+                                "name": {"type": ["string", "null"], "description": "Chemical name"},
+                                "formula": {"type": ["string", "null"], "description": "Molecular formula"},
+                                "formula_weight": {"type": ["number", "null"], "description": "Molecular weight in Da"},
+                                "type": {"type": ["string", "null"], "description": "Component type (non-polymer, peptide-like, etc.)"},
+                                "parent_comp_id": {"type": ["string", "null"], "description": "Parent component if modified residue"},
+                                "inchikey": {"type": ["string", "null"], "description": "InChIKey structural identifier"},
+                                "smiles": {"type": ["string", "null"], "description": "SMILES chemical notation"},
+                                "initial_release_date": {"type": ["string", "null"], "description": "Date first released in PDB"},
+                                "targets": {
+                                    "type": "array",
+                                    "items": {
+                                        "type": "object",
+                                        "properties": {
+                                            "name": {"type": ["string", "null"], "description": "Target protein name"},
+                                            "actions": {"type": ["array", "null"], "description": "Target actions (inhibitor, substrate, etc.)"},
+                                            "provenance": {"type": ["string", "null"], "description": "Data source (e.g., DrugBank)"},
+                                            "accession": {"type": ["string", "null"], "description": "Target accession (e.g., UniProt ID)"},
+                                            "database": {"type": ["string", "null"], "description": "Reference database name"}
+                                        }
+                                    },
+                                    "description": "Known drug targets for this compound"
+                                }
+                            }
+                        },
+                        "metadata": {
+                            "type": "object",
+                            "properties": {
+                                "source": {"type": "string"},
+                                "comp_id": {"type": "string"},
+                                "target_count": {"type": "integer"}
+                            }
+                        }
+                    }
+                },
+                {
+                    "type": "object",
+                    "properties": {
+                        "error": {"type": "string"}
+                    },
+                    "required": ["error"]
+                }
+            ]
+        }
+    },
+    {
+        "name": "RCSBGraphQL_get_polymer_entity",
+        "description": "Get detailed polymer entity information from PDB structures including amino acid sequence, chain IDs, polymer type, source organism, and domain/family annotations (Pfam, GO terms). Each PDB entry can contain multiple polymer entities (chains). Use this to retrieve the protein sequence, identify chains, and find functional annotations for proteins in a PDB structure.",
+        "parameter": {
+            "type": "object",
+            "properties": {
+                "pdb_id": {
+                    "type": ["string", "null"],
+                    "description": "PDB ID (will fetch entity 1 by default). Examples: '4HHB' (hemoglobin), '1TUP' (p53-DNA). Use entity_num to specify which entity."
+                },
+                "entity_num": {
+                    "type": ["integer", "null"],
+                    "description": "Entity number within the PDB entry (default: 1). PDB entries can have multiple polymer entities (1, 2, 3, ...)."
+                },
+                "entity_ids": {
+                    "type": ["string", "null"],
+                    "description": "Comma-separated list of entity IDs for batch query. Format: 'PDB_ENTITY' (e.g., '4HHB_1,4HHB_2'). Overrides pdb_id/entity_num."
+                }
+            },
+            "required": []
+        },
+        "fields": {
+            "endpoint": "polymer_entity"
+        },
+        "type": "RCSBGraphQLTool",
+        "test_examples": [
+            {
+                "pdb_id": "4HHB",
+                "entity_num": 1
+            },
+            {
+                "entity_ids": "4HHB_1,4HHB_2"
+            }
+        ],
+        "return_schema": {
+            "oneOf": [
+                {
+                    "type": "object",
+                    "properties": {
+                        "data": {
+                            "type": "array",
+                            "items": {
+                                "type": "object",
+                                "properties": {
+                                    "entity_id": {"type": ["string", "null"], "description": "Entity identifier (e.g., '4HHB_1')"},
+                                    "description": {"type": ["string", "null"], "description": "Polymer description"},
+                                    "chain_ids": {"type": ["string", "null"], "description": "Comma-separated chain IDs"},
+                                    "polymer_type": {"type": ["string", "null"], "description": "Polymer type (Protein, DNA, RNA, etc.)"},
+                                    "entity_type": {"type": ["string", "null"], "description": "Entity type (polypeptide(L), polyribonucleotide, etc.)"},
+                                    "sequence": {"type": ["string", "null"], "description": "One-letter amino acid sequence"},
+                                    "sequence_length": {"type": "integer", "description": "Length of the sequence"},
+                                    "annotations": {
+                                        "type": "array",
+                                        "items": {
+                                            "type": "object",
+                                            "properties": {
+                                                "id": {"type": ["string", "null"], "description": "Annotation ID (Pfam, GO, etc.)"},
+                                                "type": {"type": ["string", "null"], "description": "Annotation type (Pfam, GO, etc.)"},
+                                                "description": {"type": ["string", "null"], "description": "Annotation description"}
+                                            }
+                                        },
+                                        "description": "Domain/family/GO annotations"
+                                    },
+                                    "source_organisms": {
+                                        "type": "array",
+                                        "items": {
+                                            "type": "object",
+                                            "properties": {
+                                                "scientific_name": {"type": ["string", "null"]},
+                                                "ncbi_taxonomy_id": {"type": ["integer", "null"]}
+                                            }
+                                        },
+                                        "description": "Source organism(s)"
+                                    }
+                                }
+                            }
+                        },
+                        "metadata": {
+                            "type": "object",
+                            "properties": {
+                                "source": {"type": "string"},
+                                "requested_ids": {"type": "array", "items": {"type": "string"}},
+                                "returned": {"type": "integer"}
+                            }
+                        }
+                    }
+                },
+                {
+                    "type": "object",
+                    "properties": {
+                        "error": {"type": "string"}
+                    },
+                    "required": ["error"]
+                }
+            ]
+        }
+    }
+]

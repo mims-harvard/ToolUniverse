@@ -1,0 +1,181 @@
+[
+    {
+        "name": "MobiDB_get_protein",
+        "description": "Get comprehensive protein disorder data from MobiDB for a UniProt accession. MobiDB integrates curated disorder from DisProt, predicted disorder from MobiDB-lite, structural data from PDB, PTM annotations, and binding mode information to provide a complete picture of protein intrinsic disorder. Returns predicted disordered regions with residue-level scores, curated disorder regions, linear interacting peptides (LIPs), PTM summary, and subcellular localization. Example: P04637 (TP53) shows predicted disorder at N-terminus (1-90) and C-terminus (360-393), curated disorder from DisProt, 28+ PTM types including phosphoserine and acetyllysine, localized to cytoplasm/nucleus/mitochondria.",
+        "parameter": {
+            "type": "object",
+            "properties": {
+                "accession": {
+                    "type": "string",
+                    "description": "UniProt accession (e.g., 'P04637' for TP53, 'P00533' for EGFR, 'P38398' for BRCA1)."
+                }
+            },
+            "required": ["accession"]
+        },
+        "fields": {
+            "endpoint": "get_protein"
+        },
+        "type": "MobiDBTool",
+        "test_examples": [
+            {
+                "accession": "P04637"
+            },
+            {
+                "accession": "P00533"
+            }
+        ],
+        "return_schema": {
+            "oneOf": [
+                {
+                    "type": "object",
+                    "properties": {
+                        "data": {
+                            "type": "object",
+                            "properties": {
+                                "accession": {"type": "string"},
+                                "gene": {"type": ["string", "null"]},
+                                "name": {"type": ["string", "null"]},
+                                "organism": {"type": ["string", "null"]},
+                                "length": {"type": "integer"},
+                                "sequence": {"type": ["string", "null"]},
+                                "prediction_disorder": {
+                                    "type": "object",
+                                    "properties": {
+                                        "regions": {"type": "array", "items": {"type": "array"}, "description": "Predicted disordered regions as [start, end] pairs"},
+                                        "content_fraction": {"type": ["number", "null"], "description": "Fraction of sequence predicted disordered (0-1)"},
+                                        "content_count": {"type": ["integer", "null"]}
+                                    },
+                                    "description": "MobiDB-lite disorder prediction"
+                                },
+                                "curated_disorder": {
+                                    "type": "object",
+                                    "properties": {
+                                        "regions": {"type": "array"},
+                                        "content_count": {"type": ["integer", "null"]}
+                                    },
+                                    "description": "Curated disorder from DisProt"
+                                },
+                                "curated_lip": {
+                                    "type": "object",
+                                    "properties": {
+                                        "regions": {"type": "array"},
+                                        "content_count": {"type": ["integer", "null"]}
+                                    },
+                                    "description": "Linear interacting peptides"
+                                },
+                                "ptm_summary": {
+                                    "type": "object",
+                                    "properties": {
+                                        "count": {"type": "integer"},
+                                        "types": {"type": "array", "items": {"type": "string"}}
+                                    },
+                                    "description": "Post-translational modification summary"
+                                },
+                                "localization": {"type": "array", "items": {"type": "string"}}
+                            }
+                        },
+                        "metadata": {
+                            "type": "object",
+                            "properties": {
+                                "source": {"type": "string"},
+                                "reviewed": {"type": ["boolean", "null"]}
+                            }
+                        }
+                    },
+                    "required": ["data"]
+                },
+                {
+                    "type": "object",
+                    "properties": {
+                        "error": {"type": "string"}
+                    },
+                    "required": ["error"]
+                }
+            ]
+        }
+    },
+    {
+        "name": "MobiDB_get_consensus",
+        "description": "Get consensus disorder analysis for a protein from MobiDB, focusing on merged/consensus predictions, phase separation data, and binding mode transitions. Returns predicted disorder regions from MobiDB-lite, curated disorder regions merged across all evidence sources, phase separation propensity, and disorder-to-order/disorder-to-disorder binding mode transitions. Useful for understanding how a protein's disordered regions function in signaling, condensate formation, and protein-protein interactions. Example: P04637 (TP53) shows phase separation regions and binding mode transitions in the transactivation domain.",
+        "parameter": {
+            "type": "object",
+            "properties": {
+                "accession": {
+                    "type": "string",
+                    "description": "UniProt accession (e.g., 'P04637' for TP53, 'P00533' for EGFR)."
+                }
+            },
+            "required": ["accession"]
+        },
+        "fields": {
+            "endpoint": "get_consensus"
+        },
+        "type": "MobiDBTool",
+        "test_examples": [
+            {
+                "accession": "P04637"
+            },
+            {
+                "accession": "P38398"
+            }
+        ],
+        "return_schema": {
+            "oneOf": [
+                {
+                    "type": "object",
+                    "properties": {
+                        "data": {
+                            "type": "object",
+                            "properties": {
+                                "accession": {"type": "string"},
+                                "gene": {"type": ["string", "null"]},
+                                "name": {"type": ["string", "null"]},
+                                "organism": {"type": ["string", "null"]},
+                                "length": {"type": "integer"},
+                                "predicted_disorder": {
+                                    "type": "object",
+                                    "properties": {
+                                        "regions": {"type": "array"},
+                                        "content_fraction": {"type": ["number", "null"]}
+                                    }
+                                },
+                                "curated_disorder_merged": {
+                                    "type": "object",
+                                    "properties": {
+                                        "regions": {"type": "array"}
+                                    },
+                                    "description": "Merged curated disorder from all evidence sources"
+                                },
+                                "phase_separation": {
+                                    "type": "object",
+                                    "properties": {
+                                        "regions": {"type": "array"}
+                                    },
+                                    "description": "Phase separation propensity data"
+                                },
+                                "binding_modes": {
+                                    "type": "object",
+                                    "description": "Disorder-to-order and disorder-to-disorder binding transitions"
+                                }
+                            }
+                        },
+                        "metadata": {
+                            "type": "object",
+                            "properties": {
+                                "source": {"type": "string"}
+                            }
+                        }
+                    },
+                    "required": ["data"]
+                },
+                {
+                    "type": "object",
+                    "properties": {
+                        "error": {"type": "string"}
+                    },
+                    "required": ["error"]
+                }
+            ]
+        }
+    }
+]

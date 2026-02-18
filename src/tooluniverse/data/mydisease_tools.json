@@ -1,0 +1,167 @@
+[
+    {
+        "name": "MyDisease_get_disease",
+        "description": "Get comprehensive disease annotations from MyDisease.info, a BioThings disease aggregator that integrates data from MONDO, Disease Ontology, CTD (chemicals and pathways related to disease), HPO (phenotypes), and DisGeNET (gene-disease associations). Returns standardized disease identifiers, definitions, cross-references, associated chemicals, pathways, and phenotypes. Example: MONDO:0005148 (type 2 diabetes) returns 160 CTD chemicals, 984 related pathways, and 3 HPO phenotypes including late onset and autosomal dominant inheritance.",
+        "parameter": {
+            "type": "object",
+            "properties": {
+                "disease_id": {
+                    "type": "string",
+                    "description": "Disease identifier. Supports MONDO IDs (e.g., 'MONDO:0005148' for T2DM), DOID IDs (e.g., 'DOID:9352'), OMIM IDs (e.g., 'OMIM:125853'), or MESH IDs (e.g., 'MESH:D003924'). MONDO IDs provide the most comprehensive results."
+                },
+                "fields": {
+                    "type": "string",
+                    "description": "Comma-separated list of data fields to return. Options: 'mondo', 'disease_ontology', 'ctd', 'hpo', 'disgenet', 'all'. Default: 'mondo,disease_ontology,ctd,hpo'. Use 'all' for complete data."
+                }
+            },
+            "required": [
+                "disease_id"
+            ]
+        },
+        "fields": {
+            "endpoint": "get_disease"
+        },
+        "type": "MyDiseaseTool",
+        "test_examples": [
+            {
+                "disease_id": "MONDO:0005148"
+            },
+            {
+                "disease_id": "DOID:9352",
+                "fields": "disease_ontology,hpo"
+            }
+        ],
+        "return_schema": {
+            "oneOf": [
+                {
+                    "type": "object",
+                    "properties": {
+                        "data": {
+                            "type": "object",
+                            "properties": {
+                                "disease_id": {
+                                    "type": "string",
+                                    "description": "Queried disease identifier"
+                                },
+                                "mondo": {
+                                    "type": ["object", "null"],
+                                    "description": "MONDO ontology data: label, definition, ancestors, children, xrefs"
+                                },
+                                "disease_ontology": {
+                                    "type": ["object", "null"],
+                                    "description": "Disease Ontology data: name, definition, DOID, ancestors, xrefs"
+                                },
+                                "ctd": {
+                                    "type": ["object", "null"],
+                                    "description": "CTD data: chemicals and pathways related to disease"
+                                },
+                                "hpo": {
+                                    "type": ["object", "null"],
+                                    "description": "HPO data: phenotypes related to disease, inheritance, clinical course"
+                                },
+                                "disgenet": {
+                                    "type": ["object", "null"],
+                                    "description": "DisGeNET gene-disease associations"
+                                }
+                            }
+                        },
+                        "metadata": {
+                            "type": "object"
+                        }
+                    },
+                    "required": ["data"]
+                },
+                {
+                    "type": "object",
+                    "properties": {
+                        "error": {
+                            "type": "string"
+                        }
+                    },
+                    "required": ["error"]
+                }
+            ]
+        }
+    },
+    {
+        "name": "MyDisease_search_diseases",
+        "description": "Search for diseases by keyword in MyDisease.info, a BioThings aggregator combining data from MONDO, Disease Ontology, CTD, HPO, and DisGeNET. Returns matching disease identifiers with names and basic annotations. Useful for finding disease IDs from free-text names. Example: searching 'breast cancer' returns 45 hits including MONDO:0004438 (sporadic breast cancer), MONDO:0006512 (ER+ breast cancer), MONDO:0006513 (ER- breast cancer). Searching 'melanoma' returns 104 hits.",
+        "parameter": {
+            "type": "object",
+            "properties": {
+                "query": {
+                    "type": "string",
+                    "description": "Search query. Can be disease name (e.g., 'breast cancer', 'melanoma', 'diabetes'), gene symbol (e.g., 'BRCA1'), or ontology term. Supports boolean operators: AND, OR, NOT."
+                },
+                "size": {
+                    "type": "integer",
+                    "description": "Maximum number of results to return (default 10, max 100).",
+                    "default": 10
+                },
+                "fields": {
+                    "type": "string",
+                    "description": "Comma-separated list of fields to include in results. Default: 'mondo.label,disease_ontology.name,disease_ontology.doid,hpo.disease_name'. Use 'all' for everything."
+                }
+            },
+            "required": [
+                "query"
+            ]
+        },
+        "fields": {
+            "endpoint": "search_diseases"
+        },
+        "type": "MyDiseaseTool",
+        "test_examples": [
+            {
+                "query": "breast cancer",
+                "size": 5
+            },
+            {
+                "query": "melanoma",
+                "size": 3
+            }
+        ],
+        "return_schema": {
+            "oneOf": [
+                {
+                    "type": "object",
+                    "properties": {
+                        "data": {
+                            "type": "object",
+                            "properties": {
+                                "total_hits": {
+                                    "type": "integer",
+                                    "description": "Total number of matching diseases"
+                                },
+                                "returned": {
+                                    "type": "integer",
+                                    "description": "Number of results returned"
+                                },
+                                "diseases": {
+                                    "type": "array",
+                                    "description": "List of matching diseases with IDs, names, and requested fields",
+                                    "items": {
+                                        "type": "object"
+                                    }
+                                }
+                            }
+                        },
+                        "metadata": {
+                            "type": "object"
+                        }
+                    },
+                    "required": ["data"]
+                },
+                {
+                    "type": "object",
+                    "properties": {
+                        "error": {
+                            "type": "string"
+                        }
+                    },
+                    "required": ["error"]
+                }
+            ]
+        }
+    }
+]

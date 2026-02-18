@@ -1,0 +1,153 @@
+[
+    {
+        "name": "EBIProteins_get_interactions",
+        "description": "Get protein-protein interaction partners for a protein from the EBI Proteins API (sourced from IntAct). Returns experimentally validated binary interactions with partner accessions, gene names, number of supporting experiments, and whether the interacting proteins are from different organisms. Example: P04637 (TP53) returns 198 interaction partners including ABL1 (2 experiments), AIMP2 (6 experiments), EP300 (8 experiments). Useful for building interaction networks and identifying key binding partners.",
+        "parameter": {
+            "type": "object",
+            "properties": {
+                "accession": {
+                    "type": "string",
+                    "description": "UniProt accession of the query protein. Examples: 'P04637' (TP53), 'P00533' (EGFR), 'P38398' (BRCA1), 'P01308' (insulin)."
+                }
+            },
+            "required": ["accession"]
+        },
+        "fields": {
+            "endpoint": "interactions"
+        },
+        "type": "EBIProteinsInteractionsTool",
+        "test_examples": [
+            {
+                "accession": "P04637"
+            },
+            {
+                "accession": "P00533"
+            }
+        ],
+        "return_schema": {
+            "oneOf": [
+                {
+                    "type": "object",
+                    "properties": {
+                        "data": {
+                            "type": "object",
+                            "properties": {
+                                "query_accession": {"type": "string"},
+                                "interactions": {
+                                    "type": "array",
+                                    "items": {
+                                        "type": "object",
+                                        "properties": {
+                                            "partner_accession": {"type": "string", "description": "UniProt accession of the interaction partner"},
+                                            "gene_name": {"type": ["string", "null"], "description": "Gene name of the interaction partner"},
+                                            "experiments": {"type": "integer", "description": "Number of supporting experiments"},
+                                            "organism_differ": {"type": "boolean", "description": "Whether the partner is from a different organism"},
+                                            "intact_id_a": {"type": ["string", "null"]},
+                                            "intact_id_b": {"type": ["string", "null"]}
+                                        }
+                                    },
+                                    "description": "Binary protein-protein interactions"
+                                }
+                            }
+                        },
+                        "metadata": {
+                            "type": "object",
+                            "properties": {
+                                "source": {"type": "string"},
+                                "total_interactions": {"type": "integer"}
+                            }
+                        }
+                    },
+                    "required": ["data"]
+                },
+                {
+                    "type": "object",
+                    "properties": {
+                        "error": {"type": "string"}
+                    },
+                    "required": ["error"]
+                }
+            ]
+        }
+    },
+    {
+        "name": "EBIProteins_get_interaction_details",
+        "description": "Get detailed protein information along with its interaction partners, disease associations, and subcellular localizations from the EBI Proteins API. Returns the full protein record including name, existence evidence, taxonomy, plus all binary interactions with partner details. Example: P04637 (TP53) returns 97 protein entries with interactions, diseases like Li-Fraumeni syndrome, and subcellular locations.",
+        "parameter": {
+            "type": "object",
+            "properties": {
+                "accession": {
+                    "type": "string",
+                    "description": "UniProt accession of the query protein. Examples: 'P04637' (TP53), 'P00533' (EGFR)."
+                }
+            },
+            "required": ["accession"]
+        },
+        "fields": {
+            "endpoint": "interaction_details"
+        },
+        "type": "EBIProteinsInteractionsTool",
+        "test_examples": [
+            {
+                "accession": "P04637"
+            }
+        ],
+        "return_schema": {
+            "oneOf": [
+                {
+                    "type": "object",
+                    "properties": {
+                        "data": {
+                            "type": "object",
+                            "properties": {
+                                "query_accession": {"type": "string"},
+                                "protein_name": {"type": ["string", "null"]},
+                                "protein_existence": {"type": ["string", "null"]},
+                                "organism": {"type": ["string", "null"]},
+                                "total_interaction_entries": {"type": "integer"},
+                                "top_interactions": {
+                                    "type": "array",
+                                    "items": {
+                                        "type": "object",
+                                        "properties": {
+                                            "partner_accession": {"type": "string"},
+                                            "gene_name": {"type": ["string", "null"]},
+                                            "experiments": {"type": "integer"},
+                                            "organism_differ": {"type": "boolean"}
+                                        }
+                                    },
+                                    "description": "Top interaction partners sorted by experiment count"
+                                },
+                                "diseases": {
+                                    "type": "array",
+                                    "items": {"type": "string"},
+                                    "description": "Associated disease names"
+                                },
+                                "subcellular_locations": {
+                                    "type": "array",
+                                    "items": {"type": "string"},
+                                    "description": "Subcellular location terms"
+                                }
+                            }
+                        },
+                        "metadata": {
+                            "type": "object",
+                            "properties": {
+                                "source": {"type": "string"},
+                                "total_interactions": {"type": "integer"}
+                            }
+                        }
+                    },
+                    "required": ["data"]
+                },
+                {
+                    "type": "object",
+                    "properties": {
+                        "error": {"type": "string"}
+                    },
+                    "required": ["error"]
+                }
+            ]
+        }
+    }
+]

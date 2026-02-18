@@ -1,0 +1,168 @@
+[
+    {
+        "name": "EnsemblSeq_get_region_sequence",
+        "description": "Get the DNA nucleotide sequence for a specific genomic region from Ensembl. Retrieves the reference genome sequence for given chromosome coordinates. Useful for examining regulatory regions, intergenic sequences, or any arbitrary genomic interval. Example: region '17:7668421-7668520' in homo_sapiens returns 100 bp of the TP53 locus. Supports any Ensembl species and coordinate strand.",
+        "parameter": {
+            "type": "object",
+            "properties": {
+                "region": {
+                    "type": "string",
+                    "description": "Genomic region in format 'chr:start-end' or 'chr:start..end:strand'. Examples: '17:7668421-7668520' (TP53 locus, 100bp), '7:140424943-140425043' (BRAF locus, 100bp), 'X:15560138-15602945' (MECP2 gene). Strand: 1 for forward, -1 for reverse."
+                },
+                "species": {
+                    "type": "string",
+                    "description": "Ensembl species name. Default: 'homo_sapiens'. Examples: 'mus_musculus', 'danio_rerio', 'drosophila_melanogaster'.",
+                    "default": "homo_sapiens"
+                }
+            },
+            "required": [
+                "region"
+            ]
+        },
+        "fields": {
+            "endpoint": "region_sequence"
+        },
+        "type": "EnsemblSequenceTool",
+        "test_examples": [
+            {
+                "region": "17:7668421-7668520"
+            },
+            {
+                "region": "7:140424943-140425043",
+                "species": "homo_sapiens"
+            }
+        ],
+        "return_schema": {
+            "oneOf": [
+                {
+                    "type": "object",
+                    "properties": {
+                        "data": {
+                            "type": "object",
+                            "properties": {
+                                "species": {
+                                    "type": "string",
+                                    "description": "Species name"
+                                },
+                                "region": {
+                                    "type": "string",
+                                    "description": "Genomic region queried"
+                                },
+                                "molecule": {
+                                    "type": "string",
+                                    "description": "Molecule type (dna)"
+                                },
+                                "description": {
+                                    "type": ["string", "null"],
+                                    "description": "Region description from Ensembl"
+                                },
+                                "sequence_length": {
+                                    "type": "integer",
+                                    "description": "Length of returned sequence in bp"
+                                },
+                                "sequence": {
+                                    "type": "string",
+                                    "description": "DNA sequence (truncated to 10kb if longer)"
+                                }
+                            }
+                        },
+                        "metadata": {
+                            "type": "object"
+                        }
+                    },
+                    "required": ["data"]
+                },
+                {
+                    "type": "object",
+                    "properties": {
+                        "error": {
+                            "type": "string"
+                        }
+                    },
+                    "required": ["error"]
+                }
+            ]
+        }
+    },
+    {
+        "name": "EnsemblSeq_get_id_sequence",
+        "description": "Get the amino acid or nucleotide sequence for an Ensembl ID (protein, transcript, or gene). Retrieves protein sequences from ENSP IDs, cDNA/CDS from ENST IDs, or genomic DNA from ENSG IDs. Example: ENSP00000269305 returns the 393 amino acid protein sequence of TP53 canonical isoform. ENST00000269305 with type='cdna' returns the 2512 bp cDNA sequence of TP53-201.",
+        "parameter": {
+            "type": "object",
+            "properties": {
+                "ensembl_id": {
+                    "type": "string",
+                    "description": "Ensembl stable ID. Examples: 'ENSP00000269305' (TP53 protein, 393 aa), 'ENST00000269305' (TP53-201 transcript), 'ENSG00000141510' (TP53 gene). Protein IDs start with ENSP, transcript with ENST, gene with ENSG."
+                },
+                "type": {
+                    "type": "string",
+                    "description": "Sequence type to return. Options: 'protein' (amino acid), 'cdna' (spliced cDNA), 'cds' (coding sequence), 'genomic' (unspliced DNA). Default: 'protein' for ENSP IDs, auto-detected for others.",
+                    "default": "protein"
+                }
+            },
+            "required": [
+                "ensembl_id"
+            ]
+        },
+        "fields": {
+            "endpoint": "id_sequence"
+        },
+        "type": "EnsemblSequenceTool",
+        "test_examples": [
+            {
+                "ensembl_id": "ENSP00000269305"
+            },
+            {
+                "ensembl_id": "ENST00000269305",
+                "type": "cdna"
+            }
+        ],
+        "return_schema": {
+            "oneOf": [
+                {
+                    "type": "object",
+                    "properties": {
+                        "data": {
+                            "type": "object",
+                            "properties": {
+                                "ensembl_id": {
+                                    "type": "string",
+                                    "description": "Ensembl stable ID"
+                                },
+                                "molecule": {
+                                    "type": ["string", "null"],
+                                    "description": "Molecule type (protein or dna)"
+                                },
+                                "description": {
+                                    "type": ["string", "null"],
+                                    "description": "Sequence description"
+                                },
+                                "sequence_length": {
+                                    "type": "integer",
+                                    "description": "Sequence length (aa for protein, bp for DNA)"
+                                },
+                                "sequence": {
+                                    "type": "string",
+                                    "description": "Amino acid or nucleotide sequence (truncated to 10kb)"
+                                }
+                            }
+                        },
+                        "metadata": {
+                            "type": "object"
+                        }
+                    },
+                    "required": ["data"]
+                },
+                {
+                    "type": "object",
+                    "properties": {
+                        "error": {
+                            "type": "string"
+                        }
+                    },
+                    "required": ["error"]
+                }
+            ]
+        }
+    }
+]

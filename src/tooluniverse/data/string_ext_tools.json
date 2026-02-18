@@ -1,0 +1,101 @@
+[
+    {
+        "name": "STRING_get_functional_annotations",
+        "description": "Get comprehensive functional annotations for a protein from STRING database. Returns per-protein annotations from Gene Ontology (Process, Function, Component), KEGG pathways, Reactome, WikiPathways, InterPro domains, Pfam, HPO phenotypes, DISEASES, TISSUES expression, and COMPARTMENTS subcellular localization. Different from STRING_functional_enrichment which tests for statistical enrichment of a protein SET - this tool returns all known annotations for individual proteins. Example: 'TP53' returns 1,877 annotations across 13 categories including 655 biological processes, 462 HPO phenotypes, 212 disease associations.",
+        "parameter": {
+            "type": "object",
+            "properties": {
+                "identifiers": {
+                    "type": "string",
+                    "description": "Protein identifier (gene name or STRING ID). Examples: 'TP53', 'BRCA1', 'EGFR', '9606.ENSP00000269305'."
+                },
+                "species": {
+                    "type": "integer",
+                    "description": "NCBI taxonomy ID (default 9606 for human). Examples: 9606 (human), 10090 (mouse), 7227 (fly), 6239 (worm).",
+                    "default": 9606
+                },
+                "category": {
+                    "type": "string",
+                    "description": "Filter by annotation category. Options: 'Process' (GO BP), 'Function' (GO MF), 'Component' (GO CC), 'KEGG', 'RCTM' (Reactome), 'WikiPathways', 'InterPro', 'Pfam', 'HPO', 'DISEASES', 'TISSUES', 'COMPARTMENTS', 'Keyword'. Leave null for all categories."
+                }
+            },
+            "required": [
+                "identifiers"
+            ]
+        },
+        "fields": {
+            "endpoint": "functional_annotation"
+        },
+        "type": "STRINGExtTool",
+        "test_examples": [
+            {
+                "identifiers": "TP53",
+                "species": 9606
+            },
+            {
+                "identifiers": "BRCA1",
+                "species": 9606,
+                "category": "Process"
+            }
+        ],
+        "return_schema": {
+            "oneOf": [
+                {
+                    "type": "object",
+                    "properties": {
+                        "data": {
+                            "type": "object",
+                            "properties": {
+                                "identifiers": {
+                                    "type": "string",
+                                    "description": "Queried protein identifier"
+                                },
+                                "species": {
+                                    "type": "integer",
+                                    "description": "NCBI taxonomy ID"
+                                },
+                                "total_annotations": {
+                                    "type": "integer",
+                                    "description": "Total number of annotations across all categories"
+                                },
+                                "category_summary": {
+                                    "type": "object",
+                                    "description": "Number of annotations per category"
+                                },
+                                "annotations": {
+                                    "type": "object",
+                                    "description": "Annotations grouped by category, each with term, description, number_of_genes, input_genes (max 15 per category)"
+                                }
+                            }
+                        },
+                        "metadata": {
+                            "type": "object",
+                            "properties": {
+                                "source": {
+                                    "type": "string"
+                                },
+                                "identifiers": {
+                                    "type": "string"
+                                },
+                                "species": {
+                                    "type": "integer"
+                                }
+                            }
+                        }
+                    }
+                },
+                {
+                    "type": "object",
+                    "properties": {
+                        "error": {
+                            "type": "string"
+                        }
+                    },
+                    "required": [
+                        "error"
+                    ]
+                }
+            ]
+        }
+    }
+]

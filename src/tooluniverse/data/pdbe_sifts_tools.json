@@ -1,0 +1,319 @@
+[
+    {
+        "name": "PDBeSIFTS_get_best_structures",
+        "description": "Get the best available PDB structures for a UniProt protein, ranked by coverage and resolution from PDBe SIFTS. Returns PDB IDs with chain mapping, resolution, experimental method (X-ray, cryo-EM, NMR), and UniProt sequence coverage. Essential for structural biologists to find the most suitable structure for a protein of interest. Example: P04637 (TP53) returns 641 structure entries, P00533 (EGFR) returns 633 entries, with X-ray and cryo-EM structures ranked by quality.",
+        "parameter": {
+            "type": "object",
+            "properties": {
+                "uniprot_accession": {
+                    "type": "string",
+                    "description": "UniProt accession for the protein. Examples: 'P04637' (TP53), 'P00533' (EGFR), 'P38398' (BRCA1), 'P01308' (Insulin)."
+                }
+            },
+            "required": [
+                "uniprot_accession"
+            ]
+        },
+        "fields": {
+            "endpoint": "best_structures"
+        },
+        "type": "PDBeSIFTSTool",
+        "test_examples": [
+            {
+                "uniprot_accession": "P04637"
+            },
+            {
+                "uniprot_accession": "P00533"
+            }
+        ],
+        "return_schema": {
+            "oneOf": [
+                {
+                    "type": "object",
+                    "properties": {
+                        "data": {
+                            "type": "object",
+                            "properties": {
+                                "uniprot_accession": {
+                                    "type": "string",
+                                    "description": "UniProt accession queried"
+                                },
+                                "structures": {
+                                    "type": "array",
+                                    "items": {
+                                        "type": "object",
+                                        "properties": {
+                                            "pdb_id": {
+                                                "type": ["string", "null"],
+                                                "description": "PDB entry ID (4 characters)"
+                                            },
+                                            "chain_id": {
+                                                "type": ["string", "null"],
+                                                "description": "Chain ID in PDB entry"
+                                            },
+                                            "uniprot_start": {
+                                                "type": ["integer", "null"],
+                                                "description": "UniProt sequence start covered"
+                                            },
+                                            "uniprot_end": {
+                                                "type": ["integer", "null"],
+                                                "description": "UniProt sequence end covered"
+                                            },
+                                            "resolution": {
+                                                "type": ["number", "null"],
+                                                "description": "Structure resolution in Angstroms"
+                                            },
+                                            "experimental_method": {
+                                                "type": ["string", "null"],
+                                                "description": "Method (X-ray diffraction, Electron Microscopy, NMR)"
+                                            },
+                                            "coverage": {
+                                                "type": ["number", "null"],
+                                                "description": "Fraction of UniProt sequence covered"
+                                            },
+                                            "tax_id": {
+                                                "type": ["integer", "null"],
+                                                "description": "Taxonomy ID of source organism"
+                                            }
+                                        }
+                                    },
+                                    "description": "Ranked PDB structures (max 50)"
+                                },
+                                "total_structures": {
+                                    "type": "integer",
+                                    "description": "Total available structure-chain entries"
+                                }
+                            }
+                        },
+                        "metadata": {
+                            "type": "object",
+                            "properties": {
+                                "source": {"type": "string"},
+                                "accession": {"type": "string"}
+                            }
+                        }
+                    }
+                },
+                {
+                    "type": "object",
+                    "properties": {
+                        "error": {"type": "string"}
+                    },
+                    "required": ["error"]
+                }
+            ]
+        }
+    },
+    {
+        "name": "PDBeSIFTS_get_pdb_to_uniprot",
+        "description": "Map PDB entry chains to UniProt protein accessions using PDBe SIFTS cross-referencing. For a given PDB structure, returns which UniProt proteins are present, which chains correspond to each protein, and the residue-level mapping between PDB and UniProt numbering. Essential for understanding multi-chain structures and identifying proteins in crystal/EM structures. Example: PDB 1tup maps chain A/B/C to P04637 (TP53) residues 94-312.",
+        "parameter": {
+            "type": "object",
+            "properties": {
+                "pdb_id": {
+                    "type": "string",
+                    "description": "PDB entry ID (4-character code). Examples: '1tup' (p53-DNA complex), '1m17' (EGFR kinase), '3pxe' (BRCA1 BRCT), '4hhb' (hemoglobin)."
+                }
+            },
+            "required": [
+                "pdb_id"
+            ]
+        },
+        "fields": {
+            "endpoint": "pdb_to_uniprot"
+        },
+        "type": "PDBeSIFTSTool",
+        "test_examples": [
+            {
+                "pdb_id": "1tup"
+            },
+            {
+                "pdb_id": "1m17"
+            }
+        ],
+        "return_schema": {
+            "oneOf": [
+                {
+                    "type": "object",
+                    "properties": {
+                        "data": {
+                            "type": "object",
+                            "properties": {
+                                "pdb_id": {
+                                    "type": "string",
+                                    "description": "PDB entry ID"
+                                },
+                                "proteins": {
+                                    "type": "array",
+                                    "items": {
+                                        "type": "object",
+                                        "properties": {
+                                            "uniprot_accession": {
+                                                "type": ["string", "null"],
+                                                "description": "UniProt accession"
+                                            },
+                                            "name": {
+                                                "type": ["string", "null"],
+                                                "description": "Protein identifier"
+                                            },
+                                            "chain_mappings": {
+                                                "type": "array",
+                                                "items": {
+                                                    "type": "object",
+                                                    "properties": {
+                                                        "chain_id": {
+                                                            "type": ["string", "null"],
+                                                            "description": "Chain ID"
+                                                        },
+                                                        "pdb_start": {
+                                                            "type": ["integer", "null"],
+                                                            "description": "PDB residue start"
+                                                        },
+                                                        "pdb_end": {
+                                                            "type": ["integer", "null"],
+                                                            "description": "PDB residue end"
+                                                        },
+                                                        "uniprot_start": {
+                                                            "type": ["integer", "null"],
+                                                            "description": "UniProt residue start"
+                                                        },
+                                                        "uniprot_end": {
+                                                            "type": ["integer", "null"],
+                                                            "description": "UniProt residue end"
+                                                        }
+                                                    }
+                                                },
+                                                "description": "Chain-to-UniProt residue mappings"
+                                            }
+                                        }
+                                    },
+                                    "description": "UniProt proteins found in PDB entry"
+                                },
+                                "total_proteins": {
+                                    "type": "integer",
+                                    "description": "Number of distinct UniProt proteins"
+                                }
+                            }
+                        },
+                        "metadata": {
+                            "type": "object",
+                            "properties": {
+                                "source": {"type": "string"},
+                                "pdb_id": {"type": "string"}
+                            }
+                        }
+                    }
+                },
+                {
+                    "type": "object",
+                    "properties": {
+                        "error": {"type": "string"}
+                    },
+                    "required": ["error"]
+                }
+            ]
+        }
+    },
+    {
+        "name": "PDBeSIFTS_get_all_structures",
+        "description": "Get all PDB structures for a UniProt protein, grouped by PDB entry with chain details, from PDBe SIFTS. Unlike best_structures which returns a flat ranked list, this groups results by PDB ID showing all chains per structure, sorted by resolution. Useful for comprehensive structural coverage analysis. Example: P04637 (TP53) has structures across hundreds of unique PDB entries covering different domains and complexes.",
+        "parameter": {
+            "type": "object",
+            "properties": {
+                "uniprot_accession": {
+                    "type": "string",
+                    "description": "UniProt accession for the protein. Examples: 'P04637' (TP53), 'P00533' (EGFR), 'P38398' (BRCA1)."
+                }
+            },
+            "required": [
+                "uniprot_accession"
+            ]
+        },
+        "fields": {
+            "endpoint": "uniprot_to_pdb"
+        },
+        "type": "PDBeSIFTSTool",
+        "test_examples": [
+            {
+                "uniprot_accession": "P04637"
+            },
+            {
+                "uniprot_accession": "P01308"
+            }
+        ],
+        "return_schema": {
+            "oneOf": [
+                {
+                    "type": "object",
+                    "properties": {
+                        "data": {
+                            "type": "object",
+                            "properties": {
+                                "uniprot_accession": {
+                                    "type": "string",
+                                    "description": "UniProt accession queried"
+                                },
+                                "pdb_entries": {
+                                    "type": "array",
+                                    "items": {
+                                        "type": "object",
+                                        "properties": {
+                                            "pdb_id": {
+                                                "type": ["string", "null"],
+                                                "description": "PDB entry ID"
+                                            },
+                                            "resolution": {
+                                                "type": ["number", "null"],
+                                                "description": "Resolution in Angstroms"
+                                            },
+                                            "experimental_method": {
+                                                "type": ["string", "null"],
+                                                "description": "Experimental method"
+                                            },
+                                            "chains": {
+                                                "type": "array",
+                                                "items": {
+                                                    "type": "object",
+                                                    "properties": {
+                                                        "chain_id": {"type": ["string", "null"]},
+                                                        "uniprot_start": {"type": ["integer", "null"]},
+                                                        "uniprot_end": {"type": ["integer", "null"]},
+                                                        "coverage": {"type": ["number", "null"]}
+                                                    }
+                                                },
+                                                "description": "Chains in this PDB entry"
+                                            }
+                                        }
+                                    },
+                                    "description": "PDB entries sorted by resolution (max 50)"
+                                },
+                                "total_pdb_entries": {
+                                    "type": "integer",
+                                    "description": "Total unique PDB entries"
+                                },
+                                "total_chain_mappings": {
+                                    "type": "integer",
+                                    "description": "Total chain-level mappings"
+                                }
+                            }
+                        },
+                        "metadata": {
+                            "type": "object",
+                            "properties": {
+                                "source": {"type": "string"},
+                                "accession": {"type": "string"}
+                            }
+                        }
+                    }
+                },
+                {
+                    "type": "object",
+                    "properties": {
+                        "error": {"type": "string"}
+                    },
+                    "required": ["error"]
+                }
+            ]
+        }
+    }
+]

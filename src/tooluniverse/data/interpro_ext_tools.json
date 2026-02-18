@@ -1,0 +1,145 @@
+[
+    {
+        "name": "InterPro_get_proteins_by_domain",
+        "description": "Find proteins that contain a specific InterPro domain. Performs a reverse lookup from an InterPro domain/family accession to the list of UniProt proteins annotated with that domain. Supports filtering by reviewed (Swiss-Prot) entries only. Useful for discovering all proteins in a protein family or containing a specific functional domain. Example: IPR011615 (p53 DNA-binding domain) returns 6,251 proteins including P04637 (TP53), P10276 (TP63), P63165 (TP73).",
+        "parameter": {
+            "type": "object",
+            "properties": {
+                "domain_id": {
+                    "type": "string",
+                    "description": "InterPro accession ID. Examples: 'IPR011615' (p53 DNA-binding domain, 6K proteins), 'IPR000719' (Protein kinase domain, 2.2M proteins), 'IPR002117' (p53 family), 'IPR001245' (Serine-threonine/tyrosine-protein kinase)."
+                },
+                "page_size": {
+                    "type": "integer",
+                    "description": "Number of proteins to return (1-50, default 20).",
+                    "default": 20
+                },
+                "reviewed_only": {
+                    "type": "boolean",
+                    "description": "If true, only return Swiss-Prot reviewed entries (default false returns all UniProt).",
+                    "default": false
+                }
+            },
+            "required": [
+                "domain_id"
+            ]
+        },
+        "fields": {
+            "endpoint": "proteins_by_domain"
+        },
+        "type": "InterProExtTool",
+        "test_examples": [
+            {
+                "domain_id": "IPR011615"
+            },
+            {
+                "domain_id": "IPR011615",
+                "reviewed_only": true,
+                "page_size": 10
+            }
+        ],
+        "return_schema": {
+            "oneOf": [
+                {
+                    "type": "object",
+                    "properties": {
+                        "data": {
+                            "type": "object",
+                            "properties": {
+                                "domain_id": {
+                                    "type": "string",
+                                    "description": "InterPro domain accession queried"
+                                },
+                                "total_proteins": {
+                                    "type": "integer",
+                                    "description": "Total number of proteins with this domain"
+                                },
+                                "proteins": {
+                                    "type": "array",
+                                    "items": {
+                                        "type": "object",
+                                        "properties": {
+                                            "accession": {
+                                                "type": [
+                                                    "string",
+                                                    "null"
+                                                ],
+                                                "description": "UniProt accession"
+                                            },
+                                            "name": {
+                                                "type": [
+                                                    "string",
+                                                    "null"
+                                                ],
+                                                "description": "Protein name"
+                                            },
+                                            "source_database": {
+                                                "type": [
+                                                    "string",
+                                                    "null"
+                                                ],
+                                                "description": "Source (reviewed=Swiss-Prot, unreviewed=TrEMBL)"
+                                            },
+                                            "length": {
+                                                "type": [
+                                                    "integer",
+                                                    "null"
+                                                ],
+                                                "description": "Sequence length"
+                                            },
+                                            "source_organism": {
+                                                "type": [
+                                                    "string",
+                                                    "null"
+                                                ],
+                                                "description": "Species scientific name"
+                                            },
+                                            "tax_id": {
+                                                "type": [
+                                                    "string",
+                                                    "null"
+                                                ],
+                                                "description": "NCBI taxonomy ID"
+                                            }
+                                        }
+                                    },
+                                    "description": "Proteins containing this domain"
+                                },
+                                "page_size": {
+                                    "type": "integer",
+                                    "description": "Page size used"
+                                },
+                                "reviewed_only": {
+                                    "type": "boolean",
+                                    "description": "Whether only Swiss-Prot entries were returned"
+                                }
+                            }
+                        },
+                        "metadata": {
+                            "type": "object",
+                            "properties": {
+                                "source": {
+                                    "type": "string"
+                                },
+                                "domain_id": {
+                                    "type": "string"
+                                }
+                            }
+                        }
+                    }
+                },
+                {
+                    "type": "object",
+                    "properties": {
+                        "error": {
+                            "type": "string"
+                        }
+                    },
+                    "required": [
+                        "error"
+                    ]
+                }
+            ]
+        }
+    }
+]

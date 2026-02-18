@@ -1,0 +1,156 @@
+[
+    {
+        "name": "EnsemblArchive_get_id_history",
+        "description": "Get the version history and current status of an Ensembl stable ID. Returns the latest version string, current release number, assembly, and whether the ID is still active. Useful for checking if a gene/transcript/protein ID is current or deprecated, and what replaced it. Example: ENSG00000141510 (TP53) is current at release 115 on GRCh38 with latest version ENSG00000141510.20.",
+        "parameter": {
+            "type": "object",
+            "properties": {
+                "ensembl_id": {
+                    "type": "string",
+                    "description": "Ensembl stable ID to look up (gene: ENSG*, transcript: ENST*, protein: ENSP*, e.g., 'ENSG00000141510' for TP53)."
+                }
+            },
+            "required": ["ensembl_id"]
+        },
+        "fields": {
+            "endpoint": "get_id_history"
+        },
+        "type": "EnsemblArchiveTool",
+        "test_examples": [
+            {
+                "ensembl_id": "ENSG00000141510"
+            },
+            {
+                "ensembl_id": "ENSG00000012048"
+            }
+        ],
+        "return_schema": {
+            "oneOf": [
+                {
+                    "type": "object",
+                    "properties": {
+                        "data": {
+                            "type": "object",
+                            "properties": {
+                                "id": {
+                                    "type": "string",
+                                    "description": "Ensembl stable ID"
+                                },
+                                "latest_version": {
+                                    "type": "string",
+                                    "description": "Full versioned ID (e.g., ENSG00000141510.20)"
+                                },
+                                "current_release": {
+                                    "type": "integer",
+                                    "description": "Ensembl release number (e.g., 115)"
+                                },
+                                "assembly": {
+                                    "type": "string",
+                                    "description": "Genome assembly (e.g., GRCh38)"
+                                },
+                                "is_current": {
+                                    "type": "boolean",
+                                    "description": "Whether this ID is still active"
+                                },
+                                "type": {
+                                    "type": ["string", "null"],
+                                    "description": "Feature type (Gene, Transcript, Translation)"
+                                },
+                                "possible_replacement": {
+                                    "type": ["array", "null"],
+                                    "description": "Replacement IDs if this ID was retired"
+                                }
+                            }
+                        },
+                        "metadata": {
+                            "type": "object"
+                        }
+                    },
+                    "required": ["data"]
+                },
+                {
+                    "type": "object",
+                    "properties": {
+                        "error": {
+                            "type": "string"
+                        }
+                    },
+                    "required": ["error"]
+                }
+            ]
+        }
+    },
+    {
+        "name": "EnsemblArchive_batch_lookup",
+        "description": "Batch lookup version histories for multiple Ensembl stable IDs. Returns current status, release, and assembly for each ID. Supports up to 50 IDs per request. Useful for checking a list of gene IDs for currency, identifying deprecated IDs, and finding their replacements. Example: ENSG00000141510 (TP53) and ENSG00000012048 (BRCA1) both return as current at release 115 on GRCh38.",
+        "parameter": {
+            "type": "object",
+            "properties": {
+                "ensembl_ids": {
+                    "type": "string",
+                    "description": "Comma-separated Ensembl stable IDs (max 50). Example: 'ENSG00000141510,ENSG00000012048' for TP53 and BRCA1."
+                }
+            },
+            "required": ["ensembl_ids"]
+        },
+        "fields": {
+            "endpoint": "batch_lookup"
+        },
+        "type": "EnsemblArchiveTool",
+        "test_examples": [
+            {
+                "ensembl_ids": "ENSG00000141510,ENSG00000012048"
+            }
+        ],
+        "return_schema": {
+            "oneOf": [
+                {
+                    "type": "object",
+                    "properties": {
+                        "data": {
+                            "type": "object",
+                            "properties": {
+                                "queried_ids": {
+                                    "type": "integer",
+                                    "description": "Number of IDs queried"
+                                },
+                                "found": {
+                                    "type": "integer",
+                                    "description": "Number of IDs found"
+                                },
+                                "entries": {
+                                    "type": "array",
+                                    "description": "Archive entries for each ID",
+                                    "items": {
+                                        "type": "object",
+                                        "properties": {
+                                            "id": {"type": "string"},
+                                            "latest_version": {"type": "string"},
+                                            "current_release": {"type": "integer"},
+                                            "assembly": {"type": "string"},
+                                            "is_current": {"type": "boolean"},
+                                            "type": {"type": ["string", "null"]}
+                                        }
+                                    }
+                                }
+                            }
+                        },
+                        "metadata": {
+                            "type": "object"
+                        }
+                    },
+                    "required": ["data"]
+                },
+                {
+                    "type": "object",
+                    "properties": {
+                        "error": {
+                            "type": "string"
+                        }
+                    },
+                    "required": ["error"]
+                }
+            ]
+        }
+    }
+]

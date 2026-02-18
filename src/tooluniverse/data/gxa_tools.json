@@ -1,0 +1,248 @@
+[
+    {
+        "name": "GxA_list_experiments",
+        "description": "List gene expression experiments from EBI Gene Expression Atlas. Can filter by species (e.g., 'Homo sapiens') and experiment type ('baseline' for tissue expression, 'differential' for condition comparisons). The Atlas contains 4,500+ experiments across hundreds of species. Example: filtering by 'Homo sapiens' and 'baseline' returns 123 human tissue-level expression experiments including E-MTAB-2836 (122 human tissues), E-MTAB-2706 (675 cancer cell lines), and E-GEOD-46817 (melanoma).",
+        "parameter": {
+            "type": "object",
+            "properties": {
+                "species": {
+                    "type": "string",
+                    "description": "Species name to filter experiments (e.g., 'Homo sapiens', 'Mus musculus', 'Arabidopsis thaliana'). Leave empty for all species."
+                },
+                "experiment_type": {
+                    "type": "string",
+                    "description": "Filter by experiment type: 'baseline' (tissue/cell type expression), 'differential' (condition comparisons), 'proteomics', or 'rnaseq'. Leave empty for all types."
+                },
+                "limit": {
+                    "type": "integer",
+                    "description": "Maximum number of experiments to return (1-100). Default: 20."
+                }
+            },
+            "required": []
+        },
+        "fields": {
+            "endpoint": "list_experiments"
+        },
+        "type": "GxATool",
+        "test_examples": [
+            {
+                "species": "Homo sapiens",
+                "experiment_type": "baseline",
+                "limit": 5
+            },
+            {
+                "species": "Mus musculus",
+                "limit": 5
+            }
+        ],
+        "return_schema": {
+            "oneOf": [
+                {
+                    "type": "object",
+                    "properties": {
+                        "data": {
+                            "type": "object",
+                            "properties": {
+                                "total_experiments": {
+                                    "type": "integer",
+                                    "description": "Total number of matching experiments"
+                                },
+                                "returned": {
+                                    "type": "integer",
+                                    "description": "Number of experiments in this response"
+                                },
+                                "experiments": {
+                                    "type": "array",
+                                    "description": "List of experiments with accession, description, species, type, and assay count",
+                                    "items": {
+                                        "type": "object",
+                                        "properties": {
+                                            "accession": {"type": "string"},
+                                            "description": {"type": "string"},
+                                            "species": {"type": "string"},
+                                            "experiment_type": {"type": "string"},
+                                            "number_of_assays": {"type": "integer"}
+                                        }
+                                    }
+                                }
+                            }
+                        },
+                        "metadata": {
+                            "type": "object"
+                        }
+                    },
+                    "required": ["data"]
+                },
+                {
+                    "type": "object",
+                    "properties": {
+                        "error": {
+                            "type": "string"
+                        }
+                    },
+                    "required": ["error"]
+                }
+            ]
+        }
+    },
+    {
+        "name": "GxA_get_experiment_expression",
+        "description": "Get gene expression data from a specific Expression Atlas experiment. Returns expression levels across tissues or conditions, with optional filtering by gene ID. Experiment E-MTAB-2836 contains RNA-seq of 122 human tissues, E-MTAB-2706 covers 675 cancer cell lines. For each gene, expression values are provided across all assayed conditions (tissues, cell types, developmental stages, etc.).",
+        "parameter": {
+            "type": "object",
+            "properties": {
+                "experiment_accession": {
+                    "type": "string",
+                    "description": "Expression Atlas experiment accession (e.g., 'E-MTAB-2836' for human tissues RNA-seq, 'E-MTAB-2706' for cancer cell lines)."
+                },
+                "gene_id": {
+                    "type": "string",
+                    "description": "Optional Ensembl gene ID to filter expression data for a specific gene (e.g., 'ENSG00000141510' for TP53). Leave empty for all genes in the experiment."
+                }
+            },
+            "required": ["experiment_accession"]
+        },
+        "fields": {
+            "endpoint": "get_experiment_expression"
+        },
+        "type": "GxATool",
+        "test_examples": [
+            {
+                "experiment_accession": "E-MTAB-2836"
+            },
+            {
+                "experiment_accession": "E-MTAB-2836",
+                "gene_id": "ENSG00000141510"
+            }
+        ],
+        "return_schema": {
+            "oneOf": [
+                {
+                    "type": "object",
+                    "properties": {
+                        "data": {
+                            "type": "object",
+                            "properties": {
+                                "experiment_accession": {
+                                    "type": "string",
+                                    "description": "Experiment accession ID"
+                                },
+                                "experiment_description": {
+                                    "type": "string",
+                                    "description": "Experiment description"
+                                },
+                                "columns": {
+                                    "type": "array",
+                                    "description": "Assay conditions (tissues/cell types/treatments)",
+                                    "items": {
+                                        "type": "object",
+                                        "properties": {
+                                            "factor_value": {"type": "string"},
+                                            "ontology_term_id": {"type": ["string", "null"]},
+                                            "replicates": {"type": ["integer", "null"]}
+                                        }
+                                    }
+                                },
+                                "total_gene_profiles": {
+                                    "type": "integer",
+                                    "description": "Total genes with expression data"
+                                },
+                                "gene_profiles": {
+                                    "type": "array",
+                                    "description": "Gene expression profiles with tissue/condition values",
+                                    "items": {
+                                        "type": "object",
+                                        "properties": {
+                                            "gene_id": {"type": "string"},
+                                            "gene_name": {"type": "string"},
+                                            "expressions": {
+                                                "type": "array",
+                                                "items": {
+                                                    "type": "object",
+                                                    "properties": {
+                                                        "tissue": {"type": "string"},
+                                                        "value": {"type": "number"}
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        },
+                        "metadata": {
+                            "type": "object"
+                        }
+                    },
+                    "required": ["data"]
+                },
+                {
+                    "type": "object",
+                    "properties": {
+                        "error": {
+                            "type": "string"
+                        }
+                    },
+                    "required": ["error"]
+                }
+            ]
+        }
+    },
+    {
+        "name": "GxA_get_experiment_info",
+        "description": "Get metadata about a Gene Expression Atlas experiment including species, number of genes and conditions, and experimental design. Useful for understanding what data is available before querying specific gene expression. Example: E-MTAB-2836 has 29 conditions (tissues) and profiles for thousands of genes in Homo sapiens.",
+        "parameter": {
+            "type": "object",
+            "properties": {
+                "experiment_accession": {
+                    "type": "string",
+                    "description": "Expression Atlas experiment accession (e.g., 'E-MTAB-2836', 'E-MTAB-2706', 'E-GEOD-46817')."
+                }
+            },
+            "required": ["experiment_accession"]
+        },
+        "fields": {
+            "endpoint": "get_experiment_info"
+        },
+        "type": "GxATool",
+        "test_examples": [
+            {
+                "experiment_accession": "E-MTAB-2836"
+            }
+        ],
+        "return_schema": {
+            "oneOf": [
+                {
+                    "type": "object",
+                    "properties": {
+                        "data": {
+                            "type": "object",
+                            "properties": {
+                                "accession": {"type": "string"},
+                                "description": {"type": ["string", "null"]},
+                                "species": {"type": ["string", "null"]},
+                                "total_genes": {"type": "integer"},
+                                "total_conditions": {"type": "integer"},
+                                "column_groupings": {"type": "array"},
+                                "config": {"type": "object"}
+                            }
+                        },
+                        "metadata": {
+                            "type": "object"
+                        }
+                    },
+                    "required": ["data"]
+                },
+                {
+                    "type": "object",
+                    "properties": {
+                        "error": {
+                            "type": "string"
+                        }
+                    },
+                    "required": ["error"]
+                }
+            ]
+        }
+    }
+]

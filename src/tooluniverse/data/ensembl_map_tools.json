@@ -1,0 +1,206 @@
+[
+    {
+        "name": "EnsemblMap_convert_coordinates",
+        "description": "Convert genomic coordinates between human genome assemblies (e.g., GRCh37/hg19 to GRCh38/hg38 or vice versa). Essential for migrating variant positions, GWAS loci, or BED intervals between assembly versions. Uses the Ensembl REST API assembly mapping endpoint. Example: converting BRAF V600E position chr7:140453136 from GRCh37 maps to chr7:140753336 in GRCh38. Supports any species with multiple assemblies.",
+        "parameter": {
+            "type": "object",
+            "properties": {
+                "species": {
+                    "type": "string",
+                    "description": "Species name. Default 'human'. Examples: 'human', 'mouse', 'homo_sapiens', 'mus_musculus'."
+                },
+                "source_assembly": {
+                    "type": "string",
+                    "description": "Source genome assembly name. Examples: 'GRCh37', 'GRCh38', 'GRCm38', 'GRCm39'."
+                },
+                "chromosome": {
+                    "type": "string",
+                    "description": "Chromosome name (e.g., '1', '17', 'X', 'MT')."
+                },
+                "start": {
+                    "type": "integer",
+                    "description": "Start position on the chromosome (1-based, inclusive)."
+                },
+                "end": {
+                    "type": "integer",
+                    "description": "End position on the chromosome (1-based, inclusive)."
+                },
+                "target_assembly": {
+                    "type": "string",
+                    "description": "Target genome assembly name. Examples: 'GRCh38', 'GRCh37'."
+                }
+            },
+            "required": ["source_assembly", "chromosome", "start", "end", "target_assembly"]
+        },
+        "fields": {
+            "endpoint": "assembly_map"
+        },
+        "type": "EnsemblMapTool",
+        "test_examples": [
+            {
+                "species": "human",
+                "source_assembly": "GRCh37",
+                "chromosome": "7",
+                "start": 140453136,
+                "end": 140453136,
+                "target_assembly": "GRCh38"
+            },
+            {
+                "species": "human",
+                "source_assembly": "GRCh37",
+                "chromosome": "17",
+                "start": 7571720,
+                "end": 7590868,
+                "target_assembly": "GRCh38"
+            }
+        ],
+        "return_schema": {
+            "oneOf": [
+                {
+                    "type": "object",
+                    "properties": {
+                        "data": {
+                            "type": "object",
+                            "properties": {
+                                "mappings": {
+                                    "type": "array",
+                                    "items": {
+                                        "type": "object",
+                                        "properties": {
+                                            "original": {
+                                                "type": "object",
+                                                "properties": {
+                                                    "assembly": {"type": "string"},
+                                                    "seq_region_name": {"type": "string"},
+                                                    "start": {"type": "integer"},
+                                                    "end": {"type": "integer"},
+                                                    "strand": {"type": "integer"},
+                                                    "coord_system": {"type": "string"}
+                                                }
+                                            },
+                                            "mapped": {
+                                                "type": "object",
+                                                "properties": {
+                                                    "assembly": {"type": "string"},
+                                                    "seq_region_name": {"type": "string"},
+                                                    "start": {"type": "integer"},
+                                                    "end": {"type": "integer"},
+                                                    "strand": {"type": "integer"},
+                                                    "coord_system": {"type": "string"}
+                                                }
+                                            }
+                                        }
+                                    },
+                                    "description": "List of coordinate mappings between assemblies"
+                                }
+                            }
+                        },
+                        "metadata": {
+                            "type": "object",
+                            "properties": {
+                                "source": {"type": "string"},
+                                "total_mappings": {"type": "integer"}
+                            }
+                        }
+                    },
+                    "required": ["data"]
+                },
+                {
+                    "type": "object",
+                    "properties": {
+                        "error": {
+                            "type": "string",
+                            "description": "Error message"
+                        }
+                    },
+                    "required": ["error"]
+                }
+            ]
+        }
+    },
+    {
+        "name": "EnsemblMap_translate_coordinates",
+        "description": "Map protein or cDNA positions to genomic coordinates using Ensembl. Converts positions from transcript coordinate space (cDNA nucleotide positions) or protein coordinate space (amino acid positions) to chromosomal positions. Essential for mapping protein mutations (e.g., p53 amino acids 100-200) or transcript features to their genomic locations. Example: mapping protein positions 100-200 of ENSP00000269305 (p53) returns genomic coordinates chr17:7674931-7676071 across 3 exons.",
+        "parameter": {
+            "type": "object",
+            "properties": {
+                "ensembl_id": {
+                    "type": "string",
+                    "description": "Ensembl transcript ID (ENST*) for cDNA mapping, or Ensembl protein ID (ENSP*) for protein mapping. Examples: 'ENST00000269305' (TP53 transcript), 'ENSP00000269305' (TP53 protein)."
+                },
+                "start": {
+                    "type": "integer",
+                    "description": "Start position in transcript/protein coordinates (1-based). For cDNA: nucleotide position. For protein: amino acid position."
+                },
+                "end": {
+                    "type": "integer",
+                    "description": "End position in transcript/protein coordinates (1-based)."
+                }
+            },
+            "required": ["ensembl_id", "start", "end"]
+        },
+        "fields": {
+            "endpoint": "translate_coords"
+        },
+        "type": "EnsemblMapTool",
+        "test_examples": [
+            {
+                "ensembl_id": "ENSP00000269305",
+                "start": 100,
+                "end": 200
+            },
+            {
+                "ensembl_id": "ENST00000269305",
+                "start": 100,
+                "end": 200
+            }
+        ],
+        "return_schema": {
+            "oneOf": [
+                {
+                    "type": "object",
+                    "properties": {
+                        "data": {
+                            "type": "object",
+                            "properties": {
+                                "mappings": {
+                                    "type": "array",
+                                    "items": {
+                                        "type": "object",
+                                        "properties": {
+                                            "seq_region_name": {"type": "string", "description": "Chromosome"},
+                                            "start": {"type": "integer", "description": "Genomic start"},
+                                            "end": {"type": "integer", "description": "Genomic end"},
+                                            "strand": {"type": "integer", "description": "Strand (1 or -1)"},
+                                            "coord_system": {"type": "string"}
+                                        }
+                                    },
+                                    "description": "Genomic coordinates corresponding to the protein/cDNA positions"
+                                }
+                            }
+                        },
+                        "metadata": {
+                            "type": "object",
+                            "properties": {
+                                "source": {"type": "string"},
+                                "query_id": {"type": "string"},
+                                "coordinate_type": {"type": "string"},
+                                "total_mappings": {"type": "integer"}
+                            }
+                        }
+                    },
+                    "required": ["data"]
+                },
+                {
+                    "type": "object",
+                    "properties": {
+                        "error": {
+                            "type": "string"
+                        }
+                    },
+                    "required": ["error"]
+                }
+            ]
+        }
+    }
+]
