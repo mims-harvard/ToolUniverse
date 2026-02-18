@@ -447,6 +447,73 @@ Every analysis MUST include:
 
 ---
 
+## Known Limitations
+
+### PyDESeq2 vs R DESeq2 Differences
+
+This skill uses **PyDESeq2** (Python implementation) for differential expression analysis. While PyDESeq2 faithfully implements the DESeq2 algorithm, numerical differences exist between Python and R implementations:
+
+**Dispersion Estimation**:
+- Dispersion estimates may differ from R DESeq2, especially for very low dispersion genes (< 1e-05)
+- This is due to different numerical optimization methods between Python and R statistical libraries
+- Results are still statistically valid and biologically meaningful
+- If you need exact R DESeq2 dispersions for benchmark reproducibility, consider using R DESeq2 directly via rpy2
+
+**For Most Analyses**: PyDESeq2 provides accurate, publication-quality results. The differences are in numerical precision, not statistical validity.
+
+### GO/KEGG Enrichment (gseapy vs clusterProfiler)
+
+Enrichment analysis uses **Python gseapy** by default. Results may differ from **R clusterProfiler** due to:
+- Different enrichment algorithms and statistical tests
+- Different GO/KEGG database versions
+- Different term simplification/redundancy removal methods
+
+**For R clusterProfiler Compatibility**:
+If you need results matching R clusterProfiler exactly (e.g., for benchmark reproducibility):
+
+```python
+# Install rpy2 and R packages first:
+# pip install rpy2
+# In R: install.packages(c("clusterProfiler", "org.Hs.eg.db", "enrichplot"))
+
+from rpy2.robjects.packages import importr
+from rpy2.robjects import pandas2ri, vectors
+pandas2ri.activate()
+
+# Load R packages
+clusterProfiler = importr('clusterProfiler')
+orgdb = importr('org.Hs.eg.db')
+
+# Convert Python gene list to R vector
+gene_list = sig_genes.index.tolist()
+r_genes = vectors.StrVector(gene_list)
+
+# Run enrichGO (R's clusterProfiler)
+enrich_result = clusterProfiler.enrichGO(
+    gene=r_genes,
+    OrgDb=orgdb.org_Hs_eg_db,
+    ont='BP',  # Biological Process
+    pAdjustMethod='BH',
+    pvalueCutoff=0.05,
+    qvalueCutoff=0.2
+)
+
+# Apply simplify to remove redundant terms
+simplified = clusterProfiler.simplify(enrich_result, cutoff=0.7, by='p.adjust')
+
+# Convert R result back to pandas
+results_df = pandas2ri.rpy2py(simplified)
+```
+
+**Default behavior**: Uses gseapy (no R dependencies required). This is sufficient for most analyses and provides valid enrichment results.
+
+**When to use R clusterProfiler**:
+- When exact reproducibility with R-based benchmarks is required
+- When collaborating with R users who need identical results
+- When specific clusterProfiler features (GSEA, compareCluster) are needed
+
+---
+
 ## References
 
 Detailed documentation for advanced topics:
