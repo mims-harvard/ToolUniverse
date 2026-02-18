@@ -1,9 +1,2 @@
 # Product skills copied from skills/ — do not track here
 # These are synced back to skills/ by the pre-commit hook
-tooluniverse*/
-setup-*/
-tooluniverse-drug-repurposing/
-
-# Exceptions: Track these newly created skills
-!tooluniverse-chemical-safety/
-!tooluniverse-epigenomics/

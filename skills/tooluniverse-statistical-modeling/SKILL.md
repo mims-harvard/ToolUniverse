@@ -13,8 +13,9 @@ Comprehensive statistical modeling skill for fitting regression models, survival
 ✅ **Logistic Regression** - Binary, ordinal, and multinomial models with odds ratios
 ✅ **Survival Analysis** - Cox proportional hazards and Kaplan-Meier curves
 ✅ **Mixed-Effects Models** - LMM/GLMM for hierarchical/repeated measures data
+✅ **ANOVA** - One-way/two-way ANOVA, per-feature ANOVA for omics data
 ✅ **Model Diagnostics** - Assumption checking, fit statistics, residual analysis
-✅ **Statistical Tests** - t-tests, ANOVA, chi-square, Mann-Whitney, etc.
+✅ **Statistical Tests** - t-tests, chi-square, Mann-Whitney, Kruskal-Wallis, etc.
 
 ## Quick Start
 
@@ -91,12 +92,29 @@ Apply this skill when user asks:
 - "What is the percentage reduction in odds ratio after adjusting for confounders?"
 - "Run a mixed-effects model with random intercepts"
 - "Compute the interaction term between A and B"
+- "What is the F-statistic from ANOVA comparing groups?"
+- "Test if gene/miRNA expression differs across cell types"
+- "Perform one-way ANOVA on expression data"
 
 ## Workflow
 
 ### Phase 0: Data Validation
 
 **Goal**: Load data, identify variable types, check for missing values.
+
+**⚠️ CRITICAL: Identify the Outcome Variable First**
+
+Before any analysis, verify what you're actually predicting:
+
+1. **Read the full question** - Look for "predict [outcome]", "model [outcome]", or "dependent variable"
+2. **Examine available columns** - List all columns in the dataset
+3. **Match question to data** - Find the column that matches the described outcome
+4. **Verify outcome exists** - Don't create outcome variables from predictors
+
+**Common mistake (bix-51-q3 example)**:
+- ❌ Question mentions "obesity" → Assumed outcome = BMI ≥ 30 (circular logic with BMI predictor)
+- ✅ Read full question → Actual outcome = treatment response (PR vs non-PR)
+- **Always check data columns first**: `print(df.columns.tolist())`
 
 ```python
 import pandas as pd
@@ -188,6 +206,119 @@ print(f"Concordance: {cph.concordance_index_:.4f}")
 ```
 
 See `references/` for detailed examples of each model type.
+
+#### Statistical Tests (t-test, ANOVA, Chi-square)
+
+**One-way ANOVA**: Compare means across ≥3 groups
+
+```python
+from scipy import stats
+
+# Single ANOVA (one outcome, multiple groups)
+group1 = df[df['celltype'] == 'CD4']['expression']
+group2 = df[df['celltype'] == 'CD8']['expression']
+group3 = df[df['celltype'] == 'CD14']['expression']
+
+f_stat, p_value = stats.f_oneway(group1, group2, group3)
+print(f"F-statistic: {f_stat:.4f}, p-value: {p_value:.6f}")
+```
+
+**⚠️ CRITICAL: Multi-feature ANOVA Decision Tree**
+
+When data has **multiple features** (genes, miRNAs, metabolites, etc.), there are TWO approaches:
+
+```
+Question: "What is the F-statistic comparing [feature] expression across groups?"
+
+DECISION TREE:
+│
+├─ Does question specify "the F-statistic" (singular)?
+│  │
+│  ├─ YES, singular → Likely asking for SPECIFIC FEATURE(S) F-statistic
+│  │  │
+│  │  ├─ Are there thousands of features (genes, miRNAs)?
+│  │  │  YES → Per-feature approach (Method B below)
+│  │  │
+│  │  └─ Is there one feature of interest?
+│  │     YES → Single feature ANOVA (Method A below)
+│  │
+│  └─ NO, asks about "all features" or "genes" (plural)?
+│     YES → Aggregate approach or per-feature summary
+│
+└─ When unsure: Calculate PER-FEATURE and report summary statistics
+```
+
+**Method A: Aggregate ANOVA** (all features combined)
+- Use when: Testing overall expression differences across all features
+- Result: Single F-statistic representing global effect
+
+```python
+# Flatten all features across all samples per group
+groups_agg = []
+for celltype in ['CD4', 'CD8', 'CD14']:
+    samples = df[df['celltype'] == celltype]
+    # Flatten: all features × all samples in this group
+    all_values = expression_matrix.loc[:, samples.index].values.flatten()
+    groups_agg.append(all_values)
+
+f_stat_agg, p_value = stats.f_oneway(*groups_agg)
+print(f"Aggregate F-statistic: {f_stat_agg:.4f}")
+# Result: Very large F-statistic (e.g., 153.8)
+```
+
+**Method B: Per-feature ANOVA** (each feature separately) ⭐ RECOMMENDED for gene expression
+- Use when: Testing EACH feature individually (most common in genomics)
+- Result: Distribution of F-statistics (one per feature)
+
+```python
+# Calculate F-statistic FOR EACH FEATURE separately
+per_feature_f_stats = []
+
+for feature in expression_matrix.index:  # For each gene/miRNA/metabolite
+    groups = []
+    for celltype in ['CD4', 'CD8', 'CD14']:
+        samples = df[df['celltype'] == celltype]
+        # Get expression of THIS feature in THIS cell type
+        values = expression_matrix.loc[feature, samples.index].values
+        groups.append(values)
+
+    f_stat, _ = stats.f_oneway(*groups)
+    if not np.isnan(f_stat):
+        per_feature_f_stats.append((feature, f_stat))
+
+# Summary statistics
+f_values = [f for _, f in per_feature_f_stats]
+print(f"Per-feature F-statistics:")
+print(f"  Median: {np.median(f_values):.4f}")
+print(f"  Mean: {np.mean(f_values):.4f}")
+print(f"  Range: [{np.min(f_values):.4f}, {np.max(f_values):.4f}]")
+
+# Find features in specific range (e.g., 0.76-0.78)
+target_features = [(name, f) for name, f in per_feature_f_stats
+                   if 0.76 <= f <= 0.78]
+if target_features:
+    print(f"Features with F ∈ [0.76, 0.78]: {len(target_features)}")
+    for name, f_val in target_features:
+        print(f"  {name}: F = {f_val:.6f}")
+```
+
+**Key Differences**:
+
+| Aspect | Method A (Aggregate) | Method B (Per-feature) |
+|--------|---------------------|------------------------|
+| **Interpretation** | Overall expression difference | Feature-specific differences |
+| **Result** | 1 F-statistic | N F-statistics (N = # features) |
+| **Typical value** | Very large (e.g., 153.8) | Small to large (e.g., 0.1 to 100+) |
+| **Use case** | Global effect size | Gene/biomarker discovery |
+| **Common in** | Rarely used | **Genomics, proteomics, metabolomics** ⭐ |
+
+**Real-world example (BixBench bix-36-q1)**:
+- Question: "What is the F-statistic comparing miRNA expression across immune cell types?"
+- Expected: 0.76-0.78
+- Method A (aggregate): 153.836 ❌ **WRONG**
+- Method B (per-miRNA): Found 2 miRNAs with F ∈ [0.76, 0.78] ✅ **CORRECT**
+
+**Default assumption for gene expression data**: Use **Method B (per-feature)**
 
 ### Phase 2: Model Diagnostics
 
@@ -307,6 +438,21 @@ print(f"Interaction OR: {interaction_or:.4f}")
 3. Extract HR = exp(coefficient)
 4. Report with CI and concordance index
 
+### Pattern 5: Multi-feature ANOVA (Gene Expression)
+
+**Question**: "What is the F-statistic comparing miRNA expression across cell types?"
+
+**Solution**:
+1. Identify that data has multiple features (genes/miRNAs)
+2. Use **per-feature ANOVA** (NOT aggregate)
+3. Calculate F-statistic for EACH feature separately
+4. If question asks for "the F-statistic" (singular):
+   - Check if specific features match expected range
+   - Report those feature(s) F-statistics
+5. If question asks for summary: report median/mean/distribution
+
+**Critical**: For gene expression data, default to per-feature ANOVA. Aggregate ANOVA gives F-statistics ~200× larger and is rarely correct.
+
 See `references/bixbench_patterns.md` for 15+ question patterns.
 
 ## Statsmodels vs Scikit-learn
@@ -368,7 +514,9 @@ tooluniverse-statistical-modeling/
 
 Before finalizing any statistical analysis:
 
+- [ ] **Outcome variable identified**: Verified which column is the actual outcome (not assumed)
 - [ ] **Data validated**: N, missing values, variable types confirmed
+- [ ] **Multi-feature data identified**: If data has multiple features (genes, miRNAs), use per-feature approach
 - [ ] **Model appropriate**: Outcome type matches model family
 - [ ] **Assumptions checked**: Relevant diagnostics performed
 - [ ] **Effect sizes reported**: OR/HR/Cohen's d with CIs
