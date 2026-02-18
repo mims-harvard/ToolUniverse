@@ -1,0 +1,49 @@
+"""
+EnsemblArchive_get_id_history
+
+Get the version history and current status of an Ensembl stable ID. Returns the latest version st...
+"""
+
+from typing import Any, Optional, Callable
+from ._shared_client import get_shared_client
+
+
+def EnsemblArchive_get_id_history(
+    ensembl_id: str,
+    *,
+    stream_callback: Optional[Callable[[str], None]] = None,
+    use_cache: bool = False,
+    validate: bool = True,
+) -> Any:
+    """
+    Get the version history and current status of an Ensembl stable ID. Returns the latest version st...
+
+    Parameters
+    ----------
+    ensembl_id : str
+        Ensembl stable ID to look up (gene: ENSG*, transcript: ENST*, protein: ENSP*,...
+    stream_callback : Callable, optional
+        Callback for streaming output
+    use_cache : bool, default False
+        Enable caching
+    validate : bool, default True
+        Validate parameters
+
+    Returns
+    -------
+    Any
+    """
+    # Handle mutable defaults to avoid B006 linting error
+
+    return get_shared_client().run_one_function(
+        {
+            "name": "EnsemblArchive_get_id_history",
+            "arguments": {"ensembl_id": ensembl_id},
+        },
+        stream_callback=stream_callback,
+        use_cache=use_cache,
+        validate=validate,
+    )
+
+
+__all__ = ["EnsemblArchive_get_id_history"]

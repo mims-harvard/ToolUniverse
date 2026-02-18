@@ -609,6 +609,8 @@ default_tool_files = {
     "orthodb": os.path.join(current_dir, "data", "orthodb_tools.json"),
     # SynBioHub - Synthetic biology parts and designs repository (SBOL standard)
     "synbiohub": os.path.join(current_dir, "data", "synbiohub_tools.json"),
+    # BioPortal - NCBO ontology browser and annotation service
+    "bioportal": os.path.join(current_dir, "data", "bioportal_tools.json"),
 }
 
 # Auto-load any user-provided tools from ~/.tooluniverse/user_tools/
