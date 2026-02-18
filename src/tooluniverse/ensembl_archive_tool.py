@@ -80,10 +80,11 @@ class EnsemblArchiveTool(BaseTool):
         response.raise_for_status()
         data = response.json()
 
+        release = data.get("release")
         result = {
             "id": data.get("id"),
             "latest_version": data.get("latest"),
-            "current_release": data.get("release"),
+            "current_release": int(release) if release is not None else None,
             "assembly": data.get("assembly"),
             "is_current": bool(data.get("is_current")),
             "type": data.get("type"),
@@ -129,11 +130,14 @@ class EnsemblArchiveTool(BaseTool):
         results = []
         if isinstance(data, list):
             for entry in data:
+                entry_release = entry.get("release")
                 results.append(
                     {
                         "id": entry.get("id"),
                         "latest_version": entry.get("latest"),
-                        "current_release": entry.get("release"),
+                        "current_release": int(entry_release)
+                        if entry_release is not None
+                        else None,
                         "assembly": entry.get("assembly"),
                         "is_current": bool(entry.get("is_current")),
                         "type": entry.get("type"),

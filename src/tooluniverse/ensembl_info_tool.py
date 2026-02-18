@@ -148,12 +148,17 @@ class EnsemblInfoTool(BaseTool):
         # Format results
         species_results = []
         for s in species_list[:50]:
+            taxon_id_raw = s.get("taxon_id")
+            try:
+                taxon_id = int(taxon_id_raw) if taxon_id_raw is not None else None
+            except (ValueError, TypeError):
+                taxon_id = None
             species_results.append(
                 {
                     "name": s.get("name"),
                     "display_name": s.get("display_name"),
                     "common_name": s.get("common_name"),
-                    "taxon_id": s.get("taxon_id"),
+                    "taxon_id": taxon_id,
                     "assembly": s.get("assembly"),
                     "accession": s.get("accession"),
                     "division": s.get("division"),

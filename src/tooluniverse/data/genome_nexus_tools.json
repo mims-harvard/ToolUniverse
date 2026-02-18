@@ -1,0 +1,358 @@
+[
+    {
+        "name": "GenomeNexus_annotate_variant",
+        "description": "Annotate a genomic variant using Genome Nexus (Memorial Sloan Kettering), which aggregates variant annotations from multiple sources including VEP, SIFT, PolyPhen-2, AlphaMissense, cancer hotspots, and mutation assessor. Input is a GRCh37/hg19 HGVS genomic notation (e.g., '7:g.140453136A>T' for BRAF V600E, '17:g.7577120C>T' for TP53 R273H). Returns the most severe consequence, transcript consequences with pathogenicity scores (SIFT, PolyPhen, AlphaMissense), cancer hotspot information, and annotation summary with HGVS protein notation. This is the primary variant annotation tool for cancer genomics. Note: coordinates must be in GRCh37/hg19 assembly.",
+        "parameter": {
+            "type": "object",
+            "properties": {
+                "hgvsg": {
+                    "type": "string",
+                    "description": "Genomic variant in HGVS notation using GRCh37/hg19 coordinates. Format: 'chr:g.posRef>Alt'. Examples: '7:g.140453136A>T' (BRAF V600E), '17:g.7577120C>T' (TP53 R273H), '12:g.25398284C>T' (KRAS G12D)."
+                }
+            },
+            "required": ["hgvsg"]
+        },
+        "fields": {
+            "endpoint": "annotate_variant"
+        },
+        "type": "GenomeNexusTool",
+        "test_examples": [
+            {
+                "hgvsg": "7:g.140453136A>T"
+            },
+            {
+                "hgvsg": "17:g.7577120C>T"
+            }
+        ],
+        "return_schema": {
+            "oneOf": [
+                {
+                    "type": "object",
+                    "properties": {
+                        "data": {
+                            "type": "object",
+                            "properties": {
+                                "variant": {"type": "string", "description": "HGVS genomic notation"},
+                                "hgvsg": {"type": "string", "description": "Standardized HGVS genomic notation"},
+                                "assembly_name": {"type": "string", "description": "Genome assembly (GRCh37)"},
+                                "most_severe_consequence": {"type": "string", "description": "Most severe consequence type (e.g., missense_variant)"},
+                                "annotation_summary": {
+                                    "type": "object",
+                                    "properties": {
+                                        "variantType": {"type": "string"},
+                                        "canonicalTranscriptId": {"type": "string"},
+                                        "transcriptConsequences": {
+                                            "type": "array",
+                                            "items": {
+                                                "type": "object",
+                                                "properties": {
+                                                    "transcriptId": {"type": "string"},
+                                                    "hugoGeneSymbol": {"type": "string"},
+                                                    "hgvspShort": {"type": ["string", "null"]},
+                                                    "codonChange": {"type": ["string", "null"]},
+                                                    "consequenceTerms": {"type": "string"},
+                                                    "entrezGeneId": {"type": ["string", "null"]}
+                                                }
+                                            }
+                                        }
+                                    }
+                                },
+                                "transcript_consequences": {
+                                    "type": "array",
+                                    "items": {
+                                        "type": "object",
+                                        "properties": {
+                                            "gene_symbol": {"type": "string"},
+                                            "transcript_id": {"type": "string"},
+                                            "consequence_terms": {"type": "array", "items": {"type": "string"}},
+                                            "hgvsp": {"type": ["string", "null"]},
+                                            "hgvsc": {"type": ["string", "null"]},
+                                            "amino_acids": {"type": ["string", "null"]},
+                                            "polyphen_prediction": {"type": ["string", "null"]},
+                                            "polyphen_score": {"type": ["number", "null"]},
+                                            "sift_prediction": {"type": ["string", "null"]},
+                                            "sift_score": {"type": ["number", "null"]},
+                                            "alphaMissense": {
+                                                "type": ["object", "null"],
+                                                "properties": {
+                                                    "score": {"type": "number"},
+                                                    "pathogenicity": {"type": "string"}
+                                                }
+                                            }
+                                        }
+                                    }
+                                },
+                                "hotspots": {
+                                    "type": ["object", "null"],
+                                    "properties": {
+                                        "annotation": {
+                                            "type": "array",
+                                            "description": "Cancer mutation hotspot data"
+                                        }
+                                    }
+                                },
+                                "colocated_variants": {
+                                    "type": "array",
+                                    "items": {
+                                        "type": "object",
+                                        "properties": {
+                                            "dbSnpId": {"type": "string"}
+                                        }
+                                    }
+                                }
+                            }
+                        },
+                        "metadata": {
+                            "type": "object",
+                            "properties": {
+                                "source": {"type": "string"}
+                            }
+                        }
+                    },
+                    "required": ["data"]
+                },
+                {
+                    "type": "object",
+                    "properties": {
+                        "error": {"type": "string"}
+                    },
+                    "required": ["error"]
+                }
+            ]
+        }
+    },
+    {
+        "name": "GenomeNexus_get_cancer_hotspots",
+        "description": "Get cancer mutation hotspot annotations from Genome Nexus (MSK) for a specific genomic variant. Cancer hotspots are recurrently mutated residues in cancer, curated by the Chang et al. study. Returns hotspot residue, tumor count, hotspot type (single residue or 3D cluster), and the gene symbol. Use this to check if a variant falls in a known cancer hotspot. Input is a GRCh37/hg19 HGVS genomic variant. Example: '7:g.140453136A>T' (BRAF V600E) returns V600 hotspot with 897 tumors.",
+        "parameter": {
+            "type": "object",
+            "properties": {
+                "hgvsg": {
+                    "type": "string",
+                    "description": "Genomic variant in HGVS notation using GRCh37/hg19 coordinates. Format: 'chr:g.posRef>Alt'. Examples: '7:g.140453136A>T' (BRAF V600E), '17:g.7577120C>T' (TP53 R273H)."
+                }
+            },
+            "required": ["hgvsg"]
+        },
+        "fields": {
+            "endpoint": "get_cancer_hotspots"
+        },
+        "type": "GenomeNexusTool",
+        "test_examples": [
+            {
+                "hgvsg": "7:g.140453136A>T"
+            },
+            {
+                "hgvsg": "17:g.7577120C>T"
+            }
+        ],
+        "return_schema": {
+            "oneOf": [
+                {
+                    "type": "object",
+                    "properties": {
+                        "data": {
+                            "type": "object",
+                            "properties": {
+                                "variant": {"type": "string"},
+                                "gene_symbol": {"type": ["string", "null"]},
+                                "is_hotspot": {"type": "boolean"},
+                                "hotspots": {
+                                    "type": "array",
+                                    "items": {
+                                        "type": "object",
+                                        "properties": {
+                                            "hugoSymbol": {"type": "string"},
+                                            "residue": {"type": "string"},
+                                            "tumorCount": {"type": "integer"},
+                                            "type": {"type": "string", "description": "single residue or 3d"}
+                                        }
+                                    }
+                                }
+                            }
+                        },
+                        "metadata": {
+                            "type": "object",
+                            "properties": {
+                                "source": {"type": "string"}
+                            }
+                        }
+                    },
+                    "required": ["data"]
+                },
+                {
+                    "type": "object",
+                    "properties": {
+                        "error": {"type": "string"}
+                    },
+                    "required": ["error"]
+                }
+            ]
+        }
+    },
+    {
+        "name": "GenomeNexus_get_canonical_transcript",
+        "description": "Get the canonical transcript for a gene from Genome Nexus (MSK). Returns the Ensembl transcript ID, protein ID, protein length, RefSeq mRNA ID, CCDS ID, HUGO symbol, and Pfam protein domain annotations. Useful for determining the standard transcript to use for variant annotation, and for getting a quick overview of protein domain architecture. Input is a HUGO gene symbol (e.g., 'TP53', 'BRAF', 'BRCA1').",
+        "parameter": {
+            "type": "object",
+            "properties": {
+                "gene_symbol": {
+                    "type": "string",
+                    "description": "HUGO gene symbol. Examples: 'TP53', 'BRAF', 'BRCA1', 'EGFR', 'KRAS'."
+                }
+            },
+            "required": ["gene_symbol"]
+        },
+        "fields": {
+            "endpoint": "get_canonical_transcript"
+        },
+        "type": "GenomeNexusTool",
+        "test_examples": [
+            {
+                "gene_symbol": "TP53"
+            },
+            {
+                "gene_symbol": "BRAF"
+            }
+        ],
+        "return_schema": {
+            "oneOf": [
+                {
+                    "type": "object",
+                    "properties": {
+                        "data": {
+                            "type": "object",
+                            "properties": {
+                                "transcriptId": {"type": "string", "description": "Ensembl transcript ID"},
+                                "geneId": {"type": "string", "description": "Ensembl gene ID"},
+                                "proteinId": {"type": "string", "description": "Ensembl protein ID"},
+                                "proteinLength": {"type": "integer"},
+                                "hugoSymbols": {"type": "array", "items": {"type": "string"}},
+                                "refseqMrnaId": {"type": ["string", "null"]},
+                                "ccdsId": {"type": ["string", "null"]},
+                                "pfamDomains": {
+                                    "type": "array",
+                                    "items": {
+                                        "type": "object",
+                                        "properties": {
+                                            "pfamDomainId": {"type": "string"},
+                                            "pfamDomainStart": {"type": "integer"},
+                                            "pfamDomainEnd": {"type": "integer"},
+                                            "pfamDomainDescription": {"type": ["string", "null"]}
+                                        }
+                                    }
+                                }
+                            }
+                        },
+                        "metadata": {
+                            "type": "object",
+                            "properties": {
+                                "source": {"type": "string"}
+                            }
+                        }
+                    },
+                    "required": ["data"]
+                },
+                {
+                    "type": "object",
+                    "properties": {
+                        "error": {"type": "string"}
+                    },
+                    "required": ["error"]
+                }
+            ]
+        }
+    },
+    {
+        "name": "GenomeNexus_annotate_mutation",
+        "description": "Annotate a cancer mutation using Genome Nexus (MSK) by specifying chromosome, start, end, reference allele, and variant allele separately. This is an alternative to the HGVS-based annotation for when you have genomic coordinates directly (GRCh37/hg19). Returns the same comprehensive annotation as GenomeNexus_annotate_variant including VEP consequences, SIFT, PolyPhen, AlphaMissense scores, cancer hotspots, and mutation assessor. Example: chr=7, start=140453136, end=140453136, ref=A, alt=T for BRAF V600E.",
+        "parameter": {
+            "type": "object",
+            "properties": {
+                "chromosome": {
+                    "type": "string",
+                    "description": "Chromosome (without 'chr' prefix). Examples: '7', '17', '12', 'X'."
+                },
+                "start": {
+                    "type": "integer",
+                    "description": "Start position (GRCh37/hg19, 1-based)."
+                },
+                "end": {
+                    "type": "integer",
+                    "description": "End position (GRCh37/hg19, 1-based). Same as start for SNVs."
+                },
+                "reference_allele": {
+                    "type": "string",
+                    "description": "Reference allele. Example: 'A'."
+                },
+                "variant_allele": {
+                    "type": "string",
+                    "description": "Variant (alternate) allele. Example: 'T'."
+                }
+            },
+            "required": ["chromosome", "start", "end", "reference_allele", "variant_allele"]
+        },
+        "fields": {
+            "endpoint": "annotate_mutation"
+        },
+        "type": "GenomeNexusTool",
+        "test_examples": [
+            {
+                "chromosome": "7",
+                "start": 140453136,
+                "end": 140453136,
+                "reference_allele": "A",
+                "variant_allele": "T"
+            },
+            {
+                "chromosome": "17",
+                "start": 7577120,
+                "end": 7577120,
+                "reference_allele": "C",
+                "variant_allele": "T"
+            }
+        ],
+        "return_schema": {
+            "oneOf": [
+                {
+                    "type": "object",
+                    "properties": {
+                        "data": {
+                            "type": "object",
+                            "properties": {
+                                "variant": {"type": "string"},
+                                "hgvsg": {"type": "string"},
+                                "assembly_name": {"type": "string"},
+                                "most_severe_consequence": {"type": "string"},
+                                "annotation_summary": {"type": "object"},
+                                "transcript_consequences": {
+                                    "type": "array",
+                                    "items": {"type": "object"}
+                                },
+                                "hotspots": {"type": ["object", "null"]},
+                                "colocated_variants": {
+                                    "type": "array",
+                                    "items": {"type": "object"}
+                                }
+                            }
+                        },
+                        "metadata": {
+                            "type": "object",
+                            "properties": {
+                                "source": {"type": "string"}
+                            }
+                        }
+                    },
+                    "required": ["data"]
+                },
+                {
+                    "type": "object",
+                    "properties": {
+                        "error": {"type": "string"}
+                    },
+                    "required": ["error"]
+                }
+            ]
+        }
+    }
+]
