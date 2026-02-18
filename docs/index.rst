@@ -264,6 +264,7 @@ What Can You Do?
    guide/literature_search_tools_tutorial
    guide/literature_search_web_ui_tutorial
    guide/clinical_guidelines_tools
+   guide/euhealth_tools_tutorial
    guide/scientific_workflows
    guide/expert_feedback
    guide/make_your_data_agent_searchable
