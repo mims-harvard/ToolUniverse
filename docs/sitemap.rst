@@ -20,6 +20,7 @@ Documentation Sitemap
 - :doc:`guide/literature_search_tools_tutorial` - Literature Search Tutorial
 - :doc:`guide/literature_search_web_ui_tutorial` - Literature Search Web UI
 - :doc:`guide/clinical_guidelines_tools` - Clinical Guidelines Tools
+- :doc:`guide/euhealth_tools_tutorial` - EUHealth Tools Tutorial
 - :doc:`guide/scientific_workflows` - Scientific Workflows
 - :doc:`guide/expert_feedback` - Expert Feedback
 - :doc:`guide/make_your_data_agent_searchable` - Make Your Data Agent Searchable
