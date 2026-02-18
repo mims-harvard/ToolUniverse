@@ -24,6 +24,8 @@ sys.path.insert(0, _SRC_PATH)
 
 # Use the same Python interpreter that's running pytest
 _PYTHON = sys.executable
+# Force unbuffered stdout in subprocesses so MCP responses aren't held in Python's pipe buffer
+_SUBPROCESS_ENV = {**os.environ, "PYTHONUNBUFFERED": "1"}
 
 
 @pytest.mark.integration
@@ -51,7 +53,8 @@ run_stdio_server()
             stdout=subprocess.PIPE,
             stderr=subprocess.DEVNULL,
             text=True,
-            bufsize=1
+            bufsize=1,
+            env=_SUBPROCESS_ENV
         )
         
         try:
@@ -175,7 +178,8 @@ run_stdio_server()
             stdout=subprocess.PIPE,
             stderr=subprocess.DEVNULL,
             text=True,
-            bufsize=1
+            bufsize=1,
+            env=_SUBPROCESS_ENV
         )
         
         try:
@@ -278,7 +282,8 @@ run_stdio_server()
             stdout=subprocess.PIPE,
             stderr=subprocess.DEVNULL,
             text=True,
-            bufsize=1
+            bufsize=1,
+            env=_SUBPROCESS_ENV
         )
         
         try:
@@ -356,7 +361,8 @@ run_stdio_server()
             stdout=subprocess.PIPE,
             stderr=subprocess.DEVNULL,
             text=True,
-            bufsize=1
+            bufsize=1,
+            env=_SUBPROCESS_ENV
         )
         
         try:
@@ -441,9 +447,10 @@ run_stdio_server()
 """],
             stdin=subprocess.PIPE,
             stdout=subprocess.PIPE,
-            stderr=subprocess.PIPE,
+            stderr=subprocess.PIPE,  # Keep PIPE so we can verify logs on stderr
             text=True,
-            bufsize=1
+            bufsize=1,
+            env=_SUBPROCESS_ENV
         )
 
         stderr_chunks = []
@@ -511,7 +518,8 @@ run_stdio_server()
             stdout=subprocess.PIPE,
             stderr=subprocess.DEVNULL,
             text=True,
-            bufsize=1
+            bufsize=1,
+            env=_SUBPROCESS_ENV
         )
         
         try:

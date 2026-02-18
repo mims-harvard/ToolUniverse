@@ -255,11 +255,12 @@ class TestSDKIntegration(unittest.TestCase):
 
 class TestEndToEndIntegration(unittest.TestCase):
     """Test end-to-end integration scenarios."""
-    
+
     def setUp(self):
         """Set up test fixtures."""
         self.tu = ToolUniverse()
         self.temp_dir = tempfile.mkdtemp()
+        self.tu.load_tools()
     
     def tearDown(self):
         """Clean up test fixtures."""
