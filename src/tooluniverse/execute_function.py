@@ -62,12 +62,42 @@ tool_type_mappings = {
 }
 
 
+class _ToolsNamespace:
+    """Proxy namespace for dynamic tool calling: tu.tools.ToolName(...)."""
+
+    def __init__(self, tu):
+        object.__setattr__(self, "_tu", tu)
+
+    def __getattr__(self, name):
+        tu = object.__getattribute__(self, "_tu")
+        if name not in tu.all_tool_dict:
+            raise AttributeError(f"Tool '{name}' not found in ToolUniverse")
+
+        def _call(**kwargs):
+            return tu.run_one_function({"name": name, "arguments": kwargs})
+
+        return _call
+
+    def refresh(self):
+        """Refresh the tool namespace (no-op; tools already loaded)."""
+
+    def eager_load(self, names):
+        """Pre-initialise tool instances for the given names."""
+        tu = object.__getattribute__(self, "_tu")
+        for name in names:
+            if name in tu.all_tool_dict:
+                tu.init_tool(tu.all_tool_dict[name], add_to_cache=True)
+
+
 class ToolUniverse:
-    def __init__(self, tool_files=default_tool_files, keep_default_tools=True):
+    def __init__(
+        self, tool_files=default_tool_files, keep_default_tools=True, **kwargs
+    ):
         # Initialize any necessary attributes here
         self.all_tools = []
         self.all_tool_dict = {}
         self.tool_category_dicts = {}
+        self._cache = {}
         if tool_files is None:
             tool_files = default_tool_files
         elif keep_default_tools:
@@ -77,8 +107,17 @@ class ToolUniverse:
         print("Tool files:")
         print(tool_files)
         self.callable_functions = {}
+        self.tools = _ToolsNamespace(self)
 
-    def load_tools(self, tool_type=None):
+    def close(self):
+        """Release resources (no-op; provided for API compatibility)."""
+
+    def clear_cache(self):
+        """Clear the result cache."""
+        self._cache.clear()
+        self.callable_functions.clear()
+
+    def load_tools(self, tool_type=None, **kwargs):
         print(f"Number of tools before load tools: {len(self.all_tools)}")
         if tool_type is None:
             for each in self.tool_files:
@@ -230,7 +269,7 @@ class ToolUniverse:
             print("\033[91mNot a function call\033[0m")
             return None
 
-    def run_one_function(self, function_call_json):
+    def run_one_function(self, function_call_json, use_cache=False, validate=False):
         check_status, check_message = self.check_function_call(function_call_json)
         if check_status is False:
             return (
