@@ -2,6 +2,62 @@
 
 Detailed guide for loading count matrices and metadata.
 
+## Handling R Data Files (RDS)
+
+If your data is in R format (`.rds`, `.RData`), convert to CSV first:
+
+### Option 1: Convert in R (if available)
+
+```r
+# In R
+result <- readRDS("deseq2_results.rds")
+result_df <- as.data.frame(result)
+write.csv(result_df, "deseq2_results.csv", row.names=TRUE)
+```
+
+Then load the CSV in Python as usual.
+
+### Option 2: Use rpy2 in Python (requires R installed)
+
+```python
+import rpy2.robjects as ro
+from rpy2.robjects import pandas2ri
+pandas2ri.activate()
+
+# Read RDS file
+ro.r(f'df <- as.data.frame(readRDS("{rds_file}"))')
+
+# Convert to pandas
+df = pandas2ri.rpy2py(ro.r['df'])
+```
+
+**Note**: This requires R and the relevant R packages (e.g., DESeq2) installed. If unavailable, use Option 1 on a machine with R.
+
+### Working with Pre-computed DESeq2 Results
+
+If you have an RDS file containing DESeq2 results (not count data):
+
+1. **Convert to CSV** (Option 1 or 2 above)
+2. **Filter genes** directly in pandas:
+
+```python
+# Read pre-computed results
+results = pd.read_csv("deseq2_results.csv", index_col=0)
+
+# Filter upregulated genes
+upregulated = results[
+    (results['log2FoldChange'] > 0) &  # Positive = upregulated
+    (results['padj'] < 0.05)            # Significant
+]
+
+# Get gene list
+genes = upregulated.index.tolist()
+
+# Use with /tooluniverse-gene-enrichment skill
+```
+
+3. **Skip to enrichment** - Use gene list with enrichment analysis (Step 5 in workflow)
+
 ## Load Count Matrix
 
 ```python

@@ -1,7 +1,7 @@
 """
 ToolUniverse Tools
 
-Type-safe Python interface to 1640 scientific tools.
+Type-safe Python interface to 1602 scientific tools.
 Each tool is in its own module for minimal import overhead.
 
 Usage:
@@ -68,10 +68,7 @@ from .ArXiv_search_papers import ArXiv_search_papers
 from .ArgumentDescriptionOptimizer import ArgumentDescriptionOptimizer
 from .BLAST_nucleotide_search import BLAST_nucleotide_search
 from .BLAST_protein_search import BLAST_protein_search
-from .BRENDA_get_enzyme_info import BRENDA_get_enzyme_info
 from .BRENDA_get_inhibitors import BRENDA_get_inhibitors
-from .BRENDA_get_kcat import BRENDA_get_kcat
-from .BRENDA_get_km import BRENDA_get_km
 from .BVBRC_get_genome import BVBRC_get_genome
 from .BVBRC_search_amr import BVBRC_search_amr
 from .BVBRC_search_genome_features import BVBRC_search_genome_features
@@ -228,11 +225,6 @@ from .DigiKey_get_categories import DigiKey_get_categories
 from .DigiKey_get_manufacturers import DigiKey_get_manufacturers
 from .DigiKey_get_product_details import DigiKey_get_product_details
 from .DigiKey_search_by_keyword import DigiKey_search_by_keyword
-from .DisGeNET_get_disease_genes import DisGeNET_get_disease_genes
-from .DisGeNET_get_gda import DisGeNET_get_gda
-from .DisGeNET_get_vda import DisGeNET_get_vda
-from .DisGeNET_search_disease import DisGeNET_search_disease
-from .DisGeNET_search_gene import DisGeNET_search_gene
 from .DisProt_get_entry import DisProt_get_entry
 from .DisProt_search import DisProt_search
 from .DiseaseAnalyzerAgent import DiseaseAnalyzerAgent
@@ -988,32 +980,12 @@ from .NeuroMorpho_search_neurons import NeuroMorpho_search_neurons
 from .Nextstrain_get_dataset import Nextstrain_get_dataset
 from .Nextstrain_list_datasets import Nextstrain_list_datasets
 from .NoveltySignificanceReviewer import NoveltySignificanceReviewer
-from .NvidiaNIM_alphafold2 import NvidiaNIM_alphafold2
-from .NvidiaNIM_alphafold2_multimer import NvidiaNIM_alphafold2_multimer
-from .NvidiaNIM_boltz2 import NvidiaNIM_boltz2
-from .NvidiaNIM_diffdock import NvidiaNIM_diffdock
-from .NvidiaNIM_esm2_650m import NvidiaNIM_esm2_650m
-from .NvidiaNIM_esmfold import NvidiaNIM_esmfold
-from .NvidiaNIM_evo2 import NvidiaNIM_evo2
-from .NvidiaNIM_genmol import NvidiaNIM_genmol
-from .NvidiaNIM_maisi import NvidiaNIM_maisi
-from .NvidiaNIM_molmim import NvidiaNIM_molmim
-from .NvidiaNIM_msa_search import NvidiaNIM_msa_search
-from .NvidiaNIM_openfold2 import NvidiaNIM_openfold2
-from .NvidiaNIM_openfold3 import NvidiaNIM_openfold3
-from .NvidiaNIM_proteinmpnn import NvidiaNIM_proteinmpnn
-from .NvidiaNIM_rfdiffusion import NvidiaNIM_rfdiffusion
-from .NvidiaNIM_vista3d import NvidiaNIM_vista3d
 from .OBIS_search_occurrences import OBIS_search_occurrences
 from .OBIS_search_taxa import OBIS_search_taxa
 from .OMA_get_group import OMA_get_group
 from .OMA_get_hog import OMA_get_hog
 from .OMA_get_orthologs import OMA_get_orthologs
 from .OMA_get_protein import OMA_get_protein
-from .OMIM_get_clinical_synopsis import OMIM_get_clinical_synopsis
-from .OMIM_get_entry import OMIM_get_entry
-from .OMIM_get_gene_map import OMIM_get_gene_map
-from .OMIM_search import OMIM_search
 from .OSF_search_preprints import OSF_search_preprints
 from .OSL_get_efo_id_by_disease_name import OSL_get_efo_id_by_disease_name
 from .OmniPath_get_cell_communication_annotations import (
@@ -1764,7 +1736,6 @@ from .get_arxiv_info import get_arxiv_info
 from .get_ase_info import get_ase_info
 from .get_assembly_info_by_pdb_id import get_assembly_info_by_pdb_id
 from .get_assembly_summary import get_assembly_summary
-from .get_associated_documents_metadata import get_associated_documents_metadata
 from .get_astropy_info import get_astropy_info
 from .get_binding_affinity_by_pdb_id import get_binding_affinity_by_pdb_id
 from .get_biopandas_info import get_biopandas_info
@@ -1891,11 +1862,6 @@ from .get_optlang_info import get_optlang_info
 from .get_optuna_info import get_optuna_info
 from .get_palantir_info import get_palantir_info
 from .get_pandas_info import get_pandas_info
-from .get_patent_application_metadata import get_patent_application_metadata
-from .get_patent_continuity_data import get_patent_continuity_data
-from .get_patent_foreign_priority_data import get_patent_foreign_priority_data
-from .get_patent_overview_by_text_query import get_patent_overview_by_text_query
-from .get_patent_term_adjustment_data import get_patent_term_adjustment_data
 from .get_patsy_info import get_patsy_info
 from .get_pdbfixer_info import get_pdbfixer_info
 from .get_phenotype_by_HPO_ID import get_phenotype_by_HPO_ID
@@ -2063,10 +2029,6 @@ from .kegg_list_organisms import kegg_list_organisms
 from .kegg_search_pathway import kegg_search_pathway
 from .list_tools import list_tools
 from .loinc_search_codes import loinc_search_codes
-from .mcp_auto_loader_boltz import mcp_auto_loader_boltz
-from .mcp_auto_loader_expert_feedback import mcp_auto_loader_expert_feedback
-from .mcp_auto_loader_txagent import mcp_auto_loader_txagent
-from .mcp_auto_loader_uspto_downloader import mcp_auto_loader_uspto_downloader
 from .mesh_get_subjects_by_pharmacological_action import (
     mesh_get_subjects_by_pharmacological_action,
 )
@@ -2184,10 +2146,7 @@ __all__ = [
     "ArgumentDescriptionOptimizer",
     "BLAST_nucleotide_search",
     "BLAST_protein_search",
-    "BRENDA_get_enzyme_info",
     "BRENDA_get_inhibitors",
-    "BRENDA_get_kcat",
-    "BRENDA_get_km",
     "BVBRC_get_genome",
     "BVBRC_search_amr",
     "BVBRC_search_genome_features",
@@ -2342,11 +2301,6 @@ __all__ = [
     "DigiKey_get_manufacturers",
     "DigiKey_get_product_details",
     "DigiKey_search_by_keyword",
-    "DisGeNET_get_disease_genes",
-    "DisGeNET_get_gda",
-    "DisGeNET_get_vda",
-    "DisGeNET_search_disease",
-    "DisGeNET_search_gene",
     "DisProt_get_entry",
     "DisProt_search",
     "DiseaseAnalyzerAgent",
@@ -2862,32 +2816,12 @@ __all__ = [
     "Nextstrain_get_dataset",
     "Nextstrain_list_datasets",
     "NoveltySignificanceReviewer",
-    "NvidiaNIM_alphafold2",
-    "NvidiaNIM_alphafold2_multimer",
-    "NvidiaNIM_boltz2",
-    "NvidiaNIM_diffdock",
-    "NvidiaNIM_esm2_650m",
-    "NvidiaNIM_esmfold",
-    "NvidiaNIM_evo2",
-    "NvidiaNIM_genmol",
-    "NvidiaNIM_maisi",
-    "NvidiaNIM_molmim",
-    "NvidiaNIM_msa_search",
-    "NvidiaNIM_openfold2",
-    "NvidiaNIM_openfold3",
-    "NvidiaNIM_proteinmpnn",
-    "NvidiaNIM_rfdiffusion",
-    "NvidiaNIM_vista3d",
     "OBIS_search_occurrences",
     "OBIS_search_taxa",
     "OMA_get_group",
     "OMA_get_hog",
     "OMA_get_orthologs",
     "OMA_get_protein",
-    "OMIM_get_clinical_synopsis",
-    "OMIM_get_entry",
-    "OMIM_get_gene_map",
-    "OMIM_search",
     "OSF_search_preprints",
     "OSL_get_efo_id_by_disease_name",
     "OmniPath_get_cell_communication_annotations",
@@ -3438,7 +3372,6 @@ __all__ = [
     "get_ase_info",
     "get_assembly_info_by_pdb_id",
     "get_assembly_summary",
-    "get_associated_documents_metadata",
     "get_astropy_info",
     "get_binding_affinity_by_pdb_id",
     "get_biopandas_info",
@@ -3551,11 +3484,6 @@ __all__ = [
     "get_optuna_info",
     "get_palantir_info",
     "get_pandas_info",
-    "get_patent_application_metadata",
-    "get_patent_continuity_data",
-    "get_patent_foreign_priority_data",
-    "get_patent_overview_by_text_query",
-    "get_patent_term_adjustment_data",
     "get_patsy_info",
     "get_pdbfixer_info",
     "get_phenotype_by_HPO_ID",
@@ -3713,10 +3641,6 @@ __all__ = [
     "kegg_search_pathway",
     "list_tools",
     "loinc_search_codes",
-    "mcp_auto_loader_boltz",
-    "mcp_auto_loader_expert_feedback",
-    "mcp_auto_loader_txagent",
-    "mcp_auto_loader_uspto_downloader",
     "mesh_get_subjects_by_pharmacological_action",
     "mesh_get_subjects_by_subject_id",
     "mesh_get_subjects_by_subject_name",
