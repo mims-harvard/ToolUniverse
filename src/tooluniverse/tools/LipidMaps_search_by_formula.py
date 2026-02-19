@@ -15,7 +15,7 @@ def LipidMaps_search_by_formula(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> list[Any]:
     """
     Search lipids by molecular formula in LIPID MAPS Structure Database. Returns all lipids matching ...
 
@@ -34,7 +34,7 @@ def LipidMaps_search_by_formula(
 
     Returns
     -------
-    Any
+    list[Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

@@ -1,245 +1,221 @@
 [
-    {
-        "name": "FoodDataCentral_search_foods",
-        "description": "Search USDA FoodData Central for foods by keyword. Returns matching foods with nutrient data, brand info, and ingredients. Covers Foundation, Branded, SR Legacy, and Survey data. Example: 'banana' finds all banana products.",
-        "parameter": {
-            "type": "object",
-            "properties": {
-                "query": {
-                    "type": "string",
-                    "description": "Search keywords (e.g., 'cheddar cheese', 'banana', 'chicken breast'). Supports multi-word search."
-                },
-                "page_size": {
-                    "type": "integer",
-                    "description": "Number of results per page (default 25, max 200).",
-                    "default": 25,
-                    "minimum": 1,
-                    "maximum": 200
-                },
-                "page_number": {
-                    "type": "integer",
-                    "description": "Page number for pagination (starts at 1).",
-                    "default": 1
-                },
-                "data_type": {
-                    "type": "string",
-                    "description": "Filter by data type. Options: 'Foundation' (reference foods), 'Branded' (commercial products), 'SR Legacy' (USDA standard reference), 'Survey (FNDDS)' (national dietary survey)."
-                }
-            },
-            "required": [
-                "query"
-            ]
+  {
+    "name": "FoodDataCentral_search_foods",
+    "description": "Search USDA FoodData Central for foods by keyword. Returns matching foods with nutrient data, brand info, and ingredients. Covers Foundation, Branded, SR Legacy, and Survey data. Example: 'banana' finds all banana products.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "query": {
+          "type": "string",
+          "description": "Search keywords (e.g., 'cheddar cheese', 'banana', 'chicken breast'). Supports multi-word search."
         },
-        "fields": {
-            "operation": "search"
+        "page_size": {
+          "type": "integer",
+          "description": "Number of results per page (default 25, max 200).",
+          "default": 25,
+          "minimum": 1,
+          "maximum": 200
         },
-        "type": "FoodDataCentralTool",
-        "optional_api_keys": [
-            "FDC_API_KEY"
-        ],
-        "test_examples": [
-            {
-                "query": "cheddar cheese",
-                "page_size": 3
-            },
-            {
-                "query": "raw banana",
-                "page_size": 5,
-                "data_type": "Foundation"
-            }
-        ],
-        "return_schema": {
-            "oneOf": [
-                {
-                    "type": "object",
-                    "properties": {
-                        "data": {
-                            "type": "array",
-                            "items": {
-                                "type": "object",
-                                "properties": {
-                                    "fdcId": {
-                                        "type": "integer",
-                                        "description": "FoodData Central food ID"
-                                    },
-                                    "description": {
-                                        "type": "string",
-                                        "description": "Food description"
-                                    },
-                                    "dataType": {
-                                        "type": "string",
-                                        "description": "Data source type"
-                                    },
-                                    "brandOwner": {
-                                        "type": "string",
-                                        "description": "Brand owner (Branded only)"
-                                    },
-                                    "ingredients": {
-                                        "type": "string",
-                                        "description": "Ingredients list"
-                                    },
-                                    "servingSize": {
-                                        "type": [
-                                            "number",
-                                            "null"
-                                        ],
-                                        "description": "Serving size"
-                                    },
-                                    "topNutrients": {
-                                        "type": "array",
-                                        "description": "Top nutrient values"
-                                    }
-                                }
-                            }
-                        },
-                        "metadata": {
-                            "type": "object",
-                            "properties": {
-                                "totalHits": {
-                                    "type": "integer"
-                                },
-                                "currentPage": {
-                                    "type": "integer"
-                                },
-                                "totalPages": {
-                                    "type": "integer"
-                                },
-                                "source": {
-                                    "type": "string"
-                                }
-                            }
-                        }
-                    }
-                },
-                {
-                    "type": "object",
-                    "properties": {
-                        "error": {
-                            "type": "string"
-                        }
-                    },
-                    "required": [
-                        "error"
-                    ]
-                }
-            ]
+        "page_number": {
+          "type": "integer",
+          "description": "Page number for pagination (starts at 1).",
+          "default": 1
+        },
+        "data_type": {
+          "type": "string",
+          "description": "Filter by data type. Options: 'Foundation' (reference foods), 'Branded' (commercial products), 'SR Legacy' (USDA standard reference), 'Survey (FNDDS)' (national dietary survey)."
         }
+      },
+      "required": [
+        "query"
+      ]
     },
-    {
-        "name": "FoodDataCentral_get_food",
-        "description": "Get detailed food information by FDC ID from USDA FoodData Central. Returns complete nutrient profile, ingredients, serving size, and food attributes. Example: FDC ID 2344723 returns 'Bananas, raw' with 70+ nutrients.",
-        "parameter": {
-            "type": "object",
-            "properties": {
-                "fdc_id": {
-                    "type": [
-                        "integer",
-                        "string"
-                    ],
-                    "description": "FoodData Central food ID (e.g., 2344723 for bananas, 2012128 for branded banana product). Get IDs from FoodDataCentral_search_foods."
-                }
-            },
-            "required": [
-                "fdc_id"
-            ]
-        },
-        "fields": {
-            "operation": "detail"
-        },
-        "type": "FoodDataCentralTool",
-        "optional_api_keys": [
-            "FDC_API_KEY"
-        ],
-        "test_examples": [
-            {
-                "fdc_id": 2344723
-            },
-            {
-                "fdc_id": 2012128
-            }
-        ],
-        "return_schema": {
-            "oneOf": [
-                {
-                    "type": "object",
-                    "properties": {
-                        "data": {
-                            "type": "object",
-                            "properties": {
-                                "fdcId": {
-                                    "type": "integer"
-                                },
-                                "description": {
-                                    "type": "string"
-                                },
-                                "dataType": {
-                                    "type": "string"
-                                },
-                                "publicationDate": {
-                                    "type": "string"
-                                },
-                                "brandOwner": {
-                                    "type": "string"
-                                },
-                                "ingredients": {
-                                    "type": "string"
-                                },
-                                "servingSize": {
-                                    "type": [
-                                        "number",
-                                        "null"
-                                    ]
-                                },
-                                "nutrients": {
-                                    "type": "array",
-                                    "items": {
-                                        "type": "object",
-                                        "properties": {
-                                            "name": {
-                                                "type": "string"
-                                            },
-                                            "number": {
-                                                "type": "string"
-                                            },
-                                            "amount": {
-                                                "type": [
-                                                    "number",
-                                                    "null"
-                                                ]
-                                            },
-                                            "unit": {
-                                                "type": "string"
-                                            }
-                                        }
-                                    }
-                                }
-                            }
-                        },
-                        "metadata": {
-                            "type": "object",
-                            "properties": {
-                                "nutrient_count": {
-                                    "type": "integer"
-                                },
-                                "source": {
-                                    "type": "string"
-                                }
-                            }
-                        }
-                    }
-                },
-                {
-                    "type": "object",
-                    "properties": {
-                        "error": {
-                            "type": "string"
-                        }
-                    },
-                    "required": [
-                        "error"
-                    ]
-                }
-            ]
+    "fields": {
+      "operation": "search"
+    },
+    "type": "FoodDataCentralTool",
+    "optional_api_keys": [
+      "FDC_API_KEY"
+    ],
+    "test_examples": [
+      {
+        "query": "cheddar cheese",
+        "page_size": 3
+      },
+      {
+        "query": "raw banana",
+        "page_size": 5,
+        "data_type": "Foundation"
+      }
+    ],
+    "return_schema": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "fdcId": {
+            "type": "integer",
+            "description": "FoodData Central food ID"
+          },
+          "description": {
+            "type": "string",
+            "description": "Food description"
+          },
+          "dataType": {
+            "type": "string",
+            "description": "Data source type"
+          },
+          "brandOwner": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "description": "Brand owner (Branded only)"
+          },
+          "ingredients": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "description": "Ingredients list"
+          },
+          "servingSize": {
+            "type": [
+              "number",
+              "null"
+            ],
+            "description": "Serving size"
+          },
+          "servingSizeUnit": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "description": "Serving size unit"
+          },
+          "topNutrients": {
+            "type": "array",
+            "description": "Top nutrient values"
+          }
         }
+      }
     }
+  },
+  {
+    "name": "FoodDataCentral_get_food",
+    "description": "Get detailed food information by FDC ID from USDA FoodData Central. Returns complete nutrient profile, ingredients, serving size, and food attributes. Example: FDC ID 2344723 returns 'Bananas, raw' with 70+ nutrients.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "fdc_id": {
+          "type": [
+            "integer",
+            "string"
+          ],
+          "description": "FoodData Central food ID (e.g., 2344723 for bananas, 2012128 for branded banana product). Get IDs from FoodDataCentral_search_foods."
+        }
+      },
+      "required": [
+        "fdc_id"
+      ]
+    },
+    "fields": {
+      "operation": "detail"
+    },
+    "type": "FoodDataCentralTool",
+    "optional_api_keys": [
+      "FDC_API_KEY"
+    ],
+    "test_examples": [
+      {
+        "fdc_id": 2344723
+      },
+      {
+        "fdc_id": 2012128
+      }
+    ],
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "object",
+          "properties": {
+            "data": {
+              "type": "object",
+              "properties": {
+                "fdcId": {
+                  "type": "integer"
+                },
+                "description": {
+                  "type": "string"
+                },
+                "dataType": {
+                  "type": "string"
+                },
+                "publicationDate": {
+                  "type": "string"
+                },
+                "brandOwner": {
+                  "type": "string"
+                },
+                "ingredients": {
+                  "type": "string"
+                },
+                "servingSize": {
+                  "type": [
+                    "number",
+                    "null"
+                  ]
+                },
+                "nutrients": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "name": {
+                        "type": "string"
+                      },
+                      "number": {
+                        "type": "string"
+                      },
+                      "amount": {
+                        "type": [
+                          "number",
+                          "null"
+                        ]
+                      },
+                      "unit": {
+                        "type": "string"
+                      }
+                    }
+                  }
+                }
+              }
+            },
+            "metadata": {
+              "type": "object",
+              "properties": {
+                "nutrient_count": {
+                  "type": "integer"
+                },
+                "source": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        },
+        {
+          "type": "object",
+          "properties": {
+            "error": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "error"
+          ]
+        }
+      ]
+    }
+  }
 ]
