@@ -1,0 +1,71 @@
+[
+  {
+    "type": "WFGYPromptBundleTool",
+    "name": "WFGY_triage_llm_rag_failure",
+    "description": "Generate a structured prompt bundle (system + user message) to triage LLM/RAG failures using the WFGY ProblemMap (No.1..No.16). Returns prompts, a minimal-fix checklist, and links to the public ProblemMap. No LLM or external API call is made.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "bug_description": {
+          "type": "string",
+          "description": "Free-text description of the LLM/RAG incident. Include the user prompt, retrieved context, model answer, and any relevant logs."
+        },
+        "audience": {
+          "type": "string",
+          "description": "Target audience for the prompt bundle tone. 'beginner' uses plain language, 'engineer' is concise and diagnostic, 'infra' is ops-focused.",
+          "enum": ["beginner", "engineer", "infra"],
+          "default": "engineer"
+        }
+      },
+      "required": ["bug_description"]
+    },
+    "return_schema": {
+      "type": "object",
+      "description": "Structured prompt bundle for LLM/RAG triage.",
+      "properties": {
+        "mode": {
+          "type": "string",
+          "description": "Always 'prompt_bundle_only' — no LLM call is made by this tool."
+        },
+        "system_prompt": {
+          "type": "string",
+          "description": "System message to pass to an LLM for WFGY ProblemMap triage."
+        },
+        "user_prompt": {
+          "type": "string",
+          "description": "User message template with the incident report embedded."
+        },
+        "how_to_use": {
+          "type": "array",
+          "items": {"type": "string"},
+          "description": "Step-by-step instructions for using the prompt bundle with any LLM."
+        },
+        "checklist": {
+          "type": "array",
+          "items": {"type": "string"},
+          "description": "Minimal list of items to include in the bug report for effective triage."
+        },
+        "links": {
+          "type": "object",
+          "description": "Plain-text URLs to the public WFGY ProblemMap and repository.",
+          "properties": {
+            "wfgy_repo": {"type": "string"},
+            "problem_map": {"type": "string"},
+            "problem_map_readme_raw": {"type": "string"}
+          }
+        },
+        "examples": {
+          "type": "array",
+          "items": {"type": "string"},
+          "description": "Representative LLM/RAG failure patterns to illustrate WFGY ProblemMap usage."
+        }
+      }
+    },
+    "test_examples": [
+      {
+        "bug_description": "RAG chatbot answers with facts not present in retrieved context. Retrieved chunks talk about credit cards only, but model claims Bitcoin is supported.",
+        "audience": "engineer"
+      }
+    ]
+  }
+]

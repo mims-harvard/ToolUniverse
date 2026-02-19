@@ -455,6 +455,10 @@ default_tool_files = {
     "europepmc_annotations": os.path.join(
         current_dir, "data", "europepmc_annotations_tools.json"
     ),
+    # WFGY ProblemMap - LLM/RAG failure triage prompt bundle (local, no API call)
+    "wfgy_promptbundle": os.path.join(
+        current_dir, "data", "wfgy_promptbundle_tools.json"
+    ),
     # UniProt ID Mapping - Cross-database identifier conversion (100+ databases)
     "uniprot_idmapping": os.path.join(
         current_dir, "data", "uniprot_idmapping_tools.json"
