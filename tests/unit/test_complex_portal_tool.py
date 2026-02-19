@@ -118,6 +118,16 @@ class TestComplexPortalTools:
         )
 
         assert isinstance(result, dict)
+
+        # Skip on transient API failures (timeout, connection issues)
+        if result["status"] == "error":
+            error_msg = result.get("error", "")
+            if any(
+                word in error_msg.lower()
+                for word in ["timeout", "request failed", "connection"]
+            ):
+                pytest.skip(f"Skipping due to transient API error: {error_msg}")
+
         assert result["status"] == "success"
         # Should return empty list, not error
         data = result.get("data", {})
