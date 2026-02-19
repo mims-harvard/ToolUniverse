@@ -19,8 +19,8 @@ from typing import Dict, Any, Optional
 from .base_tool import BaseTool
 from .tool_registry import register_tool
 
-# Base URL for CADD API
-CADD_BASE_URL = "https://cadd.gs.washington.edu/api/v1.0"
+# Base URL for CADD API (BIH mirror - working instance)
+CADD_BASE_URL = "https://cadd.bihealth.org/api/v1.0"
 
 
 @register_tool("CADDTool")

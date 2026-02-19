@@ -89,15 +89,15 @@ class TestCADDToolDirect:
     def test_get_range_scores(self, tool_config):
         """Test getting scores for a range."""
         from tooluniverse.cadd_tool import CADDTool
-        
+
         config = tool_config["CADD_get_range_scores"]
         tool = CADDTool(config)
         result = tool.run({
             "chrom": "7",
             "start": 140753330,
-            "end": 140753340  # 10bp range
+            "end": 140753340  # 10bp range in BRAF region
         })
-        
+
         assert result["status"] == "success"
         if result["data"]:
             assert "variants" in result["data"]
