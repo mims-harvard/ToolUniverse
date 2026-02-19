@@ -571,9 +571,24 @@ def main(
     output = Path("src/tooluniverse/tools")
     output.mkdir(parents=True, exist_ok=True)
 
-    # Cleanup orphaned files
-    current_tool_names = set(tu.all_tool_dict.keys())
-    cleaned_count = cleanup_orphaned_files(output, current_tool_names)
+    # Cleanup orphaned files.
+    # Use ALL tool names from JSON configs (not just those that passed API key
+    # filtering) so that wrappers for tools like BRENDA, NvidiaNIM, OMIM, and
+    # DisGeNET are never deleted simply because the required API keys are absent
+    # in the current environment.
+    from .utils import read_json_list
+    from .default_config import default_tool_files as _default_tool_files
+
+    all_config_tool_names: set = set(tu.all_tool_dict.keys())
+    for _path in _default_tool_files.values():
+        try:
+            for _tool in read_json_list(_path):
+                if "name" in _tool:
+                    all_config_tool_names.add(_tool["name"])
+        except Exception:
+            pass
+
+    cleaned_count = cleanup_orphaned_files(output, all_config_tool_names)
     if cleaned_count > 0:
         print(f"🧹 Removed {cleaned_count} orphaned tool files")
 
