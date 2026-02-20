@@ -2,10 +2,18 @@
 Make Your Data Agent-Searchable in ToolUniverse
 ===============================================
 
-**Goal:**  
-Turn your text or JSON data into an **agent-searchable collection** once with ``tu-datastore``.  
-After that, any **ToolUniverse agent** can query it as a tool — no extra setup or paths required.  
+**Goal:**
+Turn your text or JSON data into an **agent-searchable collection** once with ``tu-datastore``.
+After that, any **ToolUniverse agent** can query it as a tool — no extra setup or paths required.
 Optionally, share your collection and tool definition on **Hugging Face** so others can use it too.
+
+.. important::
+
+   **This guide uses cardiology as a concrete example, but works for ANY domain or data type.**
+
+   You can replace ``cardiology_tutorial``, ``cardiology_data``, and ``cardiology_expert_search``
+   with your own names: ``legal_database``, ``research_papers``, ``customer_support``, ``biology_knowledge``, etc.
+   The workflow and commands are identical—only the names and descriptions change.
 
 
 What you’ll do
@@ -27,13 +35,13 @@ What you’ll do
 
    # From the repo root
    python -m venv .venv && source .venv/bin/activate
-   pip install tooluniverse
+   uv pip install tooluniverse
 
 If you’re developing locally, use:
 
 .. code-block:: bash
 
-   pip install -e .
+   uv pip install -e .
 
 If the ``tu-datastore`` command isn’t found (e.g., running from source),
 run the module directly:
@@ -105,12 +113,12 @@ All you need is either a **folder of text files** or a **JSON list of documents*
 
 .. code-block:: bash
 
-   tu-datastore quickbuild --name toy --from-folder ./my_texts
+   tu-datastore quickbuild --name cardiology_tutorial --from-folder ./cardiology_data
 
-What goes in `./my_texts`:
+What goes in `./cardiology_data`:
 * **Supported:** ``.txt`` and ``.md`` (your raw data files)
 
-Each file in  `./my_texts` automatically gets converted into a document with the following information:
+Each file in  `./cardiology_data` automatically gets converted into a document with the following information:
 * ``doc_key`` = relative file path (e.g., ``biology/mitochondria.md``)  
 * ``text`` = file contents  
 * Basic metadata (title, path, source) which is auto-filled  
@@ -118,22 +126,41 @@ Each file in  `./my_texts` automatically gets converted into a document with the
 **Example:**
 .. code-block:: text
 
-my_texts/
-├── cells_intro.txt
-├── biology/
-│   └── mitochondria.md
-└── endocrine/
-└── insulin.md
+cardiology_data/
+├── ekg_measurements.txt
+├── guidelines/
+│   ├── arrhythmia_classification.md
+│   └── cardiac_physiology.md
+└── case_studies/
+    ├── acute_mi_case.md
+    └── heart_failure_case.md
 
-**Result of running QuickBuild ( * Collection name: ``toy`` )**
+**Result of running QuickBuild ( * Collection name: ``cardiology_tutorial`` )**
 
-* **One collection:** `toy`
-* **One SQLite DB:** `<user_cache_dir>/embeddings/toy.db`
-* **One FAISS index:** `<user_cache_dir>/embeddings/toy.faiss`
+* **One collection:** `cardiology_tutorial`
+* **One SQLite DB:** `<user_cache_dir>/embeddings/cardiology_tutorial.db`
+* **One FAISS index:** `<user_cache_dir>/embeddings/cardiology_tutorial.faiss`
 
 
-We automatically detect your embedding model and dimension from ``.env`` or CLI flags.  
+We automatically detect your embedding model and dimension from ``.env`` or CLI flags.
 Safe to re-run — duplicates are skipped.
+
+**Important: Updating Source Files**
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+If you modify your source files (e.g., edit or add new content to ``./cardiology_data/``),
+you must **fully rebuild the collection** by deleting the old database files first:
+
+.. code-block:: bash
+
+   # DELETE old database and FAISS index
+   rm ~/.cache/ToolUniverse/embeddings/{collection_name}.*
+
+   # Then rebuild
+   tu-datastore quickbuild --name {collection_name} --from-folder ./my_texts/
+
+**Why?** Using ``--overwrite`` alone only rebuilds the FAISS vector index,
+but does NOT update the SQLite document table. Your old document texts will still be indexed.
 
 ---
 
@@ -143,7 +170,7 @@ Use this when you want explicit IDs and metadata.
 
 .. code-block:: bash
 
-   tu-datastore build --collection toy --docs-json my.json
+   tu-datastore build --collection cardiology_tutorial --docs-json cardiology_data.json
 
 **Example JSON (can add several documents within one JSON):**
 
@@ -151,18 +178,18 @@ Use this when you want explicit IDs and metadata.
 
    [
      {
-       "doc_key": "d1",
-       "text": "Mitochondria is the powerhouse of the cell.",
-       "metadata": {"title": "Cells", "tags": ["Biology"]}
+       "doc_key": "ekg_measurements.txt",
+       "text": "EKG MEASUREMENTS AND INTERPRETATION GUIDE\nWhat is an EKG?...",
+       "metadata": {"title": "EKG Measurements", "tags": ["Cardiology"]}
      },
      {
-       "doc_key": "d2",
-       "text": "Insulin regulates glucose.",
-       "metadata": {"title": "Endocrine", "tags": ["Medicine"]}
+       "doc_key": "arrhythmia_classification.md",
+       "text": "# Arrhythmia Classification and Clinical Significance\n...",
+       "metadata": {"title": "Arrhythmia Classification", "tags": ["Cardiology", "Clinical"]}
      }
    ]
 
-Produces the same ``toy.db`` and ``toy.faiss`` artifacts as QuickBuild.
+Produces the same ``cardiology_tutorial.db`` and ``cardiology_tutorial.faiss`` artifacts as QuickBuild.
 Note: 
 * **Required:** `doc_key` (unique per collection), `text`
 * **Optional:** `metadata` (any JSON object), `text_hash` (string)
@@ -174,22 +201,22 @@ Note:
 Now the last step is to tell ToolUniverse how agents should search your dataset by creating a small **tool JSON**.
 
 Example:
-Save as ``toy_search_tool.json``:
+Save as ``cardiology_expert_search.json``:
 
 .. code-block:: json
 
    [
      {
-       "name": "toy_search", # choose an appropriate name for your tool 
-       "description": "Provides biology data on cells, mitochondria, endocrine topics, and insulin.",  # make sure "description" is as detailed as possible so the agent gets a good explanation of what your data is
+       "name": "cardiology_expert_search", # choose an appropriate name for your tool
+       "description": "Searches comprehensive cardiology knowledge base for clinical information about EKG interpretation, arrhythmias, cardiac physiology, and case studies.",  # make sure "description" is as detailed as possible so the agent gets a good explanation of what your data is
        "type": "EmbeddingCollectionSearchTool",
-       "fields": {"collection": "toy"}, # name of the data collection this tool will look into
+       "fields": {"collection": "cardiology_tutorial"}, # name of the data collection this tool will look into
        "parameter": {
          "type": "object",
          "properties": {
            "query":  {"type": "string",  "description": "Search text"},
            "method": {"type": "string",  "default": "hybrid", "enum": ["keyword", "embedding", "hybrid"]},
-           "top_k":  {"type": "integer", "default": 5},
+           "top_k":  {"type": "integer", "default": 10},
            "alpha":  {"type": "number",  "default": 0.5, "description": "Hybrid mix (0 = keyword, 1 = embedding)"}
          },
          "required": ["query"]
@@ -203,7 +230,7 @@ If you want your tool to load automatically in all ToolUniverse or Codex session
 
 .. code-block:: bash
 
-   tu-datastore add-tool toy_search_tool.json
+   tu-datastore add-tool cardiology_expert_search.json
 
 ---
 
@@ -222,13 +249,13 @@ Install your tool with:
 
 .. code-block:: bash
 
-   tu-datastore add-tool toy_search_tool.json
+   tu-datastore add-tool cardiology_expert_search.json
 
 This copies your tool into the auto-load directory:
 
 ```
 
-~/.tooluniverse/data/user_tools/toy_search_tool.json
+~/.tooluniverse/data/user_tools/cardiology_expert_search.json
 
 ```
 
@@ -236,14 +263,14 @@ Optional arguments:
 
 .. code-block:: bash
 
-   tu-datastore add-tool toy_search_tool.json --name toy.json
-   tu-datastore add-tool toy_search_tool.json --overwrite # overwrites json file if exists
+   tu-datastore add-tool cardiology_expert_search.json --name cardiology_expert_search.json
+   tu-datastore add-tool cardiology_expert_search.json --overwrite # overwrites json file if exists
 
 Once installed, **any ToolUniverse or Codex session** will immediately expose your tool:
 
 ```
 
-tu.tools.toy_search(...)
+tu.tools.cardiology_expert_search(...)
 
 ```
 
@@ -259,8 +286,8 @@ How it works
       - number of results (``top_k``),
       - You can optionally control the hybrid mix with alpha (``alpha``).
 
-ToolUniverse automatically resolves paths in ``<user_cache_dir>/embeddings/``.  
-* Agents can now call ``toy_search`` immediately after loading your JSON — no local setup needed.  
+ToolUniverse automatically resolves paths in ``<user_cache_dir>/embeddings/``.
+* Agents can now call ``cardiology_expert_search`` immediately after loading your JSON — no local setup needed.  
 
 ---
 
@@ -269,47 +296,98 @@ ToolUniverse automatically resolves paths in ``<user_cache_dir>/embeddings/``.
 
 After making your agent-searchable dataset you can share it publicly. You can also download other's public agent-searchable datasets and their tools so that you can use the community's data and tools in your research!
 
-This is the **final step for making your collection “public-ready.”**
+This is the **final step for making your collection "public-ready."**
 Use it when you want to:
 * publish your dataset so anyone can search or integrate it,
 * share your work across teammates or servers, or
 
+**PREREQUISITE for upload/download:** Add your HuggingFace token to ``.env``:
+
+.. code-block:: bash
+
+   HF_TOKEN=hf_your_token_here
+
+Get your token from: https://huggingface.co/settings/tokens
 
 **Upload (defaults to your username/collection if --repo is omitted):**
 
 .. code-block:: bash
 
    # uploads your agent searchable dataset to your HF
-   tu-datastore sync-hf upload --collection toy
+   tu-datastore sync-hf upload --collection cardiology_tutorial
 
    # can override HF destination and make public:
-   tu-datastore sync-hf upload --collection toy --repo "your_username/my-toy-db" --no-private
+   tu-datastore sync-hf upload --collection cardiology_tutorial --repo "your_username/cardiology-tutorial" --no-private
 
    # add tool JSON(s) to the dataset so others have your ToolUniverse agent for the dataset you uploaded above. This way others have the full pipeline to add your data to their own ToolUniverse
-   tu-datastore sync-hf upload --collection toy --tool-json toy_search_tool.json
+   tu-datastore sync-hf upload --collection cardiology_tutorial --tool-json cardiology_expert_search.json
 
 **Download (works for public repos; private requires permission or a valid HF token):**
 
 .. code-block:: bash
 
    # Download DB + FAISS only (preserves existing files unless --overwrite)
-   tu-datastore sync-hf download --repo "your_username/my-toy-db" --collection toy --overwrite
+   tu-datastore sync-hf download --repo "your_username/cardiology-tutorial" --collection cardiology_tutorial --overwrite
 
-   # Download DB + FAISS + tool JSONs (downloads any *.json in the dataset) 
-   tu-datastore sync-hf download --repo "your_username/my-toy-db" --collection toy --overwrite --include-tools
+   # Download DB + FAISS + tool JSONs (downloads any *.json in the dataset)
+   tu-datastore sync-hf download --repo "your_username/cardiology-tutorial" --collection cardiology_tutorial --overwrite --include-tools
 
 All files download into your local cache at: ``<user_cache_dir>/embeddings/<collection>/``.
 
 How it works
 ------------
 
-* Using the above commands, ToolUniverse syncs your local datastore, the `.db` and `.faiss` files (e.g. `<user_cache_dir>/embeddings/toy.db` and `<user_cache_dir>/embeddings/toy.faiss`) and associated JSON tools you create to search the associated `.db` and `.faiss` (e.g. `toy_search_tool.json`) directly with your **Hugging Face account**. This way others can download and use the exact same searchable dataset you built with ToolUniverse agents — complete with your embeddings and metadata.
+* Using the above commands, ToolUniverse syncs your local datastore, the `.db` and `.faiss` files (e.g. `<user_cache_dir>/embeddings/cardiology_tutorial.db` and `<user_cache_dir>/embeddings/cardiology_tutorial.faiss`) and associated JSON tools you create to search the associated `.db` and `.faiss` (e.g. `cardiology_expert_search.json`) directly with your **Hugging Face account**. This way others can download and use the exact same searchable dataset you built with ToolUniverse agents — complete with your embeddings and metadata.
 
 -------------------------------------------------------------
 
 
+7. Understanding the three search methods
+-----------------------------------------
+
+When agents query your collection, they use **hybrid search by default** — a blend of keyword precision and semantic understanding.
+You can ask the agent to search by keyword, embedding, or hybrid! Here's how all three methods work on the same query:
+
+**Example query:** "What ECG findings distinguish atrial fibrillation from other arrhythmias?"
+
+**1. Keyword Search** — Exact term matching
+
+.. code-block:: bash
+
+   tu-datastore search --collection cardiology_tutorial --query "atrial fibrillation arrhythmias" --method keyword
+
+Returns documents containing those exact words. Fast and precise, but misses context and fails on natural language questions.
+
+**2. Embedding Search** — Semantic understanding
+
+.. code-block:: bash
+
+   tu-datastore search --collection cardiology_tutorial --query "What ECG findings distinguish atrial fibrillation from other arrhythmias?" --method embedding
+
+Converts the query to a vector and finds documents with similar meaning. Returns 5 ranked results (e.g., arrhythmia_classification.md at 0.609, ekg_measurements.txt at 0.506). Understands concepts but may include tangentially related documents.
+
+**3. Hybrid Search** — Best of both (default for agents)
+
+.. code-block:: bash
+
+   tu-datastore search --collection cardiology_tutorial --query "What ECG findings distinguish atrial fibrillation from other arrhythmias?" --method hybrid
+
+Blends keyword and embedding scores. Documents must be relevant on BOTH dimensions. Stricter ranking, better precision. This is why agents default to hybrid—it balances recall with accuracy.
+
+**Comparison:**
+
+| Method | Strength | Use Case |
+|--------|----------|----------|
+| **Keyword** | Fast, exact | Technical queries with known terms |
+| **Embedding** | Understands meaning | Natural language, conceptual queries |
+| **Hybrid** | Both (agents use this) | Recommended for agents; combines precision + recall |
+
+---
+
+
 Optional
 --------
+
 
 Use your dataset manually (for quick exploration without an agent)
 ------------------------------------------------------------------
@@ -320,11 +398,11 @@ If you’re prototyping in a notebook or wiring custom logic, you can directly s
 .. code-block:: bash
 
    # Exact word match
-   tu-datastore search --collection toy --query glucose --method keyword
+   tu-datastore search --collection cardiology_tutorial --query "atrial fibrillation" --method keyword
    # Embedding (semantic)
-   tu-datastore search --collection toy --query glucose --method embedding
+   tu-datastore search --collection cardiology_tutorial --query "atrial fibrillation" --method embedding
    # Hybrid (recommended): best of both (alpha 0=words only, 1=embeddings only)
-   tu-datastore search --collection toy --query glucose --method hybrid --alpha 0.5
+   tu-datastore search --collection cardiology_tutorial --query "atrial fibrillation" --method hybrid --alpha 0.5
 
 **Example result**:
 
@@ -333,17 +411,14 @@ If you’re prototyping in a notebook or wiring custom logic, you can directly s
    [
      {
        "doc_id": "2",
-       "doc_key": "d2",
-       "text": "Insulin is a hormone regulating glucose.",
-       "metadata": {"title":"Endocrine","tags":["Medicine"]},
-       "score": 0.83
+       "doc_key": "guidelines/arrhythmia_classification.md",
+       "text": "# Arrhythmia Classification and Clinical Significance\n\nAtrial Fibrillation...",
+       "metadata": {"title":"arrhythmia_classification","tags":["Cardiology"]},
+       "score": 0.61
      }
    ]
 
-   
-
-Optional (for developers):
---------------------------
+---
 
 Programmatic use of customized tools (rather than agent use)
 ------------------------------------------------------------------
@@ -354,8 +429,8 @@ Programmatic use of customized tools (rather than agent use)
 
    from tooluniverse.database_setup.generic_embedding_search_tool import EmbeddingCollectionSearchTool
 
-   tool = EmbeddingCollectionSearchTool(tool_config={"fields": {"collection": "toy"}})
-   results = tool.run({"query": "glucose", "method": "hybrid", "top_k": 5})
+   tool = EmbeddingCollectionSearchTool(tool_config={"fields": {"collection": "cardiology_tutorial"}})
+   results = tool.run({"query": "atrial fibrillation ECG findings", "method": "hybrid", "top_k": 10})
    print(results)
 
 **B) Register a tool and include it in all ToolUniverse tools for this Python session. Then search your tool directly within ToolUniverse (temporary for this python session)**
@@ -368,15 +443,15 @@ Programmatic use of customized tools (rather than agent use)
    tu = ToolUniverse()
 
    tool_cfg = {
-     "name": "toy_search",
+     "name": "cardiology_expert_search",
      "type": "EmbeddingCollectionSearchTool",
-     "fields": {"collection": "toy"},
+     "fields": {"collection": "cardiology_tutorial"},
      "parameter": {
        "type": "object",
        "properties": {
          "query":  {"type": "string"},
          "method": {"type": "string",  "default": "hybrid", "enum": ["keyword","embedding","hybrid"]},
-         "top_k":  {"type": "integer", "default": 5},
+         "top_k":  {"type": "integer", "default": 10},
          "alpha":  {"type": "number",  "default": 0.5}
        },
        "required": ["query"]
@@ -384,7 +459,7 @@ Programmatic use of customized tools (rather than agent use)
    }
 
    tu.register_custom_tool(EmbeddingCollectionSearchTool, tool_config=tool_cfg)
-   results = tu.tools.toy_search(query="glucose", method="hybrid", top_k=5)
+   results = tu.tools.cardiology_expert_search(query="atrial fibrillation ECG", method="hybrid", top_k=10)
    print(results)
 
 **C) Load your custom JSON tool inside ToolUniverse to use your searchable dataset (same as agents do, but manually in Python)**
@@ -396,10 +471,10 @@ This lets you interact with your tool exactly the way an agent would but directl
    from tooluniverse import ToolUniverse
 
    tu = ToolUniverse()
-   tu.load_tools(tool_config_files={"local": "toy_search_tool.json"})
+   tu.load_tools(tool_config_files={"local": "cardiology_expert_search.json"})
 
    # Now any agent (or you) can call:
-   results = tu.tools.toy_search(query="glucose", method="hybrid", top_k=5)
+   results = tu.tools.cardiology_expert_search(query="atrial fibrillation ECG", method="hybrid", top_k=10)
    print(results)
 
 Results contain: ``doc_key``, ``text``, ``metadata``, ``score``, and a short snippet.
@@ -433,7 +508,7 @@ Mini FAQ
 - **What is the`EmbeddingCollectionSearchTool`?**
   -`EmbeddingCollectionSearchTool` is a **real ToolUniverse tool** (registered in code). Check ``src/tooluniverse/database_setup/generic_embedding_search_tool.py`` for details.  
   - We don’t ship a pre-bound JSON for it because the collection name is yours.
-  - Use the example JSON under ``docs/tools/``, set ``"fields.collection"`` to your collection (e.g., ``"toy"``), and load it
+  - Use the example JSON under ``docs/tools/``, set ``"fields.collection"`` to your collection (e.g., ``"cardiology_tutorial"``), and load it
   - If you prefer not to create a JSON, you can also instantiate the tool directly from Python and pass the collection name via ``fields``
 
 - **Can I upload my tool with the datastore?** Yes, pass one or more files via ``--tool-json`` during ``sync-hf upload``; they’re stored at the dataset root.
@@ -451,7 +526,7 @@ Mini FAQ
 
 .. code-block:: bash
 
-    tu-datastore build --collection toy --docs-json my.json --provider openai --model text-embedding-3-small 
+    tu-datastore build --collection cardiology_tutorial --docs-json cardiology_data.json --provider openai --model text-embedding-3-small 
 
 - **Can I have JSON files in a folder I use with 'quickbuild'?** `quickbuild` does **not** read JSON files in a folder; use `build --docs-json` for JSON ingestion.
 
@@ -460,11 +535,11 @@ Mini FAQ
 Glossary
 --------
 
-- **Collection** — your named library of texts (e.g., ``toy``).  
+- **Collection** — your named library of texts (e.g., ``cardiology_tutorial``).
 - **doc_key** — unique ID per document
-- **text** — the searchable content.  
-- **metadata** — optional tags or annotations.  
-- **FAISS** — vector index used for “search by meaning”.   You don’t need to configure its dimensions—**detected automatically**.  
+- **text** — the searchable content.
+- **metadata** — optional tags or annotations.
+- **FAISS** — vector index used for "search by meaning".   You don't need to configure its dimensions—**detected automatically**.
 - **tu-datastore** — CLI for building, searching, and syncing collections.
 
 ---
