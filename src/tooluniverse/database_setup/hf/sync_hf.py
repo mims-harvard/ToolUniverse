@@ -139,6 +139,7 @@ def _download_one(
 ):
     """
     Helper to fetch one file (DB or FAISS) using tooluniverse.utils.download_from_hf.
+    Returns tuple: (success: bool, path: Path) where success indicates actual download occurred.
     """
 
     token = os.getenv("HF_TOKEN") or get_token() or ""
@@ -151,20 +152,39 @@ def _download_one(
         }
     }
 
+    # Track if file existed before download (to detect cache fallback)
+    file_existed_before = local_target.exists()
+    mtime_before = local_target.stat().st_mtime if file_existed_before else None
+
     res = download_from_hf(cfg)
     if not res.get("success"):
-        raise RuntimeError(f"Failed to download {filename}: {res.get('error')}")
+        error_msg = res.get('error', 'Unknown error')
+        # Make error message more helpful
+        if "Repository Not Found" in error_msg or "404" in error_msg:
+            error_msg = f"Repository '{repo}' not found on HuggingFace. Check that the repo exists and the name is correct. Error: {error_msg}"
+        raise RuntimeError(f"Failed to download {filename}: {error_msg}")
 
     downloaded_path = Path(res["local_path"])
     if downloaded_path.resolve() == local_target.resolve():
-        return local_target  # already correct location
+        # Check if file was actually updated from HF or just returned from local cache
+        # Even with overwrite=True, hf_hub_download may fall back to cache if repo doesn't exist
+        if file_existed_before:
+            mtime_after = local_target.stat().st_mtime
+            # If mtime didn't change, HF fell back to cache (repo is unreachable/doesn't exist)
+            if mtime_after == mtime_before:
+                if not overwrite:
+                    print(f" {local_target.name} already exists. Skipping (use --overwrite).")
+                else:
+                    print(f" [WARNING] Repository '{repo}' is unreachable. Using local cache for {local_target.name}.")
+                return False, local_target  # file was not downloaded, using local cache
+        return True, local_target  # successfully downloaded to correct location
 
     if local_target.exists() and not overwrite:
         print(f" {local_target.name} already exists. Skipping (use --overwrite).")
-        return local_target
+        return False, local_target  # file was not downloaded, using local cache
 
     shutil.copyfile(downloaded_path, local_target)
-    return local_target
+    return True, local_target  # successfully downloaded and copied
 
 
 # def download(repo: str, collection: str, overwrite: bool = False, include_tools: bool = False):
@@ -206,6 +226,8 @@ def download(
     dest_db = db_path_for_collection(collection)
     dest_faiss = DATA_DIR / f"{collection}.faiss"
 
+    download_succeeded = False
+
     print(f" Downloading from {repo} into {DATA_DIR}...")
 
     # -------------------------------------------------
@@ -223,8 +245,11 @@ def download(
                     target_path = DATA_DIR / filename
                     target_path.parent.mkdir(parents=True, exist_ok=True)
                     try:
-                        _download_one(repo, filename, target_path, overwrite)
-                        print(f" Restored tool file: {filename}")
+                        success, _ = _download_one(repo, filename, target_path, overwrite)
+                        if success:
+                            print(f" Restored tool file: {filename}")
+                        else:
+                            print(f" Using cached tool file: {filename}")
                     except Exception as e:
                         print(f" Skipped {filename}: {e}")
         except Exception as e:
@@ -234,8 +259,12 @@ def download(
     # (2) Download the DB
     # -------------------------------------------------
     try:
-        db_path = _download_one(repo, f"{collection}.db", dest_db, overwrite)
-        print(f" Restored {db_path.name} from {repo}")
+        db_success, db_path = _download_one(repo, f"{collection}.db", dest_db, overwrite)
+        if db_success:
+            print(f" Restored {db_path.name} from {repo}")
+            download_succeeded = True
+        else:
+            print(f" Using cached {db_path.name}")
     except Exception as e:
         print(f" Failed to download DB: {e}")
         return
@@ -244,12 +273,18 @@ def download(
     # (3) Download the FAISS index
     # -------------------------------------------------
     try:
-        faiss_path = _download_one(repo, f"{collection}.faiss", dest_faiss, overwrite)
-        print(f" Restored {faiss_path.name} from {repo}")
+        faiss_success, faiss_path = _download_one(repo, f"{collection}.faiss", dest_faiss, overwrite)
+        if faiss_success:
+            print(f" Restored {faiss_path.name} from {repo}")
+        else:
+            print(f" Using cached {faiss_path.name}")
     except Exception as e:
         print(f" No FAISS index found or failed to download: {e}")
 
-    print(f"Download complete for {collection} from {repo}")
+    if download_succeeded:
+        print(f"Download complete for {collection} from {repo}")
+    else:
+        print(f"Download complete for {collection} from {repo} (using cached files)")
 
 
 # ---------------------------
