@@ -189,6 +189,9 @@ default_tool_files = {
     "mcp_auto_loader_boltz": os.path.join(
         current_dir, "data", "boltz_mcp_loader_tools.json"
     ),
+    "mcp_auto_loader_esm": os.path.join(
+        current_dir, "data", "mcp_auto_loader_esm.json"
+    ),
     "url": os.path.join(current_dir, "data", "url_fetch_tools.json"),
     "file_download": os.path.join(current_dir, "data", "file_download_tools.json"),
     # 'langchain': os.path.join(current_dir, 'data', 'langchain_tools.json'),
