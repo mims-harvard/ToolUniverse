@@ -4,14 +4,42 @@
 
 The [ESM Cambrian (ESMC)](https://github.com/evolutionaryscale/esm) tool from EvolutionaryScale provides contextualized protein embeddings using protein language models. ESM-C generates 960-dimensional embeddings (mean-pooled across tokens) that capture information about protein structure and function.
 
-## Installation
+---
+
+## For Researchers: Using ESM-C
+
+### Quick Start (3 steps)
+
+1. **Set the environment variable** on the machine where you're using ToolUniverse:
+   ```bash
+   export ESM_MCP_SERVER_HOST="<server-address>"
+   ```
+   Replace `<server-address>` with the hostname or IP address where the ESM MCP server is running.
+   - Examples: `localhost`, `192.168.1.100`, or your server's hostname
+
+2. **That's it!** ToolUniverse automatically discovers and loads the `esm_embed_sequence` tool.
+
+3. **Use the tool** like any other ToolUniverse tool:
+   - **Input**: Protein amino acid sequence (e.g., "MKTAYIAK...")
+   - **Output**: 960-dimensional embedding vector
+   ```json
+   {
+     "model": "esmc_300m",
+     "embedding_dim": 960,
+     "embedding": [0.123, -0.456, 0.789, ...]
+   }
+   ```
+
+---
+
+## For Server Operators: Deployment
 
 ### Prerequisites
 
 - Python 3.10+
 - Sufficient disk space for model weights
 
-### Setup
+### Installation
 
 ```bash
 # Create a virtual environment
@@ -21,28 +49,6 @@ source esm/bin/activate
 # Install dependencies
 uv pip install -r requirements.txt
 ```
-
-## Using ESM-C via ToolUniverse
-
-Once the MCP server is running (`python esm_tool.py`), ToolUniverse automatically discovers and loads the ESM tool. Researchers can generate protein embeddings without needing to install or deploy the model themselves.
-
-The tool is available in ToolUniverse's catalog as `esm_embed_sequence` and can be used like any other ToolUniverse tool.
-
-
-### Input/Output
-
-**Input**: Protein amino acid sequence (e.g., "MKTAYIAK...")
-
-**Output**:
-```json
-{
-  "model": "esmc_300m",
-  "embedding_dim": 960,
-  "embedding": [0.123, -0.456, 0.789, ...]
-}
-```
-
-## MCP Server
 
 ### Running the Server
 
@@ -56,25 +62,9 @@ The server:
 - Lazy-loads the ESM-C model on first request
 - Listens for embedding requests via HTTP/MCP protocol
 
+### Advanced Configuration
 
-## Configuration
-
-### Environment Variables
-
-Set the required environment variable on the machine where you're using ToolUniverse:
-
-```bash
-export ESM_MCP_SERVER_HOST="<your-server-address>"
-```
-
-Replace `<your-server-address>` with the hostname or IP address where the ESM MCP server is running.
-
-**Examples:**
-- `localhost` (if running the server locally)
-- `192.168.1.100` (IP address)
-- Your server's hostname or domain name
-
-### Change Model Size
+#### Change Model Size
 
 Edit `get_client()` in `esm_tool.py`:
 
@@ -87,7 +77,7 @@ def get_client():
     return _ESM_CLIENT
 ```
 
-### Change Server Port
+#### Change Server Port
 
 Edit the `@register_mcp_tool` decorator in `esm_tool.py`:
 
