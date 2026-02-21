@@ -2,27 +2,19 @@
 
 ## Overview
 
-The [ESM Cambrian (ESMC)](https://github.com/evolutionaryscale/esm) tool from EvolutionaryScale provides contextualized protein embeddings using state-of-the-art protein language models. ESM-C uses transformer architecture trained on billions of diverse protein sequences to generate high-quality 960-dimensional embeddings (mean-pooled across tokens) that capture biologically meaningful information about protein structure and function.
-
-### Available Models
-
-- **esmc_300m** - 300M parameters (recommended for most use cases, open weight)
-- **esmc_600m** - 600M parameters (higher quality embeddings, open weight)
-- **esmc_6b** - 6B parameters (highest quality, requires Forge for academic use or AWS SageMaker for commercial use)
+The [ESM Cambrian (ESMC)](https://github.com/evolutionaryscale/esm) tool from EvolutionaryScale provides contextualized protein embeddings using protein language models. ESM-C generates 960-dimensional embeddings (mean-pooled across tokens) that capture information about protein structure and function.
 
 ## Installation
 
 ### Prerequisites
 
 - Python 3.10+
-- CUDA 11.8+ (for GPU acceleration, optional but recommended)
-- Sufficient disk space for model weights (size varies by model selected)
-- For GPU acceleration: NVIDIA GPU with sufficient VRAM (8GB+ recommended for esmc_300m)
+- Sufficient disk space for model weights
 
 ### Setup
 
 ```bash
-# Create a uv virtual environment
+# Create a virtual environment
 uv venv esm --python 3.10
 source esm/bin/activate
 
@@ -30,230 +22,78 @@ source esm/bin/activate
 uv pip install -r requirements.txt
 ```
 
-## Tool Input and Output
+## Using ESM-C via ToolUniverse
 
-### Input Parameters
+Once the MCP server is running (`python esm_tool.py`), ToolUniverse automatically discovers and loads the ESM tool. Researchers can generate protein embeddings without needing to install or deploy the model themselves.
 
-| Parameter | Type | Required | Description |
-|-----------|------|----------|-------------|
-| `sequence` | string | Yes | Protein amino acid sequence using standard 20 amino acids (A, C, D, E, F, G, H, I, K, L, M, N, P, Q, R, S, T, V, W, Y) |
+The tool is available in ToolUniverse's catalog as `esm_embed_sequence` and can be used like any other ToolUniverse tool.
 
-### Output Format
 
-#### Successful Response
+### Input/Output
 
+**Input**: Protein amino acid sequence (e.g., "MKTAYIAK...")
+
+**Output**:
 ```json
 {
   "model": "esmc_300m",
   "embedding_dim": 960,
-  "embedding": [0.123, -0.456, 0.789, -0.234, 0.567, ...]
+  "embedding": [0.123, -0.456, 0.789, ...]
 }
 ```
 
-#### Output Properties
+## MCP Server
 
-- **Dimensionality**: 960-dimensional vectors (mean-pooled across tokens)
-- **Format**: List of float32 values
-- **Data Type**: float32
-
-## MCP Server Setup
-
-### Running the MCP Server
+### Running the Server
 
 ```bash
-# Start the MCP server on localhost:8008
 python esm_tool.py
 ```
 
-The server will:
-1. Register the ESM-C embedding tool via the `@register_mcp_tool` decorator
-2. Start the MCP server on `http://0.0.0.0:8008`
-3. Lazy-load the ESM-C 300M model on first request
-4. Listen for embedding requests via HTTP/MCP protocol
+The server:
+- Registers the ESM-C embedding tool via `@register_mcp_tool` decorator
+- Starts on `http://0.0.0.0:8008`
+- Lazy-loads the ESM-C model on first request
+- Listens for embedding requests via HTTP/MCP protocol
 
-### Server Configuration
 
-- **Host**: `0.0.0.0` (accepts connections from any IP)
-- **Port**: `8008` (default, can be changed in esm_tool.py's `@register_mcp_tool` decorator)
-- **Transport**: `http` (stateless HTTP for scalability)
-- **Model**: esmc_300m (can be modified in `get_client()` function)
+## Configuration
 
-### Performance Notes
+### Change Model Size
 
-- Model lazy-loads on first request (initial model download and initialization)
-- Performance depends on hardware (GPU vs CPU), sequence length, and model size
-- For performance benchmarks, refer to the [ESM repository](https://github.com/evolutionaryscale/esm)
-
-## Usage Examples
-
-### Basic Usage via ToolUniverse
-
-```python
-from tooluniverse import ToolUniverse
-
-# Initialize ToolUniverse
-tu = ToolUniverse()
-
-# Load ESM tools from MCPAutoLoaderTool configuration
-tu.load_tools(tool_config_files={"esm": "src/tooluniverse/data/mcp_auto_loader_esm.json"})
-
-# Use the remote ESM tool
-result = tu.run({
-    "name": "esm_embed_sequence",
-    "arguments": {
-        "sequence": "MKTAYIAKQRQISFVKSHFSRQLEERLGLIEVQAPILSRVGDGTQDNLSGAEKAVQVKVKALPDAQFEVV"
-    }
-})
-
-print(f"Model: {result['model']}")
-print(f"Embedding dimension: {result['embedding_dim']}")
-print(f"First 10 embedding values: {result['embedding'][:10]}")
-```
-
-### Direct MCP Request
-
-```python
-import requests
-import json
-
-# Assuming ESM server is running on localhost:8008
-response = requests.post(
-    "http://localhost:8008/mcp",
-    json={
-        "jsonrpc": "2.0",
-        "method": "tools/call",
-        "params": {
-            "name": "esm_embed_sequence",
-            "arguments": {
-                "sequence": "MKFLKFSLLTAVLLSVVFAFSSCGDDDDTGPPAPAPAPAPAPAPAPAPAPAP"
-            }
-        },
-        "id": 1
-    }
-)
-
-embedding_result = response.json()
-print(json.dumps(embedding_result, indent=2))
-```
-
-### Using with @register_mcp_tool Pattern
-
-The `esm_tool.py` uses the `@register_mcp_tool` decorator pattern for registration:
-
-```python
-from tooluniverse.mcp_tool_registry import register_mcp_tool, start_mcp_server
-
-@register_mcp_tool(
-    tool_type_name="esm_embed_sequence",
-    config={...},
-    mcp_config={"host": "0.0.0.0", "port": 8008}
-)
-class ESMEmbeddingTool:
-    def run(self, arguments):
-        # Tool implementation
-        ...
-
-# Start the server
-if __name__ == "__main__":
-    start_mcp_server()
-```
-
-This approach provides:
-- **Automatic registration**: Tools are registered via decorators, not manual JSON
-- **Type safety**: Python class-based tools with clear interfaces
-- **Discoverable**: Auto-discovery via the `@register_mcp_tool` mechanism
-- **Scalable**: Multiple tools can be registered on the same server
-
-## Troubleshooting
-
-### Port Already in Use
-
-```bash
-# If port 8008 is already in use, modify esm_tool.py:
-# In the @register_mcp_tool decorator, change:
-# mcp_config={"port": 8008}
-# To:
-# mcp_config={"port": 8009}  # or another available port
-```
-
-### Model Download Fails
-
-- Check internet connection
-- Verify sufficient disk space
-- Models are cached in `~/.cache/huggingface/hub/` after first download
-- Subsequent runs will load from cache
-
-### GPU Out of Memory
-
-- Use smaller model size (esmc_300m instead of esmc_600m)
-- Edit `get_client()` in esm_tool.py to change the model
-
-### Slow Embeddings
-
-- Verify GPU is being used: Check NVIDIA output with `nvidia-smi`
-- CPU inference will be significantly slower than GPU
-
-### Connection Refused
-
-- Verify server is running: `python esm_tool.py`
-- Check correct host/port in ToolUniverse configuration
-- Verify firewall isn't blocking port 8008
-
-## Advanced Configuration
-
-### Using Different ESM-C Models
-
-Edit `esm_tool.py` in the `get_client()` function:
+Edit `get_client()` in `esm_tool.py`:
 
 ```python
 def get_client():
     global _ESM_CLIENT
     if _ESM_CLIENT is None:
-        # Change from "esmc_300m" to desired model
-        _ESM_CLIENT = ESMC.from_pretrained("esmc_600m")  # Higher quality
+        _ESM_CLIENT = ESMC.from_pretrained("esmc_600m")  # or esmc_6b
         _ESM_CLIENT.eval()
     return _ESM_CLIENT
 ```
 
-### Custom Server Port
+### Change Server Port
 
-Edit `esm_tool.py` in the `@register_mcp_tool` decorator:
+Edit the `@register_mcp_tool` decorator in `esm_tool.py`:
 
 ```python
-@register_mcp_tool(
-    tool_type_name="esm_embed_sequence",
-    config={...},
-    mcp_config={
-        "host": "0.0.0.0",
-        "port": 9999,  # Change to desired port
-        "transport": "http",
-    },
-)
-class ESMEmbeddingTool:
-    ...
+mcp_config={"host": "0.0.0.0", "port": 8009}  # Change port number
 ```
 
-Then update `src/tooluniverse/data/mcp_auto_loader_esm.json` to match:
+Then update `src/tooluniverse/data/mcp_auto_loader_esm.json`:
 
 ```json
-[
-  {
-    "name": "mcp_auto_loader_esm",
-    "description": "Automatically discover and load ESM-C protein embedding tools from MCP Server",
-    "type": "MCPAutoLoaderTool",
-    "tool_prefix": "esm_",
-    "server_url": "http://localhost:9999/mcp"
-  }
-]
+{
+  "server_url": "http://localhost:8009/mcp"
+}
 ```
 
 ## References
 
-- **ESM Cambrian Blog Post**: https://www.evolutionaryscale.ai/blog/esm-cambrian
-- **Official ESM Repository**: https://github.com/evolutionaryscale/esm
-- **ESM-C Models on Hugging Face**: https://huggingface.co/EvolutionaryScale
-- **Model Context Protocol**: https://modelcontextprotocol.io/
-- **ToolUniverse Remote Tools Tutorial**: https://zitniklab.hms.harvard.edu/ToolUniverse/expand_tooluniverse/remote_tools/tutorial.html
+- [ESM Cambrian Blog](https://www.evolutionaryscale.ai/blog/esm-cambrian)
+- [Official ESM Repository](https://github.com/evolutionaryscale/esm)
+- [ESM-C Models on Hugging Face](https://huggingface.co/EvolutionaryScale)
+- [ToolUniverse Remote Tools Tutorial](https://zitniklab.hms.harvard.edu/ToolUniverse/expand_tooluniverse/remote_tools/tutorial.html)
 
 ## Citation
 
