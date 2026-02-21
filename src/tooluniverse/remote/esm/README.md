@@ -59,6 +59,21 @@ The server:
 
 ## Configuration
 
+### Environment Variables
+
+Set the required environment variable on the machine where you're using ToolUniverse:
+
+```bash
+export ESM_MCP_SERVER_HOST="<your-server-address>"
+```
+
+Replace `<your-server-address>` with the hostname or IP address where the ESM MCP server is running.
+
+**Examples:**
+- `localhost` (if running the server locally)
+- `192.168.1.100` (IP address)
+- Your server's hostname or domain name
+
 ### Change Model Size
 
 Edit `get_client()` in `esm_tool.py`:
