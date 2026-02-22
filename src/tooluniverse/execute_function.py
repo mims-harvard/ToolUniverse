@@ -1192,13 +1192,7 @@ class ToolUniverse:
 
                 # Create auto loader instance
                 self.logger.debug("Creating auto loader instance...")
-                MCPAutoLoaderToolClass = get_tool_class_lazy("MCPAutoLoaderTool")
-                if MCPAutoLoaderToolClass is None:
-                    error_msg = "MCPAutoLoaderTool not found in registry"
-                    self.logger.error(error_msg)
-                    warning(error_msg)
-                    continue
-                auto_loader = MCPAutoLoaderToolClass(loader_config)
+                auto_loader = get_tool_class_lazy("MCPAutoLoaderTool")(loader_config)
                 self.logger.debug("Auto loader instance created")
 
                 # Run auto-load process with proper session cleanup and timeout
