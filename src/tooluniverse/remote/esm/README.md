@@ -4,67 +4,106 @@
 
 The [ESM Cambrian (ESMC)](https://github.com/evolutionaryscale/esm) tool from EvolutionaryScale provides contextualized protein embeddings using protein language models. ESM-C generates 960-dimensional embeddings (mean-pooled across tokens) that capture information about protein structure and function.
 
----
+## Setup
 
-## For Researchers: Using ESM-C
+### Step 1: Install and Start the ESM Server
 
-### Quick Start (3 steps)
-
-1. **Set the environment variable** on the machine where you're using ToolUniverse:
-   ```bash
-   export ESM_MCP_SERVER_HOST="<server-address>"
-   ```
-   Replace `<server-address>` with the hostname or IP address where the ESM MCP server is running.
-   - Examples: `localhost`, `192.168.1.100`, or your server's hostname
-
-2. **That's it!** ToolUniverse automatically discovers and loads the `esm_embed_sequence` tool.
-
-3. **Use the tool** like any other ToolUniverse tool:
-   - **Input**: Protein amino acid sequence (e.g., "MKTAYIAK...")
-   - **Output**: 960-dimensional embedding vector
-   ```json
-   {
-     "model": "esmc_300m",
-     "embedding_dim": 960,
-     "embedding": [0.123, -0.456, 0.789, ...]
-   }
-   ```
-
----
-
-## For Server Operators: Deployment
-
-### Prerequisites
-
+**Prerequisites:**
 - Python 3.10+
 - Sufficient disk space for model weights
 
-### Installation
+**Installation:**
 
 ```bash
+# Clone the ToolUniverse repository
+git clone https://github.com/mims-harvard/ToolUniverse.git
+cd ToolUniverse
+
 # Create a virtual environment
 uv venv esm --python 3.10
 source esm/bin/activate
 
-# Install dependencies
-uv pip install -r requirements.txt
+# Install ToolUniverse package and ESM dependencies
+uv pip install -e .
+uv pip install -r src/tooluniverse/remote/esm/requirements.txt
 ```
 
-### Running the Server
+**Start the server:**
 
 ```bash
-python esm_tool.py
+python src/tooluniverse/remote/esm/esm_tool.py
 ```
 
-The server:
-- Registers the ESM-C embedding tool via `@register_mcp_tool` decorator
-- Starts on `http://0.0.0.0:8008`
-- Lazy-loads the ESM-C model on first request
-- Listens for embedding requests via HTTP/MCP protocol
+The server will start on port 8008. Leave it running in this terminal. If running locally, you are done here. If using a remote server, ask the server administrator to run these steps and provide you with the server's IP address.
 
-### Advanced Configuration
+## Usage Options
 
-#### Change Model Size
+### Option 1: Use ESM via LLM with MCP Support
+
+Connect any LLM client that supports MCP by pointing it to ToolUniverse with your server location:
+
+```bash
+export ESM_MCP_SERVER_HOST=localhost  # or your server's IP if remote
+```
+
+Then configure your LLM client to use ToolUniverse as an MCP server with the `ESM_MCP_SERVER_HOST` environment variable set.
+
+### Example: Using with Claude Code
+
+Here's how to use ESM through Claude Code (an example of Option 1):
+
+**1. Add the MCP Server to Claude:**
+
+```bash
+claude mcp add tooluniverse --env ESM_MCP_SERVER_HOST=$ESM_MCP_SERVER_HOST -- uvx tooluniverse
+```
+
+**2. Start Claude and use the tool:**
+
+```bash
+claude
+```
+
+Ask Claude:
+```
+Give me the embedding for the protein sequence: MKTAYIAKQRQISFVKSHFSRQLEERLGLIEVQAPILSRVGDGTQDNLSGAEKAVQVKVKALPDAQFEVV
+```
+
+Claude will automatically use the `esm_embed_sequence` tool to generate the embedding.
+
+### Option 2: Use ESM via ToolUniverse Script (Direct Python)
+
+Use ESM directly in Python scripts by setting the server location:
+
+```bash
+export ESM_MCP_SERVER_HOST=localhost  # or your server's IP if remote
+```
+
+**Python script example:**
+
+```python
+from tooluniverse import load_tooluniverse
+
+client = load_tooluniverse()
+embedding = client.esm_embed_sequence(
+    sequence="MKTAYIAKQRQISFVKSHFSRQLEERLGLIEVQAPILSRVGDGTQDNLSGAEKAVQVKVKALPDAQFEVV"
+)
+print(embedding)
+```
+
+The tool will return:
+
+```json
+{
+  "model": "esmc_300m",
+  "embedding_dim": 960,
+  "embedding": [0.123, -0.456, 0.789, ...]
+}
+```
+
+## Advanced Configuration
+
+### Change Model Size
 
 Edit `get_client()` in `esm_tool.py`:
 
@@ -77,7 +116,7 @@ def get_client():
     return _ESM_CLIENT
 ```
 
-#### Change Server Port
+### Change Server Port
 
 Edit the `@register_mcp_tool` decorator in `esm_tool.py`:
 
