@@ -36,6 +36,16 @@ python src/tooluniverse/remote/esm/esm_tool.py
 
 The server will start on port 8008. Leave it running in this terminal. If running locally, you are done here. If using a remote server, ask the server administrator to run these steps and provide you with the server's IP address.
 
+**In a new terminal**, navigate to the ToolUniverse directory and activate your virtual environment:
+
+```bash
+cd ToolUniverse  # Go back to the same ToolUniverse directory
+source esm/bin/activate
+```
+
+Then follow one of the Usage Options below.
+
+
 ## Usage Options
 
 ### Option 1: Use ESM via LLM with MCP Support
@@ -82,14 +92,21 @@ export ESM_MCP_SERVER_HOST=localhost  # or your server's IP if remote
 **Python script example:**
 
 ```python
-from tooluniverse import load_tooluniverse
+from tooluniverse import ToolUniverse
 
-client = load_tooluniverse()
-embedding = client.esm_embed_sequence(
-    sequence="MKTAYIAKQRQISFVKSHFSRQLEERLGLIEVQAPILSRVGDGTQDNLSGAEKAVQVKVKALPDAQFEVV"
-)
+tu = ToolUniverse()
+tu.load_tools()
+
+embedding = tu.run_one_function({
+    "name": "esm_embed_sequence",
+    "arguments": {
+        "sequence": "MKTAYIAKQRQISFVKSHFSRQLEERLGLIEVQAPILSRVGDGTQDNLSGAEKAVQVKVKALPDAQFEVV"
+    }
+})
+
 print(embedding)
 ```
+
 
 The tool will return:
 
