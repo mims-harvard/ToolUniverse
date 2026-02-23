@@ -733,23 +733,25 @@ Combine multiple tools for comprehensive analysis:
 
        # 1. Find disease ID
        disease_query = {
-           "name": "opentarget_get_disease_id_description_by_name",
+           "name": "OpenTargets_get_disease_id_description_by_name",
            "arguments": {"disease_name": disease_name}
        }
        disease_info = tooluni.run(disease_query)
 
        # 2. Get associated targets
        targets_query = {
-           "name": "opentarget_get_associated_targets_by_disease_efoId",
-           "arguments": {"disease_efo_id": disease_info['id']}
+           "name": "OpenTargets_get_associated_targets_by_disease_efoId",
+           "arguments": {"efoId": disease_info['id']}
        }
-       targets = tooluni.run(targets_query)
+       targets_result = tooluni.run(targets_query)
+       targets = targets_result['data']['disease']['associatedTargets']['rows']
 
        # 3. Find drugs for each target
        drugs = []
-       for target in targets[:5]:  # Top 5 targets
+       for row in targets[:5]:  # Top 5 targets
+           target = row['target']
            drugs_query = {
-               "name": "opentarget_get_associated_drugs_by_target_ensemblID",
+               "name": "OpenTargets_get_associated_drugs_by_target_ensemblID",
                "arguments": {
                    "target_ensembl_id": target['id'],
                    "size": 10,
@@ -897,10 +899,11 @@ Finding the Right Tools
 
 .. code-block:: python
 
-   # List tools by category
-   ml_tools = tu.list_tools_by_category("ML Models")
-   database_tools = tu.list_tools_by_category("Databases")
-   api_tools = tu.list_tools_by_category("APIs")
+   # List tools by type (use get_tool_types() to see available types)
+   print(tu.get_tool_types())        # e.g. ['opentarget', 'ChEMBL', 'uniprot', ...]
+   ml_tools = tu.filter_tools(include_tool_types=["ML_tools"])
+   database_tools = tu.filter_tools(include_tool_types=["uniprot", "ChEMBL"])
+   api_tools = tu.filter_tools(include_tool_types=["EuropePMC", "PubMed"])
 
 **By Functionality:**
 
@@ -937,19 +940,16 @@ API Authentication
 
 .. code-block:: python
 
-   # Environment-based API key management
+   # API keys are managed via environment variables
+   # Set them before importing ToolUniverse or use a .env file
    import os
 
-   # Recommended: Use environment variables
-   api_keys = {
-       'OPENTARGETS_API_KEY': os.getenv('OPENTARGETS_API_KEY'),
-       'NCBI_API_KEY': os.getenv('NCBI_API_KEY'),
-       'SEMANTIC_SCHOLAR_API_KEY': os.getenv('SEMANTIC_SCHOLAR_API_KEY')
-   }
+   os.environ['NCBI_API_KEY'] = 'your_ncbi_key'
+   os.environ['SEMANTIC_SCHOLAR_API_KEY'] = 'your_s2_key'
 
-   # ToolUniverse automatically manages authentication
+   # ToolUniverse automatically reads API keys from environment variables
    tu = ToolUniverse()
-   tu.configure_api_keys(api_keys)
+   tu.load_tools()
 
 Future Extensions
 -----------------

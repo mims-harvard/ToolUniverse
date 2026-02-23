@@ -6,9 +6,25 @@ from .tool_registry import register_tool
 
 @register_tool("ClinicalTrialsTool")
 class ClinicalTrialsTool(RESTfulTool):
+    _BASE_URL = "https://clinicaltrials.gov/api/v2"
+
+    _OPERATION_URLS = {
+        "search": "/studies",
+        "get_study": "/studies",
+        "stats_size": "/stats/size",
+        "field_values": "/stats/field-values",
+    }
+
     def __init__(self, tool_config):
-        base_url = "https://clinicaltrials.gov/api/v2"  # Base URL for CTG API v2
-        full_url = urljoin(base_url + "/", tool_config["tool_url"].lstrip("/"))
+        base_url = self._BASE_URL
+        self._operation = (tool_config.get("fields") or {}).get("operation")
+
+        if "tool_url" in tool_config:
+            url_path = tool_config["tool_url"]
+        else:
+            url_path = self._OPERATION_URLS.get(self._operation, "/studies")
+
+        full_url = urljoin(base_url + "/", url_path.lstrip("/"))
         super().__init__(tool_config, full_url)
 
         self.list_params_to_join = [
@@ -98,7 +114,239 @@ class ClinicalTrialsTool(RESTfulTool):
             return url_to_format
 
     def run(self, arguments):
-        raise NotImplementedError("The run method should be implemented in subclasses.")
+        if not self._operation:
+            raise NotImplementedError(
+                "The run method should be implemented in subclasses."
+            )
+        if self._operation == "search":
+            return self._run_search(arguments)
+        elif self._operation == "get_study":
+            return self._run_get_study(arguments)
+        elif self._operation == "stats_size":
+            return self._run_stats_size(arguments)
+        elif self._operation == "field_values":
+            return self._run_field_values(arguments)
+        else:
+            return {"error": f"Unknown operation: {self._operation}"}
+
+    def _run_search(self, arguments):
+        """Handle search operations (search_studies, search_by_intervention, search_by_sponsor)."""
+        import requests
+
+        _SEARCH_PARAM_MAP = {
+            "query_cond": "query.cond",
+            "query_intr": "query.intr",
+            "query_term": "query.term",
+            "filter_status": "filter.overallStatus",
+            "filter_study_type": "filter.studyType",
+            "page_size": "pageSize",
+            "next_page_token": "pageToken",
+            "intervention": "query.intr",
+            "sponsor": "query.spons",
+        }
+
+        params = {"format": "json", "countTotal": "true"}
+        params["fields"] = ",".join(
+            [
+                "NCTId",
+                "BriefTitle",
+                "OverallStatus",
+                "BriefSummary",
+                "Condition",
+                "Phase",
+            ]
+        )
+
+        # Build advanced filter clauses (filter.advanced for phase/studytype)
+        advanced_clauses = []
+
+        for key, value in arguments.items():
+            if value is None:
+                continue
+            if key == "filter_phase":
+                # CTG API v2 uses filter.advanced for phase, not filter.phase
+                phases = [p.strip() for p in value.split(",")]
+                phase_clause = " OR ".join(f"AREA[Phase]{p}" for p in phases)
+                if len(phases) > 1:
+                    phase_clause = f"({phase_clause})"
+                advanced_clauses.append(phase_clause)
+            elif key in _SEARCH_PARAM_MAP:
+                params[_SEARCH_PARAM_MAP[key]] = value
+
+        if advanced_clauses:
+            params["filter.advanced"] = " AND ".join(advanced_clauses)
+
+        resp = requests.get(f"{self._BASE_URL}/studies", params=params, timeout=30)
+        resp.raise_for_status()
+        data = resp.json()
+
+        studies = []
+        for s in data.get("studies", []):
+            proto = s.get("protocolSection", {})
+            studies.append(
+                {
+                    "nct_id": proto.get("identificationModule", {}).get("nctId"),
+                    "brief_title": proto.get("identificationModule", {}).get(
+                        "briefTitle"
+                    ),
+                    "status": proto.get("statusModule", {}).get("overallStatus"),
+                    "study_type": proto.get("designModule", {}).get("studyType"),
+                    "phases": proto.get("designModule", {}).get("phases", []),
+                    "enrollment": (
+                        proto.get("designModule", {}).get("enrollmentInfo") or {}
+                    ).get("count"),
+                    "conditions": proto.get("conditionsModule", {}).get(
+                        "conditions", []
+                    ),
+                    "interventions": proto.get("armsInterventionsModule", {}).get(
+                        "interventionNames", []
+                    ),
+                    "sponsor": (
+                        proto.get("sponsorCollaboratorsModule", {}).get("leadSponsor")
+                        or {}
+                    ).get("name"),
+                    "start_date": (
+                        proto.get("statusModule", {}).get("startDateStruct") or {}
+                    ).get("date"),
+                    "completion_date": (
+                        proto.get("statusModule", {}).get("completionDateStruct") or {}
+                    ).get("date"),
+                }
+            )
+
+        return {
+            "data": {
+                "studies": studies,
+                "total_count": data.get("totalCount"),
+                "next_page_token": data.get("nextPageToken"),
+            },
+            "metadata": {"source": "ClinicalTrials.gov API v2", "operation": "search"},
+        }
+
+    def _run_get_study(self, arguments):
+        """Get full details for a single study by NCT ID."""
+        import requests
+
+        nct_id = arguments.get("nct_id")
+        if not nct_id:
+            return {"error": "nct_id is required"}
+
+        resp = requests.get(
+            f"{self._BASE_URL}/studies/{nct_id}",
+            params={"format": "json"},
+            timeout=30,
+        )
+        resp.raise_for_status()
+        data = resp.json()
+        proto = data.get("protocolSection", {})
+
+        study = {
+            "nct_id": proto.get("identificationModule", {}).get("nctId"),
+            "brief_title": proto.get("identificationModule", {}).get("briefTitle"),
+            "official_title": proto.get("identificationModule", {}).get(
+                "officialTitle"
+            ),
+            "status": proto.get("statusModule", {}).get("overallStatus"),
+            "study_type": proto.get("designModule", {}).get("studyType"),
+            "phases": proto.get("designModule", {}).get("phases", []),
+            "enrollment": (
+                proto.get("designModule", {}).get("enrollmentInfo") or {}
+            ).get("count"),
+            "brief_summary": proto.get("descriptionModule", {}).get("briefSummary"),
+            "conditions": proto.get("conditionsModule", {}).get("conditions", []),
+            "interventions": [
+                {"type": i.get("type"), "name": i.get("name")}
+                for i in proto.get("armsInterventionsModule", {}).get(
+                    "interventions", []
+                )
+            ],
+            "primary_outcomes": [
+                {"measure": o.get("measure"), "timeFrame": o.get("timeFrame")}
+                for o in proto.get("outcomesModule", {}).get("primaryOutcomes", [])
+            ],
+            "eligibility_criteria": proto.get("eligibilityModule", {}).get(
+                "eligibilityCriteria"
+            ),
+            "sponsor": (
+                proto.get("sponsorCollaboratorsModule", {}).get("leadSponsor") or {}
+            ).get("name"),
+            "locations": [
+                {
+                    "facility": loc.get("facility"),
+                    "city": loc.get("city"),
+                    "country": loc.get("country"),
+                }
+                for loc in proto.get("contactsLocationsModule", {}).get("locations", [])
+            ],
+            "references": proto.get("referencesModule", {}).get("references", []),
+        }
+
+        return {
+            "data": study,
+            "metadata": {
+                "source": "ClinicalTrials.gov API v2",
+                "operation": "get_study",
+            },
+        }
+
+    def _run_stats_size(self, arguments):
+        """Get aggregate ClinicalTrials.gov database statistics."""
+        import requests
+
+        resp = requests.get(f"{self._BASE_URL}/stats/size", timeout=30)
+        resp.raise_for_status()
+        data = resp.json()
+
+        return {
+            "data": {
+                "total_studies": data.get("totalStudiesCount"),
+                "average_byte_size": data.get("averageByteSize"),
+                "largest_studies": data.get("largestStudies"),
+            },
+            "metadata": {
+                "source": "ClinicalTrials.gov API v2",
+                "operation": "stats_size",
+            },
+        }
+
+    def _run_field_values(self, arguments):
+        """Get value distribution for a specific field."""
+        import requests
+
+        field = arguments.get("field")
+        if not field:
+            return {"error": "field is required"}
+
+        # CTG API v2: endpoint is /stats/fieldValues (camelCase), param is 'fields' (plural)
+        params = {"fields": field}
+        if arguments.get("query_cond"):
+            params["query.cond"] = arguments["query_cond"]
+
+        resp = requests.get(
+            f"{self._BASE_URL}/stats/fieldValues", params=params, timeout=30
+        )
+        resp.raise_for_status()
+        data = resp.json()  # Returns a list of field objects
+
+        values = []
+        if isinstance(data, list) and data:
+            field_obj = data[0]
+            values = [
+                {"value": item.get("value"), "studies_count": item.get("studiesCount")}
+                for item in field_obj.get("topValues", [])
+            ]
+
+        return {
+            "data": {
+                "field": field,
+                "values": values,
+                "total_count": len(values),
+            },
+            "metadata": {
+                "source": "ClinicalTrials.gov API v2",
+                "operation": "field_values",
+            },
+        }
 
 
 @register_tool("ClinicalTrialsSearchTool")

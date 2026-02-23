@@ -1,0 +1,282 @@
+[
+  {
+    "name": "IDR_list_studies",
+    "description": "List imaging studies (projects) from the Image Data Resource (IDR), the public repository for reference image datasets from published scientific studies. IDR contains high-content microscopy, histopathology, and other biological imaging datasets from over 140 studies. Returns study names (e.g., 'idr0018-neff-histopathology/experimentA'), descriptions, IDs, and URLs to access datasets within each study.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "limit": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "description": "Maximum number of studies to return (default 25, max 1000)"
+        },
+        "offset": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "description": "Offset for pagination"
+        }
+      },
+      "required": []
+    },
+    "fields": {
+      "endpoint": "https://idr.openmicroscopy.org/api/v0/m/projects/"
+    },
+    "type": "BaseRESTTool",
+    "test_examples": [
+      {
+        "limit": 10
+      },
+      {
+        "limit": 5,
+        "offset": 10
+      }
+    ],
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "object",
+          "description": "IDR studies list",
+          "properties": {
+            "data": {
+              "type": "array",
+              "description": "List of imaging studies",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "@id": {
+                    "type": "integer",
+                    "description": "Study/project ID"
+                  },
+                  "Name": {
+                    "type": "string",
+                    "description": "Study name (e.g., 'idr0018-neff-histopathology/experimentA')"
+                  },
+                  "Description": {
+                    "type": "string",
+                    "description": "Study description including organism, assay type, and biological question"
+                  },
+                  "url:datasets": {
+                    "type": "string",
+                    "description": "URL to list datasets within this study"
+                  },
+                  "url:project": {
+                    "type": "string",
+                    "description": "URL to this study's details"
+                  }
+                }
+              }
+            },
+            "meta": {
+              "type": "object",
+              "properties": {
+                "totalCount": {
+                  "type": "integer",
+                  "description": "Total number of studies in IDR"
+                },
+                "offset": {
+                  "type": "integer"
+                },
+                "limit": {
+                  "type": "integer"
+                }
+              }
+            }
+          }
+        },
+        {
+          "type": "object",
+          "properties": {
+            "error": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "error"
+          ]
+        }
+      ]
+    }
+  },
+  {
+    "name": "IDR_get_study",
+    "description": "Get detailed information about a specific imaging study (project) in the Image Data Resource (IDR) by its project ID. Returns study metadata including name, description, number of datasets, and links to associated imaging data. Use IDR_list_studies to find study IDs.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "project_id": {
+          "type": "integer",
+          "description": "IDR project/study ID (e.g., 101 for idr0018-neff-histopathology). Obtain from IDR_list_studies."
+        }
+      },
+      "required": [
+        "project_id"
+      ]
+    },
+    "fields": {
+      "endpoint": "https://idr.openmicroscopy.org/api/v0/m/projects/{project_id}/"
+    },
+    "type": "BaseRESTTool",
+    "test_examples": [
+      {
+        "project_id": 101
+      },
+      {
+        "project_id": 51
+      }
+    ],
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "object",
+          "description": "Study details",
+          "properties": {
+            "data": {
+              "type": "object",
+              "description": "Study/project data",
+              "properties": {
+                "@id": {
+                  "type": "integer",
+                  "description": "Project ID"
+                },
+                "Name": {
+                  "type": "string",
+                  "description": "Study name"
+                },
+                "Description": {
+                  "type": "string",
+                  "description": "Study description"
+                },
+                "url:datasets": {
+                  "type": "string",
+                  "description": "URL to list datasets"
+                },
+                "url:project": {
+                  "type": "string",
+                  "description": "URL to this project"
+                }
+              }
+            }
+          }
+        },
+        {
+          "type": "object",
+          "properties": {
+            "error": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "error"
+          ]
+        }
+      ]
+    }
+  },
+  {
+    "name": "IDR_get_study_datasets",
+    "description": "Get datasets (image collections) within a specific IDR imaging study. Each dataset within an IDR project corresponds to a set of related images, often representing a specific experimental condition, cell line, or time point. Returns dataset names and IDs. Use IDR_list_studies to find study IDs first.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "project_id": {
+          "type": "integer",
+          "description": "IDR project/study ID (e.g., 101). Obtain from IDR_list_studies."
+        },
+        "limit": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "description": "Maximum number of datasets to return (default 25, max 1000)"
+        },
+        "offset": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "description": "Offset for pagination"
+        }
+      },
+      "required": [
+        "project_id"
+      ]
+    },
+    "fields": {
+      "endpoint": "https://idr.openmicroscopy.org/api/v0/m/projects/{project_id}/datasets/"
+    },
+    "type": "BaseRESTTool",
+    "test_examples": [
+      {
+        "project_id": 101,
+        "limit": 10
+      },
+      {
+        "project_id": 51,
+        "limit": 5
+      }
+    ],
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "object",
+          "description": "Datasets within the study",
+          "properties": {
+            "data": {
+              "type": "array",
+              "description": "List of datasets",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "@id": {
+                    "type": "integer",
+                    "description": "Dataset ID"
+                  },
+                  "Name": {
+                    "type": "string",
+                    "description": "Dataset name"
+                  },
+                  "url:images": {
+                    "type": "string",
+                    "description": "URL to list images in this dataset"
+                  },
+                  "url:dataset": {
+                    "type": "string",
+                    "description": "URL to this dataset's details"
+                  },
+                  "url:projects": {
+                    "type": "string",
+                    "description": "URL to parent projects"
+                  }
+                }
+              }
+            },
+            "meta": {
+              "type": "object",
+              "properties": {
+                "totalCount": {
+                  "type": "integer",
+                  "description": "Total number of datasets in this study"
+                }
+              }
+            }
+          }
+        },
+        {
+          "type": "object",
+          "properties": {
+            "error": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "error"
+          ]
+        }
+      ]
+    }
+  }
+]

@@ -713,5 +713,411 @@
     "return_schema": {
       "type": "string"
     }
+  },
+  {
+    "name": "ClinicalTrials_search_studies",
+    "description": "Search ClinicalTrials.gov for clinical trial studies by condition, intervention, sponsor, or other criteria. Returns NCT IDs, titles, status, phase, enrollment, and key trial metadata. Example: search for 'breast cancer' trials with 'pembrolizumab' that are RECRUITING in Phase 3.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "query_cond": {
+          "type": ["string", "null"],
+          "description": "Disease or condition to search for (e.g., 'breast cancer', 'type 2 diabetes', 'COVID-19'). Supports Boolean operators (AND, OR, NOT)."
+        },
+        "query_intr": {
+          "type": ["string", "null"],
+          "description": "Intervention or drug to search for (e.g., 'pembrolizumab', 'metformin', 'chemotherapy')."
+        },
+        "query_term": {
+          "type": ["string", "null"],
+          "description": "Free-text search across all study fields. Use for general keyword search."
+        },
+        "filter_status": {
+          "type": ["string", "null"],
+          "description": "Filter by recruitment status. Options: 'RECRUITING', 'NOT_YET_RECRUITING', 'ACTIVE_NOT_RECRUITING', 'COMPLETED', 'WITHDRAWN', 'SUSPENDED', 'TERMINATED', 'ENROLLING_BY_INVITATION'. Comma-separate multiple values."
+        },
+        "filter_phase": {
+          "type": ["string", "null"],
+          "description": "Filter by trial phase. Options: 'EARLY_PHASE1', 'PHASE1', 'PHASE2', 'PHASE3', 'PHASE4', 'NA'. Comma-separate multiple (e.g., 'PHASE2,PHASE3')."
+        },
+        "filter_study_type": {
+          "type": ["string", "null"],
+          "description": "Filter by study type: 'INTERVENTIONAL', 'OBSERVATIONAL', 'EXPANDED_ACCESS'."
+        },
+        "page_size": {
+          "type": "integer",
+          "description": "Number of results per page (default 10, max 1000).",
+          "default": 10,
+          "minimum": 1,
+          "maximum": 1000
+        },
+        "next_page_token": {
+          "type": ["string", "null"],
+          "description": "Token for retrieving the next page of results (obtained from previous response)."
+        }
+      },
+      "required": []
+    },
+    "fields": {
+      "operation": "search"
+    },
+    "query_schema": {},
+    "type": "ClinicalTrialsTool",
+    "test_examples": [
+      {
+        "query_cond": "breast cancer",
+        "query_intr": "pembrolizumab",
+        "filter_status": "RECRUITING",
+        "page_size": 5
+      }
+    ],
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "object",
+          "properties": {
+            "data": {
+              "type": "object",
+              "properties": {
+                "studies": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "nct_id": {"type": ["string", "null"]},
+                      "brief_title": {"type": ["string", "null"]},
+                      "status": {"type": ["string", "null"]},
+                      "study_type": {"type": ["string", "null"]},
+                      "phases": {"type": "array"},
+                      "enrollment": {"type": ["integer", "null"]},
+                      "conditions": {"type": "array"},
+                      "interventions": {"type": "array"},
+                      "sponsor": {"type": ["string", "null"]},
+                      "start_date": {"type": ["string", "null"]},
+                      "completion_date": {"type": ["string", "null"]}
+                    }
+                  }
+                },
+                "total_count": {"type": ["integer", "null"]},
+                "next_page_token": {"type": ["string", "null"]}
+              }
+            },
+            "metadata": {"type": "object"}
+          },
+          "required": ["data"]
+        },
+        {
+          "type": "object",
+          "properties": {"error": {"type": "string"}},
+          "required": ["error"]
+        }
+      ]
+    },
+    "label": ["ClinicalTrials.gov", "Clinical Trial", "Intervention", "Search"]
+  },
+  {
+    "name": "ClinicalTrials_get_study",
+    "description": "Get full details for a specific clinical trial by NCT ID from ClinicalTrials.gov. Returns comprehensive protocol including title, objectives, eligibility criteria, interventions, outcome measures, contacts, and results summary. Example: NCT04280705 returns the ACTT remdesivir COVID-19 trial with all details.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "nct_id": {
+          "type": "string",
+          "description": "NCT (National Clinical Trial) identifier (e.g., 'NCT04280705', 'NCT02142712'). Obtain from ClinicalTrials_search_studies."
+        }
+      },
+      "required": ["nct_id"]
+    },
+    "fields": {
+      "operation": "get_study"
+    },
+    "query_schema": {},
+    "type": "ClinicalTrialsTool",
+    "test_examples": [
+      {"nct_id": "NCT04280705"}
+    ],
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "object",
+          "properties": {
+            "data": {
+              "type": "object",
+              "properties": {
+                "nct_id": {"type": ["string", "null"]},
+                "brief_title": {"type": ["string", "null"]},
+                "official_title": {"type": ["string", "null"]},
+                "status": {"type": ["string", "null"]},
+                "study_type": {"type": ["string", "null"]},
+                "phases": {"type": "array"},
+                "enrollment": {"type": ["integer", "null"]},
+                "brief_summary": {"type": ["string", "null"]},
+                "conditions": {"type": "array"},
+                "interventions": {"type": "array"},
+                "primary_outcomes": {"type": "array"},
+                "eligibility_criteria": {"type": ["string", "null"]},
+                "sponsor": {"type": ["string", "null"]},
+                "locations": {"type": "array"},
+                "references": {"type": "array"}
+              }
+            },
+            "metadata": {"type": "object"}
+          },
+          "required": ["data"]
+        },
+        {
+          "type": "object",
+          "properties": {"error": {"type": "string"}},
+          "required": ["error"]
+        }
+      ]
+    },
+    "label": ["ClinicalTrials.gov", "Clinical Trial", "Study"]
+  },
+  {
+    "name": "ClinicalTrials_search_by_intervention",
+    "description": "Search ClinicalTrials.gov for all clinical trials testing a specific drug, biologic, device, or other intervention. Returns trial IDs, titles, phases, status, and conditions being studied. Ideal for finding all trials for a given drug (e.g., 'nivolumab') across all disease indications.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "intervention": {
+          "type": "string",
+          "description": "Drug, biologic, device, or intervention name (e.g., 'nivolumab', 'CRISPR', 'CAR-T cells', 'metformin', 'osimertinib')."
+        },
+        "filter_status": {
+          "type": ["string", "null"],
+          "description": "Filter by recruitment status: 'RECRUITING', 'COMPLETED', 'ACTIVE_NOT_RECRUITING', 'TERMINATED'. Comma-separate multiple."
+        },
+        "filter_phase": {
+          "type": ["string", "null"],
+          "description": "Filter by trial phase: 'PHASE1', 'PHASE2', 'PHASE3', 'PHASE4'. Comma-separate multiple."
+        },
+        "page_size": {
+          "type": "integer",
+          "description": "Number of results per page (default 10, max 1000).",
+          "default": 10,
+          "minimum": 1,
+          "maximum": 1000
+        }
+      },
+      "required": ["intervention"]
+    },
+    "fields": {
+      "operation": "search"
+    },
+    "query_schema": {},
+    "type": "ClinicalTrialsTool",
+    "test_examples": [
+      {
+        "intervention": "nivolumab",
+        "filter_phase": "PHASE3",
+        "page_size": 5
+      }
+    ],
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "object",
+          "properties": {
+            "data": {
+              "type": "object",
+              "properties": {
+                "studies": {"type": "array"},
+                "total_count": {"type": ["integer", "null"]},
+                "next_page_token": {"type": ["string", "null"]}
+              }
+            },
+            "metadata": {"type": "object"}
+          },
+          "required": ["data"]
+        },
+        {
+          "type": "object",
+          "properties": {"error": {"type": "string"}},
+          "required": ["error"]
+        }
+      ]
+    },
+    "label": ["ClinicalTrials.gov", "Clinical Trial", "Intervention", "Drug Development"]
+  },
+  {
+    "name": "ClinicalTrials_search_by_sponsor",
+    "description": "Search ClinicalTrials.gov for clinical trials by sponsor or lead organization. Returns trials funded by pharmaceutical companies, academic institutions, or government agencies. Example: find all Phase 3 trials sponsored by 'National Cancer Institute' for cancer conditions.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "sponsor": {
+          "type": "string",
+          "description": "Sponsor or lead organization name (e.g., 'Pfizer', 'National Cancer Institute', 'Novartis', 'Johns Hopkins University', 'Merck')."
+        },
+        "query_cond": {
+          "type": ["string", "null"],
+          "description": "Optional disease/condition filter (e.g., 'cancer', 'cardiovascular disease', 'alzheimer')."
+        },
+        "filter_status": {
+          "type": ["string", "null"],
+          "description": "Filter by status: 'RECRUITING', 'COMPLETED', 'ACTIVE_NOT_RECRUITING'. Comma-separate multiple."
+        },
+        "filter_phase": {
+          "type": ["string", "null"],
+          "description": "Filter by phase: 'PHASE1', 'PHASE2', 'PHASE3', 'PHASE4'. Comma-separate multiple."
+        },
+        "page_size": {
+          "type": "integer",
+          "description": "Number of results per page (default 10, max 1000).",
+          "default": 10,
+          "minimum": 1,
+          "maximum": 1000
+        }
+      },
+      "required": ["sponsor"]
+    },
+    "fields": {
+      "operation": "search"
+    },
+    "query_schema": {},
+    "type": "ClinicalTrialsTool",
+    "test_examples": [
+      {
+        "sponsor": "National Cancer Institute",
+        "filter_phase": "PHASE3",
+        "page_size": 5
+      }
+    ],
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "object",
+          "properties": {
+            "data": {
+              "type": "object",
+              "properties": {
+                "studies": {"type": "array"},
+                "total_count": {"type": ["integer", "null"]},
+                "next_page_token": {"type": ["string", "null"]}
+              }
+            },
+            "metadata": {"type": "object"}
+          },
+          "required": ["data"]
+        },
+        {
+          "type": "object",
+          "properties": {"error": {"type": "string"}},
+          "required": ["error"]
+        }
+      ]
+    },
+    "label": ["ClinicalTrials.gov", "Clinical Trial", "Sponsor", "Drug Development"]
+  },
+  {
+    "name": "ClinicalTrials_get_database_stats",
+    "description": "Get aggregate statistics about the ClinicalTrials.gov database, including total number of registered studies and size distribution. Returns database-wide counts and file size metrics.",
+    "parameter": {
+      "type": "object",
+      "properties": {},
+      "required": []
+    },
+    "fields": {
+      "operation": "stats_size"
+    },
+    "query_schema": {},
+    "type": "ClinicalTrialsTool",
+    "test_examples": [
+      {}
+    ],
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "object",
+          "properties": {
+            "data": {
+              "type": "object",
+              "properties": {
+                "total_studies": {"type": ["integer", "null"]},
+                "average_byte_size": {"type": ["number", "null"]},
+                "largest_studies": {"type": ["array", "null"]}
+              }
+            },
+            "metadata": {"type": "object"}
+          },
+          "required": ["data"]
+        },
+        {
+          "type": "object",
+          "properties": {"error": {"type": "string"}},
+          "required": ["error"]
+        }
+      ]
+    },
+    "label": ["ClinicalTrials.gov", "Clinical Trial", "Statistics"]
+  },
+  {
+    "name": "ClinicalTrials_get_field_values",
+    "description": "Get value distribution for a specific field across ClinicalTrials.gov studies. Returns all unique values with study counts. Use to see what status, phase, or study type options exist. Example: 'Phase' field returns counts for PHASE1, PHASE2, PHASE3, etc.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "field": {
+          "type": "string",
+          "description": "Field name to get value counts for. Common fields: 'OverallStatus' (trial status), 'Phase' (trial phase), 'StudyType' (Interventional/Observational), 'LeadSponsorClass' (industry/NIH/other), 'InterventionType' (drug/device/biological)."
+        },
+        "query_cond": {
+          "type": ["string", "null"],
+          "description": "Optional condition filter to restrict value counts to a specific disease area."
+        },
+        "page_size": {
+          "type": "integer",
+          "description": "Number of field values to return (default 50).",
+          "default": 50
+        }
+      },
+      "required": ["field"]
+    },
+    "fields": {
+      "operation": "field_values"
+    },
+    "query_schema": {},
+    "type": "ClinicalTrialsTool",
+    "test_examples": [
+      {
+        "field": "Phase",
+        "page_size": 20
+      }
+    ],
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "object",
+          "properties": {
+            "data": {
+              "type": "object",
+              "properties": {
+                "field": {"type": "string"},
+                "values": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "value": {"type": ["string", "null"]},
+                      "studies_count": {"type": ["integer", "null"]}
+                    }
+                  }
+                },
+                "total_count": {"type": ["integer", "null"]}
+              }
+            },
+            "metadata": {"type": "object"}
+          },
+          "required": ["data"]
+        },
+        {
+          "type": "object",
+          "properties": {"error": {"type": "string"}},
+          "required": ["error"]
+        }
+      ]
+    },
+    "label": ["ClinicalTrials.gov", "Clinical Trial", "Statistics"]
   }
 ]

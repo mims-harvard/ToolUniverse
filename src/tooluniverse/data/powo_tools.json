@@ -1,0 +1,346 @@
+[
+  {
+    "name": "POWO_search_plants",
+    "description": "Search the Plants of the World Online (POWO) database maintained by the Royal Botanic Gardens, Kew. POWO is the most comprehensive global checklist of vascular plants with 1.3+ million names and 350,000+ accepted species. Search by plant name, genus, family, or common name. Returns taxonomic information including accepted names, synonyms, distribution, and images. Essential for plant taxonomy, botany, and biodiversity research.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "q": {
+          "type": "string",
+          "description": "Search query. Can be scientific name, common name, genus, or family. Examples: 'rosa canina', 'orchid', 'Asteraceae', 'oak'"
+        },
+        "f": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Filter facets (comma-separated). Common filters: 'species_f:true' (species only), 'accepted_names:true' (only accepted names). Example: 'species_f:true'"
+        },
+        "perPage": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "description": "Results per page (default 24, max 500)"
+        },
+        "cursor": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Pagination cursor from previous response"
+        }
+      },
+      "required": [
+        "q"
+      ]
+    },
+    "fields": {
+      "endpoint": "https://powo.science.kew.org/api/2/search",
+      "headers": {"User-Agent": "ToolUniverse/1.0 (scientific research; https://github.com/tooluniverse/ToolUniverse)"}
+    },
+    "type": "BaseRESTTool",
+    "test_examples": [
+      {
+        "q": "Rosa canina",
+        "f": "species_f:true"
+      },
+      {
+        "q": "Arabidopsis thaliana"
+      },
+      {
+        "q": "Quercus robur",
+        "f": "accepted_names:true"
+      }
+    ],
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "object",
+          "description": "Plant search results from POWO",
+          "properties": {
+            "totalResults": {
+              "type": "integer",
+              "description": "Total matching results"
+            },
+            "page": {
+              "type": "integer"
+            },
+            "totalPages": {
+              "type": "integer"
+            },
+            "perPage": {
+              "type": "integer"
+            },
+            "cursor": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "Cursor for next page"
+            },
+            "results": {
+              "type": "array",
+              "description": "List of plant taxa",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "accepted": {
+                    "type": "boolean",
+                    "description": "Whether this is an accepted name"
+                  },
+                  "author": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "Taxonomic authority"
+                  },
+                  "kingdom": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "family": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "Plant family (e.g. 'Rosaceae')"
+                  },
+                  "name": {
+                    "type": "string",
+                    "description": "Scientific name (e.g. 'Rosa canina')"
+                  },
+                  "rank": {
+                    "type": "string",
+                    "description": "Taxonomic rank: Species, Genus, Family, etc."
+                  },
+                  "snippet": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "Brief description or common name"
+                  },
+                  "url": {
+                    "type": "string",
+                    "description": "POWO page URL"
+                  },
+                  "fqId": {
+                    "type": "string",
+                    "description": "Fully qualified ID for species lookup"
+                  },
+                  "images": {
+                    "type": [
+                      "array",
+                      "null"
+                    ],
+                    "description": "Available images",
+                    "items": {
+                      "type": "object",
+                      "properties": {
+                        "fullsizeUrl": {
+                          "type": "string"
+                        },
+                        "thumbnailUrl": {
+                          "type": "string"
+                        },
+                        "caption": {
+                          "type": "string"
+                        },
+                        "rights": {
+                          "type": "string"
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        {
+          "type": "object",
+          "properties": {
+            "error": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "error"
+          ]
+        }
+      ]
+    }
+  },
+  {
+    "name": "POWO_get_taxon",
+    "description": "Get detailed taxonomic information for a specific plant species from Plants of the World Online (POWO). Returns comprehensive data including taxonomic classification, accepted name, synonyms, geographic distribution by region, morphological descriptions, and images. Use POWO_search_plants to find the fqId (fully qualified ID) first.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "fqId": {
+          "type": "string",
+          "description": "Fully qualified taxon ID from POWO. Format: 'urn:lsid:ipni.org:names:XXXXXXX-X'. Example: 'urn:lsid:ipni.org:names:717960-1' (Rosa canina). Obtained from POWO_search_plants results."
+        }
+      },
+      "required": [
+        "fqId"
+      ]
+    },
+    "fields": {
+      "endpoint": "https://powo.science.kew.org/api/2/taxon/{fqId}",
+      "headers": {"User-Agent": "ToolUniverse/1.0 (scientific research; https://github.com/tooluniverse/ToolUniverse)"}
+    },
+    "type": "BaseRESTTool",
+    "test_examples": [
+      {
+        "fqId": "urn:lsid:ipni.org:names:717960-1"
+      },
+      {
+        "fqId": "urn:lsid:ipni.org:names:30001404-2"
+      },
+      {
+        "fqId": "urn:lsid:ipni.org:names:316947-2"
+      }
+    ],
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "object",
+          "description": "Detailed plant taxon record",
+          "properties": {
+            "accepted": {
+              "type": "boolean"
+            },
+            "author": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "name": {
+              "type": "string",
+              "description": "Scientific name"
+            },
+            "rank": {
+              "type": "string"
+            },
+            "family": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "kingdom": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "phylum": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "order": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "genus": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "species": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "fqId": {
+              "type": "string"
+            },
+            "synonymOf": {
+              "type": [
+                "object",
+                "null"
+              ],
+              "description": "If this is a synonym, the accepted name",
+              "properties": {
+                "name": {
+                  "type": "string"
+                },
+                "fqId": {
+                  "type": "string"
+                }
+              }
+            },
+            "synonyms": {
+              "type": [
+                "array",
+                "null"
+              ],
+              "description": "Known synonyms for this taxon"
+            },
+            "distribution": {
+              "type": [
+                "object",
+                "null"
+              ],
+              "description": "Geographic distribution by region",
+              "properties": {
+                "natives": {
+                  "type": "array",
+                  "description": "Native distribution regions"
+                },
+                "introduced": {
+                  "type": "array",
+                  "description": "Introduced/naturalized regions"
+                }
+              }
+            },
+            "descriptions": {
+              "type": [
+                "array",
+                "null"
+              ],
+              "description": "Morphological descriptions"
+            },
+            "commonNames": {
+              "type": [
+                "array",
+                "null"
+              ],
+              "description": "Common names in various languages"
+            },
+            "images": {
+              "type": [
+                "array",
+                "null"
+              ],
+              "description": "Plant images with URLs"
+            }
+          }
+        },
+        {
+          "type": "object",
+          "properties": {
+            "error": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "error"
+          ]
+        }
+      ]
+    }
+  }
+]

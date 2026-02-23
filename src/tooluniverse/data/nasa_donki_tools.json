@@ -1,0 +1,633 @@
+[
+  {
+    "name": "NASA_DONKI_get_coronal_mass_ejections",
+    "description": "Search NASA DONKI (Database Of Notifications, Knowledge, Information) for Coronal Mass Ejection (CME) events. Returns CME observations including start time, source location, active region, speed, direction, half-angle, and linked geomagnetic storms. No API key required. Date range defaults to last 30 days if not specified. Essential for space weather research, satellite operations planning, and aurora forecasting.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "startDate": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Start date in YYYY-MM-DD format (e.g., '2024-01-01'). Defaults to 30 days before endDate."
+        },
+        "endDate": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "End date in YYYY-MM-DD format (e.g., '2024-01-31'). Defaults to today."
+        }
+      },
+      "required": []
+    },
+    "fields": {
+      "endpoint": "https://kauai.ccmc.gsfc.nasa.gov/DONKI/WS/get/CME"
+    },
+    "type": "BaseRESTTool",
+    "test_examples": [
+      {
+        "startDate": "2024-01-01",
+        "endDate": "2024-01-10"
+      },
+      {
+        "startDate": "2024-05-01",
+        "endDate": "2024-05-15"
+      },
+      {
+        "startDate": "2024-10-01",
+        "endDate": "2024-10-07"
+      }
+    ],
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "array",
+          "description": "List of CME events",
+          "items": {
+            "type": "object",
+            "properties": {
+              "activityID": {
+                "type": "string",
+                "description": "Unique event ID (e.g., 2024-01-01T17:00:00-CME-001)"
+              },
+              "startTime": {
+                "type": "string",
+                "description": "CME start time in ISO format"
+              },
+              "sourceLocation": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "Solar source location (e.g., S14W23)"
+              },
+              "activeRegionNum": {
+                "type": [
+                  "integer",
+                  "null"
+                ],
+                "description": "NOAA active region number"
+              },
+              "note": {
+                "type": "string"
+              },
+              "instruments": {
+                "type": "array",
+                "description": "Observing instruments (SOHO LASCO, STEREO)"
+              },
+              "cmeAnalyses": {
+                "type": "array",
+                "description": "CME measurements including speed, direction, half-angle",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "speed": {
+                      "type": [
+                        "number",
+                        "null"
+                      ],
+                      "description": "CME speed in km/s"
+                    },
+                    "latitude": {
+                      "type": [
+                        "number",
+                        "null"
+                      ]
+                    },
+                    "longitude": {
+                      "type": [
+                        "number",
+                        "null"
+                      ]
+                    },
+                    "halfAngle": {
+                      "type": [
+                        "number",
+                        "null"
+                      ],
+                      "description": "Half-angle in degrees"
+                    },
+                    "type": {
+                      "type": [
+                        "string",
+                        "null"
+                      ],
+                      "description": "CME type (S=Slow, C=Common, O=Occasional, R=Rare, ER=Extremely Rare)"
+                    },
+                    "isMostAccurate": {
+                      "type": "boolean"
+                    }
+                  }
+                }
+              },
+              "linkedEvents": {
+                "type": [
+                  "array",
+                  "null"
+                ],
+                "description": "Related flares, shocks, storms"
+              }
+            }
+          }
+        },
+        {
+          "type": "object",
+          "properties": {
+            "error": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "error"
+          ]
+        }
+      ]
+    }
+  },
+  {
+    "name": "NASA_DONKI_get_solar_flares",
+    "description": "Search NASA DONKI for Solar Flare (FLR) events. Returns flare observations including class (C/M/X), begin/peak/end times, source location, and active region. Solar flares are classified by X-ray peak brightness: C-class (small), M-class (medium, can cause brief radio blackouts), X-class (major, can cause global radio blackouts). No API key required.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "startDate": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Start date in YYYY-MM-DD format (e.g., '2024-01-01'). Defaults to 30 days before endDate."
+        },
+        "endDate": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "End date in YYYY-MM-DD format (e.g., '2024-01-31'). Defaults to today."
+        }
+      },
+      "required": []
+    },
+    "fields": {
+      "endpoint": "https://kauai.ccmc.gsfc.nasa.gov/DONKI/WS/get/FLR"
+    },
+    "type": "BaseRESTTool",
+    "test_examples": [
+      {
+        "startDate": "2024-01-01",
+        "endDate": "2024-01-10"
+      },
+      {
+        "startDate": "2024-05-01",
+        "endDate": "2024-05-15"
+      },
+      {
+        "startDate": "2024-10-01",
+        "endDate": "2024-10-07"
+      }
+    ],
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "array",
+          "description": "List of solar flare events",
+          "items": {
+            "type": "object",
+            "properties": {
+              "flrID": {
+                "type": "string",
+                "description": "Unique flare ID"
+              },
+              "beginTime": {
+                "type": "string",
+                "description": "Flare start time"
+              },
+              "peakTime": {
+                "type": "string",
+                "description": "Flare peak time"
+              },
+              "endTime": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "Flare end time"
+              },
+              "classType": {
+                "type": "string",
+                "description": "Flare class (e.g., M2.3, X1.0, C5.4)"
+              },
+              "sourceLocation": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "Solar source location (e.g., N03E70)"
+              },
+              "activeRegionNum": {
+                "type": [
+                  "integer",
+                  "null"
+                ],
+                "description": "NOAA active region number"
+              },
+              "instruments": {
+                "type": "array",
+                "description": "Observing instruments"
+              },
+              "linkedEvents": {
+                "type": [
+                  "array",
+                  "null"
+                ],
+                "description": "Related CMEs, storms, etc."
+              }
+            }
+          }
+        },
+        {
+          "type": "object",
+          "properties": {
+            "error": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "error"
+          ]
+        }
+      ]
+    }
+  },
+  {
+    "name": "NASA_DONKI_get_geomagnetic_storms",
+    "description": "Search NASA DONKI for Geomagnetic Storm (GST) events. Returns storm observations including Kp index values (measure of geomagnetic disturbance: 5=minor storm, 6=moderate, 7=strong, 8=severe, 9=extreme). Geomagnetic storms can cause aurora displays, GPS disruptions, power grid problems, and satellite drag. No API key required.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "startDate": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Start date in YYYY-MM-DD format (e.g., '2024-01-01'). Defaults to 30 days before endDate."
+        },
+        "endDate": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "End date in YYYY-MM-DD format (e.g., '2024-06-30'). Defaults to today."
+        }
+      },
+      "required": []
+    },
+    "fields": {
+      "endpoint": "https://kauai.ccmc.gsfc.nasa.gov/DONKI/WS/get/GST"
+    },
+    "type": "BaseRESTTool",
+    "test_examples": [
+      {
+        "startDate": "2024-01-01",
+        "endDate": "2024-03-31"
+      },
+      {
+        "startDate": "2024-05-01",
+        "endDate": "2024-05-31"
+      },
+      {
+        "startDate": "2024-10-01",
+        "endDate": "2024-12-31"
+      }
+    ],
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "array",
+          "description": "List of geomagnetic storm events",
+          "items": {
+            "type": "object",
+            "properties": {
+              "gstID": {
+                "type": "string",
+                "description": "Unique storm ID"
+              },
+              "startTime": {
+                "type": "string",
+                "description": "Storm start time"
+              },
+              "allKpIndex": {
+                "type": "array",
+                "description": "Kp index observations over time",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "observedTime": {
+                      "type": "string"
+                    },
+                    "kpIndex": {
+                      "type": "number",
+                      "description": "Kp index (5-9 scale)"
+                    },
+                    "source": {
+                      "type": "string"
+                    }
+                  }
+                }
+              },
+              "linkedEvents": {
+                "type": [
+                  "array",
+                  "null"
+                ],
+                "description": "Related CMEs and shocks"
+              }
+            }
+          }
+        },
+        {
+          "type": "object",
+          "properties": {
+            "error": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "error"
+          ]
+        }
+      ]
+    }
+  },
+  {
+    "name": "NASA_DONKI_get_solar_energetic_particles",
+    "description": "Search NASA DONKI for Solar Energetic Particle (SEP) events. SEPs are high-energy particles (protons, electrons, heavy ions) accelerated by solar flares and CME-driven shocks. They pose radiation hazards to astronauts, satellites, and high-altitude aircraft. Returns event time, associated instruments, and linked solar events. No API key required.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "startDate": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Start date in YYYY-MM-DD format (e.g., '2024-01-01'). Defaults to 30 days before endDate."
+        },
+        "endDate": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "End date in YYYY-MM-DD format (e.g., '2024-06-30'). Defaults to today."
+        }
+      },
+      "required": []
+    },
+    "fields": {
+      "endpoint": "https://kauai.ccmc.gsfc.nasa.gov/DONKI/WS/get/SEP"
+    },
+    "type": "BaseRESTTool",
+    "test_examples": [
+      {
+        "startDate": "2024-01-01",
+        "endDate": "2024-06-30"
+      },
+      {
+        "startDate": "2024-05-01",
+        "endDate": "2024-05-31"
+      },
+      {
+        "startDate": "2024-10-01",
+        "endDate": "2024-12-31"
+      }
+    ],
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "array",
+          "description": "List of solar energetic particle events",
+          "items": {
+            "type": "object",
+            "properties": {
+              "sepID": {
+                "type": "string",
+                "description": "Unique SEP event ID"
+              },
+              "eventTime": {
+                "type": "string",
+                "description": "Event time in ISO format"
+              },
+              "instruments": {
+                "type": "array",
+                "description": "Detecting instruments (SOHO COSTEP, GOES, etc.)"
+              },
+              "linkedEvents": {
+                "type": [
+                  "array",
+                  "null"
+                ],
+                "description": "Related flares and CMEs"
+              }
+            }
+          }
+        },
+        {
+          "type": "object",
+          "properties": {
+            "error": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "error"
+          ]
+        }
+      ]
+    }
+  },
+  {
+    "name": "NASA_DONKI_get_interplanetary_shocks",
+    "description": "Search NASA DONKI for Interplanetary Shock (IPS) events detected at Earth or in the solar wind. Interplanetary shocks are sudden increases in solar wind speed, density, and magnetic field strength, often driven by CMEs or stream interaction regions. They can trigger geomagnetic storms. Returns event time, location, detecting instruments, and linked events. No API key required.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "startDate": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Start date in YYYY-MM-DD format (e.g., '2024-01-01'). Defaults to 30 days before endDate."
+        },
+        "endDate": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "End date in YYYY-MM-DD format (e.g., '2024-03-31'). Defaults to today."
+        },
+        "location": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Shock detection location. Options: 'Earth', 'STEREO A', 'STEREO B', 'MESSENGER', 'Mars'. Default: all locations."
+        }
+      },
+      "required": []
+    },
+    "fields": {
+      "endpoint": "https://kauai.ccmc.gsfc.nasa.gov/DONKI/WS/get/IPS"
+    },
+    "type": "BaseRESTTool",
+    "test_examples": [
+      {
+        "startDate": "2024-01-01",
+        "endDate": "2024-03-31"
+      },
+      {
+        "startDate": "2024-05-01",
+        "endDate": "2024-05-31",
+        "location": "Earth"
+      },
+      {
+        "startDate": "2024-10-01",
+        "endDate": "2024-12-31"
+      }
+    ],
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "array",
+          "description": "List of interplanetary shock events",
+          "items": {
+            "type": "object",
+            "properties": {
+              "activityID": {
+                "type": "string",
+                "description": "Unique shock event ID"
+              },
+              "catalog": {
+                "type": "string"
+              },
+              "location": {
+                "type": "string",
+                "description": "Detection location (Earth, STEREO A, etc.)"
+              },
+              "eventTime": {
+                "type": "string",
+                "description": "Shock arrival time"
+              },
+              "instruments": {
+                "type": "array",
+                "description": "Detecting instruments (DSCOVR PLASMAG, ACE, etc.)"
+              },
+              "linkedEvents": {
+                "type": [
+                  "array",
+                  "null"
+                ],
+                "description": "Related CMEs and storms"
+              }
+            }
+          }
+        },
+        {
+          "type": "object",
+          "properties": {
+            "error": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "error"
+          ]
+        }
+      ]
+    }
+  },
+  {
+    "name": "NASA_DONKI_get_high_speed_streams",
+    "description": "Search NASA DONKI for High Speed Stream (HSS) events in the solar wind. HSSs originate from coronal holes on the Sun and can cause minor to moderate geomagnetic storming when they interact with Earth's magnetosphere. They produce recurrent geomagnetic activity patterns (27-day cycle) and are a major source of space weather disturbances during solar minimum. No API key required.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "startDate": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Start date in YYYY-MM-DD format (e.g., '2024-01-01'). Defaults to 30 days before endDate."
+        },
+        "endDate": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "End date in YYYY-MM-DD format (e.g., '2024-06-30'). Defaults to today."
+        }
+      },
+      "required": []
+    },
+    "fields": {
+      "endpoint": "https://kauai.ccmc.gsfc.nasa.gov/DONKI/WS/get/HSS"
+    },
+    "type": "BaseRESTTool",
+    "test_examples": [
+      {
+        "startDate": "2024-01-01",
+        "endDate": "2024-03-31"
+      },
+      {
+        "startDate": "2024-05-01",
+        "endDate": "2024-06-30"
+      },
+      {
+        "startDate": "2024-10-01",
+        "endDate": "2024-12-31"
+      }
+    ],
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "array",
+          "description": "List of high speed stream events",
+          "items": {
+            "type": "object",
+            "properties": {
+              "hssID": {
+                "type": "string",
+                "description": "Unique HSS event ID"
+              },
+              "eventTime": {
+                "type": "string",
+                "description": "HSS arrival time at detection point"
+              },
+              "instruments": {
+                "type": "array",
+                "description": "Detecting instruments (DSCOVR, ACE, etc.)"
+              },
+              "linkedEvents": {
+                "type": [
+                  "array",
+                  "null"
+                ],
+                "description": "Related events"
+              }
+            }
+          }
+        },
+        {
+          "type": "object",
+          "properties": {
+            "error": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "error"
+          ]
+        }
+      ]
+    }
+  }
+]

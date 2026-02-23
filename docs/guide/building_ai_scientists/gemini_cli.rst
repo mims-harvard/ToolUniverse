@@ -1,98 +1,104 @@
 Gemini CLI Setup
 ================
 
-**Connect ToolUniverse to Google Gemini CLI in 10 minutes**
+**Connect ToolUniverse to Google Gemini CLI**
 
-Overview
---------
+Gemini CLI is Google's open-source AI agent for the terminal with native MCP support.
 
-Gemini CLI integration provides command-line access to Google's Gemini reasoning models with ToolUniverse's scientific tools.
+.. tip:: 🚀 **Fastest setup — no installation needed**
 
-.. grid:: 1 1 3 3
-   :gutter: 2
+   Open Gemini CLI and paste this single message:
 
-   .. grid-item-card:: ⚡ Setup Time
-      :class-card: hover-lift
-      :shadow: sm
-      
-      **10 minutes**
+   .. code-block:: text
 
-   .. grid-item-card:: 💻 Difficulty
-      :class-card: hover-lift
-      :shadow: sm
-      
-      **Moderate**
+      Please read https://raw.githubusercontent.com/mims-harvard/ToolUniverse/main/skills/setup-tooluniverse/SKILL.md and follow it to help me set up ToolUniverse.
 
-   .. grid-item-card:: 🎯 Best For
-      :class-card: hover-lift
-      :shadow: sm
-      
-      **CLI workflows**
+   Gemini CLI will fetch the setup guide from GitHub and walk you through everything interactively.
 
 Prerequisites
 -------------
 
 .. important:: ✅ **What you need:**
    
-   - **Gemini CLI** - ``npm install -g @google/generative-ai-cli``
-   - **Google AI API Key** - `Get key <https://ai.google.dev>`_
-   - **ToolUniverse** - ``pip install tooluniverse``
+   - **Node.js 18+** - `Download here <https://nodejs.org/>`_
+   - **Gemini CLI** - ``npm install -g @google/gemini-cli``
+   - **uv/uvx** - `Install uv <https://docs.astral.sh/uv/>`_
+
+.. seealso:: `Gemini CLI MCP official guide <https://google-gemini.github.io/gemini-cli/docs/tools/mcp-server.html>`_
 
 Setup Steps
 -----------
 
-.. card:: Step 1: Install ToolUniverse
-   :class-card: step-card completed
+.. card:: Step 1: Configure MCP in Gemini CLI
+   :class-card: step-card
 
-   .. code-block:: bash
+   **1.1. Open MCP Configuration**
 
-      pip install tooluniverse
+   Edit (or create) ``~/.gemini/settings.json``:
 
-.. card:: Step 2: Start MCP Server
-   :class-card: step-card current
+   **1.2. Add ToolUniverse Configuration**
 
-   Launch ToolUniverse MCP server:
-
-   .. code-block:: bash
-
-      # Terminal 1: Start MCP server
-      tooluniverse-smcp --port 8000
-
-   Keep this terminal open.
-
-.. card:: Step 3: Configure Gemini CLI
-   :class-card: step-card pending
-
-   Create Gemini CLI config file ``~/.gemini-cli/config.json``:
+   Add this to your ``settings.json``:
 
    .. code-block:: json
 
       {
         "mcpServers": {
           "tooluniverse": {
-            "url": "http://localhost:8000"
+            "command": "uvx",
+            "args": ["--refresh", "tooluniverse"],
+            "env": {
+              "PYTHONIOENCODING": "utf-8"
+            }
           }
         }
       }
 
-.. card:: Step 4: Set API Key
-   :class-card: step-card pending
+   **1.3. Save the file**
+
+   Gemini CLI reads ``settings.json`` on startup. No server restart is needed.
+
+.. card:: Step 2: Install Agent Skills
+   :class-card: step-card
+
+   Install ToolUniverse skills for guided workflows:
 
    .. code-block:: bash
 
-      export GOOGLE_API_KEY=your_gemini_api_key
+      npx skills add mims-harvard/ToolUniverse
 
-.. card:: Step 5: Launch Gemini CLI
-   :class-card: step-card pending
+.. card:: Step 3: Launch and Verify
+   :class-card: step-card
+
+   Start the Gemini CLI:
 
    .. code-block:: bash
 
-      # Terminal 2: Start Gemini CLI
-      gemini-cli
+      gemini
 
-   .. success:: ✅ **Connected!**
-      
-      Gemini CLI can now use ToolUniverse tools!
+   Then ask:
+
+   .. code-block:: text
+
+      "List available tools from ToolUniverse"
+
+   Or use the setup skill:
+
+   .. code-block:: text
+
+      "setup tooluniverse"
+
+   You should see ToolUniverse tools available!
+
+.. important:: 🔑 **Configure API Keys**
+   
+   Many tools require API keys. Set them up for full functionality:
+   
+   .. button-ref:: ../../api_keys
+      :color: primary
+      :shadow:
+   
+      🔐 **API Keys Setup Guide**
 
 Example Queries
 ---------------
@@ -123,47 +129,53 @@ Example Queries
 Advanced Configuration
 ----------------------
 
-.. dropdown:: 🎛️ Custom Port
-   :animate: fade-in-slide-down
-
-   Use a different port:
-
-   .. code-block:: bash
-
-      # Server
-      tooluniverse-smcp --port 9000
-
-      # Config
-      {"mcpServers": {"tooluniverse": {"url": "http://localhost:9000"}}}
-
 .. dropdown:: 🔑 Tool-Specific API Keys
    :animate: fade-in-slide-down
 
-   .. code-block:: bash
+   Add ToolUniverse API keys directly in ``settings.json``:
 
-      export NCBI_API_KEY=your_key
-      export SEMANTIC_SCHOLAR_API_KEY=your_key
-      tooluniverse-smcp --port 8000
+   .. code-block:: json
+
+      {
+        "mcpServers": {
+          "tooluniverse": {
+            "command": "uvx",
+            "args": ["--refresh", "tooluniverse"],
+            "env": {
+              "PYTHONIOENCODING": "utf-8",
+              "NCBI_API_KEY": "your_key",
+              "SEMANTIC_SCHOLAR_API_KEY": "your_key"
+            }
+          }
+        }
+      }
+
+.. dropdown:: 🎛️ Project-Specific Config
+   :animate: fade-in-slide-down
+
+   Place a ``.gemini/settings.json`` in your project directory to use project-scoped MCP settings that override the user-level config.
 
 Troubleshooting
 ---------------
 
-.. dropdown:: ❌ Connection refused
+.. dropdown:: ❌ Tools not found
    :color: danger
 
-   Check MCP server is running:
-
-   .. code-block:: bash
-
-      curl http://localhost:8000/health
+   - Ensure ``uvx`` is installed: ``uvx --version``
+   - Check that ``settings.json`` is valid JSON
+   - Restart Gemini CLI after editing the config
 
 .. dropdown:: ⚠️ Rate limit errors
    :color: warning
 
-   Add API keys (see Advanced Configuration)
+   Add API keys in ``settings.json`` ``env`` section (see Advanced Configuration)
 
 Next Steps
 ----------
+
+- :doc:`../../skills_showcase` - Explore AI agent skills
+- :doc:`../../tools/tools_config_index` - Browse 1000+ tools
+- :doc:`../../help/troubleshooting` - Get help
 
 .. button-ref:: index
    :color: secondary
@@ -173,6 +185,5 @@ Next Steps
    ← **Back to Platform Selector**
 
 .. seealso::
-   - :doc:`../tooluniverse_case_study` - End-to-end example with Gemini
-   - :doc:`../scientific_workflows` - Research workflows
+   - :doc:`../tooluniverse_case_study` - End-to-end example
    - :doc:`../../help/troubleshooting` - Common issues

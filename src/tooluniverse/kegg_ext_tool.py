@@ -58,6 +58,10 @@ class KEGGExtTool(BaseTool):
             return self._get_pathway_genes(arguments)
         elif self.endpoint == "get_compound":
             return self._get_compound(arguments)
+        elif self.endpoint == "list_brite":
+            return self._list_brite(arguments)
+        elif self.endpoint == "get_brite_hierarchy":
+            return self._get_brite_hierarchy(arguments)
         else:
             return {"error": f"Unknown endpoint: {self.endpoint}"}
 
@@ -292,5 +296,64 @@ class KEGGExtTool(BaseTool):
             "metadata": {
                 "source": "KEGG REST API",
                 "compound_id": compound_id,
+            },
+        }
+
+    def _list_brite(self, arguments: Dict[str, Any]) -> Dict[str, Any]:
+        """List all available KEGG BRITE hierarchy classifications."""
+        url = f"{KEGG_BASE_URL}/list/brite"
+        response = requests.get(url, timeout=self.timeout)
+        response.raise_for_status()
+
+        hierarchies = []
+        for line in response.text.strip().split("\n"):
+            if line.strip():
+                parts = line.strip().split("\t", 1)
+                if len(parts) >= 2:
+                    hierarchies.append(
+                        {
+                            "hierarchy_id": parts[0].strip(),
+                            "name": parts[1].strip(),
+                        }
+                    )
+                elif parts:
+                    hierarchies.append(
+                        {
+                            "hierarchy_id": parts[0].strip(),
+                            "name": "",
+                        }
+                    )
+
+        return {
+            "data": {
+                "hierarchy_count": len(hierarchies),
+                "hierarchies": hierarchies,
+            },
+            "metadata": {
+                "source": "KEGG BRITE",
+            },
+        }
+
+    def _get_brite_hierarchy(self, arguments: Dict[str, Any]) -> Dict[str, Any]:
+        """Get a specific KEGG BRITE hierarchy as a JSON tree."""
+        hierarchy_id = arguments.get("hierarchy_id", "")
+        if not hierarchy_id:
+            return {"error": "hierarchy_id is required (e.g., 'ko01000' for Enzymes)"}
+
+        # KEGG BRITE JSON endpoint requires br: prefix
+        url = f"{KEGG_BASE_URL}/get/br:{hierarchy_id}/json"
+        response = requests.get(url, timeout=self.timeout)
+        response.raise_for_status()
+
+        if not response.text.strip():
+            return {"error": f"BRITE hierarchy not found: {hierarchy_id}"}
+
+        tree = response.json()
+
+        return {
+            "data": tree,
+            "metadata": {
+                "source": "KEGG BRITE",
+                "hierarchy_id": hierarchy_id,
             },
         }

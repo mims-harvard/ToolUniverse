@@ -28,18 +28,18 @@ from tooluniverse import ToolUniverse
 tu = ToolUniverse()
 
 # Search for bioRxiv preprints using Europe PMC
-result = tu.run('EuropePMC_search_articles', {
-    'query': 'CRISPR gene editing',
-    'source': 'PPR',  # Preprints only
-    'pageSize': 20
-})
+result = tu.run({"name": "EuropePMC_search_articles", "arguments": {
+    "query": "CRISPR gene editing",
+    "source": "PPR",  # Preprints only
+    "pageSize": 20
+}})
 
 # Get full metadata from bioRxiv once you have the DOI
-if result['status'] == 'success':
+if result and result.get('status') == 'success':
     for article in result['data']['resultList']['result']:
         doi = article.get('doi')
         if doi and doi.startswith('10.1101/'):
-            preprint = tu.run('BioRxiv_get_preprint', {'doi': doi})
+            preprint = tu.run({"name": "BioRxiv_get_preprint", "arguments": {"doi": doi}})
             # Now you have complete bioRxiv metadata
 ```
 
@@ -55,12 +55,12 @@ if result['status'] == 'success':
 For exploratory searches or when you need the latest preprints:
 
 ```python
-result = tu.run('web_search', {
-    'query': 'site:biorxiv.org CRISPR gene editing'
-})
+result = tu.run({"name": "web_search", "arguments": {
+    "query": "site:biorxiv.org CRISPR gene editing"
+}})
 
 # Extract DOIs from results and fetch full metadata
-for item in result.get('data', []):
+for item in (result or {}).get('data', []):
     # Parse DOI from URL or text
     # Then use BioRxiv_get_preprint
 ```
@@ -70,10 +70,10 @@ for item in result.get('data', []):
 Semantic Scholar also indexes bioRxiv:
 
 ```python
-result = tu.run('SemanticScholar_search_papers', {
-    'query': 'CRISPR gene editing',
-    'venue': 'bioRxiv'
-})
+result = tu.run({"name": "SemanticScholar_search_papers", "arguments": {
+    "query": "CRISPR gene editing",
+    "venue": "bioRxiv"
+}})
 ```
 
 ### Option 4: Local Data Dumps (Advanced)
@@ -95,22 +95,22 @@ Once you have a DOI, retrieve full metadata:
 
 ```python
 # Full DOI format
-result = tu.run('BioRxiv_get_preprint', {
-    'doi': '10.1101/2023.12.01.569554'
-})
+result = tu.run({"name": "BioRxiv_get_preprint", "arguments": {
+    "doi": "10.1101/2023.12.01.569554"
+}})
 
 # Shortened DOI format (automatically expanded)
-result = tu.run('BioRxiv_get_preprint', {
-    'doi': '2023.12.01.569554'
-})
+result = tu.run({"name": "BioRxiv_get_preprint", "arguments": {
+    "doi": "2023.12.01.569554"
+}})
 
 # For medRxiv preprints
-result = tu.run('BioRxiv_get_preprint', {
-    'doi': '10.1101/2021.04.29.21256344',
-    'server': 'medrxiv'
-})
+result = tu.run({"name": "BioRxiv_get_preprint", "arguments": {
+    "doi": "10.1101/2021.04.29.21256344",
+    "server": "medrxiv"
+}})
 
-if result['status'] == 'success':
+if result and result.get('status') == 'success':
     data = result['data']
     print(f"Title: {data['title']}")
     print(f"Authors: {', '.join(data['authors'])}")
@@ -126,27 +126,28 @@ If you were using `BioRxiv_search_preprints`:
 ### Before (deprecated):
 ```python
 # ❌ This tool no longer exists
-result = tu.run('BioRxiv_search_preprints', {
-    'query': 'CRISPR',
-    'max_results': 10
-})
+result = tu.run({"name": "BioRxiv_search_preprints", "arguments": {
+    "query": "CRISPR",
+    "max_results": 10
+}})
 ```
 
 ### After (recommended workflow):
 ```python
 # Step 1: Search using Europe PMC
-search_result = tu.run('EuropePMC_search_articles', {
-    'query': 'CRISPR',
-    'source': 'PPR',
-    'pageSize': 10
-})
+search_result = tu.run({"name": "EuropePMC_search_articles", "arguments": {
+    "query": "CRISPR",
+    "source": "PPR",
+    "pageSize": 10
+}})
 
 # Step 2: Get full bioRxiv metadata for each result
-for article in search_result['data']['resultList']['result']:
-    doi = article.get('doi')
-    if doi and doi.startswith('10.1101/'):
-        preprint = tu.run('BioRxiv_get_preprint', {'doi': doi})
-        # Use preprint['data'] with complete metadata
+if search_result and search_result.get('status') == 'success':
+    for article in search_result['data']['resultList']['result']:
+        doi = article.get('doi')
+        if doi and doi.startswith('10.1101/'):
+            preprint = tu.run({"name": "BioRxiv_get_preprint", "arguments": {"doi": doi}})
+            # Use preprint['data'] with complete metadata
 ```
 
 ## Why This Change?
@@ -177,21 +178,22 @@ from tooluniverse import ToolUniverse
 tu = ToolUniverse()
 
 # 1. Discover relevant preprints
-search = tu.run('EuropePMC_search_articles', {
-    'query': 'Acinetobacter antibiotic resistance',
-    'source': 'PPR',
-    'fromDate': '2023-01-01',
-    'toDate': '2024-12-31',
-    'pageSize': 20
-})
+search = tu.run({"name": "EuropePMC_search_articles", "arguments": {
+    "query": "Acinetobacter antibiotic resistance",
+    "source": "PPR",
+    "fromDate": "2023-01-01",
+    "toDate": "2024-12-31",
+    "pageSize": 20
+}})
 
 # 2. Get complete metadata for the most relevant ones
 preprints = []
-for article in search['data']['resultList']['result'][:5]:
-    doi = article.get('doi')
-    if doi and doi.startswith('10.1101/'):
-        detailed = tu.run('BioRxiv_get_preprint', {'doi': doi})
-        if detailed['status'] == 'success':
+if search and search.get('status') == 'success':
+    for article in search['data']['resultList']['result'][:5]:
+        doi = article.get('doi')
+        if doi and doi.startswith('10.1101/'):
+            detailed = tu.run({"name": "BioRxiv_get_preprint", "arguments": {"doi": doi}})
+            if detailed and detailed.get('status') == 'success':
             preprints.append(detailed['data'])
 
 # 3. Access full text if needed

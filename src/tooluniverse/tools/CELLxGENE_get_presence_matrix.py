@@ -16,7 +16,7 @@ def CELLxGENE_get_presence_matrix(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> dict[str, Any]:
+) -> Any:
     """
     Get feature presence matrix showing which genes are measured in which datasets. Returns sparse ma...
 
@@ -37,7 +37,7 @@ def CELLxGENE_get_presence_matrix(
 
     Returns
     -------
-    dict[str, Any]
+    Any
     """
     # Handle mutable defaults to avoid B006 linting error
 

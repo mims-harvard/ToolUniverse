@@ -17,7 +17,7 @@ def CELLxGENE_download_h5ad(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> dict[str, Any]:
+) -> Optional[dict[str, Any]]:
     """
     Download original H5AD (HDF5-based AnnData) files from CELLxGENE datasets or get their URIs. Acce...
 
@@ -40,7 +40,7 @@ def CELLxGENE_download_h5ad(
 
     Returns
     -------
-    dict[str, Any]
+    Optional[dict[str, Any]]
     """
     # Handle mutable defaults to avoid B006 linting error
 

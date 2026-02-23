@@ -1,0 +1,362 @@
+[
+  {
+    "name": "DiseaseSh_get_global_stats",
+    "description": "Get global COVID-19 statistics from the Disease.sh API. Returns worldwide totals for confirmed cases, deaths, recovered, active cases, critical cases, tests performed, and per-million rates. Data is aggregated from multiple sources including Johns Hopkins University, Worldometers, and government health agencies. Updated multiple times per day. Useful for epidemiology research, public health monitoring, and global pandemic tracking.",
+    "parameter": {
+      "type": "object",
+      "properties": {},
+      "required": []
+    },
+    "fields": {
+      "endpoint": "https://disease.sh/v3/covid-19/all"
+    },
+    "type": "BaseRESTTool",
+    "test_examples": [
+      {}
+    ],
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "object",
+          "description": "Global COVID-19 statistics",
+          "properties": {
+            "updated": {
+              "type": "integer",
+              "description": "Timestamp of last data update (Unix ms)"
+            },
+            "cases": {
+              "type": "integer",
+              "description": "Total confirmed cases worldwide"
+            },
+            "todayCases": {
+              "type": "integer",
+              "description": "New cases reported today"
+            },
+            "deaths": {
+              "type": "integer",
+              "description": "Total deaths worldwide"
+            },
+            "todayDeaths": {
+              "type": "integer",
+              "description": "New deaths reported today"
+            },
+            "recovered": {
+              "type": "integer",
+              "description": "Total recovered worldwide"
+            },
+            "todayRecovered": {
+              "type": "integer"
+            },
+            "active": {
+              "type": "integer",
+              "description": "Currently active cases"
+            },
+            "critical": {
+              "type": "integer",
+              "description": "Currently in critical condition"
+            },
+            "casesPerOneMillion": {
+              "type": "number",
+              "description": "Cases per million people globally"
+            },
+            "deathsPerOneMillion": {
+              "type": "number"
+            },
+            "tests": {
+              "type": "integer",
+              "description": "Total tests performed globally"
+            },
+            "testsPerOneMillion": {
+              "type": "number"
+            },
+            "population": {
+              "type": "integer",
+              "description": "Estimated world population"
+            },
+            "activePerOneMillion": {
+              "type": "number"
+            },
+            "recoveredPerOneMillion": {
+              "type": "number"
+            },
+            "criticalPerOneMillion": {
+              "type": "number"
+            },
+            "affectedCountries": {
+              "type": "integer",
+              "description": "Number of countries with reported cases"
+            }
+          }
+        },
+        {
+          "type": "object",
+          "properties": {
+            "error": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "error"
+          ]
+        }
+      ]
+    }
+  },
+  {
+    "name": "DiseaseSh_get_country_stats",
+    "description": "Get COVID-19 statistics for a specific country from the Disease.sh API. Returns total and daily cases, deaths, recovered, active, critical, testing data, and per-million rates. Also includes country metadata (population, continent, flag image, latitude/longitude). Accepts country name, ISO2, ISO3, or country ID. Example: 'USA', 'US', 'United States' all return US data. Useful for comparing pandemic impact across nations.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "country": {
+          "type": "string",
+          "description": "Country name (e.g., 'USA', 'India', 'Brazil'), ISO2 code (e.g., 'US', 'IN'), or ISO3 code (e.g., 'USA', 'IND')"
+        }
+      },
+      "required": [
+        "country"
+      ]
+    },
+    "fields": {
+      "endpoint": "https://disease.sh/v3/covid-19/countries/{country}"
+    },
+    "type": "BaseRESTTool",
+    "test_examples": [
+      {
+        "country": "USA"
+      },
+      {
+        "country": "India"
+      },
+      {
+        "country": "Brazil"
+      }
+    ],
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "object",
+          "description": "Country-specific COVID-19 statistics",
+          "properties": {
+            "updated": {
+              "type": "integer",
+              "description": "Timestamp of last update (Unix ms)"
+            },
+            "country": {
+              "type": "string",
+              "description": "Country name"
+            },
+            "countryInfo": {
+              "type": "object",
+              "description": "Country metadata",
+              "properties": {
+                "_id": {
+                  "type": [
+                    "integer",
+                    "null"
+                  ]
+                },
+                "iso2": {
+                  "type": [
+                    "string",
+                    "null"
+                  ],
+                  "description": "ISO2 country code"
+                },
+                "iso3": {
+                  "type": [
+                    "string",
+                    "null"
+                  ],
+                  "description": "ISO3 country code"
+                },
+                "lat": {
+                  "type": "number",
+                  "description": "Latitude"
+                },
+                "long": {
+                  "type": "number",
+                  "description": "Longitude"
+                },
+                "flag": {
+                  "type": "string",
+                  "description": "URL to country flag image"
+                }
+              }
+            },
+            "cases": {
+              "type": "integer",
+              "description": "Total confirmed cases"
+            },
+            "todayCases": {
+              "type": "integer"
+            },
+            "deaths": {
+              "type": "integer",
+              "description": "Total deaths"
+            },
+            "todayDeaths": {
+              "type": "integer"
+            },
+            "recovered": {
+              "type": "integer"
+            },
+            "todayRecovered": {
+              "type": "integer"
+            },
+            "active": {
+              "type": "integer",
+              "description": "Currently active cases"
+            },
+            "critical": {
+              "type": "integer"
+            },
+            "casesPerOneMillion": {
+              "type": "number"
+            },
+            "deathsPerOneMillion": {
+              "type": "number"
+            },
+            "tests": {
+              "type": "integer"
+            },
+            "testsPerOneMillion": {
+              "type": "number"
+            },
+            "population": {
+              "type": "integer"
+            },
+            "continent": {
+              "type": "string",
+              "description": "Continent name"
+            },
+            "oneCasePerPeople": {
+              "type": "integer"
+            },
+            "oneDeathPerPeople": {
+              "type": "integer"
+            },
+            "oneTestPerPeople": {
+              "type": "integer"
+            }
+          }
+        },
+        {
+          "type": "object",
+          "properties": {
+            "error": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "error"
+          ]
+        }
+      ]
+    }
+  },
+  {
+    "name": "DiseaseSh_get_historical",
+    "description": "Get historical COVID-19 time series data for a country or globally from Disease.sh. Returns daily cumulative totals for cases, deaths, and recovered over the specified time period. Data sourced from Johns Hopkins University CSSE. Use lastdays parameter to control the time range. Example: lastdays=30 returns the last 30 days, lastdays=all returns all available data from the start of the pandemic. Useful for trend analysis, epidemiological modeling, and visualization.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "country": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Country name or 'all' for global data. Examples: 'USA', 'India', 'all'. If omitted, returns global data."
+        },
+        "lastdays": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Number of days of historical data to return. Use a number (e.g., '30') or 'all' for all available data. Default: '30'"
+        }
+      },
+      "required": []
+    },
+    "fields": {
+      "endpoint": "https://disease.sh/v3/covid-19/historical/{country}"
+    },
+    "type": "BaseRESTTool",
+    "test_examples": [
+      {
+        "country": "USA",
+        "lastdays": "7"
+      },
+      {
+        "country": "all",
+        "lastdays": "7"
+      },
+      {
+        "country": "India",
+        "lastdays": "30"
+      }
+    ],
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "object",
+          "description": "Historical COVID-19 time series data. For a specific country: {country, province, timeline: {cases, deaths, recovered}}. For 'all': {cases, deaths, recovered} directly.",
+          "properties": {
+            "country": {
+              "type": "string",
+              "description": "Country name (absent when country='all')"
+            },
+            "province": {
+              "type": [
+                "array",
+                "null"
+              ],
+              "description": "List of provinces included"
+            },
+            "timeline": {
+              "type": "object",
+              "description": "Time series data (for specific country)",
+              "properties": {
+                "cases": {
+                  "type": "object",
+                  "description": "Date-keyed cumulative case counts (e.g., '3/1/23': 103648690)"
+                },
+                "deaths": {
+                  "type": "object",
+                  "description": "Date-keyed cumulative death counts"
+                },
+                "recovered": {
+                  "type": "object",
+                  "description": "Date-keyed cumulative recovery counts"
+                }
+              }
+            },
+            "cases": {
+              "type": "object",
+              "description": "Date-keyed cumulative case counts (when country='all')"
+            },
+            "deaths": {
+              "type": "object",
+              "description": "Date-keyed cumulative death counts (when country='all')"
+            },
+            "recovered": {
+              "type": "object",
+              "description": "Date-keyed cumulative recovery counts (when country='all')"
+            }
+          }
+        },
+        {
+          "type": "object",
+          "properties": {
+            "error": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "error"
+          ]
+        }
+      ]
+    }
+  }
+]

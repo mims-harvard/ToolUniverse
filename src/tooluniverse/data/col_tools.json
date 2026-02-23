@@ -54,6 +54,7 @@
       "oneOf": [
         {
           "type": "object",
+          "description": "Catalogue of Life search results",
           "properties": {
             "total": {
               "type": "integer",
@@ -129,24 +130,16 @@
                 }
               }
             }
-          },
-          "description": "Catalogue of Life search results"
+          }
         },
         {
           "type": "object",
           "properties": {
-            "status": {
-              "type": "string",
-              "enum": [
-                "error"
-              ]
-            },
             "error": {
               "type": "string"
             }
           },
           "required": [
-            "status",
             "error"
           ]
         }
@@ -184,6 +177,7 @@
       "oneOf": [
         {
           "type": "object",
+          "description": "Detailed taxon information",
           "properties": {
             "id": {
               "type": "string"
@@ -221,24 +215,16 @@
             "parentId": {
               "type": "string"
             }
-          },
-          "description": "Detailed taxon information"
+          }
         },
         {
           "type": "object",
           "properties": {
-            "status": {
-              "type": "string",
-              "enum": [
-                "error"
-              ]
-            },
             "error": {
               "type": "string"
             }
           },
           "required": [
-            "status",
             "error"
           ]
         }
@@ -292,6 +278,7 @@
       "oneOf": [
         {
           "type": "object",
+          "description": "Child taxa list",
           "properties": {
             "total": {
               "type": "integer",
@@ -342,24 +329,16 @@
                 }
               }
             }
-          },
-          "description": "Child taxa list"
+          }
         },
         {
           "type": "object",
           "properties": {
-            "status": {
-              "type": "string",
-              "enum": [
-                "error"
-              ]
-            },
             "error": {
               "type": "string"
             }
           },
           "required": [
-            "status",
             "error"
           ]
         }

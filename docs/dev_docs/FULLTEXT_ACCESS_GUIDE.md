@@ -51,11 +51,11 @@ However, critical experimental details often reside in the full text:
 from tooluniverse import ToolUniverse
 
 tu = ToolUniverse()
-results = tu.EuropePMC_search_articles(
-    query="bacterial antibiotic resistance evolution",
-    limit=10,
-    extract_terms_from_fulltext=["ciprofloxacin", "meropenem", "gentamicin", "A. baumannii"]
-)
+results = tu.run({"name": "EuropePMC_search_articles", "arguments": {
+    "query": "bacterial antibiotic resistance evolution",
+    "limit": 10,
+    "extract_terms_from_fulltext": ["ciprofloxacin", "meropenem", "gentamicin", "A. baumannii"]
+}})
 
 # Process results
 for article in results:
@@ -91,22 +91,22 @@ for article in results:
 
 ```python
 # Step 1: Search for papers
-papers = tu.SemanticScholar_search_papers(
-    query="machine learning interpretability",
-    limit=10,
-    include_abstract=True
-)
+papers = tu.run({"name": "SemanticScholar_search_papers", "arguments": {
+    "query": "machine learning interpretability",
+    "limit": 10,
+    "include_abstract": True
+}})
 
 # Step 2: Identify OA papers and extract snippets
 for paper in papers:
     if paper.get("open_access_pdf_url"):
         print(f"Processing: {paper['title']}")
         
-        snippets = tu.SemanticScholar_get_pdf_snippets(
-            open_access_pdf_url=paper["open_access_pdf_url"],
-            terms=["SHAP", "LIME", "gradient", "attribution"],
-            window_chars=300
-        )
+        snippets = tu.run({"name": "SemanticScholar_get_pdf_snippets", "arguments": {
+    "open_access_pdf_url": paper["open_access_pdf_url"],
+    "terms": ["SHAP", "LIME", "gradient", "attribution"],
+    "window_chars": 300
+}})
         
         if snippets["status"] == "success":
             print(f"Found {snippets['snippets_count']} snippets")
@@ -131,22 +131,22 @@ for paper in papers:
 
 ```python
 # Step 1: Search ArXiv
-papers = tu.ArXiv_search_papers(
-    query="vision transformer architecture",
-    limit=5,
-    sort_by="submittedDate"
-)
+papers = tu.run({"name": "ArXiv_search_papers", "arguments": {
+    "query": "vision transformer architecture",
+    "limit": 5,
+    "sort_by": "submittedDate"
+}})
 
 # Step 2: Extract snippets from recent papers
 for paper in papers:
     # Extract arXiv ID from URL (e.g., https://arxiv.org/abs/2301.12345)
     arxiv_id = paper["url"].split("/")[-1]
     
-    snippets = tu.ArXiv_get_pdf_snippets(
-        arxiv_id=arxiv_id,
-        terms=["attention mechanism", "self-attention", "layer normalization"],
-        max_snippets_per_term=5
-    )
+    snippets = tu.run({"name": "ArXiv_get_pdf_snippets", "arguments": {
+    "arxiv_id": arxiv_id,
+    "terms": ["attention mechanism", "self-attention", "layer normalization"],
+    "max_snippets_per_term": 5
+}})
     
     if snippets["status"] == "success":
         print(f"Paper: {paper['title']}")
@@ -171,21 +171,21 @@ search_query = "CRISPR gene editing off-target effects"
 terms_of_interest = ["off-target", "specificity", "guide RNA", "Cas9"]
 
 # Try Europe PMC first (best OA coverage + XML quality)
-epmc_results = tu.EuropePMC_search_articles(
-    query=search_query,
-    limit=10,
-    extract_terms_from_fulltext=terms_of_interest
-)
+epmc_results = tu.run({"name": "EuropePMC_search_articles", "arguments": {
+    "query": search_query,
+    "limit": 10,
+    "extract_terms_from_fulltext": terms_of_interest
+}})
 
 print(f"Europe PMC: {len(epmc_results)} results")
 oa_with_snippets = [r for r in epmc_results if "fulltext_snippets" in r]
 print(f"  With full-text snippets: {len(oa_with_snippets)}")
 
 # Supplement with Semantic Scholar
-ss_results = tu.SemanticScholar_search_papers(
-    query=search_query,
-    limit=10
-)
+ss_results = tu.run({"name": "SemanticScholar_search_papers", "arguments": {
+    "query": search_query,
+    "limit": 10
+}})
 
 print(f"Semantic Scholar: {len(ss_results)} results")
 oa_pdfs = [r for r in ss_results if r.get("open_access_pdf_url")]
@@ -193,10 +193,10 @@ print(f"  With OA PDFs: {len(oa_pdfs)}")
 
 # Process top Semantic Scholar OA papers
 for paper in oa_pdfs[:3]:
-    snippets = tu.SemanticScholar_get_pdf_snippets(
-        open_access_pdf_url=paper["open_access_pdf_url"],
-        terms=terms_of_interest
-    )
+    snippets = tu.run({"name": "SemanticScholar_get_pdf_snippets", "arguments": {
+    "open_access_pdf_url": paper["open_access_pdf_url"],
+    "terms": terms_of_interest
+}})
     if snippets["status"] == "success":
         print(f"  Extracted from: {paper['title'][:50]}...")
 ```
@@ -236,11 +236,11 @@ for article in results:
 When exploring a new topic, use Europe PMC's auto-snippet mode:
 
 ```python
-results = tu.EuropePMC_search_articles(
-    query="new topic keywords",
-    limit=20,
-    extract_terms_from_fulltext=["key term 1", "key term 2", "key term 3"]
-)
+results = tu.run({"name": "EuropePMC_search_articles", "arguments": {
+    "query": "new topic keywords",
+    "limit": 20,
+    "extract_terms_from_fulltext": ["key term 1", "key term 2", "key term 3"]
+}})
 
 # Quickly scan which articles contain your terms
 relevant = [r for r in results if r.get("fulltext_snippets")]
@@ -255,11 +255,11 @@ print(f"Found {len(relevant)} articles with matching terms in full text")
 
 ```python
 # Wide window for methods
-snippets = tu.EuropePMC_get_fulltext_snippets(
-    fulltext_xml_url=article["fulltext_xml_url"],
-    terms=["cell culture protocol"],
-    window_chars=500
-)
+snippets = tu.run({"name": "EuropePMC_get_fulltext_snippets", "arguments": {
+    "fulltext_xml_url": article["fulltext_xml_url"],
+    "terms": ["cell culture protocol"],
+    "window_chars": 500
+}})
 ```
 
 ### 5. Handle Rate Limits
@@ -270,7 +270,7 @@ Semantic Scholar and ArXiv have rate limits:
 import time
 
 for paper in papers:
-    snippets = tu.ArXiv_get_pdf_snippets(arxiv_id=paper["arxiv_id"], terms=terms)
+    snippets = tu.run({"name": "ArXiv_get_pdf_snippets", "arguments": {"arxiv_id": paper["arxiv_id"], terms=terms}})
     # ArXiv requests 3s between calls
     time.sleep(3.1)
 ```
@@ -288,10 +288,10 @@ def extract_or_skip(article, terms):
         return {"status": "skipped", "reason": "no_xml"}
     
     try:
-        return tu.EuropePMC_get_fulltext_snippets(
-            fulltext_xml_url=article["fulltext_xml_url"],
-            terms=terms
-        )
+        return tu.run({"name": "EuropePMC_get_fulltext_snippets", "arguments": {
+    "fulltext_xml_url": article["fulltext_xml_url"],
+    "terms": terms
+}})
     except Exception as e:
         return {"status": "error", "reason": str(e)}
 ```
@@ -318,7 +318,7 @@ pip install 'markitdown[all]>=0.1.0'
 **Debug:**
 
 ```python
-results = tu.EuropePMC_search_articles(query="...", limit=10)
+results = tu.run({"name": "EuropePMC_search_articles", "arguments": {"query": "...", limit=10}})
 
 for r in results:
     print(f"Title: {r['title']}")
@@ -355,11 +355,11 @@ arxiv_id = "2301.12345"  # Not "arXiv:2301.12345v1"
 **Solution:** markitdown uses OCR for image-based PDFs, but quality varies. Consider:
 
 ```python
-snippets = tu.ArXiv_get_pdf_snippets(
-    arxiv_id=arxiv_id,
-    terms=terms,
-    window_chars=400  # Wider window helps with garbled text
-)
+snippets = tu.run({"name": "ArXiv_get_pdf_snippets", "arguments": {
+    "arxiv_id": arxiv_id,
+    "terms": terms,
+    "window_chars": 400  # Wider window helps with garbled text
+}})
 
 # Check snippet quality
 for s in snippets["snippets"]:
@@ -377,7 +377,7 @@ import time
 def rate_limited_extract(papers, delay=3):
     results = []
     for paper in papers:
-        result = tu.ArXiv_get_pdf_snippets(...)
+        result = tu.run({"name": "ArXiv_get_pdf_snippets", "arguments": {...}})
         results.append(result)
         time.sleep(delay)
     return results
@@ -419,11 +419,11 @@ def rate_limited_extract(papers, delay=3):
 
 ```python
 # Step 1: Search and extract
-results = tu.EuropePMC_search_articles(
-    query="cancer immunotherapy checkpoint inhibitors",
-    limit=20,
-    extract_terms_from_fulltext=["PD-1", "PD-L1", "CTLA-4", "response rate"]
-)
+results = tu.run({"name": "EuropePMC_search_articles", "arguments": {
+    "query": "cancer immunotherapy checkpoint inhibitors",
+    "limit": 20,
+    "extract_terms_from_fulltext": ["PD-1", "PD-L1", "CTLA-4", "response rate"]
+}})
 
 # Step 2: Build context for LLM
 context = []
@@ -456,11 +456,11 @@ Extract specific experimental conditions across papers to identify gaps:
 
 ```python
 # Find papers with specific model organisms
-papers = tu.EuropePMC_search_articles(
-    query="Alzheimer's disease tau pathology",
-    limit=50,
-    extract_terms_from_fulltext=["mouse model", "rat model", "C. elegans", "Drosophila"]
-)
+papers = tu.run({"name": "EuropePMC_search_articles", "arguments": {
+    "query": "Alzheimer's disease tau pathology",
+    "limit": 50,
+    "extract_terms_from_fulltext": ["mouse model", "rat model", "C. elegans", "Drosophila"]
+}})
 
 # Analyze model organism distribution
 model_counts = {}

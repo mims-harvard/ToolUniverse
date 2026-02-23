@@ -549,7 +549,7 @@
       }
     },
     "return_schema": {
-      "type": "object",
+      "type": ["object", "null"],
       "properties": {
         "status": {
           "type": "string",
@@ -569,7 +569,7 @@
             "string",
             "null"
           ]
-        },
+},
         "format": {
           "type": [
             "string",
@@ -701,7 +701,7 @@
       ]
     },
     "return_schema": {
-      "type": "object",
+      "type": ["object", "null"],
       "properties": {
         "status": {
           "type": "string",

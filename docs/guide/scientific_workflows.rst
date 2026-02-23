@@ -60,9 +60,7 @@ Target Identification Pipeline
        print("=" * 60)
 
        # Use the LiteratureSearchTool compose tool for initial research
-       literature_results = tu.call_tool('LiteratureSearchTool', {
-           'research_topic': f"{disease_name} therapeutic targets druggability"
-       })
+       literature_results = tu.run({"name": "LiteratureSearchTool", "arguments": {'research_topic': f"{disease_name} therapeutic targets druggability"}})
 
        print("✅ Literature review completed")
 
@@ -407,9 +405,7 @@ This advanced workflow demonstrates how to create a compose tool that orchestrat
    tu.load_tools(['compose_tools'])
 
    # Run the comprehensive drug discovery pipeline
-   discovery_results = tu.call_tool('ComprehensiveDrugDiscoveryPipeline', {
-       'disease_efo_id': 'EFO_0001074'  # Alzheimer's disease
-   })
+   discovery_results = tu.run({"name": "ComprehensiveDrugDiscoveryPipeline", "arguments": {'disease_efo_id': 'EFO_0001074'  # Alzheimer's disease}})
 
    print("Drug Discovery Results:")
    print(f"Targets identified: {len(discovery_results['target_selection']['data']['disease']['associatedTargets']['rows'])}")
@@ -464,9 +460,7 @@ Comprehensive Safety Assessment
                print(f"   • {reaction}: {count} reports")
 
        # Step 3: Safety literature review using compose tool
-       safety_literature = tu.call_tool('LiteratureSearchTool', {
-           'research_topic': f"{drug_name} safety toxicity adverse effects"
-       })
+       safety_literature = tu.run({"name": "LiteratureSearchTool", "arguments": {'research_topic': f"{drug_name} safety toxicity adverse effects"}})
 
        safety_assessment['safety_literature'] = safety_literature
        print(f"📚 Safety literature review completed")
@@ -544,9 +538,7 @@ Systematic Literature Review
        review_results = {}
 
        # Step 1: Use LiteratureSearchTool compose tool for comprehensive search
-       literature_summary = tu.call_tool('LiteratureSearchTool', {
-           'research_topic': research_topic
-       })
+       literature_summary = tu.run({"name": "LiteratureSearchTool", "arguments": {'research_topic': research_topic}})
 
        review_results['ai_summary'] = literature_summary
        print("✅ AI-powered literature summary completed")
@@ -560,9 +552,7 @@ Systematic Literature Review
 
        detailed_searches = {}
        for aspect in search_aspects:
-           aspect_results = tu.call_tool('LiteratureSearchTool', {
-               'research_topic': aspect
-           })
+           aspect_results = tu.run({"name": "LiteratureSearchTool", "arguments": {'research_topic': aspect}})
            detailed_searches[aspect] = aspect_results
            print(f"✅ {aspect} search completed")
 
@@ -689,9 +679,7 @@ Variant Analysis Pipeline
        literature_analysis = {}
 
        for gene in gene_symbols:
-           gene_literature = tu.call_tool('LiteratureSearchTool', {
-               'research_topic': f"{gene} variants mutations functional impact"
-           })
+           gene_literature = tu.run({"name": "LiteratureSearchTool", "arguments": {'research_topic': f"{gene} variants mutations functional impact"}})
            literature_analysis[gene] = gene_literature
            print(f"   ✅ {gene} literature analysis completed")
 
@@ -977,10 +965,8 @@ Biomarker Discovery Workflow
    tu.load_tools(['compose_tools'])
 
    # Run biomarker discovery workflow
-   biomarker_results = tu.call_tool('BiomarkerDiscoveryWorkflow', {
-       'disease_condition': 'breast cancer',
-       'sample_type': 'blood'
-   })
+   biomarker_results = tu.run({"name": "BiomarkerDiscoveryWorkflow", "arguments": {'disease_condition': 'breast cancer',
+       'sample_type': 'blood'}})
 
    print("Biomarker Discovery Results:")
    print(f"Disease: {biomarker_results['disease']}")
@@ -1041,9 +1027,7 @@ Clinical Trial Analysis Pipeline
            print(f"   {phase}: {count} trials")
 
        # Step 3: Literature context using compose tool
-       literature_context = tu.call_tool('LiteratureSearchTool', {
-           'research_topic': f"{condition} {intervention} clinical trials outcomes"
-       })
+       literature_context = tu.run({"name": "LiteratureSearchTool", "arguments": {'research_topic': f"{condition} {intervention} clinical trials outcomes"}})
 
        trial_analysis['literature_context'] = literature_context
        print("✅ Literature context analysis completed")
@@ -1100,9 +1084,7 @@ Intelligent Research Assistant
 
        # Step 1: Initial literature exploration
        print("Step 1: Initial literature exploration...")
-       initial_literature = tu.call_tool('LiteratureSearchTool', {
-           'research_topic': research_question
-       })
+       initial_literature = tu.run({"name": "LiteratureSearchTool", "arguments": {'research_topic': research_question}})
 
        research_results['initial_literature'] = initial_literature
        print("✅ Initial literature review completed")
@@ -1119,9 +1101,7 @@ Intelligent Research Assistant
        follow_up_searches = {}
 
        for concept in key_concepts[:3]:  # Top 3 concepts
-           concept_literature = tu.call_tool('LiteratureSearchTool', {
-               'research_topic': f"{research_question} {concept}"
-           })
+           concept_literature = tu.run({"name": "LiteratureSearchTool", "arguments": {'research_topic': f"{research_question} {concept}"}})
            follow_up_searches[concept] = concept_literature
            print(f"   ✅ {concept} follow-up search completed")
 

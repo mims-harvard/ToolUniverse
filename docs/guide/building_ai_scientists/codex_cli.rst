@@ -1,86 +1,105 @@
 Codex CLI Setup
 ===============
 
-**Connect ToolUniverse to OpenAI Codex CLI in 10 minutes**
+**Connect ToolUniverse to OpenAI Codex CLI**
 
-Overview
---------
+Codex CLI is OpenAI's locally-running AI coding agent with native MCP support via stdio.
 
-Codex CLI integration provides terminal-based access to OpenAI's reasoning with ToolUniverse's scientific tools.
+.. tip:: 🚀 **Fastest setup — no installation needed**
 
-.. grid:: 1 1 3 3
-   :gutter: 2
+   Open Codex CLI and paste this single message:
 
-   .. grid-item-card:: ⚡ Setup Time
-      :class-card: hover-lift
-      :shadow: sm
-      
-      **10 minutes**
+   .. code-block:: text
 
-   .. grid-item-card:: 💻 Difficulty
-      :class-card: hover-lift
-      :shadow: sm
-      
-      **Moderate**
+      Please read https://raw.githubusercontent.com/mims-harvard/ToolUniverse/main/skills/setup-tooluniverse/SKILL.md and follow it to help me set up ToolUniverse.
 
-   .. grid-item-card:: 🎯 Best For
-      :class-card: hover-lift
-      :shadow: sm
-      
-      **Terminal workflows**
+   Codex CLI will fetch the setup guide from GitHub and walk you through everything interactively.
 
 Prerequisites
 -------------
 
 .. important:: ✅ **What you need:**
    
-   - **Codex CLI** - ``npm install -g @openai/codex-cli``
+   - **Node.js 18+** - `Download here <https://nodejs.org/>`_
+   - **Codex CLI** - ``npm install -g @openai/codex``
    - **OpenAI API Key** - `Get key <https://platform.openai.com/api-keys>`_
-   - **ToolUniverse** - ``pip install tooluniverse``
+   - **uv/uvx** - `Install uv <https://docs.astral.sh/uv/>`_
+
+.. seealso:: `Codex CLI MCP official guide <https://developers.openai.com/codex/mcp/>`_
 
 Setup Steps
 -----------
 
-.. card:: Step 1: Install ToolUniverse
-   :class-card: step-card completed
+.. card:: Step 1: Configure MCP in Codex CLI
+   :class-card: step-card
+
+   **Option A — CLI command (quickest):**
 
    .. code-block:: bash
 
-      pip install tooluniverse
+      codex mcp add tooluniverse -- uvx tooluniverse
 
-.. card:: Step 2: Start MCP Server
-   :class-card: step-card current
+   **Option B — Edit config directly:**
 
-   .. code-block:: bash
+   Open ``~/.codex/config.toml`` and add:
 
-      tooluniverse-smcp --port 8000
+   .. code-block:: toml
 
-.. card:: Step 3: Configure Codex CLI
-   :class-card: step-card pending
+      [mcp_servers.tooluniverse]
+      command = "uvx"
+      args = ["tooluniverse"]
 
-   .. code-block:: json
+      [mcp_servers.tooluniverse.env]
+      PYTHONIOENCODING = "utf-8"
 
-      {
-        "mcpServers": {
-          "tooluniverse": {
-            "url": "http://localhost:8000"
-          }
-        }
-      }
+   .. note::
+      Codex CLI uses **TOML format** (not JSON) and the ``mcp_servers`` key (not ``mcpServers``).
+      You can also scope config to a project with ``.codex/config.toml`` in a trusted project directory.
 
-.. card:: Step 4: Set API Key
-   :class-card: step-card pending
+.. card:: Step 2: Set OpenAI API Key
+   :class-card: step-card
 
    .. code-block:: bash
 
       export OPENAI_API_KEY=your_key
 
-.. card:: Step 5: Launch Codex CLI
-   :class-card: step-card pending
+.. card:: Step 3: Install Agent Skills
+   :class-card: step-card
+
+   Install ToolUniverse skills for guided workflows:
 
    .. code-block:: bash
 
-      codex-cli
+      npx skills add mims-harvard/ToolUniverse
+
+.. card:: Step 4: Launch and Verify
+   :class-card: step-card
+
+   .. code-block:: bash
+
+      codex
+
+   In the TUI, run ``/mcp`` to confirm ToolUniverse is connected, then ask:
+
+   .. code-block:: text
+
+      "List available tools from ToolUniverse"
+
+   Or use the setup skill:
+
+   .. code-block:: text
+
+      "setup tooluniverse"
+
+.. important:: 🔑 **Configure API Keys**
+   
+   Many tools require API keys. Set them up for full functionality:
+   
+   .. button-ref:: ../../api_keys
+      :color: primary
+      :shadow:
+   
+      🔐 **API Keys Setup Guide**
 
 Example Queries
 ---------------
@@ -100,20 +119,56 @@ Example Queries
          "Get disease targets for diabetes,
          rank by evidence strength"
 
+Advanced Configuration
+----------------------
+
+.. dropdown:: 🔑 Tool-Specific API Keys
+   :animate: fade-in-slide-down
+
+   Add ToolUniverse API keys in ``config.toml``:
+
+   .. code-block:: toml
+
+      [mcp_servers.tooluniverse]
+      command = "uvx"
+      args = ["tooluniverse"]
+
+      [mcp_servers.tooluniverse.env]
+      PYTHONIOENCODING = "utf-8"
+      NCBI_API_KEY = "your_key"
+      SEMANTIC_SCHOLAR_API_KEY = "your_key"
+
+.. dropdown:: 🎛️ Project-Scoped Config
+   :animate: fade-in-slide-down
+
+   Place ``.codex/config.toml`` in a trusted project directory to scope MCP servers per project (project config merges with ``~/.codex/config.toml``).
+
 Troubleshooting
 ---------------
 
-.. dropdown:: ❌ MCP server unreachable
+.. dropdown:: ❌ MCP server not found
    :color: danger
 
-   Check server status:
+   - Ensure ``uvx`` is installed: ``uvx --version``
+   - Verify TOML syntax with a linter
+   - Run ``/mcp`` in the Codex TUI to inspect server status
 
-   .. code-block:: bash
+.. dropdown:: ⚠️ Context limit errors
+   :color: warning
 
-      curl http://localhost:8000/health
+   Disable ToolUniverse when not needed:
+
+   .. code-block:: toml
+
+      [mcp_servers.tooluniverse]
+      enabled = false
 
 Next Steps
 ----------
+
+- :doc:`../../skills_showcase` - Explore AI agent skills
+- :doc:`../../tools/tools_config_index` - Browse 1000+ tools
+- :doc:`../../help/troubleshooting` - Get help
 
 .. button-ref:: index
    :color: secondary

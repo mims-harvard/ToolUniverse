@@ -1,0 +1,379 @@
+[
+  {
+    "name": "NCBIGene_search",
+    "description": "Search the NCBI Gene database using the E-utilities API. Find gene IDs (Entrez Gene IDs) by gene symbol, name, or keyword combined with an organism filter. Returns a list of matching Gene IDs that can be used with NCBIGene_get_summary. Essential for resolving gene names to standardized NCBI Gene IDs. Example: searching 'TP53' in Homo sapiens returns Gene ID 7157; 'BRCA1' returns 672.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "term": {
+          "type": "string",
+          "description": "Search query. Use gene symbol with organism filter for best results. Format: 'GENE[Symbol] AND Organism[Organism]'. Examples: 'TP53[Symbol] AND Homo sapiens[Organism]', 'BRCA1[Symbol] AND Homo sapiens[Organism]', 'insulin AND Homo sapiens[Organism]', 'EGFR AND Mus musculus[Organism]'."
+        },
+        "retmax": {
+          "type": "integer",
+          "description": "Maximum number of results to return (default 10, max 100)."
+        }
+      },
+      "required": [
+        "term"
+      ]
+    },
+    "fields": {
+      "endpoint": "https://eutils.ncbi.nlm.nih.gov/entrez/eutils/esearch.fcgi",
+      "params": {
+        "db": "gene",
+        "retmode": "json"
+      }
+    },
+    "type": "BaseRESTTool",
+    "test_examples": [
+      {
+        "term": "TP53[Symbol] AND Homo sapiens[Organism]"
+      },
+      {
+        "term": "BRCA1[Symbol] AND Homo sapiens[Organism]"
+      },
+      {
+        "term": "insulin AND Homo sapiens[Organism]",
+        "retmax": 5
+      }
+    ],
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "object",
+          "properties": {
+            "header": {
+              "type": "object",
+              "properties": {
+                "type": {
+                  "type": "string"
+                },
+                "version": {
+                  "type": "string"
+                }
+              }
+            },
+            "esearchresult": {
+              "type": "object",
+              "properties": {
+                "count": {
+                  "type": "string",
+                  "description": "Total number of matching genes"
+                },
+                "retmax": {
+                  "type": "string"
+                },
+                "retstart": {
+                  "type": "string"
+                },
+                "idlist": {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  },
+                  "description": "List of NCBI Gene IDs (Entrez Gene IDs)"
+                },
+                "querytranslation": {
+                  "type": "string",
+                  "description": "How NCBI interpreted the query"
+                }
+              }
+            }
+          }
+        },
+        {
+          "type": "object",
+          "properties": {
+            "error": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "error"
+          ]
+        }
+      ]
+    }
+  },
+  {
+    "name": "NCBIGene_get_summary",
+    "description": "Get a detailed gene summary from NCBI Gene by Entrez Gene ID using the E-utilities ESummary API. Returns gene name, symbol, description, function summary, chromosomal location, map position, aliases, genomic coordinates, exon count, and MIM (OMIM) IDs. The most authoritative source for human gene information. Use NCBIGene_search first to find Gene IDs. Example: Gene ID 7157 returns TP53 on chromosome 17p13.1 with a detailed functional summary.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "NCBI Gene ID (Entrez Gene ID). Can be a single ID or comma-separated list. Examples: '7157' (TP53), '672' (BRCA1), '1956' (EGFR), '3845' (KRAS). Get IDs from NCBIGene_search."
+        }
+      },
+      "required": [
+        "id"
+      ]
+    },
+    "fields": {
+      "endpoint": "https://eutils.ncbi.nlm.nih.gov/entrez/eutils/esummary.fcgi",
+      "params": {
+        "db": "gene",
+        "retmode": "json"
+      }
+    },
+    "type": "BaseRESTTool",
+    "test_examples": [
+      {
+        "id": "7157"
+      },
+      {
+        "id": "672"
+      },
+      {
+        "id": "1956"
+      }
+    ],
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "object",
+          "properties": {
+            "result": {
+              "type": "object",
+              "properties": {
+                "uids": {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  },
+                  "description": "List of returned Gene IDs"
+                }
+              },
+              "additionalProperties": {
+                "type": "object",
+                "properties": {
+                  "uid": {
+                    "type": "string",
+                    "description": "Gene ID"
+                  },
+                  "name": {
+                    "type": "string",
+                    "description": "Gene symbol (e.g., TP53)"
+                  },
+                  "description": {
+                    "type": "string",
+                    "description": "Gene full name"
+                  },
+                  "chromosome": {
+                    "type": "string"
+                  },
+                  "maplocation": {
+                    "type": "string",
+                    "description": "Cytogenetic band (e.g., 17p13.1)"
+                  },
+                  "otheraliases": {
+                    "type": "string",
+                    "description": "Comma-separated gene aliases"
+                  },
+                  "otherdesignations": {
+                    "type": "string",
+                    "description": "Alternative protein names"
+                  },
+                  "nomenclaturesymbol": {
+                    "type": "string",
+                    "description": "Official gene symbol"
+                  },
+                  "nomenclaturename": {
+                    "type": "string",
+                    "description": "Official gene name"
+                  },
+                  "summary": {
+                    "type": "string",
+                    "description": "Detailed gene function summary from RefSeq"
+                  },
+                  "mim": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    },
+                    "description": "OMIM disease/phenotype IDs"
+                  },
+                  "genomicinfo": {
+                    "type": "array",
+                    "items": {
+                      "type": "object",
+                      "properties": {
+                        "chrloc": {
+                          "type": "string"
+                        },
+                        "chraccver": {
+                          "type": "string",
+                          "description": "Chromosome RefSeq accession"
+                        },
+                        "chrstart": {
+                          "type": "integer"
+                        },
+                        "chrstop": {
+                          "type": "integer"
+                        },
+                        "exoncount": {
+                          "type": "integer"
+                        }
+                      }
+                    }
+                  },
+                  "organism": {
+                    "type": "object",
+                    "properties": {
+                      "scientificname": {
+                        "type": "string"
+                      },
+                      "commonname": {
+                        "type": "string"
+                      },
+                      "taxid": {
+                        "type": "integer"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        {
+          "type": "object",
+          "properties": {
+            "error": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "error"
+          ]
+        }
+      ]
+    }
+  },
+  {
+    "name": "NCBIProtein_get_summary",
+    "description": "Get protein record summary from the NCBI Protein database by GI number or accession using the E-utilities ESummary API. Returns protein title, organism, accession version, sequence length, molecular type, source database, and creation/update dates. NCBI Protein aggregates sequences from GenBank, RefSeq, Swiss-Prot, PDB, and other sources. Use for resolving NCBI protein GI numbers to names, accessions, and species. Example: GI 119395750 returns 'keratin, type II cytoskeletal 1 [Homo sapiens]' with accession NP_006112.3 and length 644 aa.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "NCBI Protein ID (GI number or accession). Can be a single ID or comma-separated list. Examples: '119395750' (keratin 1, NP_006112), '4507879' (TP53, NP_000537), '4503747' (EGFR, NP_005219). GI numbers can be obtained from NCBI Gene genomic info or from BLAST results."
+        }
+      },
+      "required": [
+        "id"
+      ]
+    },
+    "fields": {
+      "endpoint": "https://eutils.ncbi.nlm.nih.gov/entrez/eutils/esummary.fcgi",
+      "params": {
+        "db": "protein",
+        "retmode": "json"
+      }
+    },
+    "type": "BaseRESTTool",
+    "test_examples": [
+      {
+        "id": "119395750"
+      },
+      {
+        "id": "4507879"
+      },
+      {
+        "id": "4503747"
+      }
+    ],
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "object",
+          "properties": {
+            "result": {
+              "type": "object",
+              "properties": {
+                "uids": {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  },
+                  "description": "List of returned protein IDs (GI numbers)"
+                }
+              },
+              "additionalProperties": {
+                "type": "object",
+                "properties": {
+                  "uid": {
+                    "type": "string",
+                    "description": "GI number"
+                  },
+                  "caption": {
+                    "type": "string",
+                    "description": "Accession number (e.g., NP_006112)"
+                  },
+                  "title": {
+                    "type": "string",
+                    "description": "Protein name with organism"
+                  },
+                  "extra": {
+                    "type": "string",
+                    "description": "Additional identifier info"
+                  },
+                  "gi": {
+                    "type": "integer",
+                    "description": "GI number (integer form)"
+                  },
+                  "taxid": {
+                    "type": "integer",
+                    "description": "NCBI Taxonomy ID"
+                  },
+                  "slen": {
+                    "type": "integer",
+                    "description": "Sequence length in amino acids"
+                  },
+                  "moltype": {
+                    "type": "string",
+                    "description": "Molecule type (aa for amino acid)"
+                  },
+                  "sourcedb": {
+                    "type": "string",
+                    "description": "Source database (refseq, insd, etc.)"
+                  },
+                  "organism": {
+                    "type": "string",
+                    "description": "Scientific name of the organism"
+                  },
+                  "accessionversion": {
+                    "type": "string",
+                    "description": "Accession with version (e.g., NP_006112.3)"
+                  },
+                  "createdate": {
+                    "type": "string",
+                    "description": "Record creation date"
+                  },
+                  "updatedate": {
+                    "type": "string",
+                    "description": "Record last update date"
+                  }
+                }
+              }
+            }
+          }
+        },
+        {
+          "type": "object",
+          "properties": {
+            "error": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "error"
+          ]
+        }
+      ]
+    }
+  }
+]

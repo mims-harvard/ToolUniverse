@@ -25,7 +25,7 @@ Verify your installation and see ToolUniverse in action:
    print(f"✅ Loaded {len(tu.all_tools)} tools")
 
    # List first 5 tools
-   for tool in tu.list_built_in_tools()[:5]:
+   for tool in tu.list_built_in_tools(mode='list_name')[:5]:
        print(f"   • {tool}")
 
 Your First Scientific Query
@@ -75,9 +75,13 @@ Get comprehensive protein/gene information:
    protein_info = tu.run(gene_query)
 
    if protein_info:
-       print(f"Gene: {protein_info.get('gene_symbol', 'Unknown')}")
-       print(f"Function: {protein_info.get('function', 'No description available')}")
-       print(f"Location: {protein_info.get('subcellular_location', 'Unknown')}")
+       # UniProt returns a list of functional annotation strings
+       if isinstance(protein_info, list):
+           print(f"Gene: BRCA1")
+           print(f"Function: {protein_info[0][:200]}")
+       else:
+           print(f"Gene: {protein_info.get('gene_symbol', 'Unknown')}")
+           print(f"Function: {protein_info.get('function', 'No description available')}")
 
 Disease Information
 ~~~~~~~~~~~~~~~~~~~
@@ -95,23 +99,26 @@ Explore disease definitions and associations:
    disease_info = tu.run(disease_query)
 
    if disease_info and 'data' in disease_info:
-       disease_data = disease_info['data']
-       print(f"Disease ID: {disease_data['id']}")
-       print(f"Description: {disease_data['description']}")
+       hits = disease_info['data']['search']['hits']
+       if hits:
+           disease_data = hits[0]  # Top match
+           print(f"Disease ID: {disease_data['id']}")
+           print(f"Description: {disease_data.get('description', 'N/A')}")
 
-       # Get associated targets
-       targets_query = {
-           "name": "OpenTargets_get_associated_targets_by_disease_efoId",
-           "arguments": {"efoId": disease_data['id']}
-       }
+           # Get associated targets
+           targets_query = {
+               "name": "OpenTargets_get_associated_targets_by_disease_efoId",
+               "arguments": {"efoId": disease_data['id']}
+           }
 
-       targets = tu.run(targets_query)
-       if targets and 'data' in targets:
-           print(f"\nTop 3 associated targets:")
-           for target in targets['data'][:3]:
-               symbol = target.get('approvedSymbol', 'Unknown')
-               score = target.get('associationScore', 0)
-               print(f"   • {symbol}: {score:.3f}")
+           targets = tu.run(targets_query)
+           if targets and 'data' in targets:
+               rows = targets['data'].get('disease', {}).get('associatedTargets', {}).get('rows', [])
+               print(f"\nTop 3 associated targets:")
+               for target in rows[:3]:
+                   symbol = target.get('approvedSymbol', 'Unknown')
+                   score = target.get('score', 0)
+                   print(f"   • {symbol}: {score:.3f}")
 
 Drug Safety Analysis
 ~~~~~~~~~~~~~~~~~~~~
@@ -193,8 +200,13 @@ Comprehensive analysis connecting drugs, targets, and diseases:
            print(f"❌ Could not find disease: {disease_name}")
            return None
 
-       disease_id = disease_info['data']['id']
-       results['disease'] = disease_info['data']
+       hits = disease_info['data']['search']['hits']
+       if not hits:
+           print(f"❌ No matches for disease: {disease_name}")
+           return None
+
+       disease_id = hits[0]['id']
+       results['disease'] = hits[0]
        print(f"🩺 Analyzing disease: {disease_name} ({disease_id})")
 
        # 2. Get disease-associated targets
@@ -205,13 +217,14 @@ Comprehensive analysis connecting drugs, targets, and diseases:
 
        targets = tu.run(targets_query)
        if targets and 'data' in targets:
-           results['targets'] = targets['data']
-           print(f"🎯 Found {len(targets['data'])} associated targets")
+           rows = targets['data'].get('disease', {}).get('associatedTargets', {}).get('rows', [])
+           results['targets'] = rows
+           print(f"🎯 Found {len(rows)} associated targets")
 
            # Show top targets
-           for target in targets['data'][:3]:
+           for target in rows[:3]:
                symbol = target.get('approvedSymbol', 'Unknown')
-               score = target.get('associationScore', 0)
+               score = target.get('score', 0)
                print(f"   • {symbol}: {score:.3f}")
 
        # 3. Get drug information
@@ -266,7 +279,9 @@ Comprehensive gene analysis across multiple databases:
        protein_info = tu.run(protein_query)
        if protein_info:
            analysis_results['protein'] = protein_info
-           print(f"✅ Protein information: {protein_info.get('function', 'N/A')[:100]}...")
+           # UniProt returns a list of functional annotation strings
+           func_text = protein_info[0] if isinstance(protein_info, list) else protein_info.get('function', 'N/A')
+           print(f"✅ Protein information: {func_text[:100]}...")
 
        # 2. Disease associations
        disease_query = {
@@ -404,7 +419,11 @@ Complete drug discovery workflow:
            print("❌ Disease not found")
            return None
 
-       disease_id = disease_info['data']['id']
+       hits = disease_info['data']['search']['hits']
+       if not hits:
+           print("❌ Disease not found")
+           return None
+       disease_id = hits[0]['id']
 
        # Check if target is associated with disease
        targets_query = {
@@ -415,10 +434,11 @@ Complete drug discovery workflow:
        targets = tu.run(targets_query)
        target_found = False
        if targets and 'data' in targets:
-           for target in targets['data']:
+           rows = targets['data'].get('disease', {}).get('associatedTargets', {}).get('rows', [])
+           for target in rows:
                if target.get('approvedSymbol', '').upper() == target_gene.upper():
                    target_found = True
-                   score = target.get('associationScore', 0)
+                   score = target.get('score', 0)
                    print(f"✅ Target validation: {target_gene} associated with {disease_term} (score: {score:.3f})")
                    break
 
@@ -661,16 +681,18 @@ Comprehensive analysis combining multiple data sources:
 
        target_query = {
            "name": "OpenTargets_get_target_id_description_by_name",
-           "arguments": {"target_name": gene_of_interest}
+           "arguments": {"targetName": gene_of_interest}
        }
        target_info = tu.run(target_query)
 
-       if target_info:
-           ensembl_id = target_info['id']
-           results['target_info'] = target_info
+       if target_info and 'data' in target_info:
+           hits = target_info['data']['search']['hits']
+           if hits:
+               ensembl_id = hits[0]['id']
+               results['target_info'] = hits[0]
 
-           print(f"Ensembl ID: {ensembl_id}")
-           print(f"Description: {target_info.get('description', 'N/A')}")
+               print(f"Ensembl ID: {ensembl_id}")
+               print(f"Description: {hits[0].get('description', 'N/A')}")
 
        # 2. Disease Associations
        print(f"\n2. Disease Associations")
@@ -679,14 +701,17 @@ Comprehensive analysis combining multiple data sources:
        if 'target_info' in results:
            diseases_query = {
                "name": "OpenTargets_get_diseases_phenotypes_by_target_ensembl",
-               "arguments": {"ensembl_id": ensembl_id}
+               "arguments": {"ensemblId": ensembl_id}
            }
-           diseases = tu.run(diseases_query)
-           results['diseases'] = diseases
+           diseases_resp = tu.run(diseases_query)
+           disease_rows = (diseases_resp or {}).get('data', {}).get('target', {}).get('associatedDiseases', {}).get('rows', [])
+           results['diseases'] = disease_rows
 
-           print(f"Associated diseases: {len(diseases)}")
-           for disease in diseases[:5]:
-               print(f"- {disease['name']}: Score {disease.get('score', 'N/A')}")
+           print(f"Associated diseases: {len(disease_rows)}")
+           for row in disease_rows[:5]:
+               name = row.get('disease', {}).get('name', 'Unknown')
+               top_score = row['datasourceScores'][0]['score'] if row.get('datasourceScores') else 'N/A'
+               print(f"- {name}: Score {top_score}")
 
        # 3. Drug Associations
        print(f"\n3. Drug Associations")
@@ -696,17 +721,18 @@ Comprehensive analysis combining multiple data sources:
            drugs_query = {
                "name": "OpenTargets_get_associated_drugs_by_target_ensemblID",
                "arguments": {
-                   "target_ensembl_id": ensembl_id,
+                   "ensemblId": ensembl_id,
                    "size": 10,
                    "cursor": ""
                }
            }
-           drugs = tu.run(drugs_query)
-           results['drugs'] = drugs
+           drugs_resp = tu.run(drugs_query)
+           drug_rows = (drugs_resp or {}).get('data', {}).get('target', {}).get('knownDrugs', {}).get('rows', [])
+           results['drugs'] = drug_rows
 
-           print(f"Associated drugs: {len(drugs)}")
-           for drug in drugs[:5]:
-               print(f"- {drug['name']}: Phase {drug.get('maxClinicalTrialPhase', 'N/A')}")
+           print(f"Associated drugs: {len(drug_rows)}")
+           for drug in drug_rows[:5]:
+               print(f"- {drug.get('drug', {}).get('name', 'Unknown')}: Phase {drug.get('maximumClinicalTrialPhase', 'N/A')}")
 
        # 4. Literature Analysis
        print(f"\n4. Literature Analysis")
@@ -768,8 +794,7 @@ Robust error handling for production use:
 
        for attempt in range(max_retries):
            try:
-               # Set timeout for this attempt
-               tu_local = ToolUniverse(timeout=timeout)
+               tu_local = ToolUniverse()
                tu_local.load_tools()
 
                result = tu_local.run(query)

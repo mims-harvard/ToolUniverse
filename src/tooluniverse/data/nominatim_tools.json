@@ -1,0 +1,237 @@
+[
+  {
+    "name": "Nominatim_geocode",
+    "description": "Geocode addresses and place names to geographic coordinates using the OpenStreetMap Nominatim service. Converts human-readable addresses, landmarks, or place names into latitude/longitude coordinates. Returns structured address components, bounding box, and place type. No authentication required. Useful for geospatial analysis, mapping, and location-based research.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "q": {
+          "type": "string",
+          "description": "Free-form address or place name query. Examples: 'Eiffel Tower Paris', '1600 Pennsylvania Ave Washington DC', 'Big Ben London', 'Mount Everest'"
+        },
+        "limit": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "description": "Maximum number of results to return (default 5, max 50)"
+        },
+        "countrycodes": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Restrict to specific countries (comma-separated ISO 3166-1 alpha-2 codes). Examples: 'us', 'de,fr', 'gb'"
+        }
+      },
+      "required": [
+        "q"
+      ]
+    },
+    "fields": {
+      "endpoint": "https://nominatim.openstreetmap.org/search",
+      "params": {
+        "format": "json",
+        "addressdetails": "1",
+        "limit": "5"
+      },
+      "headers": {
+        "User-Agent": "ToolUniverse/1.0 +https://github.com/ToolUniverse"
+      }
+    },
+    "type": "BaseRESTTool",
+    "test_examples": [
+      {
+        "q": "Eiffel Tower Paris"
+      },
+      {
+        "q": "Big Ben London",
+        "limit": 3
+      },
+      {
+        "q": "Central Park New York City"
+      }
+    ],
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "array",
+          "description": "List of geocoding results",
+          "items": {
+            "type": "object",
+            "properties": {
+              "place_id": {
+                "type": "integer"
+              },
+              "lat": {
+                "type": "string",
+                "description": "Latitude"
+              },
+              "lon": {
+                "type": "string",
+                "description": "Longitude"
+              },
+              "display_name": {
+                "type": "string",
+                "description": "Full human-readable address"
+              },
+              "type": {
+                "type": "string",
+                "description": "Place type"
+              },
+              "importance": {
+                "type": "number",
+                "description": "Relevance score 0-1"
+              },
+              "address": {
+                "type": "object",
+                "description": "Structured address components",
+                "properties": {
+                  "road": {
+                    "type": "string"
+                  },
+                  "city": {
+                    "type": "string"
+                  },
+                  "state": {
+                    "type": "string"
+                  },
+                  "country": {
+                    "type": "string"
+                  },
+                  "country_code": {
+                    "type": "string"
+                  },
+                  "postcode": {
+                    "type": "string"
+                  }
+                }
+              },
+              "boundingbox": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                },
+                "description": "Bounding box [south, north, west, east]"
+              }
+            }
+          }
+        },
+        {
+          "type": "object",
+          "properties": {
+            "error": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "error"
+          ]
+        }
+      ]
+    }
+  },
+  {
+    "name": "Nominatim_reverse_geocode",
+    "description": "Reverse geocode latitude/longitude coordinates to a human-readable address using OpenStreetMap Nominatim. Converts geographic coordinates into structured address information including street, city, country. No authentication required.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "lat": {
+          "type": "number",
+          "description": "Latitude in decimal degrees. Examples: 48.8582 (Paris), 51.5007 (London), 40.7484 (New York)"
+        },
+        "lon": {
+          "type": "number",
+          "description": "Longitude in decimal degrees. Examples: 2.2945 (Paris), -0.1246 (London), -73.9967 (New York)"
+        }
+      },
+      "required": [
+        "lat",
+        "lon"
+      ]
+    },
+    "fields": {
+      "endpoint": "https://nominatim.openstreetmap.org/reverse",
+      "params": {
+        "format": "json"
+      },
+      "headers": {
+        "User-Agent": "ToolUniverse/1.0 +https://github.com/ToolUniverse"
+      }
+    },
+    "type": "BaseRESTTool",
+    "test_examples": [
+      {
+        "lat": 48.8582,
+        "lon": 2.2945
+      },
+      {
+        "lat": 51.5007,
+        "lon": -0.1246
+      },
+      {
+        "lat": 35.6895,
+        "lon": 139.6917
+      }
+    ],
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "object",
+          "description": "Reverse geocoding result",
+          "properties": {
+            "place_id": {
+              "type": "integer"
+            },
+            "lat": {
+              "type": "string"
+            },
+            "lon": {
+              "type": "string"
+            },
+            "display_name": {
+              "type": "string",
+              "description": "Full address"
+            },
+            "address": {
+              "type": "object",
+              "description": "Structured address components",
+              "properties": {
+                "road": {
+                  "type": "string"
+                },
+                "city": {
+                  "type": "string"
+                },
+                "state": {
+                  "type": "string"
+                },
+                "postcode": {
+                  "type": "string"
+                },
+                "country": {
+                  "type": "string"
+                },
+                "country_code": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        },
+        {
+          "type": "object",
+          "properties": {
+            "error": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "error"
+          ]
+        }
+      ]
+    }
+  }
+]

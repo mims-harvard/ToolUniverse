@@ -1,0 +1,315 @@
+[
+  {
+    "name": "Dataverse_search_datasets",
+    "description": "Search the Harvard Dataverse repository for research datasets, files, and dataverses. Harvard Dataverse is one of the largest open-access research data repositories, hosting datasets from all academic disciplines including social sciences, natural sciences, medicine, and humanities. Returns dataset names, DOIs, descriptions, publication dates, publishers, citations, subjects, authors, and file counts. Supports filtering by type (dataset, file, dataverse) and pagination. Essential for finding research datasets with full metadata and citations.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "q": {
+          "type": "string",
+          "description": "Search query string for dataset title, description, or keyword (e.g., 'climate change', 'genomics', 'RNA-seq cancer')"
+        },
+        "type": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Filter by type: 'dataset', 'file', or 'dataverse' (default: returns all types)"
+        },
+        "per_page": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "description": "Number of results per page (default 10)"
+        },
+        "start": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "description": "Result offset for pagination (0-based, e.g., 0, 10, 20)"
+        }
+      },
+      "required": [
+        "q"
+      ]
+    },
+    "fields": {
+      "endpoint": "https://dataverse.harvard.edu/api/search"
+    },
+    "type": "BaseRESTTool",
+    "test_examples": [
+      {
+        "q": "climate change",
+        "type": "dataset",
+        "per_page": 5
+      },
+      {
+        "q": "genomics",
+        "type": "dataset",
+        "per_page": 3
+      },
+      {
+        "q": "protein structure",
+        "per_page": 5
+      }
+    ],
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "object",
+          "description": "Harvard Dataverse search results",
+          "properties": {
+            "q": {
+              "type": "string",
+              "description": "Echo of the search query"
+            },
+            "total_count": {
+              "type": "integer",
+              "description": "Total number of matching results"
+            },
+            "start": {
+              "type": "integer",
+              "description": "Offset of this result page"
+            },
+            "items": {
+              "type": "array",
+              "description": "Array of matching dataset/file/dataverse items",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "name": {
+                    "type": "string",
+                    "description": "Dataset/item name"
+                  },
+                  "type": {
+                    "type": "string",
+                    "description": "Item type: 'dataset', 'file', or 'dataverse'"
+                  },
+                  "url": {
+                    "type": "string",
+                    "description": "DOI URL for the dataset"
+                  },
+                  "global_id": {
+                    "type": "string",
+                    "description": "Persistent identifier (e.g., 'doi:10.7910/DVN/DUWBBU'). Use with Dataverse_get_dataset."
+                  },
+                  "description": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "Dataset description/abstract"
+                  },
+                  "published_at": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "Publication timestamp (ISO 8601)"
+                  },
+                  "publisher": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "Publishing dataverse name"
+                  },
+                  "citation": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "Formatted citation string"
+                  },
+                  "subjects": {
+                    "type": "array",
+                    "description": "Subject categories",
+                    "items": {
+                      "type": "string"
+                    }
+                  },
+                  "authors": {
+                    "type": "array",
+                    "description": "Author names",
+                    "items": {
+                      "type": "string"
+                    }
+                  },
+                  "fileCount": {
+                    "type": [
+                      "integer",
+                      "null"
+                    ],
+                    "description": "Number of files in the dataset"
+                  },
+                  "versionId": {
+                    "type": [
+                      "integer",
+                      "null"
+                    ],
+                    "description": "Version ID"
+                  },
+                  "versionState": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "Version state (e.g., 'RELEASED')"
+                  },
+                  "keywords": {
+                    "type": "array",
+                    "description": "Dataset keywords",
+                    "items": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        {
+          "type": "object",
+          "properties": {
+            "error": {
+              "type": "string",
+              "description": "Error message"
+            }
+          },
+          "required": [
+            "error"
+          ]
+        }
+      ]
+    }
+  },
+  {
+    "name": "Dataverse_get_dataset",
+    "description": "Get detailed metadata for a specific Harvard Dataverse dataset by its persistent DOI identifier. Returns comprehensive information including dataset ID, version details, citation metadata (title, authors, description, subjects, keywords), terms of use, and publication dates. The persistent ID is the DOI from search results (e.g., 'doi:10.7910/DVN/DUWBBU'). Use Dataverse_search_datasets first to find the global_id, then pass it here as persistentId.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "persistentId": {
+          "type": "string",
+          "description": "Persistent DOI identifier for the dataset (e.g., 'doi:10.7910/DVN/DUWBBU', 'doi:10.7910/DVN/A6RYXI'). Found in global_id field of search results."
+        }
+      },
+      "required": [
+        "persistentId"
+      ]
+    },
+    "fields": {
+      "endpoint": "https://dataverse.harvard.edu/api/datasets/:persistentId"
+    },
+    "type": "BaseRESTTool",
+    "test_examples": [
+      {
+        "persistentId": "doi:10.7910/DVN/DUWBBU"
+      },
+      {
+        "persistentId": "doi:10.7910/DVN/AXGDJO"
+      },
+      {
+        "persistentId": "doi:10.7910/DVN/A6RYXI"
+      }
+    ],
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "object",
+          "description": "Detailed dataset metadata from Harvard Dataverse",
+          "properties": {
+            "id": {
+              "type": "integer",
+              "description": "Internal Dataverse dataset ID"
+            },
+            "identifier": {
+              "type": "string",
+              "description": "Short identifier (e.g., 'DVN/DUWBBU')"
+            },
+            "persistentUrl": {
+              "type": "string",
+              "description": "Persistent DOI URL"
+            },
+            "publisher": {
+              "type": "string",
+              "description": "Publishing institution (e.g., 'Harvard Dataverse')"
+            },
+            "publicationDate": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "Publication date (YYYY-MM-DD)"
+            },
+            "datasetType": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "Type of dataset"
+            },
+            "latestVersion": {
+              "type": "object",
+              "description": "Latest version metadata including citation fields, terms, files",
+              "properties": {
+                "id": {
+                  "type": "integer"
+                },
+                "datasetId": {
+                  "type": "integer"
+                },
+                "datasetPersistentId": {
+                  "type": "string"
+                },
+                "versionNumber": {
+                  "type": "integer"
+                },
+                "versionState": {
+                  "type": "string",
+                  "description": "e.g., 'RELEASED'"
+                },
+                "releaseTime": {
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                },
+                "createTime": {
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                },
+                "termsOfUse": {
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                },
+                "metadataBlocks": {
+                  "type": "object",
+                  "description": "Contains citation metadata block with title, authors, description, subjects, keywords"
+                }
+              }
+            }
+          }
+        },
+        {
+          "type": "object",
+          "properties": {
+            "error": {
+              "type": "string",
+              "description": "Error message"
+            }
+          },
+          "required": [
+            "error"
+          ]
+        }
+      ]
+    }
+  }
+]

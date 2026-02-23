@@ -1,0 +1,266 @@
+[
+  {
+    "name": "OpenFoodFacts_search_products",
+    "description": "Search for food products in the Open Food Facts database by name or brand. Returns product details including nutrition grades (Nutri-Score A-E), ingredients, nutrients (calories, fat, sugar, salt, protein), and food categories. Over 3 million products from worldwide. No authentication required.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "search_terms": {
+          "type": "string",
+          "description": "Food product name or brand to search for. Examples: 'nutella', 'coca cola', 'oreo', 'kelloggs cornflakes', 'olive oil'"
+        },
+        "page_size": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "description": "Number of results per page (1-100). Default: 10"
+        },
+        "page": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "description": "Page number for pagination. Default: 1"
+        }
+      },
+      "required": [
+        "search_terms"
+      ]
+    },
+    "fields": {
+      "endpoint": "https://world.openfoodfacts.org/cgi/search.pl",
+      "params": {
+        "search_simple": "1",
+        "action": "process",
+        "json": "1",
+        "fields": "product_name,brands,nutrition_grades,nutriments,categories,ingredients_text,image_url,countries_tags"
+      }
+    },
+    "type": "BaseRESTTool",
+    "test_examples": [
+      {
+        "search_terms": "nutella",
+        "page_size": 5
+      },
+      {
+        "search_terms": "coca cola",
+        "page_size": 5
+      },
+      {
+        "search_terms": "olive oil",
+        "page_size": 5
+      }
+    ],
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "object",
+          "description": "Food product search results",
+          "properties": {
+            "count": {
+              "type": "integer",
+              "description": "Total number of matching products"
+            },
+            "page": {
+              "type": ["integer", "string", "null"]
+            },
+            "page_size": {
+              "type": "integer"
+            },
+            "products": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "product_name": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "brands": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "nutrition_grades": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "Nutri-Score: a (best) to e (worst)"
+                  },
+                  "categories": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "ingredients_text": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "nutriments": {
+                    "type": [
+                      "object",
+                      "null"
+                    ],
+                    "description": "Nutritional values per 100g",
+                    "properties": {
+                      "energy-kcal_100g": {
+                        "type": [
+                          "number",
+                          "null"
+                        ]
+                      },
+                      "fat_100g": {
+                        "type": [
+                          "number",
+                          "null"
+                        ]
+                      },
+                      "sugars_100g": {
+                        "type": [
+                          "number",
+                          "null"
+                        ]
+                      },
+                      "proteins_100g": {
+                        "type": [
+                          "number",
+                          "null"
+                        ]
+                      },
+                      "salt_100g": {
+                        "type": [
+                          "number",
+                          "null"
+                        ]
+                      }
+                    }
+                  },
+                  "image_url": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "countries_tags": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        {
+          "type": "object",
+          "properties": {
+            "error": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "error"
+          ]
+        }
+      ]
+    }
+  },
+  {
+    "name": "OpenFoodFacts_get_product",
+    "description": "Get detailed information about a specific food product by barcode using the Open Food Facts database. Returns complete nutritional data, ingredients, allergens, Nutri-Score, eco-score, and product images. No authentication required.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "barcode": {
+          "type": "string",
+          "description": "Product barcode (EAN-13 or UPC). Examples: '3017620422003' (Nutella 400g), '0737628064502' (Annie Chun's), '8001505005592'"
+        }
+      },
+      "required": [
+        "barcode"
+      ]
+    },
+    "fields": {
+      "endpoint": "https://world.openfoodfacts.org/api/v0/product/{barcode}.json",
+      "params": {}
+    },
+    "type": "BaseRESTTool",
+    "test_examples": [
+      {
+        "barcode": "3017620422003"
+      },
+      {
+        "barcode": "0737628064502"
+      },
+      {
+        "barcode": "8001505005592"
+      }
+    ],
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "object",
+          "description": "Food product data by barcode",
+          "properties": {
+            "status": {
+              "type": "integer",
+              "description": "1 = product found, 0 = not found"
+            },
+            "status_verbose": {
+              "type": "string"
+            },
+            "product": {
+              "type": "object",
+              "properties": {
+                "product_name": {
+                  "type": "string"
+                },
+                "brands": {
+                  "type": "string"
+                },
+                "nutrition_grades": {
+                  "type": "string"
+                },
+                "ingredients_text": {
+                  "type": "string"
+                },
+                "allergens": {
+                  "type": "string"
+                },
+                "nutriments": {
+                  "type": "object"
+                },
+                "image_url": {
+                  "type": "string"
+                },
+                "url": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        },
+        {
+          "type": "object",
+          "properties": {
+            "error": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "error"
+          ]
+        }
+      ]
+    }
+  }
+]

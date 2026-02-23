@@ -100,5 +100,80 @@
         }
       ]
     }
+  },
+  {
+    "name": "STRING_get_enrichment",
+    "description": "Perform functional enrichment analysis on a set of proteins using the STRING database. Tests whether the input protein list is statistically enriched for Gene Ontology terms, KEGG pathways, Reactome pathways, WikiPathways, InterPro domains, TISSUES, DISEASES, COMPARTMENTS, and other functional categories. Returns enriched terms with p-values, FDR-corrected q-values, and the matching proteins. Useful for interpreting gene lists from RNA-seq, GWAS, proteomics experiments.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "identifiers": {
+          "type": "string",
+          "description": "Newline-separated list of protein identifiers (gene names or STRING IDs). Example: 'BRCA1\\nBRCA2\\nTP53\\nATM'. Minimum 2 proteins, recommended 5-100 for meaningful enrichment."
+        },
+        "species": {
+          "type": "integer",
+          "description": "NCBI taxonomy ID (default 9606 for human). Examples: 9606 (human), 10090 (mouse), 7227 (fly), 6239 (worm).",
+          "default": 9606
+        },
+        "background_string_identifiers": {
+          "type": ["string", "null"],
+          "description": "Optional newline-separated background gene set. If not provided, the entire genome proteome is used as background."
+        }
+      },
+      "required": ["identifiers"]
+    },
+    "fields": {
+      "endpoint": "enrichment"
+    },
+    "type": "STRINGExtTool",
+    "test_examples": [
+      {"identifiers": "BRCA1\nBRCA2\nTP53\nATM\nPALB2", "species": 9606},
+      {"identifiers": "EGFR\nERBB2\nKRAS\nBRAF\nPIK3CA", "species": 9606}
+    ],
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "object",
+          "properties": {
+            "data": {
+              "type": "object",
+              "description": "Enrichment analysis results",
+              "properties": {
+                "identifiers": {"type": "string"},
+                "species": {"type": "integer"},
+                "enrichments": {
+                  "type": "array",
+                  "description": "List of enriched functional terms sorted by FDR",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "category": {"type": "string", "description": "Annotation category: Process (GO BP), Function (GO MF), Component (GO CC), KEGG, RCTM, WikiPathways, InterPro, Pfam, HPO, DISEASES, TISSUES, COMPARTMENTS"},
+                      "term": {"type": "string", "description": "Term identifier"},
+                      "description": {"type": "string", "description": "Term description"},
+                      "number_of_genes": {"type": "integer", "description": "Number of input genes with this annotation"},
+                      "number_of_genes_in_background": {"type": "integer", "description": "Total genes with this annotation in background"},
+                      "p_value": {"type": "number", "description": "Raw p-value"},
+                      "fdr": {"type": "number", "description": "FDR-corrected q-value"},
+                      "inputGenes": {"type": "array", "description": "Input genes matching this term", "items": {"type": "string"}},
+                      "preferredNames": {"type": "array", "items": {"type": "string"}}
+                    }
+                  }
+                }
+              }
+            },
+            "metadata": {"type": "object"}
+          },
+          "required": ["data"]
+        },
+        {
+          "type": "object",
+          "properties": {
+            "error": {"type": "string"}
+          },
+          "required": ["error"]
+        }
+      ]
+    }
   }
 ]

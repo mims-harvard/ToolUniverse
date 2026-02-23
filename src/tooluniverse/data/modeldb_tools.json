@@ -1,0 +1,350 @@
+[
+  {
+    "name": "ModelDB_list_models",
+    "type": "BaseRESTTool",
+    "description": "List all computational neuroscience model IDs from ModelDB, optionally filtered by simulation environment. ModelDB is a curated repository of published computational neuroscience models. Returns an array of model IDs that can be used with ModelDB_get_model for full details. Filter by modeling application name (e.g., 'NEURON', 'GENESIS', 'Python', 'MATLAB', 'Brian'). Without a filter, returns all model IDs (1000+). Use this to discover models for a specific simulator or to get an overview of available models.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "modeling_application": {
+          "type": "string",
+          "description": "Filter by simulation environment name. Case-sensitive. Common values: 'NEURON', 'GENESIS', 'Python', 'MATLAB', 'Brian', 'NEST', 'XPP', 'C or C++'. Omit to get all models."
+        }
+      },
+      "required": []
+    },
+    "fields": {
+      "endpoint": "https://modeldb.science/api/v1/models",
+      "return_format": "JSON"
+    },
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "array",
+          "description": "Array of model IDs (integers). Use ModelDB_get_model to get full details for any ID.",
+          "items": {
+            "type": "integer"
+          }
+        },
+        {
+          "type": "object",
+          "properties": {
+            "error": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "error"
+          ]
+        }
+      ]
+    },
+    "test_examples": [
+      {
+        "modeling_application": "NEURON"
+      },
+      {
+        "modeling_application": "Python"
+      }
+    ]
+  },
+  {
+    "name": "ModelDB_get_model",
+    "type": "BaseRESTTool",
+    "description": "Get detailed information about a specific computational neuroscience model from ModelDB by its numeric ID. Returns the model name, description (notes), neuron types, ion currents, model type, model concepts, modeling application (simulator), associated papers with citations, genes, receptors, transmitters, brain region, and creation/version dates. ModelDB is a curated repository of published computational neuroscience models hosted by Yale/SenseLab. Use model IDs from ModelDB_list_models or from the ModelDB website (e.g., model 3263 is CA3 Pyramidal Neuron by Migliore et al 1995).",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "model_id": {
+          "type": "integer",
+          "description": "Numeric model ID from ModelDB. Examples: 3263 (CA3 pyramidal neuron), 2487 (Purkinje cell), 279 (squid axon), 87284 (cerebellar granule cell). Find IDs using ModelDB_list_models."
+        }
+      },
+      "required": [
+        "model_id"
+      ]
+    },
+    "fields": {
+      "endpoint": "https://modeldb.science/api/v1/models/{model_id}",
+      "return_format": "JSON"
+    },
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "object",
+          "description": "Full model details",
+          "properties": {
+            "id": {
+              "type": "integer",
+              "description": "Model ID"
+            },
+            "name": {
+              "type": "string",
+              "description": "Model name"
+            },
+            "created": {
+              "type": "string",
+              "description": "Creation date"
+            },
+            "ver_date": {
+              "type": "string",
+              "description": "Last modification date"
+            },
+            "notes": {
+              "type": "object",
+              "description": "Model description/notes",
+              "properties": {
+                "value": {
+                  "type": "string"
+                }
+              }
+            },
+            "neurons": {
+              "type": "object",
+              "description": "Neuron types modeled",
+              "properties": {
+                "value": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "object_id": {
+                        "type": "integer"
+                      },
+                      "object_name": {
+                        "type": "string"
+                      }
+                    }
+                  }
+                }
+              }
+            },
+            "currents": {
+              "type": "object",
+              "description": "Ion currents in the model"
+            },
+            "model_type": {
+              "type": "object",
+              "description": "Type of model (e.g., Neuron or other electrically excitable cell)"
+            },
+            "model_concept": {
+              "type": "object",
+              "description": "Model concepts (e.g., Bursting, Detailed Neuronal Models)"
+            },
+            "modeling_application": {
+              "type": "object",
+              "description": "Simulation environment (e.g., NEURON, GENESIS)"
+            },
+            "model_paper": {
+              "type": "object",
+              "description": "Associated publication(s)"
+            }
+          }
+        },
+        {
+          "type": "object",
+          "properties": {
+            "error": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "error"
+          ]
+        }
+      ]
+    },
+    "test_examples": [
+      {
+        "model_id": 3263
+      },
+      {
+        "model_id": 2487
+      }
+    ]
+  },
+  {
+    "name": "ModelDB_get_paper",
+    "type": "BaseRESTTool",
+    "description": "Get details of a scientific paper referenced in ModelDB by its paper ID. Returns the paper title, full citation name, references, and associated models. Papers in ModelDB are linked to computational neuroscience models and represent the publications describing those models. Use paper IDs found in ModelDB_get_model results (in the model_paper field). Example: paper 4307 is 'Migliore et al 1995' describing CA3 hippocampal neuron simulations.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "paper_id": {
+          "type": "integer",
+          "description": "Numeric paper ID from ModelDB. Examples: 4307 (Migliore et al 1995), 3860 (Hodgkin-Huxley classic). Find IDs from model_paper field in ModelDB_get_model results."
+        }
+      },
+      "required": [
+        "paper_id"
+      ]
+    },
+    "fields": {
+      "endpoint": "https://modeldb.science/api/v1/papers/{paper_id}",
+      "return_format": "JSON"
+    },
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "object",
+          "description": "Paper details",
+          "properties": {
+            "id": {
+              "type": "integer",
+              "description": "Paper ID"
+            },
+            "name": {
+              "type": "string",
+              "description": "Short citation (e.g., 'Author et al (Year)')"
+            },
+            "created": {
+              "type": "string",
+              "description": "Record creation date"
+            },
+            "title": {
+              "type": "object",
+              "description": "Full paper title",
+              "properties": {
+                "value": {
+                  "type": "string"
+                }
+              }
+            },
+            "references": {
+              "type": "object",
+              "description": "References cited by this paper"
+            }
+          }
+        },
+        {
+          "type": "object",
+          "properties": {
+            "error": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "error"
+          ]
+        }
+      ]
+    },
+    "test_examples": [
+      {
+        "paper_id": 4307
+      },
+      {
+        "paper_id": 3860
+      }
+    ]
+  },
+  {
+    "name": "ModelDB_list_celltypes",
+    "type": "BaseRESTTool",
+    "description": "List all neuron/cell type IDs available in ModelDB. Returns an array of cell type IDs that can be used with ModelDB_get_celltype for full details including name and morphology. ModelDB categorizes computational models by the neuron types they simulate, such as hippocampal pyramidal cells, Purkinje cells, cortical interneurons, etc. This is useful for finding what cell types have computational models available.",
+    "parameter": {
+      "type": "object",
+      "properties": {},
+      "required": []
+    },
+    "fields": {
+      "endpoint": "https://modeldb.science/api/v1/celltypes",
+      "return_format": "JSON"
+    },
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "array",
+          "description": "Array of cell type IDs (strings). Use ModelDB_get_celltype for details.",
+          "items": {
+            "type": "string"
+          }
+        },
+        {
+          "type": "object",
+          "properties": {
+            "error": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "error"
+          ]
+        }
+      ]
+    },
+    "test_examples": [
+      {}
+    ]
+  },
+  {
+    "name": "ModelDB_get_celltype",
+    "type": "BaseRESTTool",
+    "description": "Get details about a specific neuron/cell type from ModelDB by its cell type ID. Returns the cell type name (e.g., 'Hippocampus CA3 pyramidal GLU cell', 'Cerebellum Purkinje GABA cell'), creation date, and version info. Cell type IDs can be obtained from ModelDB_list_celltypes or from the neurons field of ModelDB_get_model results. This is useful for understanding what neuron types are modeled in computational neuroscience.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "celltype_id": {
+          "type": "string",
+          "description": "Cell type ID from ModelDB. Examples: '259' (Hippocampus CA3 pyramidal GLU cell), '258' (Hippocampus CA1 pyramidal GLU cell), '263' (Cerebellum Purkinje GABA cell). Find IDs using ModelDB_list_celltypes."
+        }
+      },
+      "required": [
+        "celltype_id"
+      ]
+    },
+    "fields": {
+      "endpoint": "https://modeldb.science/api/v1/celltypes/{celltype_id}",
+      "return_format": "JSON"
+    },
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "object",
+          "description": "Cell type details",
+          "properties": {
+            "id": {
+              "type": "integer",
+              "description": "Cell type ID"
+            },
+            "name": {
+              "type": "string",
+              "description": "Full cell type name"
+            },
+            "created": {
+              "type": "string",
+              "description": "Record creation date"
+            },
+            "ver_date": {
+              "type": "string",
+              "description": "Last modification date"
+            },
+            "class_id": {
+              "type": "integer",
+              "description": "Classification ID"
+            }
+          }
+        },
+        {
+          "type": "object",
+          "properties": {
+            "error": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "error"
+          ]
+        }
+      ]
+    },
+    "test_examples": [
+      {
+        "celltype_id": "259"
+      },
+      {
+        "celltype_id": "263"
+      }
+    ]
+  }
+]

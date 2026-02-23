@@ -1,0 +1,137 @@
+[
+  {
+    "name": "PubTator3_get_annotations",
+    "description": "Extract biomedical entity annotations from PubMed articles using NCBI PubTator3. Given one or more PubMed IDs (PMIDs), returns text-mined entities including genes, diseases, chemicals, species, mutations, and cell lines with their normalized identifiers (NCBI Gene ID, MeSH, NCBI Taxonomy, etc.) and text positions. Useful for extracting structured biomedical knowledge from literature. Provide PMIDs as a comma-separated string.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "pmids": {
+          "type": "string",
+          "description": "Comma-separated PubMed IDs (e.g., '33205991', '33205991,34234088'). Maximum ~100 PMIDs per request."
+        },
+        "concepts": {
+          "type": "string",
+          "default": "gene,disease,chemical,species,mutation,cellline",
+          "description": "Comma-separated entity types to extract: gene, disease, chemical, species, mutation, cellline (default: all types)"
+        }
+      },
+      "required": [
+        "pmids"
+      ]
+    },
+    "fields": {
+      "endpoint": "https://www.ncbi.nlm.nih.gov/research/pubtator3-api/publications/export/biocjson"
+    },
+    "type": "BaseRESTTool",
+    "test_examples": [
+      {
+        "pmids": "33205991",
+        "concepts": "gene,disease,chemical"
+      },
+      {
+        "pmids": "34234088",
+        "concepts": "gene,disease"
+      },
+      {
+        "pmids": "25416956"
+      }
+    ],
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "object",
+          "description": "PubTator3 BioC JSON annotation results",
+          "properties": {
+            "PubTator3": {
+              "type": "array",
+              "description": "Array of annotated publications",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "id": {
+                    "type": "string",
+                    "description": "PubMed ID"
+                  },
+                  "passages": {
+                    "type": "array",
+                    "description": "Article passages (title, abstract) with annotations",
+                    "items": {
+                      "type": "object",
+                      "properties": {
+                        "infons": {
+                          "type": "object",
+                          "description": "Passage metadata (type: title/abstract, journal, year, authors)"
+                        },
+                        "text": {
+                          "type": "string",
+                          "description": "Passage text"
+                        },
+                        "annotations": {
+                          "type": "array",
+                          "description": "Entity annotations found in this passage",
+                          "items": {
+                            "type": "object",
+                            "properties": {
+                              "infons": {
+                                "type": "object",
+                                "description": "Entity details: identifier (e.g., NCBI Gene ID, MeSH ID), type (gene/disease/chemical/species/mutation/cellline), name",
+                                "properties": {
+                                  "identifier": {
+                                    "type": "string"
+                                  },
+                                  "type": {
+                                    "type": "string"
+                                  },
+                                  "name": {
+                                    "type": "string"
+                                  },
+                                  "database": {
+                                    "type": "string"
+                                  }
+                                }
+                              },
+                              "text": {
+                                "type": "string",
+                                "description": "Entity text as it appears in the article"
+                              },
+                              "locations": {
+                                "type": "array",
+                                "description": "Text positions (offset, length)",
+                                "items": {
+                                  "type": "object",
+                                  "properties": {
+                                    "offset": {
+                                      "type": "integer"
+                                    },
+                                    "length": {
+                                      "type": "integer"
+                                    }
+                                  }
+                                }
+                              }
+                            }
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        {
+          "type": "object",
+          "properties": {
+            "error": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "error"
+          ]
+        }
+      ]
+    }
+  }
+]

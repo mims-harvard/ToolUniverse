@@ -17,7 +17,7 @@ def ClinGen_dosage_region_search(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> dict[str, Any]:
+) -> list[Any]:
     """
     Search ClinGen dosage sensitivity curations by genomic region. Returns all genes and recurrent CN...
 
@@ -40,7 +40,7 @@ def ClinGen_dosage_region_search(
 
     Returns
     -------
-    dict[str, Any]
+    list[Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

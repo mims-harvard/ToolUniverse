@@ -1,0 +1,46 @@
+"""
+Figshare_get_article
+
+Get detailed metadata for a specific Figshare research output by its article ID. Returns complete...
+"""
+
+from typing import Any, Optional, Callable
+from ._shared_client import get_shared_client
+
+
+def Figshare_get_article(
+    article_id: int,
+    *,
+    stream_callback: Optional[Callable[[str], None]] = None,
+    use_cache: bool = False,
+    validate: bool = True,
+) -> Any:
+    """
+    Get detailed metadata for a specific Figshare research output by its article ID. Returns complete...
+
+    Parameters
+    ----------
+    article_id : int
+        Figshare article ID (numeric, e.g., 14847609, 1000050). Obtain from search re...
+    stream_callback : Callable, optional
+        Callback for streaming output
+    use_cache : bool, default False
+        Enable caching
+    validate : bool, default True
+        Validate parameters
+
+    Returns
+    -------
+    Any
+    """
+    # Handle mutable defaults to avoid B006 linting error
+
+    return get_shared_client().run_one_function(
+        {"name": "Figshare_get_article", "arguments": {"article_id": article_id}},
+        stream_callback=stream_callback,
+        use_cache=use_cache,
+        validate=validate,
+    )
+
+
+__all__ = ["Figshare_get_article"]

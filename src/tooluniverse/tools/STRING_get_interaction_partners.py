@@ -1,7 +1,7 @@
 """
 STRING_get_interaction_partners
 
-Find direct interaction partners for a single protein from STRING (Search Tool for Retrieval of I...
+Get interaction partners for a single protein from STRING database. Returns a ranked list of prot...
 """
 
 from typing import Any, Optional, Callable
@@ -9,28 +9,28 @@ from ._shared_client import get_shared_client
 
 
 def STRING_get_interaction_partners(
-    protein_ids: list[str],
+    identifiers: str,
     species: Optional[int] = 9606,
-    confidence_score: Optional[float] = 0.4,
-    limit: Optional[int] = 20,
+    limit: Optional[int] = 10,
+    required_score: Optional[int | Any] = None,
     *,
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> list[Any]:
+) -> Any:
     """
-    Find direct interaction partners for a single protein from STRING (Search Tool for Retrieval of I...
+    Get interaction partners for a single protein from STRING database. Returns a ranked list of prot...
 
     Parameters
     ----------
-    protein_ids : list[str]
-        List of protein identifiers (UniProt IDs, gene names, Ensembl IDs)
+    identifiers : str
+        Protein identifier (gene name or STRING ID). Examples: 'TP53', 'BRCA1', 'EGFR...
     species : int
-        NCBI taxonomy ID (default: 9606 for human, 10090 for mouse)
-    confidence_score : float
-        Minimum confidence score (0-1, default: 0.4 for medium confidence)
+        NCBI taxonomy ID (9606=human, 10090=mouse, 7227=fly, 6239=worm)
     limit : int
-        Maximum number of interaction partners to return (default: 20)
+        Maximum number of interaction partners to return
+    required_score : int | Any
+        Minimum combined STRING score (0-1000). 400=medium, 700=high, 900=highest con...
     stream_callback : Callable, optional
         Callback for streaming output
     use_cache : bool, default False
@@ -40,7 +40,7 @@ def STRING_get_interaction_partners(
 
     Returns
     -------
-    list[Any]
+    Any
     """
     # Handle mutable defaults to avoid B006 linting error
 
@@ -48,10 +48,10 @@ def STRING_get_interaction_partners(
         {
             "name": "STRING_get_interaction_partners",
             "arguments": {
-                "protein_ids": protein_ids,
+                "identifiers": identifiers,
                 "species": species,
-                "confidence_score": confidence_score,
                 "limit": limit,
+                "required_score": required_score,
             },
         },
         stream_callback=stream_callback,

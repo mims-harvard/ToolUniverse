@@ -1,0 +1,609 @@
+[
+  {
+    "name": "NeuroVault_list_collections",
+    "description": "List and browse neuroimaging statistical map collections from NeuroVault. Returns collections of brain images (fMRI, PET, EEG) contributed by researchers worldwide. Each collection contains metadata about the study, DOI, authors, and imaging parameters. NeuroVault hosts over 16,000 collections with 650,000+ brain images. Use limit and offset for pagination. Use this to discover available neuroimaging datasets for meta-analysis or to find specific studies.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "limit": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "description": "Maximum number of collections to return per page (default 10, max 100). Example: 10"
+        },
+        "offset": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "description": "Number of collections to skip for pagination (default 0). Example: 20 to get page 3 with limit=10"
+        },
+        "format": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Response format. Must be 'json'. Default: 'json'"
+        }
+      },
+      "required": []
+    },
+    "fields": {
+      "endpoint": "https://neurovault.org/api/collections/",
+      "params": {
+        "format": "json"
+      }
+    },
+    "type": "BaseRESTTool",
+    "test_examples": [
+      {
+        "limit": 5
+      },
+      {
+        "limit": 3,
+        "offset": 10
+      }
+    ],
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "object",
+          "description": "Paginated list of NeuroVault collections",
+          "properties": {
+            "count": {
+              "type": "integer",
+              "description": "Total number of collections available"
+            },
+            "next": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "URL for the next page of results"
+            },
+            "previous": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "URL for the previous page of results"
+            },
+            "results": {
+              "type": "array",
+              "description": "Array of collection objects",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "id": {
+                    "type": "integer",
+                    "description": "Collection ID"
+                  },
+                  "name": {
+                    "type": "string",
+                    "description": "Collection name/title"
+                  },
+                  "DOI": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "Digital Object Identifier"
+                  },
+                  "owner_name": {
+                    "type": "string"
+                  },
+                  "number_of_images": {
+                    "type": "integer"
+                  },
+                  "description": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "authors": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "paper_url": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "journal_name": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "add_date": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          }
+        },
+        {
+          "type": "object",
+          "properties": {
+            "error": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "error"
+          ]
+        }
+      ]
+    }
+  },
+  {
+    "name": "NeuroVault_get_collection",
+    "description": "Get detailed metadata for a specific NeuroVault neuroimaging collection by its ID. Returns study details including title, DOI, authors, journal, imaging parameters (scanner, pulse sequence, field strength), study design information (number of subjects, experimental conditions), and number of statistical map images. Use collection IDs from NeuroVault_list_collections or NeuroVault website. Example: collection 457 is the Human Connectome Project overview with 48 brain images.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "collection_id": {
+          "type": "integer",
+          "description": "NeuroVault collection ID number. Examples: 457 (Human Connectome Project), 1952 (BrainPedia with 6573 images)"
+        }
+      },
+      "required": [
+        "collection_id"
+      ]
+    },
+    "fields": {
+      "endpoint": "https://neurovault.org/api/collections/{collection_id}/",
+      "params": {
+        "format": "json"
+      }
+    },
+    "type": "BaseRESTTool",
+    "test_examples": [
+      {
+        "collection_id": 457
+      },
+      {
+        "collection_id": 1952
+      }
+    ],
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "object",
+          "description": "Detailed collection metadata",
+          "properties": {
+            "id": {
+              "type": "integer",
+              "description": "Collection ID"
+            },
+            "name": {
+              "type": "string",
+              "description": "Collection name/title"
+            },
+            "DOI": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "Digital Object Identifier of the associated publication"
+            },
+            "owner_name": {
+              "type": "string"
+            },
+            "number_of_images": {
+              "type": "integer",
+              "description": "Number of statistical map images in collection"
+            },
+            "description": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "Study description"
+            },
+            "authors": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "paper_url": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "journal_name": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "full_dataset_url": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "type_of_design": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "Experimental design type"
+            },
+            "number_of_imaging_runs": {
+              "type": [
+                "integer",
+                "null"
+              ]
+            },
+            "number_of_experimental_units": {
+              "type": [
+                "integer",
+                "null"
+              ]
+            },
+            "scanner_make": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "scanner_model": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "field_strength": {
+              "type": [
+                "number",
+                "null"
+              ],
+              "description": "MRI field strength in Tesla"
+            },
+            "pulse_sequence": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "software_package": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "Analysis software used"
+            },
+            "software_version": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "add_date": {
+              "type": "string",
+              "description": "Date collection was added"
+            },
+            "modify_date": {
+              "type": "string"
+            },
+            "url": {
+              "type": "string",
+              "description": "URL to view collection on NeuroVault"
+            },
+            "download_url": {
+              "type": "string",
+              "description": "URL to download all images"
+            }
+          }
+        },
+        {
+          "type": "object",
+          "properties": {
+            "error": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "error"
+          ]
+        }
+      ]
+    }
+  },
+  {
+    "name": "NeuroVault_list_collection_images",
+    "description": "List all statistical map images in a specific NeuroVault collection. Returns image metadata including name, map type (T map, Z map, F map, etc.), cognitive paradigm/contrast annotations, and file download URLs. Use this to explore what brain maps are available in a study collection before downloading. Example: collection 457 (Human Connectome Project) has 48 images covering emotion, gambling, language, motor, relational, social, and working memory tasks.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "collection_id": {
+          "type": "integer",
+          "description": "NeuroVault collection ID. Example: 457 (Human Connectome Project)"
+        },
+        "limit": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "description": "Maximum number of images to return (default 10, max 100)"
+        },
+        "offset": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "description": "Number of images to skip for pagination (default 0)"
+        }
+      },
+      "required": [
+        "collection_id"
+      ]
+    },
+    "fields": {
+      "endpoint": "https://neurovault.org/api/collections/{collection_id}/images/",
+      "params": {
+        "format": "json"
+      }
+    },
+    "type": "BaseRESTTool",
+    "test_examples": [
+      {
+        "collection_id": 457,
+        "limit": 5
+      },
+      {
+        "collection_id": 1952,
+        "limit": 3
+      }
+    ],
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "object",
+          "description": "Paginated list of images in the collection",
+          "properties": {
+            "count": {
+              "type": "integer",
+              "description": "Total number of images"
+            },
+            "next": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "previous": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "results": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "id": {
+                    "type": "integer",
+                    "description": "Image ID"
+                  },
+                  "name": {
+                    "type": "string",
+                    "description": "Image name"
+                  },
+                  "map_type": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "Statistical map type: T map, Z map, F map, etc."
+                  },
+                  "file": {
+                    "type": "string",
+                    "description": "URL to download the NIfTI image file"
+                  },
+                  "collection_id": {
+                    "type": "integer"
+                  },
+                  "cognitive_paradigm_cogatlas": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "Cognitive Atlas paradigm label"
+                  },
+                  "cognitive_paradigm_cogatlas_id": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "cognitive_contrast_cogatlas": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "Cognitive Atlas contrast label"
+                  },
+                  "analysis_level": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "Analysis level: group or individual"
+                  }
+                }
+              }
+            }
+          }
+        },
+        {
+          "type": "object",
+          "properties": {
+            "error": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "error"
+          ]
+        }
+      ]
+    }
+  },
+  {
+    "name": "NeuroVault_get_image",
+    "description": "Get detailed metadata for a specific brain statistical map image in NeuroVault by image ID. Returns comprehensive information including map type (T/Z/F map), cognitive paradigm and contrast annotations from Cognitive Atlas, analysis level, modality, and file download URL (NIfTI format). Use image IDs from NeuroVault_list_collection_images. Example: image 3128 is a Z map of 'emotion processing fMRI task paradigm' showing FACES minus SHAPES contrast from the Human Connectome Project.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "image_id": {
+          "type": "integer",
+          "description": "NeuroVault image ID. Examples: 3128 (HCP emotion task Z map), 946 (pain T map)"
+        }
+      },
+      "required": [
+        "image_id"
+      ]
+    },
+    "fields": {
+      "endpoint": "https://neurovault.org/api/images/{image_id}/",
+      "params": {
+        "format": "json"
+      }
+    },
+    "type": "BaseRESTTool",
+    "test_examples": [
+      {
+        "image_id": 3128
+      },
+      {
+        "image_id": 946
+      }
+    ],
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "object",
+          "description": "Detailed image metadata",
+          "properties": {
+            "id": {
+              "type": "integer",
+              "description": "Image ID"
+            },
+            "name": {
+              "type": "string",
+              "description": "Image name/description"
+            },
+            "file": {
+              "type": "string",
+              "description": "URL to download the NIfTI image file"
+            },
+            "collection_id": {
+              "type": "integer",
+              "description": "Parent collection ID"
+            },
+            "map_type": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "Statistical map type: T map, Z map, F map, univariate-beta map, ROI/mask, parcellation, etc."
+            },
+            "cognitive_paradigm_cogatlas": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "Cognitive Atlas paradigm label (e.g., 'emotion processing fMRI task paradigm')"
+            },
+            "cognitive_paradigm_cogatlas_id": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "Cognitive Atlas paradigm ID"
+            },
+            "cognitive_contrast_cogatlas": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "Cognitive Atlas contrast label"
+            },
+            "cognitive_contrast_cogatlas_id": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "analysis_level": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "Analysis level: group or individual"
+            },
+            "modality": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "Imaging modality (fMRI-BOLD, PET, etc.)"
+            },
+            "image_type": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "Image type (statistic_map, atlas, etc.)"
+            },
+            "statistic_parameters": {
+              "type": [
+                "number",
+                "null"
+              ]
+            },
+            "smoothness_fwhm": {
+              "type": [
+                "number",
+                "null"
+              ],
+              "description": "Smoothing kernel FWHM in mm"
+            },
+            "brain_coverage": {
+              "type": [
+                "number",
+                "null"
+              ]
+            },
+            "not_mni": {
+              "type": "boolean",
+              "description": "Whether image is NOT in MNI space"
+            }
+          }
+        },
+        {
+          "type": "object",
+          "properties": {
+            "error": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "error"
+          ]
+        }
+      ]
+    }
+  }
+]

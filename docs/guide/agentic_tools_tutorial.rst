@@ -395,10 +395,13 @@ If the tool returns unexpected results:
    import logging
    logging.getLogger('tooluniverse.agentic_tool').setLevel(logging.DEBUG)
 
-   # Check the actual prompt sent to AI
-   tool = tu.get_tool("ScientificTextSummarizer")
-   prompt_preview = tool.get_prompt_preview(arguments)
-   print("🔍 Prompt sent to AI:", prompt_preview)
+   # Inspect the tool configuration
+   tool = tu.get_tool_by_name("ScientificTextSummarizer")
+   if tool:
+       spec = tu.tool_specification(tool_name="ScientificTextSummarizer", format="openai")
+       print("🔍 Tool specification:", spec.get("description", "N/A")[:200])
+   else:
+       print("⚠️  Tool not found — check the tool name is loaded")
 
 
 Step 7: Create More Complex Tools

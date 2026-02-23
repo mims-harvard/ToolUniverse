@@ -14,7 +14,7 @@ def ClinGen_search_dosage_sensitivity(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> dict[str, Any]:
+) -> list[Any]:
     """
     Search ClinGen dosage sensitivity curations by gene symbol. Returns haploinsufficiency (HI) and t...
 
@@ -31,7 +31,7 @@ def ClinGen_search_dosage_sensitivity(
 
     Returns
     -------
-    dict[str, Any]
+    list[Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

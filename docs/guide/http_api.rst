@@ -449,7 +449,7 @@ Your custom client uses ``__getattr__`` to proxy ALL method calls to ``POST /api
 
 **Why this happens:**
 
-.. code-block:: python
+.. code-block:: text
 
     # Your custom client code:
     client.list_available_methods()

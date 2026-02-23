@@ -1,0 +1,302 @@
+[
+  {
+    "name": "GeneNetwork_list_species",
+    "description": "List all species available in GeneNetwork, the open systems genetics database for behavioral, neural, and physiological phenotypes. GeneNetwork contains genetic cross data for 13+ model organisms including mouse (BXD, BXH, AXB, etc.), rat, Arabidopsis, human, zebrafish, and barley. Returns species names and taxonomy IDs for use with other GeneNetwork tools.",
+    "parameter": {
+      "type": "object",
+      "properties": {},
+      "required": []
+    },
+    "fields": {
+      "endpoint": "https://genenetwork.org/api/v_pre1/species"
+    },
+    "type": "BaseRESTTool",
+    "test_examples": [
+      {}
+    ],
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "array",
+          "description": "List of species in GeneNetwork",
+          "items": {
+            "type": "object",
+            "properties": {
+              "Id": {
+                "type": "integer",
+                "description": "GeneNetwork species ID"
+              },
+              "Name": {
+                "type": "string",
+                "description": "Short species name (e.g., 'mouse', 'rat', 'human')"
+              },
+              "FullName": {
+                "type": "string",
+                "description": "Scientific name (e.g., 'Mus musculus')"
+              },
+              "TaxonomyId": {
+                "type": "integer",
+                "description": "NCBI Taxonomy ID"
+              }
+            }
+          }
+        },
+        {
+          "type": "object",
+          "properties": {
+            "error": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "error"
+          ]
+        }
+      ]
+    }
+  },
+  {
+    "name": "GeneNetwork_list_groups",
+    "description": "List genetic cross populations (groups) available in GeneNetwork for a given species. These groups represent specific genetic crosses (e.g., BXD = C57BL/6J x DBA/2J recombinant inbred strains, BXH = BXH RI strains, HXB = Hybrid strains) used for QTL mapping and systems genetics. Each group can have hundreds of datasets measuring gene expression, metabolites, and phenotypes across the population. Returns group names, genetic types (riset, intercross, etc.), and IDs.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "species": {
+          "type": "string",
+          "description": "Species short name (e.g., 'mouse', 'rat', 'human', 'arabidopsis'). Get from GeneNetwork_list_species."
+        }
+      },
+      "required": [
+        "species"
+      ]
+    },
+    "fields": {
+      "endpoint": "https://genenetwork.org/api/v_pre1/groups/{species}"
+    },
+    "type": "BaseRESTTool",
+    "test_examples": [
+      {
+        "species": "mouse"
+      },
+      {
+        "species": "rat"
+      }
+    ],
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "array",
+          "description": "List of genetic cross populations for this species",
+          "items": {
+            "type": "object",
+            "properties": {
+              "Id": {
+                "type": "integer",
+                "description": "GeneNetwork group ID"
+              },
+              "Name": {
+                "type": "string",
+                "description": "Short group name (e.g., 'BXD', 'HXB')"
+              },
+              "FullName": {
+                "type": "string",
+                "description": "Full group name (e.g., 'BXD Family')"
+              },
+              "DisplayName": {
+                "type": "string"
+              },
+              "GeneticType": {
+                "type": "string",
+                "description": "Type of cross: 'riset' (recombinant inbred), 'intercross', 'inbred', 'diversity'"
+              },
+              "SpeciesId": {
+                "type": "integer"
+              },
+              "public": {
+                "type": "integer",
+                "description": "Public accessibility: 2 = public"
+              }
+            }
+          }
+        },
+        {
+          "type": "object",
+          "properties": {
+            "error": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "error"
+          ]
+        }
+      ]
+    }
+  },
+  {
+    "name": "GeneNetwork_list_datasets",
+    "description": "List all datasets available for a specific genetic cross population in GeneNetwork. Datasets represent different tissues, time points, or measurement technologies for the population (e.g., 'BXD Brain mRNA', 'BXD Liver Metabolites', 'BXD Phenotype'). Returns dataset names, abbreviations, data types, and timestamps. Use GeneNetwork_list_groups to find group names (e.g., 'bxd' for BXD cross).",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "group": {
+          "type": "string",
+          "description": "Genetic cross group name in lowercase (e.g., 'bxd', 'bxh', 'hxb', 'bnlx-srjr-f2'). Obtain from GeneNetwork_list_groups."
+        }
+      },
+      "required": [
+        "group"
+      ]
+    },
+    "fields": {
+      "endpoint": "https://genenetwork.org/api/v_pre1/datasets/{group}"
+    },
+    "type": "BaseRESTTool",
+    "test_examples": [
+      {
+        "group": "bxd"
+      },
+      {
+        "group": "bxh"
+      }
+    ],
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "array",
+          "description": "List of datasets in this genetic cross population",
+          "items": {
+            "type": "object",
+            "properties": {
+              "Id": {
+                "type": "integer",
+                "description": "Dataset ID"
+              },
+              "FullName": {
+                "type": "string",
+                "description": "Full dataset name (e.g., 'Brain U74Av2 08/03 MAS5')"
+              },
+              "ShortName": {
+                "type": "string"
+              },
+              "Short_Abbreviation": {
+                "type": "string",
+                "description": "Short abbreviation for the dataset"
+              },
+              "Long_Abbreviation": {
+                "type": "string",
+                "description": "Long abbreviation used in API calls"
+              },
+              "DataScale": {
+                "type": "string",
+                "description": "Data scale: 'log2', 'linear', etc."
+              },
+              "CreateTime": {
+                "type": "string",
+                "description": "Dataset creation date"
+              },
+              "ProbeFreezeId": {
+                "type": "integer"
+              },
+              "public": {
+                "type": "integer"
+              }
+            }
+          }
+        },
+        {
+          "type": "object",
+          "properties": {
+            "error": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "error"
+          ]
+        }
+      ]
+    }
+  },
+  {
+    "name": "GeneNetwork_get_sample_data",
+    "description": "Get expression or phenotype values for a specific gene/trait across all samples in a GeneNetwork dataset. Returns measurement values with standard errors for each inbred strain or individual in the genetic cross. Use this to find how a gene's expression varies across strains, identify strain differences, or get data for QTL analysis. Dataset abbreviation and trait/probe ID must match the dataset.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "dataset_name": {
+          "type": "string",
+          "description": "Dataset long abbreviation (e.g., 'HC_M2_0606_P' for BXD hippocampus, 'BXDPublish' for phenotypes). Obtain from GeneNetwork_list_datasets Long_Abbreviation field."
+        },
+        "trait_name": {
+          "type": "string",
+          "description": "Probe/trait identifier within the dataset (e.g., '1436869_at' for a microarray probe, '10001' for a BXD phenotype trait). Must exist in the specified dataset."
+        }
+      },
+      "required": [
+        "dataset_name",
+        "trait_name"
+      ]
+    },
+    "fields": {
+      "endpoint": "https://genenetwork.org/api/v_pre1/sample_data/{dataset_name}/{trait_name}"
+    },
+    "type": "BaseRESTTool",
+    "test_examples": [
+      {
+        "dataset_name": "HC_M2_0606_P",
+        "trait_name": "1436869_at"
+      },
+      {
+        "dataset_name": "HC_M2_0606_P",
+        "trait_name": "1415670_at"
+      }
+    ],
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "array",
+          "description": "Sample measurements across all strains/individuals in the dataset",
+          "items": {
+            "type": "object",
+            "properties": {
+              "data_id": {
+                "type": "integer",
+                "description": "Data record ID"
+              },
+              "sample_name": {
+                "type": "string",
+                "description": "Strain or sample name (e.g., 'C57BL/6J', 'DBA/2J', 'BXD1')"
+              },
+              "sample_name_2": {
+                "type": "string"
+              },
+              "value": {
+                "type": "number",
+                "description": "Measured expression or phenotype value"
+              },
+              "se": {
+                "type": [
+                  "number",
+                  "null"
+                ],
+                "description": "Standard error of the measurement"
+              }
+            }
+          }
+        },
+        {
+          "type": "object",
+          "properties": {
+            "error": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "error"
+          ]
+        }
+      ]
+    }
+  }
+]

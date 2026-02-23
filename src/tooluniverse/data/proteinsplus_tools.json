@@ -41,38 +41,12 @@
               "properties": {
                 "pockets": {
                   "type": "array",
-                  "description": "Array of predicted binding pockets, sorted by druggability score (best first)",
+                  "description": "Array of predicted binding pockets (URLs or objects)",
                   "items": {
-                    "type": "object",
-                    "properties": {
-                      "pocket_id": {
-                        "type": "integer",
-                        "description": "Unique pocket identifier (1, 2, 3, ...)"
-                      },
-                      "druggability_score": {
-                        "type": "number",
-                        "description": "Druggability score (0-1), higher is better. >0.5 indicates druggable pocket"
-                      },
-                      "volume": {
-                        "type": "number",
-                        "description": "Pocket volume in Angstrom^3. Typical range: 200-2000"
-                      },
-                      "surface_area": {
-                        "type": "number",
-                        "description": "Pocket surface area in Angstrom^2. Larger values indicate more exposed pockets"
-                      },
-                      "depth": {
-                        "type": "number",
-                        "description": "Pocket depth in Angstroms. Deeper pockets are more buried"
-                      },
-                      "residues": {
-                        "type": "array",
-                        "items": {
-                          "type": "string"
-                        },
-                        "description": "List of residues forming the pocket (e.g., ['TYR123', 'PHE45', 'LEU67'])"
-                      }
-                    }
+                    "oneOf": [
+                      {"type": "string"},
+                      {"type": "object"}
+                    ]
                   }
                 }
               }
@@ -87,7 +61,7 @@
           "type": "object",
           "properties": {
             "error": {
-              "type": "string"
+              "oneOf": [{"type": "string"}, {"type": "object"}]
             }
           },
           "required": ["error"]
@@ -166,38 +140,22 @@
                   "type": "array",
                   "description": "Array of predicted pockets with subpocket information",
                   "items": {
-                    "type": "object",
-                    "properties": {
-                      "pocket_id": {
-                        "type": "integer",
-                        "description": "Unique pocket identifier"
-                      },
-                      "druggability_score": {
-                        "type": "number",
-                        "description": "Druggability score (0-1), >0.5 indicates druggable"
-                      },
-                      "volume": {
-                        "type": "number",
-                        "description": "Pocket volume in Angstrom^3 (typical: 200-2000)"
-                      },
-                      "surface_area": {
-                        "type": "number",
-                        "description": "Pocket surface area in Angstrom^2"
-                      },
-                      "depth": {
-                        "type": "number",
-                        "description": "Pocket depth in Angstroms (deeper = more buried)"
-                      }
-                    }
+                    "oneOf": [
+                      {"type": "string"},
+                      {"type": "object"}
+                    ]
                   }
                 },
                 "residues": {
-                  "type": "object",
-                  "description": "Mapping of pockets to constituent residues. Format: {pocket_id: ['TYR123', 'PHE45', ...]}"
+                  "oneOf": [
+                    {"type": "object"},
+                    {"type": "array", "items": {"type": "string"}}
+                  ],
+                  "description": "Mapping of pockets to constituent residues, or array of URL strings"
                 },
                 "descriptor_explanation": {
-                  "type": "object",
-                  "description": "Explanations of calculated descriptors"
+                  "type": ["string", "null"],
+                  "description": "URL or explanations of calculated descriptors"
                 },
                 "parameters": {
                   "type": "object",
@@ -299,7 +257,7 @@
           "type": "object",
           "properties": {
             "error": {
-              "type": "string"
+              "oneOf": [{"type": "string"}, {"type": "object"}]
             }
           },
           "required": ["error"]
@@ -410,8 +368,11 @@
                   "description": "Aligned PDB structures in the ensemble"
                 },
                 "ligands": {
-                  "type": "string",
-                  "description": "SDF file with aligned ligands"
+                  "oneOf": [
+                    {"type": "string"},
+                    {"type": "array", "items": {"type": "string"}}
+                  ],
+                  "description": "SDF file URL(s) with aligned ligands"
                 },
                 "alignment": {
                   "type": "string",
@@ -433,7 +394,7 @@
           "type": "object",
           "properties": {
             "error": {
-              "type": "string"
+              "oneOf": [{"type": "string"}, {"type": "object"}]
             }
           },
           "required": ["error"]
@@ -497,31 +458,28 @@
               "type": "object",
               "properties": {
                 "complex": {
-                  "type": "object",
-                  "description": "Overall protein-ligand complex quality metrics"
+                  "type": "string",
+                  "description": "URL to overall protein-ligand complex quality metrics"
                 },
                 "activesite": {
-                  "type": "object",
-                  "description": "Active site geometry and quality assessment"
+                  "type": "string",
+                  "description": "URL to active site geometry and quality assessment"
                 },
                 "ligands": {
-                  "type": "array",
-                  "items": {
-                    "type": "object"
-                  },
-                  "description": "Individual ligand quality assessments"
+                  "type": "string",
+                  "description": "URL to individual ligand quality assessments"
                 },
                 "smarts": {
-                  "type": "object",
-                  "description": "SMARTS patterns for chemical validation"
+                  "type": "string",
+                  "description": "URL to SMARTS patterns for chemical validation"
                 },
                 "hetcode": {
                   "type": "string",
                   "description": "Heteroatom residue codes found"
                 },
                 "config": {
-                  "type": "object",
-                  "description": "Configuration and parameters used"
+                  "type": "string",
+                  "description": "URL to configuration and parameters used"
                 }
               }
             },

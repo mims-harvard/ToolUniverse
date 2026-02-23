@@ -1,0 +1,72 @@
+[
+  {
+    "name": "OpenMeteo_get_air_quality",
+    "description": "Get current and forecast air quality data for any location using the Open-Meteo Air Quality API. Returns hourly concentrations of PM2.5, PM10, ozone, NO2, SO2, carbon monoxide, and European Air Quality Index (AQI). Data from the Copernicus Atmosphere Monitoring Service. No authentication required.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "latitude": {
+          "type": "number",
+          "description": "Location latitude (-90 to 90). Examples: 52.52 (Berlin), 40.71 (NYC), 48.85 (Paris), 35.68 (Tokyo)"
+        },
+        "longitude": {
+          "type": "number",
+          "description": "Location longitude (-180 to 180). Examples: 13.41 (Berlin), -74.01 (NYC), 2.35 (Paris), 139.69 (Tokyo)"
+        },
+        "hourly": {
+          "type": ["string", "null"],
+          "description": "Comma-separated air quality variables. Values: 'pm10', 'pm2_5', 'carbon_monoxide', 'nitrogen_dioxide', 'sulphur_dioxide', 'ozone', 'aerosol_optical_depth', 'european_aqi', 'us_aqi'. Default: pm10,pm2_5,european_aqi"
+        },
+        "forecast_days": {
+          "type": ["integer", "null"],
+          "description": "Number of forecast days (1-7). Default: 5"
+        },
+        "past_days": {
+          "type": ["integer", "null"],
+          "description": "Include past days in response (0-92). Examples: 1, 7"
+        }
+      },
+      "required": ["latitude", "longitude"]
+    },
+    "fields": {
+      "endpoint": "https://air-quality-api.open-meteo.com/v1/air-quality",
+      "params": {"hourly": "pm10,pm2_5,european_aqi"}
+    },
+    "type": "BaseRESTTool",
+    "test_examples": [
+      {"latitude": 52.52, "longitude": 13.41, "forecast_days": 1},
+      {"latitude": 40.71, "longitude": -74.01, "hourly": "pm2_5,ozone,us_aqi", "forecast_days": 2},
+      {"latitude": 48.85, "longitude": 2.35, "hourly": "pm10,pm2_5,nitrogen_dioxide,european_aqi"}
+    ],
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "object",
+          "description": "Air quality forecast data",
+          "properties": {
+            "latitude": {"type": "number"},
+            "longitude": {"type": "number"},
+            "elevation": {"type": "number"},
+            "timezone": {"type": "string"},
+            "hourly_units": {"type": "object", "description": "Units for each variable (e.g. μg/m³)"},
+            "hourly": {
+              "type": "object",
+              "description": "Hourly air quality data arrays",
+              "properties": {
+                "time": {"type": "array", "items": {"type": "string"}},
+                "pm10": {"type": "array", "items": {"type": ["number", "null"]}},
+                "pm2_5": {"type": "array", "items": {"type": ["number", "null"]}},
+                "european_aqi": {"type": "array", "items": {"type": ["number", "null"]}}
+              }
+            }
+          }
+        },
+        {
+          "type": "object",
+          "properties": {"error": {"type": "string"}},
+          "required": ["error"]
+        }
+      ]
+    }
+  }
+]

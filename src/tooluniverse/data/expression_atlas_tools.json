@@ -169,22 +169,16 @@
             {"accession": "E-MTAB-5214"}
         ],
         "return_schema": {
-            "type": "object",
+            "type": ["object", "null"],
             "properties": {
-                "status": {"type": "string", "enum": ["success", "error"]},
-                "data": {
-                    "type": "object",
-                    "properties": {
-                        "accession": {"type": "string"},
-                        "type": {"type": "string"},
-                        "description": {"type": "string"},
-                        "species": {"type": "string"},
-                        "factors": {"type": "array"},
-                        "assay_count": {"type": "integer"}
-                    }
-                },
-                "error": {"type": "string"}
-            }
+                "accession": {"type": "string"},
+                "type": {"type": "string"},
+                "description": {"type": "string"},
+                "species": {"type": "string"},
+                "factors": {"type": "array"},
+                "assay_count": {"type": "integer"}
+            },
+            "additionalProperties": true
         },
         "label": ["Expression Atlas", "Experiment Detail"],
         "metadata": {

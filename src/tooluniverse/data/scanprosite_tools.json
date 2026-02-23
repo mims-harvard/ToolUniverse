@@ -1,0 +1,105 @@
+[
+  {
+    "name": "ScanProsite_scan_protein",
+    "description": "Scan a protein against the PROSITE database of protein motifs, domains, and families. Given a UniProt accession (e.g., P04637 for TP53, P01308 for insulin), identifies all PROSITE pattern matches in the protein sequence. Returns matched PROSITE signature accessions and IDs with start/end positions. PROSITE is part of the ExPASy/SIB suite and contains 1,800+ patterns and profiles for protein functional sites and domains. Essential for identifying conserved motifs like zinc fingers, kinase activation loops, or receptor binding sites. Note: only patterns (PS00xxx) are scanned; profile matches require the ScanProsite web interface.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "seq": {
+          "type": "string",
+          "description": "UniProt accession to scan for PROSITE motifs. Examples: 'P04637' (TP53, returns PS00348 p53 signature), 'P01308' (insulin, returns PS00262 insulin family), 'Q9UHC1' (MLH3, returns PS00058 DNA mismatch repair). Can also accept a raw amino acid sequence."
+        }
+      },
+      "required": [
+        "seq"
+      ]
+    },
+    "fields": {
+      "endpoint": "https://prosite.expasy.org/cgi-bin/prosite/PSScan.cgi",
+      "params": {
+        "output": "json"
+      }
+    },
+    "type": "BaseRESTTool",
+    "test_examples": [
+      {
+        "seq": "P04637"
+      },
+      {
+        "seq": "P01308"
+      },
+      {
+        "seq": "Q9UHC1"
+      }
+    ],
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "object",
+          "properties": {
+            "n_match": {
+              "type": "integer",
+              "description": "Number of PROSITE motif matches found"
+            },
+            "n_seq": {
+              "type": "integer",
+              "description": "Number of sequences scanned (1 for single protein)"
+            },
+            "matchset": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "sequence_ac": {
+                    "type": "string",
+                    "description": "UniProt accession of the scanned protein"
+                  },
+                  "sequence_id": {
+                    "type": "string",
+                    "description": "UniProt entry name (e.g., P53_HUMAN)"
+                  },
+                  "sequence_db": {
+                    "type": "string",
+                    "description": "Sequence database (sp for Swiss-Prot, tr for TrEMBL)"
+                  },
+                  "start": {
+                    "type": "integer",
+                    "description": "Start position of the motif match in the protein"
+                  },
+                  "stop": {
+                    "type": "integer",
+                    "description": "End position of the motif match"
+                  },
+                  "signature_ac": {
+                    "type": "string",
+                    "description": "PROSITE accession (e.g., PS00348 for p53 family signature)"
+                  },
+                  "signature_id": {
+                    "type": "string",
+                    "description": "PROSITE entry name (e.g., P53, INSULIN, DNA_MISMATCH_REPAIR_1)"
+                  },
+                  "level_tag": {
+                    "type": "string",
+                    "description": "Match confidence level tag (0 = strong match)"
+                  }
+                }
+              },
+              "description": "Array of PROSITE motif matches with positions"
+            }
+          }
+        },
+        {
+          "type": "object",
+          "properties": {
+            "error": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "error"
+          ]
+        }
+      ]
+    }
+  }
+]

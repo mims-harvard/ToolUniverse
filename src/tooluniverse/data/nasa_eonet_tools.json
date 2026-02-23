@@ -1,0 +1,293 @@
+[
+  {
+    "name": "NASAEONET_get_events",
+    "description": "Get natural event data from NASA Earth Observatory Natural Event Tracker (EONET). EONET tracks ongoing and historical natural events including wildfires, storms, volcanoes, floods, sea ice changes, landslides, earthquakes, and more. Returns event details with geographic coordinates, time series, and source references. Useful for disaster monitoring, environmental research, and geospatial analysis.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "status": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Event status: 'open' (ongoing events) or 'closed' (past events). Default: both"
+        },
+        "category": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Filter by event category. Values: 'wildfires', 'severeStorms', 'volcanoes', 'seaLakeIce', 'earthquakes', 'floods', 'landslides', 'manmade', 'snow'. Use the exact slug."
+        },
+        "limit": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "description": "Maximum number of events to return (default 10, max 1000)"
+        },
+        "days": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "description": "Return events in the last N days. Example: 7 for last week. Ignored if start/end are set."
+        },
+        "start": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Filter events starting from this date (YYYY-MM-DD). Example: '2024-01-01'"
+        },
+        "end": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Filter events up to this date (YYYY-MM-DD). Example: '2024-12-31'"
+        },
+        "bbox": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Bounding box filter: 'minLon,minLat,maxLon,maxLat'. Example: '-120,30,-100,50' for western US"
+        },
+        "source": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Filter by data source. Examples: 'GDACS', 'InciWeb', 'IRWIN'"
+        }
+      },
+      "required": []
+    },
+    "fields": {
+      "endpoint": "https://eonet.gsfc.nasa.gov/api/v3/events"
+    },
+    "type": "BaseRESTTool",
+    "test_examples": [
+      {
+        "status": "open",
+        "category": "wildfires",
+        "limit": 5
+      },
+      {
+        "status": "open",
+        "category": "severeStorms",
+        "limit": 5
+      },
+      {
+        "days": 30,
+        "category": "volcanoes",
+        "limit": 10
+      }
+    ],
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "object",
+          "description": "EONET natural event data",
+          "properties": {
+            "title": {
+              "type": "string",
+              "description": "Response title ('EONET Events')"
+            },
+            "description": {
+              "type": "string"
+            },
+            "link": {
+              "type": "string"
+            },
+            "events": {
+              "type": "array",
+              "description": "List of natural events",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "id": {
+                    "type": "string",
+                    "description": "Unique event ID (e.g. 'EONET_6305')"
+                  },
+                  "title": {
+                    "type": "string",
+                    "description": "Event name (e.g. 'Camp Fire, California')"
+                  },
+                  "description": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "link": {
+                    "type": "string",
+                    "description": "URL for detailed event info"
+                  },
+                  "closed": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "Date event was marked closed (null if ongoing)"
+                  },
+                  "categories": {
+                    "type": "array",
+                    "items": {
+                      "type": "object",
+                      "properties": {
+                        "id": {
+                          "type": "string"
+                        },
+                        "title": {
+                          "type": "string",
+                          "description": "Category name (e.g. 'Wildfires')"
+                        }
+                      }
+                    }
+                  },
+                  "sources": {
+                    "type": "array",
+                    "items": {
+                      "type": "object",
+                      "properties": {
+                        "id": {
+                          "type": "string",
+                          "description": "Source system ID"
+                        },
+                        "url": {
+                          "type": "string",
+                          "description": "Link to source data"
+                        }
+                      }
+                    }
+                  },
+                  "geometry": {
+                    "type": "array",
+                    "description": "Time-series geographic positions of the event",
+                    "items": {
+                      "type": "object",
+                      "properties": {
+                        "magnitudeValue": {
+                          "type": [
+                            "number",
+                            "null"
+                          ],
+                          "description": "Magnitude value (e.g. area in acres)"
+                        },
+                        "magnitudeUnit": {
+                          "type": [
+                            "string",
+                            "null"
+                          ]
+                        },
+                        "date": {
+                          "type": "string",
+                          "description": "Timestamp of this observation"
+                        },
+                        "type": {
+                          "type": "string",
+                          "description": "Geometry type (Point, Polygon)"
+                        },
+                        "coordinates": {
+                          "type": "array",
+                          "description": "Coordinates [longitude, latitude] or polygon rings"
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        {
+          "type": "object",
+          "properties": {
+            "error": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "error"
+          ]
+        }
+      ]
+    }
+  },
+  {
+    "name": "NASAEONET_get_categories",
+    "description": "Get the list of natural event categories tracked by NASA EONET (Earth Observatory Natural Event Tracker). Returns all event category types with their IDs, titles, descriptions, and layer information. Use the category ID/slug with NASAEONET_get_events to filter events by type.",
+    "parameter": {
+      "type": "object",
+      "properties": {},
+      "required": []
+    },
+    "fields": {
+      "endpoint": "https://eonet.gsfc.nasa.gov/api/v3/categories"
+    },
+    "type": "BaseRESTTool",
+    "test_examples": [
+      {},
+      {},
+      {}
+    ],
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "object",
+          "description": "EONET event categories",
+          "properties": {
+            "title": {
+              "type": "string"
+            },
+            "description": {
+              "type": "string"
+            },
+            "link": {
+              "type": "string"
+            },
+            "categories": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "id": {
+                    "type": "string",
+                    "description": "Category slug (use with NASAEONET_get_events)"
+                  },
+                  "title": {
+                    "type": "string",
+                    "description": "Human-readable name"
+                  },
+                  "link": {
+                    "type": "string"
+                  },
+                  "description": {
+                    "type": "string"
+                  },
+                  "layers": {
+                    "type": "string",
+                    "description": "URL to layer information"
+                  }
+                }
+              }
+            }
+          }
+        },
+        {
+          "type": "object",
+          "properties": {
+            "error": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "error"
+          ]
+        }
+      ]
+    }
+  }
+]

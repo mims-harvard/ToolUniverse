@@ -1,7 +1,7 @@
 """
 LOINC_get_answer_list
 
-Get standardized answer list (permissible values) for a LOINC code. Many LOINC codes have predefi...
+Search LOINC answer-type codes matching a LOINC code or search term. Returns LOINC codes classifi...
 """
 
 from typing import Any, Optional, Callable
@@ -16,12 +16,12 @@ def LOINC_get_answer_list(
     validate: bool = True,
 ) -> dict[str, Any]:
     """
-    Get standardized answer list (permissible values) for a LOINC code. Many LOINC codes have predefi...
+    Search LOINC answer-type codes matching a LOINC code or search term. Returns LOINC codes classifi...
 
     Parameters
     ----------
     loinc_code : str
-        LOINC code identifier for which to retrieve answer list (e.g., '883-9' for AB...
+        LOINC code or search term to find answer-type codes (e.g., '883-9' for ABO bl...
     stream_callback : Callable, optional
         Callback for streaming output
     use_cache : bool, default False

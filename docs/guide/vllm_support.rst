@@ -26,6 +26,7 @@ Quick Start
 .. code-block:: python
 
     from tooluniverse import ToolUniverse
+    from tooluniverse.agentic_tool import AgenticTool
     
     tool_config = {
         "name": "Summarizer",
@@ -39,9 +40,10 @@ Quick Start
         }
     }
     
+    # Requires VLLM_SERVER_URL and TOOLUNIVERSE_LLM_DEFAULT_PROVIDER=VLLM
     tu = ToolUniverse()
-    tu.register_tool_from_config(tool_config)
-    result = tu.execute_tool("Summarizer", {"text": "Your text here"})
+    tu.register_custom_tool(AgenticTool, tool_config=tool_config)
+    result = tu.run({"name": "Summarizer", "arguments": {"text": "Your text here"}})
 
 Configuration
 -------------

@@ -13,7 +13,7 @@ def ensembl_get_homology(
     symbol: str,
     target_species: Optional[str] = None,
     target_taxon: Optional[str] = None,
-    type: Optional[str] = "all",
+    type_: Optional[str] = "all",
     sequence: Optional[str] = "none",
     aligned: Optional[bool] = False,
     *,
@@ -34,7 +34,7 @@ def ensembl_get_homology(
         Target species to find homologues in (optional, e.g., 'mouse', 'mus_musculus'...
     target_taxon : str
         Target taxonomic group (optional, e.g., 'Mammalia', 'Primates')
-    type : str
+    type_ : str
         Homology type: 'orthologues' (different species), 'paralogues' (same species)...
     sequence : str
         Include sequences in response
@@ -61,7 +61,7 @@ def ensembl_get_homology(
                 "symbol": symbol,
                 "target_species": target_species,
                 "target_taxon": target_taxon,
-                "type": type,
+                "type": type_,
                 "sequence": sequence,
                 "aligned": aligned,
             },

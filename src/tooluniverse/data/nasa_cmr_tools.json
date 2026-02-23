@@ -1,0 +1,353 @@
+[
+  {
+    "name": "NASACMR_search_collections",
+    "description": "Search NASA's Common Metadata Repository (CMR) for Earth observation datasets and satellite collections. CMR is NASA's centralized metadata repository hosting 40,000+ collections from NASA's Earth Observing System (EOS) missions. Search for climate, atmospheric, ocean, land surface, cryosphere, and space weather datasets from satellites like MODIS, Landsat, GOES, Sentinel, GRACE, ICESat, and more. Returns dataset titles, summaries, temporal coverage, data centers, processing levels, and access links.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "keyword": {
+          "type": "string",
+          "description": "Free-text keyword search. Examples: 'sea surface temperature', 'land cover', 'atmospheric CO2', 'Arctic sea ice', 'precipitation', 'vegetation index NDVI'"
+        },
+        "page_size": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "description": "Number of results to return (default 10, max 2000)"
+        },
+        "data_center": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Filter by data center short name. Examples: 'NSIDC', 'PODAAC', 'GES_DISC', 'LAADS', 'LP DAAC'"
+        },
+        "platform": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Filter by satellite/instrument platform. Examples: 'Terra', 'Aqua', 'Landsat-8', 'GOES-16', 'ICESat-2'"
+        }
+      },
+      "required": [
+        "keyword"
+      ]
+    },
+    "fields": {
+      "endpoint": "https://cmr.earthdata.nasa.gov/search/collections.json"
+    },
+    "type": "BaseRESTTool",
+    "test_examples": [
+      {
+        "keyword": "sea surface temperature",
+        "page_size": 5
+      },
+      {
+        "keyword": "Arctic sea ice",
+        "page_size": 5
+      },
+      {
+        "keyword": "vegetation NDVI",
+        "page_size": 5,
+        "data_center": "LP DAAC"
+      }
+    ],
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "object",
+          "description": "NASA CMR collection search results",
+          "properties": {
+            "feed": {
+              "type": "object",
+              "properties": {
+                "title": {
+                  "type": "string"
+                },
+                "updated": {
+                  "type": "string"
+                },
+                "id": {
+                  "type": "string"
+                },
+                "entry": {
+                  "type": "array",
+                  "description": "List of matching dataset collections",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "id": {
+                        "type": "string",
+                        "description": "CMR concept ID (e.g., 'C2036882064-POCLOUD')"
+                      },
+                      "title": {
+                        "type": "string",
+                        "description": "Dataset collection title"
+                      },
+                      "dataset_id": {
+                        "type": [
+                          "string",
+                          "null"
+                        ]
+                      },
+                      "summary": {
+                        "type": [
+                          "string",
+                          "null"
+                        ],
+                        "description": "Dataset description"
+                      },
+                      "short_name": {
+                        "type": [
+                          "string",
+                          "null"
+                        ],
+                        "description": "Short identifier"
+                      },
+                      "version_id": {
+                        "type": [
+                          "string",
+                          "null"
+                        ]
+                      },
+                      "time_start": {
+                        "type": [
+                          "string",
+                          "null"
+                        ],
+                        "description": "Temporal coverage start"
+                      },
+                      "time_end": {
+                        "type": [
+                          "string",
+                          "null"
+                        ],
+                        "description": "Temporal coverage end"
+                      },
+                      "data_center": {
+                        "type": [
+                          "string",
+                          "null"
+                        ],
+                        "description": "Hosting data center"
+                      },
+                      "processing_level_id": {
+                        "type": [
+                          "string",
+                          "null"
+                        ],
+                        "description": "Processing level (0-4)"
+                      },
+                      "cloud_hosted": {
+                        "type": [
+                          "boolean",
+                          "null"
+                        ]
+                      },
+                      "online_access_flag": {
+                        "type": [
+                          "boolean",
+                          "null"
+                        ]
+                      },
+                      "platforms": {
+                        "type": [
+                          "array",
+                          "null"
+                        ],
+                        "items": {
+                          "type": ["string", "object"]
+                        }
+                      },
+                      "links": {
+                        "type": [
+                          "array",
+                          "null"
+                        ]
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        {
+          "type": "object",
+          "properties": {
+            "error": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "error"
+          ]
+        }
+      ]
+    }
+  },
+  {
+    "name": "NASACMR_search_granules",
+    "description": "Search NASA CMR for individual granules (data files/scenes) within Earth observation collections. Granules are the individual data files (e.g., a single day's MODIS image, one Landsat scene). Search by collection concept ID, bounding box, time range, or keyword. Returns file metadata including download links, spatial coverage, and temporal information. Useful for finding specific satellite data files to download.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "concept_id": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Parent collection concept ID (e.g., 'C2036882064-POCLOUD'). Get from NASACMR_search_collections."
+        },
+        "short_name": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Collection short name (e.g., 'MYD11A1', 'MODIS_A-JPL-L2P-v2019.0')"
+        },
+        "temporal": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Temporal range in format 'YYYY-MM-DD,YYYY-MM-DD'. Examples: '2020-01-01,2020-01-31', '2023-06-01,2023-06-30'"
+        },
+        "bounding_box": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Spatial bounding box: 'west,south,east,north' in decimal degrees. Example: '-10,35,10,55' for Western Europe"
+        },
+        "page_size": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "description": "Number of results (default 10, max 2000)"
+        }
+      },
+      "required": []
+    },
+    "fields": {
+      "endpoint": "https://cmr.earthdata.nasa.gov/search/granules.json"
+    },
+    "type": "BaseRESTTool",
+    "test_examples": [
+      {
+        "concept_id": "C2036882064-POCLOUD",
+        "temporal": "2020-01-01,2020-01-03",
+        "page_size": 5
+      },
+      {
+        "short_name": "GRACE-FO_L3_MASCON_GRID_RL06_v04",
+        "page_size": 3
+      },
+      {
+        "concept_id": "C2799438271-NSIDC_CPRD",
+        "temporal": "2023-01-01,2023-01-07",
+        "page_size": 5
+      }
+    ],
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "object",
+          "description": "NASA CMR granule search results",
+          "properties": {
+            "feed": {
+              "type": "object",
+              "properties": {
+                "title": {
+                  "type": "string"
+                },
+                "entry": {
+                  "type": "array",
+                  "description": "List of matching data granules",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "id": {
+                        "type": "string",
+                        "description": "Granule concept ID"
+                      },
+                      "title": {
+                        "type": "string",
+                        "description": "Granule title/filename"
+                      },
+                      "time_start": {
+                        "type": [
+                          "string",
+                          "null"
+                        ]
+                      },
+                      "time_end": {
+                        "type": [
+                          "string",
+                          "null"
+                        ]
+                      },
+                      "dataset_id": {
+                        "type": [
+                          "string",
+                          "null"
+                        ]
+                      },
+                      "collection_concept_id": {
+                        "type": [
+                          "string",
+                          "null"
+                        ]
+                      },
+                      "links": {
+                        "type": "array",
+                        "description": "Download and metadata links",
+                        "items": {
+                          "type": "object",
+                          "properties": {
+                            "rel": {
+                              "type": "string"
+                            },
+                            "href": {
+                              "type": "string"
+                            },
+                            "type": {
+                              "type": [
+                                "string",
+                                "null"
+                              ]
+                            },
+                            "title": {
+                              "type": [
+                                "string",
+                                "null"
+                              ]
+                            }
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        {
+          "type": "object",
+          "properties": {
+            "error": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "error"
+          ]
+        }
+      ]
+    }
+  }
+]

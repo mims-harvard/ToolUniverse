@@ -10,7 +10,7 @@ from ._shared_client import get_shared_client
 
 def EnsemblSeq_get_id_sequence(
     ensembl_id: str,
-    type: Optional[str] = "protein",
+    type_: Optional[str] = "protein",
     *,
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
@@ -23,7 +23,7 @@ def EnsemblSeq_get_id_sequence(
     ----------
     ensembl_id : str
         Ensembl stable ID. Examples: 'ENSP00000269305' (TP53 protein, 393 aa), 'ENST0...
-    type : str
+    type_ : str
         Sequence type to return. Options: 'protein' (amino acid), 'cdna' (spliced cDN...
     stream_callback : Callable, optional
         Callback for streaming output
@@ -41,7 +41,7 @@ def EnsemblSeq_get_id_sequence(
     return get_shared_client().run_one_function(
         {
             "name": "EnsemblSeq_get_id_sequence",
-            "arguments": {"ensembl_id": ensembl_id, "type": type},
+            "arguments": {"ensembl_id": ensembl_id, "type": type_},
         },
         stream_callback=stream_callback,
         use_cache=use_cache,

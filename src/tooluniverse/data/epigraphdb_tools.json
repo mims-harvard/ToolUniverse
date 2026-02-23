@@ -1,0 +1,829 @@
+[
+  {
+    "name": "EpiGraphDB_get_mendelian_randomization",
+    "description": "Get Mendelian Randomization (MR) evidence for a causal relationship between an exposure trait and an outcome trait using IEU OpenGWAS data. Returns MR estimates (beta, SE, p-value) from multiple instruments/methods. Example: exposure='Body mass index', outcome='Coronary heart disease' returns causal effect estimates.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "exposure_trait": {
+          "type": "string",
+          "description": "GWAS trait name for the exposure (e.g., 'Body mass index', 'LDL cholesterol', 'Type 2 diabetes'). Use EpiGraphDB_search_opengwas to find exact trait names."
+        },
+        "outcome_trait": {
+          "type": "string",
+          "description": "GWAS trait name for the outcome (e.g., 'Coronary heart disease', 'Stroke', 'Alzheimer disease'). Use EpiGraphDB_search_opengwas to find exact trait names."
+        },
+        "pval_threshold": {
+          "type": "number",
+          "description": "P-value threshold for instrument selection (default 1e-5).",
+          "default": 1e-05
+        }
+      },
+      "required": [
+        "exposure_trait",
+        "outcome_trait"
+      ]
+    },
+    "fields": {
+      "operation": "mr"
+    },
+    "type": "EpiGraphDBTool",
+    "test_examples": [
+      {
+        "exposure_trait": "Body mass index",
+        "outcome_trait": "Coronary heart disease",
+        "pval_threshold": 1e-05
+      },
+      {
+        "exposure_trait": "LDL cholesterol",
+        "outcome_trait": "Coronary heart disease",
+        "pval_threshold": 1e-05
+      }
+    ],
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "object",
+          "properties": {
+            "mr_results": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "exposure_id": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "exposure_trait": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "outcome_id": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "outcome_trait": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "beta": {
+                    "type": [
+                      "number",
+                      "null"
+                    ]
+                  },
+                  "se": {
+                    "type": [
+                      "number",
+                      "null"
+                    ]
+                  },
+                  "pval": {
+                    "type": [
+                      "number",
+                      "null"
+                    ]
+                  },
+                  "method": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "moescore": {
+                    "type": [
+                      "number",
+                      "null"
+                    ]
+                  }
+                }
+              }
+            },
+            "total_count": {
+              "type": [
+                "integer",
+                "null"
+              ]
+            }
+          }
+        },
+        {
+          "type": "object",
+          "properties": {
+            "error": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "error"
+          ]
+        }
+      ]
+    },
+    "label": [
+      "EpiGraphDB",
+      "Mendelian Randomization",
+      "GWAS",
+      "Causal Inference"
+    ],
+    "metadata": {
+      "tags": [
+        "mendelian_randomization",
+        "causal_inference",
+        "gwas",
+        "epidemiology"
+      ],
+      "estimated_execution_time": "5-15 seconds"
+    }
+  },
+  {
+    "name": "EpiGraphDB_get_genetic_correlations",
+    "description": "Get genetic correlations (rg) between a GWAS trait and all other traits in the IEU OpenGWAS database. Returns traits with significant genetic overlap. Useful for understanding shared genetic architecture between diseases. Example: 'Body mass index' shows high genetic correlation with waist circumference, diabetes.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "trait": {
+          "type": "string",
+          "description": "GWAS trait name to find genetic correlations for (e.g., 'Body mass index', 'Depression', 'Type 2 diabetes')."
+        },
+        "pval_threshold": {
+          "type": "number",
+          "description": "P-value threshold for genetic correlations (default 0.05).",
+          "default": 0.05
+        }
+      },
+      "required": [
+        "trait"
+      ]
+    },
+    "fields": {
+      "operation": "genetic_cor"
+    },
+    "type": "EpiGraphDBTool",
+    "test_examples": [
+      {
+        "trait": "Body mass index",
+        "pval_threshold": 0.01
+      },
+      {
+        "trait": "Depression",
+        "pval_threshold": 0.05
+      }
+    ],
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "object",
+          "properties": {
+            "correlations": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "trait1_id": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "trait1_trait": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "trait2_id": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "trait2_trait": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "rg": {
+                    "type": [
+                      "number",
+                      "null"
+                    ]
+                  },
+                  "rg_pval": {
+                    "type": [
+                      "number",
+                      "null"
+                    ]
+                  }
+                }
+              }
+            },
+            "total_count": {
+              "type": [
+                "integer",
+                "null"
+              ]
+            }
+          }
+        },
+        {
+          "type": "object",
+          "properties": {
+            "error": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "error"
+          ]
+        }
+      ]
+    },
+    "label": [
+      "EpiGraphDB",
+      "GWAS",
+      "Genetic Correlation"
+    ],
+    "metadata": {
+      "tags": [
+        "genetic_correlation",
+        "gwas",
+        "shared_genetics",
+        "epidemiology"
+      ],
+      "estimated_execution_time": "5-15 seconds"
+    }
+  },
+  {
+    "name": "EpiGraphDB_get_drugs_for_trait",
+    "description": "Find drugs that target genes associated with a GWAS risk factor trait. Uses genetic evidence to identify drug repurposing candidates. Returns drugs whose target genes are significantly associated with the trait via GWAS. Example: 'LDL cholesterol' returns statins (targeting HMGCR), PCSK9 inhibitors, etc.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "trait": {
+          "type": "string",
+          "description": "GWAS risk factor trait name (e.g., 'LDL cholesterol', 'Body mass index', 'C-reactive protein', 'Systolic blood pressure')."
+        },
+        "pval_threshold": {
+          "type": "number",
+          "description": "GWAS p-value threshold for gene-trait associations (default 1e-4).",
+          "default": 0.0001
+        }
+      },
+      "required": [
+        "trait"
+      ]
+    },
+    "fields": {
+      "operation": "drugs_risk_factors"
+    },
+    "type": "EpiGraphDBTool",
+    "test_examples": [
+      {
+        "trait": "LDL cholesterol",
+        "pval_threshold": 0.0001
+      },
+      {
+        "trait": "Body mass index",
+        "pval_threshold": 1e-05
+      }
+    ],
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "object",
+          "properties": {
+            "drugs": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "drug": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "gene": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "variant": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "evidence_count": {
+                    "type": [
+                      "integer",
+                      "null"
+                    ]
+                  }
+                }
+              }
+            },
+            "total_evidence_count": {
+              "type": [
+                "integer",
+                "null"
+              ]
+            },
+            "unique_drug_count": {
+              "type": [
+                "integer",
+                "null"
+              ]
+            }
+          }
+        },
+        {
+          "type": "object",
+          "properties": {
+            "error": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "error"
+          ]
+        }
+      ]
+    },
+    "label": [
+      "EpiGraphDB",
+      "Drug Repurposing",
+      "GWAS",
+      "Drug Discovery"
+    ],
+    "metadata": {
+      "tags": [
+        "drug_repurposing",
+        "gwas",
+        "pharmacogenomics",
+        "drug_discovery"
+      ],
+      "estimated_execution_time": "5-15 seconds"
+    }
+  },
+  {
+    "name": "EpiGraphDB_map_gwas_to_efo",
+    "description": "Map GWAS trait names to EFO (Experimental Factor Ontology) terms for standardization. Returns EFO IDs and labels corresponding to a GWAS trait. Useful for cross-database trait harmonization. Example: 'Body mass index' maps to EFO:0004340.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "trait": {
+          "type": "string",
+          "description": "GWAS trait name to map to EFO (e.g., 'Body mass index', 'coronary artery disease', 'type 2 diabetes')."
+        }
+      },
+      "required": [
+        "trait"
+      ]
+    },
+    "fields": {
+      "operation": "gwas_efo"
+    },
+    "type": "EpiGraphDBTool",
+    "test_examples": [
+      {
+        "trait": "Body mass index"
+      },
+      {
+        "trait": "coronary artery disease"
+      }
+    ],
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "object",
+          "properties": {
+            "efo_mappings": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "efo_id": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "efo_label": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "gwas_id": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "gwas_trait": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "score": {
+                    "type": [
+                      "number",
+                      "null"
+                    ]
+                  }
+                }
+              }
+            },
+            "total_count": {
+              "type": [
+                "integer",
+                "null"
+              ]
+            }
+          }
+        },
+        {
+          "type": "object",
+          "properties": {
+            "error": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "error"
+          ]
+        }
+      ]
+    },
+    "label": [
+      "EpiGraphDB",
+      "EFO",
+      "Ontology",
+      "GWAS"
+    ],
+    "metadata": {
+      "tags": [
+        "efo",
+        "ontology_mapping",
+        "gwas",
+        "trait_standardization"
+      ],
+      "estimated_execution_time": "< 5 seconds"
+    }
+  },
+  {
+    "name": "EpiGraphDB_search_gene",
+    "description": "Search for gene information in EpiGraphDB by gene symbol or Ensembl ID. Returns gene metadata including druggability classification, chromosomal location, and gene type. Example: 'BRCA1' returns Tier 2 druggability, chr17 location.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "gene_name": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Gene symbol to search for (e.g., 'BRCA1', 'TP53', 'EGFR'). Either gene_name or gene_id required."
+        },
+        "gene_id": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Ensembl gene ID (e.g., 'ENSG00000012048'). Either gene_name or gene_id required."
+        },
+        "limit": {
+          "type": "integer",
+          "description": "Maximum results to return (default 10, max 50).",
+          "default": 10
+        }
+      },
+      "required": []
+    },
+    "fields": {
+      "operation": "gene_search"
+    },
+    "type": "EpiGraphDBTool",
+    "test_examples": [
+      {
+        "gene_name": "BRCA1"
+      },
+      {
+        "gene_name": "TP53",
+        "limit": 5
+      }
+    ],
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "object",
+          "properties": {
+            "genes": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "ensembl_id": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "name": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "description": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "chr": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "druggability_tier": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "bio_druggable": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "small_mol_druggable": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  }
+                }
+              }
+            },
+            "total_found": {
+              "type": [
+                "integer",
+                "null"
+              ]
+            }
+          }
+        },
+        {
+          "type": "object",
+          "properties": {
+            "error": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "error"
+          ]
+        }
+      ]
+    },
+    "label": [
+      "EpiGraphDB",
+      "Gene",
+      "Druggability"
+    ],
+    "metadata": {
+      "tags": [
+        "gene_search",
+        "druggability",
+        "epigraphdb"
+      ],
+      "estimated_execution_time": "< 3 seconds"
+    }
+  },
+  {
+    "name": "EpiGraphDB_get_gene_drug_associations",
+    "description": "Get pharmacogenomics drug-gene associations from CPIC and PharmGKB databases via EpiGraphDB. Returns drugs associated with a gene with clinical evidence levels. Example: 'DPYD' returns fluorouracil with CPIC Level A evidence.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "gene_name": {
+          "type": "string",
+          "description": "Gene symbol to find drug associations for (e.g., 'TP53', 'EGFR', 'DPYD', 'CYP2D6')."
+        },
+        "pval_threshold": {
+          "type": "number",
+          "description": "P-value threshold (default 0.05).",
+          "default": 0.05
+        }
+      },
+      "required": [
+        "gene_name"
+      ]
+    },
+    "fields": {
+      "operation": "gene_drugs"
+    },
+    "type": "EpiGraphDBTool",
+    "test_examples": [
+      {
+        "gene_name": "EGFR"
+      },
+      {
+        "gene_name": "DPYD"
+      }
+    ],
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "object",
+          "properties": {
+            "gene_drug_associations": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "gene": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "drug": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "source": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "pharmgkb_evidence": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "cpic_level": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "pgx_on_fda_label": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  }
+                }
+              }
+            },
+            "total_count": {
+              "type": [
+                "integer",
+                "null"
+              ]
+            }
+          }
+        },
+        {
+          "type": "object",
+          "properties": {
+            "error": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "error"
+          ]
+        }
+      ]
+    },
+    "label": [
+      "EpiGraphDB",
+      "Pharmacogenomics",
+      "Drug-Gene"
+    ],
+    "metadata": {
+      "tags": [
+        "pharmacogenomics",
+        "drug_gene",
+        "cpic",
+        "pharmgkb"
+      ],
+      "estimated_execution_time": "< 5 seconds"
+    }
+  },
+  {
+    "name": "EpiGraphDB_search_opengwas",
+    "description": "Search the IEU OpenGWAS database for GWAS studies by trait name. Returns matching GWAS study IDs and trait names with similarity scores. OpenGWAS IDs (e.g., 'ieu-a-2') are needed as inputs for Mendelian Randomization analyses. Example: 'body mass index' returns 'ieu-a-2', 'ieu-b-40', etc.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "query": {
+          "type": "string",
+          "description": "Trait or phenotype name to search for in OpenGWAS (e.g., 'body mass index', 'coronary heart disease', 'type 2 diabetes', 'blood pressure')."
+        }
+      },
+      "required": [
+        "query"
+      ]
+    },
+    "fields": {
+      "operation": "opengwas_search"
+    },
+    "type": "EpiGraphDBTool",
+    "test_examples": [
+      {
+        "query": "body mass index"
+      },
+      {
+        "query": "coronary heart disease"
+      }
+    ],
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "object",
+          "properties": {
+            "gwas_studies": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "id": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "trait": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "similarity_score": {
+                    "type": [
+                      "number",
+                      "null"
+                    ]
+                  }
+                }
+              }
+            },
+            "total_found": {
+              "type": [
+                "integer",
+                "null"
+              ]
+            }
+          }
+        },
+        {
+          "type": "object",
+          "properties": {
+            "error": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "error"
+          ]
+        }
+      ]
+    },
+    "label": [
+      "EpiGraphDB",
+      "OpenGWAS",
+      "GWAS"
+    ],
+    "metadata": {
+      "tags": [
+        "gwas",
+        "opengwas",
+        "trait_search",
+        "mendelian_randomization"
+      ],
+      "estimated_execution_time": "< 3 seconds"
+    }
+  }
+]

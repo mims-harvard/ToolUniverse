@@ -1,0 +1,400 @@
+[
+  {
+    "name": "G2P_search",
+    "description": "Search the Gene2Phenotype (G2P) database for gene-disease associations curated by clinical geneticists. G2P is maintained by EBI and provides expert-curated evidence for gene-disease relationships used in clinical diagnosis. Returns gene-disease pairs with genotype (monoallelic/biallelic), molecular mechanism (loss/gain of function), clinical panel assignment (DD, Cancer, Skeletal, etc.), and confidence level (definitive, strong, moderate, limited). Useful for clinical variant interpretation and genetic diagnosis.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "query": {
+          "type": "string",
+          "description": "Search query - gene symbol (e.g., 'BRCA1', 'TP53') or disease name (e.g., 'epilepsy', 'cardiomyopathy', 'cancer')"
+        },
+        "page": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "description": "Page number for pagination (default 1)"
+        }
+      },
+      "required": [
+        "query"
+      ]
+    },
+    "fields": {
+      "endpoint": "https://www.ebi.ac.uk/gene2phenotype/api/search/"
+    },
+    "type": "BaseRESTTool",
+    "test_examples": [
+      {
+        "query": "BRCA1"
+      },
+      {
+        "query": "epilepsy"
+      },
+      {
+        "query": "cardiomyopathy"
+      }
+    ],
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "object",
+          "description": "G2P search results",
+          "properties": {
+            "count": {
+              "type": "integer",
+              "description": "Total number of matching gene-disease records"
+            },
+            "next": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "URL for next page of results"
+            },
+            "results": {
+              "type": "array",
+              "description": "Array of gene-disease association records",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "stable_id": {
+                    "type": "string",
+                    "description": "G2P stable identifier (e.g., 'G2P01796')"
+                  },
+                  "gene": {
+                    "type": "string",
+                    "description": "Gene symbol"
+                  },
+                  "genotype": {
+                    "type": "string",
+                    "description": "Inheritance pattern (monoallelic_autosomal, biallelic_autosomal, x_linked, etc.)"
+                  },
+                  "disease": {
+                    "type": "string",
+                    "description": "Disease name"
+                  },
+                  "mechanism": {
+                    "type": "string",
+                    "description": "Molecular mechanism (loss of function, gain of function, etc.)"
+                  },
+                  "panel": {
+                    "type": "array",
+                    "description": "Clinical panels (DD=developmental disorders, Cancer, Skeletal, Eye, Cardiac, etc.)",
+                    "items": {
+                      "type": "string"
+                    }
+                  },
+                  "confidence": {
+                    "type": "string",
+                    "description": "Evidence confidence level (definitive, strong, moderate, limited)"
+                  }
+                }
+              }
+            }
+          }
+        },
+        {
+          "type": "object",
+          "properties": {
+            "error": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "error"
+          ]
+        }
+      ]
+    }
+  },
+  {
+    "name": "G2P_get_record",
+    "description": "Get detailed Gene2Phenotype (G2P) record for a specific gene-disease association by its stable ID. Returns comprehensive clinical genetics information including locus details (gene symbol, genomic coordinates, cross-references), genotype/inheritance pattern, variant consequences (with Sequence Ontology terms), molecular mechanism with evidence, disease details with ontology terms, confidence level, and supporting publications. Use G2P_search first to find stable IDs.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "stable_id": {
+          "type": "string",
+          "description": "G2P stable identifier (e.g., 'G2P01796', 'G2P00119', 'G2P00979'). Get IDs from G2P_search results."
+        }
+      },
+      "required": [
+        "stable_id"
+      ]
+    },
+    "fields": {
+      "endpoint": "https://www.ebi.ac.uk/gene2phenotype/api/lgd/{stable_id}"
+    },
+    "type": "BaseRESTTool",
+    "test_examples": [
+      {
+        "stable_id": "G2P01796"
+      },
+      {
+        "stable_id": "G2P00119"
+      },
+      {
+        "stable_id": "G2P00979"
+      }
+    ],
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "object",
+          "description": "Detailed G2P gene-disease record",
+          "properties": {
+            "stable_id": {
+              "type": "string"
+            },
+            "locus": {
+              "type": "object",
+              "description": "Gene/locus details",
+              "properties": {
+                "gene_symbol": {
+                  "type": "string"
+                },
+                "sequence": {
+                  "type": "string",
+                  "description": "Chromosome"
+                },
+                "start": {
+                  "type": "integer"
+                },
+                "end": {
+                  "type": "integer"
+                },
+                "strand": {
+                  "type": "integer"
+                },
+                "reference": {
+                  "type": "string",
+                  "description": "Genome assembly"
+                },
+                "ids": {
+                  "type": "object",
+                  "description": "Cross-references (HGNC, Ensembl, OMIM)"
+                },
+                "synonyms": {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  }
+                }
+              }
+            },
+            "genotype": {
+              "type": "string",
+              "description": "Inheritance pattern"
+            },
+            "variant_consequence": {
+              "type": "array",
+              "description": "Variant consequences with Sequence Ontology terms"
+            },
+            "molecular_mechanism": {
+              "type": "object",
+              "description": "Molecular mechanism (loss/gain of function) with evidence"
+            },
+            "disease": {
+              "type": "object",
+              "description": "Disease details with ontology terms and synonyms"
+            },
+            "confidence": {
+              "type": "string",
+              "description": "Evidence confidence level"
+            },
+            "publications": {
+              "type": "array",
+              "description": "Supporting publications with PubMed IDs"
+            }
+          }
+        },
+        {
+          "type": "object",
+          "properties": {
+            "error": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "error"
+          ]
+        }
+      ]
+    }
+  },
+  {
+    "name": "G2P_get_gene",
+    "description": "Get Gene2Phenotype information for a specific gene by symbol. Returns gene location, cross-references to HGNC/Ensembl/OMIM, gene synonyms, and genomic coordinates. This provides the gene-level data without disease associations. For disease associations, use G2P_search with the gene name instead.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "gene_symbol": {
+          "type": "string",
+          "description": "Gene symbol (e.g., 'BRCA1', 'TP53', 'EGFR', 'SCN1A')"
+        }
+      },
+      "required": [
+        "gene_symbol"
+      ]
+    },
+    "fields": {
+      "endpoint": "https://www.ebi.ac.uk/gene2phenotype/api/gene/{gene_symbol}"
+    },
+    "type": "BaseRESTTool",
+    "test_examples": [
+      {
+        "gene_symbol": "BRCA1"
+      },
+      {
+        "gene_symbol": "TP53"
+      },
+      {
+        "gene_symbol": "SCN1A"
+      }
+    ],
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "object",
+          "description": "Gene information from G2P",
+          "properties": {
+            "gene_symbol": {
+              "type": "string"
+            },
+            "sequence": {
+              "type": "string",
+              "description": "Chromosome"
+            },
+            "start": {
+              "type": "integer"
+            },
+            "end": {
+              "type": "integer"
+            },
+            "strand": {
+              "type": "integer"
+            },
+            "reference": {
+              "type": "string"
+            },
+            "ids": {
+              "type": "object",
+              "description": "Cross-references (HGNC, Ensembl, OMIM IDs)"
+            },
+            "synonyms": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
+            "last_updated": {
+              "type": "string"
+            }
+          }
+        },
+        {
+          "type": "object",
+          "properties": {
+            "error": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "error"
+          ]
+        }
+      ]
+    }
+  },
+  {
+    "name": "G2P_get_panel",
+    "description": "Get summary statistics for a Gene2Phenotype clinical panel. G2P organizes gene-disease associations into expert-curated panels: DD (developmental disorders), Cancer, Skeletal, Eye, Cardiac, Ear, Skin, and Prenatal. Returns panel name, description, last update date, total records count, total genes, and breakdown by confidence level (definitive, strong, moderate, limited).",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "panel": {
+          "type": "string",
+          "description": "Panel name: 'cancer', 'dd' (developmental disorders), 'skeletal', 'eye', 'cardiac', 'ear', 'skin', 'prenatal'"
+        }
+      },
+      "required": [
+        "panel"
+      ]
+    },
+    "fields": {
+      "endpoint": "https://www.ebi.ac.uk/gene2phenotype/api/panel/{panel}"
+    },
+    "type": "BaseRESTTool",
+    "test_examples": [
+      {
+        "panel": "cancer"
+      },
+      {
+        "panel": "dd"
+      },
+      {
+        "panel": "cardiac"
+      }
+    ],
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "object",
+          "description": "Panel summary statistics",
+          "properties": {
+            "name": {
+              "type": "string"
+            },
+            "description": {
+              "type": "string"
+            },
+            "last_updated": {
+              "type": "string"
+            },
+            "stats": {
+              "type": "object",
+              "properties": {
+                "total_records": {
+                  "type": "integer"
+                },
+                "total_genes": {
+                  "type": "integer"
+                },
+                "by_confidence": {
+                  "type": "object",
+                  "properties": {
+                    "definitive": {
+                      "type": "integer"
+                    },
+                    "strong": {
+                      "type": "integer"
+                    },
+                    "moderate": {
+                      "type": "integer"
+                    },
+                    "limited": {
+                      "type": "integer"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        {
+          "type": "object",
+          "properties": {
+            "error": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "error"
+          ]
+        }
+      ]
+    }
+  }
+]

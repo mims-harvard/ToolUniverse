@@ -1,0 +1,163 @@
+[
+  {
+    "name": "FDA_search_drug_labels",
+    "description": "Search FDA-approved drug labels (prescribing information) by drug name or medical indication. Drug labels contain official clinical guidance: indications, dosing regimens, contraindications, black box warnings, drug interactions, and adverse reactions. Use drug_name for drug-specific lookups (e.g., 'metformin', 'warfarin') or indication for condition-based searches (e.g., 'hypertension', 'type 2 diabetes'). Returns a list of matching drug labels with key clinical sections.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "drug_name": {
+          "type": ["string", "null"],
+          "description": "Brand or generic drug name to search (e.g., 'metformin', 'atorvastatin', 'lisinopril'). Mutually exclusive with indication."
+        },
+        "indication": {
+          "type": ["string", "null"],
+          "description": "Medical condition to search in indications sections (e.g., 'hypertension', 'type 2 diabetes', 'atrial fibrillation'). Mutually exclusive with drug_name."
+        },
+        "limit": {
+          "type": "integer",
+          "description": "Maximum number of results to return (default: 5, max: 20)",
+          "default": 5
+        }
+      },
+      "required": ["limit"]
+    },
+    "fields": {
+      "endpoint": "https://api.fda.gov/drug/label.json",
+      "query_type": "search"
+    },
+    "type": "FDALabelTool",
+    "test_examples": [
+      {"drug_name": "metformin", "limit": 3},
+      {"indication": "hypertension", "limit": 3}
+    ],
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "array",
+          "description": "List of FDA drug label summaries with clinical sections",
+          "items": {
+            "type": "object",
+            "properties": {
+              "brand_name": {"type": ["string", "null"]},
+              "generic_name": {"type": ["string", "null"]},
+              "manufacturer": {"type": ["string", "null"]},
+              "route": {"type": ["string", "null"]},
+              "pharm_class": {"type": ["string", "null"]},
+              "boxed_warning": {"type": ["string", "null"]},
+              "indications_and_usage": {"type": ["string", "null"]},
+              "dosage_and_administration": {"type": ["string", "null"]},
+              "contraindications": {"type": ["string", "null"]},
+              "warnings_and_precautions": {"type": ["string", "null"]},
+              "drug_interactions": {"type": ["string", "null"]},
+              "spl_id": {"type": ["string", "null"]}
+            }
+          }
+        },
+        {
+          "type": "object",
+          "properties": {"error": {"type": "string"}},
+          "required": ["error"]
+        }
+      ]
+    }
+  },
+  {
+    "name": "FDA_get_drug_label",
+    "description": "Get the complete FDA-approved prescribing information for a specific drug by name. Returns all clinical sections of the official drug label: indications, dosing regimens, contraindications, black box warnings, drug interactions, use in specific populations (pregnancy, pediatrics, renal/hepatic impairment), pharmacokinetics, mechanism of action, and adverse reactions. This is the authoritative source for FDA-approved drug clinical information in the US.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "drug_name": {
+          "type": "string",
+          "description": "Brand or generic drug name (e.g., 'warfarin', 'Eliquis', 'apixaban', 'atorvastatin', 'metformin')"
+        }
+      },
+      "required": ["drug_name"]
+    },
+    "fields": {
+      "endpoint": "https://api.fda.gov/drug/label.json",
+      "query_type": "get"
+    },
+    "type": "FDALabelTool",
+    "test_examples": [
+      {"drug_name": "warfarin"},
+      {"drug_name": "metformin"}
+    ],
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "object",
+          "description": "Complete FDA drug label with all clinical sections",
+          "properties": {
+            "brand_name": {"type": ["string", "null"]},
+            "generic_name": {"type": ["string", "null"]},
+            "manufacturer": {"type": ["string", "null"]},
+            "route": {"type": ["string", "null"]},
+            "pharm_class": {"type": ["string", "null"]},
+            "rxcui": {"type": ["array", "null"]},
+            "boxed_warning": {"type": ["string", "null"]},
+            "indications_and_usage": {"type": ["string", "null"]},
+            "dosage_and_administration": {"type": ["string", "null"]},
+            "dosage_forms_and_strengths": {"type": ["string", "null"]},
+            "contraindications": {"type": ["string", "null"]},
+            "warnings_and_precautions": {"type": ["string", "null"]},
+            "adverse_reactions": {"type": ["string", "null"]},
+            "drug_interactions": {"type": ["string", "null"]},
+            "use_in_specific_populations": {"type": ["string", "null"]},
+            "clinical_pharmacology": {"type": ["string", "null"]},
+            "mechanism_of_action": {"type": ["string", "null"]},
+            "spl_id": {"type": ["string", "null"]}
+          }
+        },
+        {
+          "type": "object",
+          "properties": {"error": {"type": "string"}},
+          "required": ["error"]
+        }
+      ]
+    }
+  },
+  {
+    "name": "FDA_list_drug_classes",
+    "description": "List FDA pharmacological drug classes (Established Pharmacologic Class, EPC) and the number of drug products in each class. Classes include designations like 'Selective Serotonin Reuptake Inhibitor [EPC]', 'Beta-Adrenergic Blocker [EPC]', 'HMG-CoA Reductase Inhibitor [EPC]' (statins), 'ACE Inhibitor [EPC]', etc. Use this to discover drug class names for filtering or understanding drug categorization.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "limit": {
+          "type": "integer",
+          "description": "Maximum number of drug classes to return (default: 20, max: 100)",
+          "default": 20
+        }
+      },
+      "required": ["limit"]
+    },
+    "fields": {
+      "endpoint": "https://api.fda.gov/drug/label.json",
+      "query_type": "list_classes"
+    },
+    "type": "FDALabelTool",
+    "test_examples": [
+      {"limit": 20}
+    ],
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "array",
+          "description": "List of FDA pharmacological drug classes with product counts",
+          "items": {
+            "type": "object",
+            "properties": {
+              "drug_class": {"type": "string"},
+              "count": {"type": "integer"}
+            }
+          }
+        },
+        {
+          "type": "object",
+          "properties": {"error": {"type": "string"}},
+          "required": ["error"]
+        }
+      ]
+    }
+  }
+]

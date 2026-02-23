@@ -282,8 +282,7 @@ Create ``tests/integration/test_my_remote_tool.py``:
 
        def test_tool_discovery(self):
            """Test that tool is discovered correctly."""
-           tools = self.tu.list_tools()
-           assert "my_remote_tool" in tools
+           assert "my_remote_tool" in self.tu.all_tool_dict
 
 Run tests:
 .. code-block:: bash
@@ -498,8 +497,7 @@ Troubleshooting
    tu = ToolUniverse()
    tu.load_tools()
    
-   tools = tu.list_tools()
-   print("my_remote_tool" in tools)  # Should be True
+   print("my_remote_tool" in tu.all_tool_dict)  # Should be True
 
 **Server returns unexpected format**
 - Ensure server follows MCP protocol

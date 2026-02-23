@@ -10,7 +10,7 @@ from ._shared_client import get_shared_client
 
 def ensembl_get_sequence(
     id: str,
-    type: Optional[str] = "genomic",
+    type_: Optional[str] = "genomic",
     species: Optional[str] = None,
     multiple_sequences: Optional[bool] = True,
     *,
@@ -25,7 +25,7 @@ def ensembl_get_sequence(
     ----------
     id : str
         Ensembl gene/transcript ID (e.g., 'ENSG00000139618' or 'ENST00000380152')
-    type : str
+    type_ : str
         Sequence type: 'genomic' (genomic DNA), 'cds' (coding sequence), 'cdna' (cDNA...
     species : str
         Species name (optional, defaults to human)
@@ -49,7 +49,7 @@ def ensembl_get_sequence(
             "name": "ensembl_get_sequence",
             "arguments": {
                 "id": id,
-                "type": type,
+                "type": type_,
                 "species": species,
                 "multiple_sequences": multiple_sequences,
             },

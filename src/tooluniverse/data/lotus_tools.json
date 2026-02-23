@@ -33,6 +33,7 @@
       "oneOf": [
         {
           "type": "object",
+          "description": "LOTUS search results",
           "properties": {
             "originalQuery": {
               "type": "string",
@@ -104,24 +105,16 @@
                 }
               }
             }
-          },
-          "description": "LOTUS search results"
+          }
         },
         {
           "type": "object",
           "properties": {
-            "status": {
-              "type": "string",
-              "enum": [
-                "error"
-              ]
-            },
             "error": {
               "type": "string"
             }
           },
           "required": [
-            "status",
             "error"
           ]
         }
@@ -159,6 +152,7 @@
       "oneOf": [
         {
           "type": "object",
+          "description": "Detailed compound information",
           "properties": {
             "lotus_id": {
               "type": "string",
@@ -321,24 +315,16 @@
               ],
               "description": "Source organisms from which this natural product has been isolated"
             }
-          },
-          "description": "Detailed compound information"
+          }
         },
         {
           "type": "object",
           "properties": {
-            "status": {
-              "type": "string",
-              "enum": [
-                "error"
-              ]
-            },
             "error": {
               "type": "string"
             }
           },
           "required": [
-            "status",
             "error"
           ]
         }
@@ -376,6 +362,7 @@
       "oneOf": [
         {
           "type": "object",
+          "description": "LOTUS InChIKey search results",
           "properties": {
             "originalQuery": {
               "type": "string"
@@ -422,24 +409,16 @@
                 }
               }
             }
-          },
-          "description": "LOTUS InChIKey search results"
+          }
         },
         {
           "type": "object",
           "properties": {
-            "status": {
-              "type": "string",
-              "enum": [
-                "error"
-              ]
-            },
             "error": {
               "type": "string"
             }
           },
           "required": [
-            "status",
             "error"
           ]
         }

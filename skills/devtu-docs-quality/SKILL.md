@@ -1,455 +1,208 @@
 ---
 name: devtu-docs-quality
-description: Comprehensive documentation quality system combining automated validation with ToolUniverse-specific auditing. Detects outdated commands, circular navigation, inconsistent terminology, auto-generated file conflicts, broken links, and structural problems. Use when reviewing documentation, before releases, after refactoring, or when user asks to audit, optimize, or improve documentation quality.
+description: TOP PRIORITY skill — find and immediately fix or remove every piece of wrong or outdated information in ToolUniverse docs. Wrong code, invalid method calls, outdated API patterns, and incorrect examples must be fixed or removed — never left in place. Runs four phases: static method-name scan, live code block execution, automated validation, and ToolUniverse-specific audit. Use when reviewing docs, before releases, after API changes, or when a user asks to audit, check, fix, or improve documentation quality.
 ---
 
 # Documentation Quality Assurance
 
-Systematic documentation quality system combining automated validation scripts with ToolUniverse-specific structural audits.
+## ⚠️ TOP PRIORITY — Zero Tolerance for Wrong Information
+
+> **Fixing wrong and outdated documentation is the single highest priority task in this skill. It overrides all other work.**
+
+If a code example calls a method that doesn't exist, crashes at runtime, or uses a deprecated pattern:
+- **Fix it immediately** if there is a correct equivalent
+- **Remove it immediately** if no equivalent exists
+
+Leaving wrong code in docs is worse than having no docs — it actively misleads users and breaks their code. When in doubt about whether something is correct, **verify it against the source** (`src/tooluniverse/execute_function.py`) before moving on.
 
 ## When to Use
 
-- Pre-release documentation review
-- After major refactoring (commands, APIs, tool counts changed)
-- User reports confusing or outdated documentation
-- Circular navigation or structural problems suspected
-- Want to establish automated validation pipeline
+- Before a release, after an API refactor, or after adding new tools
+- User reports confusing or broken documentation
+- Code examples might reference methods that no longer exist
+- Structural problems (circular navigation, inconsistent counts) suspected
 
-## Approach: Two-Phase Strategy
+## Four-Phase Strategy
 
-**Phase A: Automated Validation** (15-20 min)
-- Create validation scripts for systematic detection
-- Test commands, links, terminology consistency
-- Priority-based fixes (blockers → polish)
+Run phases in this order — **D first** (fastest), **C second**, then A/B.
 
-**Phase B: ToolUniverse-Specific Audit** (20-25 min)
-- Circular navigation checks
-- MCP configuration duplication
-- Tool count consistency
-- Auto-generated file conflicts
+| Phase | What it catches | Time |
+|-------|----------------|------|
+| **D** Static method scan | Wrong method names (`tu.run_batch`, `tu.call_tool`, etc.) | ~2 s |
+| **C** Live code execution | Runtime failures (wrong key, bad return type) | 3-5 min |
+| **A** Automated validation | Deprecated commands, broken links, term inconsistency | 15 min |
+| **B** ToolUniverse audit | Circular nav, duplicate MCP configs, tool counts | 20 min |
+
+## Complete Audit — Run This First
+
+```bash
+# Phase D: static method-name scan (no network, instant)
+python3 - <<'EOF'
+import re, sys
+from pathlib import Path
+from collections import defaultdict
+DOCS = Path("docs")
+EXCLUDE = {"locale", "old", "_build", "__pycache__", "tools", "archive"}
+KNOWN_BAD = {
+    "list_tools", "run_batch", "run_async", "execute_tool", "call_tool",
+    "list_tools_by_category", "configure_api_keys", "get_tool", "get_exposed_name",
+    "list_available_methods", "register_tool_from_config", "register_tool",
+}
+STATIC = [
+    (r"\.load_tools\([^)]*(?:use_cache|cache_dir)\s*=", "load_tools() invalid kwargs"),
+    (r"ToolUniverse\([^)]*timeout\s*=", "ToolUniverse(timeout=) invalid"),
+    (r'"name":\s*"opentarget_', 'old lowercase "opentarget_*" tool name'),
+    (r"tu\.run_batch\(", "tu.run_batch() — use tu.run(list, max_workers=N)"),
+    (r'\btu\.[A-Z]\w+\s*\(', "tu.ToolName() shorthand — use tu.run({name:...})"),
+]
+M = re.compile(r'\b(?:tu|tooluni)\.([\w]+)\s*\(')
+issues = defaultdict(list)
+for f in sorted(list(DOCS.rglob("*.rst")) + list(DOCS.rglob("*.md"))):
+    if any(p in f.parts for p in EXCLUDE): continue
+    t = f.read_text(errors="replace")
+    code = "\n".join(
+        re.findall(r"\.\. code-block:: python\n((?:[ \t]+[^\n]*\n|[ \t]*\n)*)", t, re.MULTILINE) +
+        re.findall(r"```python\n(.*?)```", t, re.DOTALL))
+    if not code.strip(): continue
+    rel = str(f.relative_to(DOCS))
+    for m in M.finditer(code):
+        if not m.group(1).startswith("_") and m.group(1) in KNOWN_BAD:
+            issues[rel].append(f"tu.{m.group(1)}()")
+    for pat, label in STATIC:
+        if re.search(pat, code): issues[rel].append(label)
+if issues:
+    [print(f"  {f}: {i}") for f in sorted(issues) for i in sorted(set(issues[f]))]
+    sys.exit(1)
+else:
+    print("✅ Phase D clean")
+EOF
+
+# Phase C: live code block execution
+python scripts/test_doc_code_blocks.py
+
+# Phase A: structural validation
+python scripts/validate_documentation.py
+```
+
+## Phase D: Fix Wrong Method Calls
+
+When Phase D reports a file, look up the wrong call in [API_REFERENCE.md](API_REFERENCE.md) for the exact fix.
+
+**Most common fixes:**
+
+```python
+# ❌ → ✅
+tu.run_batch(list)              → tu.run(list, max_workers=4)
+tu.run_async(query)             → await tu.run(query)
+tu.call_tool('X', {...})        → tu.run({"name": "X", "arguments": {...}})
+tu.execute_tool('X', {...})     → tu.run({"name": "X", "arguments": {...}})
+tu.list_tools()                 → tu.list_built_in_tools(mode='list_name')
+tu.get_tool('X')                → tu.get_tool_by_name('X')
+tu.register_tool(instance)      → tu.register_custom_tool(tool_instance=instance)
+tu.register_tool_from_config(c) → tu.register_custom_tool(tool_config=c)
+tu.configure_api_keys({})       → REMOVE — use env vars
+tu.get_exposed_name(name)       → REMOVE — shortening is automatic
+ToolUniverse(timeout=30)        → ToolUniverse()  # no timeout kwarg
+load_tools(use_cache=True)      → load_tools()  # no use_cache kwarg
+tu.ToolName(key=val)            → tu.run({"name": "ToolName", "arguments": {"key": val}})
+opentarget_get_*                → OpenTargets_get_*  (capital O and T)
+```
+
+**Fix-or-remove rule — no exceptions:**
+- Correct replacement exists → **fix it immediately**
+- Feature is automatic/internal → **remove the call**, add a prose comment if needed
+- Feature simply doesn't exist → **delete the code block or section entirely**
+
+Do not mark something as "TODO fix later". Fix it now or remove it now.
+
+**Special case — error diagrams:** Change `.. code-block:: python` to `.. code-block:: text` when showing intentionally-wrong code as an error example. This prevents the scanner from flagging it.
+
+## Phase C: Fix Runtime Failures
+
+The live test runner is at `scripts/test_doc_code_blocks.py`. It:
+- Injects a real `ToolUniverse` instance as preamble
+- Skips blocks that need API keys, start servers, or use async
+- Classifies `NameError` on out-of-scope variables as "context-dependent" (not a failure)
+
+**Common runtime failures and fixes:**
+
+| Error | Cause | Fix |
+|-------|-------|-----|
+| `KeyError: 'parameters'` | `tool_specification()` without `format="openai"` | Add `format="openai"` |
+| `KeyError: slice(...)` on OpenTargets result | Slicing a dict | Use `result['data']['disease']['associatedTargets']['rows'][:N]` |
+| `TypeError: load_tools() got unexpected kwarg` | `use_cache` or `cache_dir` | Remove the kwarg |
+
+For full patterns, see [API_REFERENCE.md](API_REFERENCE.md).
 
 ## Phase A: Automated Validation
 
-### A1. Build Validation Script
-
-Create `scripts/validate_documentation.py`:
-
 ```python
-#!/usr/bin/env python3
-"""Documentation validator for ToolUniverse"""
-
-import re
-import glob
-from pathlib import Path
-
-DOCS_ROOT = Path("docs")
-
-# ToolUniverse-specific patterns
+# scripts/validate_documentation.py checks:
 DEPRECATED_PATTERNS = [
     (r"python -m tooluniverse\.server", "tooluniverse-server"),
     (r"600\+?\s+tools", "1000+ tools"),
     (r"750\+?\s+tools", "1000+ tools"),
 ]
-
-def is_false_positive(match, content):
-    """Smart context checking to avoid false positives"""
-    start = max(0, match.start() - 100)
-    end = min(len(content), match.end() + 100)
-    context = content[start:end].lower()
-    
-    # Skip if discussing deprecation itself
-    if any(kw in context for kw in ['deprecated', 'old version', 'migration']):
-        return True
-    
-    # Skip technical values (ports, dimensions, etc.)
-    if any(kw in context for kw in ['width', 'height', 'port', '":"']):
-        return True
-    
-    return False
-
-def validate_file(filepath):
-    """Check one file for issues"""
-    with open(filepath, 'r', encoding='utf-8') as f:
-        content = f.read()
-    
-    issues = []
-    
-    # Check deprecated patterns
-    for old_pattern, new_text in DEPRECATED_PATTERNS:
-        matches = re.finditer(old_pattern, content)
-        for match in matches:
-            if is_false_positive(match, content):
-                continue
-            
-            line_num = content[:match.start()].count('\n') + 1
-            issues.append({
-                'file': filepath,
-                'line': line_num,
-                'severity': 'HIGH',
-                'found': match.group(),
-                'suggestion': new_text
-            })
-    
-    return issues
-
-# Scan all docs
-all_issues = []
-for doc_file in glob.glob(str(DOCS_ROOT / "**/*.md"), recursive=True):
-    all_issues.extend(validate_file(doc_file))
-
-for doc_file in glob.glob(str(DOCS_ROOT / "**/*.rst"), recursive=True):
-    all_issues.extend(validate_file(doc_file))
-
-# Report
-if all_issues:
-    print(f"❌ Found {len(all_issues)} issues\n")
-    for issue in all_issues:
-        print(f"{issue['file']}:{issue['line']} [{issue['severity']}]")
-        print(f"  Found: {issue['found']}")
-        print(f"  Should be: {issue['suggestion']}\n")
-    exit(1)
-else:
-    print("✅ Documentation validation passed")
-    exit(0)
 ```
 
-### A2. Command Accuracy Check
-
-Test that commands in docs actually work:
-
+Additional checks:
 ```bash
-# Extract and test commands
-grep -r "^\s*\$\s*" docs/ | while read line; do
-    cmd=$(echo "$line" | sed 's/.*\$ //' | cut -d' ' -f1)
-    if ! command -v "$cmd" &> /dev/null; then
-        echo "❌ Command not found: $cmd in $line"
-    fi
-done
-```
+# Broken :doc: references
+rg ':doc:`([^`]+)`' docs/ -o | python3 -c "
+import sys, re
+from pathlib import Path
+for line in sys.stdin:
+    m = re.search(r'`([^`]+)`', line)
+    if m:
+        ref = m.group(1)
+        if not any(Path('docs', p).exists() for p in [ref+'.rst', ref+'.md', ref+'/index.rst']):
+            print('broken:', ref)
+"
 
-### A3. Link Integrity Check
-
-For RST docs:
-
-```python
-def check_rst_links(docs_root):
-    """Validate :doc: references"""
-    pattern = r':doc:`([^`]+)`'
-    
-    for rst_file in glob.glob(f"{docs_root}/**/*.rst", recursive=True):
-        with open(rst_file) as f:
-            content = f.read()
-        
-        matches = re.finditer(pattern, content)
-        for match in matches:
-            ref = match.group(1)
-            
-            # Check if target exists
-            possible = [f"{ref}.rst", f"{ref}.md", f"{ref}/index.rst"]
-            if not any(Path(docs_root, p).exists() for p in possible):
-                print(f"❌ Broken link in {rst_file}: {ref}")
-```
-
-### A4. Terminology Consistency
-
-Track variations and standardize:
-
-```python
-# Define standard terms
-TERMINOLOGY = {
-    'api_endpoint': ['endpoint', 'url', 'route', 'path'],
-    'tool_count': ['tools', 'resources', 'integrations'],
-}
-
-def check_terminology(content):
-    """Find inconsistent terminology"""
-    for standard, variations in TERMINOLOGY.items():
-        counts = {v: content.lower().count(v) for v in variations}
-        if len([c for c in counts.values() if c > 0]) > 2:
-            return f"Inconsistent terminology: {counts}"
-    return None
+# Tool count consistency
+rg "[0-9]+\+?\s+(tools|integrations)" docs/ --no-filename | sort -u
 ```
 
 ## Phase B: ToolUniverse-Specific Audit
 
-### B1. Circular Navigation Check
+**Circular navigation** — trace `index.rst → quickstart → getting_started` manually; no loops allowed.
 
-**Issue**: Documentation pages that reference each other in loops.
+**Tool count** — use "1000+ tools" consistently everywhere.
 
-**Check manually**:
-```bash
-# Find cross-references
-grep -r ":doc:\`" docs/*.rst | grep -E "(quickstart|getting_started|installation)"
+**Auto-generated headers** — `docs/tools/*_tools.rst` and `docs/api/*.rst` must start with `.. AUTO-GENERATED`.
+
+**CLI docs** — every entry under `[project.scripts]` in `pyproject.toml` must appear in `docs/reference/cli_tools.rst`.
+
+**Env vars** — every `os.getenv("TOOLUNIVERSE_*")` in `src/` must appear in `docs/reference/environment_variables.rst`.
+
+## RST Code Block Extractor (important)
+
+Always use `re.MULTILINE` (not `re.DOTALL`) for RST blocks to avoid merging adjacent blocks:
+
+```python
+# ✅ correct
+re.findall(r"\.\. code-block:: python\n((?:[ \t]+[^\n]*\n|[ \t]*\n)*)", text, re.MULTILINE)
+
+# ❌ wrong — merges adjacent blocks
+re.findall(r"\.\..*?code-block.*?python\n((?:[ \t]+.*\n|\n)*)", text, re.DOTALL)
 ```
-
-**Checklist**:
-- [ ] Is there a clear "Start Here" on `docs/index.rst`?
-- [ ] Does navigation follow linear path: index → quickstart → getting_started → guides?
-- [ ] No "you should have completed X first" statements that create dependency loops?
-
-**Common patterns to fix**:
-- `quickstart.rst` → "See getting_started"
-- `getting_started.rst` → "Complete quickstart first"
-
-### B2. Duplicate Content Check
-
-**Common duplicates in ToolUniverse**:
-1. Multiple FAQs: `docs/faq.rst` and `docs/help/faq.rst`
-2. Getting started: `docs/installation.rst`, `docs/quickstart.rst`, `docs/getting_started.rst`
-3. MCP configuration: All files in `docs/guide/building_ai_scientists/`
-
-**Detection**:
-```bash
-# Find MCP config duplication
-rg "MCP.*configuration" docs/ -l | wc -l
-rg "pip install tooluniverse" docs/ -l | wc -l
-```
-
-**Action**: Consolidate or clearly differentiate
-
-### B3. Tool Count Consistency
-
-**Standard**: Use "1000+ tools" consistently.
-
-**Detection**:
-```bash
-# Find all tool count mentions
-rg "[0-9]+\+?\s+(tools|resources|integrations)" docs/ --no-filename | sort -u
-```
-
-**Check**:
-- [ ] Are different numbers used (600, 750, 1195)?
-- [ ] Is "1000+ tools" used consistently?
-- [ ] Exact counts avoided in favor of "1000+"?
-
-### B4. Auto-Generated File Headers
-
-**Auto-generated directories**:
-- `docs/tools/*_tools.rst` (from `generate_config_index.py`)
-- `docs/api/*.rst` (from `sphinx-apidoc`)
-
-**Required header**:
-```rst
-.. AUTO-GENERATED - DO NOT EDIT MANUALLY
-.. Generated by: docs/generate_config_index.py
-.. Last updated: 2024-02-05
-.. 
-.. To modify, edit source files and regenerate.
-```
-
-**Check**:
-```bash
-head -5 docs/tools/*_tools.rst | grep "AUTO-GENERATED"
-```
-
-### B5. CLI Tools Documentation
-
-**Check pyproject.toml for all CLIs**:
-```bash
-grep -A 20 "\[project.scripts\]" pyproject.toml
-```
-
-**Common undocumented**:
-- `tooluniverse-expert-feedback`
-- `tooluniverse-expert-feedback-web`
-- `generate-mcp-tools`
-
-**Action**: Ensure all in `docs/reference/cli_tools.rst`
-
-### B6. Environment Variables
-
-**Discovery**:
-```bash
-# Find all env vars in code
-rg "os\.getenv|os\.environ" src/tooluniverse/ -o | sort -u
-rg "TOOLUNIVERSE_[A-Z_]+" src/tooluniverse/ -o | sort -u
-```
-
-**Categories to document**:
-- Cache: `TOOLUNIVERSE_CACHE_*`
-- Logging: `TOOLUNIVERSE_LOG_*`
-- LLM: `TOOLUNIVERSE_LLM_*`
-- API keys: `*_API_KEY`
-
-**Check**:
-- [ ] Does `docs/reference/environment_variables.rst` exist?
-- [ ] Are variables categorized?
-- [ ] Each has: default, description, example?
-- [ ] Is there `.env.template` at project root?
-
-### B7. ToolUniverse-Specific Jargon
-
-**Terms to define on first use**:
-- Tool Specification
-- EFO ID
-- MCP, SMCP
-- Compact Mode
-- Tool Finder
-- AI Scientist
-
-**Check**:
-- [ ] Is there `docs/glossary.rst`?
-- [ ] Terms defined inline with `:term:` references?
-- [ ] Glossary linked from main index?
-
-### B8. CI/CD Documentation Regeneration
-
-**Required in `.github/workflows/deploy-docs.yml`**:
-```yaml
-- name: Regenerate tool documentation
-  run: |
-    cd docs
-    python generate_config_index.py
-    python generate_remote_tools_docs.py
-    python generate_tool_reference.py
-```
-
-**Check**:
-- [ ] CI/CD regenerates docs before build?
-- [ ] Regeneration happens BEFORE Sphinx build?
-- [ ] `docs/api/` excluded from cache?
-
-## Priority Framework
-
-### Issue Severity
-
-| Severity | Definition | Examples | Timeline |
-|----------|------------|----------|----------|
-| **CRITICAL** | Blocks release | Broken builds, dangerous instructions | Immediate |
-| **HIGH** | Blocks users | Wrong commands, broken setup | Same day |
-| **MEDIUM** | Causes confusion | Inconsistent terminology, unclear examples | Same week |
-| **LOW** | Reduces quality | Long files, minor formatting | Future task |
-
-### Fix Order
-
-1. Run automated validation → Fix HIGH issues
-2. Check circular navigation → Fix CRITICAL loops
-3. Verify tool counts → Standardize to "1000+"
-4. Check auto-generated headers → Add missing
-5. Validate CLI docs → Document all from pyproject.toml
-6. Check env vars → Create reference page
-7. Review jargon → Create/update glossary
-8. Verify CI/CD → Add regeneration steps
 
 ## Validation Checklist
 
-Before considering docs "done":
+All items must be ✅ before the audit is considered done. A partial pass is not acceptable.
 
-### Accuracy
-- [ ] Automated validation passes
-- [ ] All commands tested
-- [ ] Version numbers current
-- [ ] Counts match reality
-
-### Structure (ToolUniverse-specific)
+- [ ] Phase D scan exits 0 — **no invalid method calls remain anywhere**
+- [ ] `python scripts/test_doc_code_blocks.py` exits 0 — **no runtime failures remain**
+- [ ] No `spec['parameters']` without `format="openai"` ([check context](API_REFERENCE.md))
+- [ ] Automated validation passes (0 HIGH issues)
+- [ ] "1000+ tools" used consistently
+- [ ] All CLIs from `pyproject.toml` documented
 - [ ] No circular navigation
-- [ ] Clear "Start Here" entry point
-- [ ] Linear learning path
-- [ ] Max 2-3 level hierarchy
 
-### Consistency
-- [ ] "1000+ tools" everywhere
-- [ ] Same terminology throughout
-- [ ] Auto-generated files have headers
-- [ ] All CLIs documented
+If any item is failing: stop, fix it, re-run the scan, confirm it passes. Do not proceed to the next item until the current one is clean.
 
-### Completeness
-- [ ] All features documented
-- [ ] All CLIs in pyproject.toml covered
-- [ ] All env vars documented
-- [ ] Glossary includes all jargon
+## Reference Files
 
-## Output: Audit Report
-
-```markdown
-# Documentation Quality Report
-
-**Date**: [date]
-**Scope**: Automated validation + ToolUniverse audit
-
-## Executive Summary
-- Files scanned: X
-- Issues found: Y (Critical: A, High: B, Medium: C, Low: D)
-
-## Critical Issues
-1. **[Issue]** - Location: file:line
-   - Problem: [description]
-   - Fix: [action]
-   - Effort: [time]
-
-## Automated Validation Results
-- Deprecated commands: X instances
-- Inconsistent counts: Y instances
-- Broken links: Z instances
-
-## ToolUniverse-Specific Findings
-- Circular navigation: [yes/no]
-- Tool count variations: [list]
-- Missing CLI docs: [list]
-- Auto-generated headers: X missing
-
-## Recommendations
-1. Immediate (today): [list]
-2. This week: [list]
-3. Next sprint: [list]
-
-## Validation Command
-Run `python scripts/validate_documentation.py` to verify fixes
-```
-
-## CI/CD Integration
-
-Add to `.github/workflows/validate-docs.yml`:
-
-```yaml
-name: Validate Documentation
-on: [pull_request]
-jobs:
-  validate:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v2
-      - name: Install dependencies
-        run: pip install -r requirements.txt
-      - name: Run validation
-        run: python scripts/validate_documentation.py
-      - name: Check auto-generated headers
-        run: |
-          for f in docs/tools/*_tools.rst; do
-            if ! head -1 "$f" | grep -q "AUTO-GENERATED"; then
-              echo "Missing header: $f"
-              exit 1
-            fi
-          done
-```
-
-## Common Issues Quick Reference
-
-| Issue | Detection | Fix |
-|-------|-----------|-----|
-| Deprecated command | `rg "old-cmd" docs/` | Replace with `new-cmd` |
-| Wrong tool count | `rg "[0-9]+ tools" docs/` | Change to "1000+ tools" |
-| Circular nav | Manual trace | Remove back-references |
-| Missing header | `head -1 file.rst` | Add AUTO-GENERATED header |
-| Undocumented CLI | Check pyproject.toml | Add to cli_tools.rst |
-| Missing env var | `rg "os.getenv" src/` | Add to env vars reference |
-
-## Best Practices
-
-1. **Automate first** - Build validation before manual audit
-2. **Context matters** - Smart pattern matching avoids false positives
-3. **Fix systematically** - Batch similar issues together
-4. **Validate continuously** - Add to CI/CD pipeline
-5. **ToolUniverse-specific last** - Automated checks catch most issues
-
-## Success Criteria
-
-Documentation quality achieved when:
-- ✅ Automated validation reports 0 HIGH issues
-- ✅ No circular navigation
-- ✅ "1000+ tools" used consistently
-- ✅ All auto-generated files have headers
-- ✅ All CLIs from pyproject.toml documented
-- ✅ All env vars have reference page
-- ✅ Glossary covers all technical terms
-- ✅ CI/CD validates on every PR
+- [API_REFERENCE.md](API_REFERENCE.md) — valid method signatures, wrong-method table, correct patterns
+- [DOCS_STRUCTURE.md](DOCS_STRUCTURE.md) — per-file audit status for all 122 doc files
+- `scripts/test_doc_code_blocks.py` — Phase C live runner (run directly)

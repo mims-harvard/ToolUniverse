@@ -1,0 +1,105 @@
+[
+  {
+    "name": "OpenTopoData_get_elevation",
+    "description": "Get terrain elevation data for any location on Earth using the OpenTopoData API. Returns elevation in meters above sea level from multiple digital elevation model (DEM) datasets including SRTM 30m, ASTER, NED 10m (US only), EU-DEM, and others. Supports batch queries for multiple locations. No authentication required. Useful for geographic analysis, hiking planning, and terrain modeling.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "locations": {
+          "type": "string",
+          "description": "One or more lat,lng coordinate pairs separated by | (pipe). Examples: '36.455556,-116.866667' (Death Valley), '48.8566,2.3522|51.5074,-0.1278' (Paris and London), '27.9881,86.9250' (Everest)"
+        },
+        "dataset": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Elevation dataset to use. Values: 'srtm30m' (global 30m), 'srtm90m' (global 90m), 'aster' (global 30m), 'ned10m' (US 10m), 'eudem' (Europe 25m), 'mapzen' (global). Default: srtm30m"
+        },
+        "interpolation": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Interpolation method. Values: 'nearest', 'bilinear', 'cubic'. Default: bilinear"
+        }
+      },
+      "required": [
+        "locations"
+      ]
+    },
+    "fields": {
+      "endpoint": "https://api.opentopodata.org/v1/srtm30m",
+      "params": {}
+    },
+    "type": "BaseRESTTool",
+    "test_examples": [
+      {
+        "locations": "27.9881,86.9250"
+      },
+      {
+        "locations": "48.8566,2.3522|51.5074,-0.1278|40.7128,-74.0060"
+      },
+      {
+        "locations": "36.455556,-116.866667",
+        "dataset": "srtm90m"
+      }
+    ],
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "object",
+          "description": "Elevation data results",
+          "properties": {
+            "results": {
+              "type": "array",
+              "description": "Elevation for each queried location",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "dataset": {
+                    "type": "string",
+                    "description": "DEM dataset used"
+                  },
+                  "elevation": {
+                    "type": [
+                      "number",
+                      "null"
+                    ],
+                    "description": "Elevation in meters above sea level (null if no data)"
+                  },
+                  "location": {
+                    "type": "object",
+                    "properties": {
+                      "lat": {
+                        "type": "number"
+                      },
+                      "lng": {
+                        "type": "number"
+                      }
+                    }
+                  }
+                }
+              }
+            },
+            "status": {
+              "type": "string",
+              "description": "OK or error message"
+            }
+          }
+        },
+        {
+          "type": "object",
+          "properties": {
+            "error": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "error"
+          ]
+        }
+      ]
+    }
+  }
+]

@@ -15,7 +15,7 @@ def ClinGen_get_dosage_sensitivity(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> dict[str, Any]:
+) -> list[Any]:
     """
     Get all ClinGen dosage sensitivity curations. Returns haploinsufficiency and triplosensitivity sc...
 
@@ -34,7 +34,7 @@ def ClinGen_get_dosage_sensitivity(
 
     Returns
     -------
-    dict[str, Any]
+    list[Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

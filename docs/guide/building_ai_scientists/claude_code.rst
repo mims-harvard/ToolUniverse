@@ -1,79 +1,58 @@
 Claude Code Setup
 =================
 
-**Connect ToolUniverse to Claude Code in 10 minutes**
-
-Overview
---------
+**Connect ToolUniverse to Claude Code**
 
 Claude Code integration combines Anthropic's reasoning model with ToolUniverse's 1000+ scientific tools in a development-focused environment.
 
-.. grid:: 1 1 3 3
-   :gutter: 2
+.. tip:: 🚀 **Fastest setup — no installation needed**
 
-   .. grid-item-card:: ⚡ Setup Time
-      :class-card: hover-lift
-      :shadow: sm
-      
-      **10 minutes**
+   Open Claude Code and paste this single message:
 
-   .. grid-item-card:: 💻 Difficulty
-      :class-card: hover-lift
-      :shadow: sm
-      
-      **Moderate**
+   .. code-block:: text
 
-   .. grid-item-card:: 🎯 Best For
-      :class-card: hover-lift
-      :shadow: sm
-      
-      **Development workflows**
+      Please read https://raw.githubusercontent.com/mims-harvard/ToolUniverse/main/skills/setup-tooluniverse/SKILL.md and follow it to help me set up ToolUniverse.
+
+   Claude Code will fetch the setup guide from GitHub and walk you through everything interactively.
 
 Prerequisites
 -------------
 
 .. important:: ✅ **What you need:**
    
-   - **Claude Code CLI** - Install via: ``npm install -g @anthropics/claude-code``
-   - **Python 3.10+**
-   - **ToolUniverse** - ``pip install tooluniverse``
+   - **Claude Code CLI** - Install via: ``npm install -g @anthropic-ai/claude-code``
+   - **uv/uvx** - `Install uv <https://docs.astral.sh/uv/>`_
+
+.. seealso:: `Claude Code MCP official guide <https://docs.anthropic.com/en/docs/claude-code/mcp>`_
 
 Setup Steps
 -----------
 
-.. card:: Step 1: Install ToolUniverse
-   :class-card: step-card completed
-
-   .. code-block:: bash
-
-      pip install tooluniverse
-
-.. card:: Step 2: Configure MCP Server
+.. card:: Step 1: Configure MCP Server
    :class-card: step-card current
 
    Add ToolUniverse MCP server to Claude Code:
 
    .. code-block:: bash
 
-      claude mcp add --transport stdio tooluniverse -- tooluniverse-smcp-stdio --compact-mode
+      claude mcp add --transport stdio tooluniverse -- uvx tooluniverse
 
    .. dropdown:: 💡 What does this do?
       :animate: fade-in-slide-down
       :color: info
 
       - ``--transport stdio``: Uses standard input/output for communication
-      - ``tooluniverse``: Server name
-      - ``tooluniverse-smcp-stdio``: ToolUniverse's MCP stdio server
-      - ``--compact-mode``: Loads essential tools (prevents context overflow)
+      - ``tooluniverse``: Server name (the label stored in Claude Code)
+      - ``uvx tooluniverse``: Runs the ToolUniverse MCP stdio server via uvx (no separate install needed)
 
-.. card:: Step 3: Install Agent Skills (Optional)
+.. card:: Step 2: Install Agent Skills (Optional)
    :class-card: step-card pending
 
    .. code-block:: bash
 
       npx skills add mims-harvard/ToolUniverse
 
-.. card:: Step 4: Start Claude Code
+.. card:: Step 3: Start Claude Code
    :class-card: step-card pending
 
    Launch Claude Code with ToolUniverse:
@@ -82,7 +61,7 @@ Setup Steps
 
       claude
 
-.. card:: Step 5: Verify Integration
+.. card:: Step 4: Verify Integration
    :class-card: step-card pending
 
    Test in Claude Code:
@@ -134,7 +113,7 @@ Advanced Configuration
    .. code-block:: bash
 
       claude mcp add --transport stdio tooluniverse -- \
-        tooluniverse-smcp-stdio \
+        uvx tooluniverse \
         --tool-categories uniprot,chembl,opentarget
 
 .. dropdown:: 🔑 API Keys
@@ -154,16 +133,13 @@ Troubleshooting
 .. dropdown:: ❌ MCP server not found
    :color: danger
 
-   Reinstall ToolUniverse:
+   Ensure ``uvx`` is installed and working:
 
    .. code-block:: bash
 
-      pip install --upgrade tooluniverse
+      uvx --version
+      uvx tooluniverse --help
 
-.. dropdown:: ⚠️ Too many tools warning
-   :color: warning
-
-   Use ``--compact-mode`` flag (see Step 2)
 
 Next Steps
 ----------

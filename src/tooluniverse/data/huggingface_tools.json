@@ -1,0 +1,464 @@
+[
+  {
+    "name": "HuggingFace_search_models",
+    "description": "Search the HuggingFace Hub for machine learning models by keyword, task type, or ML framework. HuggingFace Hub hosts 500,000+ open-source models spanning NLP, computer vision, audio, protein language models, and more. Returns model IDs, download counts, likes, tags, pipeline task, and library information. Filter by pipeline_tag (e.g., 'fill-mask', 'text-classification', 'token-classification', 'image-classification', 'feature-extraction') and by library (e.g., 'transformers', 'diffusers', 'timm'). Use HuggingFace_get_model for full details on a specific model.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "search": {
+          "type": "string",
+          "description": "Search query for model name, task, or topic (e.g., 'protein language model', 'bert', 'image segmentation', 'drug discovery')"
+        },
+        "limit": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "description": "Maximum number of results to return (default 20, max 1000)"
+        },
+        "pipeline_tag": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Filter by ML task type. Common values: 'text-classification', 'token-classification', 'fill-mask', 'text-generation', 'image-classification', 'object-detection', 'feature-extraction', 'question-answering', 'summarization', 'translation', 'text-to-image', 'automatic-speech-recognition'"
+        },
+        "library": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Filter by ML framework/library. Common values: 'transformers', 'diffusers', 'timm', 'sentence-transformers', 'spacy', 'flair', 'allennlp', 'adapter-transformers'"
+        }
+      },
+      "required": [
+        "search"
+      ]
+    },
+    "fields": {
+      "endpoint": "https://huggingface.co/api/models"
+    },
+    "type": "BaseRESTTool",
+    "test_examples": [
+      {
+        "search": "protein language model",
+        "limit": 5
+      },
+      {
+        "search": "bert",
+        "pipeline_tag": "fill-mask",
+        "library": "transformers",
+        "limit": 3
+      },
+      {
+        "search": "drug discovery",
+        "limit": 5
+      }
+    ],
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "array",
+          "description": "Array of matching model objects from HuggingFace Hub",
+          "items": {
+            "type": "object",
+            "properties": {
+              "_id": {
+                "type": "string",
+                "description": "Internal HuggingFace database ID"
+              },
+              "id": {
+                "type": "string",
+                "description": "Full model identifier in author/name format (e.g., 'facebook/esm2_t33_650M_UR50D')"
+              },
+              "modelId": {
+                "type": "string",
+                "description": "Model identifier (same as id)"
+              },
+              "author": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "Model author or organization"
+              },
+              "likes": {
+                "type": "integer",
+                "description": "Number of likes/favorites"
+              },
+              "downloads": {
+                "type": "integer",
+                "description": "Total number of downloads"
+              },
+              "trendingScore": {
+                "type": "number",
+                "description": "Current trending score"
+              },
+              "private": {
+                "type": "boolean",
+                "description": "Whether the model is private"
+              },
+              "pipeline_tag": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "ML task type (e.g., 'fill-mask', 'text-classification', 'image-classification')"
+              },
+              "library_name": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "Primary ML library (e.g., 'transformers', 'diffusers')"
+              },
+              "tags": {
+                "type": "array",
+                "description": "Tags including framework, task, license, language, dataset",
+                "items": {
+                  "type": "string"
+                }
+              },
+              "createdAt": {
+                "type": "string",
+                "description": "Model creation timestamp (ISO 8601)"
+              },
+              "lastModified": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "Last modification timestamp"
+              }
+            }
+          }
+        },
+        {
+          "type": "object",
+          "properties": {
+            "error": {
+              "type": "string",
+              "description": "Error message"
+            }
+          },
+          "required": [
+            "error"
+          ]
+        }
+      ]
+    }
+  },
+  {
+    "name": "HuggingFace_get_model",
+    "description": "Get detailed metadata for a specific model on HuggingFace Hub by its author and model name. Returns comprehensive information including model architecture, tags, download/like counts, creation date, license, widget data for interactive testing, and card metadata. Model IDs on HuggingFace follow the 'author/model-name' format; provide the author and model_name as separate parameters. Use HuggingFace_search_models to find model IDs (the 'id' field returns 'author/model-name').",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "author": {
+          "type": "string",
+          "description": "Model author or organization (e.g., 'facebook', 'openai-community', 'google-bert', 'meta-llama')"
+        },
+        "model_name": {
+          "type": "string",
+          "description": "Model name within the author's namespace (e.g., 'esm2_t33_650M_UR50D', 'gpt2', 'bert-base-uncased')"
+        }
+      },
+      "required": [
+        "author",
+        "model_name"
+      ]
+    },
+    "fields": {
+      "endpoint": "https://huggingface.co/api/models/{author}/{model_name}"
+    },
+    "type": "BaseRESTTool",
+    "test_examples": [
+      {
+        "author": "facebook",
+        "model_name": "esm2_t33_650M_UR50D"
+      },
+      {
+        "author": "openai-community",
+        "model_name": "gpt2"
+      },
+      {
+        "author": "google-bert",
+        "model_name": "bert-base-uncased"
+      }
+    ],
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "object",
+          "description": "Detailed model metadata from HuggingFace Hub",
+          "properties": {
+            "_id": {
+              "type": "string",
+              "description": "Internal database ID"
+            },
+            "id": {
+              "type": "string",
+              "description": "Full model identifier (author/name)"
+            },
+            "modelId": {
+              "type": "string",
+              "description": "Model identifier"
+            },
+            "author": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "Model author or organization"
+            },
+            "sha": {
+              "type": "string",
+              "description": "Latest commit SHA"
+            },
+            "lastModified": {
+              "type": "string",
+              "description": "Last modification timestamp"
+            },
+            "private": {
+              "type": "boolean",
+              "description": "Whether the model is private"
+            },
+            "gated": {
+              "type": [
+                "boolean",
+                "string"
+              ],
+              "description": "Whether the model has gated access (false, 'auto', or 'manual')"
+            },
+            "disabled": {
+              "type": "boolean",
+              "description": "Whether the model is disabled"
+            },
+            "pipeline_tag": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "ML task type"
+            },
+            "library_name": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "Primary ML library"
+            },
+            "tags": {
+              "type": "array",
+              "description": "All tags (framework, task, license, language, dataset, arxiv references)",
+              "items": {
+                "type": "string"
+              }
+            },
+            "downloads": {
+              "type": "integer",
+              "description": "Total download count"
+            },
+            "likes": {
+              "type": "integer",
+              "description": "Number of likes"
+            },
+            "config": {
+              "type": [
+                "object",
+                "null"
+              ],
+              "description": "Model configuration including architectures and model_type"
+            },
+            "cardData": {
+              "type": [
+                "object",
+                "null"
+              ],
+              "description": "Model card metadata (license, datasets, language, metrics, widget examples)"
+            },
+            "transformersInfo": {
+              "type": [
+                "object",
+                "null"
+              ],
+              "description": "Transformers library info (auto_model class, pipeline_tag, processor)"
+            },
+            "widgetData": {
+              "type": [
+                "array",
+                "null"
+              ],
+              "description": "Widget data for interactive model testing (sample inputs)"
+            },
+            "siblings": {
+              "type": "array",
+              "description": "List of files in the model repository",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "rfilename": {
+                    "type": "string",
+                    "description": "Relative file path/name"
+                  }
+                }
+              }
+            },
+            "createdAt": {
+              "type": "string",
+              "description": "Model creation timestamp"
+            }
+          }
+        },
+        {
+          "type": "object",
+          "properties": {
+            "error": {
+              "type": "string",
+              "description": "Error message"
+            }
+          },
+          "required": [
+            "error"
+          ]
+        }
+      ]
+    }
+  },
+  {
+    "name": "HuggingFace_search_datasets",
+    "description": "Search HuggingFace Hub for machine learning datasets by keyword. HuggingFace hosts 100,000+ open datasets spanning text, image, audio, tabular, and biological sequence data. Returns dataset IDs, authors, download counts, likes, tags (including format, modality, size category), and descriptions. Use this to find training/evaluation datasets for ML models, benchmark datasets, or domain-specific datasets (e.g., protein sequences, medical images, genomics).",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "search": {
+          "type": "string",
+          "description": "Search query for dataset name or topic (e.g., 'protein sequence', 'medical imaging', 'sentiment analysis', 'genomics')"
+        },
+        "limit": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "description": "Maximum number of results to return (default 20, max 1000)"
+        }
+      },
+      "required": [
+        "search"
+      ]
+    },
+    "fields": {
+      "endpoint": "https://huggingface.co/api/datasets"
+    },
+    "type": "BaseRESTTool",
+    "test_examples": [
+      {
+        "search": "protein sequence",
+        "limit": 5
+      },
+      {
+        "search": "sentiment analysis",
+        "limit": 3
+      },
+      {
+        "search": "medical imaging",
+        "limit": 5
+      }
+    ],
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "array",
+          "description": "Array of matching dataset objects from HuggingFace Hub",
+          "items": {
+            "type": "object",
+            "properties": {
+              "_id": {
+                "type": "string",
+                "description": "Internal HuggingFace database ID"
+              },
+              "id": {
+                "type": "string",
+                "description": "Full dataset identifier in author/name format"
+              },
+              "author": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "Dataset author or organization"
+              },
+              "likes": {
+                "type": "integer",
+                "description": "Number of likes/favorites"
+              },
+              "downloads": {
+                "type": [
+                  "integer",
+                  "null"
+                ],
+                "description": "Total number of downloads"
+              },
+              "trendingScore": {
+                "type": "number",
+                "description": "Current trending score"
+              },
+              "private": {
+                "type": "boolean",
+                "description": "Whether the dataset is private"
+              },
+              "gated": {
+                "type": [
+                  "boolean",
+                  "string"
+                ],
+                "description": "Whether the dataset has gated access"
+              },
+              "disabled": {
+                "type": "boolean",
+                "description": "Whether the dataset is disabled"
+              },
+              "description": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "Dataset description/summary"
+              },
+              "tags": {
+                "type": "array",
+                "description": "Tags including format (csv, parquet, json), modality (text, image, audio), size category, license, library support",
+                "items": {
+                  "type": "string"
+                }
+              },
+              "createdAt": {
+                "type": "string",
+                "description": "Dataset creation timestamp (ISO 8601)"
+              },
+              "lastModified": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "Last modification timestamp"
+              }
+            }
+          }
+        },
+        {
+          "type": "object",
+          "properties": {
+            "error": {
+              "type": "string",
+              "description": "Error message"
+            }
+          },
+          "required": [
+            "error"
+          ]
+        }
+      ]
+    }
+  }
+]

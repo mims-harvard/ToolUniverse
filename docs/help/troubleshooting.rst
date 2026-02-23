@@ -131,7 +131,7 @@ Tool not found errors
 
    # List available tools
    print("Available tools:")
-   for tool_name in tu.list_tools():
+   for tool_name in tu.list_built_in_tools(mode='list_name'):
        print(f"  - {tool_name}")
 
 **Solutions:**
@@ -151,7 +151,7 @@ Tool not found errors
 
    .. code-block:: python
 
-      if "OpenTargets_tool" not in tu.list_tools():
+      if "OpenTargets_tool" not in tu.all_tool_dict:
           print("OpenTargets tool not loaded")
           # Check for missing dependencies
 
@@ -161,7 +161,7 @@ Tool not found errors
 
       from tooluniverse.opentargets_tool import OpenTargetsTool
       tool = OpenTargetsTool()
-      tu.register_tool(tool)
+      tu.register_custom_tool(tool_instance=tool)
 
 API Authentication errors
 ~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -318,7 +318,7 @@ Many services limit how many requests you can make per second/minute. API keys t
       batch_size = 5
       for i in range(0, len(queries), batch_size):
            batch = queries[i:i+batch_size]
-           results = tu.run_batch(batch)
+           results = tu.run(batch, max_workers=4)
            time.sleep(2)  # Pause between batches
 
 4. **Enable caching to avoid redundant requests:**
@@ -356,7 +356,7 @@ Connection timeouts
 
    .. code-block:: python
 
-      tu = ToolUniverse(timeout=30)  # 30 second timeout
+      tu = ToolUniverse()  # timeout is configured per-tool at the HTTP request level
 
 2. **Check network connection:**
 
@@ -437,7 +437,7 @@ Slow query performance
       import asyncio
 
       async def run_queries():
-           tasks = [tu.run_async(query) for query in queries]
+           tasks = [tu.run(query) for query in queries]  # run() is context-aware
            results = await asyncio.gather(*tasks)
            return results
 
@@ -459,7 +459,7 @@ Slow query performance
            {"name": "UniProt_get_function_by_accession", "arguments": {"accession": accession}}
            for accession in accessions
       ]
-      results = tu.run_batch(queries)
+      results = tu.run(queries, max_workers=4)
 
 Memory usage issues
 ~~~~~~~~~~~~~~~~~~~
@@ -486,7 +486,7 @@ Memory usage issues
       def process_large_dataset(data, chunk_size=100):
            for i in range(0, len(data), chunk_size):
                chunk = data[i:i+chunk_size]
-               yield tu.run_batch(chunk)
+               yield tu.run(chunk, max_workers=4)
 
 2. **Clear cache periodically:**
 
@@ -564,7 +564,7 @@ Claude/AI assistant not finding tools
    .. code-block:: python
 
       # In MCP server
-      tools = tu.list_tools()
+      tools = tu.return_all_loaded_tools()
       print(f"Registered {len(tools)} tools")
 
 Advanced Debugging

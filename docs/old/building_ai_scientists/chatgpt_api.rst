@@ -497,7 +497,7 @@ Common Issues and Solutions
 .. code-block:: python
 
    # Inspect a tool's OpenAI function schema
-   spec = tu.tool_specification("EuropePMC_search_articles")
+   spec = tu.tool_specification("EuropePMC_search_articles", format="openai")
    import json; print(json.dumps(spec, indent=2))
 
 Tips

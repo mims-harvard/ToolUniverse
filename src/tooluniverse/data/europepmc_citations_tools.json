@@ -1,0 +1,190 @@
+[
+  {
+    "name": "EPMC_get_citations",
+    "type": "BaseRESTTool",
+    "description": "Get articles that cite a specific paper from Europe PMC. Given a PubMed ID (PMID), returns a list of citing articles with their titles, authors, journals, publication years, and citation counts. This enables citation network traversal: find what papers cite a given study to track research impact, identify follow-up studies, and discover related work. Essential for systematic reviews and literature mapping. Use PMID from EuropePMC search results.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "pmid": {
+          "type": "string",
+          "description": "PubMed ID of the article to find citations for. Examples: '25378148' (AlphaFold paper), '33234567', '29474920' (CRISPR review). Find PMIDs using Europe PMC search."
+        },
+        "page": {
+          "type": "integer",
+          "default": 1,
+          "description": "Page number for paginated results (1-based). Default: 1."
+        },
+        "pageSize": {
+          "type": "integer",
+          "default": 25,
+          "description": "Number of citing articles to return per page (1-1000). Default: 25."
+        }
+      },
+      "required": [
+        "pmid"
+      ]
+    },
+    "fields": {
+      "endpoint": "https://www.ebi.ac.uk/europepmc/webservices/rest/MED/{pmid}/citations?format=json&page={page}&pageSize={pageSize}"
+    },
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "object",
+          "description": "Citation data showing articles that cite the queried paper",
+          "properties": {
+            "version": {
+              "type": ["string", "null"]
+            },
+            "hitCount": {
+              "type": "integer",
+              "description": "Total number of citing articles"
+            },
+            "request": {
+              "type": ["object", "null"]
+            },
+            "citationList": {
+              "type": ["object", "null"],
+              "properties": {
+                "citation": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "id": {"type": ["string", "null"]},
+                      "source": {"type": ["string", "null"]},
+                      "title": {"type": ["string", "null"]},
+                      "authorString": {"type": ["string", "null"]},
+                      "journalAbbreviation": {"type": ["string", "null"]},
+                      "pubYear": {"type": ["integer", "null"]},
+                      "citedByCount": {"type": ["integer", "null"]}
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "required": ["hitCount"]
+        },
+        {
+          "type": "object",
+          "properties": {
+            "error": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "error"
+          ]
+        }
+      ]
+    },
+    "test_examples": [
+      {
+        "pmid": "25378148",
+        "page": 1,
+        "pageSize": 5
+      },
+      {
+        "pmid": "29474920",
+        "page": 1,
+        "pageSize": 5
+      }
+    ]
+  },
+  {
+    "name": "EPMC_get_references",
+    "type": "BaseRESTTool",
+    "description": "Get the reference list (bibliography) of a specific paper from Europe PMC. Given a PubMed ID (PMID), returns all articles cited BY that paper (its reference list). This is the reverse of citations: instead of finding who cites a paper, find what papers it cites. Essential for understanding a paper's intellectual foundations, finding seminal works, and tracing research lineage. Use PMID from EuropePMC search results.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "pmid": {
+          "type": "string",
+          "description": "PubMed ID of the article whose references you want. Examples: '25378148', '33234567', '29474920'. Find PMIDs using Europe PMC search."
+        },
+        "page": {
+          "type": "integer",
+          "default": 1,
+          "description": "Page number for paginated results (1-based). Default: 1."
+        },
+        "pageSize": {
+          "type": "integer",
+          "default": 25,
+          "description": "Number of references to return per page (1-1000). Default: 25."
+        }
+      },
+      "required": [
+        "pmid"
+      ]
+    },
+    "fields": {
+      "endpoint": "https://www.ebi.ac.uk/europepmc/webservices/rest/MED/{pmid}/references?format=json&page={page}&pageSize={pageSize}"
+    },
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "object",
+          "description": "Reference list (bibliography) of the queried paper",
+          "properties": {
+            "version": {
+              "type": ["string", "null"]
+            },
+            "hitCount": {
+              "type": "integer",
+              "description": "Total number of references in the paper"
+            },
+            "request": {
+              "type": ["object", "null"]
+            },
+            "referenceList": {
+              "type": ["object", "null"],
+              "properties": {
+                "reference": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "id": {"type": ["string", "null"]},
+                      "source": {"type": ["string", "null"]},
+                      "title": {"type": ["string", "null"]},
+                      "authorString": {"type": ["string", "null"]},
+                      "journalAbbreviation": {"type": ["string", "null"]},
+                      "pubYear": {"type": ["integer", "null"]},
+                      "citedByCount": {"type": ["integer", "null"]}
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "required": ["hitCount"]
+        },
+        {
+          "type": "object",
+          "properties": {
+            "error": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "error"
+          ]
+        }
+      ]
+    },
+    "test_examples": [
+      {
+        "pmid": "25378148",
+        "page": 1,
+        "pageSize": 10
+      },
+      {
+        "pmid": "29474920",
+        "page": 1,
+        "pageSize": 5
+      }
+    ]
+  }
+]

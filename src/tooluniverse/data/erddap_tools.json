@@ -1,0 +1,160 @@
+[
+  {
+    "name": "ERDDAP_search_datasets",
+    "description": "Search for oceanographic and atmospheric datasets in NOAA CoastWatch ERDDAP (Environmental Research Division's Data Access Program). Returns dataset IDs, titles, and summaries. No authentication required. ERDDAP aggregates satellite, buoy, and model data including sea surface temperature, chlorophyll-a, wave height, wind speed, currents, and salinity. Use returned Dataset IDs to access actual data. Useful for oceanography, climate science, fisheries research, and environmental monitoring.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "searchFor": {
+          "type": "string",
+          "description": "Search keyword(s) for dataset discovery. Examples: 'sea surface temperature', 'chlorophyll', 'wave height', 'salinity', 'currents', 'wind', 'MODIS', 'SST', 'bathymetry'"
+        },
+        "itemsPerPage": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "description": "Number of results to return (1-100). Default: 10"
+        },
+        "page": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "description": "Page number for pagination. Default: 1"
+        }
+      },
+      "required": [
+        "searchFor"
+      ]
+    },
+    "fields": {
+      "endpoint": "https://coastwatch.pfeg.noaa.gov/erddap/search/index.json",
+      "params": {
+        "page": 1,
+        "itemsPerPage": 10
+      }
+    },
+    "type": "BaseRESTTool",
+    "test_examples": [
+      {
+        "searchFor": "sea surface temperature",
+        "itemsPerPage": 5
+      },
+      {
+        "searchFor": "chlorophyll satellite",
+        "itemsPerPage": 5
+      },
+      {
+        "searchFor": "ocean salinity",
+        "itemsPerPage": 5
+      }
+    ],
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "object",
+          "description": "ERDDAP dataset search results",
+          "properties": {
+            "table": {
+              "type": "object",
+              "properties": {
+                "columnNames": {
+                  "type": "array",
+                  "description": "Column names: griddap, Subset, tabledap, ..., Title, Summary, ..., Dataset ID"
+                },
+                "rows": {
+                  "type": "array",
+                  "description": "List of datasets (each row matches columnNames order). Key columns: Title (index 7), Summary (index 8), Dataset ID (index 16)",
+                  "items": {
+                    "type": "array"
+                  }
+                }
+              }
+            }
+          }
+        },
+        {
+          "type": "object",
+          "properties": {
+            "error": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "error"
+          ]
+        }
+      ]
+    }
+  },
+  {
+    "name": "ERDDAP_get_dataset_info",
+    "description": "Get metadata and variable information for a specific ERDDAP dataset by its Dataset ID from NOAA CoastWatch. Returns variable names, dimensions, units, and global attributes. No authentication required. Dataset IDs can be found using ERDDAP_search_datasets. Example dataset IDs: 'erdATssta8day' (AVHRR SST 8-day composite), 'goes_west' (GOES-18 SST hourly), 'erdMHchla8day' (MODIS chlorophyll 8-day).",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "datasetID": {
+          "type": "string",
+          "description": "ERDDAP dataset identifier. Examples: 'erdATssta8day' (AVHRR SST 8-day), 'goes_west' (GOES-18 SST), 'erdMHchla8day' (MODIS chlorophyll), 'cwwcNDBCMet' (NDBC buoy meteorological data)"
+        }
+      },
+      "required": [
+        "datasetID"
+      ]
+    },
+    "fields": {
+      "endpoint": "https://coastwatch.pfeg.noaa.gov/erddap/info/{datasetID}/index.json",
+      "params": {}
+    },
+    "type": "BaseRESTTool",
+    "test_examples": [
+      {
+        "datasetID": "erdATssta8day"
+      },
+      {
+        "datasetID": "osu2ChlaAnom"
+      },
+      {
+        "datasetID": "cwwcNDBCMet"
+      }
+    ],
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "object",
+          "description": "Dataset metadata and variable information",
+          "properties": {
+            "table": {
+              "type": "object",
+              "properties": {
+                "columnNames": {
+                  "type": "array",
+                  "description": "Column headers: Row Type, Variable Name, Attribute Name, Data Type, Value"
+                },
+                "rows": {
+                  "type": "array",
+                  "description": "Metadata rows. Row Type='attribute' for metadata, 'variable' for data variables",
+                  "items": {
+                    "type": "array"
+                  }
+                }
+              }
+            }
+          }
+        },
+        {
+          "type": "object",
+          "properties": {
+            "error": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "error"
+          ]
+        }
+      ]
+    }
+  }
+]

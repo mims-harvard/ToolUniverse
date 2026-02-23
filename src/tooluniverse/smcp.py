@@ -1458,7 +1458,7 @@ class SMCP(FastMCP):
         elif len(one_of_types) == 1:
             python_type = one_of_types[0]
         else:
-            python_type = Union.__getitem__(tuple(one_of_types))
+            python_type = Union[tuple(one_of_types)]
 
         return python_type, {"json_schema_extra": {"oneOf": one_of_schemas}}
 

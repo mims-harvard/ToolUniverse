@@ -15,7 +15,7 @@ def ClinGen_get_variant_classifications(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> dict[str, Any]:
+) -> list[Any]:
     """
     Get variant pathogenicity classifications from ClinGen Evidence Repository. Returns expert-curate...
 
@@ -34,7 +34,7 @@ def ClinGen_get_variant_classifications(
 
     Returns
     -------
-    dict[str, Any]
+    list[Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

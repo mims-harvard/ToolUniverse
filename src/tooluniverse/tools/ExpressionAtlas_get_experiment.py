@@ -14,7 +14,7 @@ def ExpressionAtlas_get_experiment(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> dict[str, Any]:
+) -> Optional[dict[str, Any]]:
     """
     Get detailed metadata for a specific Expression Atlas experiment by accession (e.g., E-MTAB-5214)...
 
@@ -31,7 +31,7 @@ def ExpressionAtlas_get_experiment(
 
     Returns
     -------
-    dict[str, Any]
+    Optional[dict[str, Any]]
     """
     # Handle mutable defaults to avoid B006 linting error
 

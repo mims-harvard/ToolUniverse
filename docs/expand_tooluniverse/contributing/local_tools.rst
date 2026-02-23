@@ -381,8 +381,7 @@ Troubleshooting
    tu.load_tools()
    
    # Check if tool is in the loaded tools
-   tools = tu.list_tools()
-   print("my_new_tool" in tools)  # Should be True
+   print("my_new_tool" in tu.all_tool_dict)  # Should be True
 
 Next Steps
 ----------

@@ -1,0 +1,52 @@
+"""
+USGS_get_earthquake_feed
+
+Get recent USGS earthquake data feeds in GeoJSON format. Returns earthquakes based on magnitude t...
+"""
+
+from typing import Any, Optional, Callable
+from ._shared_client import get_shared_client
+
+
+def USGS_get_earthquake_feed(
+    magnitude: str,
+    period: str,
+    *,
+    stream_callback: Optional[Callable[[str], None]] = None,
+    use_cache: bool = False,
+    validate: bool = True,
+) -> Any:
+    """
+    Get recent USGS earthquake data feeds in GeoJSON format. Returns earthquakes based on magnitude t...
+
+    Parameters
+    ----------
+    magnitude : str
+        Minimum magnitude filter: 'significant' (felt widely), '4.5', '2.5', '1.0', '...
+    period : str
+        Time period: 'hour' (past 1 hour), 'day' (past 24 hours), 'week' (past 7 days...
+    stream_callback : Callable, optional
+        Callback for streaming output
+    use_cache : bool, default False
+        Enable caching
+    validate : bool, default True
+        Validate parameters
+
+    Returns
+    -------
+    Any
+    """
+    # Handle mutable defaults to avoid B006 linting error
+
+    return get_shared_client().run_one_function(
+        {
+            "name": "USGS_get_earthquake_feed",
+            "arguments": {"magnitude": magnitude, "period": period},
+        },
+        stream_callback=stream_callback,
+        use_cache=use_cache,
+        validate=validate,
+    )
+
+
+__all__ = ["USGS_get_earthquake_feed"]

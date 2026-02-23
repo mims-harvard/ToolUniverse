@@ -1,0 +1,407 @@
+[
+  {
+    "name": "IdentifiersOrg_resolve",
+    "type": "BaseRESTTool",
+    "description": "Resolve a biological identifier to its resource URLs using Identifiers.org. Given a namespace (e.g., 'uniprot') and local ID (e.g., 'P04637'), returns all resolved URLs across different providers (NCBI, EBI, UniProt, etc.). Identifiers.org is an ELIXIR service that provides persistent identifiers for life science data. Supports 800+ namespaces including uniprot, pdb, ensembl, go, reactome, kegg, ncbigene, taxonomy, and many more. Use this to find where a biological entity can be accessed across databases.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "namespace": {
+          "type": "string",
+          "description": "Database namespace prefix. Examples: 'uniprot', 'pdb', 'ncbigene', 'go', 'taxonomy', 'reactome', 'ensembl', 'kegg.compound', 'interpro', 'pfam'. Find available namespaces using IdentifiersOrg_search_namespaces."
+        },
+        "local_id": {
+          "type": "string",
+          "description": "The local identifier within the namespace. Examples: 'P04637' (for uniprot), '4HHB' (for pdb), '7157' (for ncbigene), '0006915' (for go), '9606' (for taxonomy), 'R-HSA-73857' (for reactome), 'ENSG00000141510' (for ensembl)."
+        }
+      },
+      "required": [
+        "namespace",
+        "local_id"
+      ]
+    },
+    "fields": {
+      "endpoint": "https://resolver.api.identifiers.org/{namespace}:{local_id}",
+      "return_format": "JSON"
+    },
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "object",
+          "description": "Resolution results containing resolved resource URLs",
+          "properties": {
+            "apiVersion": {
+              "type": "string"
+            },
+            "errorMessage": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "payload": {
+              "type": "object",
+              "properties": {
+                "parsedCompactIdentifier": {
+                  "type": "object",
+                  "properties": {
+                    "namespace": {
+                      "type": "string"
+                    },
+                    "localId": {
+                      "type": "string"
+                    },
+                    "providerCode": {
+                      "type": [
+                        "string",
+                        "null"
+                      ]
+                    }
+                  }
+                },
+                "resolvedResources": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "providerCode": {
+                        "type": "string"
+                      },
+                      "compactIdentifierResolvedUrl": {
+                        "type": "string"
+                      },
+                      "description": {
+                        "type": "string"
+                      },
+                      "official": {
+                        "type": "boolean"
+                      },
+                      "resourceHomeUrl": {
+                        "type": "string"
+                      },
+                      "institution": {
+                        "type": "object",
+                        "properties": {
+                          "name": {
+                            "type": "string"
+                          },
+                          "homeUrl": {
+                            "type": "string"
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        {
+          "type": "object",
+          "properties": {
+            "error": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "error"
+          ]
+        }
+      ]
+    },
+    "test_examples": [
+      {
+        "namespace": "uniprot",
+        "local_id": "P04637"
+      },
+      {
+        "namespace": "pdb",
+        "local_id": "4HHB"
+      }
+    ]
+  },
+  {
+    "name": "IdentifiersOrg_get_namespace",
+    "type": "BaseRESTTool",
+    "description": "Get detailed information about a specific Identifiers.org namespace (database prefix). Returns the namespace name, ID pattern regex, description, sample ID, and provider resources. Use this to understand the identifier format for a specific database (e.g., what a valid UniProt ID looks like). The prefix is the part before the colon in a compact ID (e.g., 'uniprot' in 'uniprot:P04637'). There are 800+ registered namespaces covering most major biological databases.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "prefix": {
+          "type": "string",
+          "description": "The namespace prefix to look up. Examples: 'uniprot', 'pdb', 'ensembl', 'go', 'chebi', 'ncbigene', 'taxonomy', 'reactome', 'kegg.compound', 'interpro', 'pfam', 'doi'."
+        }
+      },
+      "required": [
+        "prefix"
+      ]
+    },
+    "fields": {
+      "endpoint": "https://registry.api.identifiers.org/restApi/namespaces/search/findByPrefix",
+      "return_format": "JSON"
+    },
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "object",
+          "description": "Namespace details including ID pattern and description",
+          "properties": {
+            "prefix": {
+              "type": "string"
+            },
+            "mirId": {
+              "type": "string"
+            },
+            "name": {
+              "type": "string"
+            },
+            "pattern": {
+              "type": "string",
+              "description": "Regex pattern for valid local IDs"
+            },
+            "description": {
+              "type": "string"
+            },
+            "sampleId": {
+              "type": "string"
+            },
+            "namespaceEmbeddedInLui": {
+              "type": "boolean"
+            },
+            "deprecated": {
+              "type": "boolean"
+            }
+          }
+        },
+        {
+          "type": "object",
+          "properties": {
+            "error": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "error"
+          ]
+        }
+      ]
+    },
+    "test_examples": [
+      {
+        "prefix": "uniprot"
+      },
+      {
+        "prefix": "pdb"
+      }
+    ]
+  },
+  {
+    "name": "IdentifiersOrg_search_namespaces",
+    "type": "BaseRESTTool",
+    "description": "Search the Identifiers.org registry for namespaces (database prefixes) by keyword. Returns namespaces whose prefix contains the search term. Use this to discover what database prefixes are available for resolving identifiers. For example, search 'pdb' to find PDB-related namespaces, or 'gene' to find all gene-related databases registered in Identifiers.org.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "content": {
+          "type": "string",
+          "description": "Search term to find in namespace prefixes. Examples: 'pdb', 'gene', 'protein', 'uniprot', 'ensembl', 'kegg', 'chebi', 'pathway'."
+        },
+        "page": {
+          "type": "integer",
+          "default": 0,
+          "description": "Page number (0-based). Default: 0."
+        },
+        "size": {
+          "type": "integer",
+          "default": 10,
+          "description": "Results per page. Default: 10."
+        }
+      },
+      "required": [
+        "content"
+      ]
+    },
+    "fields": {
+      "endpoint": "https://registry.api.identifiers.org/restApi/namespaces/search/findByPrefixContaining",
+      "return_format": "JSON"
+    },
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "object",
+          "description": "Search results containing matching namespaces",
+          "properties": {
+            "_embedded": {
+              "type": "object",
+              "properties": {
+                "namespaces": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "prefix": {
+                        "type": "string"
+                      },
+                      "name": {
+                        "type": "string"
+                      },
+                      "pattern": {
+                        "type": "string"
+                      },
+                      "description": {
+                        "type": "string"
+                      },
+                      "sampleId": {
+                        "type": "string"
+                      }
+                    }
+                  }
+                }
+              }
+            },
+            "page": {
+              "type": "object",
+              "properties": {
+                "size": {
+                  "type": "integer"
+                },
+                "totalElements": {
+                  "type": "integer"
+                },
+                "totalPages": {
+                  "type": "integer"
+                },
+                "number": {
+                  "type": "integer"
+                }
+              }
+            }
+          }
+        },
+        {
+          "type": "object",
+          "properties": {
+            "error": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "error"
+          ]
+        }
+      ]
+    },
+    "test_examples": [
+      {
+        "content": "pdb",
+        "page": 0,
+        "size": 10
+      },
+      {
+        "content": "gene",
+        "page": 0,
+        "size": 10
+      }
+    ]
+  },
+  {
+    "name": "IdentifiersOrg_list_namespaces",
+    "type": "BaseRESTTool",
+    "description": "List all registered namespaces in the Identifiers.org registry with pagination. Returns database prefixes, names, ID patterns, and descriptions for all 800+ registered biological databases. Use this to browse available namespaces or find databases you may not have known about. Results are paginated with configurable page size.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "page": {
+          "type": "integer",
+          "default": 0,
+          "description": "Page number (0-based). Default: 0."
+        },
+        "size": {
+          "type": "integer",
+          "default": 20,
+          "description": "Results per page. Default: 20."
+        }
+      }
+    },
+    "fields": {
+      "endpoint": "https://registry.api.identifiers.org/restApi/namespaces",
+      "return_format": "JSON"
+    },
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "object",
+          "description": "Paginated list of all registered namespaces",
+          "properties": {
+            "_embedded": {
+              "type": "object",
+              "properties": {
+                "namespaces": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "prefix": {
+                        "type": "string"
+                      },
+                      "name": {
+                        "type": "string"
+                      },
+                      "pattern": {
+                        "type": "string"
+                      },
+                      "description": {
+                        "type": "string"
+                      },
+                      "sampleId": {
+                        "type": "string"
+                      },
+                      "deprecated": {
+                        "type": "boolean"
+                      }
+                    }
+                  }
+                }
+              }
+            },
+            "page": {
+              "type": "object",
+              "properties": {
+                "size": {
+                  "type": "integer"
+                },
+                "totalElements": {
+                  "type": "integer"
+                },
+                "totalPages": {
+                  "type": "integer"
+                },
+                "number": {
+                  "type": "integer"
+                }
+              }
+            }
+          }
+        },
+        {
+          "type": "object",
+          "properties": {
+            "error": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "error"
+          ]
+        }
+      ]
+    },
+    "test_examples": [
+      {
+        "page": 0,
+        "size": 10
+      }
+    ]
+  }
+]

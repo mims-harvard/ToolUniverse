@@ -55,6 +55,7 @@
       "oneOf": [
         {
           "type": "object",
+          "description": "HumanMine search results",
           "properties": {
             "totalHits": {
               "type": "integer",
@@ -139,24 +140,16 @@
                 }
               }
             }
-          },
-          "description": "HumanMine search results"
+          }
         },
         {
           "type": "object",
           "properties": {
-            "status": {
-              "type": "string",
-              "enum": [
-                "error"
-              ]
-            },
             "error": {
               "type": "string"
             }
           },
           "required": [
-            "status",
             "error"
           ]
         }
@@ -210,6 +203,7 @@
       "oneOf": [
         {
           "type": "object",
+          "description": "Gene search results from HumanMine",
           "properties": {
             "totalHits": {
               "type": "integer",
@@ -266,24 +260,16 @@
                 }
               }
             }
-          },
-          "description": "Gene search results from HumanMine"
+          }
         },
         {
           "type": "object",
           "properties": {
-            "status": {
-              "type": "string",
-              "enum": [
-                "error"
-              ]
-            },
             "error": {
               "type": "string"
             }
           },
           "required": [
-            "status",
             "error"
           ]
         }
@@ -337,6 +323,7 @@
       "oneOf": [
         {
           "type": "object",
+          "description": "Pathway search results from HumanMine",
           "properties": {
             "totalHits": {
               "type": "integer",
@@ -370,24 +357,16 @@
                 }
               }
             }
-          },
-          "description": "Pathway search results from HumanMine"
+          }
         },
         {
           "type": "object",
           "properties": {
-            "status": {
-              "type": "string",
-              "enum": [
-                "error"
-              ]
-            },
             "error": {
               "type": "string"
             }
           },
           "required": [
-            "status",
             "error"
           ]
         }

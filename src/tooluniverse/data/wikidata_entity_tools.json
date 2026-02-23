@@ -1,0 +1,298 @@
+[
+  {
+    "name": "Wikidata_search_entities",
+    "description": "Search Wikidata for entities (items, properties, or lexemes) by label or description using the MediaWiki Wikibase API. Wikidata is the world's largest open knowledge graph with 100M+ data items. Returns entity IDs (Q-numbers), labels, descriptions, and aliases. Complementary to Wikidata_SPARQL_query for finding entity IDs before constructing SPARQL queries.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "search": {
+          "type": "string",
+          "description": "Search term to find Wikidata entities. Examples: 'CRISPR', 'Albert Einstein', 'HIV', 'perovskite', 'insulin'"
+        },
+        "language": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Language code for search and results. Default: 'en'. Examples: 'fr', 'de', 'zh', 'ja', 'es'"
+        },
+        "type": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Entity type to search. Values: 'item' (Q-numbers, default), 'property' (P-numbers), 'lexeme' (L-numbers)"
+        },
+        "limit": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "description": "Number of results to return (default 7, max 50)"
+        }
+      },
+      "required": [
+        "search"
+      ]
+    },
+    "fields": {
+      "endpoint": "https://www.wikidata.org/w/api.php",
+      "params": {
+        "action": "wbsearchentities",
+        "format": "json"
+      },
+      "headers": {
+        "User-Agent": "ToolUniverse/1.0 (scientific research; https://github.com/tooluniverse/ToolUniverse)"
+      }
+    },
+    "type": "BaseRESTTool",
+    "test_examples": [
+      {
+        "search": "CRISPR",
+        "language": "en",
+        "limit": 5
+      },
+      {
+        "search": "Alzheimer disease",
+        "type": "item"
+      },
+      {
+        "search": "Human Immunodeficiency Virus"
+      }
+    ],
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "object",
+          "description": "Wikidata entity search results",
+          "properties": {
+            "searchinfo": {
+              "type": "object",
+              "properties": {
+                "search": {
+                  "type": "string",
+                  "description": "The search query"
+                }
+              }
+            },
+            "search": {
+              "type": "array",
+              "description": "List of matching Wikidata entities",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "id": {
+                    "type": "string",
+                    "description": "Wikidata entity ID (e.g. 'Q412563' for CRISPR)"
+                  },
+                  "title": {
+                    "type": "string",
+                    "description": "Same as id"
+                  },
+                  "pageid": {
+                    "type": "integer"
+                  },
+                  "concepturi": {
+                    "type": "string",
+                    "description": "Canonical URI for the entity"
+                  },
+                  "url": {
+                    "type": "string",
+                    "description": "URL to entity page"
+                  },
+                  "label": {
+                    "type": "string",
+                    "description": "Entity label in requested language"
+                  },
+                  "description": {
+                    "type": "string",
+                    "description": "Short entity description"
+                  },
+                  "match": {
+                    "type": "object",
+                    "properties": {
+                      "type": {
+                        "type": "string",
+                        "description": "What was matched: 'label', 'alias', 'description'"
+                      },
+                      "language": {
+                        "type": "string"
+                      },
+                      "text": {
+                        "type": "string"
+                      }
+                    }
+                  }
+                }
+              }
+            },
+            "search-continue": {
+              "type": "integer",
+              "description": "Offset for next page"
+            }
+          }
+        },
+        {
+          "type": "object",
+          "properties": {
+            "error": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "error"
+          ]
+        }
+      ]
+    }
+  },
+  {
+    "name": "Wikidata_get_entity",
+    "description": "Get detailed structured data for one or more specific Wikidata entities by their Q-numbers. Returns labels, descriptions, aliases, sitelinks, and claims (statements). Use Wikidata_search_entities first to find entity IDs. Essential for extracting structured facts from the Wikidata knowledge graph without writing SPARQL queries.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "ids": {
+          "type": "string",
+          "description": "Wikidata entity ID(s) to retrieve. Use pipe | separator for multiple. Examples: 'Q937' (Einstein), 'Q937|Q7251' (multiple)"
+        },
+        "languages": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Language code(s) for labels and descriptions. Default: 'en'. Pipe-separated for multiple: 'en|fr|de'"
+        },
+        "props": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Which properties to return (pipe-separated). Options: 'labels', 'descriptions', 'aliases', 'claims', 'sitelinks'. Default: 'labels|descriptions|aliases|sitelinks'"
+        }
+      },
+      "required": [
+        "ids"
+      ]
+    },
+    "fields": {
+      "endpoint": "https://www.wikidata.org/w/api.php",
+      "params": {
+        "action": "wbgetentities",
+        "format": "json",
+        "props": "labels|descriptions|sitelinks"
+      },
+      "headers": {
+        "User-Agent": "ToolUniverse/1.0 (scientific research; https://github.com/tooluniverse/ToolUniverse)"
+      }
+    },
+    "type": "BaseRESTTool",
+    "test_examples": [
+      {
+        "ids": "Q937",
+        "languages": "en"
+      },
+      {
+        "ids": "Q412563",
+        "languages": "en",
+        "props": "labels|descriptions|aliases"
+      },
+      {
+        "ids": "Q7251|Q23666"
+      }
+    ],
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "object",
+          "description": "Wikidata entity data",
+          "properties": {
+            "entities": {
+              "type": "object",
+              "description": "Dictionary of entity ID to entity data",
+              "additionalProperties": {
+                "type": "object",
+                "properties": {
+                  "type": {
+                    "type": "string",
+                    "description": "Entity type: 'item', 'property'"
+                  },
+                  "id": {
+                    "type": "string",
+                    "description": "Entity ID (Q-number)"
+                  },
+                  "labels": {
+                    "type": "object",
+                    "description": "Labels in different languages",
+                    "additionalProperties": {
+                      "type": "object",
+                      "properties": {
+                        "language": {
+                          "type": "string"
+                        },
+                        "value": {
+                          "type": "string"
+                        }
+                      }
+                    }
+                  },
+                  "descriptions": {
+                    "type": "object",
+                    "description": "Descriptions in different languages",
+                    "additionalProperties": {
+                      "type": "object",
+                      "properties": {
+                        "language": {
+                          "type": "string"
+                        },
+                        "value": {
+                          "type": "string"
+                        }
+                      }
+                    }
+                  },
+                  "aliases": {
+                    "type": "object",
+                    "description": "Aliases/alternative names"
+                  },
+                  "sitelinks": {
+                    "type": "object",
+                    "description": "Links to Wikipedia/other Wikimedia sites",
+                    "additionalProperties": {
+                      "type": "object",
+                      "properties": {
+                        "site": {
+                          "type": "string"
+                        },
+                        "title": {
+                          "type": "string"
+                        },
+                        "url": {
+                          "type": "string"
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            },
+            "success": {
+              "type": "integer"
+            }
+          }
+        },
+        {
+          "type": "object",
+          "properties": {
+            "error": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "error"
+          ]
+        }
+      ]
+    }
+  }
+]

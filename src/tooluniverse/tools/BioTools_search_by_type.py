@@ -1,0 +1,67 @@
+"""
+BioTools_search_by_type
+
+Search the ELIXIR Bio.tools registry for bioinformatics resources by tool type. Returns resources...
+"""
+
+from typing import Any, Optional, Callable
+from ._shared_client import get_shared_client
+
+
+def BioTools_search_by_type(
+    toolType: str,
+    q: Optional[str | Any] = None,
+    page: Optional[int] = 1,
+    size: Optional[int] = 10,
+    format: Optional[str] = "json",
+    *,
+    stream_callback: Optional[Callable[[str], None]] = None,
+    use_cache: bool = False,
+    validate: bool = True,
+) -> Any:
+    """
+    Search the ELIXIR Bio.tools registry for bioinformatics resources by tool type. Returns resources...
+
+    Parameters
+    ----------
+    toolType : str
+        Bio.tools resource type. Examples: 'Command-line tool', 'Web application', 'W...
+    q : str | Any
+        Optional free-text query to further filter results. Example: 'proteomics' to ...
+    page : int
+        Page number (1-based). Default: 1.
+    size : int
+        Results per page (1-50). Default: 10.
+    format : str
+        Response format. Must be 'json'.
+    stream_callback : Callable, optional
+        Callback for streaming output
+    use_cache : bool, default False
+        Enable caching
+    validate : bool, default True
+        Validate parameters
+
+    Returns
+    -------
+    Any
+    """
+    # Handle mutable defaults to avoid B006 linting error
+
+    return get_shared_client().run_one_function(
+        {
+            "name": "BioTools_search_by_type",
+            "arguments": {
+                "toolType": toolType,
+                "q": q,
+                "page": page,
+                "size": size,
+                "format": format,
+            },
+        },
+        stream_callback=stream_callback,
+        use_cache=use_cache,
+        validate=validate,
+    )
+
+
+__all__ = ["BioTools_search_by_type"]

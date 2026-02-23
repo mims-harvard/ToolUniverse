@@ -1,0 +1,173 @@
+[
+  {
+    "name": "InspireHEP_search_papers",
+    "description": "Search high-energy physics literature in the INSPIRE-HEP database, the premier repository for physics papers in particle physics, astrophysics, and related fields. Returns paper titles, authors, abstract, citation count, DOI, and arXiv identifiers. No authentication required. Search syntax: 'a einstein' (author), 't higgs' (title), 'j phys.rev' (journal), 'cn cms' (collaboration), 'texkey smith:2024abc'. Covers 1.6 million+ records.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "q": {
+          "type": "string",
+          "description": "INSPIRE search query. Examples: 'higgs boson discovery', 'author:einstein', 'a:witten AND string theory', 'dark matter direct detection', 'cn:atlas AND higgs', 't:gravitational waves'. Use field prefixes: a: or author:, t: or title:, j: journal, cn: collaboration"
+        },
+        "sort": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Sort order. Values: 'mostrecent' (default), 'mostcited'. Examples: 'mostcited' to get highest-cited papers first"
+        },
+        "size": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "description": "Number of results (1-25). Default: 10"
+        },
+        "fields": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Comma-separated fields to return. Default includes titles, authors, abstract, citations. Example: 'titles,authors,abstract,citation_count,arxiv_eprints,dois'"
+        }
+      },
+      "required": [
+        "q"
+      ]
+    },
+    "fields": {
+      "endpoint": "https://inspirehep.net/api/literature",
+      "params": {
+        "sort": "mostrecent"
+      }
+    },
+    "type": "BaseRESTTool",
+    "test_examples": [
+      {
+        "q": "higgs boson LHC discovery",
+        "sort": "mostcited",
+        "size": 5
+      },
+      {
+        "q": "author:witten string theory",
+        "size": 5
+      },
+      {
+        "q": "gravitational waves LIGO detection",
+        "sort": "mostrecent",
+        "size": 5
+      }
+    ],
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "object",
+          "description": "INSPIRE-HEP literature search results",
+          "properties": {
+            "hits": {
+              "type": "object",
+              "properties": {
+                "total": {
+                  "type": "integer",
+                  "description": "Total matching papers"
+                },
+                "hits": {
+                  "type": "array",
+                  "description": "List of paper records",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "id": {
+                        "type": "string",
+                        "description": "INSPIRE record ID"
+                      },
+                      "metadata": {
+                        "type": "object",
+                        "properties": {
+                          "titles": {
+                            "type": "array",
+                            "items": {
+                              "type": "object",
+                              "properties": {
+                                "title": {
+                                  "type": "string"
+                                }
+                              }
+                            }
+                          },
+                          "authors": {
+                            "type": "array",
+                            "items": {
+                              "type": "object"
+                            }
+                          },
+                          "abstract": {
+                            "type": [
+                              "object",
+                              "null"
+                            ]
+                          },
+                          "citation_count": {
+                            "type": [
+                              "integer",
+                              "null"
+                            ]
+                          },
+                          "citation_count_without_self_citations": {
+                            "type": [
+                              "integer",
+                              "null"
+                            ]
+                          },
+                          "arxiv_eprints": {
+                            "type": "array",
+                            "items": {
+                              "type": "object",
+                              "properties": {
+                                "value": {
+                                  "type": "string"
+                                }
+                              }
+                            }
+                          },
+                          "dois": {
+                            "type": "array",
+                            "items": {
+                              "type": "object",
+                              "properties": {
+                                "value": {
+                                  "type": "string"
+                                }
+                              }
+                            }
+                          },
+                          "collaborations": {
+                            "type": "array"
+                          },
+                          "publication_info": {
+                            "type": "array"
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        {
+          "type": "object",
+          "properties": {
+            "error": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "error"
+          ]
+        }
+      ]
+    }
+  }
+]

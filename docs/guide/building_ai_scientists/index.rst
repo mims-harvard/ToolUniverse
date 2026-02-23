@@ -150,9 +150,17 @@ Platforms
    codex_cli
    chatgpt_api
 
-.. tip:: 🎯 **Guided Setup Available**
-   
-   Install skills first with ``npx skills add mims-harvard/ToolUniverse``, then ask your AI coding agent **"setup tooluniverse"**. The ``setup-tooluniverse`` skill will walk you through MCP configuration, API keys, and validation step by step.
+.. tip:: 🚀 **Instant guided setup — works with any agent, no pre-installation needed**
+
+   Open your AI agent and paste this single message:
+
+   .. code-block:: text
+
+      Please read https://raw.githubusercontent.com/mims-harvard/ToolUniverse/main/skills/setup-tooluniverse/SKILL.md and follow it to help me set up ToolUniverse.
+
+   Your agent will fetch the interactive setup guide from GitHub and walk you through MCP configuration, API keys, and validation step by step — no setup required beforehand.
+
+   Or, install skills first with ``npx skills add mims-harvard/ToolUniverse``, then ask your agent **"setup tooluniverse"**.
 
 Common Setup Steps
 ------------------
@@ -170,7 +178,7 @@ All platforms follow this general pattern:
         "mcpServers": {
           "tooluniverse": {
             "command": "uvx",
-            "args": ["tooluniverse"],
+            "args": ["--refresh", "tooluniverse"],
             "env": {"PYTHONIOENCODING": "utf-8"}
           }
         }

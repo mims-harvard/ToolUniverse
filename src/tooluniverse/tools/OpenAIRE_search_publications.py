@@ -11,7 +11,7 @@ from ._shared_client import get_shared_client
 def OpenAIRE_search_publications(
     query: str,
     max_results: int,
-    type: str,
+    type_: str,
     *,
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
@@ -26,7 +26,7 @@ def OpenAIRE_search_publications(
         Search query for OpenAIRE research products. Use keywords to search across ti...
     max_results : int
         Maximum number of results to return. Default is 10, maximum is 100.
-    type : str
+    type_ : str
         Type of research product to search: 'publications', 'datasets', or 'software'...
     stream_callback : Callable, optional
         Callback for streaming output
@@ -44,7 +44,7 @@ def OpenAIRE_search_publications(
     return get_shared_client().run_one_function(
         {
             "name": "OpenAIRE_search_publications",
-            "arguments": {"query": query, "max_results": max_results, "type": type},
+            "arguments": {"query": query, "max_results": max_results, "type": type_},
         },
         stream_callback=stream_callback,
         use_cache=use_cache,

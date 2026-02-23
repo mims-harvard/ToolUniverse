@@ -91,6 +91,17 @@ Start SMCP server with STDIO transport for desktop AI applications (Claude Deskt
 
 **See also**: :doc:`../guide/building_ai_scientists/claude_desktop`
 
+tooluniverse-mcp
+~~~~~~~~~~~~~~~~
+
+Alias for ``tooluniverse-smcp`` - starts the MCP HTTP/SSE server.
+
+**Usage**::
+
+   tooluniverse-mcp [OPTIONS]
+
+This command is identical to ``tooluniverse-smcp`` and provided for compatibility with MCP-first workflows.
+
 tooluniverse-smcp-server
 ~~~~~~~~~~~~~~~~~~~~~~~~
 

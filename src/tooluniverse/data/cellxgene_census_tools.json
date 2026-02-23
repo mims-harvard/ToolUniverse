@@ -20,16 +20,21 @@
       "required": []
     },
     "return_schema": {
-      "type": "object",
-      "properties": {
-        "status": {"type": "string"},
-        "versions": {
-          "type": "array",
-          "description": "List of available Census versions with metadata"
+      "oneOf": [
+        {
+          "type": "object",
+          "properties": {
+            "status": {"type": "string"},
+            "versions": {
+              "type": "array",
+              "description": "List of available Census versions with metadata"
+            },
+            "error": {"type": "string"}
+          },
+          "additionalProperties": true
         },
-        "error": {"type": "string"}
-      },
-      "additionalProperties": true
+        {"type": "null"}
+      ]
     },
     "test_examples": [
       {
@@ -78,17 +83,8 @@
       "required": ["operation", "obs_value_filter"]
     },
     "return_schema": {
-      "type": "object",
-      "properties": {
-        "status": {"type": "string"},
-        "organism": {"type": "string"},
-        "num_cells": {"type": "integer"},
-        "columns": {"type": "array", "items": {"type": "string"}},
-        "data": {"type": "array"},
-        "message": {"type": "string"},
-        "error": {"type": "string"}
-      },
-      "additionalProperties": true
+      "type": ["array", "null"],
+      "items": {"type": "object"}
     },
     "test_examples": [
       {
@@ -140,17 +136,8 @@
       "required": ["operation"]
     },
     "return_schema": {
-      "type": "object",
-      "properties": {
-        "status": {"type": "string"},
-        "organism": {"type": "string"},
-        "num_genes": {"type": "integer"},
-        "columns": {"type": "array", "items": {"type": "string"}},
-        "data": {"type": "array"},
-        "message": {"type": "string"},
-        "error": {"type": "string"}
-      },
-      "additionalProperties": true
+      "type": ["array", "null"],
+      "items": {"type": "object"}
     },
     "test_examples": [
       {
@@ -211,16 +198,13 @@
       "required": ["operation"]
     },
     "return_schema": {
-      "type": "object",
+      "type": ["object", "null"],
       "properties": {
-        "status": {"type": "string"},
-        "organism": {"type": "string"},
-        "n_obs": {"type": "integer", "description": "Number of cells"},
-        "n_vars": {"type": "integer", "description": "Number of genes"},
+        "n_obs": {"type": "integer"},
+        "n_vars": {"type": "integer"},
         "obs_columns": {"type": "array"},
         "var_columns": {"type": "array"},
-        "message": {"type": "string"},
-        "error": {"type": "string"}
+        "message": {"type": "string"}
       },
       "additionalProperties": true
     },
@@ -266,17 +250,22 @@
       "required": ["operation"]
     },
     "return_schema": {
-      "type": "object",
-      "properties": {
-        "status": {"type": "string"},
-        "organism": {"type": "string"},
-        "shape": {"type": "array", "items": {"type": "integer"}},
-        "nnz": {"type": "integer", "description": "Number of non-zero entries"},
-        "density": {"type": "number"},
-        "message": {"type": "string"},
-        "error": {"type": "string"}
-      },
-      "additionalProperties": true
+      "oneOf": [
+        {
+          "type": "object",
+          "properties": {
+            "status": {"type": "string"},
+            "organism": {"type": "string"},
+            "shape": {"type": "array", "items": {"type": "integer"}},
+            "nnz": {"type": "integer", "description": "Number of non-zero entries"},
+            "density": {"type": "number"},
+            "message": {"type": "string"},
+            "error": {"type": "string"}
+          },
+          "additionalProperties": true
+        },
+        {"type": "null"}
+      ]
     },
     "test_examples": [
       {
@@ -324,13 +313,12 @@
     "return_schema": {
       "type": "object",
       "properties": {
-        "status": {"type": "string"},
-        "organism": {"type": "string"},
-        "embedding_name": {"type": "string"},
-        "shape": {"type": "array"},
-        "available_embeddings": {"type": "object"},
         "message": {"type": "string"},
-        "error": {"type": "string"}
+        "organism": {"type": ["string", "null"]},
+        "embedding_name": {"type": ["string", "null"]},
+        "available": {"type": ["boolean", "null"]},
+        "shape": {"type": ["array", "null"]},
+        "available_embeddings": {"type": ["object", "null"]}
       },
       "additionalProperties": true
     },
@@ -376,21 +364,19 @@
       "required": ["operation", "dataset_id"]
     },
     "return_schema": {
-      "type": "object",
+      "type": ["object", "null"],
       "properties": {
-        "status": {"type": "string"},
         "dataset_id": {"type": "string"},
-        "output_path": {"type": "string"},
-        "uri": {"type": "string"},
-        "message": {"type": "string"},
-        "error": {"type": "string"}
+        "output_path": {"type": ["string", "null"]},
+        "uri": {"type": ["string", "null"]},
+        "message": {"type": "string"}
       },
       "additionalProperties": true
     },
     "test_examples": [
       {
         "operation": "download_h5ad",
-        "dataset_id": "example_dataset_id",
+        "dataset_id": "4eb29386-de81-452f-b3c0-e00844e8c7fd",
         "census_version": "stable"
       }
     ]

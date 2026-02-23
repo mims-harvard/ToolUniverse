@@ -1,0 +1,93 @@
+[
+  {
+    "name": "VariantValidator_validate_variant",
+    "description": "Validate and convert genetic variant descriptions using VariantValidator. Takes HGVS-formatted variant notation and returns validated variant descriptions with genomic context, transcript context, protein consequence, and cross-references. Validates variant nomenclature against current RefSeq sequences and LOVD syntax checker. Supports substitutions, deletions, insertions, duplications, inversions. Reference assemblies: GRCh37 (hg19) or GRCh38 (hg38).",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "genome_build": {
+          "type": "string",
+          "description": "Reference genome assembly: 'GRCh37' (hg19) or 'GRCh38' (hg38)"
+        },
+        "variant_description": {
+          "type": "string",
+          "description": "HGVS variant description (e.g., 'NM_007294.4:c.5266dup' for BRCA1 c.5266dupC, 'NM_000179.3:c.943C>T', 'chr17:g.43092919del')"
+        },
+        "select_transcripts": {
+          "type": "string",
+          "description": "Transcript to validate against (e.g., 'NM_007294.4'). Use 'all' to get all transcripts for a genomic variant."
+        }
+      },
+      "required": ["genome_build", "variant_description", "select_transcripts"]
+    },
+    "fields": {
+      "endpoint": "https://rest.variantvalidator.org/VariantValidator/variantvalidator/{genome_build}/{variant_description}/{select_transcripts}"
+    },
+    "type": "BaseRESTTool",
+    "test_examples": [
+      {"genome_build": "GRCh38", "variant_description": "NM_007294.4:c.5266dup", "select_transcripts": "NM_007294.4"},
+      {"genome_build": "GRCh38", "variant_description": "NM_000179.3:c.943C>T", "select_transcripts": "NM_000179.3"}
+    ],
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "object",
+          "description": "Validated variant information. Contains 'flag' field, 'metadata' field, and dynamic keys for each validated variant.",
+          "properties": {
+            "flag": {"type": ["string", "null"], "description": "Validation status: 'gene_variant', 'warning', 'error'"},
+            "metadata": {
+              "type": ["object", "null"],
+              "description": "VariantValidator version information",
+              "properties": {
+                "variantvalidator_version": {"type": "string"},
+                "variantvalidator_hgvs_version": {"type": "string"},
+                "vvdb_version": {"type": "string"}
+              }
+            }
+          },
+          "additionalProperties": {
+            "type": "object",
+            "description": "HGVS variant key with validated transcript/genomic coordinates, protein consequence, and warnings",
+            "properties": {
+              "hgvs_transcript_variant": {"type": ["string", "null"], "description": "Validated HGVS transcript notation"},
+              "hgvs_refseqgene_variant": {"type": ["string", "null"], "description": "HGVS RefSeqGene notation"},
+              "hgvs_predicted_protein_consequence": {
+                "type": ["object", "null"],
+                "properties": {
+                  "tlr": {"type": ["string", "null"], "description": "Three-letter amino acid code"},
+                  "slr": {"type": ["string", "null"], "description": "Single-letter amino acid code"}
+                }
+              },
+              "primary_assembly_loci": {
+                "type": ["object", "null"],
+                "description": "Genomic coordinates in GRCh37/GRCh38",
+                "properties": {
+                  "grch38": {"type": ["object", "null"]},
+                  "grch37": {"type": ["object", "null"]}
+                }
+              },
+              "gene_ids": {
+                "type": ["object", "null"],
+                "properties": {
+                  "hgnc_id": {"type": ["string", "null"]},
+                  "entrez_gene_id": {"type": ["string", "null"]},
+                  "ncbi_id": {"type": ["string", "null"]},
+                  "ensembl_gene_id": {"type": ["string", "null"]}
+                }
+              },
+              "gene_symbol": {"type": ["string", "null"]},
+              "validation_warnings": {"type": ["array", "null"]}
+            }
+          }
+        },
+        {
+          "type": "object",
+          "properties": {
+            "error": {"type": "string"}
+          },
+          "required": ["error"]
+        }
+      ]
+    }
+  }
+]

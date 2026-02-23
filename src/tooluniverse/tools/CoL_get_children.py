@@ -1,0 +1,55 @@
+"""
+CoL_get_children
+
+Get child taxa (immediate subtaxa) of a given taxon in the Catalogue of Life. For example, get al...
+"""
+
+from typing import Any, Optional, Callable
+from ._shared_client import get_shared_client
+
+
+def CoL_get_children(
+    parentId: str,
+    limit: Optional[int | Any] = None,
+    offset: Optional[int | Any] = None,
+    *,
+    stream_callback: Optional[Callable[[str], None]] = None,
+    use_cache: bool = False,
+    validate: bool = True,
+) -> Any:
+    """
+    Get child taxa (immediate subtaxa) of a given taxon in the Catalogue of Life. For example, get al...
+
+    Parameters
+    ----------
+    parentId : str
+        CoL ID of the parent taxon whose children to retrieve (e.g., '636X2' for genu...
+    limit : int | Any
+        Maximum number of children to return (default 10, max 1000)
+    offset : int | Any
+        Offset for pagination
+    stream_callback : Callable, optional
+        Callback for streaming output
+    use_cache : bool, default False
+        Enable caching
+    validate : bool, default True
+        Validate parameters
+
+    Returns
+    -------
+    Any
+    """
+    # Handle mutable defaults to avoid B006 linting error
+
+    return get_shared_client().run_one_function(
+        {
+            "name": "CoL_get_children",
+            "arguments": {"parentId": parentId, "limit": limit, "offset": offset},
+        },
+        stream_callback=stream_callback,
+        use_cache=use_cache,
+        validate=validate,
+    )
+
+
+__all__ = ["CoL_get_children"]

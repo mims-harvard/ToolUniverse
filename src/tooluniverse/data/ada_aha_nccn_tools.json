@@ -1,0 +1,503 @@
+[
+  {
+    "name": "ADA_list_standards_sections",
+    "description": "List all sections/chapters of the current ADA Standards of Medical Care in Diabetes. The ADA publishes the Standards of Care annually in Diabetes Care as a free supplement. Each section covers a specific clinical topic (e.g., glycemic goals, pharmacologic treatment, cardiovascular risk management, diabetes technology). Returns section titles, numbers, PMIDs, and PMC links. Use year parameter to access specific editions (default: 2026).",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "year": {
+          "type": "integer",
+          "description": "Year of the ADA Standards of Care edition to retrieve (default: 2026). Standards have been published annually since 2004.",
+          "default": 2026
+        }
+      },
+      "required": []
+    },
+    "fields": {
+      "operation": "list_sections"
+    },
+    "type": "ADAStandardsTool",
+    "test_examples": [
+      {"year": 2026},
+      {"year": 2025}
+    ],
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "array",
+          "description": "List of ADA Standards of Care sections with metadata",
+          "items": {
+            "type": "object",
+            "properties": {
+              "title": {"type": "string"},
+              "section_number": {"type": ["integer", "null"]},
+              "pmid": {"type": "string"},
+              "url": {"type": "string"},
+              "pmc_url": {"type": ["string", "null"]},
+              "doi": {"type": ["string", "null"]},
+              "year": {"type": "integer"}
+            }
+          }
+        },
+        {
+          "type": "object",
+          "properties": {"error": {"type": "string"}},
+          "required": ["error"]
+        }
+      ]
+    }
+  },
+  {
+    "name": "ADA_search_standards",
+    "description": "Search ADA (American Diabetes Association) guidelines and publications by topic using PubMed. Searches publications with ADA as corporate author, returning titles, abstracts, PMIDs, and PMC links. Useful for finding ADA recommendations on specific diabetes-related topics such as glycemic targets, insulin therapy, GLP-1 receptor agonists, SGLT2 inhibitors, gestational diabetes, diabetic kidney disease, or diabetes technology.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "query": {
+          "type": "string",
+          "description": "Search topic (e.g., 'type 2 diabetes insulin therapy', 'gestational diabetes', 'diabetic kidney disease', 'SGLT2 inhibitors cardiovascular')"
+        },
+        "limit": {
+          "type": "integer",
+          "description": "Maximum number of results to return (default: 5)",
+          "default": 5
+        }
+      },
+      "required": ["query"]
+    },
+    "fields": {
+      "operation": "search"
+    },
+    "type": "ADAStandardsTool",
+    "test_examples": [
+      {"query": "type 2 diabetes pharmacologic treatment", "limit": 3},
+      {"query": "gestational diabetes management", "limit": 3}
+    ],
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "array",
+          "description": "List of ADA publications matching the search query",
+          "items": {
+            "type": "object",
+            "properties": {
+              "title": {"type": "string"},
+              "abstract": {"type": "string"},
+              "year": {"type": ["integer", "null"]},
+              "pmid": {"type": "string"},
+              "url": {"type": "string"},
+              "pmc_url": {"type": ["string", "null"]},
+              "doi": {"type": "string"},
+              "journal": {"type": "string"},
+              "publication_date": {"type": "string"}
+            }
+          }
+        },
+        {
+          "type": "object",
+          "properties": {"error": {"type": "string"}},
+          "required": ["error"]
+        }
+      ]
+    }
+  },
+  {
+    "name": "ADA_get_standards_section",
+    "description": "Fetch detailed content from a specific ADA Standards of Care section by PMID. Retrieves the abstract and, when available via PubMed Central (PMC), a full-text snippet. Use ADA_list_standards_sections first to get PMIDs for each section. All ADA Standards sections are freely available in PMC. Returns title, abstract, full text snippet, and links.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "pmid": {
+          "type": "string",
+          "description": "PubMed ID (PMID) of the ADA Standards section to retrieve (e.g., '41358900' for Section 9 Pharmacologic Approaches 2026)"
+        }
+      },
+      "required": ["pmid"]
+    },
+    "fields": {
+      "operation": "get_section"
+    },
+    "type": "ADAStandardsTool",
+    "test_examples": [
+      {"pmid": "41358900"},
+      {"pmid": "41358899"}
+    ],
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "object",
+          "description": "ADA Standards section with abstract and optional full text",
+          "properties": {
+            "title": {"type": "string"},
+            "pmid": {"type": "string"},
+            "abstract": {"type": "string"},
+            "journal": {"type": "string"},
+            "publication_date": {"type": "string"},
+            "pmc_url": {"type": ["string", "null"]},
+            "full_text_snippet": {"type": ["string", "null"]}
+          }
+        },
+        {
+          "type": "object",
+          "properties": {"error": {"type": "string"}},
+          "required": ["error"]
+        }
+      ]
+    }
+  },
+  {
+    "name": "AHA_ACC_search_guidelines",
+    "description": "Search AHA (American Heart Association) and ACC (American College of Cardiology) clinical practice guidelines by topic via PubMed. Covers guidelines published in Circulation, JACC, and other AHA/ACC journals. Useful for finding recommendations on hypertension, heart failure, atrial fibrillation, coronary artery disease, valvular heart disease, lipid management, cardiac arrest, and other cardiovascular conditions.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "query": {
+          "type": "string",
+          "description": "Search topic (e.g., 'heart failure', 'atrial fibrillation management', 'hypertension blood pressure', 'lipid cholesterol statin', 'coronary artery disease')"
+        },
+        "limit": {
+          "type": "integer",
+          "description": "Maximum number of results to return (default: 5)",
+          "default": 5
+        },
+        "year_from": {
+          "type": ["integer", "null"],
+          "description": "Filter to guidelines published from this year onward (e.g., 2020). Null for no date filter."
+        }
+      },
+      "required": ["query"]
+    },
+    "fields": {
+      "operation": "search"
+    },
+    "type": "AHAACCGuidelineTool",
+    "test_examples": [
+      {"query": "heart failure", "limit": 3},
+      {"query": "atrial fibrillation", "limit": 3, "year_from": 2020}
+    ],
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "array",
+          "description": "List of AHA/ACC guideline publications matching the search",
+          "items": {
+            "type": "object",
+            "properties": {
+              "title": {"type": "string"},
+              "abstract": {"type": "string"},
+              "year": {"type": ["integer", "null"]},
+              "pmid": {"type": "string"},
+              "url": {"type": "string"},
+              "pmc_url": {"type": ["string", "null"]},
+              "doi": {"type": "string"},
+              "journal": {"type": "string"},
+              "publication_date": {"type": "string"}
+            }
+          }
+        },
+        {
+          "type": "object",
+          "properties": {"error": {"type": "string"}},
+          "required": ["error"]
+        }
+      ]
+    }
+  },
+  {
+    "name": "AHA_list_guidelines",
+    "description": "List recent American Heart Association (AHA) clinical practice guidelines. Returns AHA-authored guidelines and scientific statements published in Circulation and other AHA journals, sorted by date. Covers cardiovascular guidelines on topics including hypertension, heart failure, cardiac arrest, stroke, arrhythmias, and prevention.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "limit": {
+          "type": "integer",
+          "description": "Maximum number of guidelines to return (default: 10)",
+          "default": 10
+        },
+        "year_from": {
+          "type": ["integer", "null"],
+          "description": "Filter to guidelines published from this year onward (e.g., 2020). Null for no date filter."
+        }
+      },
+      "required": []
+    },
+    "fields": {
+      "operation": "list_aha"
+    },
+    "type": "AHAACCGuidelineTool",
+    "test_examples": [
+      {"limit": 5},
+      {"limit": 5, "year_from": 2023}
+    ],
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "array",
+          "description": "List of recent AHA guideline publications",
+          "items": {
+            "type": "object",
+            "properties": {
+              "title": {"type": "string"},
+              "abstract": {"type": "string"},
+              "year": {"type": ["integer", "null"]},
+              "pmid": {"type": "string"},
+              "url": {"type": "string"},
+              "pmc_url": {"type": ["string", "null"]},
+              "doi": {"type": "string"},
+              "journal": {"type": "string"},
+              "publication_date": {"type": "string"}
+            }
+          }
+        },
+        {
+          "type": "object",
+          "properties": {"error": {"type": "string"}},
+          "required": ["error"]
+        }
+      ]
+    }
+  },
+  {
+    "name": "ACC_list_guidelines",
+    "description": "List recent American College of Cardiology (ACC) clinical practice guidelines. Returns ACC-authored guidelines published in JACC and other ACC journals, sorted by date. ACC guidelines cover coronary revascularization, valvular heart disease, chest pain evaluation, cardiac catheterization, and cardiovascular risk assessment.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "limit": {
+          "type": "integer",
+          "description": "Maximum number of guidelines to return (default: 10)",
+          "default": 10
+        },
+        "year_from": {
+          "type": ["integer", "null"],
+          "description": "Filter to guidelines published from this year onward (e.g., 2020). Null for no date filter."
+        }
+      },
+      "required": []
+    },
+    "fields": {
+      "operation": "list_acc"
+    },
+    "type": "AHAACCGuidelineTool",
+    "test_examples": [
+      {"limit": 5},
+      {"limit": 5, "year_from": 2022}
+    ],
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "array",
+          "description": "List of recent ACC guideline publications",
+          "items": {
+            "type": "object",
+            "properties": {
+              "title": {"type": "string"},
+              "abstract": {"type": "string"},
+              "year": {"type": ["integer", "null"]},
+              "pmid": {"type": "string"},
+              "url": {"type": "string"},
+              "pmc_url": {"type": ["string", "null"]},
+              "doi": {"type": "string"},
+              "journal": {"type": "string"},
+              "publication_date": {"type": "string"}
+            }
+          }
+        },
+        {
+          "type": "object",
+          "properties": {"error": {"type": "string"}},
+          "required": ["error"]
+        }
+      ]
+    }
+  },
+  {
+    "name": "NCCN_list_patient_guidelines",
+    "description": "List all NCCN (National Comprehensive Cancer Network) Guidelines for Patients available on nccn.org. These are free, publicly accessible cancer treatment guides organized by cancer type, detection/prevention, supportive care, and specific populations. Returns cancer type names, URLs, and category. Over 70 cancer types are covered including breast, lung, colon, prostate, melanoma, leukemias, and lymphomas.",
+    "parameter": {
+      "type": "object",
+      "properties": {},
+      "required": []
+    },
+    "fields": {
+      "operation": "list_patient"
+    },
+    "type": "NCCNGuidelineTool",
+    "test_examples": [
+      {}
+    ],
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "array",
+          "description": "List of NCCN patient guideline cancer types with URLs",
+          "items": {
+            "type": "object",
+            "properties": {
+              "cancer_type": {"type": "string"},
+              "url": {"type": "string"},
+              "category": {"type": "string"}
+            }
+          }
+        },
+        {
+          "type": "object",
+          "properties": {"error": {"type": "string"}},
+          "required": ["error"]
+        }
+      ]
+    }
+  },
+  {
+    "name": "NCCN_search_guidelines",
+    "description": "Search NCCN (National Comprehensive Cancer Network) guidelines and publications via PubMed. Searches the JNCCN (Journal of the NCCN) and other NCCN publications for clinical practice guidelines, evidence blocks, and discussion papers on cancer treatment. Useful for finding specific NCCN treatment recommendations and updates.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "query": {
+          "type": "string",
+          "description": "Search topic (e.g., 'breast cancer treatment', 'non-small cell lung cancer', 'prostate cancer screening', 'melanoma immunotherapy', 'pancreatic cancer')"
+        },
+        "limit": {
+          "type": "integer",
+          "description": "Maximum number of results to return (default: 5)",
+          "default": 5
+        }
+      },
+      "required": ["query"]
+    },
+    "fields": {
+      "operation": "search"
+    },
+    "type": "NCCNGuidelineTool",
+    "test_examples": [
+      {"query": "breast cancer treatment", "limit": 3},
+      {"query": "non-small cell lung cancer", "limit": 3}
+    ],
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "array",
+          "description": "List of NCCN publications matching the search",
+          "items": {
+            "type": "object",
+            "properties": {
+              "title": {"type": "string"},
+              "abstract": {"type": "string"},
+              "year": {"type": ["integer", "null"]},
+              "pmid": {"type": "string"},
+              "url": {"type": "string"},
+              "pmc_url": {"type": ["string", "null"]},
+              "doi": {"type": "string"},
+              "journal": {"type": "string"},
+              "publication_date": {"type": "string"}
+            }
+          }
+        },
+        {
+          "type": "object",
+          "properties": {"error": {"type": "string"}},
+          "required": ["error"]
+        }
+      ]
+    }
+  },
+  {
+    "name": "NCCN_get_patient_guideline",
+    "description": "Fetch content from a specific NCCN Guidelines for Patients page. Takes a URL obtained from NCCN_list_patient_guidelines and scrapes the page for title, content sections, and PDF download links. Returns the guideline page content organized by sections. Note: NCCN patient guidelines are educational summaries; for full professional guidelines, use NCCN_search_guidelines to find JNCCN publications.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "url": {
+          "type": "string",
+          "description": "URL of the NCCN patient guideline page (from NCCN_list_patient_guidelines output)"
+        }
+      },
+      "required": ["url"]
+    },
+    "fields": {
+      "operation": "get_patient"
+    },
+    "type": "NCCNGuidelineTool",
+    "test_examples": [
+      {"url": "https://www.nccn.org/patientresources/patient-resources/guidelines-for-patients/guidelines-for-patients-details?patientGuidelineId=21"}
+    ],
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "object",
+          "description": "NCCN patient guideline page with cancer type, version, and PDF links",
+          "properties": {
+            "title": {"type": "string"},
+            "url": {"type": "string"},
+            "cancer_type": {"type": "string"},
+            "version": {"type": "string"},
+            "pdf_downloads": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "label": {"type": "string"},
+                  "url": {"type": "string"}
+                }
+              }
+            },
+            "pdf_url": {"type": ["string", "null"]},
+            "source": {"type": "string"},
+            "content": {"type": ["string", "null"]}
+          }
+        },
+        {
+          "type": "object",
+          "properties": {"error": {"type": "string"}},
+          "required": ["error"]
+        }
+      ]
+    }
+  },
+  {
+    "name": "AHA_ACC_get_guideline",
+    "description": "Fetch the full text (or a detailed snippet) of a specific AHA (American Heart Association) or ACC (American College of Cardiology) guideline from PubMed Central using its PMID. Returns the abstract and, when the article is open-access in PMC, the full guideline text up to 6000 characters covering recommendations, evidence tables, and rationale. Use AHA_list_guidelines or ACC_list_guidelines first to obtain PMIDs. Many recent AHA/ACC guidelines are open-access in PMC.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "pmid": {
+          "type": "string",
+          "description": "PubMed ID (PMID) of the AHA/ACC guideline to retrieve (e.g., '37952199' for 2023 ACC/AHA Atrial Fibrillation Guideline)"
+        }
+      },
+      "required": ["pmid"]
+    },
+    "fields": {
+      "operation": "get_guideline"
+    },
+    "type": "AHAACCGuidelineTool",
+    "test_examples": [
+      {"pmid": "37952199"},
+      {"pmid": "36636024"}
+    ],
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "object",
+          "description": "AHA/ACC guideline with abstract and optional PMC full text",
+          "properties": {
+            "title": {"type": "string"},
+            "pmid": {"type": "string"},
+            "abstract": {"type": "string"},
+            "journal": {"type": "string"},
+            "publication_date": {"type": "string"},
+            "pmc_url": {"type": ["string", "null"]},
+            "full_text_snippet": {"type": ["string", "null"]},
+            "is_open_access": {"type": "boolean"}
+          }
+        },
+        {
+          "type": "object",
+          "properties": {"error": {"type": "string"}},
+          "required": ["error"]
+        }
+      ]
+    }
+  }
+]

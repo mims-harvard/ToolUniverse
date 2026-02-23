@@ -15,7 +15,7 @@ def EuropePMC_Guidelines_Search(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> dict[str, Any]:
+) -> Any:
     """
     Search Europe PMC for clinical guidelines and evidence-based recommendations. Europe PMC provides...
 
@@ -34,7 +34,7 @@ def EuropePMC_Guidelines_Search(
 
     Returns
     -------
-    dict[str, Any]
+    Any
     """
     # Handle mutable defaults to avoid B006 linting error
 

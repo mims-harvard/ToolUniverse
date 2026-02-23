@@ -14,7 +14,7 @@ def WHO_Guideline_Full_Text(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> dict[str, Any]:
+) -> Any:
     """
     Fetch full text content from a WHO (World Health Organization) guideline publication page. Extrac...
 
@@ -31,7 +31,7 @@ def WHO_Guideline_Full_Text(
 
     Returns
     -------
-    dict[str, Any]
+    Any
     """
     # Handle mutable defaults to avoid B006 linting error
 

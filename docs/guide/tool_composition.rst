@@ -137,9 +137,7 @@ Once configured, you can use your compose tool like any other ToolUniverse tool:
    tu.load_tools(['compose_tools'])
 
    # Use your literature search tool
-   result = tu.call_tool('LiteratureSearchTool', {
-       'research_topic': 'COVID-19 vaccine efficacy'
-   })
+   result = tu.run({"name": "LiteratureSearchTool", "arguments": {'research_topic': 'COVID-19 vaccine efficacy'}})
 
    print(result)
 

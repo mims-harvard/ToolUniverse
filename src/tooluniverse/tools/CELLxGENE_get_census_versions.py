@@ -14,7 +14,7 @@ def CELLxGENE_get_census_versions(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> dict[str, Any]:
+) -> Any:
     """
     Get list of available CELLxGENE Census versions with release dates and descriptions. The Census c...
 
@@ -31,7 +31,7 @@ def CELLxGENE_get_census_versions(
 
     Returns
     -------
-    dict[str, Any]
+    Any
     """
     # Handle mutable defaults to avoid B006 linting error
 

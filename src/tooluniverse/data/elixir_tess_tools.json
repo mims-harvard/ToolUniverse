@@ -1,0 +1,381 @@
+[
+  {
+    "name": "ELIXIRTeSS_search_materials",
+    "description": "Search ELIXIR TeSS (Training eSupport System) for bioinformatics and life science training materials. TeSS aggregates learning resources from ELIXIR nodes and partner organizations including tutorials, online courses, webinars, and training presentations. Returns materials with scientific topics, EDAM operations, difficulty levels, and resource URLs. Essential for finding bioinformatics training resources and educational content.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "q": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Search query for training materials. Examples: 'CRISPR', 'protein structure prediction', 'RNA-seq', 'machine learning', 'genome assembly'"
+        },
+        "scientific_topics": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Filter by EDAM scientific topic. Examples: 'Genomics', 'Proteomics', 'Sequence analysis', 'Phylogenetics'"
+        },
+        "target_audience": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Filter by target audience. Examples: 'Researchers', 'Graduate students', 'Bioinformaticians'"
+        },
+        "difficulty_level": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Filter by difficulty: 'Beginner', 'Intermediate', 'Advanced'"
+        },
+        "licence": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Filter by license type. Example: 'CC-BY'"
+        },
+        "page_size": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "description": "Number of results to return (default 10, max 100)"
+        },
+        "page": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "description": "Page number for pagination"
+        }
+      },
+      "required": []
+    },
+    "fields": {
+      "endpoint": "https://tess.elixir-europe.org/materials.json",
+      "params": {
+        "page_size": "10"
+      }
+    },
+    "type": "BaseRESTTool",
+    "test_examples": [
+      {
+        "q": "CRISPR",
+        "page_size": 5
+      },
+      {
+        "q": "protein structure",
+        "difficulty_level": "Beginner",
+        "page_size": 5
+      },
+      {
+        "q": "RNA-seq analysis",
+        "page_size": 5
+      }
+    ],
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "array",
+          "description": "List of bioinformatics training materials",
+          "items": {
+            "type": "object",
+            "properties": {
+              "id": {
+                "type": "integer",
+                "description": "TeSS material ID"
+              },
+              "title": {
+                "type": "string",
+                "description": "Training material title"
+              },
+              "url": {
+                "type": "string",
+                "description": "URL to the material on TeSS"
+              },
+              "description": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "Description of the training content"
+              },
+              "doi": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "DOI if available"
+              },
+              "remote_updated_date": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "Last updated date"
+              },
+              "remote_created_date": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "Created date"
+              },
+              "scientific_topics": {
+                "type": "array",
+                "description": "EDAM scientific topics",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "uri": {
+                      "type": "string"
+                    },
+                    "preferred_label": {
+                      "type": "string"
+                    }
+                  }
+                }
+              },
+              "operations": {
+                "type": "array",
+                "description": "EDAM operations covered",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "uri": {
+                      "type": "string"
+                    },
+                    "preferred_label": {
+                      "type": "string"
+                    }
+                  }
+                }
+              },
+              "external_resources": {
+                "type": "array",
+                "description": "Links to external resources",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "title": {
+                      "type": [
+                        "string",
+                        "null"
+                      ]
+                    },
+                    "url": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        {
+          "type": "object",
+          "properties": {
+            "error": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "error"
+          ]
+        }
+      ]
+    }
+  },
+  {
+    "name": "ELIXIRTeSS_search_events",
+    "description": "Search ELIXIR TeSS for upcoming and past bioinformatics training events, workshops, and courses. TeSS aggregates events from ELIXIR nodes and partner organizations across Europe and worldwide. Returns event details including organizer, location (online or physical), dates, costs, and registration links. Useful for finding bioinformatics training opportunities.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "q": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Search query for events. Examples: 'metagenomics workshop', 'NGS training', 'structural biology course'"
+        },
+        "country": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Filter by country. Examples: 'United Kingdom', 'Germany', 'Netherlands', 'Online'"
+        },
+        "event_type": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Filter by event type. Values: 'workshops_and_courses', 'conferences', 'webinars'"
+        },
+        "online": {
+          "type": [
+            "boolean",
+            "null"
+          ],
+          "description": "Filter to online events only (true/false)"
+        },
+        "page_size": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "description": "Number of results to return (default 10)"
+        }
+      },
+      "required": []
+    },
+    "fields": {
+      "endpoint": "https://tess.elixir-europe.org/events.json",
+      "params": {
+        "page_size": "10"
+      }
+    },
+    "type": "BaseRESTTool",
+    "test_examples": [
+      {
+        "q": "bioinformatics",
+        "page_size": 5
+      },
+      {
+        "q": "proteomics",
+        "page_size": 5
+      },
+      {
+        "q": "machine learning biology",
+        "page_size": 5
+      }
+    ],
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "array",
+          "description": "List of bioinformatics training events",
+          "items": {
+            "type": "object",
+            "properties": {
+              "id": {
+                "type": "integer"
+              },
+              "external_id": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "title": {
+                "type": "string",
+                "description": "Event title"
+              },
+              "subtitle": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "url": {
+                "type": "string",
+                "description": "TeSS event URL"
+              },
+              "organizer": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "Event organizer"
+              },
+              "description": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "start": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "Start date (ISO format)"
+              },
+              "end": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "End date (ISO format)"
+              },
+              "venue": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "city": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "country": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "online": {
+                "type": [
+                  "boolean",
+                  "null"
+                ]
+              },
+              "cost_basis": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "free, partly_free, or fee_based"
+              },
+              "scientific_topics": {
+                "type": "array",
+                "items": {
+                  "type": "object"
+                }
+              },
+              "fields": {
+                "type": "array"
+              },
+              "keywords": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        },
+        {
+          "type": "object",
+          "properties": {
+            "error": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "error"
+          ]
+        }
+      ]
+    }
+  }
+]

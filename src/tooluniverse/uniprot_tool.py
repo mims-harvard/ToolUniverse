@@ -297,7 +297,11 @@ class UniProtRESTTool(BaseTool):
                 status_resp = requests.get(status_url, timeout=self.timeout)
                 status_data = status_resp.json()
 
-                if status_data.get("status") == "FINISHED":
+                # UniProt API returns "jobStatus" (not "status") for job completion
+                if (
+                    status_data.get("jobStatus") == "FINISHED"
+                    or status_data.get("status") == "FINISHED"
+                ):
                     # Step 3: Retrieve results
                     results_resp = requests.get(results_url, timeout=self.timeout)
                     results_data = results_resp.json()
@@ -341,10 +345,13 @@ class UniProtRESTTool(BaseTool):
                         "failed": list(set(failed)) if failed else [],
                     }
                     return {"status": "success", "data": result_data}
-                elif status_data.get("status") == "FAILED":
+                elif (
+                    status_data.get("jobStatus") == "FAILED"
+                    or status_data.get("status") == "FAILED"
+                ):
                     return {
                         "status": "error",
-                        "data": {"error": "ID mapping job failed"},
+                        "error": "ID mapping job failed",
                     }
 
                 time.sleep(1)  # Wait 1 second before next poll

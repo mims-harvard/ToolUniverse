@@ -1,0 +1,49 @@
+"""
+Pfam_get_family_detail
+
+Get detailed information about a specific Pfam protein family by accession. Returns the full fami...
+"""
+
+from typing import Any, Optional, Callable
+from ._shared_client import get_shared_client
+
+
+def Pfam_get_family_detail(
+    pfam_accession: str,
+    *,
+    stream_callback: Optional[Callable[[str], None]] = None,
+    use_cache: bool = False,
+    validate: bool = True,
+) -> Any:
+    """
+    Get detailed information about a specific Pfam protein family by accession. Returns the full fami...
+
+    Parameters
+    ----------
+    pfam_accession : str
+        Pfam family accession. Examples: 'PF00001' (7tm_1, GPCR rhodopsin family), 'P...
+    stream_callback : Callable, optional
+        Callback for streaming output
+    use_cache : bool, default False
+        Enable caching
+    validate : bool, default True
+        Validate parameters
+
+    Returns
+    -------
+    Any
+    """
+    # Handle mutable defaults to avoid B006 linting error
+
+    return get_shared_client().run_one_function(
+        {
+            "name": "Pfam_get_family_detail",
+            "arguments": {"pfam_accession": pfam_accession},
+        },
+        stream_callback=stream_callback,
+        use_cache=use_cache,
+        validate=validate,
+    )
+
+
+__all__ = ["Pfam_get_family_detail"]

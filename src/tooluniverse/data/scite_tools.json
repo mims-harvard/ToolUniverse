@@ -1,0 +1,82 @@
+[
+  {
+    "name": "scite_get_tallies",
+    "description": "Get smart citation tallies for a scientific paper using scite.ai. scite analyzes citation contexts to classify citations as Supporting, Contradicting, or Mentioning. Returns counts of supporting citations (citations that confirm the paper's claims), contradicting citations (citations that dispute claims), mentioning citations (neutral references), and total citing publications. Supporting-to-contradicting ratios help assess scientific consensus and reproducibility. Example: 10.1038/nature12303 has 13 supporting, 1 contradicting, 261 mentioning citations. Requires the paper's DOI.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "doi": {
+          "type": "string",
+          "description": "DOI of the paper to get citation tallies for (e.g., '10.1038/nature12303', '10.1016/j.cell.2020.02.058'). Include the full DOI without URL prefix."
+        }
+      },
+      "required": [
+        "doi"
+      ]
+    },
+    "fields": {
+      "endpoint": "https://api.scite.ai/tallies/{doi}"
+    },
+    "type": "BaseRESTTool",
+    "test_examples": [
+      {
+        "doi": "10.1038/nature12303"
+      },
+      {
+        "doi": "10.1016/j.cell.2020.02.058"
+      },
+      {
+        "doi": "10.1038/s41586-020-2649-2"
+      }
+    ],
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "object",
+          "description": "scite citation tally data for the paper",
+          "properties": {
+            "doi": {
+              "type": "string",
+              "description": "DOI of the queried paper"
+            },
+            "total": {
+              "type": "integer",
+              "description": "Total number of unique citing papers with citation context"
+            },
+            "supporting": {
+              "type": "integer",
+              "description": "Citations where the citing paper confirms/supports this paper's findings"
+            },
+            "contradicting": {
+              "type": "integer",
+              "description": "Citations where the citing paper disputes or contradicts this paper's findings"
+            },
+            "mentioning": {
+              "type": "integer",
+              "description": "Citations that mention this paper without confirming or contradicting"
+            },
+            "unclassified": {
+              "type": "integer",
+              "description": "Citations that could not be classified"
+            },
+            "citingPublications": {
+              "type": "integer",
+              "description": "Total unique publications that cite this paper"
+            }
+          }
+        },
+        {
+          "type": "object",
+          "properties": {
+            "error": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "error"
+          ]
+        }
+      ]
+    }
+  }
+]

@@ -1,0 +1,182 @@
+[
+  {
+    "name": "UniProt_search_proteomes",
+    "description": "Search the UniProt Proteome database for complete sets of proteins expressed by organisms. Proteomes represent the complete set of proteins from a fully sequenced genome. Supports searching by organism name, taxonomy ID, BUSCO completeness, proteome type (reference/representative/redundant), and more. Returns proteome IDs (e.g., UP000005640 for human), gene counts, organism info, and quality metrics. Useful for comparative genomics, finding model organism proteomes, or identifying reference proteomes.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "query": {
+          "type": "string",
+          "description": "Search query using UniProt query syntax. Examples: 'organism_name:human', 'organism_id:9606', 'organism_name:escherichia coli', 'proteome_type:1' (reference), 'busco:complete>95.0'"
+        },
+        "size": {
+          "type": "integer",
+          "default": 10,
+          "description": "Number of results to return (default 10, max 500)"
+        }
+      },
+      "required": ["query"]
+    },
+    "fields": {
+      "endpoint": "https://rest.uniprot.org/proteomes/search",
+      "params": {
+        "format": "json"
+      }
+    },
+    "type": "BaseRESTTool",
+    "test_examples": [
+      {"query": "organism_name:human", "size": 3},
+      {"query": "organism_name:escherichia coli", "size": 3},
+      {"query": "organism_name:mouse", "size": 3}
+    ],
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "object",
+          "description": "UniProt proteome search results",
+          "properties": {
+            "results": {
+              "type": "array",
+              "description": "Array of proteome objects",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "id": {
+                    "type": "string",
+                    "description": "UniProt proteome ID (e.g., 'UP000005640')"
+                  },
+                  "description": {
+                    "type": ["string", "null"],
+                    "description": "Description of the organism"
+                  },
+                  "taxonomy": {
+                    "type": ["object", "null"],
+                    "description": "Taxonomy information",
+                    "properties": {
+                      "taxonId": {"type": "integer"},
+                      "scientificName": {"type": "string"},
+                      "commonName": {"type": ["string", "null"]},
+                      "mnemonic": {"type": ["string", "null"]}
+                    }
+                  },
+                  "proteomeType": {
+                    "type": ["string", "null"],
+                    "description": "Type: 'Reference and representative proteome', 'Representative proteome', 'Other proteome', 'Redundant proteome', 'Excluded'"
+                  },
+                  "geneCount": {
+                    "type": ["integer", "null"],
+                    "description": "Number of genes in the proteome"
+                  },
+                  "superkingdom": {
+                    "type": ["string", "null"],
+                    "description": "Taxonomic superkingdom (Eukaryota, Bacteria, Archaea, Viruses)"
+                  },
+                  "proteomeCompletenessReport": {
+                    "type": ["object", "null"],
+                    "description": "BUSCO completeness assessment"
+                  },
+                  "genomeAssembly": {
+                    "type": ["object", "null"],
+                    "description": "Genome assembly details"
+                  }
+                }
+              }
+            }
+          }
+        },
+        {
+          "type": "object",
+          "properties": {
+            "error": {"type": "string"}
+          },
+          "required": ["error"]
+        }
+      ]
+    }
+  },
+  {
+    "name": "UniProt_get_proteome",
+    "description": "Get detailed metadata for a specific UniProt proteome by its proteome ID (e.g., UP000005640 for human). Returns comprehensive information including organism taxonomy, gene count, genome assembly details, BUSCO completeness assessment, proteome type, annotation score, component breakdown (chromosomes), and cross-references. Use UniProt_search_proteomes to find proteome IDs.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "proteome_id": {
+          "type": "string",
+          "description": "UniProt proteome ID (e.g., 'UP000005640' for human, 'UP000000589' for mouse, 'UP000000625' for E. coli)"
+        }
+      },
+      "required": ["proteome_id"]
+    },
+    "fields": {
+      "endpoint": "https://rest.uniprot.org/proteomes/{proteome_id}",
+      "params": {
+        "format": "json"
+      }
+    },
+    "type": "BaseRESTTool",
+    "test_examples": [
+      {"proteome_id": "UP000005640"},
+      {"proteome_id": "UP000000589"},
+      {"proteome_id": "UP000000625"}
+    ],
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "object",
+          "description": "Detailed proteome metadata",
+          "properties": {
+            "id": {
+              "type": "string",
+              "description": "UniProt proteome ID"
+            },
+            "description": {
+              "type": ["string", "null"],
+              "description": "Organism description"
+            },
+            "taxonomy": {
+              "type": ["object", "null"],
+              "properties": {
+                "taxonId": {"type": "integer"},
+                "scientificName": {"type": "string"},
+                "commonName": {"type": ["string", "null"]},
+                "lineage": {"type": ["array", "null"], "items": {"type": "string"}}
+              }
+            },
+            "proteomeType": {"type": ["string", "null"]},
+            "geneCount": {"type": ["integer", "null"]},
+            "superkingdom": {"type": ["string", "null"]},
+            "proteomeCompletenessReport": {
+              "type": ["object", "null"],
+              "description": "BUSCO completeness (complete, duplicated, fragmented, missing percentages)"
+            },
+            "genomeAssembly": {
+              "type": ["object", "null"],
+              "description": "Genome assembly details (GCA/GCF accession, level, source)"
+            },
+            "components": {
+              "type": ["array", "null"],
+              "description": "Proteome components (chromosomes, scaffolds, etc.)",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "name": {"type": "string"},
+                  "proteinCount": {"type": ["integer", "null"]},
+                  "genomeAnnotation": {"type": ["object", "null"]}
+                }
+              }
+            },
+            "annotationScore": {"type": ["number", "null"]},
+            "panproteome": {"type": ["object", "string", "null"]}
+          }
+        },
+        {
+          "type": "object",
+          "properties": {
+            "error": {"type": "string"}
+          },
+          "required": ["error"]
+        }
+      ]
+    }
+  }
+]

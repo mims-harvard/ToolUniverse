@@ -1,0 +1,120 @@
+[
+  {
+    "name": "SunriseSunset_get_times",
+    "description": "Get sunrise, sunset, solar noon, and twilight times for any location on Earth using the Sunrise-Sunset.org API. Returns times in UTC ISO 8601 format. Supports historical dates. No authentication required. Useful for astronomy, agriculture, photography planning, circadian rhythm research, and solar energy calculations.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "lat": {
+          "type": "number",
+          "description": "Latitude in decimal degrees (-90 to 90). Examples: 40.7128 (New York), 51.5074 (London), 35.6762 (Tokyo), 48.8566 (Paris), -33.8688 (Sydney)"
+        },
+        "lng": {
+          "type": "number",
+          "description": "Longitude in decimal degrees (-180 to 180). Examples: -74.0060 (New York), -0.1278 (London), 139.6503 (Tokyo), 2.3522 (Paris), 151.2093 (Sydney)"
+        },
+        "date": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Date in YYYY-MM-DD format, or 'today'. Default: today. Examples: '2024-06-21', '2024-12-21', 'today'"
+        }
+      },
+      "required": [
+        "lat",
+        "lng"
+      ]
+    },
+    "fields": {
+      "endpoint": "https://api.sunrise-sunset.org/json",
+      "params": {
+        "formatted": "0"
+      }
+    },
+    "type": "BaseRESTTool",
+    "test_examples": [
+      {
+        "lat": 40.7128,
+        "lng": -74.006
+      },
+      {
+        "lat": 51.5074,
+        "lng": -0.1278,
+        "date": "2024-06-21"
+      },
+      {
+        "lat": 35.6762,
+        "lng": 139.6503
+      }
+    ],
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "object",
+          "description": "Sun timing data for the location and date",
+          "properties": {
+            "results": {
+              "type": "object",
+              "properties": {
+                "sunrise": {
+                  "type": "string",
+                  "description": "Sunrise time in UTC ISO 8601"
+                },
+                "sunset": {
+                  "type": "string",
+                  "description": "Sunset time in UTC ISO 8601"
+                },
+                "solar_noon": {
+                  "type": "string",
+                  "description": "Solar noon time in UTC ISO 8601"
+                },
+                "day_length": {
+                  "type": "integer",
+                  "description": "Day length in seconds"
+                },
+                "civil_twilight_begin": {
+                  "type": "string"
+                },
+                "civil_twilight_end": {
+                  "type": "string"
+                },
+                "nautical_twilight_begin": {
+                  "type": "string"
+                },
+                "nautical_twilight_end": {
+                  "type": "string"
+                },
+                "astronomical_twilight_begin": {
+                  "type": "string"
+                },
+                "astronomical_twilight_end": {
+                  "type": "string"
+                }
+              }
+            },
+            "status": {
+              "type": "string",
+              "description": "OK or error message"
+            },
+            "tzid": {
+              "type": "string",
+              "description": "Timezone identifier"
+            }
+          }
+        },
+        {
+          "type": "object",
+          "properties": {
+            "error": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "error"
+          ]
+        }
+      ]
+    }
+  }
+]

@@ -1,0 +1,499 @@
+[
+  {
+    "name": "OpenMeteo_get_weather_forecast",
+    "description": "Get current weather and forecasts for any location using Open-Meteo (free, no API key needed). Returns current conditions and hourly/daily forecasts up to 16 days. Essential for weather-aware applications, research, and decision making. Supports 170+ weather variables including temperature, precipitation, wind, humidity, UV index, cloud cover, and more. Latitude/longitude required (use OpenMeteo_geocode_location to get coordinates from city names). Example: latitude=51.5, longitude=-0.12 for London.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "latitude": {
+          "type": "number",
+          "description": "Latitude in decimal degrees (e.g., 51.5 for London, 40.7 for New York, 35.7 for Tokyo)"
+        },
+        "longitude": {
+          "type": "number",
+          "description": "Longitude in decimal degrees (e.g., -0.12 for London, -74.0 for New York, 139.7 for Tokyo)"
+        },
+        "current": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Comma-separated current weather variables (e.g., 'temperature_2m,wind_speed_10m,precipitation,weather_code,relative_humidity_2m,surface_pressure')"
+        },
+        "daily": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Comma-separated daily forecast variables (e.g., 'temperature_2m_max,temperature_2m_min,precipitation_sum,wind_speed_10m_max,uv_index_max')"
+        },
+        "hourly": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Comma-separated hourly variables (e.g., 'temperature_2m,precipitation_probability,wind_speed_10m,relative_humidity_2m')"
+        },
+        "forecast_days": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "description": "Number of forecast days (1-16, default 7)"
+        },
+        "timezone": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Timezone for local time (e.g., 'Europe/London', 'America/New_York', 'Asia/Tokyo', 'auto' to detect from location)"
+        }
+      },
+      "required": [
+        "latitude",
+        "longitude"
+      ]
+    },
+    "fields": {
+      "endpoint": "https://api.open-meteo.com/v1/forecast"
+    },
+    "type": "BaseRESTTool",
+    "test_examples": [
+      {
+        "latitude": 51.5,
+        "longitude": -0.12,
+        "current": "temperature_2m,wind_speed_10m,weather_code,relative_humidity_2m"
+      },
+      {
+        "latitude": 40.71,
+        "longitude": -74.01,
+        "daily": "temperature_2m_max,temperature_2m_min,precipitation_sum",
+        "forecast_days": 3
+      },
+      {
+        "latitude": 35.68,
+        "longitude": 139.69,
+        "current": "temperature_2m,precipitation",
+        "timezone": "Asia/Tokyo"
+      }
+    ],
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "object",
+          "description": "Weather forecast data",
+          "properties": {
+            "latitude": {
+              "type": "number"
+            },
+            "longitude": {
+              "type": "number"
+            },
+            "timezone": {
+              "type": "string"
+            },
+            "current": {
+              "type": "object",
+              "description": "Current weather conditions"
+            },
+            "current_units": {
+              "type": "object",
+              "description": "Units for current weather variables"
+            },
+            "daily": {
+              "type": "object",
+              "description": "Daily forecasts with arrays of values"
+            },
+            "daily_units": {
+              "type": "object"
+            },
+            "hourly": {
+              "type": "object",
+              "description": "Hourly forecasts with arrays of values"
+            },
+            "hourly_units": {
+              "type": "object"
+            }
+          }
+        },
+        {
+          "type": "object",
+          "properties": {
+            "error": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "error"
+          ]
+        }
+      ]
+    }
+  },
+  {
+    "name": "OpenMeteo_get_historical_weather",
+    "description": "Get historical weather data for any location from Open-Meteo ERA5 reanalysis archive (1940-present). Free, no API key required. Returns daily or hourly historical weather including temperature, precipitation, wind speed, solar radiation, snowfall, and more. Useful for climate analysis, anomaly detection, and historical research. Use OpenMeteo_geocode_location to get coordinates from city names.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "latitude": {
+          "type": "number",
+          "description": "Latitude in decimal degrees (e.g., 51.5 for London, 40.7 for New York)"
+        },
+        "longitude": {
+          "type": "number",
+          "description": "Longitude in decimal degrees (e.g., -0.12 for London, -74.0 for New York)"
+        },
+        "start_date": {
+          "type": "string",
+          "description": "Start date in YYYY-MM-DD format (e.g., '2023-01-01'). Data available from 1940-01-01."
+        },
+        "end_date": {
+          "type": "string",
+          "description": "End date in YYYY-MM-DD format (e.g., '2023-12-31'). Maximum range: a few months per request."
+        },
+        "daily": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Comma-separated daily variables (e.g., 'temperature_2m_max,temperature_2m_min,precipitation_sum,wind_speed_10m_max,sunshine_duration')"
+        },
+        "hourly": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Comma-separated hourly variables (e.g., 'temperature_2m,precipitation,wind_speed_10m,relative_humidity_2m')"
+        },
+        "timezone": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Timezone (e.g., 'Europe/London', 'America/New_York', 'auto')"
+        }
+      },
+      "required": [
+        "latitude",
+        "longitude",
+        "start_date",
+        "end_date"
+      ]
+    },
+    "fields": {
+      "endpoint": "https://archive-api.open-meteo.com/v1/archive"
+    },
+    "type": "BaseRESTTool",
+    "test_examples": [
+      {
+        "latitude": 51.5,
+        "longitude": -0.12,
+        "start_date": "2023-01-01",
+        "end_date": "2023-01-31",
+        "daily": "temperature_2m_max,temperature_2m_min,precipitation_sum"
+      },
+      {
+        "latitude": 40.71,
+        "longitude": -74.01,
+        "start_date": "2022-06-01",
+        "end_date": "2022-06-30",
+        "daily": "temperature_2m_max,precipitation_sum,wind_speed_10m_max"
+      },
+      {
+        "latitude": 48.85,
+        "longitude": 2.35,
+        "start_date": "2020-01-01",
+        "end_date": "2020-03-31",
+        "daily": "temperature_2m_mean,precipitation_sum"
+      }
+    ],
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "object",
+          "description": "Historical weather data",
+          "properties": {
+            "latitude": {
+              "type": "number"
+            },
+            "longitude": {
+              "type": "number"
+            },
+            "timezone": {
+              "type": "string"
+            },
+            "daily": {
+              "type": "object",
+              "description": "Daily historical data with time array and variable arrays",
+              "properties": {
+                "time": {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  }
+                },
+                "temperature_2m_max": {
+                  "type": "array"
+                },
+                "temperature_2m_min": {
+                  "type": "array"
+                },
+                "precipitation_sum": {
+                  "type": "array"
+                }
+              }
+            },
+            "daily_units": {
+              "type": "object"
+            },
+            "hourly": {
+              "type": "object"
+            },
+            "hourly_units": {
+              "type": "object"
+            }
+          }
+        },
+        {
+          "type": "object",
+          "properties": {
+            "error": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "error"
+          ]
+        }
+      ]
+    }
+  },
+  {
+    "name": "OpenMeteo_geocode_location",
+    "description": "Search for city/location coordinates using Open-Meteo's free geocoding API. Returns latitude, longitude, country, timezone, elevation, and population for matching locations. Use this to get coordinates before calling OpenMeteo_get_weather_forecast or OpenMeteo_get_historical_weather. Covers 300,000+ cities worldwide.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "name": {
+          "type": "string",
+          "description": "City or location name to search (e.g., 'London', 'New York', 'Tokyo', 'Paris', 'Berlin', 'Sydney')"
+        },
+        "count": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "description": "Number of results to return (default 10, max 100)"
+        },
+        "language": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Language for result names (e.g., 'en', 'de', 'fr', 'ja', 'zh'). Default 'en'."
+        }
+      },
+      "required": [
+        "name"
+      ]
+    },
+    "fields": {
+      "endpoint": "https://geocoding-api.open-meteo.com/v1/search",
+      "params": {
+        "format": "json"
+      }
+    },
+    "type": "BaseRESTTool",
+    "test_examples": [
+      {
+        "name": "London",
+        "count": 3
+      },
+      {
+        "name": "New York",
+        "count": 2
+      },
+      {
+        "name": "Tokyo",
+        "language": "en"
+      }
+    ],
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "object",
+          "description": "Geocoding search results",
+          "properties": {
+            "results": {
+              "type": "array",
+              "description": "List of matching locations",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "id": {
+                    "type": "integer",
+                    "description": "Location ID"
+                  },
+                  "name": {
+                    "type": "string",
+                    "description": "Location name"
+                  },
+                  "latitude": {
+                    "type": "number"
+                  },
+                  "longitude": {
+                    "type": "number"
+                  },
+                  "elevation": {
+                    "type": "number",
+                    "description": "Elevation in meters"
+                  },
+                  "feature_code": {
+                    "type": "string"
+                  },
+                  "country_code": {
+                    "type": "string"
+                  },
+                  "country": {
+                    "type": "string"
+                  },
+                  "timezone": {
+                    "type": "string"
+                  },
+                  "population": {
+                    "type": [
+                      "integer",
+                      "null"
+                    ]
+                  },
+                  "admin1": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "State/province"
+                  }
+                }
+              }
+            },
+            "generationtime_ms": {
+              "type": "number"
+            }
+          }
+        },
+        {
+          "type": "object",
+          "properties": {
+            "error": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "error"
+          ]
+        }
+      ]
+    }
+  },
+  {
+    "name": "OpenMeteo_get_air_quality",
+    "description": "Get current and forecasted air quality data for any location using Open-Meteo's free air quality API. Returns PM2.5, PM10, ozone, nitrogen dioxide, carbon monoxide, European Air Quality Index (AQI), and more. Data sourced from CAMS (Copernicus Atmosphere Monitoring Service). No API key required.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "latitude": {
+          "type": "number",
+          "description": "Latitude in decimal degrees (e.g., 51.5 for London, 40.7 for New York)"
+        },
+        "longitude": {
+          "type": "number",
+          "description": "Longitude in decimal degrees (e.g., -0.12 for London, -74.0 for New York)"
+        },
+        "current": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Comma-separated current variables (e.g., 'pm10,pm2_5,carbon_monoxide,nitrogen_dioxide,ozone,european_aqi,us_aqi')"
+        },
+        "hourly": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Comma-separated hourly variables (e.g., 'pm10,pm2_5,ozone,nitrogen_dioxide,european_aqi')"
+        }
+      },
+      "required": [
+        "latitude",
+        "longitude"
+      ]
+    },
+    "fields": {
+      "endpoint": "https://air-quality-api.open-meteo.com/v1/air-quality"
+    },
+    "type": "BaseRESTTool",
+    "test_examples": [
+      {
+        "latitude": 51.5,
+        "longitude": -0.12,
+        "current": "pm10,pm2_5,carbon_monoxide,ozone,european_aqi"
+      },
+      {
+        "latitude": 40.71,
+        "longitude": -74.01,
+        "current": "pm2_5,ozone,us_aqi,nitrogen_dioxide"
+      },
+      {
+        "latitude": 28.7,
+        "longitude": 77.1,
+        "current": "pm2_5,pm10,us_aqi"
+      }
+    ],
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "object",
+          "description": "Air quality data",
+          "properties": {
+            "latitude": {
+              "type": "number"
+            },
+            "longitude": {
+              "type": "number"
+            },
+            "timezone": {
+              "type": "string"
+            },
+            "current": {
+              "type": "object",
+              "description": "Current air quality measurements"
+            },
+            "current_units": {
+              "type": "object"
+            },
+            "hourly": {
+              "type": "object",
+              "description": "Hourly air quality forecast"
+            },
+            "hourly_units": {
+              "type": "object"
+            }
+          }
+        },
+        {
+          "type": "object",
+          "properties": {
+            "error": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "error"
+          ]
+        }
+      ]
+    }
+  }
+]

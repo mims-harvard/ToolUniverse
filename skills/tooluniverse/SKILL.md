@@ -9,6 +9,14 @@ description: Router skill for ToolUniverse tasks. First checks if specialized to
 
 When a user asks a question, **DO NOT just show this documentation**. Instead, follow these steps:
 
+### STEP 0: Auto-Install Specialized Skills If Missing
+
+**Before doing anything else**, check whether the specialized ToolUniverse skills are installed. If not, invoke the `tooluniverse-install-skills` skill to install them, then continue to STEP 1.
+
+> **Why this matters**: Without specialized skills, this router falls back to general strategies. Specialized skills give dramatically better results for their domains.
+
+---
+
 ### STEP 1: Parse the User's Question
 
 Read the user's question and extract:

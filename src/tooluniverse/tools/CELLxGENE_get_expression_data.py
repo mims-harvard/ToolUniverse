@@ -20,7 +20,7 @@ def CELLxGENE_get_expression_data(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> dict[str, Any]:
+) -> Optional[dict[str, Any]]:
     """
     Query gene expression data from CELLxGENE Census (50M+ cells, 60K+ genes). CRITICAL: At least one...
 
@@ -49,7 +49,7 @@ def CELLxGENE_get_expression_data(
 
     Returns
     -------
-    dict[str, Any]
+    Optional[dict[str, Any]]
     """
     # Handle mutable defaults to avoid B006 linting error
 

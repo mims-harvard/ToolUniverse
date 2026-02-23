@@ -1,0 +1,52 @@
+"""
+OpenFDA_search_device_510k
+
+Search the FDA 510(k) premarket notification database via openFDA. Contains clearances for medica...
+"""
+
+from typing import Any, Optional, Callable
+from ._shared_client import get_shared_client
+
+
+def OpenFDA_search_device_510k(
+    search: str,
+    limit: Optional[int | Any] = None,
+    *,
+    stream_callback: Optional[Callable[[str], None]] = None,
+    use_cache: bool = False,
+    validate: bool = True,
+) -> Any:
+    """
+    Search the FDA 510(k) premarket notification database via openFDA. Contains clearances for medica...
+
+    Parameters
+    ----------
+    search : str
+        Lucene query for 510(k) devices (e.g., 'device_name:stethoscope', 'applicant:...
+    limit : int | Any
+        Maximum number of results (default 5, max 100)
+    stream_callback : Callable, optional
+        Callback for streaming output
+    use_cache : bool, default False
+        Enable caching
+    validate : bool, default True
+        Validate parameters
+
+    Returns
+    -------
+    Any
+    """
+    # Handle mutable defaults to avoid B006 linting error
+
+    return get_shared_client().run_one_function(
+        {
+            "name": "OpenFDA_search_device_510k",
+            "arguments": {"search": search, "limit": limit},
+        },
+        stream_callback=stream_callback,
+        use_cache=use_cache,
+        validate=validate,
+    )
+
+
+__all__ = ["OpenFDA_search_device_510k"]

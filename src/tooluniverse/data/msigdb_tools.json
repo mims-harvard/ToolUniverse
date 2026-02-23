@@ -33,7 +33,6 @@
       "oneOf": [
         {
           "type": "object",
-          "properties": {},
           "description": "Gene set data keyed by gene set name. The key is the gene set name and the value contains gene list and metadata.",
           "additionalProperties": {
             "type": "object",
@@ -73,8 +72,7 @@
                 "description": "MSigDB collection code: H, C1-C8"
               },
               "filteredBySimilarity": {
-                "type": "array",
-                "description": "Gene sets filtered out due to similarity"
+                "type": ["boolean", "array", "null"]
               },
               "externalNamesForSimilarTerms": {
                 "type": "array"
@@ -85,18 +83,11 @@
         {
           "type": "object",
           "properties": {
-            "status": {
-              "type": "string",
-              "enum": [
-                "error"
-              ]
-            },
             "error": {
               "type": "string"
             }
           },
           "required": [
-            "status",
             "error"
           ]
         }
@@ -137,7 +128,6 @@
       "oneOf": [
         {
           "type": "object",
-          "properties": {},
           "description": "Hallmark gene set data",
           "additionalProperties": {
             "type": "object",
@@ -170,18 +160,11 @@
         {
           "type": "object",
           "properties": {
-            "status": {
-              "type": "string",
-              "enum": [
-                "error"
-              ]
-            },
             "error": {
               "type": "string"
             }
           },
           "required": [
-            "status",
             "error"
           ]
         }

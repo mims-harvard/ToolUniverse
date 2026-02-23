@@ -7,83 +7,185 @@ description: Install and configure ToolUniverse with MCP integration for any AI 
 
 Guide the user step-by-step through setting up ToolUniverse with MCP (Model Context Protocol) integration.
 
-## Agent Behavior
+## Agent Behavior — READ THIS FIRST AND ENFORCE IT THROUGHOUT
 
-**Be friendly, conversational, and interactive.** This is a setup wizard, not a reference manual.
+**This is a setup wizard, not a reference manual. You must stay interactive at every step.**
 
+### The one rule that overrides everything else
+**After every single step: STOP. Ask if it worked. Wait for the user's reply before continuing.**
+Never run ahead. Never explain Step 3 while the user is still on Step 1. Never output a wall of instructions. One step, then pause.
+
+### How to behave at each step
+- **Show one thing at a time.** Give one command or one question. Wait for the result.
+- **Confirm before moving on.** "Did that work? What did you see?" — then react to the answer.
+- **Explain briefly** what each step does and why, in plain language. One sentence is enough.
+- **Use the AskQuestion tool** for structured choices when available (client selection, research areas, etc.).
 - **Detect the user's language** from their first message. If they write in Chinese, Japanese, Spanish, etc., respond in that language throughout the entire setup. All explanations, questions, and celebrations should be in their language. Only keep commands, code blocks, URLs, and env variable names in English (those are technical and must stay as-is).
-- Go **one step at a time**. Don't dump all steps at once.
-- **Ask before proceeding** to the next step. Confirm the previous step worked.
-- Use the **AskQuestion tool** for structured choices when available (client selection, research areas, etc.).
-- **Explain briefly** what each step does and why, in plain language.
-- When something goes wrong, be reassuring and help troubleshoot before moving on.
-- **Celebrate small wins** -- when uv installs successfully, when the MCP server appears, when the first tool call works.
+- **Celebrate small wins** — when uv installs successfully, when the MCP server appears, when the first tool call works.
+- **When something goes wrong**, be reassuring and help troubleshoot before moving on.
+
+### What NOT to do
+- ❌ Do not paste multiple steps at once
+- ❌ Do not pre-explain upcoming steps "just in case"
+- ❌ Do not move to the next step without hearing that the current one succeeded
+- ❌ Do not reproduce large blocks from the reference files — summarize and act
 
 ## Internal Notes (do not show to user)
 
-⚠️ **ToolUniverse has 1200+ tools** which will cause context window overflow if all exposed directly. The default `tooluniverse` command already enables compact mode automatically.
+⚠️ **ToolUniverse has 1200+ tools** which will cause context window overflow if all exposed directly. The default `tooluniverse` command enables compact mode automatically, exposing only 5 core tools (list_tools, grep_tools, get_tool_info, execute_tool, find_tools) while keeping all 1200+ accessible via execute_tool.
 
-**Compact mode** exposes only 5 core tools (list_tools, grep_tools, get_tool_info, execute_tool, find_tools) while keeping all 1200+ tools accessible via execute_tool.
+**This skill's own URL** (for bootstrapping):
+`https://raw.githubusercontent.com/mims-harvard/ToolUniverse/main/skills/setup-tooluniverse/SKILL.md`
 
-## Step 0: Welcome & Discovery
+**Reference files** — fetch by GitHub raw URL (works whether this skill was loaded locally or from GitHub):
 
-Start by welcoming the user and asking two questions to tailor the setup:
+| File | GitHub URL |
+|------|------------|
+| `CLAUDE_DESKTOP.md` | https://raw.githubusercontent.com/mims-harvard/ToolUniverse/main/skills/setup-tooluniverse/CLAUDE_DESKTOP.md |
+| `API_KEYS_REFERENCE.md` | https://raw.githubusercontent.com/mims-harvard/ToolUniverse/main/skills/setup-tooluniverse/API_KEYS_REFERENCE.md |
+| `MCP_CONFIG.md` | https://raw.githubusercontent.com/mims-harvard/ToolUniverse/main/skills/setup-tooluniverse/MCP_CONFIG.md |
+| `SKILLS_CATALOG.md` | https://raw.githubusercontent.com/mims-harvard/ToolUniverse/main/skills/setup-tooluniverse/SKILLS_CATALOG.md |
+| `TROUBLESHOOTING.md` | https://raw.githubusercontent.com/mims-harvard/ToolUniverse/main/skills/setup-tooluniverse/TROUBLESHOOTING.md |
 
-**Question 1: Which app are you using?**
+## Step 0: Auto-Detect & Quick Start
 
-Use AskQuestion if available:
-- Cursor
-- Claude Desktop
-- VS Code / Copilot
-- Windsurf
-- Claude Code
-- Gemini CLI
-- Codex (OpenAI)
-- Cline
-- Trae
-- Antigravity
-- OpenCode
-- Other
-
-**Question 2: How will you use ToolUniverse?**
-- **MCP server** (use scientific tools through chat) -- this is the default for most users
-- **Python coding** (write scripts that `import tooluniverse`) -- also needs pip install
-
-For MCP-only users, only `uv` is needed. `uvx` automatically installs and runs ToolUniverse.
-
-For coding use, also ask about Python version (`python3 --version`, needs >=3.10, <3.14).
-
-## Installation Workflow
-
-### Step 1: Make sure uv is installed
-
-First, check if the user already has `uv` (a fast Python package manager). Run this for them:
+Welcome the user, then immediately run these detection commands **before asking any questions**:
 
 ```bash
-which uv || echo "uv not installed"
+echo "=== Detecting OS ===" && \
+  ([ "$(uname)" = "Darwin" ] && echo "OS: macOS") || \
+  ([ "$(uname)" = "Linux" ] && echo "OS: Linux") || \
+  echo "OS: Unknown"
+
+echo "=== Detecting your AI client ===" && \
+  ([ -f ~/.cursor/mcp.json ] && echo "✅ Cursor detected") || true && \
+  ([ -f ~/Library/Application\ Support/Claude/claude_desktop_config.json ] && echo "✅ Claude Desktop detected (macOS)") || true && \
+  ([ -f ~/.config/Claude/claude_desktop_config.json ] && echo "✅ Claude Desktop detected (Linux)") || true && \
+  ([ -f ~/.claude.json ] && echo "✅ Claude Code detected") || true && \
+  ([ -f ~/.codeium/windsurf/mcp_config.json ] && echo "✅ Windsurf detected") || true && \
+  ([ -f ~/.gemini/settings.json ] && echo "✅ Gemini CLI detected") || true && \
+  ([ -f ~/.codex/config.toml ] && echo "✅ Codex CLI detected") || true && \
+  ([ -f ~/.qwen/settings.json ] && echo "✅ Qwen Code detected") || true && \
+  ([ -f opencode.json ] && echo "✅ OpenCode detected") || true && \
+  echo "=== Detection complete ==="
 ```
 
-If it's already installed, let them know and move on. If not, explain that `uv` is a fast package manager that makes MCP setup simple, then install it:
+**On Windows**, detection won't run in bash — ask the user to check manually: Claude Desktop `%APPDATA%\Claude\claude_desktop_config.json`, Cursor `%USERPROFILE%\.cursor\mcp.json`.
+
+**Remember the detected OS** — it changes config paths, uv install commands, and log locations in later steps.
+
+Based on results:
+- **One client detected**: "I can see you're using [Client]. I'll set up ToolUniverse for that." Skip Question 1.
+- **Multiple detected**: Ask which one to configure.
+- **None detected**: Ask Question 1 below.
+
+> ⏸️ **Now**: Report what was detected, then ask Question 1 if needed. Wait for the client answer before continuing.
+
+**Question 1 (only if not auto-detected):** Which app are you using?
+Cursor · Claude Desktop · VS Code / Copilot · Windsurf · Claude Code · Gemini CLI · Qwen Code · Codex (OpenAI) · Cline · Trae · Antigravity · OpenCode · Other
+
+⚠️ **If Claude Desktop is detected or selected**: Step 2 is completely different — you must fetch and follow CLAUDE_DESKTOP.md instead of the standard config. Hold this in mind.
+
+**Bootstrap check (terminal-based clients only — OpenCode, Gemini CLI, Codex CLI, Claude Code):**
+If the user arrived here from README/docs (not from inside their client), give them this one-liner to paste into their client instead and stop:
+```
+Please read https://raw.githubusercontent.com/mims-harvard/ToolUniverse/main/skills/setup-tooluniverse/SKILL.md and follow it to help me set up ToolUniverse.
+```
+
+> ⏸️ **Now**: Ask "Would you like a **quick start** (~3 min, no questions) or a **full setup** (API keys + options)?" — then wait for the answer.
+
+- **Quick start**: `brew install uv` (or curl), write config with python3 one-liner, restart app, confirm tools appear, install skills with `npx skills add mims-harvard/ToolUniverse`. Skip API keys (add later). Skills are included — they're what make ToolUniverse genuinely useful.
+- **Full setup**: Continue with all steps including API keys.
+
+**Question 2 (full setup only):** How will you use ToolUniverse?
+- **MCP server** (use scientific tools through chat) — default for most users
+- **Python coding** (write scripts that `import tooluniverse`) — also needs pip install
+
+> ⏸️ **Wait for Question 2 answer** before proceeding to Step 1.
+
+## Step 1: Make sure uv is installed
+
+Check first — **skip install entirely if uv is already present**:
 
 ```bash
-curl -LsSf https://astral.sh/uv/install.sh | sh
+which uv && uv --version || echo "NOT_INSTALLED"
 ```
 
-**Confirm it worked** before moving to the next step.
+- **Found**: "✅ uv is already installed — skipping." Go to Step 2.
+- **NOT_INSTALLED**: Explain uv is a fast package manager that makes MCP setup simple, then install.
 
-### Step 2: Add ToolUniverse to your MCP config
+**macOS — check for Homebrew first (preferred for Claude Desktop):**
+```bash
+which brew && echo "Homebrew found" || echo "No Homebrew"
+```
 
-Now we'll add ToolUniverse to your app's MCP configuration. Based on the client the user chose in Step 0, help them find and edit the right config file. All clients use the same server config -- only the file location differs.
+- **Homebrew found:**
+  ```bash
+  brew install uv
+  ```
+  Verify with Homebrew path directly (GUI apps use this, not the shell's `which uvx`):
+  ```bash
+  /opt/homebrew/bin/uvx --version   # Apple Silicon
+  /usr/local/bin/uvx --version      # Intel Mac
+  ```
 
-#### MCP Server Configuration (same for all clients)
+- **No Homebrew:**
+  ```bash
+  curl -LsSf https://astral.sh/uv/install.sh | sh
+  source "$HOME/.local/bin/env" 2>/dev/null || source ~/.zshrc 2>/dev/null || source ~/.bashrc 2>/dev/null
+  ```
 
-**Default method: Using uvx (Recommended)**
+**Linux:** `curl -LsSf https://astral.sh/uv/install.sh | sh && source "$HOME/.local/bin/env" 2>/dev/null || source ~/.bashrc`
+
+**Windows (PowerShell):** `powershell -c "irm https://astral.sh/uv/install.ps1 | iex"` then reopen PowerShell.
+
+Verify: `uvx --version`
+
+> ⏸️ **After Step 1**: Ask "Did `uvx --version` print a version number?" Wait for confirmation before continuing.
+
+## Step 2: Add ToolUniverse to your MCP config
+
+### 🖥️ Claude Desktop users — your path diverges here
+
+**Fetch and read this file now, then follow it entirely for Step 2:**
+https://raw.githubusercontent.com/mims-harvard/ToolUniverse/main/skills/setup-tooluniverse/CLAUDE_DESKTOP.md
+
+CLAUDE_DESKTOP.md contains all Claude Desktop-specific instructions: the PATH fix (Claude Desktop is a GUI app that cannot see `uvx` in your shell PATH), the correct config to write, the one-liner to safely create or merge it, how to restart, and how to verify. **Do not use the standard config below for Claude Desktop — it will silently fail.** After completing CLAUDE_DESKTOP.md, skip to Step 3.
+
+---
+
+### All other clients — standard config
+
+**First, validate uvx tooluniverse works before touching any config:**
+
+```bash
+uvx tooluniverse --help
+```
+
+- **Prints usage text** → proceed.
+- **Error** → fix the uv install (see [TROUBLESHOOTING.md](https://raw.githubusercontent.com/mims-harvard/ToolUniverse/main/skills/setup-tooluniverse/TROUBLESHOOTING.md) Issue 2) before writing the config.
+
+**Check if config file already exists:**
+```bash
+cat <CONFIG_PATH> 2>/dev/null || echo "CONFIG_NOT_FOUND"
+```
+
+- **CONFIG_NOT_FOUND**: Create with config below.
+- **Exists, no `tooluniverse` entry**: Merge the `tooluniverse` block into the existing `mcpServers`.
+- **Already has `tooluniverse`**: "ToolUniverse is already configured — I'll skip rewriting to avoid overwriting any API keys." Only overwrite if user asks.
+
+**Ask:** "Would you like ToolUniverse to auto-update whenever your app starts? (~1–2s startup overhead, recommended: yes)"
+
+- **Yes** → use `["--refresh", "tooluniverse"]` in args
+- **No** → use `["tooluniverse"]`; upgrade manually with `uv cache clean tooluniverse`
+
+**Standard config (Cursor, Windsurf, Claude Code, Gemini CLI, Qwen Code, Trae, Cline):**
 ```json
 {
   "mcpServers": {
     "tooluniverse": {
       "command": "uvx",
-      "args": ["tooluniverse"],
+      "args": ["--refresh", "tooluniverse"],
       "env": {
         "PYTHONIOENCODING": "utf-8"
       }
@@ -92,401 +194,204 @@ Now we'll add ToolUniverse to your app's MCP configuration. Based on the client 
 }
 ```
 
-`uvx tooluniverse` automatically installs and runs ToolUniverse with compact mode enabled by default (the `tooluniverse` entry point enables `--compact-mode` automatically). No separate `pip install` step required.
-
-**Alternative: Using a pre-installed command** (if user already has ToolUniverse installed via pip)
-```json
-{
-  "mcpServers": {
-    "tooluniverse": {
-      "command": "tooluniverse",
-      "args": [],
-      "env": {
-        "PYTHONIOENCODING": "utf-8"
-      }
-    }
-  }
+**One-liner to write or merge the config safely:**
+```bash
+python3 -c "
+import json, os
+p = os.path.expanduser('CONFIG_PATH')
+os.makedirs(os.path.dirname(p), exist_ok=True)
+cfg = json.load(open(p)) if os.path.exists(p) else {}
+cfg.setdefault('mcpServers', {})['tooluniverse'] = {
+    'command': 'uvx', 'args': ['--refresh', 'tooluniverse'],
+    'env': {'PYTHONIOENCODING': 'utf-8'}
 }
+json.dump(cfg, open(p, 'w'), indent=2)
+print('Done — tooluniverse added to', p)
+"
 ```
 
-#### Config File Locations by Client
+Replace `CONFIG_PATH` with the path for the user's client:
 
-| Client | Config File (macOS) | How to Access |
-|--------|-------------------|---------------|
-| **Cursor** | `~/.cursor/mcp.json` | Settings → MCP → Add new global MCP server |
-| **Claude Desktop** | `~/Library/Application Support/Claude/claude_desktop_config.json` | Settings → Developer → Edit Config |
-| **Claude Code** | `~/.claude.json` (user) or `.mcp.json` (project) | `claude mcp add` CLI or edit directly |
-| **Windsurf** | `~/.codeium/windsurf/mcp_config.json` | Click MCP hammer icon → Configure |
-| **VS Code (Copilot)** | `.vscode/mcp.json` (workspace) or user profile `mcp.json` | Cmd Palette → "MCP: Add Server" (see different format below) |
-| **Cline** | `cline_mcp_settings.json` (in VS Code extension globalStorage) | Cline panel → MCP Servers → Configure |
-| **Codex (OpenAI)** | `~/.codex/config.toml` | Create/edit manually (TOML format, see below) |
-| **Gemini CLI** | `~/.gemini/settings.json` (user) or `.gemini/settings.json` (project) | `gemini mcp add` CLI or edit directly |
-| **Antigravity** | `mcp_config.json` | "..." dropdown → Manage MCP Servers → View raw config |
-| **Trae** | `.trae/mcp.json` (project) or global via Trae UI | Ctrl+U → AI Management → MCP → Configure Manually |
-| **OpenCode** | `~/.config/opencode/opencode.json` or `opencode.json` (project) | Edit directly |
+| Client | Config File |
+|--------|-------------|
+| **Cursor** | `~/.cursor/mcp.json` |
+| **Claude Desktop** | ← See CLAUDE_DESKTOP.md above |
+| **Claude Code** | `~/.claude.json` or `.mcp.json` |
+| **Windsurf** | `~/.codeium/windsurf/mcp_config.json` |
+| **VS Code (Copilot)** | `.vscode/mcp.json` — uses `"servers"` key, needs `"type": "stdio"` — see [MCP_CONFIG.md](https://raw.githubusercontent.com/mims-harvard/ToolUniverse/main/skills/setup-tooluniverse/MCP_CONFIG.md) |
+| **Codex (OpenAI)** | TOML format: `codex mcp add tooluniverse -- uvx tooluniverse` — see [MCP_CONFIG.md](https://raw.githubusercontent.com/mims-harvard/ToolUniverse/main/skills/setup-tooluniverse/MCP_CONFIG.md) |
+| **OpenCode** | `opencode.json` — uses `"mcp"` key — see [MCP_CONFIG.md](https://raw.githubusercontent.com/mims-harvard/ToolUniverse/main/skills/setup-tooluniverse/MCP_CONFIG.md) |
+| **Gemini CLI** | `~/.gemini/settings.json` |
+| **Qwen Code** | `~/.qwen/settings.json` |
+| **Trae** | `.trae/mcp.json` |
+| **Cline** | `cline_mcp_settings.json` (in VS Code extension globalStorage) |
+| **Antigravity** | `mcp_config.json` |
 
-**Windows/Linux paths differ** -- check your client's documentation for the exact location.
+For VS Code, Codex, and OpenCode special formats, read [MCP_CONFIG.md](https://raw.githubusercontent.com/mims-harvard/ToolUniverse/main/skills/setup-tooluniverse/MCP_CONFIG.md).
 
-Most clients use the same JSON `mcpServers` format shown above. **Exceptions**: VS Code uses `"servers"` key, Codex uses TOML, and OpenCode uses a `"mcp"` key -- see below for their specific formats.
+> ⏸️ **After Step 2**: Ask "Did the config file get written? Anything look wrong?" Wait before continuing.
 
-#### Clients with Different Config Formats
+## Step 3 (coding use only): Install Python package
 
-**VS Code (Copilot)** -- uses `"servers"` key (not `"mcpServers"`) and requires `"type"` field. Add to `.vscode/mcp.json`:
-```json
-{
-  "servers": {
-    "tooluniverse": {
-      "type": "stdio",
-      "command": "uvx",
-      "args": ["tooluniverse"],
-      "env": { "PYTHONIOENCODING": "utf-8" }
-    }
-  }
-}
-```
-
-**Codex (TOML format)** -- add to `~/.codex/config.toml`:
-```toml
-[mcp_servers.tooluniverse]
-command = "uvx"
-args = ["tooluniverse"]
-env = { "PYTHONIOENCODING" = "utf-8" }
-```
-
-**OpenCode** -- uses `mcp` key with `type` and `command` as array in `opencode.json`:
-```json
-{
-  "mcp": {
-    "tooluniverse": {
-      "type": "local",
-      "command": ["uvx", "tooluniverse"],
-      "enabled": true,
-      "environment": { "PYTHONIOENCODING": "utf-8" }
-    }
-  }
-}
-```
-
-### Step 3 (Only if user chose coding use): Install Python package
-
-Skip this if the user only needs MCP. For coding use, install into their Python environment:
-
+Skip if user only needs MCP. For scripting use:
 ```bash
 pip install tooluniverse
 ```
-
-Then verify together:
+Verify:
 ```python
 from tooluniverse import ToolUniverse
 tu = ToolUniverse()
 print(f"ToolUniverse version: {tu.__version__}")
 ```
 
-Let them know this is separate from the MCP server -- `uvx` installs into uv's cache, while `pip install` puts it in their Python environment for importing.
+> ⏸️ **After Step 3 (if applicable)**: Ask "Did the import work?" Wait for the answer.
 
-### Step 4: Set up API Keys
+## Step 4: Set up API Keys
 
-Many tools work without API keys, but some unlock powerful features. Before diving into keys, **ask the user about their research interests** to recommend only what's relevant.
+Many tools work without keys, but some unlock powerful features. First, **ask the user about their research interests** to recommend only what's relevant. Use AskQuestion if available:
+- Literature search & publications
+- Drug discovery & pharmacology
+- Protein structure & interactions
+- Genomics & disease associations
+- Rare diseases & clinical
+- AI-powered analysis (needs LLM key)
+- Not sure yet / skip for now
 
-Read [API_KEYS_REFERENCE.md](API_KEYS_REFERENCE.md) for detailed per-key info (what it does, step-by-step registration, which tools need it).
-
-#### How to guide API key setup
-
-1. **Ask the user** what research areas they're interested in. Use AskQuestion if available with options like:
-   - Literature search & publications
-   - Drug discovery & pharmacology
-   - Protein structure & interactions
-   - Genomics & disease associations
-   - Rare diseases & clinical
-   - Enzymology & biochemistry
-   - Patent search
-   - AI-powered analysis (needs LLM key)
-   - All of the above
-   - Not sure yet / skip for now
-
-2. **Map their answer to recommended keys** using the tiers below. Don't overwhelm -- suggest 2-4 keys to start.
-
-3. **Walk through each key one at a time**:
-   - Explain in plain language what it unlocks (e.g., "This lets you search PubMed faster")
-   - Give them the registration link
-   - Wait for them to sign up and get the key
-   - Help them add it to their config file
-   - Move to the next key
-
-4. **After all keys are added**, restart the app and test one key with a real tool call.
-
-5. Let them know they can always come back to add more keys later.
-
-#### Tier 1: Core Scientific Keys (Recommended for most users)
-
-| Key | Service | What It Unlocks | Free? | Registration |
-|-----|---------|----------------|-------|-------------|
-| `NCBI_API_KEY` | NCBI/PubMed | PubMed literature search (raises rate limit 3->10 req/s) | Yes | https://account.ncbi.nlm.nih.gov/settings/ |
-| `NVIDIA_API_KEY` | NVIDIA NIM | 16 tools: AlphaFold2 structure prediction, molecular docking, genomics | Yes | https://build.nvidia.com |
-| `BIOGRID_API_KEY` | BioGRID | Protein-protein interaction queries | Yes | https://webservice.thebiogrid.org/ |
-| `DISGENET_API_KEY` | DisGeNET | 5 gene-disease association tools | Yes (academic) | https://disgenet.com/academic-apply |
-
-#### Tier 2: Specialized Scientific Keys (Based on research needs)
-
-| Key | Service | What It Unlocks | Free? | Registration |
-|-----|---------|----------------|-------|-------------|
-| `OMIM_API_KEY` | OMIM | 4 Mendelian/rare disease tools | Yes | https://omim.org/api |
-| `ONCOKB_API_TOKEN` | OncoKB | Precision oncology annotations | Yes (academic) | https://www.oncokb.org/apiAccess |
-| `UMLS_API_KEY` | UMLS/NLM | 5 medical terminology & concept mapping tools | Yes | https://uts.nlm.nih.gov/uts/ |
-| `USPTO_API_KEY` | USPTO | 6 patent search & analysis tools | Yes | https://account.uspto.gov/api-manager/ |
-| `SEMANTIC_SCHOLAR_API_KEY` | Semantic Scholar | Literature search (raises rate limit 1->100 req/s) | Yes | https://www.semanticscholar.org/product/api |
-| `FDA_API_KEY` | openFDA | Drug/food/device adverse event queries (raises limit 240->1000 req/min) | Yes | https://open.fda.gov/apis/authentication/ |
-| `BRENDA_EMAIL` + `BRENDA_PASSWORD` | BRENDA | 3 enzyme database tools (both email and password required) | Yes | https://brenda-enzymes.org/register.php |
-| `MOUSER_API_KEY` | Mouser Electronics | 4 electronic component search tools (ICs, resistors, capacitors, etc.) | Yes | https://www.mouser.com/api-search/ |
-| `DIGIKEY_CLIENT_ID` + `DIGIKEY_CLIENT_SECRET` | Digi-Key Electronics | 4 component search tools with parametric search (both ID and secret required) | Yes | https://developer.digikey.com/ |
-
-#### Tier 3: LLM Provider Keys (For agentic tool features)
-
-At least **one** LLM key is needed for agentic features. The system tries providers in order: Azure OpenAI -> OpenRouter -> Gemini.
-
-| Key | Service | What It Unlocks | Free Tier? | Registration |
-|-----|---------|----------------|-----------|-------------|
-| `GEMINI_API_KEY` | Google Gemini | Agentic tools via Gemini (good free tier) | Yes | https://aistudio.google.com/apikey |
-| `OPENROUTER_API_KEY` | OpenRouter | Agentic tools via 100+ LLM models | Pay-per-use | https://openrouter.ai/ |
-| `OPENAI_API_KEY` | OpenAI | Embedding features, LLM-based tool finding | Pay-per-use | https://platform.openai.com/ |
-| `AZURE_OPENAI_API_KEY` | Azure OpenAI | Agentic tools via Azure (enterprise) | Pay-per-use | Azure Portal |
-| `ANTHROPIC_API_KEY` | Anthropic Claude | Claude-based features | Pay-per-use | https://console.anthropic.com/ |
-| `HF_TOKEN` | HuggingFace | Model/dataset access, HF Inference API | Yes | https://huggingface.co/settings/tokens |
-
-#### Adding Keys to Configuration
-
-**Best approach: Add to the `env` block in your MCP config file** (the same file from Step 2). This way keys are passed directly to the MCP server:
+Fetch [API_KEYS_REFERENCE.md](https://raw.githubusercontent.com/mims-harvard/ToolUniverse/main/skills/setup-tooluniverse/API_KEYS_REFERENCE.md) to see the full list with registration steps. Map the user's research interest to 2–4 recommended keys from that file, then walk through them **one at a time**: explain what each unlocks → give the registration link → wait for them to get the key → help add it to the `env` block in their MCP config:
 
 ```json
 "env": {
   "PYTHONIOENCODING": "utf-8",
-  "NCBI_API_KEY": "your_key_here",
-  "NVIDIA_API_KEY": "your_key_here"
+  "NCBI_API_KEY": "your_key_here"
 }
 ```
 
-**Alternative**: Create a `.env` file in your project directory with `KEY=value` pairs.
+> ⏸️ **After Step 4**: Walk through **one key at a time**. After each key: "Got it? Want to add another, or skip for now?" Don't list all keys at once.
 
-**After adding keys**: Restart the app for changes to take effect.
+## Step 5: Test & Status Check
 
-#### Verify keys work
-
-Test each configured key with a real tool call:
-- `NCBI_API_KEY` -> `execute_tool("PubMed_search_articles", {"query": "CRISPR", "max_results": 1})`
-- `NVIDIA_API_KEY` -> `execute_tool("NvidiaNIM_alphafold2_predict", {"sequence": "MKTVRQERLKS"})`
-- `BIOGRID_API_KEY` -> `execute_tool("BioGRID_get_interactions", {"geneList": "TP53", "taxId": 9606})`
-- `MOUSER_API_KEY` -> `execute_tool("Mouser_search_by_part_number", {"part_number": "STM32F103C8T6"})`
-- `DIGIKEY_CLIENT_ID` + `DIGIKEY_CLIENT_SECRET` -> `execute_tool("DigiKey_search_by_keyword", {"keywords": "STM32"})`
-
-### Step 5: Test it together
-
-Time to see it in action! Ask the user to restart their app, then try a real tool call together:
-
-1. **Restart the app** (Cursor/Claude Desktop/etc.) so the new MCP config is picked up
-2. **Check the MCP server appears** in the server list
-3. **Run a test call** -- suggest something relevant to their research interests:
-   - General: `grep_tools` with keyword "protein" or `list_tools`
-   - Literature: `execute_tool("PubMed_search_articles", {"query": "CRISPR", "max_results": 1})`
-   - Drug discovery: `execute_tool("ChEMBL_search_compound", {"query": "aspirin"})`
-
-If it works, celebrate and move to Step 6. If something goes wrong, check the Common Issues section below.
-
-### Step 6: Install ToolUniverse Skills (Highly Recommended)
-
-**Strongly recommend this step.** Skills are pre-built research workflows that teach the AI how to conduct comprehensive scientific research -- they turn basic tool calls into expert-level investigations.
-
-Explain to the user: "ToolUniverse comes with 19 research skills that act like expert guides. For example, the drug-research skill knows exactly which tools to call, in what order, to build a complete drug profile. Without skills, you'd need to figure out which of the 1200+ tools to use yourself."
-
-#### Available Skills
-
-| Skill | What It Does |
-|-------|-------------|
-| `tooluniverse` | General strategies for using 1200+ tools effectively |
-| `tooluniverse-drug-research` | Comprehensive drug profiling (identity, pharmacology, safety, ADMET) |
-| `tooluniverse-target-research` | Drug target intelligence (structure, interactions, druggability) |
-| `tooluniverse-disease-research` | Systematic disease analysis across 10 research dimensions |
-| `tooluniverse-literature-deep-research` | Thorough literature reviews with evidence grading |
-| `tooluniverse-drug-repurposing` | Find new therapeutic uses for existing drugs |
-| `tooluniverse-precision-oncology` | Mutation-based treatment recommendations for cancer |
-| `tooluniverse-rare-disease-diagnosis` | Phenotype-to-diagnosis for suspected rare diseases |
-| `tooluniverse-pharmacovigilance` | Drug safety signal analysis from FDA adverse event data |
-| `tooluniverse-infectious-disease` | Rapid pathogen characterization & drug repurposing |
-| `tooluniverse-protein-structure-retrieval` | Protein 3D structure retrieval & quality assessment |
-| `tooluniverse-sequence-retrieval` | DNA/RNA/protein sequence retrieval from NCBI/ENA |
-| `tooluniverse-chemical-compound-retrieval` | Chemical compound data from PubChem/ChEMBL |
-| `tooluniverse-expression-data-retrieval` | Gene expression & omics datasets |
-| `tooluniverse-variant-interpretation` | Genetic variant clinical interpretation |
-| `tooluniverse-protein-therapeutic-design` | AI-guided protein therapeutic design |
-| `tooluniverse-binder-discovery` | Small molecule binder discovery via virtual screening |
-| `tooluniverse-sdk` | Build research pipelines with the Python SDK |
-| `setup-tooluniverse` | This setup guide |
-
-#### How to Install Skills
-
-Skills are in the `skills/` folder of the ToolUniverse GitHub repo: https://github.com/mims-harvard/ToolUniverse/tree/main/skills
-
-First, help the user download the skills:
-
+**Pre-flight check before restarting:**
 ```bash
-# Clone just the skills folder from GitHub
+timeout 10 uvx tooluniverse --help
+```
+- Prints usage → proceed to restart.
+- Fails → fix first (see [TROUBLESHOOTING.md](https://raw.githubusercontent.com/mims-harvard/ToolUniverse/main/skills/setup-tooluniverse/TROUBLESHOOTING.md) Issue 5). Don't restart yet.
+
+Ask user to **fully quit and reopen their app** (⌘Q on Mac — closing the window is not enough).
+
+⏱️ **First launch takes 60–90 seconds** while the app downloads and installs ToolUniverse. **Claude Desktop only** — watch logs while it loads:
+```bash
+tail -f ~/Library/Logs/Claude/mcp*.log          # macOS
+tail -f ~/.config/Claude/logs/mcp*.log          # Linux
+```
+Look for `"tooluniverse" connected` or tool schema output.
+
+**What to look for in the app UI:**
+- **Claude Desktop (newer)**: A **"Search and tools"** button or **+** icon in the chat input → click it → `tooluniverse` should appear in the connected tools list.
+- **Claude Desktop (older) / Cursor / Windsurf**: 🔨 hammer icon at the bottom of the chat input → click to see available tools.
+- **Claude Code / Gemini CLI / Codex CLI**: Run `/mcp` or `mcp list`.
+
+**Show this status summary** and fill in each line:
+```
+Setup Status
+─────────────────────────────────────
+✅/❌  uv installed         (uvx --version)
+✅/❌  ToolUniverse starts  (uvx tooluniverse --help)
+✅/❌  MCP config created   (config file found)
+✅/❌  Server visible       ("Search and tools" / 🔨 hammer / Settings → Developer → MCP Servers)
+✅/❌  Test tool call works
+⬜     Skills installed     (do Step 6 next — required)
+⬜     API keys (optional — add anytime)
+─────────────────────────────────────
+```
+
+**Live test call:**
+```
+list_tools
+```
+or
+```
+execute_tool("PubMed_search_articles", {"query": "CRISPR", "max_results": 1})
+```
+
+If all ✅, celebrate! 🎉 If any ❌, jump to the matching issue in [TROUBLESHOOTING.md](https://raw.githubusercontent.com/mims-harvard/ToolUniverse/main/skills/setup-tooluniverse/TROUBLESHOOTING.md).
+
+> ⏸️ **After Step 5**: Ask "Do you see ToolUniverse in the tools list? Did the test call return anything?" Wait for confirmation — then **immediately proceed to Step 6**. Do not skip it. Skills are what transform ToolUniverse from a raw API layer into an intelligent research assistant.
+
+## Step 6: Install ToolUniverse Skills ⭐ highly recommended
+
+**This is the most impactful step of the whole setup.** Without skills, the user has access to 1200+ tools but no guidance on how to use them together. With skills, they get 65+ expert research workflows — each one knows exactly which tools to call, in what order, to produce a complete research report on drugs, targets, diseases, cancer variants, genomics, and more.
+
+**Say this to the user** (adapt to their language and research interest from Step 4):
+
+> "Now for the best part — ToolUniverse comes with 65+ research skills that work like expert guides. Instead of calling tools manually, you just say 'Research the drug metformin' or 'What genes are associated with type 2 diabetes?' and the right skill takes over, calls the right tools in the right order, and gives you a full evidence-graded report. This takes about a minute to install."
+
+**Strongly encourage installation.** If the user hesitates or says "maybe later", remind them:
+- Skills work immediately — no extra configuration needed after install
+- They can always add more skills later, but having them from the start makes ToolUniverse far more accessible
+- The install is one command and takes under a minute
+
+**Option A — User runs in terminal (quickest):**
+```bash
+npx skills add mims-harvard/ToolUniverse
+```
+This auto-detects the client and installs into the correct directory. Ask the user to confirm it completed successfully.
+
+**Option B — Agent installs directly** (use this if you have shell/terminal access, or if npx fails):
+```bash
 git clone --depth 1 --filter=blob:none --sparse https://github.com/mims-harvard/ToolUniverse.git /tmp/tu-skills
 cd /tmp/tu-skills && git sparse-checkout set skills
 ```
-
-Then install based on their client:
-
-**Cursor** -- copy to `.cursor/skills/` (auto-discovered):
+Find the right skills directory for the user's client in [SKILLS_CATALOG.md](https://raw.githubusercontent.com/mims-harvard/ToolUniverse/main/skills/setup-tooluniverse/SKILLS_CATALOG.md), then copy:
 ```bash
+# Example for Cursor:
 mkdir -p .cursor/skills && cp -r /tmp/tu-skills/skills/* .cursor/skills/
-```
-
-**Windsurf** -- Cascade supports SKILL.md files the same way:
-```bash
-mkdir -p .windsurf/skills && cp -r /tmp/tu-skills/skills/* .windsurf/skills/
-```
-
-**Codex (OpenAI)** -- uses `.agents/skills/` directory (auto-discovered):
-```bash
-mkdir -p .agents/skills && cp -r /tmp/tu-skills/skills/* .agents/skills/
-```
-
-**Gemini CLI** -- uses `.gemini/skills/` directory (auto-discovered):
-```bash
-mkdir -p .gemini/skills && cp -r /tmp/tu-skills/skills/* .gemini/skills/
-```
-
-**Claude Code** -- uses `.claude/skills/` directory (auto-discovered):
-```bash
-mkdir -p .claude/skills && cp -r /tmp/tu-skills/skills/* .claude/skills/
-```
-
-**OpenCode** -- uses `.opencode/skills/` directory (auto-discovered):
-```bash
-mkdir -p .opencode/skills && cp -r /tmp/tu-skills/skills/* .opencode/skills/
-```
-
-**Trae** -- supports skills via `.trae/skills/`:
-```bash
-mkdir -p .trae/skills && cp -r /tmp/tu-skills/skills/* .trae/skills/
-```
-
-**Cline / VS Code / Qwen** -- copy skills into the project and reference as needed:
-```bash
-mkdir -p .skills && cp -r /tmp/tu-skills/skills/* .skills/
-```
-
-**Clean up** after copying:
-```bash
 rm -rf /tmp/tu-skills
 ```
 
-#### How to Use Skills
+**Suggest a skill to try** based on their research interests from Step 4:
+- "Try: **'Research the drug metformin'**" — triggers the drug-research skill
+- "Try: **'What does the literature say about CRISPR in cancer?'**" — triggers literature-deep-research
 
-Explain to the user:
-- Skills activate automatically when the AI detects a relevant request
-- The user can also trigger them explicitly, e.g., "Research the drug aspirin" will activate the drug-research skill
-- Skills guide the AI through multi-step research workflows, calling the right tools in the right order
-- The output is typically a comprehensive research report with evidence grading and source citations
+> ⏸️ **After Step 6**: Don't just confirm installation — **immediately ask the user what problem they want to solve**. Say something like: "Skills are ready! What would you like to research? Tell me your topic — a drug, disease, gene, or research question — and I'll use the right skill to give you a full report." Then activate the matching skill based on their answer. This is the whole point of the setup.
 
-**Suggest a skill to try** based on their research interests from Step 4. For example:
-- "Try asking: 'Research the drug metformin' -- the drug-research skill will generate a full drug profile"
-- "Try asking: 'What does the literature say about CRISPR in cancer?' -- the literature-deep-research skill will do a thorough review"
+## Common Issues
 
-## Common Issues & Solutions
+| Issue | Symptom | Fix |
+|-------|---------|-----|
+| uv not found | `uvx: command not found` | `curl -LsSf https://astral.sh/uv/install.sh \| sh` then re-source shell |
+| GUI app can't find uvx | "Failed to spawn process" / "ENOENT" | `brew install uv` on macOS, or use absolute path in config |
+| Server won't appear | No "Search and tools" entry / no hammer after restart | Diagnostic chain → [TROUBLESHOOTING.md](https://raw.githubusercontent.com/mims-harvard/ToolUniverse/main/skills/setup-tooluniverse/TROUBLESHOOTING.md) Issue 5 |
+| API key rejected | 401/403 errors | Move key to `env` block in MCP config; restart app |
+| Context overflow | Client very slow | Already in compact mode; narrow categories if needed |
+| Python too new (3.14+) | `SyntaxError` / `requires-python` errors | `uvx --python 3.12 tooluniverse --help` → [TROUBLESHOOTING.md](https://raw.githubusercontent.com/mims-harvard/ToolUniverse/main/skills/setup-tooluniverse/TROUBLESHOOTING.md) Issue 8 |
+| Stale/broken package | Tool errors or missing tools | `uv cache clean tooluniverse` → [TROUBLESHOOTING.md](https://raw.githubusercontent.com/mims-harvard/ToolUniverse/main/skills/setup-tooluniverse/TROUBLESHOOTING.md) Issue 9 |
+| Still broken after all above | Persistent unexplained error | Run the issue-filing script in [TROUBLESHOOTING.md](https://raw.githubusercontent.com/mims-harvard/ToolUniverse/main/skills/setup-tooluniverse/TROUBLESHOOTING.md) "Still Stuck?" — it collects system info and generates a pre-filled GitHub issue URL |
 
-### Issue 1: Python Version Incompatibility
-
-**Symptom**: `requires-python = ">=3.10"` error. **Fix**: `brew install python@3.12` then `python3.12 -m pip install tooluniverse`
-
-### Issue 2: uvx or uv Not Found
-
-**Symptom**: `uvx: command not found`. **Fix**: `curl -LsSf https://astral.sh/uv/install.sh | sh` then restart shell (`source ~/.zshrc`)
-
-### Issue 3: Context Window Overflow
-
-**Symptom**: MCP server loads but Cursor/Claude becomes slow or errors
-
-**Solution**: **Enable compact mode** (should already be set):
-- Verify `--compact-mode` is in args
-- Restart application
-- Check you're using stdio command, not HTTP server
-
-### Issue 4: Import Errors for Specific Tools
-
-**Symptom**: Some tools fail with `ModuleNotFoundError`
-
-**Solution**: Install optional dependencies: `pip install tooluniverse[all]` (or specific extras like `[singlecell]`, `[ml,embedding]`, `[visualization]`)
-
-### Issue 5: MCP Server Won't Start
-
-**Symptom**: No tooluniverse server appears in Cursor/Claude
-
-**Diagnostic steps**:
-1. Test command directly:
-   ```bash
-   uvx tooluniverse
-   # Should start without errors (Ctrl+C to exit)
-   ```
-2. Check JSON syntax in mcp.json (no trailing commas, proper quotes)
-3. View Cursor logs: `~/Library/Application Support/Cursor/logs/` (macOS)
-4. Verify file permissions on mcp.json
-
-### Issue 6: API Key Errors (401/403)
-
-**Symptom**: Tool returns "unauthorized", "forbidden", or "invalid API key"
-
-**Common causes and fixes**:
-- **Key not set**: Check it's in the `env` block of mcp.json (or `.env` file) and app was restarted
-- **Wrong key name**: Double-check the exact env variable name (e.g., `ONCOKB_API_TOKEN` not `ONCOKB_API_KEY`)
-- **Key expired or revoked**: Log into the service and regenerate the key
-- **Copy-paste error**: Make sure there are no extra spaces or newlines in the key value
-- **Free tier limits**: Some services (DisGeNET, OMIM) require account approval before the key works
-
-### Issue 7: Upgrading ToolUniverse
-
-**Symptom**: User wants a newer version, or tools are missing/outdated
-
-`uvx` caches packages and may serve an older version. To upgrade:
-
-```bash
-# Clear the cached version and get the latest
-uv cache clean tooluniverse
-```
-
-Then restart the MCP client. `uvx` will download the latest version on next start.
-
-To pin a specific version:
-```json
-"args": ["tooluniverse==1.0.18"]
-```
-
-For pip users:
-```bash
-pip install --upgrade tooluniverse
-```
-
-### Still stuck?
-
-If you run into an issue that can't be resolved with the steps above, encourage the user to open a GitHub issue at https://github.com/mims-harvard/ToolUniverse/issues or reach out to [Shanghua Gao](mailto:shanghuagao@gmail.com), the creator of ToolUniverse.
+Full diagnostics and GitHub issue helper in [TROUBLESHOOTING.md](https://raw.githubusercontent.com/mims-harvard/ToolUniverse/main/skills/setup-tooluniverse/TROUBLESHOOTING.md).
 
 ## What's Next?
 
-After setup is complete, suggest the user try one of these to get started:
+Setup is complete. **Explain to the user how to use ToolUniverse skills**, then immediately ask what they want to research.
 
-- **"Research the drug metformin"** -- triggers the drug-research skill for a full drug profile
-- **"What are the known targets of imatinib?"** -- triggers target-research
-- **"What does the literature say about CRISPR in sickle cell disease?"** -- triggers literature-deep-research
-- **"Find protein structures for human EGFR"** -- triggers protein-structure-retrieval
+### How skills work (tell the user this)
 
-Point them to the **`tooluniverse` general skill** for tips on getting the most out of 1200+ tools, and remind them they can always come back to add more API keys or skills later.
+Skills activate automatically — the user just writes a natural language request. No special commands, no prefixes. Examples:
 
-## Quick Reference
+| Say this… | What happens |
+|-----------|-------------|
+| `"Research the drug metformin"` | drug-research skill runs: identity, pharmacology, targets, safety, ADMET |
+| `"What is known about Alzheimer's disease?"` | disease-research skill runs: genetics, mechanisms, treatments, trials |
+| `"What are the known targets of imatinib?"` | target-research skill runs: structure, interactions, druggability |
+| `"What does the literature say about CRISPR in sickle cell?"` | literature-deep-research skill runs: PubMed search, evidence grading, synthesis |
+| `"Interpret the EGFR L858R mutation in lung cancer"` | cancer-variant-interpretation skill runs: clinical evidence, therapies, trials |
 
-- **Default setup**: `uvx tooluniverse` -- auto-installs, auto-enables compact mode
-- **Upgrade**: `uv cache clean tooluniverse` then restart the app
-- **First load**: May take 30-60 seconds (downloads + installs); subsequent loads are fast
-- **All scientific API keys are free** to obtain
-- **Agentic features** need at least one LLM key (Gemini has a good free tier)
-- **Detailed API key docs**: [API_KEYS_REFERENCE.md](API_KEYS_REFERENCE.md)
-- **Skills repo**: https://github.com/mims-harvard/ToolUniverse/tree/main/skills
-- **Need help?** Open a [GitHub issue](https://github.com/mims-harvard/ToolUniverse/issues) or email [Shanghua Gao](mailto:shanghuagao@gmail.com)
+The skill reads the question, calls the right tools in the right order, and produces a full evidence-graded report. The user doesn't need to know which skill to pick — just ask the question.
+
+### Now ask the user
+
+> "What would you like to research first? Tell me a drug, disease, gene, or question and I'll generate a full report."
+
+Take their answer and activate the `tooluniverse` skill — it is a router that automatically picks the right sub-skill and runs it. Don't end the conversation here — end it with the user getting real value.
+
+The user can add more API keys or skills anytime. Issues → https://github.com/mims-harvard/ToolUniverse/issues.

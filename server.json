@@ -7,13 +7,13 @@
     "url": "https://github.com/mims-harvard/ToolUniverse",
     "source": "github"
   },
-  "version": "1.0.19.1",
+  "version": "1.0.20",
   "packages": [
     {
       "registryType": "pypi",
       "registryBaseUrl": "https://pypi.org",
       "identifier": "tooluniverse",
-      "version": "1.0.19.1",
+      "version": "1.0.20",
       "runtimeHint": "uvx",
       "transport": {
         "type": "stdio"

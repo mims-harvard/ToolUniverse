@@ -10,7 +10,7 @@ from ._shared_client import get_shared_client
 
 def UniChem_search_compound(
     compound: str,
-    type: str,
+    type_: str,
     sourceID: Optional[int | Any] = None,
     *,
     stream_callback: Optional[Callable[[str], None]] = None,
@@ -24,7 +24,7 @@ def UniChem_search_compound(
     ----------
     compound : str
         The compound identifier to search. Can be an InChIKey (e.g., 'BSYNRYMUTXBXSQ-...
-    type : str
+    type_ : str
         Type of the compound identifier. One of: 'inchikey', 'sourceID', 'uci'. Defau...
     sourceID : int | Any
         Required when type='sourceID'. The source database ID (e.g., 1=ChEMBL, 2=Drug...
@@ -44,7 +44,7 @@ def UniChem_search_compound(
     return get_shared_client().run_one_function(
         {
             "name": "UniChem_search_compound",
-            "arguments": {"compound": compound, "type": type, "sourceID": sourceID},
+            "arguments": {"compound": compound, "type": type_, "sourceID": sourceID},
         },
         stream_callback=stream_callback,
         use_cache=use_cache,

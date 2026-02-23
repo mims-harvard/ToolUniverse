@@ -1,0 +1,46 @@
+"""
+GeneNetwork_list_datasets
+
+List all datasets available for a specific genetic cross population in GeneNetwork. Datasets repr...
+"""
+
+from typing import Any, Optional, Callable
+from ._shared_client import get_shared_client
+
+
+def GeneNetwork_list_datasets(
+    group: str,
+    *,
+    stream_callback: Optional[Callable[[str], None]] = None,
+    use_cache: bool = False,
+    validate: bool = True,
+) -> Any:
+    """
+    List all datasets available for a specific genetic cross population in GeneNetwork. Datasets repr...
+
+    Parameters
+    ----------
+    group : str
+        Genetic cross group name in lowercase (e.g., 'bxd', 'bxh', 'hxb', 'bnlx-srjr-...
+    stream_callback : Callable, optional
+        Callback for streaming output
+    use_cache : bool, default False
+        Enable caching
+    validate : bool, default True
+        Validate parameters
+
+    Returns
+    -------
+    Any
+    """
+    # Handle mutable defaults to avoid B006 linting error
+
+    return get_shared_client().run_one_function(
+        {"name": "GeneNetwork_list_datasets", "arguments": {"group": group}},
+        stream_callback=stream_callback,
+        use_cache=use_cache,
+        validate=validate,
+    )
+
+
+__all__ = ["GeneNetwork_list_datasets"]

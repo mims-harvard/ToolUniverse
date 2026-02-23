@@ -1,0 +1,325 @@
+[
+  {
+    "name": "EVA_get_variants_by_gene",
+    "description": "Get genetic variants from the European Variation Archive (EVA) for a specific gene. EVA is hosted at EBI and aggregates variant data from multiple studies including ClinVar, dbSNP, and population sequencing projects. Returns variants with allele frequencies, study sources, and variant type. The gene name uses HGNC symbols (e.g., 'BRCA1', 'TP53', 'EGFR'). Species defaults to human GRCh38.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "gene": {
+          "type": "string",
+          "description": "Gene symbol (HGNC format, e.g., 'BRCA1', 'TP53', 'EGFR', 'BRCA2', 'APOE')"
+        },
+        "species": {
+          "type": "string",
+          "default": "hsapiens_grch38",
+          "description": "Species and assembly (e.g., 'hsapiens_grch38', 'hsapiens_grch37', 'mmusculus_grcm38')"
+        },
+        "limit": {
+          "type": "integer",
+          "default": 20,
+          "description": "Maximum number of variants to return (default 20, max ~1000)"
+        }
+      },
+      "required": [
+        "gene"
+      ]
+    },
+    "fields": {
+      "endpoint": "https://www.ebi.ac.uk/eva/webservices/rest/v1/genes/{gene}/variants"
+    },
+    "type": "BaseRESTTool",
+    "test_examples": [
+      {
+        "gene": "BRCA2",
+        "species": "hsapiens_grch38",
+        "limit": 5
+      },
+      {
+        "gene": "TP53",
+        "species": "hsapiens_grch38",
+        "limit": 5
+      },
+      {
+        "gene": "EGFR",
+        "species": "hsapiens_grch38",
+        "limit": 3
+      }
+    ],
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "object",
+          "description": "EVA response containing variant data for the gene",
+          "properties": {
+            "time": {
+              "type": "integer",
+              "description": "Query execution time in milliseconds"
+            },
+            "apiVersion": {
+              "type": "string",
+              "description": "API version (e.g., 'v1')"
+            },
+            "response": {
+              "type": "array",
+              "description": "Array of response objects containing variant results",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "numResults": {
+                    "type": "integer",
+                    "description": "Number of results in this response"
+                  },
+                  "numTotalResults": {
+                    "type": "integer",
+                    "description": "Total number of variants available for the gene"
+                  },
+                  "result": {
+                    "type": "array",
+                    "description": "Array of variant objects",
+                    "items": {
+                      "type": "object",
+                      "properties": {
+                        "chromosome": {
+                          "type": "string"
+                        },
+                        "start": {
+                          "type": "integer"
+                        },
+                        "end": {
+                          "type": "integer"
+                        },
+                        "reference": {
+                          "type": "string"
+                        },
+                        "alternate": {
+                          "type": "string"
+                        },
+                        "type": {
+                          "type": "string",
+                          "description": "Variant type (SNV, INDEL, etc.)"
+                        },
+                        "hgvs": {
+                          "type": "object"
+                        },
+                        "sourceEntries": {
+                          "type": "object"
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        {
+          "type": "object",
+          "properties": {
+            "error": {
+              "type": "string",
+              "description": "Error message"
+            }
+          },
+          "required": [
+            "error"
+          ]
+        }
+      ]
+    }
+  },
+  {
+    "name": "EVA_get_variants_by_region",
+    "description": "Get genetic variants from the European Variation Archive (EVA) within a specific genomic region. Returns all known variants in the specified chromosomal coordinate range, including SNVs, indels, and structural variants with allele frequencies from multiple studies. Useful for scanning variant hotspots or checking variants in regulatory regions. The endpoint URL uses 'chromosome:start-end' format.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "region": {
+          "type": "string",
+          "description": "Genomic region in 'chr:start-end' format (e.g., '17:41200000-41210000', '7:140753300-140753400', '19:44905700-44910000')"
+        },
+        "species": {
+          "type": "string",
+          "default": "hsapiens_grch38",
+          "description": "Species and assembly (e.g., 'hsapiens_grch38', 'hsapiens_grch37')"
+        },
+        "limit": {
+          "type": "integer",
+          "default": 20,
+          "description": "Maximum number of variants to return"
+        }
+      },
+      "required": [
+        "region"
+      ]
+    },
+    "fields": {
+      "endpoint": "https://www.ebi.ac.uk/eva/webservices/rest/v1/segments/{region}/variants"
+    },
+    "type": "BaseRESTTool",
+    "test_examples": [
+      {
+        "region": "17:41200000-41210000",
+        "species": "hsapiens_grch38",
+        "limit": 5
+      },
+      {
+        "region": "7:140753300-140753400",
+        "species": "hsapiens_grch38",
+        "limit": 5
+      },
+      {
+        "region": "19:44905700-44910000",
+        "species": "hsapiens_grch38",
+        "limit": 3
+      }
+    ],
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "object",
+          "description": "EVA response containing variants in the specified genomic region",
+          "properties": {
+            "time": {
+              "type": "integer"
+            },
+            "apiVersion": {
+              "type": "string"
+            },
+            "response": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "numResults": {
+                    "type": "integer"
+                  },
+                  "numTotalResults": {
+                    "type": "integer"
+                  },
+                  "result": {
+                    "type": "array",
+                    "items": {
+                      "type": "object",
+                      "properties": {
+                        "chromosome": {
+                          "type": "string"
+                        },
+                        "start": {
+                          "type": "integer"
+                        },
+                        "end": {
+                          "type": "integer"
+                        },
+                        "reference": {
+                          "type": "string"
+                        },
+                        "alternate": {
+                          "type": "string"
+                        },
+                        "type": {
+                          "type": "string"
+                        },
+                        "length": {
+                          "type": "integer"
+                        },
+                        "hgvs": {
+                          "type": "object"
+                        },
+                        "sourceEntries": {
+                          "type": "object"
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        {
+          "type": "object",
+          "properties": {
+            "error": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "error"
+          ]
+        }
+      ]
+    }
+  },
+  {
+    "name": "EVA_list_studies",
+    "description": "List all variant studies available in the European Variation Archive (EVA) for a given species. Returns study accessions (e.g., PRJEB84021) that have submitted variant data. Useful for discovering available datasets before querying variants. Each study typically corresponds to a population sequencing project or variant calling pipeline.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "species": {
+          "type": "string",
+          "default": "hsapiens_grch38",
+          "description": "Species and assembly (e.g., 'hsapiens_grch38', 'hsapiens_grch37', 'mmusculus_grcm38')"
+        }
+      },
+      "required": []
+    },
+    "fields": {
+      "endpoint": "https://www.ebi.ac.uk/eva/webservices/rest/v1/meta/studies/list"
+    },
+    "type": "BaseRESTTool",
+    "test_examples": [
+      {
+        "species": "hsapiens_grch38"
+      },
+      {
+        "species": "mmusculus_grcm38"
+      }
+    ],
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "object",
+          "description": "List of available EVA studies",
+          "properties": {
+            "time": {
+              "type": "integer"
+            },
+            "apiVersion": {
+              "type": "string"
+            },
+            "response": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "numResults": {
+                    "type": "integer"
+                  },
+                  "numTotalResults": {
+                    "type": "integer"
+                  },
+                  "result": {
+                    "type": "array",
+                    "description": "Array of study accession strings"
+                  }
+                }
+              }
+            }
+          }
+        },
+        {
+          "type": "object",
+          "properties": {
+            "error": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "error"
+          ]
+        }
+      ]
+    }
+  }
+]

@@ -14,7 +14,7 @@ def FoodDataCentral_get_food(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> dict[str, Any]:
     """
     Get detailed food information by FDC ID from USDA FoodData Central. Returns complete nutrient pro...
 
@@ -31,7 +31,7 @@ def FoodDataCentral_get_food(
 
     Returns
     -------
-    Any
+    dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

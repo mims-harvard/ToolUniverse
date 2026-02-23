@@ -1,0 +1,334 @@
+[
+  {
+    "name": "DataCite_get_doi",
+    "description": "Get metadata for a research dataset or publication by DOI from DataCite. DataCite is the primary registry for research data DOIs, covering datasets, software, samples, and other research outputs deposited in repositories like Zenodo, Dryad, Figshare, and thousands of institutional repositories. Returns title, creators, affiliations, publication year, resource type, subjects, funding information, and related identifiers. Essential for finding research data linked to publications, understanding data provenance, and discovering datasets in a field.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "doi": {
+          "type": "string",
+          "description": "DOI of the research output (e.g., '10.5281/zenodo.4088438', '10.5061/dryad.234', '10.6084/m9.figshare.1000050'). Include full DOI without URL prefix."
+        }
+      },
+      "required": [
+        "doi"
+      ]
+    },
+    "fields": {
+      "endpoint": "https://api.datacite.org/dois/{doi}"
+    },
+    "type": "BaseRESTTool",
+    "test_examples": [
+      {
+        "doi": "10.5281/zenodo.4088438"
+      },
+      {
+        "doi": "10.5061/dryad.234"
+      },
+      {
+        "doi": "10.17863/cam.72848"
+      }
+    ],
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "object",
+          "description": "DataCite DOI metadata",
+          "properties": {
+            "data": {
+              "type": "object",
+              "properties": {
+                "id": {
+                  "type": "string",
+                  "description": "The DOI"
+                },
+                "type": {
+                  "type": "string",
+                  "description": "Record type (e.g., 'dois')"
+                },
+                "attributes": {
+                  "type": "object",
+                  "properties": {
+                    "doi": {
+                      "type": "string",
+                      "description": "The DOI"
+                    },
+                    "titles": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "title": {
+                            "type": "string"
+                          }
+                        }
+                      },
+                      "description": "Titles of the resource"
+                    },
+                    "creators": {
+                      "type": "array",
+                      "description": "Creator(s) of the resource",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "name": {
+                            "type": [
+                              "string",
+                              "null"
+                            ]
+                          },
+                          "givenName": {
+                            "type": [
+                              "string",
+                              "null"
+                            ]
+                          },
+                          "familyName": {
+                            "type": [
+                              "string",
+                              "null"
+                            ]
+                          },
+                          "affiliation": {
+                            "type": "array"
+                          }
+                        }
+                      }
+                    },
+                    "publicationYear": {
+                      "type": [
+                        "integer",
+                        "null"
+                      ],
+                      "description": "Year of publication"
+                    },
+                    "publisher": {
+                      "type": [
+                        "string",
+                        "null"
+                      ],
+                      "description": "Publisher or repository name"
+                    },
+                    "types": {
+                      "type": "object",
+                      "properties": {
+                        "resourceTypeGeneral": {
+                          "type": "string",
+                          "description": "General resource type (Dataset, Software, Text, etc.)"
+                        },
+                        "resourceType": {
+                          "type": [
+                            "string",
+                            "null"
+                          ],
+                          "description": "Specific resource type"
+                        }
+                      }
+                    },
+                    "subjects": {
+                      "type": "array",
+                      "description": "Subject keywords",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "subject": {
+                            "type": "string"
+                          }
+                        }
+                      }
+                    },
+                    "description": {
+                      "type": [
+                        "string",
+                        "null"
+                      ],
+                      "description": "Abstract or description"
+                    },
+                    "fundingReferences": {
+                      "type": "array",
+                      "description": "Funding sources",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "funderName": {
+                            "type": "string"
+                          },
+                          "awardNumber": {
+                            "type": [
+                              "string",
+                              "null"
+                            ]
+                          }
+                        }
+                      }
+                    },
+                    "relatedIdentifiers": {
+                      "type": "array",
+                      "description": "Related DOIs and identifiers (e.g., linked publications)",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "relatedIdentifier": {
+                            "type": "string"
+                          },
+                          "relatedIdentifierType": {
+                            "type": "string"
+                          },
+                          "relationType": {
+                            "type": "string"
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        {
+          "type": "object",
+          "properties": {
+            "error": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "error"
+          ]
+        }
+      ]
+    }
+  },
+  {
+    "name": "DataCite_search_dois",
+    "description": "Search DataCite for research datasets, software, and other research outputs by keyword, subject, or creator. Returns metadata for research outputs registered with DataCite DOIs across repositories like Zenodo, Dryad, Figshare, and institutional repositories. Useful for discovering datasets related to a research topic, finding software and code with DOIs, and exploring research outputs beyond traditional publications.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "query": {
+          "type": "string",
+          "description": "Search query (e.g., 'RNA-seq transcriptomics', 'CRISPR knockout mouse', 'climate change temperature')"
+        },
+        "resource_type_general": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Filter by resource type: 'Dataset', 'Software', 'Text', 'Image', 'Workflow', 'Model', 'PhysicalObject', 'Collection'"
+        },
+        "page_size": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "description": "Number of results per page (default 10, max 100)"
+        },
+        "page_number": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "description": "Page number for pagination (default 1)"
+        }
+      },
+      "required": [
+        "query"
+      ]
+    },
+    "fields": {
+      "endpoint": "https://api.datacite.org/dois"
+    },
+    "type": "BaseRESTTool",
+    "test_examples": [
+      {
+        "query": "BRCA1 breast cancer genomics",
+        "page_size": 5
+      },
+      {
+        "query": "single cell RNA-seq mouse brain",
+        "resource_type_general": "Dataset",
+        "page_size": 5
+      },
+      {
+        "query": "protein structure prediction AlphaFold",
+        "page_size": 5
+      }
+    ],
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "object",
+          "description": "DataCite search results",
+          "properties": {
+            "data": {
+              "type": "array",
+              "description": "List of matching DOI records",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "id": {
+                    "type": "string",
+                    "description": "DOI"
+                  },
+                  "attributes": {
+                    "type": "object",
+                    "properties": {
+                      "doi": {
+                        "type": "string"
+                      },
+                      "titles": {
+                        "type": "array"
+                      },
+                      "creators": {
+                        "type": "array"
+                      },
+                      "publicationYear": {
+                        "type": [
+                          "integer",
+                          "null"
+                        ]
+                      },
+                      "publisher": {
+                        "type": [
+                          "string",
+                          "null"
+                        ]
+                      },
+                      "types": {
+                        "type": "object"
+                      }
+                    }
+                  }
+                }
+              }
+            },
+            "meta": {
+              "type": "object",
+              "properties": {
+                "total": {
+                  "type": "integer",
+                  "description": "Total number of matching records"
+                },
+                "page": {
+                  "type": "integer"
+                }
+              }
+            }
+          }
+        },
+        {
+          "type": "object",
+          "properties": {
+            "error": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "error"
+          ]
+        }
+      ]
+    }
+  }
+]

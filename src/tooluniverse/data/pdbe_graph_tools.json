@@ -1,0 +1,568 @@
+[
+  {
+    "name": "PDBe_get_bound_molecules",
+    "description": "Get all bound molecules (ligands, cofactors, drugs) in a PDB structure from the PDBe Graph API. Returns each bound molecule group with its chemical component ID (e.g., HEM for heme, ATP for adenosine triphosphate, REA for retinoic acid), chain location, and entity information. Essential for identifying what small molecules co-crystallized with a protein. Use this to discover ligands in a structure before analyzing binding sites. Example: 4HHB returns 6 bound molecules (4 HEM groups + 2 PO4 groups); 1CBS returns REA (retinoic acid).",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "pdb_id": {
+          "type": "string",
+          "description": "PDB identifier (4-character code, case-insensitive). Examples: '4hhb' (hemoglobin with heme), '1cbs' (CRABP2 with retinoic acid), '6lu7' (SARS-CoV-2 Mpro with inhibitor), '3hyd' (kinase with ATP analog)."
+        }
+      },
+      "required": [
+        "pdb_id"
+      ]
+    },
+    "fields": {
+      "endpoint": "https://www.ebi.ac.uk/pdbe/graph-api/pdb/bound_molecules/{pdb_id}"
+    },
+    "type": "BaseRESTTool",
+    "test_examples": [
+      {
+        "pdb_id": "4hhb"
+      },
+      {
+        "pdb_id": "1cbs"
+      }
+    ],
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "object",
+          "description": "Keyed by lowercase PDB ID",
+          "additionalProperties": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "bm_id": {
+                  "type": "string",
+                  "description": "Bound molecule group identifier (e.g., bm1, bm2)"
+                },
+                "composition": {
+                  "type": "object",
+                  "properties": {
+                    "ligands": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "chain_id": {
+                            "type": "string",
+                            "description": "Chain identifier"
+                          },
+                          "author_residue_number": {
+                            "type": "integer"
+                          },
+                          "chem_comp_id": {
+                            "type": "string",
+                            "description": "Chemical component ID (e.g., HEM, ATP, REA)"
+                          },
+                          "entity": {
+                            "type": "integer"
+                          },
+                          "molecule_type": {
+                            "type": "string",
+                            "description": "Type: Bound, Water, etc."
+                          }
+                        }
+                      }
+                    },
+                    "connections": {
+                      "type": "array"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        {
+          "type": "object",
+          "properties": {
+            "error": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "error"
+          ]
+        }
+      ]
+    }
+  },
+  {
+    "name": "PDBe_get_uniprot_structure_coverage",
+    "description": "Get all PDB structures mapped to a UniProt protein, ranked by quality and coverage, from the PDBe Graph API. For each structure, shows residue coverage on the UniProt sequence, resolution, experimental method, mutations present, and ligands bound. Returns the best chain per PDB entry. Essential for finding the best structural coverage for a protein of interest and identifying which regions have experimental structures vs predicted models. Example: P04637 (TP53) returns 100+ structures covering different domains (DNA-binding domain 93-292, tetramerization domain 319-360, etc.).",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "uniprot_id": {
+          "type": "string",
+          "description": "UniProt accession. Examples: 'P04637' (TP53, many structures), 'P00533' (EGFR), 'P69905' (hemoglobin alpha), 'P01308' (insulin)."
+        }
+      },
+      "required": [
+        "uniprot_id"
+      ]
+    },
+    "fields": {
+      "endpoint": "https://www.ebi.ac.uk/pdbe/graph-api/uniprot/unipdb/{uniprot_id}"
+    },
+    "type": "BaseRESTTool",
+    "test_examples": [
+      {
+        "uniprot_id": "P04637"
+      },
+      {
+        "uniprot_id": "P69905"
+      }
+    ],
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "object",
+          "description": "Keyed by UniProt accession",
+          "additionalProperties": {
+            "type": "object",
+            "properties": {
+              "sequence": {
+                "type": "string",
+                "description": "Full UniProt protein sequence"
+              },
+              "length": {
+                "type": "integer",
+                "description": "Protein sequence length"
+              },
+              "dataType": {
+                "type": "string"
+              },
+              "data": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "name": {
+                      "type": "string",
+                      "description": "PDB accession code"
+                    },
+                    "accession": {
+                      "type": "string"
+                    },
+                    "entityId": {
+                      "type": "integer"
+                    },
+                    "bestChainId": {
+                      "type": "string",
+                      "description": "Best representative chain ID"
+                    },
+                    "residues": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "startIndex": {
+                            "type": "integer",
+                            "description": "Start position on UniProt sequence"
+                          },
+                          "endIndex": {
+                            "type": "integer",
+                            "description": "End position on UniProt sequence"
+                          },
+                          "observed": {
+                            "type": "string",
+                            "description": "Y if residue observed in structure, N if missing"
+                          }
+                        }
+                      }
+                    },
+                    "additionalData": {
+                      "type": "object",
+                      "properties": {
+                        "resolution": {
+                          "type": [
+                            "number",
+                            "null"
+                          ],
+                          "description": "Resolution in Angstroms"
+                        },
+                        "ligandCount": {
+                          "type": "integer"
+                        },
+                        "entityCount": {
+                          "type": "integer"
+                        },
+                        "experiment": {
+                          "type": "string",
+                          "description": "Experimental method (X-ray, Cryo-EM, NMR)"
+                        },
+                        "title": {
+                          "type": "string"
+                        },
+                        "residueCount": {
+                          "type": "integer"
+                        },
+                        "rankingScore": {
+                          "type": "number",
+                          "description": "Quality ranking score (higher = better)"
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        {
+          "type": "object",
+          "properties": {
+            "error": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "error"
+          ]
+        }
+      ]
+    }
+  },
+  {
+    "name": "PDBe_get_uniprot_mappings",
+    "description": "Get UniProt-to-PDB chain mappings for a PDB structure from the PDBe Graph API. For each UniProt accession represented in the structure, returns all chain mappings with residue-level alignment (UniProt start/end, PDB start/end, identity, coverage). Essential for understanding which proteins are in a crystal structure and how they map to UniProt reference sequences. Example: 4HHB returns P69905 (HBA_HUMAN) mapped to chains A,C and P68871 (HBB_HUMAN) mapped to chains B,D.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "pdb_id": {
+          "type": "string",
+          "description": "PDB identifier (4-character code). Examples: '4hhb' (hemoglobin), '1cbs' (CRABP2), '6lu7' (SARS-CoV-2 main protease)."
+        }
+      },
+      "required": [
+        "pdb_id"
+      ]
+    },
+    "fields": {
+      "endpoint": "https://www.ebi.ac.uk/pdbe/graph-api/mappings/uniprot/{pdb_id}"
+    },
+    "type": "BaseRESTTool",
+    "test_examples": [
+      {
+        "pdb_id": "4hhb"
+      },
+      {
+        "pdb_id": "1cbs"
+      }
+    ],
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "object",
+          "description": "Keyed by PDB ID, then 'UniProt', then UniProt accession",
+          "additionalProperties": {
+            "type": "object",
+            "properties": {
+              "UniProt": {
+                "type": "object",
+                "additionalProperties": {
+                  "type": "object",
+                  "properties": {
+                    "name": {
+                      "type": "string",
+                      "description": "UniProt entry name"
+                    },
+                    "identifier": {
+                      "type": "string"
+                    },
+                    "mappings": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "entity_id": {
+                            "type": "integer"
+                          },
+                          "chain_id": {
+                            "type": "string"
+                          },
+                          "struct_asym_id": {
+                            "type": "string"
+                          },
+                          "unp_start": {
+                            "type": "integer",
+                            "description": "UniProt residue start"
+                          },
+                          "unp_end": {
+                            "type": "integer",
+                            "description": "UniProt residue end"
+                          },
+                          "identity": {
+                            "type": "number",
+                            "description": "Sequence identity (0-1)"
+                          },
+                          "coverage": {
+                            "type": "number",
+                            "description": "Fraction of UniProt sequence covered"
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        {
+          "type": "object",
+          "properties": {
+            "error": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "error"
+          ]
+        }
+      ]
+    }
+  },
+  {
+    "name": "PDBe_get_compound_details",
+    "description": "Get detailed chemical compound information from the PDBe Graph API by chemical component ID (3-letter code). Returns chemical formula, molecular weight, SMILES, InChI, InChIKey, systematic names, cross-references to DrugBank/PubChem/ClinicalTrials, and stereoisomer information. More comprehensive than compound name search. Example: 'ATP' returns adenosine-5'-triphosphate with formula C10H16N5O13P3, weight 507.181, DrugBank DB00171, PubChem 5957.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "comp_id": {
+          "type": "string",
+          "description": "Chemical component identifier (3-letter PDB ligand code, uppercase). Examples: 'ATP' (adenosine triphosphate), 'HEM' (protoporphyrin IX containing FE), 'NAD' (nicotinamide-adenine-dinucleotide), 'FAD' (flavin-adenine dinucleotide), 'REA' (retinoic acid)."
+        }
+      },
+      "required": [
+        "comp_id"
+      ]
+    },
+    "fields": {
+      "endpoint": "https://www.ebi.ac.uk/pdbe/graph-api/compound/summary/{comp_id}"
+    },
+    "type": "BaseRESTTool",
+    "test_examples": [
+      {
+        "comp_id": "ATP"
+      },
+      {
+        "comp_id": "HEM"
+      }
+    ],
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "object",
+          "description": "Keyed by compound ID",
+          "additionalProperties": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "name": {
+                  "type": "string",
+                  "description": "Chemical compound name"
+                },
+                "formula": {
+                  "type": "string",
+                  "description": "Chemical formula"
+                },
+                "weight": {
+                  "type": "number",
+                  "description": "Molecular weight in Daltons"
+                },
+                "formal_charge": {
+                  "type": "integer"
+                },
+                "compound_type": {
+                  "type": "string",
+                  "description": "NON-POLYMER, POLYMER, etc."
+                },
+                "inchi": {
+                  "type": "string",
+                  "description": "InChI identifier"
+                },
+                "inchi_key": {
+                  "type": "string",
+                  "description": "InChIKey for database lookups"
+                },
+                "smiles": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "name": {
+                        "type": "string",
+                        "description": "SMILES string"
+                      },
+                      "program": {
+                        "type": "string"
+                      }
+                    }
+                  }
+                },
+                "cross_links": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "resource": {
+                        "type": "string",
+                        "description": "Database name (DrugBank, PubChem, etc.)"
+                      },
+                      "resource_id": {
+                        "type": "string",
+                        "description": "External database identifier"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        {
+          "type": "object",
+          "properties": {
+            "error": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "error"
+          ]
+        }
+      ]
+    }
+  },
+  {
+    "name": "PDBe_get_funpdbe_annotations",
+    "description": "Get functional annotations from the FunPDBe consortium for a PDB structure. FunPDBe aggregates residue-level functional data from external resources including residue depth (DEPTH), dynamic cross-correlation (DynaMine), conservation scores, binding site predictions, and more. Returns per-residue annotations with confidence scores and classifications. Not all structures have FunPDBe data. Example: 4HHB returns depth annotations for all residues across chains A-D with confidence classifications (high/medium/low).",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "pdb_id": {
+          "type": "string",
+          "description": "PDB identifier (4-character code). Examples: '4hhb' (hemoglobin, has depth annotations), '1cbs' (CRABP2), '6lu7' (SARS-CoV-2 main protease)."
+        }
+      },
+      "required": [
+        "pdb_id"
+      ]
+    },
+    "fields": {
+      "endpoint": "https://www.ebi.ac.uk/pdbe/graph-api/pdb/funpdbe_annotation/{pdb_id}"
+    },
+    "type": "BaseRESTTool",
+    "test_examples": [
+      {
+        "pdb_id": "4hhb"
+      },
+      {
+        "pdb_id": "1cbs"
+      }
+    ],
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "object",
+          "description": "Keyed by PDB ID",
+          "additionalProperties": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "origin": {
+                  "type": "string",
+                  "description": "Source resource name (e.g., depth, dynamine, cansar, p2rank)"
+                },
+                "label": {
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                },
+                "release_date": {
+                  "type": "string"
+                },
+                "url": {
+                  "type": "string",
+                  "description": "URL of the source resource"
+                },
+                "evidence_codes": {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  }
+                },
+                "annotations": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "site_id": {
+                        "type": "integer"
+                      },
+                      "label": {
+                        "type": "string"
+                      },
+                      "site_residues": {
+                        "type": "array",
+                        "items": {
+                          "type": "object",
+                          "properties": {
+                            "entity_id": {
+                              "type": "integer"
+                            },
+                            "chain_id": {
+                              "type": "string"
+                            },
+                            "residue_number": {
+                              "type": "integer"
+                            },
+                            "chem_comp_id": {
+                              "type": "string",
+                              "description": "3-letter amino acid code"
+                            },
+                            "raw_score": {
+                              "type": ["number", "null"]
+                            },
+                            "confidence_score": {
+                              "type": ["number", "null"]
+                            },
+                            "confidence_classification": {
+                              "type": "string",
+                              "description": "high, medium, or low"
+                            }
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        {
+          "type": "object",
+          "properties": {
+            "error": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "error"
+          ]
+        }
+      ]
+    }
+  }
+]

@@ -1,11 +1,25 @@
 #!/usr/bin/env python3
 """Minimal tools generator - one tool, one file."""
 
+import keyword
 import os
+import re
 import shutil
 import subprocess
 from pathlib import Path
 from typing import Dict, Any, Optional, List, Tuple
+
+
+def sanitize_param_name(name: str) -> str:
+    """Convert an API parameter name to a valid Python identifier.
+
+    Handles dots (query.cond -> query_cond), hyphens (from-date -> from_date),
+    and Python reserved keywords (for -> for_, in -> in_).
+    """
+    sanitized = re.sub(r"[.\-]", "_", name)
+    if keyword.iskeyword(sanitized) or keyword.issoftkeyword(sanitized):
+        sanitized = sanitized + "_"
+    return sanitized
 
 
 def json_type_to_python(json_type: str | list) -> str:
@@ -148,16 +162,18 @@ def validate_generated_code(
         required = schema.get("required", []) or []
 
         for param_name in required:
-            # Check if parameter appears in function signature
-            if f"{param_name}:" not in content:
+            # Check if parameter appears in function signature (use sanitized name)
+            py_param_name = sanitize_param_name(param_name)
+            if f"{py_param_name}:" not in content:
                 issues.append(
                     f"Required parameter '{param_name}' missing from function signature"
                 )
 
         # Check that all parameters in config appear in generated code
         for param_name in properties.keys():
-            # Parameter should appear either in signature or in kwargs
-            if f'"{param_name}"' not in content and f"{param_name}:" not in content:
+            py_param_name = sanitize_param_name(param_name)
+            # Parameter should appear either in signature (sanitized) or in kwargs (original)
+            if f'"{param_name}"' not in content and f"{py_param_name}:" not in content:
                 issues.append(f"Parameter '{param_name}' missing from generated code")
 
     except Exception as e:
@@ -194,33 +210,36 @@ def generate_tool_file(
         desc = prop.get("description", "")
         # Escape backslashes to avoid Unicode escape errors in docstrings
         desc = desc.replace("\\", "\\\\")
+        # Sanitize parameter name to be a valid Python identifier
+        py_name = sanitize_param_name(name)
 
         if name in required:
-            required_params.append(f"{name}: {py_type}")
+            required_params.append(f"{py_name}: {py_type}")
         else:
             default = prop.get("default")
             if default is not None:
                 # Handle mutable defaults to avoid B006 linting error
                 if isinstance(default, (list, dict)):
                     # Use None as default and handle in function body
-                    optional_params.append(f"{name}: Optional[{py_type}] = None")
+                    optional_params.append(f"{py_name}: Optional[{py_type}] = None")
                     mutable_defaults_code.append(
                         ("    if {n} is None:\n        {n} = {d}").format(
-                            n=name, d=repr(default)
+                            n=py_name, d=repr(default)
                         )
                     )
                 else:
                     optional_params.append(
-                        f"{name}: Optional[{py_type}] = {repr(default)}"
+                        f"{py_name}: Optional[{py_type}] = {repr(default)}"
                     )
             else:
-                optional_params.append(f"{name}: Optional[{py_type}] = None")
+                optional_params.append(f"{py_name}: Optional[{py_type}] = None")
 
-        kwargs.append(f'"{name}": {name}')
+        # Use original name as the API key, but sanitized py_name as the variable
+        kwargs.append(f'"{name}": {py_name}')
         # Wrap long descriptions
         if len(desc) > 80:
             desc = desc[:77] + "..."
-        doc_params.append(f"    {name} : {py_type}\n        {desc}")
+        doc_params.append(f"    {py_name} : {py_type}\n        {desc}")
 
     # Combine required and optional parameters
     params = required_params + optional_params

@@ -1,0 +1,52 @@
+"""
+NWS_get_point_metadata
+
+Get weather metadata for a geographic point (latitude/longitude) from the US National Weather Ser...
+"""
+
+from typing import Any, Optional, Callable
+from ._shared_client import get_shared_client
+
+
+def NWS_get_point_metadata(
+    latitude: float,
+    longitude: float,
+    *,
+    stream_callback: Optional[Callable[[str], None]] = None,
+    use_cache: bool = False,
+    validate: bool = True,
+) -> Any:
+    """
+    Get weather metadata for a geographic point (latitude/longitude) from the US National Weather Ser...
+
+    Parameters
+    ----------
+    latitude : float
+        Latitude of the location (e.g., 38.8894 for Washington DC)
+    longitude : float
+        Longitude of the location (e.g., -77.0352 for Washington DC)
+    stream_callback : Callable, optional
+        Callback for streaming output
+    use_cache : bool, default False
+        Enable caching
+    validate : bool, default True
+        Validate parameters
+
+    Returns
+    -------
+    Any
+    """
+    # Handle mutable defaults to avoid B006 linting error
+
+    return get_shared_client().run_one_function(
+        {
+            "name": "NWS_get_point_metadata",
+            "arguments": {"latitude": latitude, "longitude": longitude},
+        },
+        stream_callback=stream_callback,
+        use_cache=use_cache,
+        validate=validate,
+    )
+
+
+__all__ = ["NWS_get_point_metadata"]

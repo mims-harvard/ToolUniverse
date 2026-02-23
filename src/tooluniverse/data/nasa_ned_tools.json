@@ -1,0 +1,158 @@
+[
+  {
+    "name": "NASANED_lookup_object",
+    "description": "Look up an extragalactic astronomical object by name in the NASA/IPAC Extragalactic Database (NED). NED is the authoritative database for extragalactic objects (galaxies, quasars, AGN, galaxy clusters) containing 1 billion+ photometry measurements for 60 million+ objects. Returns the preferred name, coordinates (RA/Dec), object type, redshift with uncertainty, distance estimates, morphology, and all alternative names. Object types: G (galaxy), QSO (quasar), GPair (galaxy pair), GClstr (galaxy cluster), AGN, RadioS (radio source).",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "name": {
+          "type": "string",
+          "description": "Object name in NED format. Examples: 'NGC 1300', 'M31', 'Andromeda Galaxy', 'Coma Cluster', '3C 273', 'Markarian 421', 'Arp 299', 'NGC 4889'"
+        }
+      },
+      "required": [
+        "name"
+      ]
+    },
+    "fields": {
+      "endpoint": "https://ned.ipac.caltech.edu/srs/ObjectLookup",
+      "params": {
+        "out_csys": "Equatorial",
+        "out_equinox": "J2000.0",
+        "of": "xml_main",
+        "nm_cat": "All",
+        "in_csys": "Equatorial",
+        "in_equinox": "J2000.0",
+        "get_coord": "1",
+        "hconst": "67.8",
+        "omegam": "0.308",
+        "omegav": "0.692",
+        "corr_z": "1"
+      }
+    },
+    "type": "BaseRESTTool",
+    "test_examples": [
+      {
+        "name": "NGC 1300"
+      },
+      {
+        "name": "M31"
+      },
+      {
+        "name": "3C 273"
+      }
+    ],
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "object",
+          "description": "NED object lookup result",
+          "properties": {
+            "QueryTime": {
+              "type": "string"
+            },
+            "Supplied": {
+              "type": "string",
+              "description": "Input object name as supplied"
+            },
+            "NameResolver": {
+              "type": "string"
+            },
+            "Interpreted": {
+              "type": "object",
+              "properties": {
+                "Name": {
+                  "type": "string"
+                }
+              }
+            },
+            "Preferred": {
+              "type": "object",
+              "description": "Preferred NED name and properties",
+              "properties": {
+                "Name": {
+                  "type": "string",
+                  "description": "NED preferred name"
+                },
+                "Position": {
+                  "type": "object",
+                  "properties": {
+                    "RA": {
+                      "type": "number",
+                      "description": "Right Ascension (degrees, J2000)"
+                    },
+                    "Dec": {
+                      "type": "number",
+                      "description": "Declination (degrees, J2000)"
+                    },
+                    "UncSemiMajor": {
+                      "type": [
+                        "number",
+                        "null"
+                      ]
+                    },
+                    "UncSemiMinor": {
+                      "type": [
+                        "number",
+                        "null"
+                      ]
+                    }
+                  }
+                },
+                "ObjType": {
+                  "type": "object",
+                  "properties": {
+                    "Value": {
+                      "type": "string",
+                      "description": "Object type code (G=galaxy, QSO, AGN, GClstr, etc.)"
+                    }
+                  }
+                },
+                "Redshift": {
+                  "type": [
+                    "object",
+                    "null"
+                  ],
+                  "properties": {
+                    "Value": {
+                      "type": "number"
+                    },
+                    "Unc": {
+                      "type": [
+                        "number",
+                        "null"
+                      ]
+                    },
+                    "Quality": {
+                      "type": [
+                        "string",
+                        "null"
+                      ]
+                    }
+                  }
+                }
+              }
+            },
+            "StatusCode": {
+              "type": "integer"
+            },
+            "ResultCode": {
+              "type": "integer"
+            }
+          }
+        },
+        {
+          "type": "object",
+          "properties": {
+            "error": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "error"
+          ]
+        }
+      ]
+    }
+  }
+]

@@ -1,0 +1,600 @@
+[
+  {
+    "name": "COD_search_structures",
+    "description": "Search the Crystallography Open Database (COD) for crystal structures by chemical formula, elements, space group, mineral name, or compound name. COD is the largest open-access collection of crystal structures with 500,000+ experimentally determined structures. Returns unit cell parameters (a, b, c, alpha, beta, gamma), space group, chemical formula, mineral/compound name, and publication details (DOI, journal, authors). Useful for materials science, chemistry, mineralogy, and solid-state physics research.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "text": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Free text search across titles, keywords, and compound names. Examples: 'aspirin', 'perovskite', 'diamond', 'zeolite', 'ice'"
+        },
+        "formula": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Chemical formula to search (use spaces between elements). Examples: 'Fe2 O3', 'Si O2', 'Na Cl', 'C H4'. Exact formula matching."
+        },
+        "el1": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "First required element (chemical symbol). Examples: 'Cu', 'Fe', 'Si', 'C', 'N'"
+        },
+        "el2": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Second required element (chemical symbol)"
+        },
+        "el3": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Third required element (chemical symbol)"
+        },
+        "nel": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Number of distinct elements in formula (e.g., '2' for binary compounds, '3' for ternary)"
+        },
+        "commonname": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Common/trivial name search (partial match). Examples: 'quartz', 'perovskite', 'zeolite', 'diamond'"
+        },
+        "mineral": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Mineral name search (partial match). Examples: 'calcite', 'feldspar', 'pyrite', 'magnetite'"
+        },
+        "sg": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Space group symbol (Hermann-Mauguin notation). Examples: 'P 21/c', 'Fm -3 m', 'P 1'"
+        },
+        "sgNumber": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Space group number (1-230). Examples: '225' (Fm-3m, FCC metals), '62' (Pnma, common for perovskites)"
+        },
+        "results": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "description": "Maximum number of results to return (default 100, use smaller values for speed, e.g. 5 or 10)"
+        }
+      },
+      "required": []
+    },
+    "fields": {
+      "endpoint": "https://www.crystallography.net/cod/result",
+      "params": {
+        "format": "json"
+      }
+    },
+    "type": "BaseRESTTool",
+    "test_examples": [
+      {
+        "el1": "Si",
+        "el2": "O",
+        "nel": "2",
+        "results": 10
+      },
+      {
+        "mineral": "calcite",
+        "results": 5
+      },
+      {
+        "el1": "Cu",
+        "el2": "O",
+        "nel": "2",
+        "sgNumber": "225",
+        "results": 5
+      },
+      {
+        "text": "aspirin",
+        "results": 5
+      }
+    ],
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "array",
+          "description": "List of crystal structures matching the search criteria",
+          "items": {
+            "type": "object",
+            "properties": {
+              "file": {
+                "type": "string",
+                "description": "COD structure file ID"
+              },
+              "formula": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "Chemical formula"
+              },
+              "calcformula": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "commonname": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "Common compound name"
+              },
+              "mineral": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "Mineral name"
+              },
+              "chemname": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "sg": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "Space group symbol"
+              },
+              "sgNumber": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "Space group number (1-230)"
+              },
+              "a": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "Unit cell parameter a (Angstroms)"
+              },
+              "b": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "Unit cell parameter b (Angstroms)"
+              },
+              "c": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "Unit cell parameter c (Angstroms)"
+              },
+              "alpha": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "Unit cell angle alpha (degrees)"
+              },
+              "beta": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "Unit cell angle beta (degrees)"
+              },
+              "gamma": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "Unit cell angle gamma (degrees)"
+              },
+              "vol": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "Unit cell volume (Angstroms^3)"
+              },
+              "doi": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "Publication DOI"
+              },
+              "journal": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "year": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "title": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "authors": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "status": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "method": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "Diffraction method"
+              },
+              "radiation": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              }
+            }
+          }
+        },
+        {
+          "type": "object",
+          "properties": {
+            "error": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "error"
+          ]
+        }
+      ]
+    }
+  },
+  {
+    "name": "COD_get_structure",
+    "description": "Get detailed crystal structure information from the Crystallography Open Database (COD) by COD entry ID. Returns complete crystallographic data including unit cell parameters (a, b, c, alpha, beta, gamma), space group, chemical formula, mineral/compound name, Z value, publication details (DOI, journal, authors, year), diffraction method, and radiation type. Use COD_search_structures first to find COD IDs, then use this tool for full details on a specific structure.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "COD structure entry ID (numeric string). Examples: '9008460' (Aluminum), '1011240' (Hematite Fe2O3), '5900000' (Methane), '1515581' (Aspirin)"
+        }
+      },
+      "required": [
+        "id"
+      ]
+    },
+    "fields": {
+      "endpoint": "https://www.crystallography.net/cod/result",
+      "params": {
+        "format": "json"
+      }
+    },
+    "type": "BaseRESTTool",
+    "test_examples": [
+      {
+        "id": "9008460"
+      },
+      {
+        "id": "1011240"
+      },
+      {
+        "id": "5900000"
+      }
+    ],
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "array",
+          "description": "Array with single crystal structure entry",
+          "items": {
+            "type": "object",
+            "properties": {
+              "file": {
+                "type": "string",
+                "description": "COD structure file ID"
+              },
+              "formula": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "Chemical formula (e.g., '- Fe2 O3 -')"
+              },
+              "calcformula": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "Calculated formula"
+              },
+              "cellformula": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "Unit cell formula"
+              },
+              "commonname": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "Common compound name"
+              },
+              "mineral": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "Mineral name (e.g., 'Hematite')"
+              },
+              "chemname": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "IUPAC chemical name"
+              },
+              "sg": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "Space group symbol (Hermann-Mauguin notation)"
+              },
+              "sgHall": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "Hall space group symbol"
+              },
+              "sgNumber": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "Space group number (1-230)"
+              },
+              "a": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "Unit cell parameter a (Angstroms)"
+              },
+              "b": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "Unit cell parameter b (Angstroms)"
+              },
+              "c": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "Unit cell parameter c (Angstroms)"
+              },
+              "alpha": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "Unit cell angle alpha (degrees)"
+              },
+              "beta": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "Unit cell angle beta (degrees)"
+              },
+              "gamma": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "Unit cell angle gamma (degrees)"
+              },
+              "vol": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "Unit cell volume (Angstroms^3)"
+              },
+              "Z": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "Number of formula units per unit cell"
+              },
+              "Zprime": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "Z' (formula units per asymmetric unit)"
+              },
+              "nel": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "Number of distinct elements"
+              },
+              "doi": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "Publication DOI"
+              },
+              "journal": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "Publication journal"
+              },
+              "year": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "Publication year"
+              },
+              "volume": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "Journal volume"
+              },
+              "firstpage": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "First page"
+              },
+              "lastpage": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "Last page"
+              },
+              "title": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "Publication title"
+              },
+              "authors": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "Author list"
+              },
+              "method": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "Diffraction method (e.g., 'single crystal')"
+              },
+              "radiation": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "Radiation source"
+              },
+              "wavelength": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "Radiation wavelength"
+              },
+              "Rall": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "R-factor (all data)"
+              },
+              "Robs": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "R-factor (observed data)"
+              },
+              "flags": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "Structure flags (e.g., 'has coordinates')"
+              },
+              "date": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "Last modification date"
+              },
+              "status": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "Entry status"
+              }
+            }
+          }
+        },
+        {
+          "type": "object",
+          "properties": {
+            "error": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "error"
+          ]
+        }
+      ]
+    }
+  }
+]

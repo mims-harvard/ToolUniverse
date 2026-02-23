@@ -1,0 +1,196 @@
+[
+  {
+    "name": "ChannelsDB_get_channels_pdb",
+    "type": "BaseRESTTool",
+    "description": "Get protein channel, tunnel, and pore data for a PDB structure from ChannelsDB. ChannelsDB is a comprehensive database of channels (tunnels, pores, and voids) found in biomacromolecular structures deposited in the Protein Data Bank. Returns channel geometry profiles (radius, distance along path, 3D coordinates), physicochemical properties (charge, hydrophobicity, polarity, mutability), residue layers lining each channel, and expert annotations when available. Useful for studying transport pathways in membrane proteins, enzyme active site access tunnels, and ion channels. Example: get channels for aquaporin structure 1ymg or hemoglobin 4hhb.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "pdb_id": {
+          "type": "string",
+          "description": "PDB structure identifier (4-character code, case-insensitive). Examples: '1ymg' (aquaporin), '3sn6' (beta2-adrenergic receptor-Gs complex), '4hhb' (hemoglobin), '5i6x' (MscL mechanosensitive channel)."
+        }
+      },
+      "required": [
+        "pdb_id"
+      ]
+    },
+    "fields": {
+      "endpoint": "https://channelsdb.ncbr.muni.cz/api/channels/pdb/{pdb_id}",
+      "return_format": "JSON"
+    },
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "object",
+          "description": "Channel data for the PDB structure",
+          "properties": {
+            "Annotations": {
+              "type": "array",
+              "description": "Expert annotations for channels in this structure",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "Id": {
+                    "type": "string",
+                    "description": "Channel identifier"
+                  },
+                  "Name": {
+                    "type": "string",
+                    "description": "Channel name (e.g., 'Water channel', 'Substrate tunnel')"
+                  },
+                  "Description": {
+                    "type": "string",
+                    "description": "Detailed description of the channel function"
+                  },
+                  "Reference": {
+                    "type": "string",
+                    "description": "Literature reference (DOI or PubMed ID)"
+                  },
+                  "ReferenceType": {
+                    "type": "string",
+                    "description": "Type of reference: DOI or PubMed"
+                  }
+                }
+              }
+            },
+            "Channels": {
+              "type": "object",
+              "description": "Detected channels organized by detection method",
+              "properties": {
+                "CSATunnels_MOLE": {
+                  "type": "array",
+                  "description": "Tunnels detected by MOLE via ChannelsDB 2.0 CSA"
+                },
+                "CSATunnels_Caver": {
+                  "type": "array",
+                  "description": "Tunnels detected by CAVER via ChannelsDB 2.0 CSA"
+                },
+                "ReviewedChannels_MOLE": {
+                  "type": "array",
+                  "description": "Expert-reviewed channels detected by MOLE"
+                },
+                "ReviewedChannels_Caver": {
+                  "type": "array",
+                  "description": "Expert-reviewed channels detected by CAVER"
+                },
+                "CofactorTunnels_MOLE": {
+                  "type": "array",
+                  "description": "Cofactor access tunnels detected by MOLE"
+                },
+                "CofactorTunnels_Caver": {
+                  "type": "array",
+                  "description": "Cofactor access tunnels detected by CAVER"
+                },
+                "TransmembranePores_MOLE": {
+                  "type": "array",
+                  "description": "Transmembrane pores detected by MOLE"
+                },
+                "TransmembranePores_Caver": {
+                  "type": "array",
+                  "description": "Transmembrane pores detected by CAVER"
+                },
+                "ProcognateTunnels_MOLE": {
+                  "type": "array",
+                  "description": "Cognate ligand tunnels detected by MOLE"
+                },
+                "ProcognateTunnels_Caver": {
+                  "type": "array",
+                  "description": "Cognate ligand tunnels detected by CAVER"
+                },
+                "AlphaFillTunnels_MOLE": {
+                  "type": "array",
+                  "description": "AlphaFill-based tunnels detected by MOLE"
+                },
+                "AlphaFillTunnels_Caver": {
+                  "type": "array",
+                  "description": "AlphaFill-based tunnels detected by CAVER"
+                }
+              }
+            }
+          }
+        },
+        {
+          "type": "object",
+          "properties": {
+            "error": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "error"
+          ]
+        }
+      ]
+    },
+    "test_examples": [
+      {
+        "pdb_id": "1ymg"
+      },
+      {
+        "pdb_id": "3sn6"
+      },
+      {
+        "pdb_id": "4hhb"
+      }
+    ]
+  },
+  {
+    "name": "ChannelsDB_get_channels_cofactor",
+    "type": "BaseRESTTool",
+    "description": "Get cofactor access tunnel data for a PDB structure from ChannelsDB. Specifically detects tunnels that provide access pathways for cofactors and small molecules to reach enzyme active sites or binding pockets. Each channel includes geometric profile data (radius along the path, 3D coordinates), physicochemical properties (charge, hydrophobicity, polarity), and the residue layers that line the tunnel. Use ChannelsDB_get_channels_pdb for a complete view of all channel types including transmembrane pores and reviewed channels.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "pdb_id": {
+          "type": "string",
+          "description": "PDB structure identifier (4-character code). Examples: '5i6x' (MscL), '3sn6' (GPCR-Gs complex)."
+        }
+      },
+      "required": [
+        "pdb_id"
+      ]
+    },
+    "fields": {
+      "endpoint": "https://channelsdb.ncbr.muni.cz/api/channels/pdb/{pdb_id}",
+      "return_format": "JSON"
+    },
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "object",
+          "description": "Channel data focusing on cofactor tunnels",
+          "properties": {
+            "Annotations": {
+              "type": "array",
+              "description": "Expert annotations"
+            },
+            "Channels": {
+              "type": "object",
+              "description": "Channel data organized by detection method. Each channel has: Type (Tunnel/Pore), Id, Cavity, Properties (Charge, Hydrophobicity, Polarity, Mutability, NumPositives, NumNegatives), Profile (array of radius/distance/coordinate points along path), and Layers (residues lining the channel)."
+            }
+          }
+        },
+        {
+          "type": "object",
+          "properties": {
+            "error": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "error"
+          ]
+        }
+      ]
+    },
+    "test_examples": [
+      {
+        "pdb_id": "1ymg"
+      },
+      {
+        "pdb_id": "1ymg"
+      }
+    ]
+  }
+]

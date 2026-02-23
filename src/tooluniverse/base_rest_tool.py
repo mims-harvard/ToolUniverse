@@ -112,7 +112,11 @@ class BaseRESTTool(BaseTool):
         Returns:
             Processed response dictionary
         """
-        data = response.json()
+        try:
+            data = response.json()
+        except Exception:
+            # Non-JSON response (e.g., BibTeX, plain text) - return as string
+            data = response.text
 
         # Handle extract_path for nested data
         extract_path = self.tool_config.get("fields", {}).get("extract_path")
@@ -166,17 +170,21 @@ class BaseRESTTool(BaseTool):
             url = self._build_url(arguments)
             params = self._build_params(arguments)
 
+            # Get custom headers from config (e.g., Accept: application/json)
+            custom_headers = self.tool_config.get("fields", {}).get("headers")
+
             response = request_with_retry(
                 self.session,
                 "GET",
                 url,
                 params=params,
+                headers=custom_headers,
                 timeout=self.timeout,
                 max_attempts=3,
             )
 
-            # Check for errors
-            if response.status_code != 200:
+            # Check for errors (accept any 2xx success status)
+            if not (200 <= response.status_code < 300):
                 return {
                     "status": "error",
                     "error": f"{self.api_name} API error",

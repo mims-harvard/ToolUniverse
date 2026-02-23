@@ -52,6 +52,8 @@ class STRINGExtTool(BaseTool):
         """Route to appropriate endpoint."""
         if self.endpoint == "functional_annotation":
             return self._get_functional_annotations(arguments)
+        elif self.endpoint == "enrichment":
+            return self._get_enrichment(arguments)
         else:
             return {"error": f"Unknown endpoint: {self.endpoint}"}
 
@@ -111,6 +113,42 @@ class STRINGExtTool(BaseTool):
             },
             "metadata": {
                 "source": "STRING API - Functional Annotation",
+                "identifiers": identifiers,
+                "species": species,
+            },
+        }
+
+    def _get_enrichment(self, arguments: Dict[str, Any]) -> Dict[str, Any]:
+        """Perform functional enrichment analysis on a set of proteins."""
+        identifiers = arguments.get("identifiers", "")
+        if not identifiers:
+            return {
+                "error": "identifiers parameter is required (newline-separated gene names, e.g., 'BRCA1\\nTP53\\nEGFR')"
+            }
+
+        species = arguments.get("species", 9606)
+        background = arguments.get("background_string_identifiers", None)
+
+        url = f"{STRING_API_BASE_URL}/enrichment"
+        params = {
+            "identifiers": identifiers,
+            "species": species,
+        }
+        if background:
+            params["background_string_identifiers"] = background
+
+        response = requests.get(url, params=params, timeout=self.timeout)
+        response.raise_for_status()
+        data = response.json()
+
+        return {
+            "data": {
+                "identifiers": identifiers,
+                "species": species,
+                "enrichments": data,
+            },
+            "metadata": {
+                "source": "STRING API - Functional Enrichment",
                 "identifiers": identifiers,
                 "species": species,
             },

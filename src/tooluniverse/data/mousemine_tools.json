@@ -1,0 +1,351 @@
+[
+  {
+    "name": "MouseMine_search",
+    "type": "BaseRESTTool",
+    "description": "Search MouseMine, the InterMine data warehouse for mouse (Mus musculus) genomics data from MGI (Mouse Genome Informatics). Searches across genes, alleles, proteins, publications, gene ontology terms, protein domains, and more. Returns matching records with category facets and relevance scores. MouseMine integrates data from MGI including gene annotations, phenotypes, alleles, expression data, pathways, and disease models. Use facet_Category parameter to filter by specific entity type (e.g., 'ProteinCodingGene', 'Allele', 'Publication', 'Protein').",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "q": {
+          "type": "string",
+          "description": "Search query: gene symbol (e.g., 'Brca1', 'Tp53', 'Sox9'), protein name, disease term, or free text."
+        },
+        "size": {
+          "type": "integer",
+          "default": 10,
+          "description": "Number of results to return (default: 10, max: 100)."
+        },
+        "format": {
+          "type": "string",
+          "default": "json",
+          "description": "Response format. Must be 'json'."
+        },
+        "facet_Category": {
+          "type": "string",
+          "description": "Filter results by entity category. Options include: 'ProteinCodingGene', 'Gene', 'Allele', 'Protein', 'Publication', 'Genotype', 'GOTerm', 'ProteinDomain', 'GXDExpression', 'NcRNAGene', 'AntisenseLncRNAGene', 'Strain', 'HTExperiment', 'InteractionExperiment', 'DOTerm', 'UniProtFeature'."
+        }
+      },
+      "required": [
+        "q"
+      ]
+    },
+    "fields": {
+      "endpoint": "https://www.mousemine.org/mousemine/service/search",
+      "return_format": "JSON",
+      "params": {
+        "format": "json"
+      }
+    },
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "object",
+          "description": "MouseMine search results",
+          "properties": {
+            "totalHits": {
+              "type": "integer",
+              "description": "Total number of matching records"
+            },
+            "facets": {
+              "type": "object",
+              "description": "Facet counts by category, organism, pathway, and strain",
+              "properties": {
+                "Category": {
+                  "type": "object",
+                  "description": "Record counts by entity type (ProteinCodingGene, Allele, etc.)"
+                },
+                "organism.shortName": {
+                  "type": "object",
+                  "description": "Record counts by organism"
+                },
+                "pathways.name": {
+                  "type": "object",
+                  "description": "Record counts by Reactome pathway"
+                },
+                "strain.name": {
+                  "type": "object",
+                  "description": "Record counts by mouse strain"
+                }
+              }
+            },
+            "results": {
+              "type": "array",
+              "description": "Matching records",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "id": {
+                    "type": "integer",
+                    "description": "Internal database ID"
+                  },
+                  "type": {
+                    "type": "string",
+                    "description": "Entity type (Gene, Allele, Protein, etc.)"
+                  },
+                  "relevance": {
+                    "type": "number",
+                    "description": "Search relevance score"
+                  },
+                  "fields": {
+                    "type": "object",
+                    "description": "Entity-specific fields. For genes: symbol, organism.commonName, primaryIdentifier, sequenceOntologyTerm.name. For alleles: symbol, name, primaryIdentifier, alleleType, attributeString. For proteins: primaryAccession, organism.name, isFragment."
+                  }
+                }
+              }
+            }
+          }
+        },
+        {
+          "type": "object",
+          "properties": {
+            "error": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "error"
+          ]
+        }
+      ]
+    },
+    "test_examples": [
+      {
+        "q": "Brca1",
+        "size": 5,
+        "format": "json"
+      },
+      {
+        "q": "Tp53",
+        "size": 5,
+        "format": "json",
+        "facet_Category": "ProteinCodingGene"
+      },
+      {
+        "q": "Sox9",
+        "size": 5,
+        "format": "json",
+        "facet_Category": "Allele"
+      }
+    ]
+  },
+  {
+    "name": "MouseMine_search_genes",
+    "type": "BaseRESTTool",
+    "description": "Search MouseMine specifically for mouse protein-coding genes. This is a convenience wrapper that filters results to ProteinCodingGene category only. Returns gene symbols, MGI identifiers, and organism information from Mouse Genome Informatics (MGI). For broader searches across all entity types, use MouseMine_search instead.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "q": {
+          "type": "string",
+          "description": "Gene search query: gene symbol (e.g., 'Brca1', 'Tp53'), gene name, or keyword."
+        },
+        "size": {
+          "type": "integer",
+          "default": 10,
+          "description": "Number of results to return (default: 10)."
+        }
+      },
+      "required": [
+        "q"
+      ]
+    },
+    "fields": {
+      "endpoint": "https://www.mousemine.org/mousemine/service/search",
+      "return_format": "JSON",
+      "params": {
+        "format": "json",
+        "facet_Category": "ProteinCodingGene"
+      }
+    },
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "object",
+          "description": "MouseMine gene search results",
+          "properties": {
+            "totalHits": {
+              "type": "integer",
+              "description": "Total matching genes"
+            },
+            "results": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "id": {
+                    "type": "integer"
+                  },
+                  "type": {
+                    "type": "string",
+                    "description": "Always 'ProteinCodingGene'"
+                  },
+                  "relevance": {
+                    "type": "number"
+                  },
+                  "fields": {
+                    "type": "object",
+                    "properties": {
+                      "symbol": {
+                        "type": "string",
+                        "description": "Official gene symbol (e.g., 'Brca1')"
+                      },
+                      "primaryIdentifier": {
+                        "type": "string",
+                        "description": "MGI identifier (e.g., 'MGI:104537')"
+                      },
+                      "organism.commonName": {
+                        "type": "string",
+                        "description": "Organism name (e.g., 'mouse, laboratory')"
+                      },
+                      "sequenceOntologyTerm.name": {
+                        "type": "string",
+                        "description": "Gene biotype"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        {
+          "type": "object",
+          "properties": {
+            "error": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "error"
+          ]
+        }
+      ]
+    },
+    "test_examples": [
+      {
+        "q": "Brca1",
+        "size": 5
+      },
+      {
+        "q": "insulin",
+        "size": 10
+      },
+      {
+        "q": "Notch1",
+        "size": 5
+      }
+    ]
+  },
+  {
+    "name": "MouseMine_search_alleles",
+    "type": "BaseRESTTool",
+    "description": "Search MouseMine specifically for mouse alleles and mutants. Returns allele symbols, names, MGI identifiers, allele types (Targeted, Endonuclease-mediated, Spontaneous, etc.), and attribute strings (Null/knockout, etc.) from Mouse Genome Informatics (MGI). Useful for finding knockout/knockin alleles, spontaneous mutations, and transgenic alleles for specific genes. For broader searches, use MouseMine_search instead.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "q": {
+          "type": "string",
+          "description": "Allele search query: gene symbol (e.g., 'Brca1'), allele symbol (e.g., 'Brca1<tm1Whl>'), or keyword."
+        },
+        "size": {
+          "type": "integer",
+          "default": 10,
+          "description": "Number of results to return (default: 10)."
+        }
+      },
+      "required": [
+        "q"
+      ]
+    },
+    "fields": {
+      "endpoint": "https://www.mousemine.org/mousemine/service/search",
+      "return_format": "JSON",
+      "params": {
+        "format": "json",
+        "facet_Category": "Allele"
+      }
+    },
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "object",
+          "description": "MouseMine allele search results",
+          "properties": {
+            "totalHits": {
+              "type": "integer",
+              "description": "Total matching alleles"
+            },
+            "results": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "id": {
+                    "type": "integer"
+                  },
+                  "type": {
+                    "type": "string",
+                    "description": "Always 'Allele'"
+                  },
+                  "relevance": {
+                    "type": "number"
+                  },
+                  "fields": {
+                    "type": "object",
+                    "properties": {
+                      "symbol": {
+                        "type": "string",
+                        "description": "Allele symbol (e.g., 'Brca1<tm1Whl>')"
+                      },
+                      "name": {
+                        "type": "string",
+                        "description": "Full allele name"
+                      },
+                      "primaryIdentifier": {
+                        "type": "string",
+                        "description": "MGI allele ID (e.g., 'MGI:1858107')"
+                      },
+                      "alleleType": {
+                        "type": "string",
+                        "description": "Allele type: Targeted, Endonuclease-mediated, Spontaneous, Transgenic, Chemically induced, etc."
+                      },
+                      "attributeString": {
+                        "type": "string",
+                        "description": "Allele attribute: Null/knockout, Reporter, Conditional ready, etc."
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        {
+          "type": "object",
+          "properties": {
+            "error": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "error"
+          ]
+        }
+      ]
+    },
+    "test_examples": [
+      {
+        "q": "Brca1",
+        "size": 5
+      },
+      {
+        "q": "Tp53",
+        "size": 5
+      },
+      {
+        "q": "CRISPR",
+        "size": 10
+      }
+    ]
+  }
+]

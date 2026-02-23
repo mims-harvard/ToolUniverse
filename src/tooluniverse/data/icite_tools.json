@@ -1,0 +1,290 @@
+[
+  {
+    "name": "iCite_get_publications",
+    "description": "Get citation metrics and research context for PubMed publications using NIH's iCite API. iCite provides evidence-based metrics including citation counts, relative citation ratios (RCR), approximate potential to translate (APT) scores for clinical translation, NIH percentile rankings, and research category flags (human/animal/molecular-cellular). Returns all available citations and the full list of citing PMIDs. Essential for evaluating scientific impact, identifying highly-cited papers, and assessing translational potential of biomedical research. Example: PMID 31510562 has citation_count=6, nih_percentile=29.0.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "pmids": {
+          "type": "string",
+          "description": "Comma-separated PubMed IDs to look up (e.g., '24453150,24453148,31510562'). Maximum ~100 PMIDs per request."
+        }
+      },
+      "required": [
+        "pmids"
+      ]
+    },
+    "fields": {
+      "endpoint": "https://icite.od.nih.gov/api/pubs"
+    },
+    "type": "BaseRESTTool",
+    "test_examples": [
+      {
+        "pmids": "24453150,24453148"
+      },
+      {
+        "pmids": "31510562,33287077"
+      }
+    ],
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "object",
+          "description": "iCite citation metrics results",
+          "properties": {
+            "data": {
+              "type": "array",
+              "description": "List of publication citation metrics",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "pmid": {
+                    "type": "integer",
+                    "description": "PubMed ID"
+                  },
+                  "doi": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "DOI"
+                  },
+                  "title": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "Publication title"
+                  },
+                  "journal": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "Journal name"
+                  },
+                  "year": {
+                    "type": [
+                      "integer",
+                      "null"
+                    ],
+                    "description": "Publication year"
+                  },
+                  "citation_count": {
+                    "type": "integer",
+                    "description": "Total citations received"
+                  },
+                  "citations_per_year": {
+                    "type": [
+                      "number",
+                      "null"
+                    ],
+                    "description": "Average citations per year"
+                  },
+                  "expected_citations_per_year": {
+                    "type": [
+                      "number",
+                      "null"
+                    ],
+                    "description": "Expected citations/year based on field"
+                  },
+                  "field_citation_rate": {
+                    "type": [
+                      "number",
+                      "null"
+                    ],
+                    "description": "Average citation rate in the same field"
+                  },
+                  "nih_percentile": {
+                    "type": [
+                      "number",
+                      "null"
+                    ],
+                    "description": "Citation percentile within NIH-funded papers (0-100)"
+                  },
+                  "apt": {
+                    "type": [
+                      "number",
+                      "null"
+                    ],
+                    "description": "Approximate Potential to Translate score (0-1): likelihood of clinical translation"
+                  },
+                  "is_research_article": {
+                    "type": "boolean",
+                    "description": "True if this is a primary research article"
+                  },
+                  "is_clinical": {
+                    "type": "boolean",
+                    "description": "True if this is a clinical article"
+                  },
+                  "human": {
+                    "type": ["number", "null"],
+                    "description": "1 if research involves humans"
+                  },
+                  "animal": {
+                    "type": ["number", "null"],
+                    "description": "1 if research involves animals"
+                  },
+                  "molecular_cellular": {
+                    "type": ["number", "null"],
+                    "description": "1 if molecular/cellular research"
+                  },
+                  "cited_by": {
+                    "type": "array",
+                    "description": "List of PMIDs that cite this paper",
+                    "items": {
+                      "type": "integer"
+                    }
+                  },
+                  "cited_by_clin": {
+                    "type": [
+                      "array",
+                      "null"
+                    ],
+                    "description": "Clinical PMIDs citing this paper"
+                  }
+                }
+              }
+            }
+          }
+        },
+        {
+          "type": "object",
+          "properties": {
+            "error": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "error"
+          ]
+        }
+      ]
+    }
+  },
+  {
+    "name": "iCite_search_publications",
+    "description": "Search PubMed publications by query and get citation metrics from NIH's iCite API. Returns papers matching the search query with citation counts, NIH percentile rankings, approximate potential to translate (APT) scores, and research category flags. Useful for finding highly-cited papers in a specific topic area and evaluating their translational potential. Returns up to 1000 results sorted by citation count.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "query": {
+          "type": "string",
+          "description": "Search query for PubMed (e.g., 'BRCA1 cancer', 'COVID-19 vaccine efficacy', 'CRISPR gene editing')"
+        },
+        "limit": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "description": "Maximum number of results (default 10, max 1000)"
+        },
+        "offset": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "description": "Offset for pagination (default 0)"
+        }
+      },
+      "required": [
+        "query"
+      ]
+    },
+    "fields": {
+      "endpoint": "https://icite.od.nih.gov/api/pubs"
+    },
+    "type": "BaseRESTTool",
+    "test_examples": [
+      {
+        "query": "BRCA1 breast cancer",
+        "limit": 5
+      },
+      {
+        "query": "COVID-19 mRNA vaccine",
+        "limit": 5
+      }
+    ],
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "object",
+          "properties": {
+            "data": {
+              "type": "array",
+              "description": "Matching publications with citation metrics",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "pmid": {
+                    "type": "integer"
+                  },
+                  "doi": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "title": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "journal": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "year": {
+                    "type": [
+                      "integer",
+                      "null"
+                    ]
+                  },
+                  "citation_count": {
+                    "type": "integer"
+                  },
+                  "nih_percentile": {
+                    "type": [
+                      "number",
+                      "null"
+                    ]
+                  },
+                  "apt": {
+                    "type": [
+                      "number",
+                      "null"
+                    ],
+                    "description": "Approximate Potential to Translate (0-1)"
+                  },
+                  "is_research_article": {
+                    "type": "boolean"
+                  },
+                  "human": {
+                    "type": ["number", "null"]
+                  },
+                  "animal": {
+                    "type": ["number", "null"]
+                  }
+                }
+              }
+            }
+          }
+        },
+        {
+          "type": "object",
+          "properties": {
+            "error": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "error"
+          ]
+        }
+      ]
+    }
+  }
+]

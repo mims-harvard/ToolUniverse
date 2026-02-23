@@ -1,7 +1,7 @@
 """
 STRING_get_network
 
-Retrieve protein-protein interaction network from STRING (Search Tool for Retrieval of Interactin...
+Get the protein-protein interaction network for one or more proteins from STRING database. Return...
 """
 
 from typing import Any, Optional, Callable
@@ -9,31 +9,28 @@ from ._shared_client import get_shared_client
 
 
 def STRING_get_network(
-    protein_ids: list[str],
+    identifiers: str,
     species: Optional[int] = 9606,
-    confidence_score: Optional[float] = 0.4,
-    add_nodes: Optional[int] = 0,
-    network_type: Optional[str] = "functional",
+    limit: Optional[int] = 10,
+    required_score: Optional[int | Any] = None,
     *,
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> list[Any]:
+) -> Any:
     """
-    Retrieve protein-protein interaction network from STRING (Search Tool for Retrieval of Interactin...
+    Get the protein-protein interaction network for one or more proteins from STRING database. Return...
 
     Parameters
     ----------
-    protein_ids : list[str]
-        List of protein identifiers (UniProt IDs, gene names, Ensembl IDs)
+    identifiers : str
+        Protein identifier(s). For multiple proteins, separate with '%0d' (URL-encode...
     species : int
-        NCBI taxonomy ID (default: 9606 for human)
-    confidence_score : float
-        Minimum confidence score (0-1, default: 0.4). Use 0.7 for high confidence, 0....
-    add_nodes : int
-        Number of additional interacting nodes to add to network (default: 0, max: 100)
-    network_type : str
-        Type of network: 'functional' (all evidence), 'physical' (physical interactio...
+        NCBI taxonomy ID. Examples: 9606 (human), 10090 (mouse), 7227 (Drosophila), 6...
+    limit : int
+        Maximum number of interaction partners to include (per protein). 0 = only int...
+    required_score : int | Any
+        Minimum combined STRING score (0-1000). 400=medium, 700=high, 900=highest con...
     stream_callback : Callable, optional
         Callback for streaming output
     use_cache : bool, default False
@@ -43,7 +40,7 @@ def STRING_get_network(
 
     Returns
     -------
-    list[Any]
+    Any
     """
     # Handle mutable defaults to avoid B006 linting error
 
@@ -51,11 +48,10 @@ def STRING_get_network(
         {
             "name": "STRING_get_network",
             "arguments": {
-                "protein_ids": protein_ids,
+                "identifiers": identifiers,
                 "species": species,
-                "confidence_score": confidence_score,
-                "add_nodes": add_nodes,
-                "network_type": network_type,
+                "limit": limit,
+                "required_score": required_score,
             },
         },
         stream_callback=stream_callback,

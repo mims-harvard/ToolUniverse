@@ -1,0 +1,160 @@
+[
+  {
+    "name": "PharmVar_list_genes",
+    "description": "List all pharmacogenes curated by PharmVar (Pharmacogene Variation Consortium). PharmVar is the authoritative repository for pharmacogene allele nomenclature and variant data, defining star (*) alleles for genes like CYP2D6, CYP2C9, CYP2C19, CYP2B6, and DPYD. Returns 15+ genes with their allele counts and descriptions.",
+    "parameter": {
+      "type": "object",
+      "properties": {}
+    },
+    "fields": {
+      "endpoint": "https://www.pharmvar.org/api-service/genes"
+    },
+    "type": "BaseRESTTool",
+    "test_examples": [
+      {}
+    ],
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "array",
+          "description": "List of pharmacogenes with allele details",
+          "items": {
+            "type": "object",
+            "properties": {
+              "geneSymbol": {
+                "type": "string",
+                "description": "Gene symbol (e.g., 'CYP2D6')"
+              },
+              "geneName": {
+                "type": "string",
+                "description": "Full gene name"
+              },
+              "alleles": {
+                "type": "array",
+                "description": "List of alleles for this gene"
+              }
+            }
+          }
+        },
+        {
+          "type": "object",
+          "properties": {
+            "error": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "error"
+          ]
+        }
+      ]
+    }
+  },
+  {
+    "name": "PharmVar_get_alleles",
+    "description": "Get all allele definitions for a pharmacogene from PharmVar (Pharmacogene Variation Consortium). Returns star allele names (e.g., CYP2D6*1, *4, *17), functional status, activity scores, variant details (HGVS notation, rsIDs, genomic positions), and evidence levels. PharmVar is the authoritative source for pharmacogenomic star allele nomenclature used in CPIC guidelines.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "gene": {
+          "type": "string",
+          "description": "Gene symbol (e.g., 'CYP2D6', 'CYP2C9', 'CYP2C19', 'CYP2B6', 'DPYD', 'SLCO1B1', 'UGT1A1', 'VKORC1')"
+        }
+      },
+      "required": [
+        "gene"
+      ]
+    },
+    "fields": {
+      "endpoint": "https://www.pharmvar.org/api-service/alleles"
+    },
+    "type": "BaseRESTTool",
+    "test_examples": [
+      {
+        "gene": "CYP2D6"
+      },
+      {
+        "gene": "CYP2C9"
+      }
+    ],
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "array",
+          "description": "List of allele definitions",
+          "items": {
+            "type": "object",
+            "properties": {
+              "geneSymbol": {
+                "type": "string"
+              },
+              "alleleName": {
+                "type": "string",
+                "description": "Star allele name (e.g., 'CYP2D6*4.001')"
+              },
+              "pvId": {
+                "type": "string",
+                "description": "PharmVar unique ID"
+              },
+              "legacyLabel": {
+                "type": ["string", "null"]
+              },
+              "coreAllele": {
+                "type": ["string", "null"]
+              },
+              "evidenceLevel": {
+                "type": "string"
+              },
+              "function": {
+                "type": "string",
+                "description": "Functional status: normal/decreased/no function"
+              },
+              "activityScore": {
+                "type": [
+                  "number",
+                  "string",
+                  "null"
+                ]
+              },
+              "variants": {
+                "type": ["array", "null"],
+                "description": "Genetic variants defining this allele",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "hgvs": {
+                      "type": "string",
+                      "description": "HGVS notation"
+                    },
+                    "rsId": {
+                      "type": ["string", "null"],
+                      "description": "dbSNP rsID"
+                    },
+                    "impact": {
+                      "type": ["string", "null"],
+                      "description": "Amino acid change"
+                    },
+                    "referenceSequence": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        {
+          "type": "object",
+          "properties": {
+            "error": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "error"
+          ]
+        }
+      ]
+    }
+  }
+]

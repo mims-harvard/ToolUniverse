@@ -1,0 +1,231 @@
+[
+  {
+    "name": "OpenCitations_get_references",
+    "description": "Get the list of papers cited by a given scientific article (its reference list) using OpenCitations COCI index. OpenCitations is a free, open scholarly citation database derived from CrossRef. Returns citation links with DOIs, publication dates, and time spans between publications. Useful for citation analysis, bibliometrics, and understanding research impact.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "doi": {
+          "type": "string",
+          "description": "DOI of the paper to get references for. Do not include 'https://doi.org/' prefix. Examples: '10.1002/jcc.21224', '10.1038/nature12373'"
+        }
+      },
+      "required": [
+        "doi"
+      ]
+    },
+    "fields": {
+      "endpoint": "https://api.opencitations.net/index/v1/references/{doi}"
+    },
+    "type": "BaseRESTTool",
+    "test_examples": [
+      {
+        "doi": "10.1002/jcc.21224"
+      },
+      {
+        "doi": "10.1038/s41586-021-03819-2"
+      },
+      {
+        "doi": "10.1126/science.aad9032"
+      }
+    ],
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "array",
+          "description": "List of references (papers cited by the input paper)",
+          "items": {
+            "type": "object",
+            "properties": {
+              "oci": {
+                "type": "string",
+                "description": "OpenCitations identifier for this citation link"
+              },
+              "citing": {
+                "type": "string",
+                "description": "DOI of the citing paper (input DOI)"
+              },
+              "cited": {
+                "type": "string",
+                "description": "DOI of the cited paper (a reference)"
+              },
+              "creation": {
+                "type": "string",
+                "description": "Publication date of citing paper (YYYY-MM format)"
+              },
+              "timespan": {
+                "type": "string",
+                "description": "Time between cited and citing publication (ISO 8601 duration, e.g. 'P6Y5M' = 6 years 5 months)"
+              },
+              "journal_sc": {
+                "type": "string",
+                "description": "Whether it's a self-citation at journal level (yes/no)"
+              },
+              "author_sc": {
+                "type": "string",
+                "description": "Whether it's a self-citation at author level (yes/no)"
+              }
+            }
+          }
+        },
+        {
+          "type": "object",
+          "properties": {
+            "error": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "error"
+          ]
+        }
+      ]
+    }
+  },
+  {
+    "name": "OpenCitations_get_citations",
+    "description": "Get the list of papers that cite a given scientific article (its citation count and citing papers) using OpenCitations COCI index. Returns who has cited the paper since its publication. Useful for measuring research impact, finding follow-up work, and understanding how a paper influenced subsequent research.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "doi": {
+          "type": "string",
+          "description": "DOI of the paper to find citations for. Do not include 'https://doi.org/' prefix. Examples: '10.1038/nature12373', '10.1002/jcc.21224'"
+        }
+      },
+      "required": [
+        "doi"
+      ]
+    },
+    "fields": {
+      "endpoint": "https://api.opencitations.net/index/v1/citations/{doi}"
+    },
+    "type": "BaseRESTTool",
+    "test_examples": [
+      {
+        "doi": "10.1002/jcc.21224"
+      },
+      {
+        "doi": "10.1038/nature12373"
+      },
+      {
+        "doi": "10.1371/journal.pone.0244463"
+      }
+    ],
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "array",
+          "description": "List of papers that cite the input paper",
+          "items": {
+            "type": "object",
+            "properties": {
+              "oci": {
+                "type": "string",
+                "description": "OpenCitations identifier for this citation link"
+              },
+              "citing": {
+                "type": "string",
+                "description": "DOI of the paper that cites the input paper"
+              },
+              "cited": {
+                "type": "string",
+                "description": "DOI of the cited paper (input DOI)"
+              },
+              "creation": {
+                "type": "string",
+                "description": "Publication date of citing paper (YYYY-MM format)"
+              },
+              "timespan": {
+                "type": "string",
+                "description": "Time between cited and citing publication (ISO 8601 duration)"
+              },
+              "journal_sc": {
+                "type": "string",
+                "description": "Journal-level self-citation (yes/no)"
+              },
+              "author_sc": {
+                "type": "string",
+                "description": "Author-level self-citation (yes/no)"
+              }
+            }
+          }
+        },
+        {
+          "type": "object",
+          "properties": {
+            "error": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "error"
+          ]
+        }
+      ]
+    }
+  },
+  {
+    "name": "OpenCitations_get_citation_count",
+    "description": "Get the total citation count for a scientific article using OpenCitations COCI index. Returns the number of times a paper has been cited in the OpenCitations database. Faster than retrieving the full citation list when you only need the count.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "doi": {
+          "type": "string",
+          "description": "DOI of the paper to count citations for. Do not include 'https://doi.org/' prefix. Example: '10.1002/jcc.21224'"
+        }
+      },
+      "required": [
+        "doi"
+      ]
+    },
+    "fields": {
+      "endpoint": "https://api.opencitations.net/index/v1/citation-count/{doi}"
+    },
+    "type": "BaseRESTTool",
+    "test_examples": [
+      {
+        "doi": "10.1002/jcc.21224"
+      },
+      {
+        "doi": "10.1038/nature12373"
+      },
+      {
+        "doi": "10.1002/jcc.20291"
+      }
+    ],
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "array",
+          "description": "Citation count result",
+          "items": {
+            "type": "object",
+            "properties": {
+              "oci": {
+                "type": "string",
+                "description": "DOI of the queried paper"
+              },
+              "count": {
+                "type": "string",
+                "description": "Number of citations in OpenCitations COCI database"
+              }
+            }
+          }
+        },
+        {
+          "type": "object",
+          "properties": {
+            "error": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "error"
+          ]
+        }
+      ]
+    }
+  }
+]

@@ -1,0 +1,437 @@
+[
+  {
+    "name": "KLIFS_list_kinases",
+    "description": "List kinases in the Kinase-Ligand Interaction Fingerprints and Structures (KLIFS) database. KLIFS contains 1,100+ kinases from 7,000+ crystal structures with curated binding pocket information. Returns kinase IDs, names, HGNC symbols, kinase family/group classification, species, and UniProt IDs. Filter by kinase group (TK, TKL, STE, CK1, AGC, CAMK, CMGC) or species (Human, Mouse, Rat).",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "kinase_group": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Filter by kinase group: 'TK' (tyrosine kinase), 'TKL' (TK-like), 'STE', 'CK1', 'AGC', 'CAMK', 'CMGC', 'RGC', 'Other'"
+        },
+        "species": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Filter by species: 'Human', 'Mouse', 'Rat'"
+        }
+      },
+      "required": []
+    },
+    "fields": {
+      "endpoint": "https://klifs.net/api/kinase_names"
+    },
+    "type": "BaseRESTTool",
+    "test_examples": [
+      {
+        "kinase_group": "TK",
+        "species": "Human"
+      },
+      {
+        "kinase_group": "AGC",
+        "species": "Human"
+      }
+    ],
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "array",
+          "description": "List of kinases in KLIFS",
+          "items": {
+            "type": "object",
+            "properties": {
+              "kinase_ID": {
+                "type": "integer",
+                "description": "KLIFS kinase ID"
+              },
+              "name": {
+                "type": "string",
+                "description": "Kinase gene symbol"
+              },
+              "full_name": {
+                "type": "string",
+                "description": "Full kinase name"
+              },
+              "species": {
+                "type": "string",
+                "description": "Species: Human, Mouse, Rat"
+              }
+            }
+          }
+        },
+        {
+          "type": "object",
+          "properties": {
+            "error": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "error"
+          ]
+        }
+      ]
+    }
+  },
+  {
+    "name": "KLIFS_get_kinase",
+    "description": "Get detailed information about a specific kinase from KLIFS by its kinase ID. Returns kinase name, HGNC symbol, family/group classification, species, UniProt ID, IUPHAR receptor ID, and the 80-residue KLIFS kinase pocket sequence (standardized binding site residues used for structure comparison). Use KLIFS_list_kinases to find kinase IDs.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "kinase_ID": {
+          "type": "integer",
+          "description": "KLIFS kinase ID (e.g., 1 for AKT1, 443 for AATK). Obtain from KLIFS_list_kinases."
+        }
+      },
+      "required": [
+        "kinase_ID"
+      ]
+    },
+    "fields": {
+      "endpoint": "https://klifs.net/api/kinase_information"
+    },
+    "type": "BaseRESTTool",
+    "test_examples": [
+      {
+        "kinase_ID": 1
+      },
+      {
+        "kinase_ID": 2
+      }
+    ],
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "array",
+          "description": "Kinase information",
+          "items": {
+            "type": "object",
+            "properties": {
+              "kinase_ID": {
+                "type": "integer"
+              },
+              "name": {
+                "type": "string",
+                "description": "Kinase gene symbol"
+              },
+              "HGNC": {
+                "type": "string",
+                "description": "HGNC symbol"
+              },
+              "family": {
+                "type": "string",
+                "description": "Kinase family"
+              },
+              "group": {
+                "type": "string",
+                "description": "Kinase group: AGC, CAMK, CK1, CMGC, STE, TK, TKL"
+              },
+              "kinase_class": {
+                "type": "string"
+              },
+              "species": {
+                "type": "string"
+              },
+              "full_name": {
+                "type": "string"
+              },
+              "uniprot": {
+                "type": "string",
+                "description": "UniProt accession"
+              },
+              "iuphar": {
+                "type": [
+                  "integer",
+                  "null"
+                ],
+                "description": "IUPHAR/GtoPdb receptor ID"
+              },
+              "pocket": {
+                "type": "string",
+                "description": "80-residue standardized KLIFS kinase pocket sequence"
+              }
+            }
+          }
+        },
+        {
+          "type": "object",
+          "properties": {
+            "error": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "error"
+          ]
+        }
+      ]
+    }
+  },
+  {
+    "name": "KLIFS_get_structures",
+    "description": "Get crystal structures for a specific kinase from KLIFS. Returns all annotated crystal structures with PDB IDs, ligands, DFG-in/out conformation, alpha-C helix orientation, binding site quality scores, and binding pocket fingerprints. Essential for drug discovery - identifies active vs. inactive conformations, Type I/II/III inhibitor binding sites, and DFG-in/out states. Use KLIFS_list_kinases to find kinase IDs.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "kinase_ID": {
+          "type": "integer",
+          "description": "KLIFS kinase ID (e.g., 1 for AKT1). Obtain from KLIFS_list_kinases."
+        }
+      },
+      "required": [
+        "kinase_ID"
+      ]
+    },
+    "fields": {
+      "endpoint": "https://klifs.net/api/structures_list"
+    },
+    "type": "BaseRESTTool",
+    "test_examples": [
+      {
+        "kinase_ID": 1
+      },
+      {
+        "kinase_ID": 2
+      }
+    ],
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "array",
+          "description": "Crystal structures for this kinase",
+          "items": {
+            "type": "object",
+            "properties": {
+              "structure_ID": {
+                "type": "integer",
+                "description": "KLIFS structure ID"
+              },
+              "kinase": {
+                "type": "string",
+                "description": "Kinase gene symbol"
+              },
+              "species": {
+                "type": "string"
+              },
+              "kinase_ID": {
+                "type": "integer"
+              },
+              "pdb": {
+                "type": "string",
+                "description": "PDB entry ID (4-letter code)"
+              },
+              "alt": {
+                "type": "string"
+              },
+              "chain": {
+                "type": "string",
+                "description": "PDB chain identifier"
+              },
+              "resolution": {
+                "type": "string",
+                "description": "Crystal resolution in Angstroms"
+              },
+              "quality_score": {
+                "type": "string",
+                "description": "KLIFS quality score (higher is better)"
+              },
+              "ligand": {
+                "type": [
+                  "string",
+                  "integer",
+                  "null"
+                ],
+                "description": "Bound ligand PDB 3-letter code ('0GS' = no ligand, 0 = no ligand)"
+              },
+              "DFG": {
+                "type": "string",
+                "description": "DFG-loop conformation: 'in', 'out', or 'out-like'"
+              },
+              "aC_helix": {
+                "type": "string",
+                "description": "Alpha-C helix conformation: 'in' or 'out'"
+              },
+              "pocket": {
+                "type": "string",
+                "description": "80-residue KLIFS pocket sequence for this structure"
+              },
+              "missing_residues": {
+                "type": "integer"
+              },
+              "missing_atoms": {
+                "type": "integer"
+              }
+            }
+          }
+        },
+        {
+          "type": "object",
+          "properties": {
+            "error": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "error"
+          ]
+        }
+      ]
+    }
+  },
+  {
+    "name": "KLIFS_get_structures_by_pdb",
+    "description": "Get KLIFS kinase structure data for one or more PDB entries by their PDB codes. Returns all kinase chains annotated in the specified PDB structures with DFG/alpha-C helix conformations, ligands, and pocket sequences. Useful when you have a PDB ID and want kinase-specific structural annotation.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "pdb_codes": {
+          "type": "string",
+          "description": "Comma-separated list of PDB codes to look up (e.g., '4ekk,3mvh,1iep'). Each must be a valid 4-character PDB ID."
+        }
+      },
+      "required": [
+        "pdb_codes"
+      ]
+    },
+    "fields": {
+      "endpoint": "https://klifs.net/api/structures_pdb_list?pdb-codes={pdb_codes}"
+    },
+    "type": "BaseRESTTool",
+    "test_examples": [
+      {
+        "pdb_codes": "4ekk,3mvh"
+      },
+      {
+        "pdb_codes": "1iep"
+      }
+    ],
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "array",
+          "description": "KLIFS annotated structures for the specified PDB codes",
+          "items": {
+            "type": "object",
+            "properties": {
+              "structure_ID": {
+                "type": "integer"
+              },
+              "kinase": {
+                "type": "string"
+              },
+              "pdb": {
+                "type": "string"
+              },
+              "chain": {
+                "type": "string"
+              },
+              "ligand": {
+                "type": "string"
+              },
+              "DFG": {
+                "type": "string"
+              },
+              "aC_helix": {
+                "type": "string"
+              },
+              "resolution": {
+                "type": "string"
+              },
+              "quality_score": {
+                "type": "string"
+              }
+            }
+          }
+        },
+        {
+          "type": "object",
+          "properties": {
+            "error": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "error"
+          ]
+        }
+      ]
+    }
+  },
+  {
+    "name": "KLIFS_get_ligands",
+    "description": "Get all ligands (co-crystallized inhibitors) bound to a specific kinase across all its crystal structures in KLIFS. Returns ligand PDB 3-letter codes, names, SMILES structures, and InChIKeys. Useful for identifying known inhibitors and their chemical scaffolds for a given kinase target. Use KLIFS_list_kinases to find kinase IDs.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "kinase_ID": {
+          "type": "integer",
+          "description": "KLIFS kinase ID (e.g., 1 for AKT1). Obtain from KLIFS_list_kinases."
+        }
+      },
+      "required": [
+        "kinase_ID"
+      ]
+    },
+    "fields": {
+      "endpoint": "https://klifs.net/api/ligands_list"
+    },
+    "type": "BaseRESTTool",
+    "test_examples": [
+      {
+        "kinase_ID": 1
+      },
+      {
+        "kinase_ID": 2
+      }
+    ],
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "array",
+          "description": "Ligands co-crystallized with this kinase",
+          "items": {
+            "type": "object",
+            "properties": {
+              "ligand_ID": {
+                "type": "integer",
+                "description": "KLIFS ligand ID"
+              },
+              "PDB-code": {
+                "type": "string",
+                "description": "3-letter PDB ligand code"
+              },
+              "Name": {
+                "type": "string",
+                "description": "Ligand full name"
+              },
+              "SMILES": {
+                "type": "string",
+                "description": "SMILES chemical structure"
+              },
+              "InChIKey": {
+                "type": "string",
+                "description": "InChIKey identifier"
+              }
+            }
+          }
+        },
+        {
+          "type": "object",
+          "properties": {
+            "error": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "error"
+          ]
+        }
+      ]
+    }
+  }
+]

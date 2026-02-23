@@ -37,7 +37,7 @@ Setup Steps
         "mcpServers": {
           "tooluniverse": {
             "command": "uvx",
-            "args": ["tooluniverse"],
+            "args": ["--refresh", "tooluniverse"],
             "env": {
               "PYTHONIOENCODING": "utf-8"
             }

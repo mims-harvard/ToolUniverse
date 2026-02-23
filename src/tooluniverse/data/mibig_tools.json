@@ -1,0 +1,187 @@
+[
+  {
+    "name": "MIBiG_list_clusters",
+    "description": "List biosynthetic gene clusters (BGCs) from the MIBiG repository. MIBiG (Minimum Information about a Biosynthetic Gene Cluster) is the standard repository for experimentally characterized BGCs producing natural products like antibiotics, antifungals, and anticancer compounds. Returns all BGC entries with accession, products, biosynthetic class (PKS, NRPS, Terpene, etc.), organism, quality, and completeness. Contains 3,013 BGC entries from bacteria, fungi, and plants. Use search_term to filter results client-side by product name or organism.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "search_term": {
+          "type": "string",
+          "description": "Optional text to filter results by product name or organism. The API returns all entries; filtering is applied client-side. Examples: 'erythromycin', 'vancomycin', 'Streptomyces', 'PKS'. Leave empty to get all 3,013 BGC entries."
+        }
+      },
+      "required": []
+    },
+    "fields": {
+      "endpoint": "https://mibig.secondarymetabolites.org/api/v1/repository"
+    },
+    "type": "BaseRESTTool",
+    "test_examples": [
+      {},
+      {
+        "search_term": "vancomycin"
+      }
+    ],
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "accession": {
+                "type": "string",
+                "description": "MIBiG accession with version (e.g., BGC0000455.6)"
+              },
+              "quality": {
+                "type": "string",
+                "description": "Data quality: questionable, good, or excellent"
+              },
+              "completeness": {
+                "type": "string",
+                "description": "BGC completeness: complete, partial, or unknown"
+              },
+              "status": {
+                "type": "string",
+                "description": "Entry status: active or retired"
+              },
+              "products": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "name": {
+                      "type": "string",
+                      "description": "Natural product name"
+                    }
+                  }
+                }
+              },
+              "classes": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "name": {
+                      "type": "string",
+                      "description": "Biosynthetic class: PKS, NRPS, Terpene, Saccharide, RiPP, Other"
+                    }
+                  }
+                }
+              },
+              "organism": {
+                "type": "string",
+                "description": "Source organism name"
+              }
+            }
+          },
+          "description": "Array of BGC entries"
+        },
+        {
+          "type": "object",
+          "properties": {
+            "error": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "error"
+          ]
+        }
+      ]
+    }
+  },
+  {
+    "name": "MIBiG_get_stats",
+    "description": "Get summary statistics from the MIBiG biosynthetic gene cluster repository. Returns total BGC counts by status (active, retired, complete, partial, pending), counts by biosynthetic class (PKS, NRPS, Terpene, Saccharide, Ribosomal, Other), and counts by source organism phylum (Actinomycetota, Ascomycota, Pseudomonadota, etc.). Essential for understanding the landscape of characterized natural product biosynthesis across the tree of life.",
+    "parameter": {
+      "type": "object",
+      "properties": {},
+      "required": []
+    },
+    "fields": {
+      "endpoint": "https://mibig.secondarymetabolites.org/api/v1/stats"
+    },
+    "type": "BaseRESTTool",
+    "test_examples": [
+      {}
+    ],
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "object",
+          "properties": {
+            "counts": {
+              "type": "object",
+              "properties": {
+                "total": {
+                  "type": "integer",
+                  "description": "Total number of BGC entries"
+                },
+                "complete": {
+                  "type": "integer"
+                },
+                "partial": {
+                  "type": "integer"
+                },
+                "pending": {
+                  "type": "integer"
+                },
+                "active": {
+                  "type": "integer"
+                },
+                "retired": {
+                  "type": "integer"
+                }
+              }
+            },
+            "clusters": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "type": {
+                    "type": "string",
+                    "description": "Biosynthetic class name"
+                  },
+                  "description": {
+                    "type": "string"
+                  },
+                  "count": {
+                    "type": "integer"
+                  }
+                }
+              }
+            },
+            "phyla": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "description": {
+                    "type": "string",
+                    "description": "Phylum name"
+                  },
+                  "count": {
+                    "type": "integer"
+                  }
+                }
+              }
+            }
+          }
+        },
+        {
+          "type": "object",
+          "properties": {
+            "error": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "error"
+          ]
+        }
+      ]
+    }
+  }
+]

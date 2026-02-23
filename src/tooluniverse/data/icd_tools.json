@@ -59,7 +59,7 @@
                 }
               }
             },
-            "guessType": {"type": "object"}
+            "guessType": {"type": ["integer", "object", "null"]}
           }
         },
         "metadata": {

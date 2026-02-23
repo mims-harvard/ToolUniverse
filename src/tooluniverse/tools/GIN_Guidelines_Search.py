@@ -15,7 +15,7 @@ def GIN_Guidelines_Search(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> list[Any]:
+) -> Any:
     """
     Search Guidelines International Network (GIN) guidelines database. GIN maintains the world's larg...
 
@@ -34,7 +34,7 @@ def GIN_Guidelines_Search(
 
     Returns
     -------
-    list[Any]
+    Any
     """
     # Handle mutable defaults to avoid B006 linting error
 

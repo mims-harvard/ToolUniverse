@@ -1,0 +1,481 @@
+[
+  {
+    "name": "PanelApp_search_panels",
+    "description": "Search Genomics England PanelApp for gene panels used in clinical genetic testing. PanelApp is the authoritative source for curated gene panels used by the NHS and global genomic medicine services. Returns panel IDs, names, disease groups, status, version, and gene count statistics. Use this to find relevant gene panels for a disease area, then use PanelApp_get_panel to get the full gene list. Panels contain genes with confidence levels (green=3 for diagnostic grade, amber=2 for borderline, red=1 for limited evidence).",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "search": {
+          "type": "string",
+          "description": "Search query for panel name or disease (e.g., 'breast cancer', 'epilepsy', 'hearing loss', 'intellectual disability')"
+        }
+      },
+      "required": [
+        "search"
+      ]
+    },
+    "fields": {
+      "endpoint": "https://panelapp.genomicsengland.co.uk/api/v1/panels/",
+      "params": {
+        "format": "json"
+      }
+    },
+    "type": "BaseRESTTool",
+    "test_examples": [
+      {
+        "search": "breast cancer"
+      },
+      {
+        "search": "epilepsy"
+      },
+      {
+        "search": "hearing loss"
+      }
+    ],
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "object",
+          "description": "PanelApp panel search results",
+          "properties": {
+            "count": {
+              "type": "integer",
+              "description": "Total number of matching panels"
+            },
+            "next": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "URL for next page of results"
+            },
+            "results": {
+              "type": "array",
+              "description": "Array of matching gene panels",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "id": {
+                    "type": "integer",
+                    "description": "Panel ID. Use with PanelApp_get_panel to get full gene list."
+                  },
+                  "name": {
+                    "type": "string",
+                    "description": "Panel name"
+                  },
+                  "disease_group": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "Disease group (e.g., 'Inherited cancer', 'Neurology and neurodevelopmental disorders')"
+                  },
+                  "disease_sub_group": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "Disease sub-group"
+                  },
+                  "status": {
+                    "type": "string",
+                    "description": "Panel status (e.g., 'public')"
+                  },
+                  "version": {
+                    "type": "string",
+                    "description": "Current panel version"
+                  },
+                  "stats": {
+                    "type": "object",
+                    "description": "Gene count statistics by confidence level",
+                    "properties": {
+                      "number_of_genes": {
+                        "type": "integer"
+                      },
+                      "number_of_strs": {
+                        "type": "integer"
+                      },
+                      "number_of_regions": {
+                        "type": "integer"
+                      }
+                    }
+                  },
+                  "types": {
+                    "type": "array",
+                    "description": "Panel type classifications"
+                  },
+                  "relevant_disorders": {
+                    "type": "array",
+                    "description": "Associated disorder names",
+                    "items": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        {
+          "type": "object",
+          "properties": {
+            "error": {
+              "type": "string",
+              "description": "Error message"
+            }
+          },
+          "required": [
+            "error"
+          ]
+        }
+      ]
+    }
+  },
+  {
+    "name": "PanelApp_get_panel",
+    "description": "Get the full gene list and details for a specific Genomics England PanelApp gene panel by panel ID. Returns all genes in the panel with their confidence levels (3=green/diagnostic, 2=amber/borderline, 1=red/limited), mode of inheritance, mode of pathogenicity, penetrance, phenotypes, publications, and evidence sources. This is the definitive resource for which genes are included in clinical genetic testing panels used by the NHS. Use PanelApp_search_panels to find panel IDs.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "panel_id": {
+          "type": "integer",
+          "description": "PanelApp panel ID (e.g., 504 for 'Inherited polyposis and early onset colorectal cancer'). Find IDs using PanelApp_search_panels."
+        }
+      },
+      "required": [
+        "panel_id"
+      ]
+    },
+    "fields": {
+      "endpoint": "https://panelapp.genomicsengland.co.uk/api/v1/panels/{panel_id}/",
+      "params": {
+        "format": "json"
+      }
+    },
+    "type": "BaseRESTTool",
+    "test_examples": [
+      {
+        "panel_id": 504
+      },
+      {
+        "panel_id": 234
+      },
+      {
+        "panel_id": 285
+      }
+    ],
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "object",
+          "description": "Full gene panel details from PanelApp",
+          "properties": {
+            "id": {
+              "type": "integer",
+              "description": "Panel ID"
+            },
+            "name": {
+              "type": "string",
+              "description": "Panel name"
+            },
+            "disease_group": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "Disease group"
+            },
+            "disease_sub_group": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "Disease sub-group"
+            },
+            "version": {
+              "type": "string",
+              "description": "Panel version"
+            },
+            "genes": {
+              "type": "array",
+              "description": "Genes in the panel with clinical annotations",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "gene_data": {
+                    "type": "object",
+                    "description": "Gene identifiers",
+                    "properties": {
+                      "gene_symbol": {
+                        "type": "string",
+                        "description": "HGNC gene symbol"
+                      },
+                      "hgnc_id": {
+                        "type": [
+                          "string",
+                          "null"
+                        ],
+                        "description": "HGNC identifier"
+                      },
+                      "gene_name": {
+                        "type": [
+                          "string",
+                          "null"
+                        ],
+                        "description": "Full gene name"
+                      },
+                      "omim_gene": {
+                        "type": ["array", "null"],
+                        "description": "OMIM gene IDs"
+                      },
+                      "ensembl_genes": {
+                        "type": "object",
+                        "description": "Ensembl gene IDs by assembly"
+                      }
+                    }
+                  },
+                  "confidence_level": {
+                    "type": "string",
+                    "description": "Evidence confidence: '3' (green/diagnostic grade), '2' (amber/borderline), '1' (red/limited), '0' (no list)"
+                  },
+                  "mode_of_inheritance": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "Inheritance pattern (e.g., MONOALLELIC, BIALLELIC, X-LINKED)"
+                  },
+                  "mode_of_pathogenicity": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "Pathogenicity mechanism (e.g., loss of function)"
+                  },
+                  "penetrance": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "Penetrance level"
+                  },
+                  "phenotypes": {
+                    "type": "array",
+                    "description": "Associated phenotypes and OMIM numbers",
+                    "items": {
+                      "type": "string"
+                    }
+                  },
+                  "publications": {
+                    "type": "array",
+                    "description": "Supporting publication PMIDs",
+                    "items": {
+                      "type": "string"
+                    }
+                  },
+                  "evidence": {
+                    "type": "array",
+                    "description": "Evidence sources (e.g., Expert Review, Literature)",
+                    "items": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            },
+            "strs": {
+              "type": "array",
+              "description": "Short tandem repeat regions in the panel"
+            },
+            "regions": {
+              "type": "array",
+              "description": "Genomic regions (CNVs) in the panel"
+            },
+            "stats": {
+              "type": "object",
+              "description": "Gene count statistics"
+            }
+          }
+        },
+        {
+          "type": "object",
+          "properties": {
+            "error": {
+              "type": "string",
+              "description": "Error message"
+            }
+          },
+          "required": [
+            "error"
+          ]
+        }
+      ]
+    }
+  },
+  {
+    "name": "PanelApp_search_genes",
+    "description": "Search for a gene across all Genomics England PanelApp panels to find which clinical testing panels include it. Returns all panels containing the gene, along with the confidence level, mode of inheritance, and associated phenotypes for each panel. This is invaluable for understanding the clinical significance of a gene - if it appears in multiple high-confidence panels, it has strong clinical evidence. Use gene symbols (e.g., 'TP53', 'BRCA1').",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "gene_symbol": {
+          "type": "string",
+          "description": "Gene symbol to search across all panels (e.g., 'TP53', 'BRCA1', 'EGFR', 'MLH1')"
+        }
+      },
+      "required": [
+        "gene_symbol"
+      ]
+    },
+    "fields": {
+      "endpoint": "https://panelapp.genomicsengland.co.uk/api/v1/genes/{gene_symbol}/",
+      "params": {
+        "format": "json"
+      }
+    },
+    "type": "BaseRESTTool",
+    "test_examples": [
+      {
+        "gene_symbol": "TP53"
+      },
+      {
+        "gene_symbol": "BRCA1"
+      },
+      {
+        "gene_symbol": "MLH1"
+      }
+    ],
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "object",
+          "description": "Gene panel membership results from PanelApp",
+          "properties": {
+            "count": {
+              "type": "integer",
+              "description": "Total number of panels containing this gene"
+            },
+            "next": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "URL for next page of results"
+            },
+            "results": {
+              "type": "array",
+              "description": "Array of panel entries containing this gene",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "gene_data": {
+                    "type": "object",
+                    "description": "Gene identifiers",
+                    "properties": {
+                      "gene_symbol": {
+                        "type": "string"
+                      },
+                      "hgnc_id": {
+                        "type": [
+                          "string",
+                          "null"
+                        ]
+                      },
+                      "gene_name": {
+                        "type": [
+                          "string",
+                          "null"
+                        ]
+                      }
+                    }
+                  },
+                  "entity_type": {
+                    "type": "string",
+                    "description": "Entity type (gene, str, region)"
+                  },
+                  "confidence_level": {
+                    "type": "string",
+                    "description": "Evidence confidence level (3=green, 2=amber, 1=red)"
+                  },
+                  "mode_of_inheritance": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "Inheritance pattern"
+                  },
+                  "panel": {
+                    "type": "object",
+                    "description": "Panel information",
+                    "properties": {
+                      "id": {
+                        "type": "integer"
+                      },
+                      "name": {
+                        "type": "string"
+                      },
+                      "disease_group": {
+                        "type": [
+                          "string",
+                          "null"
+                        ]
+                      },
+                      "disease_sub_group": {
+                        "type": [
+                          "string",
+                          "null"
+                        ]
+                      },
+                      "version": {
+                        "type": "string"
+                      },
+                      "relevant_disorders": {
+                        "type": "array",
+                        "items": {
+                          "type": "string"
+                        }
+                      }
+                    }
+                  },
+                  "phenotypes": {
+                    "type": "array",
+                    "description": "Associated phenotypes",
+                    "items": {
+                      "type": "string"
+                    }
+                  },
+                  "publications": {
+                    "type": "array",
+                    "description": "Supporting PMIDs",
+                    "items": {
+                      "type": "string"
+                    }
+                  },
+                  "evidence": {
+                    "type": "array",
+                    "description": "Evidence sources",
+                    "items": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        {
+          "type": "object",
+          "properties": {
+            "error": {
+              "type": "string",
+              "description": "Error message"
+            }
+          },
+          "required": [
+            "error"
+          ]
+        }
+      ]
+    }
+  }
+]

@@ -210,12 +210,24 @@ default_tool_files = {
     ),
     "odphp": os.path.join(current_dir, "data", "odphp_tools.json"),
     "who_gho": os.path.join(current_dir, "data", "who_gho_tools.json"),
+    # Marine Regions - VLIZ geographic authority file for oceans, seas, and marine regions worldwide
+    "marine_regions": os.path.join(current_dir, "data", "marine_regions_tools.json"),
+    # ERDDAP - NOAA CoastWatch ocean/atmospheric dataset search and metadata (SST, chlorophyll, currents)
+    "erddap": os.path.join(current_dir, "data", "erddap_tools.json"),
+    # MET Norway - Norwegian Meteorological Institute weather forecasts (global, no auth)
+    "metnorway": os.path.join(current_dir, "data", "metnorway_tools.json"),
     "umls": os.path.join(current_dir, "data", "umls_tools.json"),
     "icd": os.path.join(current_dir, "data", "icd_tools.json"),
     "euhealth": os.path.join(current_dir, "data", "euhealth_tools.json"),
     "markitdown": os.path.join(current_dir, "data", "markitdown_tools.json"),
     # Guideline and health policy tools
     "guidelines": os.path.join(current_dir, "data", "unified_guideline_tools.json"),
+    # Clinical guidelines - MAGICapp, NCI R4R, NCI Drug Dict extended, DailyMed drug classes
+    "clinical_guidelines": os.path.join(
+        current_dir, "data", "clinical_guidelines_tools.json"
+    ),
+    # FDA drug labels - official prescribing information with clinical recommendations
+    "openfda_labels": os.path.join(current_dir, "data", "openfda_label_tools.json"),
     # Database tools
     "kegg": os.path.join(current_dir, "data", "kegg_tools.json"),
     "ensembl": os.path.join(current_dir, "data", "ensembl_tools.json"),
@@ -241,9 +253,6 @@ default_tool_files = {
     "compact_mode": os.path.join(current_dir, "data", "compact_mode_tools.json"),
     # New Life Science Tools
     "hca_tools": os.path.join(current_dir, "data", "hca_tools.json"),
-    "clinical_trials_tools": os.path.join(
-        current_dir, "data", "clinical_trials_tools.json"
-    ),
     "iedb_tools": os.path.join(current_dir, "data", "iedb_tools.json"),
     "pathway_commons_tools": os.path.join(
         current_dir, "data", "pathway_commons_tools.json"
@@ -402,12 +411,6 @@ default_tool_files = {
     "cath": os.path.join(current_dir, "data", "cath_tools.json"),
     # MeSH - Medical Subject Headings (NLM controlled vocabulary for PubMed indexing)
     "mesh": os.path.join(current_dir, "data", "mesh_tools.json"),
-    # JLCSearch - Electronic components search (resistors, capacitors, MCUs, ICs, LEDs, diodes)
-    "jlcsearch": os.path.join(current_dir, "data", "jlcsearch_tools.json"),
-    # Mouser Electronics - Major distributor API (pricing, availability, specs, datasheets)
-    "mouser": os.path.join(current_dir, "data", "mouser_tools.json"),
-    # Digi-Key Electronics - Major distributor API (product search, details, categories)
-    "digikey": os.path.join(current_dir, "data", "digikey_tools.json"),
     # HPO - Human Phenotype Ontology (phenotype terms, hierarchy, clinical genetics)
     "hpo": os.path.join(current_dir, "data", "hpo_tools.json"),
     # Reactome Analysis Service - Pathway enrichment/overrepresentation analysis
@@ -630,14 +633,276 @@ default_tool_files = {
     "pfam": os.path.join(current_dir, "data", "pfam_tools.json"),
     # PubChem Toxicity - Chemical toxicity, GHS hazard, carcinogen classification, LD50 data
     "pubchem_tox": os.path.join(current_dir, "data", "pubchem_tox_tools.json"),
+    # ClinicalTrials.gov - World's largest clinical trial registry (572,000+ trials)
+    # EpiGraphDB - Mendelian Randomization, genetic correlations, drug repurposing via GWAS
+    "epigraphdb": os.path.join(current_dir, "data", "epigraphdb_tools.json"),
+    # Bio.tools - ELIXIR bioinformatics tool/software registry (30,000+ entries)
+    "biotools_registry": os.path.join(
+        current_dir, "data", "biotools_registry_tools.json"
+    ),
+    # Identifiers.org - ELIXIR biological identifier resolution service (800+ namespaces)
+    "identifiers_org": os.path.join(current_dir, "data", "identifiers_org_tools.json"),
+    # Europe PMC Citations - Citation network traversal (who cites / is cited by)
+    "europepmc_citations": os.path.join(
+        current_dir, "data", "europepmc_citations_tools.json"
+    ),
+    # TCIA - The Cancer Imaging Archive (medical imaging datasets)
+    "tcia": os.path.join(current_dir, "data", "tcia_tools.json"),
+    # OpenNeuro - Neuroimaging data repository (BIDS datasets)
+    "openneuro": os.path.join(current_dir, "data", "openneuro_tools.json"),
+    # ModelDB - Computational neuroscience model repository (Yale/SenseLab)
+    "modeldb": os.path.join(current_dir, "data", "modeldb_tools.json"),
+    # KEGG BRITE - Hierarchical functional classification (enzymes, kinases, transporters, GPCRs)
+    "kegg_brite": os.path.join(current_dir, "data", "kegg_brite_tools.json"),
+    # OmicsDI - Omics Discovery Index (integrated multi-omics repository search)
+    "omicsdi": os.path.join(current_dir, "data", "omicsdi_tools.json"),
+    # CPIC - Clinical Pharmacogenomics Implementation Consortium
+    "cpic": os.path.join(current_dir, "data", "cpic_tools.json"),
+    # PDB-REDO - Re-refined PDB structures with improved quality metrics
+    "pdb_redo": os.path.join(current_dir, "data", "pdb_redo_tools.json"),
+    # BMRB - Biological Magnetic Resonance Data Bank (NMR data for proteins and metabolites)
+    "bmrb": os.path.join(current_dir, "data", "bmrb_tools.json"),
+    # PharmVar - Pharmacogene Variation Consortium (star allele definitions)
+    "pharmvar": os.path.join(current_dir, "data", "pharmvar_tools.json"),
     # Catalogue of Life - Global species index (2M+ species from 165+ databases)
     "col": os.path.join(current_dir, "data", "col_tools.json"),
+    # MassBank Europe - Open-access MS spectral library for metabolomics and environmental chemistry
+    "massbank": os.path.join(current_dir, "data", "massbank_tools.json"),
     # LOTUS - Natural products database (750K+ structure-organism pairs)
     "lotus": os.path.join(current_dir, "data", "lotus_tools.json"),
     # MSigDB - Molecular Signatures Database (33K+ gene sets for GSEA)
     "msigdb": os.path.join(current_dir, "data", "msigdb_tools.json"),
     # HumanMine - InterMine data warehouse for human/mouse/rat genomics
     "humanmine": os.path.join(current_dir, "data", "humanmine_tools.json"),
+    # VariantValidator - HGVS variant validation and nomenclature conversion
+    "variant_validator": os.path.join(
+        current_dir, "data", "variant_validator_tools.json"
+    ),
+    # IDR - Image Data Resource, public imaging datasets from published studies
+    "idr": os.path.join(current_dir, "data", "idr_tools.json"),
+    # OpenFDA - FDA drug labels, adverse events, and NDC directory
+    "openfda": os.path.join(current_dir, "data", "openfda_tools.json"),
+    # KLIFS - Kinase-Ligand Interaction Fingerprints and Structures
+    "klifs": os.path.join(current_dir, "data", "klifs_tools.json"),
+    # GeneNetwork - systems genetics QTL and gene expression for genetic crosses
+    "genenetwork": os.path.join(current_dir, "data", "genenetwork_tools.json"),
+    # ChannelsDB - protein channel, tunnel, and pore data for PDB structures
+    "channelsdb": os.path.join(current_dir, "data", "channelsdb_tools.json"),
+    # FlyMine - InterMine data warehouse for Drosophila melanogaster genomics
+    "flymine": os.path.join(current_dir, "data", "flymine_tools.json"),
+    # MouseMine - InterMine data warehouse for mouse genomics from MGI
+    "mousemine": os.path.join(current_dir, "data", "mousemine_tools.json"),
+    # TargetMine - InterMine data warehouse for drug target discovery
+    "targetmine": os.path.join(current_dir, "data", "targetmine_tools.json"),
+    # iCite - NIH citation metrics, RCR, APT scores for PubMed publications
+    "icite": os.path.join(current_dir, "data", "icite_tools.json"),
+    # scite - smart citation tallies (supporting/contradicting/mentioning)
+    "scite": os.path.join(current_dir, "data", "scite_tools.json"),
+    # VEuPathDB - eukaryotic pathogen, vector and host genomics
+    "veupathdb": os.path.join(current_dir, "data", "veupathdb_tools.json"),
+    # GeneNetwork Extended - trait and dataset detail info
+    "genenetwork_ext": os.path.join(current_dir, "data", "genenetwork_ext_tools.json"),
+    # Open Food Facts - commercial food products with barcodes, Nutri-Score, NOVA, ingredients
+    "openfoodfacts": os.path.join(current_dir, "data", "openfoodfacts_tools.json"),
+    # MIBiG - Minimum Information about a Biosynthetic Gene Cluster (natural product BGCs)
+    "mibig": os.path.join(current_dir, "data", "mibig_tools.json"),
+    # ScanProsite - Protein motif scanning against PROSITE patterns (ExPASy/SIB)
+    "scanprosite": os.path.join(current_dir, "data", "scanprosite_tools.json"),
+    # PDBe Graph API - Bound molecules, UniProt mappings, compound details, FunPDBe
+    "pdbe_graph": os.path.join(current_dir, "data", "pdbe_graph_tools.json"),
+    # NCBI Gene - E-utilities gene search and summary (Entrez Gene)
+    "ncbi_gene": os.path.join(current_dir, "data", "ncbi_gene_tools.json"),
+    # DataCite - research data DOIs for datasets, software, samples across repositories
+    "datacite": os.path.join(current_dir, "data", "datacite_tools.json"),
+    # Figshare - open-access research repository for datasets, figures, code, posters
+    "figshare": os.path.join(current_dir, "data", "figshare_tools.json"),
+    # Human Protein Atlas - protein expression across tissues, subcellular location, disease, cancer
+    # FPbase - fluorescent protein database with spectral properties, sequences, structures
+    "fpbase": os.path.join(current_dir, "data", "fpbase_tools.json"),
+    # ROR - Research Organization Registry for institution identifiers and metadata
+    "ror": os.path.join(current_dir, "data", "ror_tools.json"),
+    # ORCID - researcher identifiers, profiles, and publication lists
+    "orcid": os.path.join(current_dir, "data", "orcid_tools.json"),
+    # PanelApp - Genomics England gene panels for clinical genetic testing
+    "panelapp": os.path.join(current_dir, "data", "panelapp_tools.json"),
+    # Semantic Scholar Extended - paper details, author profiles, recommendations
+    "semantic_scholar_ext": os.path.join(
+        current_dir, "data", "semantic_scholar_ext_tools.json"
+    ),
+    # bioRxiv Extended - list recent preprints by date range
+    "biorxiv_ext": os.path.join(current_dir, "data", "biorxiv_ext_tools.json"),
+    # World Bank - World Development Indicators (GDP, population, health, education, 200+ countries)
+    "worldbank": os.path.join(current_dir, "data", "worldbank_tools.json"),
+    # IMF - World Economic Outlook macroeconomic data (GDP growth, inflation, unemployment, debt)
+    # Open-Meteo - Free weather forecast, historical climate, air quality, and geocoding
+    "open_meteo": os.path.join(current_dir, "data", "open_meteo_tools.json"),
+    # EVA - European Variation Archive (EBI) for population variant data
+    "eva": os.path.join(current_dir, "data", "eva_tools.json"),
+    # eQTL Catalogue - Expression quantitative trait loci associations
+    "eqtl": os.path.join(current_dir, "data", "eqtl_tools.json"),
+    # OSDR - NASA Open Science Data Repository (space biology studies)
+    "osdr": os.path.join(current_dir, "data", "osdr_tools.json"),
+    # Gene2Phenotype - EBI curated gene-disease associations for clinical genetics
+    "gene2phenotype": os.path.join(current_dir, "data", "gene2phenotype_tools.json"),
+    # NASA Exoplanet Archive - ADQL queries for 5500+ confirmed exoplanets and stellar hosts
+    "nasa_exoplanet": os.path.join(current_dir, "data", "nasa_exoplanet_tools.json"),
+    # OpenStreetMap Nominatim - Free geocoding and reverse geocoding worldwide
+    "nominatim": os.path.join(current_dir, "data", "nominatim_tools.json"),
+    # REST Countries - Comprehensive country metadata (population, languages, currencies, borders)
+    # eBird - Cornell Lab bird taxonomy and regional species lists (no API key)
+    "ebird_taxonomy": os.path.join(current_dir, "data", "ebird_taxonomy_tools.json"),
+    # CRAN R Package Database - Metadata for 20,000+ R packages including versions and dependencies
+    "cran": os.path.join(current_dir, "data", "cran_tools.json"),
+    # NASA CMR - Common Metadata Repository for 40,000+ Earth observation datasets
+    "nasa_cmr": os.path.join(current_dir, "data", "nasa_cmr_tools.json"),
+    # DataONE - Federation of 43+ environmental data repositories (3.2M+ datasets)
+    "dataone": os.path.join(current_dir, "data", "dataone_tools.json"),
+    # Dryad - Open research data repository for life sciences and other disciplines
+    "dryad": os.path.join(current_dir, "data", "dryad_tools.json"),
+    # Dataverse (Harvard) - Open-source research data repository platform
+    "dataverse": os.path.join(current_dir, "data", "dataverse_tools.json"),
+    # SDSS - Sloan Digital Sky Survey DR18, SQL queries for 500M+ astronomical objects
+    "sdss": os.path.join(current_dir, "data", "sdss_tools.json"),
+    # NASA NED - NASA/IPAC Extragalactic Database for galaxies, quasars, and AGN
+    "nasa_ned": os.path.join(current_dir, "data", "nasa_ned_tools.json"),
+    # GitHub - Public repository search and metadata via GitHub API
+    "github": os.path.join(current_dir, "data", "github_tools.json"),
+    # LitVar2 - NCBI variant-literature linking (search variants, get publications)
+    "litvar": os.path.join(current_dir, "data", "litvar_tools.json"),
+    # PubTator3 Extended - entity annotation extraction from PubMed articles
+    "pubtator3_ext": os.path.join(current_dir, "data", "pubtator3_ext_tools.json"),
+    # RCSB Chemical Components - PDB ligand/small molecule chemical info
+    "rcsb_chemcomp": os.path.join(current_dir, "data", "rcsb_chemcomp_tools.json"),
+    # NCI Drug Dictionary - cancer drug definitions, aliases, and NCI concept IDs
+    "nci_drugdict": os.path.join(current_dir, "data", "nci_drugdict_tools.json"),
+    # Eurostat - EU statistical office data (GDP, population, health, environment)
+    "eurostat": os.path.join(current_dir, "data", "eurostat_tools.json"),
+    # USGS Earthquake - Real-time and historical earthquake data from USGS FDSN
+    "usgs_earthquake": os.path.join(current_dir, "data", "usgs_earthquake_tools.json"),
+    # JPL Horizons - Solar system body lookup and physical data from NASA JPL
+    "jpl_horizons": os.path.join(current_dir, "data", "jpl_horizons_tools.json"),
+    # NASA SBDB - Small Body Database for asteroids and comets (1.3M+ objects)
+    "nasa_sbdb": os.path.join(current_dir, "data", "nasa_sbdb_tools.json"),
+    # Space - ISS position/crew tracker and sunrise/sunset times (Open Notify API)
+    # COD - Crystallography Open Database for 500K+ crystal structures
+    "cod_crystal": os.path.join(current_dir, "data", "cod_crystal_tools.json"),
+    # HuggingFace Hub - ML model/dataset search and metadata (500K+ models)
+    "huggingface": os.path.join(current_dir, "data", "huggingface_tools.json"),
+    # OpenML - Open machine learning benchmark datasets and tasks
+    "openml": os.path.join(current_dir, "data", "openml_tools.json"),
+    # Metropolitan Museum of Art - 400K+ open-access artworks (search and object detail)
+    # Victoria and Albert Museum - 5000 years of art and design (search and object detail)
+    # Europeana - 50M+ European cultural heritage items (museums, libraries, archives)
+    # Exchange Rate - live currency exchange rates for 150+ currencies (no auth)
+    # Crates.io - Rust package registry (150K+ crates with search and details)
+    # Internet Archive - Digital library of 40M+ items (books, audio, video, web, software)
+    # Anaconda.org - Conda package registry (conda-forge, bioconda, 200K+ packages)
+    "anaconda": os.path.join(current_dir, "data", "anaconda_tools.json"),
+    # NASA EONET - Natural event tracker (wildfires, storms, volcanoes, floods)
+    "nasa_eonet": os.path.join(current_dir, "data", "nasa_eonet_tools.json"),
+    # POWO - Plants of the World Online by Kew Gardens (1.3M+ plant names)
+    "powo": os.path.join(current_dir, "data", "powo_tools.json"),
+    # NeuroVault - Neuroimaging statistical maps repository (16K+ collections, 650K+ images)
+    "neurovault": os.path.join(current_dir, "data", "neurovault_tools.json"),
+    # Disease.sh - COVID-19 and public health statistics (231 countries, historical data)
+    "diseasesh": os.path.join(current_dir, "data", "diseasesh_tools.json"),
+    # OpenCitations COCI - Open scholarly citation index (references, citations, counts)
+    "opencitations": os.path.join(current_dir, "data", "opencitations_tools.json"),
+    # Wikidata Entity API - search and retrieve Wikidata items/entities by ID
+    "wikidata_entity": os.path.join(current_dir, "data", "wikidata_entity_tools.json"),
+    # iDigBio - Integrated Digitized Biocollections (130M+ natural history specimens)
+    "idigbio": os.path.join(current_dir, "data", "idigbio_tools.json"),
+    # ELIXIR TeSS - Bioinformatics training materials and events aggregator
+    "elixir_tess": os.path.join(current_dir, "data", "elixir_tess_tools.json"),
+    # Wikimedia Stats - Wikipedia page views and top articles analytics
+    # Art Institute of Chicago - 130K+ artworks open access collection
+    # Cleveland Museum of Art - 61K+ open access artworks
+    # Open Notify - ISS real-time position and astronauts in space
+    # CEDA - UK Centre for Environmental Data Analysis climate datasets
+    "ceda": os.path.join(current_dir, "data", "ceda_tools.json"),
+    # Sunrise-Sunset API - solar event times for any location
+    "sunrise_sunset": os.path.join(current_dir, "data", "sunrise_sunset_tools.json"),
+    # Openverse - Creative Commons licensed images (700M+ from Flickr, Wikimedia, museums)
+    # US College Scorecard - higher education data (6000+ schools, admission rates, costs)
+    # FEC - US Federal Election Commission candidate and financial data
+    # Smithsonian Open Access - 5M+ digitized museum objects from 19 Smithsonian institutions
+    # Library of Congress - 21M+ digitized historical items (photos, maps, manuscripts)
+    # SoilGrids - global soil property predictions at any location (ISRIC)
+    "soilgrids": os.path.join(current_dir, "data", "soilgrids_tools.json"),
+    # US Treasury Fiscal Data - national debt, exchange rates, interest rates, debt breakdown
+    # Chronicling America - historic US newspaper search (LOC, 1777-1963)
+    # GBIF Extended - species detail by key and species name autocomplete
+    "gbif_ext": os.path.join(current_dir, "data", "gbif_ext_tools.json"),
+    # Frankfurter - real-time and historical currency exchange rates (ECB data)
+    # Datamuse - word-finding API (synonyms, antonyms, rhymes, semantic similarity)
+    # National Weather Service (NWS) - US weather forecasts, alerts, and point metadata
+    "nws": os.path.join(current_dir, "data", "nws_tools.json"),
+    # SpaceX - rocket launches, rockets, launchpads, and crew data
+    # USGS Water Services - real-time streamflow, water level, and temperature data
+    "usgs_water": os.path.join(current_dir, "data", "usgs_water_tools.json"),
+    # Spaceflight News API - 30K+ space news articles from major sites
+    # Launch Library 2 - upcoming rocket launches worldwide (all providers)
+    # US Census Bureau - population and demographic data (no key required)
+    "uscensus": os.path.join(current_dir, "data", "uscensus_tools.json"),
+    # Open-Meteo Marine - ocean wave/swell forecasts for any coastal location
+    "open_meteo_marine": os.path.join(
+        current_dir, "data", "open_meteo_marine_tools.json"
+    ),
+    # Open-Meteo Flood - river discharge and flood forecasts (GloFAS/Copernicus)
+    "open_meteo_flood": os.path.join(
+        current_dir, "data", "open_meteo_flood_tools.json"
+    ),
+    # NASA DONKI - space weather events (CME, flares, storms, particles, shocks)
+    "nasa_donki": os.path.join(current_dir, "data", "nasa_donki_tools.json"),
+    # OpenTopoData - terrain elevation data for any global location (SRTM/ASTER/NED)
+    "opentopodata": os.path.join(current_dir, "data", "opentopodata_tools.json"),
+    # Disease.sh - COVID-19 global and country-level statistics
+    # NASA NeoWs - Near Earth Object data (asteroids, close approaches)
+    "nasa_neows": os.path.join(current_dir, "data", "nasa_neows_tools.json"),
+    # REST Countries Extended - country details by name, region, language
+    # STRING Network - protein-protein interaction networks
+    "string_network": os.path.join(current_dir, "data", "string_network_tools.json"),
+    # UniProt Proteomes - proteome reference data
+    "uniprot_proteomes": os.path.join(
+        current_dir, "data", "uniprot_proteomes_tools.json"
+    ),
+    # wttr.in - current weather in JSON format for any city or coordinates
+    # TimeAPI.io - current time by timezone or geographic coordinates
+    # ExchangeRate-API - current foreign exchange rates for 166 currencies
+    # BigDataCloud - reverse geocode lat/lng to country, city, region (no auth)
+    # Open-Meteo Climate - historical climate data from 1950 via ERA5/CMIP6 models
+    "open_meteo_climate": os.path.join(
+        current_dir, "data", "open_meteo_climate_tools.json"
+    ),
+    # Open-Meteo Air Quality - hourly PM2.5/PM10/ozone forecast and history
+    "open_meteo_airquality": os.path.join(
+        current_dir, "data", "open_meteo_airquality_tools.json"
+    ),
+    # Open Elevation - terrain elevation data from lat/lon coordinates
+    # Disease.sh extended - COVID historical and vaccine coverage data
+    "disease_sh_ext": os.path.join(current_dir, "data", "disease_sh_ext_tools.json"),
+    # Where the ISS At - real-time ISS position and velocity
+    # Wikipedia extended - featured daily content and on-this-day events
+    "wikipedia_ext": os.path.join(current_dir, "data", "wikipedia_ext_tools.json"),
+    # Data.gov - U.S. government open data catalog search
+    # WAQI - World Air Quality Index real-time AQI data
+    "waqi": os.path.join(current_dir, "data", "waqi_tools.json"),
+    # BLS - Bureau of Labor Statistics economic time series (CPI, unemployment, etc.)
+    # SEC EDGAR - SEC filing search and company financial facts (XBRL)
+    # InspireHEP - high energy physics literature database
+    "inspirehep": os.path.join(current_dir, "data", "inspirehep_tools.json"),
+    # Federal Register - US government regulations, rules, notices, presidential documents
+    # NASA TechPort - NASA technology development projects and investments
+    # Crates.io - Rust package registry (search crates, version history, downloads)
+    # MyMemory Translation - free machine translation for 200+ language pairs
+    # IETF Datatracker - Internet standards (RFCs, Internet-Drafts, protocol specs)
+    # Gutendex - Project Gutenberg ebooks catalog search
+    # Bioconductor - R/Bioconductor bioinformatics package search and metadata (via R-universe)
+    "bioconductor": os.path.join(current_dir, "data", "bioconductor_tools.json"),
+    # ArtIC - Art Institute of Chicago open-access artwork search and metadata
+    "artic": os.path.join(current_dir, "data", "artic_tools.json"),
+    # ADA/AHA/ACC/NCCN - Clinical society guidelines (diabetes, cardiology, oncology)
+    "ada_aha_nccn": os.path.join(current_dir, "data", "ada_aha_nccn_tools.json"),
 }
 
 # Auto-load any user-provided tools from ~/.tooluniverse/user_tools/

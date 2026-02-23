@@ -5,33 +5,67 @@ Claude Desktop Setup
 
 Claude Desktop provides a user-friendly interface for scientific research with ToolUniverse's 1000+ tools through the Model Context Protocol (MCP).
 
-Prerequisites
--------------
-
-.. important:: ✅ **What you need:**
-   
-   - **Claude Desktop App** - `Download here <https://claude.com/download>`_
-   - **uv/uvx** - `Install uv <https://docs.astral.sh/uv/>`_
-
 .. seealso:: `Claude Desktop MCP official guide <https://modelcontextprotocol.io/docs/develop/connect-local-servers>`_
 
 Setup Steps
 -----------
 
-.. card:: Step 1: Configure MCP Connection
+.. card:: Step 1: Install uv
    :class-card: step-card current
 
-   Add ToolUniverse to Claude Desktop's config:
+   ``uv`` is the package manager that runs ToolUniverse.
 
-   **1.1. Open Configuration File**
+   .. tab-set::
 
-   1. Open **Claude Desktop App**
-   2. Go to **Settings** → **Developer** → **Edit Config**
-   3. Your default text editor will open the config file
+      .. tab-item:: macOS
 
-   **1.2. Add ToolUniverse Configuration**
+         .. code-block:: bash
 
-   Add this to your config file:
+            brew install uv
+
+         .. important::
+
+            On macOS, **Homebrew is the only recommended method** for Claude Desktop.
+            The curl installer puts ``uvx`` in ``~/.local/bin/``, which Claude Desktop
+            (a GUI app) cannot find, causing a "Failed to spawn" error on first launch.
+            If you don't have Homebrew, get it from `brew.sh <https://brew.sh>`_ first.
+
+      .. tab-item:: Windows
+
+         .. code-block:: powershell
+
+            powershell -c "irm https://astral.sh/uv/install.ps1 | iex"
+
+         Then close and reopen PowerShell. Verify: ``uvx --version``
+
+      .. tab-item:: Linux
+
+         .. code-block:: bash
+
+            curl -LsSf https://astral.sh/uv/install.sh | sh
+            source "$HOME/.local/bin/env"
+
+         Then verify: ``uvx --version``
+
+   After installing on macOS, verify:
+
+   .. code-block:: bash
+
+      /opt/homebrew/bin/uvx --version    # Apple Silicon
+      /usr/local/bin/uvx --version       # Intel Mac
+
+   .. note::
+
+      ``which uvx`` may show ``~/.local/bin/uvx`` if you had a previous uv installation —
+      that is fine. Claude Desktop uses the Homebrew path directly, not your shell PATH.
+      If needed, run ``brew link uv --overwrite`` to make Homebrew's version the default.
+
+.. card:: Step 2: Add ToolUniverse to Claude Desktop
+   :class-card: step-card
+
+   1. Open **Claude Desktop** → **Settings** → **Developer** → **Edit Config**
+   2. Your text editor opens ``claude_desktop_config.json``
+   3. Replace the file contents with:
 
    .. code-block:: json
 
@@ -39,38 +73,57 @@ Setup Steps
         "mcpServers": {
           "tooluniverse": {
             "command": "uvx",
-            "args": ["tooluniverse"],
+            "args": ["--refresh", "tooluniverse"],
             "env": {"PYTHONIOENCODING": "utf-8"}
           }
         }
       }
 
-   .. dropdown:: 🔧 Alternative: Using pip installation
-      :animate: fade-in-slide-down
-      :color: info
+   4. Save the file.
 
-      If you installed with pip instead of using uvx:
+   .. note::
 
-      .. code-block:: json
+      ``"--refresh"`` auto-updates ToolUniverse on every launch. If you already have other
+      MCP servers in the file, add the ``"tooluniverse": {...}`` block inside your existing
+      ``"mcpServers"`` object — don't replace the whole file.
 
-         {
-           "mcpServers": {
-             "tooluniverse": {
-               "command": "python",
-               "args": ["-m", "tooluniverse.mcp_integration.smcp_stdio"],
-               "env": {"PYTHONIOENCODING": "utf-8"}
-             }
-           }
-         }
+.. card:: Step 3: Restart & Verify
+   :class-card: step-card pending
 
-   **1.3. Save Configuration**
+   **Before restarting**, confirm the server starts cleanly in your terminal:
 
-   Save the file and close your text editor.
+   .. code-block:: bash
 
-.. card:: Step 2: Install Agent Skills
-   :class-card: step-card
+      timeout 10 uvx tooluniverse --help
 
-   Install ToolUniverse skills for guided workflows:
+   If that prints usage text, you're good. If it errors, fix it before restarting the app.
+
+   1. **Fully quit** Claude Desktop — **⌘Q** on Mac (closing the window is not enough).
+   2. Reopen Claude Desktop.
+   3. ⏱️ **Wait up to 60–90 seconds** on first launch — ToolUniverse downloads in the background.
+      You can watch the progress: open a terminal and run:
+
+      .. code-block:: bash
+
+         tail -f ~/Library/Logs/Claude/mcp*.log
+
+   4. Look for a 🔨 **hammer icon** at the bottom of the chat input box and click it —
+      you should see ``tooluniverse`` listed.
+
+      .. note::
+
+         Don't see a hammer? Check **Settings → Developer → MCP Servers** — this panel
+         shows each server's connection status and any error messages. Some versions of
+         Claude Desktop show a "Connectors" or integrations panel instead.
+
+   5. Try asking: *"What scientific tools are available?"*
+
+   .. success:: ✅ If ToolUniverse tools appear, you're all set!
+
+.. card:: Step 4: Install Agent Skills (optional but recommended)
+   :class-card: step-card pending
+
+   Skills are pre-built research workflows that guide Claude through complex tasks:
 
    .. code-block:: bash
 
@@ -80,56 +133,14 @@ Setup Steps
       :animate: fade-in-slide-down
       :color: primary
 
-      Agent Skills provide Claude with specialized workflows for:
+      Skills teach Claude how to use ToolUniverse's 1200+ tools effectively. Examples:
 
-      - Drug discovery research
-      - Target identification
-      - Disease analysis
-      - Literature deep-dive
-      - And more!
-
-      **These skills teach Claude how to use ToolUniverse tools effectively.**
-
-.. card:: Step 3: Restart Claude Desktop
-   :class-card: step-card pending
-
-   Restart the app to load ToolUniverse:
-
-   1. **Completely quit** Claude Desktop App (don't just close the window)
-   2. **Reopen** Claude Desktop App
-   3. Wait a few seconds for MCP servers to initialize
-
-   .. tip:: 🔍 **Check if it's loaded:**
-      
-      Look for a small indicator in Claude Desktop showing MCP servers are connected.
-
-.. card:: Step 4: Verify Integration
-   :class-card: step-card pending
-
-   Test that everything works:
-
-   **Try these queries in Claude:**
-
-   .. code-block:: text
-
-      "What scientific tools are available?"
-
-   .. code-block:: text
-
-      "Find protein information for BRCA1"
-
-   .. code-block:: text
-
-      "Search for recent papers about CRISPR"
-
-   .. success:: ✅ **Working?**
-      
-      Claude should now use ToolUniverse tools to answer your scientific questions!
+      - **"Research the drug metformin"** → full drug profile with safety data
+      - **"Find protein structures for EGFR"** → retrieves and assesses PDB entries
+      - **"What does the literature say about CRISPR?"** → deep literature review
 
 Example Queries
 ---------------
-
-Try these queries to explore ToolUniverse capabilities:
 
 .. tab-set::
 
@@ -161,79 +172,71 @@ Try these queries to explore ToolUniverse capabilities:
          "Search for recent publications about mRNA vaccines
          and summarize key findings"
 
-Demo & Examples
----------------
-
-See ToolUniverse in action with Claude Desktop:
-
-.. button-link:: https://claude.ai/share/ab797b7f-6e6b-46f6-b1d5-5a790b90f42d
-   :color: primary
-   :shadow:
-
-   🎥 **View Interactive Demo**
-
 Troubleshooting
 ---------------
 
-.. dropdown:: ❌ Claude doesn't recognize ToolUniverse tools
+.. dropdown:: ❌ Hammer icon missing / "Failed to spawn" / "ENOENT" error
    :animate: fade-in-slide-down
    :color: danger
 
-   **Solutions:**
+   **Cause:** Claude Desktop is a GUI app — it can't find ``uvx`` if it's in ``~/.local/bin``
+   (the default location for the shell installer).
 
-   1. Check that you **completely quit and restarted** Claude Desktop (not just closed the window)
-   2. Verify the config file syntax is correct (valid JSON)
-   3. Check that ``uvx`` is installed: ``uvx --version``
-   4. Look at Claude Desktop's developer console for error messages
+   **Fix:** Find your full ``uvx`` path and use it in the config:
 
-.. dropdown:: ⚠️ "Too many tools" or context limit errors
-   :animate: fade-in-slide-down
-   :color: warning
+   .. code-block:: bash
 
-   **Solution:** Load fewer tools by specifying categories.
+      which uvx    # macOS / Linux — e.g. /opt/homebrew/bin/uvx or /Users/you/.local/bin/uvx
 
-   Edit your config to use compact mode:
+   .. code-block:: powershell
+
+      where uvx    # Windows
+
+   Then update the ``"command"`` in your config to that full path:
 
    .. code-block:: json
 
       {
         "mcpServers": {
           "tooluniverse": {
-            "command": "uvx",
-            "args": ["tooluniverse", "--compact-mode"],
+            "command": "/opt/homebrew/bin/uvx",
+            "args": ["--refresh", "tooluniverse"],
             "env": {"PYTHONIOENCODING": "utf-8"}
           }
         }
       }
 
-.. dropdown:: 🔧 uvx not found
+   Fully quit and reopen Claude Desktop.
+
+   .. tip:: If you installed via **Homebrew** (``brew install uv``), this error won't occur —
+      Homebrew places ``uvx`` in a system path Claude Desktop can always find.
+
+   **Check the logs** for the exact error message:
+
+   .. code-block:: bash
+
+      tail -f ~/Library/Logs/Claude/mcp*.log          # macOS
+
+   .. code-block:: powershell
+
+      type "$env:APPDATA\Claude\logs\mcp*.log"         # Windows
+
+.. dropdown:: ❌ Tools not working after config is correct
+   :animate: fade-in-slide-down
+   :color: danger
+
+   1. Make sure you **fully quit** Claude Desktop (⌘Q / right-click Dock → Quit), not just closed the window.
+   2. Check JSON syntax — no trailing commas. Validate at `jsonlint.com <https://jsonlint.com>`_.
+   3. Run ``uvx tooluniverse --help`` in your terminal to confirm the package works.
+   4. Check logs: ``tail -20 ~/Library/Logs/Claude/mcp*.log``
+
+
+.. dropdown:: 🔄 Keeping ToolUniverse up to date
    :animate: fade-in-slide-down
    :color: info
 
-   **Install uv:**
-
-   .. tab-set::
-
-      .. tab-item:: macOS/Linux
-
-         .. code-block:: bash
-
-            curl -LsSf https://astral.sh/uv/install.sh | sh
-
-      .. tab-item:: Windows
-
-         .. code-block:: powershell
-
-            powershell -c "irm https://astral.sh/uv/install.ps1 | iex"
-
-Advanced Configuration
-----------------------
-
-.. dropdown:: 🎛️ Custom Tool Categories
-   :animate: fade-in-slide-down
-   :color: primary
-
-   Load only specific tool categories:
+   The recommended config uses ``"--refresh"`` so ToolUniverse automatically updates to
+   the latest version each time Claude Desktop starts (adds ~1–2 s to startup time):
 
    .. code-block:: json
 
@@ -241,20 +244,24 @@ Advanced Configuration
         "mcpServers": {
           "tooluniverse": {
             "command": "uvx",
-            "args": [
-              "tooluniverse",
-              "--tool-categories", "uniprot,chembl,opentarget"
-            ],
+            "args": ["--refresh", "tooluniverse"],
             "env": {"PYTHONIOENCODING": "utf-8"}
           }
         }
       }
 
-.. dropdown:: 🔑 API Keys Configuration
+   To update manually instead, remove ``"--refresh"`` from the args and run this in your
+   terminal whenever you want to upgrade, then restart Claude Desktop:
+
+   .. code-block:: bash
+
+      uv cache clean tooluniverse
+
+.. dropdown:: 🔑 Adding API keys for more tools
    :animate: fade-in-slide-down
    :color: info
 
-   Add API keys for enhanced performance:
+   Add keys to the ``"env"`` block in your config:
 
    .. code-block:: json
 
@@ -262,7 +269,7 @@ Advanced Configuration
         "mcpServers": {
           "tooluniverse": {
             "command": "uvx",
-            "args": ["tooluniverse"],
+            "args": ["--refresh", "tooluniverse"],
             "env": {
               "PYTHONIOENCODING": "utf-8",
               "NCBI_API_KEY": "your_key_here",
@@ -272,7 +279,7 @@ Advanced Configuration
         }
       }
 
-   See :doc:`../api_keys` for all available keys.
+   See :doc:`../api_keys` for all available keys (all are free to obtain).
 
 Next Steps
 ----------
@@ -288,14 +295,6 @@ Next Steps
       
       How to find the right tools for your research
 
-   .. grid-item-card:: 🔗 Build Workflows
-      :link: ../scientific_workflows
-      :link-type: doc
-      :class-card: hover-lift
-      :shadow: md
-      
-      Chain tools into complex research pipelines
-
    .. grid-item-card:: 🎯 Case Study
       :link: ../tooluniverse_case_study
       :link-type: doc
@@ -303,14 +302,6 @@ Next Steps
       :shadow: md
       
       End-to-end drug discovery example
-
-   .. grid-item-card:: 💬 Get Help
-      :link: ../../help/troubleshooting
-      :link-type: doc
-      :class-card: hover-lift
-      :shadow: md
-      
-      Common issues and solutions
 
 .. button-ref:: index
    :color: secondary

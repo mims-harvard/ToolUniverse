@@ -94,107 +94,6 @@
   },
   {
     "type": "STRINGRESTTool",
-    "name": "STRING_get_interaction_partners",
-    "description": "Find direct interaction partners for a single protein from STRING (Search Tool for Retrieval of Interacting Genes/Proteins). Simpler alternative to STRING_get_network when analyzing one protein - returns ranked list of interacting partners with confidence scores (0-1.0). Use this for focused analysis of single proteins; use STRING_get_network for complete network between multiple proteins. No API key required. Returns: partner protein IDs, confidence scores, evidence types, partner annotations. Use for: discovering interacting partners of a single protein, identifying potential drug targets, finding binding partners, exploring single protein biology, quick partner lookup.",
-    "parameter": {
-      "type": "object",
-      "properties": {
-        "protein_ids": {
-          "type": "array",
-          "items": {
-            "type": "string"
-          },
-          "description": "List of protein identifiers (UniProt IDs, gene names, Ensembl IDs)",
-          "minItems": 1
-        },
-        "species": {
-          "type": "integer",
-          "description": "NCBI taxonomy ID (default: 9606 for human, 10090 for mouse)",
-          "default": 9606
-        },
-        "confidence_score": {
-          "type": "number",
-          "description": "Minimum confidence score (0-1, default: 0.4 for medium confidence)",
-          "minimum": 0,
-          "maximum": 1,
-          "default": 0.4
-        },
-        "limit": {
-          "type": "integer",
-          "description": "Maximum number of interaction partners to return (default: 20)",
-          "minimum": 1,
-          "maximum": 500,
-          "default": 20
-        }
-      },
-      "required": [
-        "protein_ids"
-      ]
-    },
-    "fields": {
-      "endpoint": "/json/interaction_partners",
-      "return_format": "JSON"
-    },
-    "return_schema": {
-      "type": "array",
-      "items": {
-        "type": "object",
-        "properties": {
-          "stringId_A": {
-            "type": "string"
-          },
-          "stringId_B": {
-            "type": "string"
-          },
-          "preferredName_A": {
-            "type": "string"
-          },
-          "preferredName_B": {
-            "type": "string"
-          },
-          "ncbiTaxonId": {
-            "type": "integer"
-          },
-          "score": {
-            "type": "number"
-          },
-          "nscore": {
-            "type": "number"
-          },
-          "fscore": {
-            "type": "number"
-          },
-          "pscore": {
-            "type": "number"
-          },
-          "ascore": {
-            "type": "number"
-          },
-          "escore": {
-            "type": "number"
-          },
-          "dscore": {
-            "type": "number"
-          },
-          "tscore": {
-            "type": "number"
-          }
-        }
-      }
-    },
-    "test_examples": [
-      {
-        "protein_ids": [
-          "TP53"
-        ],
-        "species": 9606,
-        "confidence_score": 0.7,
-        "limit": 10
-      }
-    ]
-  },
-  {
-    "type": "STRINGRESTTool",
     "name": "STRING_functional_enrichment",
     "description": "Identify enriched biological functions, pathways, and processes for a protein set using STRING (Search Tool for Retrieval of Interacting Genes/Proteins) database. Performs statistical enrichment analysis against GO (Gene Ontology) terms, KEGG pathways, Reactome pathways, and other annotation databases. Returns significantly enriched terms with FDR-corrected p-values. Minimum 3-4 proteins required for meaningful statistical analysis. No API key required. Use for: discovering pathways enriched in protein network, identifying biological processes, finding shared functions among proteins, interpreting omics data (proteomics, interactomics), hypothesis generation.",
     "parameter": {
@@ -259,10 +158,10 @@
             "type": "integer"
           },
           "inputGenes": {
-            "type": "string"
+            "type": ["string", "array", "null"]
           },
           "preferredNames": {
-            "type": "string"
+            "type": ["string", "array", "null"]
           },
           "p_value": {
             "type": "number"
@@ -379,127 +278,6 @@
   },
   {
     "type": "STRINGRESTTool",
-    "name": "STRING_get_network",
-    "description": "Retrieve protein-protein interaction network from STRING (Search Tool for Retrieval of Interacting Genes/Proteins) database. Returns complete network with all pairwise interactions between your proteins, including confidence scores (0-1.0) based on multiple evidence types (experimental data, databases, co-expression, text mining). Can expand network by adding top interaction partners. No API key required. Use for: building interaction networks for pathway analysis, finding protein complexes, identifying network hubs and key regulators, visualizing protein relationships, exporting to Cytoscape/network analysis tools.",
-    "parameter": {
-      "type": "object",
-      "properties": {
-        "protein_ids": {
-          "type": "array",
-          "items": {
-            "type": "string"
-          },
-          "description": "List of protein identifiers (UniProt IDs, gene names, Ensembl IDs)",
-          "minItems": 1
-        },
-        "species": {
-          "type": "integer",
-          "description": "NCBI taxonomy ID (default: 9606 for human)",
-          "default": 9606
-        },
-        "confidence_score": {
-          "type": "number",
-          "description": "Minimum confidence score (0-1, default: 0.4). Use 0.7 for high confidence, 0.9 for highest confidence.",
-          "minimum": 0,
-          "maximum": 1,
-          "default": 0.4
-        },
-        "add_nodes": {
-          "type": "integer",
-          "description": "Number of additional interacting nodes to add to network (default: 0, max: 100)",
-          "minimum": 0,
-          "maximum": 100,
-          "default": 0
-        },
-        "network_type": {
-          "type": "string",
-          "description": "Type of network: 'functional' (all evidence), 'physical' (physical interactions only), 'regulatory' (STRING 12.5+ regulatory network with directionality)",
-          "enum": [
-            "functional",
-            "physical",
-            "regulatory"
-          ],
-          "default": "functional"
-        }
-      },
-      "required": [
-        "protein_ids"
-      ]
-    },
-    "fields": {
-      "endpoint": "/json/network",
-      "return_format": "JSON"
-    },
-    "return_schema": {
-      "type": "array",
-      "items": {
-        "type": "object",
-        "properties": {
-          "stringId_A": {
-            "type": "string"
-          },
-          "stringId_B": {
-            "type": "string"
-          },
-          "preferredName_A": {
-            "type": "string"
-          },
-          "preferredName_B": {
-            "type": "string"
-          },
-          "ncbiTaxonId": {
-            "type": "integer"
-          },
-          "score": {
-            "type": "number",
-            "description": "Combined confidence score"
-          },
-          "nscore": {
-            "type": "number",
-            "description": "Neighborhood score"
-          },
-          "fscore": {
-            "type": "number",
-            "description": "Gene fusion score"
-          },
-          "pscore": {
-            "type": "number",
-            "description": "Phylogenetic cooccurrence score"
-          },
-          "ascore": {
-            "type": "number",
-            "description": "Coexpression score"
-          },
-          "escore": {
-            "type": "number",
-            "description": "Experimental score"
-          },
-          "dscore": {
-            "type": "number",
-            "description": "Database score"
-          },
-          "tscore": {
-            "type": "number",
-            "description": "Text mining score"
-          }
-        }
-      }
-    },
-    "test_examples": [
-      {
-        "protein_ids": [
-          "TP53",
-          "MDM2"
-        ],
-        "species": 9606,
-        "confidence_score": 0.7,
-        "add_nodes": 5,
-        "network_type": "functional"
-      }
-    ]
-  },
-  {
-    "type": "STRINGRESTTool",
     "name": "STRING_ppi_enrichment",
     "description": "Test if your protein set has more interactions than expected by chance (PPI = Protein-Protein Interaction enrichment). Compares observed interactions in your network to random expectation - significant enrichment suggests proteins work together functionally. Returns enrichment p-value and expected vs observed interaction counts. Useful for validating that your protein list forms a real functional module rather than random proteins. No API key required. Use for: validating protein complex predictions, testing if proteins form functional module, quality control for network analysis, distinguishing real complexes from random protein lists, assessing functional coherence.",
     "parameter": {
@@ -535,27 +313,33 @@
       "return_format": "JSON"
     },
     "return_schema": {
-      "type": "object",
-      "properties": {
-        "number_of_nodes": {
-          "type": "integer"
+      "oneOf": [
+        {
+          "type": "object",
+          "properties": {
+            "number_of_nodes": {"type": "integer"},
+            "number_of_edges": {"type": "integer"},
+            "expected_number_of_edges": {"type": "number"},
+            "p_value": {"type": "number"},
+            "avg_node_degree": {"type": "number"},
+            "local_clustering_coefficient": {"type": "number"}
+          }
         },
-        "number_of_edges": {
-          "type": "integer"
-        },
-        "expected_number_of_edges": {
-          "type": "number"
-        },
-        "p_value": {
-          "type": "number"
-        },
-        "avg_node_degree": {
-          "type": "number"
-        },
-        "local_clustering_coefficient": {
-          "type": "number"
+        {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "number_of_nodes": {"type": "integer"},
+              "number_of_edges": {"type": "integer"},
+              "expected_number_of_edges": {"type": "number"},
+              "p_value": {"type": "number"},
+              "avg_node_degree": {"type": "number"},
+              "local_clustering_coefficient": {"type": "number"}
+            }
+          }
         }
-      }
+      ]
     },
     "test_examples": [
       {

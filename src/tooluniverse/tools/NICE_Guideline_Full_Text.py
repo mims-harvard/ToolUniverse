@@ -14,7 +14,7 @@ def NICE_Guideline_Full_Text(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> dict[str, Any]:
+) -> Any:
     """
     Fetch complete full text content from a NICE clinical guideline page. Takes a NICE guideline URL ...
 
@@ -31,7 +31,7 @@ def NICE_Guideline_Full_Text(
 
     Returns
     -------
-    dict[str, Any]
+    Any
     """
     # Handle mutable defaults to avoid B006 linting error
 

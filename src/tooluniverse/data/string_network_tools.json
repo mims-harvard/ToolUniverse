@@ -1,0 +1,259 @@
+[
+  {
+    "name": "STRING_get_network",
+    "description": "Get the protein-protein interaction network for one or more proteins from STRING database. Returns all interactions (edges) between the query proteins and their neighbors, including confidence scores broken down by evidence type (experiments, co-expression, databases, text-mining, etc.). Different from STRING_get_functional_annotations (which returns GO/pathway annotations) and STRING_get_enrichment (which tests enrichment of a set). Use this to build or visualize PPI networks. Multiple proteins can be separated by newlines (%0d).",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "identifiers": {
+          "type": "string",
+          "description": "Protein identifier(s). For multiple proteins, separate with '%0d' (URL-encoded newline). Examples: 'TP53', 'BRCA1%0dBRCA2%0dTP53', '9606.ENSP00000269305'"
+        },
+        "species": {
+          "type": "integer",
+          "default": 9606,
+          "description": "NCBI taxonomy ID. Examples: 9606 (human), 10090 (mouse), 7227 (Drosophila), 6239 (C. elegans)"
+        },
+        "limit": {
+          "type": "integer",
+          "default": 10,
+          "description": "Maximum number of interaction partners to include (per protein). 0 = only interactions among input proteins."
+        },
+        "required_score": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "description": "Minimum combined STRING score (0-1000). 400=medium, 700=high, 900=highest confidence. Default: 400."
+        }
+      },
+      "required": [
+        "identifiers"
+      ]
+    },
+    "fields": {
+      "endpoint": "https://string-db.org/api/json/network"
+    },
+    "type": "BaseRESTTool",
+    "test_examples": [
+      {
+        "identifiers": "TP53",
+        "species": 9606,
+        "limit": 5
+      },
+      {
+        "identifiers": "BRCA1\rBRCA2\rTP53",
+        "species": 9606,
+        "limit": 0
+      },
+      {
+        "identifiers": "EGFR",
+        "species": 9606,
+        "limit": 5
+      }
+    ],
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "array",
+          "description": "Array of interaction objects (edges in the network)",
+          "items": {
+            "type": "object",
+            "properties": {
+              "stringId_A": {
+                "type": "string",
+                "description": "STRING ID of protein A (e.g., '9606.ENSP00000269305')"
+              },
+              "stringId_B": {
+                "type": "string",
+                "description": "STRING ID of protein B"
+              },
+              "preferredName_A": {
+                "type": "string",
+                "description": "Gene symbol of protein A (e.g., 'TP53')"
+              },
+              "preferredName_B": {
+                "type": "string",
+                "description": "Gene symbol of protein B"
+              },
+              "ncbiTaxonId": {
+                "type": [
+                  "string",
+                  "integer",
+                  "null"
+                ],
+                "description": "NCBI taxonomy ID"
+              },
+              "score": {
+                "type": "number",
+                "description": "Combined confidence score (0-1)"
+              },
+              "nscore": {
+                "type": "number",
+                "description": "Neighborhood score"
+              },
+              "fscore": {
+                "type": "number",
+                "description": "Gene fusion score"
+              },
+              "pscore": {
+                "type": "number",
+                "description": "Phylogenetic profile score"
+              },
+              "ascore": {
+                "type": "number",
+                "description": "Co-expression score"
+              },
+              "escore": {
+                "type": "number",
+                "description": "Experimental evidence score"
+              },
+              "dscore": {
+                "type": "number",
+                "description": "Database evidence score"
+              },
+              "tscore": {
+                "type": "number",
+                "description": "Text-mining score"
+              }
+            }
+          }
+        },
+        {
+          "type": "object",
+          "properties": {
+            "error": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "error"
+          ]
+        }
+      ]
+    }
+  },
+  {
+    "name": "STRING_get_interaction_partners",
+    "description": "Get interaction partners for a single protein from STRING database. Returns a ranked list of proteins that interact with the query protein, along with detailed confidence scores by evidence type (experimental, database, text-mining, etc.). Different from STRING_get_network which returns all edges in a network - this returns a simple partner list focused on one protein. Useful for finding what proteins a given protein interacts with.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "identifiers": {
+          "type": "string",
+          "description": "Protein identifier (gene name or STRING ID). Examples: 'TP53', 'BRCA1', 'EGFR', '9606.ENSP00000269305'"
+        },
+        "species": {
+          "type": "integer",
+          "default": 9606,
+          "description": "NCBI taxonomy ID (9606=human, 10090=mouse, 7227=fly, 6239=worm)"
+        },
+        "limit": {
+          "type": "integer",
+          "default": 10,
+          "description": "Maximum number of interaction partners to return"
+        },
+        "required_score": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "description": "Minimum combined STRING score (0-1000). 400=medium, 700=high, 900=highest confidence."
+        }
+      },
+      "required": [
+        "identifiers"
+      ]
+    },
+    "fields": {
+      "endpoint": "https://string-db.org/api/json/interaction_partners"
+    },
+    "type": "BaseRESTTool",
+    "test_examples": [
+      {
+        "identifiers": "TP53",
+        "species": 9606,
+        "limit": 10
+      },
+      {
+        "identifiers": "BRCA1",
+        "species": 9606,
+        "limit": 5
+      },
+      {
+        "identifiers": "EGFR",
+        "species": 9606,
+        "limit": 5
+      }
+    ],
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "array",
+          "description": "Array of interaction partner objects",
+          "items": {
+            "type": "object",
+            "properties": {
+              "stringId_A": {
+                "type": "string"
+              },
+              "stringId_B": {
+                "type": "string"
+              },
+              "preferredName_A": {
+                "type": "string",
+                "description": "Gene symbol of query protein"
+              },
+              "preferredName_B": {
+                "type": "string",
+                "description": "Gene symbol of interaction partner"
+              },
+              "ncbiTaxonId": {
+                "type": ["string", "integer", "null"]
+              },
+              "score": {
+                "type": "number",
+                "description": "Combined confidence score (0-1)"
+              },
+              "nscore": {
+                "type": "number"
+              },
+              "fscore": {
+                "type": "number"
+              },
+              "pscore": {
+                "type": "number"
+              },
+              "ascore": {
+                "type": "number"
+              },
+              "escore": {
+                "type": "number",
+                "description": "Experimental evidence score"
+              },
+              "dscore": {
+                "type": "number",
+                "description": "Database evidence score"
+              },
+              "tscore": {
+                "type": "number",
+                "description": "Text-mining score"
+              }
+            }
+          }
+        },
+        {
+          "type": "object",
+          "properties": {
+            "error": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "error"
+          ]
+        }
+      ]
+    }
+  }
+]

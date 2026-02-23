@@ -1,0 +1,279 @@
+[
+  {
+    "name": "Figshare_search_articles",
+    "description": "Search Figshare for research outputs (datasets, figures, code, posters, papers, theses, presentations) by keyword. Figshare is a major open-access research repository where researchers share supplementary data, code, figures, and complete datasets. Returns article ID, title, DOI, resource type, publication date, and authors. Essential for finding research datasets, supplementary materials, and research code associated with published papers.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "search_for": {
+          "type": "string",
+          "description": "Keyword search query (e.g., 'CRISPR knockout RNA-seq', 'protein structure cryo-EM', 'climate change temperature dataset')"
+        },
+        "item_type": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "description": "Filter by item type: 3=dataset, 2=media, 1=figure, 9=code, 7=thesis, 6=book, 5=presentation, 4=paper, 12=journal contribution, 11=poster"
+        },
+        "page_size": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "description": "Number of results (default 10, max 1000)"
+        },
+        "published_since": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Filter to articles published after this date in format 'YYYY-MM-DD' (e.g., '2023-01-01')"
+        }
+      },
+      "required": [
+        "search_for"
+      ]
+    },
+    "fields": {
+      "endpoint": "https://api.figshare.com/v2/articles"
+    },
+    "type": "BaseRESTTool",
+    "test_examples": [
+      {
+        "search_for": "CRISPR gene editing single cell",
+        "page_size": 5
+      },
+      {
+        "search_for": "protein structure cryo-EM dataset",
+        "item_type": 3,
+        "page_size": 5
+      },
+      {
+        "search_for": "RNA-seq transcriptomics cancer",
+        "published_since": "2024-01-01",
+        "page_size": 5
+      }
+    ],
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "array",
+          "description": "List of matching Figshare research outputs",
+          "items": {
+            "type": "object",
+            "properties": {
+              "id": {
+                "type": "integer",
+                "description": "Figshare article ID"
+              },
+              "title": {
+                "type": "string",
+                "description": "Article title"
+              },
+              "doi": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "Digital Object Identifier"
+              },
+              "url": {
+                "type": "string",
+                "description": "Figshare article URL"
+              },
+              "published_date": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "Publication date"
+              },
+              "defined_type_name": {
+                "type": "string",
+                "description": "Resource type (dataset, figure, code, etc.)"
+              },
+              "authors": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "full_name": {
+                      "type": "string"
+                    },
+                    "id": {
+                      "type": "integer"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        {
+          "type": "object",
+          "properties": {
+            "error": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "error"
+          ]
+        }
+      ]
+    }
+  },
+  {
+    "name": "Figshare_get_article",
+    "description": "Get detailed metadata for a specific Figshare research output by its article ID. Returns complete information including title, description, authors, DOI, files, categories, tags, funding, license, citation, and download statistics. Use this after searching to get full details about a specific dataset, code package, or figure.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "article_id": {
+          "type": "integer",
+          "description": "Figshare article ID (numeric, e.g., 14847609, 1000050). Obtain from search results or from Figshare URLs like 'figshare.com/articles/dataset/name/14847609'."
+        }
+      },
+      "required": [
+        "article_id"
+      ]
+    },
+    "fields": {
+      "endpoint": "https://api.figshare.com/v2/articles/{article_id}"
+    },
+    "type": "BaseRESTTool",
+    "test_examples": [
+      {
+        "article_id": 14847609
+      },
+      {
+        "article_id": 1000050
+      },
+      {
+        "article_id": 31362418
+      }
+    ],
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "object",
+          "description": "Detailed Figshare article metadata",
+          "properties": {
+            "id": {
+              "type": "integer",
+              "description": "Article ID"
+            },
+            "title": {
+              "type": "string",
+              "description": "Article title"
+            },
+            "doi": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "DOI"
+            },
+            "description": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "Abstract/description"
+            },
+            "defined_type_name": {
+              "type": "string",
+              "description": "Resource type (dataset, figure, code, etc.)"
+            },
+            "published_date": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "authors": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "full_name": {
+                    "type": "string"
+                  },
+                  "orcid_id": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  }
+                }
+              }
+            },
+            "tags": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              },
+              "description": "Keywords/tags"
+            },
+            "categories": {
+              "type": "array",
+              "description": "Research categories"
+            },
+            "license": {
+              "type": "object",
+              "properties": {
+                "name": {
+                  "type": "string"
+                },
+                "url": {
+                  "type": "string"
+                }
+              }
+            },
+            "files": {
+              "type": "array",
+              "description": "Available files for download",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "name": {
+                    "type": "string"
+                  },
+                  "download_url": {
+                    "type": "string"
+                  },
+                  "size": {
+                    "type": "integer"
+                  }
+                }
+              }
+            },
+            "citation": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "Formatted citation string"
+            },
+            "figshare_url": {
+              "type": "string",
+              "description": "URL to view on Figshare"
+            }
+          }
+        },
+        {
+          "type": "object",
+          "properties": {
+            "error": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "error"
+          ]
+        }
+      ]
+    }
+  }
+]

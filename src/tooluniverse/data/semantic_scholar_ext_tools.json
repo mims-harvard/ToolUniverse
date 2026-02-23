@@ -1,0 +1,405 @@
+[
+  {
+    "name": "SemanticScholar_get_paper",
+    "description": "Get detailed metadata for a specific paper from Semantic Scholar by paper ID, DOI, PubMed ID, or other identifier. Returns title, abstract, authors, citation count, reference count, journal, publication types, open access PDF link, and external IDs (DOI, PubMed, ArXiv, etc.). Identifier formats: Semantic Scholar paper ID (40-char hex), DOI: prefix (e.g., 'DOI:10.1126/science.1225829'), PMID: prefix (e.g., 'PMID:22745249'), ArXiv: prefix (e.g., 'ArXiv:2106.01345'), or CorpusId: prefix. This complements SemanticScholar_search_papers by providing full paper details.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "paper_id": {
+          "type": "string",
+          "description": "Paper identifier. Supports multiple formats: Semantic Scholar ID (e.g., '68d962effe5520777791bd6ec8ffa4b963ba4f38'), DOI (e.g., 'DOI:10.1126/science.1225829'), PubMed (e.g., 'PMID:22745249'), ArXiv (e.g., 'ArXiv:2106.01345'), or CorpusId (e.g., 'CorpusId:14088426')."
+        },
+        "fields": {
+          "type": "string",
+          "description": "Comma-separated list of fields to return. Available: paperId,title,abstract,year,citationCount,referenceCount,openAccessPdf,journal,publicationTypes,externalIds,authors,tldr,publicationDate,venue,fieldsOfStudy. Default returns core fields.",
+          "default": "paperId,title,abstract,year,citationCount,referenceCount,openAccessPdf,journal,publicationTypes,externalIds,authors,publicationDate,fieldsOfStudy"
+        }
+      },
+      "required": ["paper_id"]
+    },
+    "fields": {
+      "endpoint": "https://api.semanticscholar.org/graph/v1/paper/{paper_id}"
+    },
+    "type": "BaseRESTTool",
+    "test_examples": [
+      {"paper_id": "DOI:10.1126/science.1225829"},
+      {"paper_id": "PMID:22745249"},
+      {"paper_id": "68d962effe5520777791bd6ec8ffa4b963ba4f38"}
+    ],
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "object",
+          "description": "Detailed paper metadata from Semantic Scholar",
+          "properties": {
+            "paperId": {
+              "type": "string",
+              "description": "Semantic Scholar paper ID (40-char hex)"
+            },
+            "title": {
+              "type": "string",
+              "description": "Paper title"
+            },
+            "abstract": {
+              "type": ["string", "null"],
+              "description": "Paper abstract"
+            },
+            "year": {
+              "type": ["integer", "null"],
+              "description": "Publication year"
+            },
+            "citationCount": {
+              "type": ["integer", "null"],
+              "description": "Number of citations"
+            },
+            "referenceCount": {
+              "type": ["integer", "null"],
+              "description": "Number of references"
+            },
+            "journal": {
+              "type": ["object", "null"],
+              "description": "Journal information",
+              "properties": {
+                "name": {"type": "string"},
+                "pages": {"type": ["string", "null"]},
+                "volume": {"type": ["string", "null"]}
+              }
+            },
+            "publicationTypes": {
+              "type": ["array", "null"],
+              "description": "Publication types (e.g., JournalArticle, Review, Conference)",
+              "items": {"type": "string"}
+            },
+            "openAccessPdf": {
+              "type": ["object", "null"],
+              "description": "Open access PDF link if available",
+              "properties": {
+                "url": {"type": "string"},
+                "status": {"type": "string"}
+              }
+            },
+            "externalIds": {
+              "type": ["object", "null"],
+              "description": "External identifiers (DOI, PubMed, ArXiv, MAG, CorpusId)",
+              "properties": {
+                "DOI": {"type": ["string", "null"]},
+                "PubMed": {"type": ["string", "null"]},
+                "ArXiv": {"type": ["string", "null"]},
+                "CorpusId": {"type": ["integer", "null"]}
+              }
+            },
+            "authors": {
+              "type": ["array", "null"],
+              "description": "Author list",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "authorId": {"type": ["string", "null"]},
+                  "name": {"type": "string"}
+                }
+              }
+            },
+            "publicationDate": {
+              "type": ["string", "null"],
+              "description": "Publication date in YYYY-MM-DD format"
+            },
+            "fieldsOfStudy": {
+              "type": ["array", "null"],
+              "description": "Fields of study (e.g., Biology, Medicine, Computer Science)",
+              "items": {"type": "string"}
+            }
+          }
+        },
+        {
+          "type": "object",
+          "properties": {
+            "error": {
+              "type": "string",
+              "description": "Error message"
+            }
+          },
+          "required": ["error"]
+        }
+      ]
+    }
+  },
+  {
+    "name": "SemanticScholar_search_authors",
+    "description": "Search for researchers/authors on Semantic Scholar by name. Returns author IDs, names, h-index, citation count, paper count, and affiliations. Use the authorId from results with SemanticScholar_get_author for detailed profiles. Rate limits: 1 req/sec without API key.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "query": {
+          "type": "string",
+          "description": "Author name to search for (e.g., 'Jennifer Doudna', 'Oren Etzioni', 'Yann LeCun')"
+        },
+        "limit": {
+          "type": "integer",
+          "description": "Maximum number of results (default 5, max 1000)",
+          "default": 5
+        },
+        "fields": {
+          "type": "string",
+          "description": "Comma-separated fields: name,hIndex,citationCount,paperCount,affiliations",
+          "default": "name,hIndex,citationCount,paperCount,affiliations"
+        }
+      },
+      "required": ["query"]
+    },
+    "fields": {
+      "endpoint": "https://api.semanticscholar.org/graph/v1/author/search"
+    },
+    "type": "BaseRESTTool",
+    "test_examples": [
+      {"query": "Jennifer Doudna"},
+      {"query": "Oren Etzioni", "limit": 3},
+      {"query": "Yoshua Bengio"}
+    ],
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "object",
+          "description": "Author search results from Semantic Scholar",
+          "properties": {
+            "total": {
+              "type": ["integer", "null"],
+              "description": "Total number of matching authors"
+            },
+            "data": {
+              "type": "array",
+              "description": "Array of matching author records",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "authorId": {
+                    "type": ["string", "null"],
+                    "description": "Semantic Scholar author ID. Use with SemanticScholar_get_author."
+                  },
+                  "name": {
+                    "type": "string",
+                    "description": "Author display name"
+                  },
+                  "hIndex": {
+                    "type": ["integer", "null"],
+                    "description": "h-index"
+                  },
+                  "citationCount": {
+                    "type": ["integer", "null"],
+                    "description": "Total citation count"
+                  },
+                  "paperCount": {
+                    "type": ["integer", "null"],
+                    "description": "Total number of papers"
+                  },
+                  "affiliations": {
+                    "type": ["array", "null"],
+                    "description": "Current affiliations",
+                    "items": {"type": "string"}
+                  }
+                }
+              }
+            }
+          }
+        },
+        {
+          "type": "object",
+          "properties": {
+            "error": {
+              "type": "string",
+              "description": "Error message"
+            }
+          },
+          "required": ["error"]
+        }
+      ]
+    }
+  },
+  {
+    "name": "SemanticScholar_get_author",
+    "description": "Get detailed profile for a specific author on Semantic Scholar by author ID. Returns name, h-index, citation count, paper count, affiliations, homepage, and optionally their paper list with titles, years, and citation counts. Use SemanticScholar_search_authors first to find the author ID.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "author_id": {
+          "type": "string",
+          "description": "Semantic Scholar author ID (e.g., '1741101' for Oren Etzioni). Find using SemanticScholar_search_authors."
+        },
+        "fields": {
+          "type": "string",
+          "description": "Comma-separated fields: name,hIndex,citationCount,paperCount,affiliations,homepage,papers.title,papers.year,papers.citationCount,papers.paperId",
+          "default": "name,hIndex,citationCount,paperCount,affiliations,homepage,papers.title,papers.year,papers.citationCount,papers.paperId"
+        }
+      },
+      "required": ["author_id"]
+    },
+    "fields": {
+      "endpoint": "https://api.semanticscholar.org/graph/v1/author/{author_id}"
+    },
+    "type": "BaseRESTTool",
+    "test_examples": [
+      {"author_id": "1741101"},
+      {"author_id": "1741101", "fields": "name,hIndex,citationCount,paperCount,affiliations"}
+    ],
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "object",
+          "description": "Detailed author profile from Semantic Scholar",
+          "properties": {
+            "authorId": {
+              "type": ["string", "null"],
+              "description": "Author ID"
+            },
+            "name": {
+              "type": "string",
+              "description": "Author name"
+            },
+            "hIndex": {
+              "type": ["integer", "null"],
+              "description": "h-index"
+            },
+            "citationCount": {
+              "type": ["integer", "null"],
+              "description": "Total citations across all papers"
+            },
+            "paperCount": {
+              "type": ["integer", "null"],
+              "description": "Total number of papers"
+            },
+            "affiliations": {
+              "type": ["array", "null"],
+              "description": "Current affiliations",
+              "items": {"type": "string"}
+            },
+            "homepage": {
+              "type": ["string", "null"],
+              "description": "Author's homepage URL"
+            },
+            "papers": {
+              "type": ["array", "null"],
+              "description": "Author's papers",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "paperId": {"type": ["string", "null"]},
+                  "title": {"type": ["string", "null"]},
+                  "year": {"type": ["integer", "null"]},
+                  "citationCount": {"type": ["integer", "null"]}
+                }
+              }
+            }
+          }
+        },
+        {
+          "type": "object",
+          "properties": {
+            "error": {
+              "type": "string",
+              "description": "Error message"
+            }
+          },
+          "required": ["error"]
+        }
+      ]
+    }
+  },
+  {
+    "name": "SemanticScholar_get_recommendations",
+    "description": "Get paper recommendations from Semantic Scholar for a given paper. Returns papers similar to or related to the input paper based on Semantic Scholar's recommendation algorithm. Useful for literature discovery - finding related work that you might have missed. Requires a Semantic Scholar paper ID (40-char hex). Use SemanticScholar_get_paper with DOI: prefix first to get the paper ID if you only have a DOI.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "paper_id": {
+          "type": "string",
+          "description": "Semantic Scholar paper ID (40-char hex, e.g., '68d962effe5520777791bd6ec8ffa4b963ba4f38'). Get this from SemanticScholar_get_paper or SemanticScholar_search_papers."
+        },
+        "limit": {
+          "type": "integer",
+          "description": "Number of recommendations to return (default 10, max 500)",
+          "default": 10
+        },
+        "fields": {
+          "type": "string",
+          "description": "Comma-separated fields for recommended papers: title,year,citationCount,abstract,authors,externalIds",
+          "default": "title,year,citationCount,abstract,authors,externalIds"
+        }
+      },
+      "required": ["paper_id"]
+    },
+    "fields": {
+      "endpoint": "https://api.semanticscholar.org/recommendations/v1/papers/forpaper/{paper_id}"
+    },
+    "type": "BaseRESTTool",
+    "test_examples": [
+      {"paper_id": "68d962effe5520777791bd6ec8ffa4b963ba4f38", "limit": 5},
+      {"paper_id": "204e3073870fae3d05bcbc2f6a8e263d9b72e776", "limit": 3}
+    ],
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "object",
+          "description": "Paper recommendations from Semantic Scholar",
+          "required": ["recommendedPapers"],
+          "properties": {
+            "recommendedPapers": {
+              "type": "array",
+              "description": "Array of recommended papers",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "paperId": {
+                    "type": ["string", "null"],
+                    "description": "Semantic Scholar paper ID"
+                  },
+                  "title": {
+                    "type": ["string", "null"],
+                    "description": "Paper title"
+                  },
+                  "year": {
+                    "type": ["integer", "null"],
+                    "description": "Publication year"
+                  },
+                  "citationCount": {
+                    "type": ["integer", "null"],
+                    "description": "Number of citations"
+                  },
+                  "abstract": {
+                    "type": ["string", "null"],
+                    "description": "Paper abstract"
+                  },
+                  "authors": {
+                    "type": ["array", "null"],
+                    "items": {
+                      "type": "object",
+                      "properties": {
+                        "authorId": {"type": ["string", "null"]},
+                        "name": {"type": "string"}
+                      }
+                    }
+                  },
+                  "externalIds": {
+                    "type": ["object", "null"],
+                    "properties": {
+                      "DOI": {"type": ["string", "null"]},
+                      "PubMed": {"type": ["string", "null"]}
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        {
+          "type": "object",
+          "properties": {
+            "error": {
+              "type": "string",
+              "description": "Error message"
+            }
+          },
+          "required": ["error"]
+        }
+      ]
+    }
+  }
+]

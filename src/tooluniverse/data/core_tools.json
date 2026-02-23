@@ -212,7 +212,7 @@
       ]
     },
     "return_schema": {
-      "type": "object",
+      "type": ["object", "null"],
       "properties": {
         "status": { "type": "string", "enum": ["success", "error"] },
         "pdf_url": { "type": "string" },
@@ -253,8 +253,8 @@
     },
     "test_examples": [
       {
-        "url": "https://core.ac.uk/download/pdf/153370038.pdf",
-        "terms": ["rs738409", "rs58542926"],
+        "url": "https://arxiv.org/pdf/1706.03762.pdf",
+        "terms": ["transformer", "attention"],
         "window_chars": 200
       }
     ]

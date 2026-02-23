@@ -118,11 +118,14 @@ Create a configuration file to automatically load your remote tool:
 .. code-block:: python
 
    # Direct tool access (if tool is loaded)
-   result = tu.tools.remote_text_processor(
-       text="Hello World",
-       operation="uppercase"
-   )
-   print(result)
+   try:
+       result = tu.tools.remote_text_processor(
+           text="Hello World",
+           operation="uppercase"
+       )
+       print(result)
+   except AttributeError:
+       print("remote_text_processor not loaded — configure remote_tools_config.json first")
 
 **Load the configuration in ToolUniverse:**
 

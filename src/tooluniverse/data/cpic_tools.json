@@ -1,0 +1,774 @@
+[
+  {
+    "name": "CPIC_get_gene_info",
+    "description": "Get pharmacogenomics information for a gene from the Clinical Pharmacogenomics Implementation Consortium (CPIC) database. Returns gene coordinates, sequence IDs, and cross-references to PharmGKB, HGNC, NCBI, and Ensembl. Use this to find which genes are pharmacogenomically relevant. Example genes: CYP2D6, CYP2C19, CYP2C9, SLCO1B1, TPMT, DPYD, UGT1A1, VKORC1, G6PD.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "symbol": {
+          "type": "string",
+          "description": "Gene symbol (e.g., 'CYP2D6', 'CYP2C19', 'SLCO1B1', 'TPMT', 'DPYD')"
+        }
+      },
+      "required": [
+        "symbol"
+      ]
+    },
+    "fields": {
+      "endpoint": "https://api.cpicpgx.org/v1/gene?symbol=eq.{symbol}"
+    },
+    "type": "BaseRESTTool",
+    "test_examples": [
+      {
+        "symbol": "CYP2D6"
+      },
+      {
+        "symbol": "CYP2C19"
+      }
+    ],
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "array",
+          "description": "Gene pharmacogenomics information",
+          "items": {
+            "type": "object",
+            "properties": {
+              "symbol": {
+                "type": "string"
+              },
+              "chr": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "genesequenceid": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "hgncid": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "ncbiid": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "ensemblid": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "pharmgkbid": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              }
+            }
+          }
+        },
+        {
+          "type": "object",
+          "properties": {
+            "error": {
+              "type": "string",
+              "description": "Error message if the request failed"
+            }
+          },
+          "required": [
+            "error"
+          ]
+        }
+      ]
+    }
+  },
+  {
+    "name": "CPIC_list_pgx_genes",
+    "description": "List all pharmacogenomics genes curated by the Clinical Pharmacogenomics Implementation Consortium (CPIC). Returns 130+ genes with known drug interactions including CYP enzymes, transporters, and other pharmacogenes. Includes gene coordinates, sequence IDs, and database cross-references.",
+    "parameter": {
+      "type": "object",
+      "properties": {}
+    },
+    "fields": {
+      "endpoint": "https://api.cpicpgx.org/v1/gene"
+    },
+    "type": "BaseRESTTool",
+    "test_examples": [
+      {}
+    ],
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "array",
+          "description": "List of pharmacogenomics genes",
+          "items": {
+            "type": "object",
+            "properties": {
+              "symbol": {
+                "type": "string"
+              },
+              "chr": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "hgncid": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "pharmgkbid": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              }
+            }
+          }
+        },
+        {
+          "type": "object",
+          "properties": {
+            "error": {
+              "type": "string",
+              "description": "Error message if the request failed"
+            }
+          },
+          "required": [
+            "error"
+          ]
+        }
+      ]
+    }
+  },
+  {
+    "name": "CPIC_get_drug_info",
+    "description": "Get pharmacogenomics information for a drug from the CPIC database. Returns drug identifiers including PharmGKB ID, RxNorm, DrugBank, and ATC codes. Use to find pharmacogenomics guidelines for a specific drug. Example drugs: warfarin, codeine, clopidogrel, simvastatin, tamoxifen, fluorouracil, mercaptopurine.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "name": {
+          "type": "string",
+          "description": "Drug name in lowercase (e.g., 'warfarin', 'codeine', 'clopidogrel', 'simvastatin')"
+        }
+      },
+      "required": [
+        "name"
+      ]
+    },
+    "fields": {
+      "endpoint": "https://api.cpicpgx.org/v1/drug?name=eq.{name}"
+    },
+    "type": "BaseRESTTool",
+    "test_examples": [
+      {
+        "name": "warfarin"
+      },
+      {
+        "name": "codeine"
+      }
+    ],
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "array",
+          "description": "Drug pharmacogenomics information",
+          "items": {
+            "type": "object",
+            "properties": {
+              "drugid": {
+                "type": "string"
+              },
+              "name": {
+                "type": "string"
+              },
+              "pharmgkbid": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "rxnormid": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "drugbankid": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "atcid": {
+                "type": [
+                  "array",
+                  "null"
+                ]
+              }
+            }
+          }
+        },
+        {
+          "type": "object",
+          "properties": {
+            "error": {
+              "type": "string",
+              "description": "Error message if the request failed"
+            }
+          },
+          "required": [
+            "error"
+          ]
+        }
+      ]
+    }
+  },
+  {
+    "name": "CPIC_get_gene_drug_pairs",
+    "description": "Get all gene-drug pairs for a pharmacogene from CPIC. Shows which drugs are affected by variants in a specific gene, with CPIC evidence level and PharmGKB clinical annotation level. Evidence levels: A (strongest) to D (weakest). Useful for understanding the clinical significance of a pharmacogene.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "genesymbol": {
+          "type": "string",
+          "description": "Gene symbol (e.g., 'CYP2D6', 'CYP2C19', 'SLCO1B1', 'TPMT', 'DPYD', 'VKORC1')"
+        }
+      },
+      "required": [
+        "genesymbol"
+      ]
+    },
+    "fields": {
+      "endpoint": "https://api.cpicpgx.org/v1/pair?genesymbol=eq.{genesymbol}"
+    },
+    "type": "BaseRESTTool",
+    "test_examples": [
+      {
+        "genesymbol": "CYP2D6"
+      },
+      {
+        "genesymbol": "DPYD"
+      }
+    ],
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "array",
+          "description": "Gene-drug pairs with evidence levels",
+          "items": {
+            "type": "object",
+            "properties": {
+              "pairid": {
+                "type": "integer"
+              },
+              "genesymbol": {
+                "type": "string"
+              },
+              "drugid": {
+                "type": "string"
+              },
+              "guidelineid": {
+                "type": [
+                  "integer",
+                  "null"
+                ]
+              },
+              "usedforrecommendation": {
+                "type": "boolean"
+              },
+              "cpiclevel": {
+                "type": "string",
+                "description": "CPIC evidence level (A, B, B/C, C, D)"
+              },
+              "pgkbcalevel": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "PharmGKB clinical annotation level"
+              },
+              "pgxtesting": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "PGx testing recommendation"
+              }
+            }
+          }
+        },
+        {
+          "type": "object",
+          "properties": {
+            "error": {
+              "type": "string",
+              "description": "Error message if the request failed"
+            }
+          },
+          "required": [
+            "error"
+          ]
+        }
+      ]
+    }
+  },
+  {
+    "name": "CPIC_list_guidelines",
+    "description": "List all CPIC pharmacogenomic guidelines. Returns 31 evidence-based guidelines for using pharmacogenomic test results to optimize drug therapy. Each guideline covers one or more gene-drug pairs with specific dosing recommendations based on genotype/phenotype. Includes guideline ID, name, URL, associated genes, and PharmGKB IDs. Use the returned guideline ID with CPIC_get_recommendations to retrieve specific dosing recommendations.",
+    "parameter": {
+      "type": "object",
+      "properties": {},
+      "required": []
+    },
+    "fields": {
+      "endpoint": "https://api.cpicpgx.org/v1/guideline"
+    },
+    "type": "BaseRESTTool",
+    "test_examples": [
+      {}
+    ],
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "array",
+          "description": "List of CPIC pharmacogenomic guidelines",
+          "items": {
+            "type": "object",
+            "properties": {
+              "id": {
+                "type": "integer",
+                "description": "Guideline numeric ID - use with CPIC_get_recommendations"
+              },
+              "version": {
+                "type": "integer",
+                "description": "Current version number of the guideline"
+              },
+              "name": {
+                "type": "string",
+                "description": "Full name of the guideline (e.g., 'CYP2D6 and Codeine')"
+              },
+              "url": {
+                "type": "string",
+                "description": "URL to the full guideline on cpicpgx.org"
+              },
+              "pharmgkbid": {
+                "type": [
+                  "array",
+                  "null"
+                ],
+                "description": "Associated PharmGKB guideline annotation IDs"
+              },
+              "genes": {
+                "type": [
+                  "array",
+                  "null"
+                ],
+                "description": "List of gene symbols covered by this guideline (e.g., ['CYP2D6'])"
+              },
+              "notesonusage": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "Additional usage notes"
+              },
+              "clinpgxid": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "ClinPGx identifier"
+              }
+            }
+          }
+        },
+        {
+          "type": "object",
+          "properties": {
+            "error": {
+              "type": "string",
+              "description": "Error message if the request failed"
+            }
+          },
+          "required": [
+            "error"
+          ]
+        }
+      ]
+    }
+  },
+  {
+    "name": "CPIC_get_recommendations",
+    "description": "Get drug dosing recommendations from a specific CPIC pharmacogenomic guideline. Returns clinically actionable recommendations that link genotype/phenotype to drug prescribing actions. Each recommendation includes the classification strength (Strong, Moderate, Optional, No recommendation), the drug recommendation text, allele status context, and clinical implications. Use CPIC_list_guidelines first to obtain valid guideline IDs. Key guideline IDs: 100421 (HLA-B/abacavir), 100414 (CYP2D6/codeine), 100412 (CYP2C9,VKORC1/warfarin), 100416 (CYP2D6/amitriptyline).",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "guideline_id": {
+          "type": "integer",
+          "description": "CPIC guideline numeric ID (e.g., 100421 for HLA-B/abacavir, 100414 for CYP2D6/codeine). Obtain IDs from CPIC_list_guidelines."
+        },
+        "limit": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "description": "Maximum number of recommendations to return (default 50)"
+        },
+        "offset": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "description": "Number of recommendations to skip for pagination (default 0)"
+        }
+      },
+      "required": [
+        "guideline_id"
+      ]
+    },
+    "fields": {
+      "endpoint": "https://api.cpicpgx.org/v1/recommendation?select=*&guidelineid=eq.{guideline_id}&limit={limit}&offset={offset}"
+    },
+    "type": "BaseRESTTool",
+    "test_examples": [
+      {
+        "guideline_id": 100421,
+        "limit": 10,
+        "offset": 0
+      },
+      {
+        "guideline_id": 100414,
+        "limit": 10,
+        "offset": 0
+      }
+    ],
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "array",
+          "description": "Drug dosing recommendations from the CPIC guideline",
+          "items": {
+            "type": "object",
+            "properties": {
+              "id": {
+                "type": "integer",
+                "description": "Unique recommendation ID"
+              },
+              "guidelineid": {
+                "type": "integer",
+                "description": "Parent guideline ID"
+              },
+              "drugid": {
+                "type": "string",
+                "description": "RxNorm drug identifier (e.g., 'RxNorm:190521')"
+              },
+              "drugrecommendation": {
+                "type": "string",
+                "description": "Clinical prescribing recommendation text"
+              },
+              "classification": {
+                "type": "string",
+                "description": "Recommendation strength: Strong, Moderate, Optional, or No recommendation"
+              },
+              "implications": {
+                "type": "object",
+                "description": "Gene-specific clinical implications (gene symbol -> implication text)"
+              },
+              "phenotypes": {
+                "type": "object",
+                "description": "Phenotype assignments per gene"
+              },
+              "allelestatus": {
+                "type": "object",
+                "description": "Allele status context per gene (e.g., HLA-B*57:01 positive/negative)"
+              },
+              "population": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "Target patient population (e.g., 'general', 'pediatric')"
+              },
+              "comments": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "Additional clinical comments"
+              },
+              "dosinginformation": {
+                "type": "boolean",
+                "description": "Whether the recommendation includes specific dosing information"
+              },
+              "alternatedrugavailable": {
+                "type": "boolean",
+                "description": "Whether an alternative drug is available"
+              }
+            }
+          }
+        },
+        {
+          "type": "object",
+          "properties": {
+            "error": {
+              "type": "string",
+              "description": "Error message if the request failed"
+            }
+          },
+          "required": [
+            "error"
+          ]
+        }
+      ]
+    }
+  },
+  {
+    "name": "CPIC_search_gene_drug_pairs",
+    "description": "Search CPIC gene-drug pairs by gene symbol and/or CPIC evidence level. Gene symbol should be the standard HGNC symbol (e.g., \"CYP2D6\", \"DPYD\", \"TPMT\"). CPIC level indicates evidence strength: A=highest evidence, B=moderate, C=limited, D=for information only. Returns gene-drug pairs with guideline IDs for further lookup.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "genesymbol": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "PostgREST filter for gene symbol, prefix with 'eq.' (e.g., 'eq.CYP2D6', 'eq.DPYD', 'eq.TPMT'). Omit to search all genes."
+        },
+        "cpiclevel": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "PostgREST filter for CPIC evidence level, prefix with 'eq.' (e.g., 'eq.A', 'eq.B', 'eq.B/C', 'eq.C', 'eq.D'). Omit to include all levels."
+        },
+        "limit": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "description": "Maximum number of results to return (default 50)"
+        }
+      },
+      "required": []
+    },
+    "fields": {
+      "endpoint": "https://api.cpicpgx.org/v1/pair?select=genesymbol,drugid,cpiclevel,guidelineid,usedforrecommendation,pgkbcalevel"
+    },
+    "type": "BaseRESTTool",
+    "test_examples": [
+      {
+        "genesymbol": "eq.CYP2D6",
+        "limit": 10
+      },
+      {
+        "cpiclevel": "eq.A",
+        "limit": 20
+      }
+    ],
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "array",
+          "description": "Gene-drug pairs matching the search filters",
+          "items": {
+            "type": "object",
+            "properties": {
+              "genesymbol": {
+                "type": "string",
+                "description": "HGNC gene symbol (e.g., 'CYP2D6')"
+              },
+              "drugid": {
+                "type": "string",
+                "description": "RxNorm drug identifier (e.g., 'RxNorm:704')"
+              },
+              "cpiclevel": {
+                "type": "string",
+                "description": "CPIC evidence level: A (strongest), B, B/C, C, D (weakest)"
+              },
+              "guidelineid": {
+                "type": [
+                  "integer",
+                  "null"
+                ],
+                "description": "CPIC guideline ID - use with CPIC_get_recommendations for dosing details"
+              },
+              "usedforrecommendation": {
+                "type": "boolean",
+                "description": "Whether this pair is used for clinical recommendations"
+              },
+              "pgkbcalevel": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "PharmGKB clinical annotation level (e.g., '1A', '2A', '3')"
+              }
+            }
+          }
+        },
+        {
+          "type": "object",
+          "properties": {
+            "error": {
+              "type": "string",
+              "description": "Error message if the request failed"
+            }
+          },
+          "required": [
+            "error"
+          ]
+        }
+      ]
+    }
+  },
+  {
+    "name": "CPIC_list_drugs",
+    "description": "List all drugs in the CPIC database that have pharmacogenomic annotations. Returns drug names and their associated CPIC guideline IDs. Drugs without a guideline ID have annotations but no full CPIC dosing guideline yet. Use the guidelineid with CPIC_get_recommendations to retrieve dosing recommendations. Covers 100+ drugs including commonly used medications like warfarin, codeine, clopidogrel, simvastatin, tamoxifen, fluorouracil, and abacavir.",
+    "parameter": {
+      "type": "object",
+      "properties": {},
+      "required": []
+    },
+    "fields": {
+      "endpoint": "https://api.cpicpgx.org/v1/drug?select=name,guidelineid&limit=200"
+    },
+    "type": "BaseRESTTool",
+    "test_examples": [
+      {}
+    ],
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "array",
+          "description": "List of drugs with CPIC pharmacogenomic annotations",
+          "items": {
+            "type": "object",
+            "properties": {
+              "name": {
+                "type": "string",
+                "description": "Drug name in lowercase (e.g., 'warfarin', 'codeine', 'abacavir')"
+              },
+              "guidelineid": {
+                "type": [
+                  "integer",
+                  "null"
+                ],
+                "description": "CPIC guideline ID if a full dosing guideline exists, null if only annotated. Use with CPIC_get_recommendations."
+              }
+            }
+          }
+        },
+        {
+          "type": "object",
+          "properties": {
+            "error": {
+              "type": "string",
+              "description": "Error message if the request failed"
+            }
+          },
+          "required": [
+            "error"
+          ]
+        }
+      ]
+    }
+  },
+  {
+    "name": "CPIC_get_alleles",
+    "description": "Get pharmacogenomics alleles and their functional status for a gene from CPIC. Returns allele names, functional status (normal, decreased, no function, increased, uncertain, unknown), and activity values. Critical for translating genotype to phenotype (e.g., CYP2D6 *4 = no function, CYP2D6 *1 = normal function).",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "genesymbol": {
+          "type": "string",
+          "description": "Gene symbol (e.g., 'CYP2D6', 'CYP2C19', 'TPMT', 'DPYD')"
+        },
+        "limit": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "description": "Maximum number of alleles to return (default 50)"
+        }
+      },
+      "required": [
+        "genesymbol"
+      ]
+    },
+    "fields": {
+      "endpoint": "https://api.cpicpgx.org/v1/allele?genesymbol=eq.{genesymbol}&select=name,functionalstatus,activityvalue,clinicalfunctionalstatus&limit={limit}"
+    },
+    "type": "BaseRESTTool",
+    "test_examples": [
+      {
+        "genesymbol": "CYP2D6",
+        "limit": 20
+      },
+      {
+        "genesymbol": "DPYD",
+        "limit": 20
+      }
+    ],
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "array",
+          "description": "Gene alleles with functional status",
+          "items": {
+            "type": "object",
+            "properties": {
+              "name": {
+                "type": "string",
+                "description": "Allele name (e.g., '*1', '*4', 'c.1905+1G>A')"
+              },
+              "functionalstatus": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "Functional status: normal function, decreased function, no function, increased function, uncertain function, unknown function"
+              },
+              "activityvalue": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "clinicalfunctionalstatus": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              }
+            }
+          }
+        },
+        {
+          "type": "object",
+          "properties": {
+            "error": {
+              "type": "string",
+              "description": "Error message if the request failed"
+            }
+          },
+          "required": [
+            "error"
+          ]
+        }
+      ]
+    }
+  }
+]

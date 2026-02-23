@@ -16,7 +16,7 @@ def STRING_ppi_enrichment(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> dict[str, Any]:
+) -> Any:
     """
     Test if your protein set has more interactions than expected by chance (PPI = Protein-Protein Int...
 
@@ -37,7 +37,7 @@ def STRING_ppi_enrichment(
 
     Returns
     -------
-    dict[str, Any]
+    Any
     """
     # Handle mutable defaults to avoid B006 linting error
 
