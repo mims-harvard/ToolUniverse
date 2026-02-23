@@ -15,7 +15,6 @@ Optionally, share your collection and tool definition on **Hugging Face** so oth
    with your own names: ``legal_database``, ``research_papers``, ``customer_support``, ``biology_knowledge``, etc.
    The workflow and commands are identical—only the names and descriptions change.
 
-
 What you’ll do
 --------------
 
@@ -36,6 +35,9 @@ What you’ll do
    # From the repo root
    python -m venv .venv && source .venv/bin/activate
    uv pip install tooluniverse
+   # if macOS run below: required for FTS5 support
+   brew install python3.12 sqlite 
+
 
 If you’re developing locally, use:
 
