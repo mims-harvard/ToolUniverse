@@ -1,36 +1,33 @@
 """
-ORCID_search_researchers
+CellPainting_get_well_data
 
-Search ORCID registry for researchers by keyword query. Returns ORCID iDs matching the search. Su...
+Get well-level metadata and image links for a specific plate in a Cell Painting experiment from t...
 """
 
 from typing import Any, Optional, Callable
 from ._shared_client import get_shared_client
 
 
-def ORCID_search_researchers(
+def CellPainting_get_well_data(
     operation: str,
-    query: str,
-    start: Optional[int] = 0,
-    rows: Optional[int] = 10,
+    plate_id: int,
+    limit: Optional[int] = 20,
     *,
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
 ) -> list[Any]:
     """
-    Search ORCID registry for researchers by keyword query. Returns ORCID iDs matching the search. Su...
+    Get well-level metadata and image links for a specific plate in a Cell Painting experiment from t...
 
     Parameters
     ----------
     operation : str
         Operation type
-    query : str
-        Search query (e.g., 'BRCA1 cancer genetics', 'Harvard genomics')
-    start : int
-        Pagination offset (0-based)
-    rows : int
-        Number of results to return
+    plate_id : int
+        IDR plate identifier (e.g., 5104 for a plate in idr0016 screenA)
+    limit : int
+        Maximum number of wells to return (default 20)
     stream_callback : Callable, optional
         Callback for streaming output
     use_cache : bool, default False
@@ -46,13 +43,8 @@ def ORCID_search_researchers(
 
     return get_shared_client().run_one_function(
         {
-            "name": "ORCID_search_researchers",
-            "arguments": {
-                "operation": operation,
-                "query": query,
-                "start": start,
-                "rows": rows,
-            },
+            "name": "CellPainting_get_well_data",
+            "arguments": {"operation": operation, "plate_id": plate_id, "limit": limit},
         },
         stream_callback=stream_callback,
         use_cache=use_cache,
@@ -60,4 +52,4 @@ def ORCID_search_researchers(
     )
 
 
-__all__ = ["ORCID_search_researchers"]
+__all__ = ["CellPainting_get_well_data"]

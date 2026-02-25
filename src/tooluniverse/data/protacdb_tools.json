@@ -1,0 +1,182 @@
+[
+  {
+    "name": "ProtacDB_search_protacs",
+    "type": "ProtacDBTool",
+    "description": "Search PROTAC-DB 3.0 for PROTAC (Proteolysis Targeting Chimera) compounds. Filter by target protein and/or E3 ligase. Returns PROTAC structures with DC50, Dmax, SMILES, cell line, and pharmacological data. At least one of target or e3_ligase is required. Use for: finding PROTACs targeting BRD4, KRAS, AR; comparing CRBN vs VHL-based PROTACs.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "operation": {
+          "type": "string",
+          "enum": [
+            "search_protacs"
+          ],
+          "description": "Operation type"
+        },
+        "target": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Target protein name or gene symbol (e.g., 'BRD4', 'KRAS', 'AR', 'BCL2'). At least one of target or e3_ligase required."
+        },
+        "e3_ligase": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "E3 ubiquitin ligase (e.g., 'CRBN', 'VHL', 'MDM2', 'XIAP'). At least one of target or e3_ligase required."
+        },
+        "max_results": {
+          "type": "integer",
+          "default": 50,
+          "description": "Maximum number of compounds to return (default 50, max 100)"
+        }
+      },
+      "required": [
+        "operation"
+      ]
+    },
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "array",
+          "items": {
+            "type": "object"
+          }
+        },
+        {
+          "type": "object",
+          "properties": {
+            "error": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "error"
+          ]
+        }
+      ]
+    },
+    "test_examples": [
+      {
+        "operation": "search_protacs",
+        "target": "BRD4",
+        "e3_ligase": "CRBN"
+      }
+    ]
+  },
+  {
+    "name": "ProtacDB_get_protac",
+    "type": "ProtacDBTool",
+    "description": "Get detailed information about a specific PROTAC compound by its PROTAC-DB ID. Returns full record including SMILES structure, warhead canonical SMILES, linker, E3 ligand, target protein, DC50 values, Dmax, cell lines tested, and literature references (DOI, journal).",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "operation": {
+          "type": "string",
+          "enum": [
+            "get_protac"
+          ],
+          "description": "Operation type"
+        },
+        "protac_id": {
+          "type": "string",
+          "description": "PROTAC-DB compound ID (e.g., '1', '42', '100')"
+        }
+      },
+      "required": [
+        "operation",
+        "protac_id"
+      ]
+    },
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "array",
+          "items": {
+            "type": "object"
+          }
+        },
+        {
+          "type": "object",
+          "properties": {
+            "error": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "error"
+          ]
+        }
+      ]
+    },
+    "test_examples": [
+      {
+        "operation": "get_protac",
+        "protac_id": "1"
+      }
+    ]
+  },
+  {
+    "name": "ProtacDB_search_targets",
+    "type": "ProtacDBTool",
+    "description": "Search PROTAC target proteins in PROTAC-DB 3.0. Returns target protein names (short and long). Over 446 unique targets available. Use for: discovering what proteins can be targeted by PROTACs, finding targets by gene symbol or protein name.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "operation": {
+          "type": "string",
+          "enum": [
+            "search_targets"
+          ],
+          "description": "Operation type"
+        },
+        "target_name": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Target protein name or gene symbol (e.g., 'BRD4', 'KRAS'). Returns all targets if omitted."
+        },
+        "uniprot_id": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "UniProt accession ID (e.g., 'O60885' for BRD4). Mutually exclusive with target_name."
+        }
+      },
+      "required": [
+        "operation"
+      ]
+    },
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "array",
+          "items": {
+            "type": "object"
+          }
+        },
+        {
+          "type": "object",
+          "properties": {
+            "error": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "error"
+          ]
+        }
+      ]
+    },
+    "test_examples": [
+      {
+        "operation": "search_targets",
+        "target_name": "BRD4"
+      }
+    ]
+  }
+]

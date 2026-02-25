@@ -151,6 +151,9 @@ src/tooluniverse/web_tools/
 src/tooluniverse/tools_generated/FILE_ORGANIZATION_LIST.md
 temp_docs_and_tests/
 
+# Parked tools pending API keys (not ready for publishing)
+temp_tools/
+
 # Session documentation (temporary - never push)
 *_SUMMARY.md
 *_REPORT.md

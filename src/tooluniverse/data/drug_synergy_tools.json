@@ -1,0 +1,164 @@
+[
+  {
+    "name": "DrugSynergy_calculate_bliss",
+    "type": "DrugSynergyTool",
+    "description": "Calculate Bliss Independence synergy score for a drug combination. Model: E_expected = E_a + E_b - E_a*E_b. Synergy score = (E_combo - E_expected) * 100. Positive = synergy; Negative = antagonism. Inputs are fractional inhibition values (0-1). Based on Bliss (1939). Use for: single-concentration combination screening, high-throughput synergy assessment.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "operation": {
+          "type": "string",
+          "enum": ["calculate_bliss"],
+          "description": "Operation type"
+        },
+        "effect_a": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 1,
+          "description": "Fractional inhibition of drug A alone (0=no effect, 1=complete inhibition)"
+        },
+        "effect_b": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 1,
+          "description": "Fractional inhibition of drug B alone (0=no effect, 1=complete inhibition)"
+        },
+        "effect_combination": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 1,
+          "description": "Observed fractional inhibition of the drug combination"
+        }
+      },
+      "required": ["operation", "effect_a", "effect_b", "effect_combination"]
+    },
+    "return_schema": {
+      "type": "object",
+      "properties": {
+        "model": {"type": "string"},
+        "effect_a": {"type": "number"},
+        "effect_b": {"type": "number"},
+        "effect_combination_observed": {"type": "number"},
+        "effect_combination_expected": {"type": "number"},
+        "bliss_synergy_score": {"type": "number"},
+        "interpretation": {"type": "string"},
+        "note": {"type": "string"}
+      }
+    },
+    "test_examples": [
+      {
+        "operation": "calculate_bliss",
+        "effect_a": 0.3,
+        "effect_b": 0.4,
+        "effect_combination": 0.58
+      }
+    ]
+  },
+  {
+    "name": "DrugSynergy_calculate_hsa",
+    "type": "DrugSynergyTool",
+    "description": "Calculate Highest Single Agent (HSA) synergy score for drug combinations across dose points. HSA expected = max(E_a, E_b) at each dose. Synergy = observed - HSA expected. Requires matching arrays of effects for drug A, drug B, and the combination. Use for: multi-dose combination matrices, identifying synergistic dose ranges.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "operation": {
+          "type": "string",
+          "enum": ["calculate_hsa"],
+          "description": "Operation type"
+        },
+        "effects_a": {
+          "type": "array",
+          "items": {"type": "number"},
+          "description": "Array of drug A inhibition effects at each dose point (0-1 or 0-100)"
+        },
+        "effects_b": {
+          "type": "array",
+          "items": {"type": "number"},
+          "description": "Array of drug B inhibition effects at each dose point (same length as effects_a)"
+        },
+        "effects_combo": {
+          "type": "array",
+          "items": {"type": "number"},
+          "description": "Array of combination inhibition effects at each dose point (same length as effects_a)"
+        }
+      },
+      "required": ["operation", "effects_a", "effects_b", "effects_combo"]
+    },
+    "return_schema": {
+      "type": "object",
+      "properties": {
+        "model": {"type": "string"},
+        "mean_hsa_synergy_score": {"type": "number"},
+        "max_hsa_synergy_score": {"type": "number"},
+        "min_hsa_synergy_score": {"type": "number"},
+        "synergy_scores_per_point": {"type": "array"},
+        "hsa_expected": {"type": "array"},
+        "interpretation": {"type": "string"},
+        "note": {"type": "string"}
+      }
+    },
+    "test_examples": [
+      {
+        "operation": "calculate_hsa",
+        "effects_a": [0.1, 0.2, 0.35, 0.5],
+        "effects_b": [0.15, 0.25, 0.4, 0.55],
+        "effects_combo": [0.3, 0.5, 0.65, 0.75]
+      }
+    ]
+  },
+  {
+    "name": "DrugSynergy_calculate_zip",
+    "type": "DrugSynergyTool",
+    "description": "Calculate ZIP (Zero Interaction Potency) delta synergy score from a full dose-response matrix. Fits Hill curves to marginal dose-response data for each drug and calculates expected additivity. Returns delta matrix where positive values indicate synergy. Based on Yadav et al. (2015). Use for: comprehensive combination screening matrices.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "operation": {
+          "type": "string",
+          "enum": ["calculate_zip"],
+          "description": "Operation type"
+        },
+        "doses_a": {
+          "type": "array",
+          "items": {"type": "number"},
+          "description": "Concentration values for drug A (e.g., [0.01, 0.1, 1, 10])"
+        },
+        "doses_b": {
+          "type": "array",
+          "items": {"type": "number"},
+          "description": "Concentration values for drug B (e.g., [0.01, 0.1, 1, 10])"
+        },
+        "viability_matrix": {
+          "type": "array",
+          "items": {
+            "type": "array",
+            "items": {"type": "number"}
+          },
+          "description": "2D matrix of cell viability percentages (0-100). Rows = doses_a, Columns = doses_b."
+        }
+      },
+      "required": ["operation", "doses_a", "doses_b", "viability_matrix"]
+    },
+    "return_schema": {
+      "type": "object",
+      "properties": {
+        "model": {"type": "string"},
+        "mean_zip_score": {"type": "number"},
+        "zip_delta_matrix": {"type": "array"},
+        "interpretation": {"type": "string"}
+      }
+    },
+    "test_examples": [
+      {
+        "operation": "calculate_zip",
+        "doses_a": [0.1, 1.0, 10.0],
+        "doses_b": [0.1, 1.0, 10.0],
+        "viability_matrix": [
+          [90, 70, 50],
+          [75, 55, 35],
+          [60, 40, 20]
+        ]
+      }
+    ]
+  }
+]

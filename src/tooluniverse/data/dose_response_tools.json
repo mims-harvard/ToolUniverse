@@ -1,0 +1,150 @@
+[
+  {
+    "name": "DoseResponse_fit_curve",
+    "type": "DoseResponseTool",
+    "description": "Nonlinear regression of paired concentration-response measurements to the Hill sigmoidal (4PL) model: f(x) = Emin + (Emax - Emin) / (1 + (EC50/x)^n). Returns the four fitted parameters (baseline Emin, plateau Emax, midpoint EC50, Hill exponent n) with standard errors, 95% CI for EC50, coefficient of determination R2, and predicted response at each measured concentration. Requires at least 4 positive concentration inputs. Useful for characterising pharmacological potency and assessing assay data quality.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "operation": {
+          "type": "string",
+          "enum": ["fit_curve"],
+          "description": "Operation type"
+        },
+        "concentrations": {
+          "type": "array",
+          "items": {"type": "number"},
+          "description": "Drug concentrations (must be positive, e.g., [0.001, 0.01, 0.1, 1, 10, 100] in µM). At least 4 points required."
+        },
+        "responses": {
+          "type": "array",
+          "items": {"type": "number"},
+          "description": "Observed responses at each concentration (e.g., % inhibition [0-100] or viability [0-100]). Same length as concentrations."
+        }
+      },
+      "required": ["operation", "concentrations", "responses"]
+    },
+    "return_schema": {
+      "type": "object",
+      "properties": {
+        "model": {"type": "string"},
+        "formula": {"type": "string"},
+        "parameters": {"type": "object"},
+        "goodness_of_fit": {"type": "object"},
+        "ic50_95_confidence_interval": {"type": "array"},
+        "standard_errors": {"type": "object"},
+        "fitted_values": {"type": "array"},
+        "input_concentrations": {"type": "array"},
+        "input_responses": {"type": "array"}
+      }
+    },
+    "test_examples": [
+      {
+        "operation": "fit_curve",
+        "concentrations": [0.001, 0.01, 0.1, 1.0, 10.0, 100.0],
+        "responses": [2, 5, 15, 50, 85, 95]
+      }
+    ]
+  },
+  {
+    "name": "DoseResponse_calculate_ic50",
+    "type": "DoseResponseTool",
+    "description": "Determine the half-maximal inhibitory or effective concentration (IC50/EC50) from paired concentration-response data by fitting the Hill sigmoidal equation. Requires a minimum of 4 data points that span the dynamic response range. Output includes EC50 with 95% confidence interval, Hill exponent n, top plateau Emax, bottom plateau Emin, R2 goodness-of-fit, and log10(EC50) for convenient pIC50 conversion. Suited to potency ranking in compound screens, structure-activity relationship analysis, and cross-assay comparisons.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "operation": {
+          "type": "string",
+          "enum": ["calculate_ic50"],
+          "description": "Operation type"
+        },
+        "concentrations": {
+          "type": "array",
+          "items": {"type": "number"},
+          "description": "Drug concentrations (positive values, e.g., in µM or nM)"
+        },
+        "responses": {
+          "type": "array",
+          "items": {"type": "number"},
+          "description": "Percent inhibition or effect values at each concentration"
+        }
+      },
+      "required": ["operation", "concentrations", "responses"]
+    },
+    "return_schema": {
+      "type": "object",
+      "properties": {
+        "ic50": {"type": "number"},
+        "ic50_95_confidence_interval": {"type": "array"},
+        "hill_slope": {"type": "number"},
+        "emax": {"type": "number"},
+        "emin": {"type": "number"},
+        "r_squared": {"type": "number"},
+        "log_ic50": {"type": "number"},
+        "note": {"type": "string"}
+      }
+    },
+    "test_examples": [
+      {
+        "operation": "calculate_ic50",
+        "concentrations": [0.001, 0.01, 0.1, 1.0, 10.0, 100.0],
+        "responses": [2, 5, 15, 50, 85, 95]
+      }
+    ]
+  },
+  {
+    "name": "DoseResponse_compare_potency",
+    "type": "DoseResponseTool",
+    "description": "Quantify relative potency between two compounds by independently fitting Hill sigmoidal curves to each concentration-response dataset and computing the EC50 fold-shift (compound B EC50 / compound A EC50). Reports EC50, Hill exponent, and plateau Emax per compound, the potency fold-ratio, and which compound is more potent. Applications include lead optimisation, matched-pair structure-activity analysis, and selectivity profiling.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "operation": {
+          "type": "string",
+          "enum": ["compare_potency"],
+          "description": "Operation type"
+        },
+        "conc_a": {
+          "type": "array",
+          "items": {"type": "number"},
+          "description": "Concentrations for compound A"
+        },
+        "resp_a": {
+          "type": "array",
+          "items": {"type": "number"},
+          "description": "Responses for compound A"
+        },
+        "conc_b": {
+          "type": "array",
+          "items": {"type": "number"},
+          "description": "Concentrations for compound B"
+        },
+        "resp_b": {
+          "type": "array",
+          "items": {"type": "number"},
+          "description": "Responses for compound B"
+        }
+      },
+      "required": ["operation", "conc_a", "resp_a", "conc_b", "resp_b"]
+    },
+    "return_schema": {
+      "type": "object",
+      "properties": {
+        "compound_a": {"type": "object"},
+        "compound_b": {"type": "object"},
+        "ic50_fold_shift_b_over_a": {"type": "number"},
+        "more_potent": {"type": "string"},
+        "potency_interpretation": {"type": "string"}
+      }
+    },
+    "test_examples": [
+      {
+        "operation": "compare_potency",
+        "conc_a": [0.01, 0.1, 1.0, 10.0, 100.0],
+        "resp_a": [5, 20, 50, 80, 95],
+        "conc_b": [0.01, 0.1, 1.0, 10.0, 100.0],
+        "resp_b": [2, 8, 30, 65, 90]
+      }
+    ]
+  }
+]

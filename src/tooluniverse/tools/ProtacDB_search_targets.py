@@ -1,36 +1,33 @@
 """
-ORCID_search_researchers
+ProtacDB_search_targets
 
-Search ORCID registry for researchers by keyword query. Returns ORCID iDs matching the search. Su...
+Search PROTAC target proteins in PROTAC-DB 3.0. Returns target protein names (short and long). Ov...
 """
 
 from typing import Any, Optional, Callable
 from ._shared_client import get_shared_client
 
 
-def ORCID_search_researchers(
+def ProtacDB_search_targets(
     operation: str,
-    query: str,
-    start: Optional[int] = 0,
-    rows: Optional[int] = 10,
+    target_name: Optional[str | Any] = None,
+    uniprot_id: Optional[str | Any] = None,
     *,
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> list[Any]:
+) -> Any:
     """
-    Search ORCID registry for researchers by keyword query. Returns ORCID iDs matching the search. Su...
+    Search PROTAC target proteins in PROTAC-DB 3.0. Returns target protein names (short and long). Ov...
 
     Parameters
     ----------
     operation : str
         Operation type
-    query : str
-        Search query (e.g., 'BRCA1 cancer genetics', 'Harvard genomics')
-    start : int
-        Pagination offset (0-based)
-    rows : int
-        Number of results to return
+    target_name : str | Any
+        Target protein name or gene symbol (e.g., 'BRD4', 'KRAS'). Returns all target...
+    uniprot_id : str | Any
+        UniProt accession ID (e.g., 'O60885' for BRD4). Mutually exclusive with targe...
     stream_callback : Callable, optional
         Callback for streaming output
     use_cache : bool, default False
@@ -40,18 +37,17 @@ def ORCID_search_researchers(
 
     Returns
     -------
-    list[Any]
+    Any
     """
     # Handle mutable defaults to avoid B006 linting error
 
     return get_shared_client().run_one_function(
         {
-            "name": "ORCID_search_researchers",
+            "name": "ProtacDB_search_targets",
             "arguments": {
                 "operation": operation,
-                "query": query,
-                "start": start,
-                "rows": rows,
+                "target_name": target_name,
+                "uniprot_id": uniprot_id,
             },
         },
         stream_callback=stream_callback,
@@ -60,4 +56,4 @@ def ORCID_search_researchers(
     )
 
 
-__all__ = ["ORCID_search_researchers"]
+__all__ = ["ProtacDB_search_targets"]

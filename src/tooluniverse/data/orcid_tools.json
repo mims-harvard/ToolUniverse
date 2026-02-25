@@ -1,414 +1,145 @@
 [
   {
-    "name": "ORCID_search_researchers",
-    "description": "Search the ORCID registry for researchers by name, affiliation, or keyword. ORCID provides persistent digital identifiers for researchers, ensuring proper attribution across scholarly communication. Returns ORCID iDs that can be used with ORCID_get_person and ORCID_get_works to retrieve detailed researcher profiles and publication lists. Useful for disambiguating authors, finding researcher identifiers, and linking researchers to their outputs.",
+    "name": "ORCID_get_profile",
+    "type": "ORCIDTool",
+    "description": "Get a researcher's full ORCID profile by ORCID iD. Returns name, biography, email, keywords, researcher URLs, and summary counts of works and employments. ORCID iDs have format XXXX-XXXX-XXXX-XXXX (e.g., 0000-0002-1825-0097). Use for: identifying researchers, getting affiliation info, finding publication counts.",
     "parameter": {
       "type": "object",
       "properties": {
-        "q": {
+        "operation": {
           "type": "string",
-          "description": "Search query using Lucene syntax. Examples: 'family-name:doudna AND given-names:jennifer', 'affiliation-org-name:MIT', 'keyword:CRISPR', 'ringgold-org-id:1846'. Supports AND/OR/NOT operators."
+          "enum": ["get_profile"],
+          "description": "Operation type"
         },
-        "rows": {
-          "type": "integer",
-          "description": "Number of results to return (default 10, max 200)",
-          "default": 10
+        "orcid": {
+          "type": "string",
+          "description": "ORCID iD in format XXXX-XXXX-XXXX-XXXX (e.g., '0000-0002-1825-0097')"
         }
       },
-      "required": [
-        "q"
-      ]
+      "required": ["operation", "orcid"]
     },
-    "fields": {
-      "endpoint": "https://pub.orcid.org/v3.0/search/",
-      "headers": {
-        "Accept": "application/json"
-      }
-    },
-    "type": "BaseRESTTool",
-    "test_examples": [
-      {
-        "q": "family-name:doudna AND given-names:jennifer"
-      },
-      {
-        "q": "family-name:lander AND given-names:eric",
-        "rows": 5
-      },
-      {
-        "q": "affiliation-org-name:MIT AND keyword:genomics"
-      }
-    ],
     "return_schema": {
-      "oneOf": [
-        {
-          "type": "object",
-          "description": "ORCID search results",
-          "properties": {
-            "num-found": {
-              "type": "integer",
-              "description": "Total number of matching ORCID records"
-            },
-            "result": {
-              "type": "array",
-              "description": "Array of matching ORCID records",
-              "items": {
-                "type": "object",
-                "properties": {
-                  "orcid-identifier": {
-                    "type": "object",
-                    "description": "ORCID identifier details",
-                    "properties": {
-                      "uri": {
-                        "type": "string",
-                        "description": "Full ORCID URI (e.g., https://orcid.org/0000-0001-9161-999X)"
-                      },
-                      "path": {
-                        "type": "string",
-                        "description": "ORCID iD (e.g., 0000-0001-9161-999X). Use this with ORCID_get_person and ORCID_get_works."
-                      },
-                      "host": {
-                        "type": "string",
-                        "description": "ORCID host (orcid.org)"
-                      }
-                    }
-                  }
-                }
-              }
-            }
-          }
-        },
-        {
-          "type": "object",
-          "properties": {
-            "error": {
-              "type": "string",
-              "description": "Error message"
-            }
-          },
-          "required": [
-            "error"
-          ]
-        }
-      ]
-    }
-  },
-  {
-    "name": "ORCID_get_person",
-    "description": "Get biographical information for a researcher by ORCID iD. Returns the researcher's name, biography, keywords, external identifiers (Scopus, ResearcherID, etc.), country, email addresses (if public), and website URLs. Use ORCID_search_researchers first to find the ORCID iD if you do not already have it. Combine with ORCID_get_works to get their publication list.",
-    "parameter": {
       "type": "object",
       "properties": {
-        "orcid_id": {
-          "type": "string",
-          "description": "ORCID iD in format XXXX-XXXX-XXXX-XXXX (e.g., '0000-0001-9161-999X' for Jennifer Doudna). Find using ORCID_search_researchers."
-        }
-      },
-      "required": [
-        "orcid_id"
-      ]
-    },
-    "fields": {
-      "endpoint": "https://pub.orcid.org/v3.0/{orcid_id}/person",
-      "headers": {
-        "Accept": "application/json"
+        "orcid": {"type": "string"},
+        "name": {},
+        "biography": {},
+        "emails": {},
+        "keywords": {},
+        "urls": {},
+        "works_count": {"type": "integer"},
+        "employments_count": {"type": "integer"}
       }
     },
-    "type": "BaseRESTTool",
     "test_examples": [
       {
-        "orcid_id": "0000-0001-9161-999X"
-      },
-      {
-        "orcid_id": "0000-0002-8843-5302"
+        "operation": "get_profile",
+        "orcid": "0000-0002-1825-0097"
       }
-    ],
-    "return_schema": {
-      "oneOf": [
-        {
-          "type": "object",
-          "description": "Researcher biographical information from ORCID",
-          "properties": {
-            "name": {
-              "type": "object",
-              "description": "Researcher's name",
-              "properties": {
-                "given-names": {
-                  "type": "object",
-                  "properties": {
-                    "value": {
-                      "type": "string"
-                    }
-                  }
-                },
-                "family-name": {
-                  "type": "object",
-                  "properties": {
-                    "value": {
-                      "type": "string"
-                    }
-                  }
-                },
-                "credit-name": {
-                  "type": [
-                    "object",
-                    "null"
-                  ],
-                  "description": "Published/credit name if different from given/family name"
-                }
-              }
-            },
-            "biography": {
-              "type": [
-                "object",
-                "null"
-              ],
-              "description": "Researcher biography text",
-              "properties": {
-                "content": {
-                  "type": [
-                    "string",
-                    "null"
-                  ]
-                }
-              }
-            },
-            "keywords": {
-              "type": "object",
-              "description": "Research keywords",
-              "properties": {
-                "keyword": {
-                  "type": "array",
-                  "items": {
-                    "type": "object",
-                    "properties": {
-                      "content": {
-                        "type": "string"
-                      }
-                    }
-                  }
-                }
-              }
-            },
-            "researcher-urls": {
-              "type": "object",
-              "description": "Researcher's websites and profiles",
-              "properties": {
-                "researcher-url": {
-                  "type": "array",
-                  "items": {
-                    "type": "object",
-                    "properties": {
-                      "url-name": {
-                        "type": [
-                          "string",
-                          "null"
-                        ]
-                      },
-                      "url": {
-                        "type": "object",
-                        "properties": {
-                          "value": {
-                            "type": "string"
-                          }
-                        }
-                      }
-                    }
-                  }
-                }
-              }
-            },
-            "external-identifiers": {
-              "type": "object",
-              "description": "External identifiers (Scopus Author ID, ResearcherID, etc.)"
-            },
-            "addresses": {
-              "type": "object",
-              "description": "Country/location information"
-            }
-          }
-        },
-        {
-          "type": "object",
-          "properties": {
-            "error": {
-              "type": "string",
-              "description": "Error message"
-            }
-          },
-          "required": [
-            "error"
-          ]
-        }
-      ]
-    }
+    ]
   },
   {
     "name": "ORCID_get_works",
-    "description": "Get the publication list (works) for a researcher by ORCID iD. Returns all works associated with the ORCID record, including titles, journal names, publication dates, DOIs, PubMed IDs, and other external identifiers. Works are grouped by deduplication. Use ORCID_search_researchers first to find the ORCID iD. This is the most comprehensive way to get a researcher's complete publication list from a trusted source.",
+    "type": "ORCIDTool",
+    "description": "Get list of publications and works for an ORCID researcher. Returns titles, publication types, dates, journal names, and external identifiers (DOI, PubMed ID). Use for: finding researcher's publication history, getting DOIs, assessing research output.",
     "parameter": {
       "type": "object",
       "properties": {
-        "orcid_id": {
+        "operation": {
           "type": "string",
-          "description": "ORCID iD in format XXXX-XXXX-XXXX-XXXX (e.g., '0000-0001-9161-999X' for Jennifer Doudna)"
+          "enum": ["get_works"],
+          "description": "Operation type"
+        },
+        "orcid": {
+          "type": "string",
+          "description": "ORCID iD in format XXXX-XXXX-XXXX-XXXX"
         }
       },
-      "required": [
-        "orcid_id"
-      ]
+      "required": ["operation", "orcid"]
     },
-    "fields": {
-      "endpoint": "https://pub.orcid.org/v3.0/{orcid_id}/works",
-      "headers": {
-        "Accept": "application/json"
-      }
+    "return_schema": {
+      "type": "array",
+      "items": {"type": "object"}
     },
-    "type": "BaseRESTTool",
     "test_examples": [
       {
-        "orcid_id": "0000-0001-9161-999X"
-      },
-      {
-        "orcid_id": "0000-0002-8843-5302"
+        "operation": "get_works",
+        "orcid": "0000-0002-1825-0097"
       }
-    ],
-    "return_schema": {
-      "oneOf": [
-        {
-          "type": "object",
-          "description": "ORCID works (publications) response",
-          "properties": {
-            "group": {
-              "type": "array",
-              "description": "Groups of works (deduplicated). Each group contains one or more work-summary entries for the same work.",
-              "items": {
-                "type": "object",
-                "properties": {
-                  "work-summary": {
-                    "type": "array",
-                    "description": "Work summaries within the group",
-                    "items": {
-                      "type": "object",
-                      "properties": {
-                        "title": {
-                          "type": "object",
-                          "properties": {
-                            "title": {
-                              "type": "object",
-                              "properties": {
-                                "value": {
-                                  "type": "string",
-                                  "description": "Publication title"
-                                }
-                              }
-                            }
-                          }
-                        },
-                        "publication-date": {
-                          "type": [
-                            "object",
-                            "null"
-                          ],
-                          "description": "Publication date with year/month/day components",
-                          "properties": {
-                            "year": {
-                              "type": "object",
-                              "properties": {
-                                "value": {
-                                  "type": "string"
-                                }
-                              }
-                            },
-                            "month": {
-                              "type": [
-                                "object",
-                                "null"
-                              ],
-                              "properties": {
-                                "value": {
-                                  "type": "string"
-                                }
-                              }
-                            }
-                          }
-                        },
-                        "journal-title": {
-                          "type": [
-                            "object",
-                            "null"
-                          ],
-                          "description": "Journal or venue name",
-                          "properties": {
-                            "value": {
-                              "type": "string"
-                            }
-                          }
-                        },
-                        "type": {
-                          "type": "string",
-                          "description": "Work type (e.g., journal-article, conference-paper, book-chapter)"
-                        },
-                        "external-ids": {
-                          "type": "object",
-                          "description": "External identifiers (DOI, PubMed ID, etc.)",
-                          "properties": {
-                            "external-id": {
-                              "type": "array",
-                              "items": {
-                                "type": "object",
-                                "properties": {
-                                  "external-id-type": {
-                                    "type": "string"
-                                  },
-                                  "external-id-value": {
-                                    "type": "string"
-                                  }
-                                }
-                              }
-                            }
-                          }
-                        },
-                        "url": {
-                          "type": [
-                            "object",
-                            "null"
-                          ],
-                          "description": "URL to the work",
-                          "properties": {
-                            "value": {
-                              "type": "string"
-                            }
-                          }
-                        }
-                      }
-                    }
-                  },
-                  "external-ids": {
-                    "type": "object",
-                    "description": "Group-level external identifiers"
-                  }
-                }
-              }
-            },
-            "last-modified-date": {
-              "type": ["object", "null"],
-              "description": "Last modification timestamp"
-            }
-          }
+    ]
+  },
+  {
+    "name": "ORCID_search_researchers",
+    "type": "ORCIDTool",
+    "description": "Search ORCID registry for researchers by keyword query. Returns ORCID iDs matching the search. Supports full-text search across names, affiliations, publications, and keywords. Use for: finding researchers working on specific topics, identifying collaborators, disambiguating authors.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "operation": {
+          "type": "string",
+          "enum": ["search_researchers"],
+          "description": "Operation type"
         },
-        {
-          "type": "object",
-          "properties": {
-            "error": {
-              "type": "string",
-              "description": "Error message"
-            }
-          },
-          "required": [
-            "error"
-          ]
+        "query": {
+          "type": "string",
+          "description": "Search query (e.g., 'BRCA1 cancer genetics', 'Harvard genomics')"
+        },
+        "start": {
+          "type": "integer",
+          "minimum": 0,
+          "default": 0,
+          "description": "Pagination offset (0-based)"
+        },
+        "rows": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 200,
+          "default": 10,
+          "description": "Number of results to return"
         }
-      ]
-    }
+      },
+      "required": ["operation", "query"]
+    },
+    "return_schema": {
+      "type": "array",
+      "items": {"type": "object"}
+    },
+    "test_examples": [
+      {
+        "operation": "search_researchers",
+        "query": "BRCA1 cancer genetics",
+        "rows": 5
+      }
+    ]
+  },
+  {
+    "name": "ORCID_get_employments",
+    "type": "ORCIDTool",
+    "description": "Get employment and affiliation history for an ORCID researcher. Returns organization names, departments, roles, and employment date ranges. Use for: verifying academic affiliations, tracing career history, finding current institution.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "operation": {
+          "type": "string",
+          "enum": ["get_employments"],
+          "description": "Operation type"
+        },
+        "orcid": {
+          "type": "string",
+          "description": "ORCID iD in format XXXX-XXXX-XXXX-XXXX"
+        }
+      },
+      "required": ["operation", "orcid"]
+    },
+    "return_schema": {
+      "type": "array",
+      "items": {"type": "object"}
+    },
+    "test_examples": [
+      {
+        "operation": "get_employments",
+        "orcid": "0000-0002-1825-0097"
+      }
+    ]
   }
 ]

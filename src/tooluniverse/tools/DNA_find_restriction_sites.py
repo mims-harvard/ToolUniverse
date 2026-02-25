@@ -1,36 +1,33 @@
 """
-ORCID_search_researchers
+DNA_find_restriction_sites
 
-Search ORCID registry for researchers by keyword query. Returns ORCID iDs matching the search. Su...
+Find restriction enzyme recognition sites in a DNA sequence using the NEB enzyme library (24 comm...
 """
 
 from typing import Any, Optional, Callable
 from ._shared_client import get_shared_client
 
 
-def ORCID_search_researchers(
+def DNA_find_restriction_sites(
     operation: str,
-    query: str,
-    start: Optional[int] = 0,
-    rows: Optional[int] = 10,
+    sequence: str,
+    enzymes: Optional[list[str] | Any] = None,
     *,
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> list[Any]:
+) -> dict[str, Any]:
     """
-    Search ORCID registry for researchers by keyword query. Returns ORCID iDs matching the search. Su...
+    Find restriction enzyme recognition sites in a DNA sequence using the NEB enzyme library (24 comm...
 
     Parameters
     ----------
     operation : str
         Operation type
-    query : str
-        Search query (e.g., 'BRCA1 cancer genetics', 'Harvard genomics')
-    start : int
-        Pagination offset (0-based)
-    rows : int
-        Number of results to return
+    sequence : str
+        DNA sequence (A, T, G, C, N only). Case insensitive. Spaces and newlines are ...
+    enzymes : list[str] | Any
+        Optional list of specific enzyme names to check (e.g., ['EcoRI', 'BamHI']). I...
     stream_callback : Callable, optional
         Callback for streaming output
     use_cache : bool, default False
@@ -40,18 +37,17 @@ def ORCID_search_researchers(
 
     Returns
     -------
-    list[Any]
+    dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 
     return get_shared_client().run_one_function(
         {
-            "name": "ORCID_search_researchers",
+            "name": "DNA_find_restriction_sites",
             "arguments": {
                 "operation": operation,
-                "query": query,
-                "start": start,
-                "rows": rows,
+                "sequence": sequence,
+                "enzymes": enzymes,
             },
         },
         stream_callback=stream_callback,
@@ -60,4 +56,4 @@ def ORCID_search_researchers(
     )
 
 
-__all__ = ["ORCID_search_researchers"]
+__all__ = ["DNA_find_restriction_sites"]

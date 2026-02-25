@@ -1,36 +1,33 @@
 """
-ORCID_search_researchers
+CLUE_get_perturbation
 
-Search ORCID registry for researchers by keyword query. Returns ORCID iDs matching the search. Su...
+Get detailed information about a specific L1000 perturbagen from CLUE.io by ID or name. Returns f...
 """
 
 from typing import Any, Optional, Callable
 from ._shared_client import get_shared_client
 
 
-def ORCID_search_researchers(
+def CLUE_get_perturbation(
     operation: str,
-    query: str,
-    start: Optional[int] = 0,
-    rows: Optional[int] = 10,
+    pert_id: Optional[str | Any] = None,
+    pert_iname: Optional[str | Any] = None,
     *,
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
 ) -> list[Any]:
     """
-    Search ORCID registry for researchers by keyword query. Returns ORCID iDs matching the search. Su...
+    Get detailed information about a specific L1000 perturbagen from CLUE.io by ID or name. Returns f...
 
     Parameters
     ----------
     operation : str
         Operation type
-    query : str
-        Search query (e.g., 'BRCA1 cancer genetics', 'Harvard genomics')
-    start : int
-        Pagination offset (0-based)
-    rows : int
-        Number of results to return
+    pert_id : str | Any
+        Perturbagen ID (e.g., 'BRD-K12345678'). Mutually exclusive with pert_iname.
+    pert_iname : str | Any
+        Perturbagen name (e.g., 'imatinib'). Mutually exclusive with pert_id.
     stream_callback : Callable, optional
         Callback for streaming output
     use_cache : bool, default False
@@ -46,12 +43,11 @@ def ORCID_search_researchers(
 
     return get_shared_client().run_one_function(
         {
-            "name": "ORCID_search_researchers",
+            "name": "CLUE_get_perturbation",
             "arguments": {
                 "operation": operation,
-                "query": query,
-                "start": start,
-                "rows": rows,
+                "pert_id": pert_id,
+                "pert_iname": pert_iname,
             },
         },
         stream_callback=stream_callback,
@@ -60,4 +56,4 @@ def ORCID_search_researchers(
     )
 
 
-__all__ = ["ORCID_search_researchers"]
+__all__ = ["CLUE_get_perturbation"]

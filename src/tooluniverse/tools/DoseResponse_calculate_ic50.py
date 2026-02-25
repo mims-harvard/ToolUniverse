@@ -1,36 +1,33 @@
 """
-ORCID_search_researchers
+DoseResponse_calculate_ic50
 
-Search ORCID registry for researchers by keyword query. Returns ORCID iDs matching the search. Su...
+Determine the half-maximal inhibitory or effective concentration (IC50/EC50) from paired concentr...
 """
 
 from typing import Any, Optional, Callable
 from ._shared_client import get_shared_client
 
 
-def ORCID_search_researchers(
+def DoseResponse_calculate_ic50(
     operation: str,
-    query: str,
-    start: Optional[int] = 0,
-    rows: Optional[int] = 10,
+    concentrations: list[Any],
+    responses: list[Any],
     *,
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> list[Any]:
+) -> dict[str, Any]:
     """
-    Search ORCID registry for researchers by keyword query. Returns ORCID iDs matching the search. Su...
+    Determine the half-maximal inhibitory or effective concentration (IC50/EC50) from paired concentr...
 
     Parameters
     ----------
     operation : str
         Operation type
-    query : str
-        Search query (e.g., 'BRCA1 cancer genetics', 'Harvard genomics')
-    start : int
-        Pagination offset (0-based)
-    rows : int
-        Number of results to return
+    concentrations : list[Any]
+        Drug concentrations (positive values, e.g., in µM or nM)
+    responses : list[Any]
+        Percent inhibition or effect values at each concentration
     stream_callback : Callable, optional
         Callback for streaming output
     use_cache : bool, default False
@@ -40,18 +37,17 @@ def ORCID_search_researchers(
 
     Returns
     -------
-    list[Any]
+    dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 
     return get_shared_client().run_one_function(
         {
-            "name": "ORCID_search_researchers",
+            "name": "DoseResponse_calculate_ic50",
             "arguments": {
                 "operation": operation,
-                "query": query,
-                "start": start,
-                "rows": rows,
+                "concentrations": concentrations,
+                "responses": responses,
             },
         },
         stream_callback=stream_callback,
@@ -60,4 +56,4 @@ def ORCID_search_researchers(
     )
 
 
-__all__ = ["ORCID_search_researchers"]
+__all__ = ["DoseResponse_calculate_ic50"]

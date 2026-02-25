@@ -903,6 +903,26 @@ default_tool_files = {
     "artic": os.path.join(current_dir, "data", "artic_tools.json"),
     # ADA/AHA/ACC/NCCN - Clinical society guidelines (diabetes, cardiology, oncology)
     "ada_aha_nccn": os.path.join(current_dir, "data", "ada_aha_nccn_tools.json"),
+    # CLUE.io - L1000 Connectivity Map perturbation signatures
+    "clue": os.path.join(current_dir, "data", "clue_tools.json"),
+    # TIMER2.0 - Tumor immune estimation and gene-immune correlations
+    "timer": os.path.join(current_dir, "data", "timer_tools.json"),
+    # PROTAC-DB - PROTAC compound database
+    "protacdb": os.path.join(current_dir, "data", "protacdb_tools.json"),
+    # DNA Design Tools - Local restriction site, ORF, GC content, translation
+    "dna_tools": os.path.join(current_dir, "data", "dna_tools.json"),
+    # Drug Synergy - Bliss, HSA, ZIP synergy models (local computation)
+    "drug_synergy": os.path.join(current_dir, "data", "drug_synergy_tools.json"),
+    # Dose-Response Analysis - 4PL curve fitting and IC50 calculation (local)
+    "dose_response": os.path.join(current_dir, "data", "dose_response_tools.json"),
+    # Survival Analysis - Kaplan-Meier, log-rank test, Cox regression (local)
+    "survival": os.path.join(current_dir, "data", "survival_tools.json"),
+    # ChemCompute - Local computational chemistry tools (RDKit SA Score)
+    "chem_compute": os.path.join(current_dir, "data", "chem_compute_tools.json"),
+    # L1000FWD - L1000 Fireworks Connectivity Map signature search
+    "l1000fwd": os.path.join(current_dir, "data", "l1000fwd_tools.json"),
+    # Cell Painting - IDR high-content microscopy screens, plates, and well-level data
+    "cellpainting": os.path.join(current_dir, "data", "cellpainting_tools.json"),
 }
 
 # Auto-load any user-provided tools from ~/.tooluniverse/user_tools/

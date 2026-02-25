@@ -1,36 +1,36 @@
 """
-ORCID_search_researchers
+CLUE_search_signatures
 
-Search ORCID registry for researchers by keyword query. Returns ORCID iDs matching the search. Su...
+Search L1000 Connectivity Map perturbation signatures from CLUE.io. Returns perturbation records ...
 """
 
 from typing import Any, Optional, Callable
 from ._shared_client import get_shared_client
 
 
-def ORCID_search_researchers(
+def CLUE_search_signatures(
     operation: str,
-    query: str,
-    start: Optional[int] = 0,
-    rows: Optional[int] = 10,
+    pert_type: Optional[str] = None,
+    pert_iname: Optional[str] = None,
+    limit: Optional[int] = 50,
     *,
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
 ) -> list[Any]:
     """
-    Search ORCID registry for researchers by keyword query. Returns ORCID iDs matching the search. Su...
+    Search L1000 Connectivity Map perturbation signatures from CLUE.io. Returns perturbation records ...
 
     Parameters
     ----------
     operation : str
         Operation type
-    query : str
-        Search query (e.g., 'BRCA1 cancer genetics', 'Harvard genomics')
-    start : int
-        Pagination offset (0-based)
-    rows : int
-        Number of results to return
+    pert_type : str
+        Perturbation type filter: 'trt_cp' (compounds), 'trt_oe' (overexpression), 't...
+    pert_iname : str
+        Perturbagen name to search (partial match). E.g., 'imatinib', 'TP53'
+    limit : int
+        Maximum number of results to return
     stream_callback : Callable, optional
         Callback for streaming output
     use_cache : bool, default False
@@ -46,12 +46,12 @@ def ORCID_search_researchers(
 
     return get_shared_client().run_one_function(
         {
-            "name": "ORCID_search_researchers",
+            "name": "CLUE_search_signatures",
             "arguments": {
                 "operation": operation,
-                "query": query,
-                "start": start,
-                "rows": rows,
+                "pert_type": pert_type,
+                "pert_iname": pert_iname,
+                "limit": limit,
             },
         },
         stream_callback=stream_callback,
@@ -60,4 +60,4 @@ def ORCID_search_researchers(
     )
 
 
-__all__ = ["ORCID_search_researchers"]
+__all__ = ["CLUE_search_signatures"]

@@ -1,36 +1,36 @@
 """
-ORCID_search_researchers
+DNA_virtual_digest
 
-Search ORCID registry for researchers by keyword query. Returns ORCID iDs matching the search. Su...
+Perform a virtual restriction enzyme digest on a DNA sequence using the NEB enzyme library (24 en...
 """
 
 from typing import Any, Optional, Callable
 from ._shared_client import get_shared_client
 
 
-def ORCID_search_researchers(
+def DNA_virtual_digest(
     operation: str,
-    query: str,
-    start: Optional[int] = 0,
-    rows: Optional[int] = 10,
+    sequence: str,
+    enzymes: Optional[list[str] | Any] = None,
+    circular: Optional[bool | Any] = False,
     *,
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> list[Any]:
+) -> Any:
     """
-    Search ORCID registry for researchers by keyword query. Returns ORCID iDs matching the search. Su...
+    Perform a virtual restriction enzyme digest on a DNA sequence using the NEB enzyme library (24 en...
 
     Parameters
     ----------
     operation : str
         Operation type
-    query : str
-        Search query (e.g., 'BRCA1 cancer genetics', 'Harvard genomics')
-    start : int
-        Pagination offset (0-based)
-    rows : int
-        Number of results to return
+    sequence : str
+        DNA sequence (A, T, G, C, N only). Case insensitive.
+    enzymes : list[str] | Any
+        List of enzyme names to use for digestion (e.g., ['EcoRI', 'BamHI']). If null...
+    circular : bool | Any
+        Treat sequence as circular DNA (e.g., plasmid). Default: false (linear).
     stream_callback : Callable, optional
         Callback for streaming output
     use_cache : bool, default False
@@ -40,18 +40,18 @@ def ORCID_search_researchers(
 
     Returns
     -------
-    list[Any]
+    Any
     """
     # Handle mutable defaults to avoid B006 linting error
 
     return get_shared_client().run_one_function(
         {
-            "name": "ORCID_search_researchers",
+            "name": "DNA_virtual_digest",
             "arguments": {
                 "operation": operation,
-                "query": query,
-                "start": start,
-                "rows": rows,
+                "sequence": sequence,
+                "enzymes": enzymes,
+                "circular": circular,
             },
         },
         stream_callback=stream_callback,
@@ -60,4 +60,4 @@ def ORCID_search_researchers(
     )
 
 
-__all__ = ["ORCID_search_researchers"]
+__all__ = ["DNA_virtual_digest"]

@@ -1,36 +1,33 @@
 """
-ORCID_search_researchers
+DoseResponse_fit_curve
 
-Search ORCID registry for researchers by keyword query. Returns ORCID iDs matching the search. Su...
+Nonlinear regression of paired concentration-response measurements to the Hill sigmoidal (4PL) mo...
 """
 
 from typing import Any, Optional, Callable
 from ._shared_client import get_shared_client
 
 
-def ORCID_search_researchers(
+def DoseResponse_fit_curve(
     operation: str,
-    query: str,
-    start: Optional[int] = 0,
-    rows: Optional[int] = 10,
+    concentrations: list[Any],
+    responses: list[Any],
     *,
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> list[Any]:
+) -> dict[str, Any]:
     """
-    Search ORCID registry for researchers by keyword query. Returns ORCID iDs matching the search. Su...
+    Nonlinear regression of paired concentration-response measurements to the Hill sigmoidal (4PL) mo...
 
     Parameters
     ----------
     operation : str
         Operation type
-    query : str
-        Search query (e.g., 'BRCA1 cancer genetics', 'Harvard genomics')
-    start : int
-        Pagination offset (0-based)
-    rows : int
-        Number of results to return
+    concentrations : list[Any]
+        Drug concentrations (must be positive, e.g., [0.001, 0.01, 0.1, 1, 10, 100] i...
+    responses : list[Any]
+        Observed responses at each concentration (e.g., % inhibition [0-100] or viabi...
     stream_callback : Callable, optional
         Callback for streaming output
     use_cache : bool, default False
@@ -40,18 +37,17 @@ def ORCID_search_researchers(
 
     Returns
     -------
-    list[Any]
+    dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 
     return get_shared_client().run_one_function(
         {
-            "name": "ORCID_search_researchers",
+            "name": "DoseResponse_fit_curve",
             "arguments": {
                 "operation": operation,
-                "query": query,
-                "start": start,
-                "rows": rows,
+                "concentrations": concentrations,
+                "responses": responses,
             },
         },
         stream_callback=stream_callback,
@@ -60,4 +56,4 @@ def ORCID_search_researchers(
     )
 
 
-__all__ = ["ORCID_search_researchers"]
+__all__ = ["DoseResponse_fit_curve"]

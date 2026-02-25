@@ -1,0 +1,188 @@
+[
+  {
+    "name": "CellPainting_search_screens",
+    "type": "CellPaintingTool",
+    "description": "List available Cell Painting screens/studies in the Image Data Resource (IDR). Returns screen names, IDs, descriptions, and URLs. Automatically filters to Cell Painting and morphological profiling studies (e.g. idr0016 Wawer ~30,000 compounds, JUMP-CP). Use the optional query parameter to further filter by keyword. Example: Discover which Cell Painting datasets are available in IDR.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "operation": {
+          "type": "string",
+          "enum": [
+            "search_screens"
+          ],
+          "description": "Operation type"
+        },
+        "query": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Optional keyword to filter screens by name or description (e.g., 'JUMP', 'U2OS', 'wawer')"
+        }
+      },
+      "required": [
+        "operation"
+      ]
+    },
+    "return_schema": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "screen_id": {
+            "type": "integer",
+            "description": "IDR screen identifier"
+          },
+          "name": {
+            "type": "string",
+            "description": "Screen name (e.g., 'idr0016-wawer-bioactivecompoundprofiling/screenA')"
+          },
+          "description": {
+            "type": "string",
+            "description": "Full screen description including publication title"
+          },
+          "url": {
+            "type": "string",
+            "description": "API URL for this screen"
+          }
+        }
+      }
+    },
+    "test_examples": [
+      {
+        "operation": "search_screens"
+      }
+    ]
+  },
+  {
+    "name": "CellPainting_get_screen_plates",
+    "type": "CellPaintingTool",
+    "description": "Get the list of plates in a Cell Painting screen from the Image Data Resource (IDR). Returns plate IDs and names for the given screen. Use CellPainting_search_screens first to find valid screen IDs. Example: Get all plates in idr0016 screenA (screen_id=1251).",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "operation": {
+          "type": "string",
+          "enum": [
+            "get_screen_plates"
+          ],
+          "description": "Operation type"
+        },
+        "screen_id": {
+          "type": "integer",
+          "description": "IDR screen identifier (e.g., 1251 for idr0016 screenA)"
+        }
+      },
+      "required": [
+        "operation",
+        "screen_id"
+      ]
+    },
+    "return_schema": {
+      "type": "object",
+      "properties": {
+        "screen_id": {
+          "type": "integer",
+          "description": "The queried screen ID"
+        },
+        "plates": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "plate_id": {
+                "type": "integer",
+                "description": "IDR plate identifier"
+              },
+              "name": {
+                "type": "string",
+                "description": "Plate name"
+              }
+            }
+          }
+        },
+        "n_plates": {
+          "type": "integer",
+          "description": "Total number of plates in this screen"
+        }
+      }
+    },
+    "test_examples": [
+      {
+        "operation": "get_screen_plates",
+        "screen_id": 1251
+      }
+    ]
+  },
+  {
+    "name": "CellPainting_get_well_data",
+    "type": "CellPaintingTool",
+    "description": "Get well-level metadata and image links for a specific plate in a Cell Painting experiment from the Image Data Resource (IDR). Returns well IDs, row/column positions, well URLs, and links to microscopy images. Use CellPainting_get_screen_plates to find valid plate IDs. Example: Get the first 5 wells of plate 5104 from idr0016.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "operation": {
+          "type": "string",
+          "enum": [
+            "get_well_data"
+          ],
+          "description": "Operation type"
+        },
+        "plate_id": {
+          "type": "integer",
+          "description": "IDR plate identifier (e.g., 5104 for a plate in idr0016 screenA)"
+        },
+        "limit": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 1000,
+          "default": 20,
+          "description": "Maximum number of wells to return (default 20)"
+        }
+      },
+      "required": [
+        "operation",
+        "plate_id"
+      ]
+    },
+    "return_schema": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "well_id": {
+            "type": "integer",
+            "description": "IDR well identifier"
+          },
+          "column": {
+            "type": "integer",
+            "description": "Well column index (0-based)"
+          },
+          "row": {
+            "type": "integer",
+            "description": "Well row index (0-based)"
+          },
+          "url": {
+            "type": "string",
+            "description": "API URL for this well"
+          },
+          "image_url": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "description": "API URL for the first microscopy image in this well"
+          }
+        }
+      }
+    },
+    "test_examples": [
+      {
+        "operation": "get_well_data",
+        "plate_id": 5104,
+        "limit": 5
+      }
+    ]
+  }
+]

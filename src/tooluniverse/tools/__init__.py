@@ -1,7 +1,7 @@
 """
 ToolUniverse Tools
 
-Type-safe Python interface to 1907 scientific tools.
+Type-safe Python interface to 1945 scientific tools.
 Each tool is in its own module for minimal import overhead.
 
 Usage:
@@ -153,6 +153,11 @@ from .CELLxGENE_get_embeddings import CELLxGENE_get_embeddings
 from .CELLxGENE_get_expression_data import CELLxGENE_get_expression_data
 from .CELLxGENE_get_gene_metadata import CELLxGENE_get_gene_metadata
 from .CELLxGENE_get_presence_matrix import CELLxGENE_get_presence_matrix
+from .CLUE_get_cell_lines import CLUE_get_cell_lines
+from .CLUE_get_gene_expression import CLUE_get_gene_expression
+from .CLUE_get_perturbation import CLUE_get_perturbation
+from .CLUE_search_compounds import CLUE_search_compounds
+from .CLUE_search_signatures import CLUE_search_signatures
 from .CMA_Guidelines_Search import CMA_Guidelines_Search
 from .COD_get_structure import COD_get_structure
 from .COD_search_structures import COD_search_structures
@@ -179,6 +184,9 @@ from .CTD_get_gene_diseases import CTD_get_gene_diseases
 from .CTFPHC_list_guidelines import CTFPHC_list_guidelines
 from .CTFPHC_search_guidelines import CTFPHC_search_guidelines
 from .CallAgent import CallAgent
+from .CellPainting_get_screen_plates import CellPainting_get_screen_plates
+from .CellPainting_get_well_data import CellPainting_get_well_data
+from .CellPainting_search_screens import CellPainting_search_screens
 from .ChEBI_get_compound import ChEBI_get_compound
 from .ChEBI_get_ontology_children import ChEBI_get_ontology_children
 from .ChEBI_search import ChEBI_search
@@ -219,6 +227,7 @@ from .ChIPAtlas_get_peak_data import ChIPAtlas_get_peak_data
 from .ChIPAtlas_search_datasets import ChIPAtlas_search_datasets
 from .ChannelsDB_get_channels_cofactor import ChannelsDB_get_channels_cofactor
 from .ChannelsDB_get_channels_pdb import ChannelsDB_get_channels_pdb
+from .Chem_sa_score import Chem_sa_score
 from .ClinGenAR_get_external_records import ClinGenAR_get_external_records
 from .ClinGenAR_lookup_allele import ClinGenAR_lookup_allele
 from .ClinGen_dosage_by_gene import ClinGen_dosage_by_gene
@@ -261,6 +270,16 @@ from .DGIdb_get_drug_gene_interactions import DGIdb_get_drug_gene_interactions
 from .DGIdb_get_drug_info import DGIdb_get_drug_info
 from .DGIdb_get_gene_druggability import DGIdb_get_gene_druggability
 from .DGIdb_get_gene_info import DGIdb_get_gene_info
+from .DNA_calculate_gc_content import DNA_calculate_gc_content
+from .DNA_codon_optimize import DNA_codon_optimize
+from .DNA_find_orfs import DNA_find_orfs
+from .DNA_find_restriction_sites import DNA_find_restriction_sites
+from .DNA_gibson_design import DNA_gibson_design
+from .DNA_golden_gate_design import DNA_golden_gate_design
+from .DNA_primer_design import DNA_primer_design
+from .DNA_reverse_complement import DNA_reverse_complement
+from .DNA_translate_sequence import DNA_translate_sequence
+from .DNA_virtual_digest import DNA_virtual_digest
 from .DOAJ_search_articles import DOAJ_search_articles
 from .DailyMed_get_spl_by_setid import DailyMed_get_spl_by_setid
 from .DailyMed_parse_adverse_reactions import DailyMed_parse_adverse_reactions
@@ -298,9 +317,15 @@ from .DiseaseSh_get_country_stats import DiseaseSh_get_country_stats
 from .DiseaseSh_get_global_stats import DiseaseSh_get_global_stats
 from .DiseaseSh_get_historical import DiseaseSh_get_historical
 from .DomainExpertValidator import DomainExpertValidator
+from .DoseResponse_calculate_ic50 import DoseResponse_calculate_ic50
+from .DoseResponse_compare_potency import DoseResponse_compare_potency
+from .DoseResponse_fit_curve import DoseResponse_fit_curve
 from .DrugInteractionAnalyzerAgent import DrugInteractionAnalyzerAgent
 from .DrugOptimizationAgent import DrugOptimizationAgent
 from .DrugSafetyAnalyzer import DrugSafetyAnalyzer
+from .DrugSynergy_calculate_bliss import DrugSynergy_calculate_bliss
+from .DrugSynergy_calculate_hsa import DrugSynergy_calculate_hsa
+from .DrugSynergy_calculate_zip import DrugSynergy_calculate_zip
 from .Dryad_get_dataset import Dryad_get_dataset
 from .Dryad_get_dataset_files import Dryad_get_dataset_files
 from .Dryad_search_datasets import Dryad_search_datasets
@@ -1012,6 +1037,7 @@ from .KLIFS_get_structures import KLIFS_get_structures
 from .KLIFS_get_structures_by_pdb import KLIFS_get_structures_by_pdb
 from .KLIFS_list_kinases import KLIFS_list_kinases
 from .KeywordExtractorAgent import KeywordExtractorAgent
+from .L1000FWD_sig_search import L1000FWD_sig_search
 from .LNCipedia_get_lncrna import LNCipedia_get_lncrna
 from .LNCipedia_get_lncrna_publications import LNCipedia_get_lncrna_publications
 from .LNCipedia_get_lncrna_xrefs import LNCipedia_get_lncrna_xrefs
@@ -1179,7 +1205,8 @@ from .OMA_get_group import OMA_get_group
 from .OMA_get_hog import OMA_get_hog
 from .OMA_get_orthologs import OMA_get_orthologs
 from .OMA_get_protein import OMA_get_protein
-from .ORCID_get_person import ORCID_get_person
+from .ORCID_get_employments import ORCID_get_employments
+from .ORCID_get_profile import ORCID_get_profile
 from .ORCID_get_works import ORCID_get_works
 from .ORCID_search_researchers import ORCID_search_researchers
 from .OSF_search_preprints import OSF_search_preprints
@@ -1191,12 +1218,14 @@ from .OmniPath_get_cell_communication_annotations import (
     OmniPath_get_cell_communication_annotations,
 )
 from .OmniPath_get_complexes import OmniPath_get_complexes
+from .OmniPath_get_dorothea_regulon import OmniPath_get_dorothea_regulon
 from .OmniPath_get_enzyme_substrate import OmniPath_get_enzyme_substrate
 from .OmniPath_get_intercell_roles import OmniPath_get_intercell_roles
 from .OmniPath_get_ligand_receptor_interactions import (
     OmniPath_get_ligand_receptor_interactions,
 )
 from .OmniPath_get_signaling_interactions import OmniPath_get_signaling_interactions
+from .OmniPath_get_tf_target_interactions import OmniPath_get_tf_target_interactions
 from .OncoKB_annotate_copy_number import OncoKB_annotate_copy_number
 from .OncoKB_annotate_variant import OncoKB_annotate_variant
 from .OncoKB_get_cancer_genes import OncoKB_get_cancer_genes
@@ -1484,6 +1513,9 @@ from .PlantReactome_search_pathways import PlantReactome_search_pathways
 from .PomBase_get_gene import PomBase_get_gene
 from .PomBase_get_gene_phenotypes import PomBase_get_gene_phenotypes
 from .PomBase_search_genes import PomBase_search_genes
+from .ProtacDB_get_protac import ProtacDB_get_protac
+from .ProtacDB_search_protacs import ProtacDB_search_protacs
+from .ProtacDB_search_targets import ProtacDB_search_targets
 from .ProteinsPlus_analyze_binding_site_similarity import (
     ProteinsPlus_analyze_binding_site_similarity,
 )
@@ -1665,6 +1697,9 @@ from .SpliceAI_get_max_delta import SpliceAI_get_max_delta
 from .SpliceAI_predict_pangolin import SpliceAI_predict_pangolin
 from .SpliceAI_predict_splice import SpliceAI_predict_splice
 from .SunriseSunset_get_times import SunriseSunset_get_times
+from .Survival_cox_regression import Survival_cox_regression
+from .Survival_kaplan_meier import Survival_kaplan_meier
+from .Survival_log_rank_test import Survival_log_rank_test
 from .SwissDock_check_job_status import SwissDock_check_job_status
 from .SwissDock_dock_ligand import SwissDock_dock_ligand
 from .SwissDock_retrieve_results import SwissDock_retrieve_results
@@ -1680,6 +1715,9 @@ from .TCIA_get_series import TCIA_get_series
 from .TCIA_get_series_metadata import TCIA_get_series_metadata
 from .TCIA_get_series_size import TCIA_get_series_size
 from .TCIA_list_collections import TCIA_list_collections
+from .TIMER2_gene_correlation import TIMER2_gene_correlation
+from .TIMER2_immune_estimation import TIMER2_immune_estimation
+from .TIMER2_survival_association import TIMER2_survival_association
 from .TRIP_Database_Guidelines_Search import TRIP_Database_Guidelines_Search
 from .TargetMine_search import TargetMine_search
 from .TargetMine_search_genes import TargetMine_search_genes
@@ -2538,6 +2576,11 @@ __all__ = [
     "CELLxGENE_get_expression_data",
     "CELLxGENE_get_gene_metadata",
     "CELLxGENE_get_presence_matrix",
+    "CLUE_get_cell_lines",
+    "CLUE_get_gene_expression",
+    "CLUE_get_perturbation",
+    "CLUE_search_compounds",
+    "CLUE_search_signatures",
     "CMA_Guidelines_Search",
     "COD_get_structure",
     "COD_search_structures",
@@ -2564,6 +2607,9 @@ __all__ = [
     "CTFPHC_list_guidelines",
     "CTFPHC_search_guidelines",
     "CallAgent",
+    "CellPainting_get_screen_plates",
+    "CellPainting_get_well_data",
+    "CellPainting_search_screens",
     "ChEBI_get_compound",
     "ChEBI_get_ontology_children",
     "ChEBI_search",
@@ -2602,6 +2648,7 @@ __all__ = [
     "ChIPAtlas_search_datasets",
     "ChannelsDB_get_channels_cofactor",
     "ChannelsDB_get_channels_pdb",
+    "Chem_sa_score",
     "ClinGenAR_get_external_records",
     "ClinGenAR_lookup_allele",
     "ClinGen_dosage_by_gene",
@@ -2644,6 +2691,16 @@ __all__ = [
     "DGIdb_get_drug_info",
     "DGIdb_get_gene_druggability",
     "DGIdb_get_gene_info",
+    "DNA_calculate_gc_content",
+    "DNA_codon_optimize",
+    "DNA_find_orfs",
+    "DNA_find_restriction_sites",
+    "DNA_gibson_design",
+    "DNA_golden_gate_design",
+    "DNA_primer_design",
+    "DNA_reverse_complement",
+    "DNA_translate_sequence",
+    "DNA_virtual_digest",
     "DOAJ_search_articles",
     "DailyMed_get_spl_by_setid",
     "DailyMed_parse_adverse_reactions",
@@ -2681,9 +2738,15 @@ __all__ = [
     "DiseaseSh_get_global_stats",
     "DiseaseSh_get_historical",
     "DomainExpertValidator",
+    "DoseResponse_calculate_ic50",
+    "DoseResponse_compare_potency",
+    "DoseResponse_fit_curve",
     "DrugInteractionAnalyzerAgent",
     "DrugOptimizationAgent",
     "DrugSafetyAnalyzer",
+    "DrugSynergy_calculate_bliss",
+    "DrugSynergy_calculate_hsa",
+    "DrugSynergy_calculate_zip",
     "Dryad_get_dataset",
     "Dryad_get_dataset_files",
     "Dryad_search_datasets",
@@ -3165,6 +3228,7 @@ __all__ = [
     "KLIFS_get_structures_by_pdb",
     "KLIFS_list_kinases",
     "KeywordExtractorAgent",
+    "L1000FWD_sig_search",
     "LNCipedia_get_lncrna",
     "LNCipedia_get_lncrna_publications",
     "LNCipedia_get_lncrna_xrefs",
@@ -3322,7 +3386,8 @@ __all__ = [
     "OMA_get_hog",
     "OMA_get_orthologs",
     "OMA_get_protein",
-    "ORCID_get_person",
+    "ORCID_get_employments",
+    "ORCID_get_profile",
     "ORCID_get_works",
     "ORCID_search_researchers",
     "OSF_search_preprints",
@@ -3332,10 +3397,12 @@ __all__ = [
     "OmicsDI_search_datasets",
     "OmniPath_get_cell_communication_annotations",
     "OmniPath_get_complexes",
+    "OmniPath_get_dorothea_regulon",
     "OmniPath_get_enzyme_substrate",
     "OmniPath_get_intercell_roles",
     "OmniPath_get_ligand_receptor_interactions",
     "OmniPath_get_signaling_interactions",
+    "OmniPath_get_tf_target_interactions",
     "OncoKB_annotate_copy_number",
     "OncoKB_annotate_variant",
     "OncoKB_get_cancer_genes",
@@ -3511,6 +3578,9 @@ __all__ = [
     "PomBase_get_gene",
     "PomBase_get_gene_phenotypes",
     "PomBase_search_genes",
+    "ProtacDB_get_protac",
+    "ProtacDB_search_protacs",
+    "ProtacDB_search_targets",
     "ProteinsPlus_analyze_binding_site_similarity",
     "ProteinsPlus_generate_interaction_diagram",
     "ProteinsPlus_predict_binding_sites",
@@ -3666,6 +3736,9 @@ __all__ = [
     "SpliceAI_predict_pangolin",
     "SpliceAI_predict_splice",
     "SunriseSunset_get_times",
+    "Survival_cox_regression",
+    "Survival_kaplan_meier",
+    "Survival_log_rank_test",
     "SwissDock_check_job_status",
     "SwissDock_dock_ligand",
     "SwissDock_retrieve_results",
@@ -3681,6 +3754,9 @@ __all__ = [
     "TCIA_get_series_metadata",
     "TCIA_get_series_size",
     "TCIA_list_collections",
+    "TIMER2_gene_correlation",
+    "TIMER2_immune_estimation",
+    "TIMER2_survival_association",
     "TRIP_Database_Guidelines_Search",
     "TargetMine_search",
     "TargetMine_search_genes",

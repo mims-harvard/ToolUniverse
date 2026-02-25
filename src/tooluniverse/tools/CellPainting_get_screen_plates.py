@@ -1,30 +1,30 @@
 """
-ORCID_get_works
+CellPainting_get_screen_plates
 
-Get list of publications and works for an ORCID researcher. Returns titles, publication types, da...
+Get the list of plates in a Cell Painting screen from the Image Data Resource (IDR). Returns plat...
 """
 
 from typing import Any, Optional, Callable
 from ._shared_client import get_shared_client
 
 
-def ORCID_get_works(
+def CellPainting_get_screen_plates(
     operation: str,
-    orcid: str,
+    screen_id: int,
     *,
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> list[Any]:
+) -> dict[str, Any]:
     """
-    Get list of publications and works for an ORCID researcher. Returns titles, publication types, da...
+    Get the list of plates in a Cell Painting screen from the Image Data Resource (IDR). Returns plat...
 
     Parameters
     ----------
     operation : str
         Operation type
-    orcid : str
-        ORCID iD in format XXXX-XXXX-XXXX-XXXX
+    screen_id : int
+        IDR screen identifier (e.g., 1251 for idr0016 screenA)
     stream_callback : Callable, optional
         Callback for streaming output
     use_cache : bool, default False
@@ -34,14 +34,14 @@ def ORCID_get_works(
 
     Returns
     -------
-    list[Any]
+    dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 
     return get_shared_client().run_one_function(
         {
-            "name": "ORCID_get_works",
-            "arguments": {"operation": operation, "orcid": orcid},
+            "name": "CellPainting_get_screen_plates",
+            "arguments": {"operation": operation, "screen_id": screen_id},
         },
         stream_callback=stream_callback,
         use_cache=use_cache,
@@ -49,4 +49,4 @@ def ORCID_get_works(
     )
 
 
-__all__ = ["ORCID_get_works"]
+__all__ = ["CellPainting_get_screen_plates"]

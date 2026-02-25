@@ -1,36 +1,30 @@
 """
-ORCID_search_researchers
+CellPainting_search_screens
 
-Search ORCID registry for researchers by keyword query. Returns ORCID iDs matching the search. Su...
+List available Cell Painting screens/studies in the Image Data Resource (IDR). Returns screen nam...
 """
 
 from typing import Any, Optional, Callable
 from ._shared_client import get_shared_client
 
 
-def ORCID_search_researchers(
+def CellPainting_search_screens(
     operation: str,
-    query: str,
-    start: Optional[int] = 0,
-    rows: Optional[int] = 10,
+    query: Optional[str | Any] = None,
     *,
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
 ) -> list[Any]:
     """
-    Search ORCID registry for researchers by keyword query. Returns ORCID iDs matching the search. Su...
+    List available Cell Painting screens/studies in the Image Data Resource (IDR). Returns screen nam...
 
     Parameters
     ----------
     operation : str
         Operation type
-    query : str
-        Search query (e.g., 'BRCA1 cancer genetics', 'Harvard genomics')
-    start : int
-        Pagination offset (0-based)
-    rows : int
-        Number of results to return
+    query : str | Any
+        Optional keyword to filter screens by name or description (e.g., 'JUMP', 'U2O...
     stream_callback : Callable, optional
         Callback for streaming output
     use_cache : bool, default False
@@ -46,13 +40,8 @@ def ORCID_search_researchers(
 
     return get_shared_client().run_one_function(
         {
-            "name": "ORCID_search_researchers",
-            "arguments": {
-                "operation": operation,
-                "query": query,
-                "start": start,
-                "rows": rows,
-            },
+            "name": "CellPainting_search_screens",
+            "arguments": {"operation": operation, "query": query},
         },
         stream_callback=stream_callback,
         use_cache=use_cache,
@@ -60,4 +49,4 @@ def ORCID_search_researchers(
     )
 
 
-__all__ = ["ORCID_search_researchers"]
+__all__ = ["CellPainting_search_screens"]

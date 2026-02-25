@@ -1,0 +1,247 @@
+[
+  {
+    "name": "CLUE_search_signatures",
+    "type": "ClueTool",
+    "description": "Search L1000 Connectivity Map perturbation signatures from CLUE.io. Returns perturbation records including genetic and chemical perturbagens with metadata. Use pert_type to filter by type (trt_cp=compounds, trt_oe=overexpression, trt_sh=knockdown). Use pert_iname for fuzzy name search. Example: Find all imatinib signatures or all compound perturbagens.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "operation": {
+          "type": "string",
+          "enum": [
+            "search_signatures"
+          ],
+          "description": "Operation type"
+        },
+        "pert_type": {
+          "type": "string",
+          "description": "Perturbation type filter: 'trt_cp' (compounds), 'trt_oe' (overexpression), 'trt_sh' (shRNA knockdown), 'trt_xpr' (CRISPR)"
+        },
+        "pert_iname": {
+          "type": "string",
+          "description": "Perturbagen name to search (partial match). E.g., 'imatinib', 'TP53'"
+        },
+        "limit": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 1000,
+          "default": 50,
+          "description": "Maximum number of results to return"
+        }
+      },
+      "required": [
+        "operation"
+      ]
+    },
+    "return_schema": {
+      "type": "array",
+      "items": {
+        "type": "object"
+      }
+    },
+    "test_examples": [
+      {
+        "operation": "search_signatures",
+        "pert_iname": "imatinib",
+        "pert_type": "trt_cp"
+      }
+    ],
+    "required_api_keys": [
+      "CLUE_API_KEY"
+    ]
+  },
+  {
+    "name": "CLUE_get_perturbation",
+    "type": "ClueTool",
+    "description": "Get detailed information about a specific L1000 perturbagen from CLUE.io by ID or name. Returns full metadata including mechanism of action, target, SMILES, dose, time points. Use pert_id for exact ID lookup or pert_iname for name search. Example: Get full details for imatinib compound.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "operation": {
+          "type": "string",
+          "enum": [
+            "get_perturbation"
+          ],
+          "description": "Operation type"
+        },
+        "pert_id": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Perturbagen ID (e.g., 'BRD-K12345678'). Mutually exclusive with pert_iname."
+        },
+        "pert_iname": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Perturbagen name (e.g., 'imatinib'). Mutually exclusive with pert_id."
+        }
+      },
+      "required": [
+        "operation"
+      ]
+    },
+    "return_schema": {
+      "type": "array",
+      "items": {
+        "type": "object"
+      }
+    },
+    "test_examples": [
+      {
+        "operation": "get_perturbation",
+        "pert_iname": "imatinib"
+      }
+    ],
+    "required_api_keys": [
+      "CLUE_API_KEY"
+    ]
+  },
+  {
+    "name": "CLUE_get_gene_expression",
+    "type": "ClueTool",
+    "description": "Get gene information from L1000 Connectivity Map landmark and inferred gene set. Returns gene metadata including gene symbol, Entrez ID, L1000 gene type (landmark vs inferred). Use gene_symbol to search for specific genes. Example: Look up TP53 or BRCA1 in the L1000 gene space.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "operation": {
+          "type": "string",
+          "enum": [
+            "get_gene_expression"
+          ],
+          "description": "Operation type"
+        },
+        "gene_symbol": {
+          "type": "string",
+          "description": "Gene symbol to search (e.g., 'TP53', 'BRCA1')"
+        },
+        "limit": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 1000,
+          "default": 50,
+          "description": "Maximum number of results"
+        }
+      },
+      "required": [
+        "operation"
+      ]
+    },
+    "return_schema": {
+      "type": "array",
+      "items": {
+        "type": "object"
+      }
+    },
+    "test_examples": [
+      {
+        "operation": "get_gene_expression",
+        "gene_symbol": "TP53"
+      }
+    ],
+    "required_api_keys": [
+      "CLUE_API_KEY"
+    ]
+  },
+  {
+    "name": "CLUE_get_cell_lines",
+    "type": "ClueTool",
+    "description": "Get cell line information used in L1000 Connectivity Map experiments. Returns cell line metadata including tissue of origin, growth properties, and available data types. Use cell_id for specific cell line lookup. Example: Get information about MCF7 breast cancer cell line.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "operation": {
+          "type": "string",
+          "enum": [
+            "get_cell_lines"
+          ],
+          "description": "Operation type"
+        },
+        "cell_id": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Cell line identifier (e.g., 'MCF7', 'A375', 'PC3')"
+        },
+        "limit": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 1000,
+          "default": 50,
+          "description": "Maximum number of results"
+        }
+      },
+      "required": [
+        "operation"
+      ]
+    },
+    "return_schema": {
+      "type": "array",
+      "items": {
+        "type": "object"
+      }
+    },
+    "test_examples": [
+      {
+        "operation": "get_cell_lines",
+        "cell_id": "MCF7"
+      }
+    ],
+    "required_api_keys": [
+      "CLUE_API_KEY"
+    ]
+  },
+  {
+    "name": "CLUE_search_compounds",
+    "type": "ClueTool",
+    "description": "Search chemical compounds (small molecule drugs) in the L1000 Connectivity Map. Filters to trt_cp perturbation type. Search by drug name or mechanism of action (MOA). Returns compound metadata including targets, pathways, and clinical status. Example: Find all kinase inhibitors or HDAC inhibitors.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "operation": {
+          "type": "string",
+          "enum": [
+            "search_compounds"
+          ],
+          "description": "Operation type"
+        },
+        "pert_iname": {
+          "type": "string",
+          "description": "Compound name search (partial match). E.g., 'imatinib', 'vorinostat'"
+        },
+        "moa": {
+          "type": "string",
+          "description": "Mechanism of action search. E.g., 'HDAC inhibitor', 'kinase inhibitor'"
+        },
+        "limit": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 1000,
+          "default": 50,
+          "description": "Maximum number of results"
+        }
+      },
+      "required": [
+        "operation"
+      ]
+    },
+    "return_schema": {
+      "type": "array",
+      "items": {
+        "type": "object"
+      }
+    },
+    "test_examples": [
+      {
+        "operation": "search_compounds",
+        "moa": "HDAC inhibitor"
+      }
+    ],
+    "required_api_keys": [
+      "CLUE_API_KEY"
+    ]
+  }
+]

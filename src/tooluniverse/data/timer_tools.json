@@ -1,0 +1,245 @@
+[
+  {
+    "name": "TIMER2_immune_estimation",
+    "type": "TIMERTool",
+    "description": "Estimate immune cell abundance in TCGA cancer samples using TIMER-equivalent marker gene expression from cBioPortal. Returns infiltration proxies for 6 immune cell types (B cells, CD4+ T cells, CD8+ T cells, neutrophils, macrophages, dendritic cells) using canonical marker genes (CD19, CD4, CD8A, FCGR3B, CD68, ITGAX). Note: TIMER2.0/3.0 REST API is no longer public; this tool uses cBioPortal TCGA data as a proxy.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "operation": {
+          "type": "string",
+          "enum": [
+            "immune_estimation"
+          ],
+          "description": "Operation type"
+        },
+        "cancer": {
+          "type": "string",
+          "description": "TCGA cancer type abbreviation (e.g., 'BRCA', 'LUAD', 'COAD', 'SKCM', 'GBM')"
+        },
+        "gene": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Optional gene symbol to correlate with immune infiltration (e.g., 'CD8A', 'PDCD1')"
+        }
+      },
+      "required": [
+        "operation",
+        "cancer"
+      ]
+    },
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "object",
+          "properties": {
+            "cancer": {
+              "type": "string"
+            },
+            "study_id": {
+              "type": "string"
+            },
+            "immune_infiltration": {
+              "type": "object"
+            },
+            "n_samples": {
+              "type": "integer"
+            }
+          },
+          "required": [
+            "immune_infiltration"
+          ]
+        },
+        {
+          "type": "object",
+          "properties": {
+            "error": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "error"
+          ]
+        }
+      ]
+    },
+    "test_examples": [
+      {
+        "operation": "immune_estimation",
+        "cancer": "BRCA"
+      }
+    ]
+  },
+  {
+    "name": "TIMER2_gene_correlation",
+    "type": "TIMERTool",
+    "description": "Analyze Spearman correlation between two genes across TCGA cancer samples using cBioPortal data. Returns correlation coefficient and p-value. Useful for identifying co-expressed genes in tumor microenvironment. Note: TIMER2.0/3.0 REST API is no longer public; uses cBioPortal as data source. Example: Correlate CD8A and PDCD1 expression in BRCA.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "operation": {
+          "type": "string",
+          "enum": [
+            "gene_correlation"
+          ],
+          "description": "Operation type"
+        },
+        "cancer": {
+          "type": "string",
+          "description": "TCGA cancer type (e.g., 'BRCA', 'LUAD')"
+        },
+        "gene1": {
+          "type": "string",
+          "description": "First gene symbol (e.g., 'CD8A')"
+        },
+        "gene2": {
+          "type": "string",
+          "description": "Second gene symbol (e.g., 'PDCD1')"
+        }
+      },
+      "required": [
+        "operation",
+        "cancer",
+        "gene1",
+        "gene2"
+      ]
+    },
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "object",
+          "properties": {
+            "cancer": {
+              "type": "string"
+            },
+            "gene1": {
+              "type": "string"
+            },
+            "gene2": {
+              "type": "string"
+            },
+            "spearman_r": {
+              "type": "number"
+            },
+            "p_value": {
+              "type": [
+                "number",
+                "null"
+              ]
+            },
+            "n_samples": {
+              "type": "integer"
+            }
+          },
+          "required": [
+            "spearman_r",
+            "n_samples"
+          ]
+        },
+        {
+          "type": "object",
+          "properties": {
+            "error": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "error"
+          ]
+        }
+      ]
+    },
+    "test_examples": [
+      {
+        "operation": "gene_correlation",
+        "cancer": "BRCA",
+        "gene1": "CD8A",
+        "gene2": "PDCD1"
+      }
+    ]
+  },
+  {
+    "name": "TIMER2_survival_association",
+    "type": "TIMERTool",
+    "description": "Analyze overall survival association of gene expression in TCGA cancer patients using cBioPortal data. Performs log-rank test comparing high vs. low gene expression groups (median split). Returns log-rank p-value, median survival times, and event counts. Note: TIMER2.0/3.0 REST API is no longer public; uses cBioPortal TCGA data.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "operation": {
+          "type": "string",
+          "enum": [
+            "survival_association"
+          ],
+          "description": "Operation type"
+        },
+        "cancer": {
+          "type": "string",
+          "description": "TCGA cancer type (e.g., 'BRCA', 'LUAD', 'COAD')"
+        },
+        "gene": {
+          "type": "string",
+          "description": "Gene symbol for survival analysis (e.g., 'CD8A', 'TP53', 'BRCA1')"
+        }
+      },
+      "required": [
+        "operation",
+        "cancer",
+        "gene"
+      ]
+    },
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "object",
+          "properties": {
+            "cancer": {
+              "type": "string"
+            },
+            "gene": {
+              "type": "string"
+            },
+            "log_rank_p_value": {
+              "type": [
+                "number",
+                "null"
+              ]
+            },
+            "n_patients": {
+              "type": "integer"
+            },
+            "high_expression_group": {
+              "type": "object"
+            },
+            "low_expression_group": {
+              "type": "object"
+            }
+          },
+          "required": [
+            "n_patients",
+            "high_expression_group"
+          ]
+        },
+        {
+          "type": "object",
+          "properties": {
+            "error": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "error"
+          ]
+        }
+      ]
+    },
+    "test_examples": [
+      {
+        "operation": "survival_association",
+        "cancer": "BRCA",
+        "gene": "CD8A"
+      }
+    ]
+  }
+]

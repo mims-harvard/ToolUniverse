@@ -1,36 +1,33 @@
 """
-ORCID_search_researchers
+DNA_gibson_design
 
-Search ORCID registry for researchers by keyword query. Returns ORCID iDs matching the search. Su...
+Design Gibson Assembly overlaps for seamless DNA fragment assembly. For each fragment, computes t...
 """
 
 from typing import Any, Optional, Callable
 from ._shared_client import get_shared_client
 
 
-def ORCID_search_researchers(
+def DNA_gibson_design(
     operation: str,
-    query: str,
-    start: Optional[int] = 0,
-    rows: Optional[int] = 10,
+    fragments: list[str],
+    overlap_length: Optional[int | Any] = 20,
     *,
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> list[Any]:
+) -> Any:
     """
-    Search ORCID registry for researchers by keyword query. Returns ORCID iDs matching the search. Su...
+    Design Gibson Assembly overlaps for seamless DNA fragment assembly. For each fragment, computes t...
 
     Parameters
     ----------
     operation : str
         Operation type
-    query : str
-        Search query (e.g., 'BRCA1 cancer genetics', 'Harvard genomics')
-    start : int
-        Pagination offset (0-based)
-    rows : int
-        Number of results to return
+    fragments : list[str]
+        List of DNA fragment sequences (at least 2). Each must be longer than overlap...
+    overlap_length : int | Any
+        Overlap length in bp for Gibson Assembly (default: 20 bp). Must be at least 1.
     stream_callback : Callable, optional
         Callback for streaming output
     use_cache : bool, default False
@@ -40,18 +37,17 @@ def ORCID_search_researchers(
 
     Returns
     -------
-    list[Any]
+    Any
     """
     # Handle mutable defaults to avoid B006 linting error
 
     return get_shared_client().run_one_function(
         {
-            "name": "ORCID_search_researchers",
+            "name": "DNA_gibson_design",
             "arguments": {
                 "operation": operation,
-                "query": query,
-                "start": start,
-                "rows": rows,
+                "fragments": fragments,
+                "overlap_length": overlap_length,
             },
         },
         stream_callback=stream_callback,
@@ -60,4 +56,4 @@ def ORCID_search_researchers(
     )
 
 
-__all__ = ["ORCID_search_researchers"]
+__all__ = ["DNA_gibson_design"]

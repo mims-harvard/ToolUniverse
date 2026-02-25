@@ -1,30 +1,30 @@
 """
-ORCID_get_works
+ORCID_get_profile
 
-Get list of publications and works for an ORCID researcher. Returns titles, publication types, da...
+Get a researcher's full ORCID profile by ORCID iD. Returns name, biography, email, keywords, rese...
 """
 
 from typing import Any, Optional, Callable
 from ._shared_client import get_shared_client
 
 
-def ORCID_get_works(
+def ORCID_get_profile(
     operation: str,
     orcid: str,
     *,
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> list[Any]:
+) -> dict[str, Any]:
     """
-    Get list of publications and works for an ORCID researcher. Returns titles, publication types, da...
+    Get a researcher's full ORCID profile by ORCID iD. Returns name, biography, email, keywords, rese...
 
     Parameters
     ----------
     operation : str
         Operation type
     orcid : str
-        ORCID iD in format XXXX-XXXX-XXXX-XXXX
+        ORCID iD in format XXXX-XXXX-XXXX-XXXX (e.g., '0000-0002-1825-0097')
     stream_callback : Callable, optional
         Callback for streaming output
     use_cache : bool, default False
@@ -34,13 +34,13 @@ def ORCID_get_works(
 
     Returns
     -------
-    list[Any]
+    dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 
     return get_shared_client().run_one_function(
         {
-            "name": "ORCID_get_works",
+            "name": "ORCID_get_profile",
             "arguments": {"operation": operation, "orcid": orcid},
         },
         stream_callback=stream_callback,
@@ -49,4 +49,4 @@ def ORCID_get_works(
     )
 
 
-__all__ = ["ORCID_get_works"]
+__all__ = ["ORCID_get_profile"]

@@ -1,36 +1,36 @@
 """
-ORCID_search_researchers
+CLUE_search_compounds
 
-Search ORCID registry for researchers by keyword query. Returns ORCID iDs matching the search. Su...
+Search chemical compounds (small molecule drugs) in the L1000 Connectivity Map. Filters to trt_cp...
 """
 
 from typing import Any, Optional, Callable
 from ._shared_client import get_shared_client
 
 
-def ORCID_search_researchers(
+def CLUE_search_compounds(
     operation: str,
-    query: str,
-    start: Optional[int] = 0,
-    rows: Optional[int] = 10,
+    pert_iname: Optional[str] = None,
+    moa: Optional[str] = None,
+    limit: Optional[int] = 50,
     *,
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
 ) -> list[Any]:
     """
-    Search ORCID registry for researchers by keyword query. Returns ORCID iDs matching the search. Su...
+    Search chemical compounds (small molecule drugs) in the L1000 Connectivity Map. Filters to trt_cp...
 
     Parameters
     ----------
     operation : str
         Operation type
-    query : str
-        Search query (e.g., 'BRCA1 cancer genetics', 'Harvard genomics')
-    start : int
-        Pagination offset (0-based)
-    rows : int
-        Number of results to return
+    pert_iname : str
+        Compound name search (partial match). E.g., 'imatinib', 'vorinostat'
+    moa : str
+        Mechanism of action search. E.g., 'HDAC inhibitor', 'kinase inhibitor'
+    limit : int
+        Maximum number of results
     stream_callback : Callable, optional
         Callback for streaming output
     use_cache : bool, default False
@@ -46,12 +46,12 @@ def ORCID_search_researchers(
 
     return get_shared_client().run_one_function(
         {
-            "name": "ORCID_search_researchers",
+            "name": "CLUE_search_compounds",
             "arguments": {
                 "operation": operation,
-                "query": query,
-                "start": start,
-                "rows": rows,
+                "pert_iname": pert_iname,
+                "moa": moa,
+                "limit": limit,
             },
         },
         stream_callback=stream_callback,
@@ -60,4 +60,4 @@ def ORCID_search_researchers(
     )
 
 
-__all__ = ["ORCID_search_researchers"]
+__all__ = ["CLUE_search_compounds"]

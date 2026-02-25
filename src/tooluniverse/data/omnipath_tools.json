@@ -593,17 +593,25 @@
                   },
                   "components": {
                     "type": [
+                      "array",
                       "string",
                       "null"
                     ],
-                    "description": "UniProt accessions of components, underscore-separated"
+                    "items": {
+                      "type": "string"
+                    },
+                    "description": "UniProt accessions of complex components"
                   },
                   "components_genesymbols": {
                     "type": [
+                      "array",
                       "string",
                       "null"
                     ],
-                    "description": "Gene symbols of components, underscore-separated"
+                    "items": {
+                      "type": "string"
+                    },
+                    "description": "Gene symbols of complex components"
                   },
                   "stoichiometry": {
                     "type": [
@@ -622,12 +630,9 @@
                   "references": {
                     "type": [
                       "array",
+                      "string",
                       "null"
-                    ],
-                    "items": {
-                      "type": "integer"
-                    },
-                    "description": "PubMed IDs supporting this complex"
+                    ]
                   },
                   "identifiers": {
                     "type": [
@@ -944,5 +949,196 @@
         }
       ]
     }
+  },
+  {
+    "name": "OmniPath_get_tf_target_interactions",
+    "type": "OmniPathTool",
+    "description": "Get transcription factor (TF) to target gene interactions from OmniPath DoRothEA and CollecTRI regulons. Returns directed TF-target pairs with mode of regulation (activation/repression), DoRothEA confidence levels (A-E), and supporting evidence. Query by TF gene symbol or target gene. Use for: TF activity inference, regulatory network construction, identifying TF targets for VIPER/decoupleR analysis.",
+    "fields": {
+      "endpoint": "tf_target"
+    },
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "tf_gene": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Transcription factor gene symbol (e.g., 'TP53', 'MYC', 'STAT3'). Mutually exclusive with target_gene or can be combined."
+        },
+        "target_gene": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Target gene symbol to find regulating TFs (e.g., 'CDKN1A', 'BCL2'). Mutually exclusive with tf_gene or can be combined."
+        },
+        "confidence_level": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "enum": [
+            "A",
+            "B",
+            "C",
+            "D",
+            "E",
+            null
+          ],
+          "description": "DoRothEA confidence level filter: A=highest (1-2 sources), B=high (3+ sources), C=medium, D=low, E=lowest. A/B recommended for analysis."
+        }
+      },
+      "required": []
+    },
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "object",
+          "required": [
+            "data",
+            "metadata"
+          ],
+          "properties": {
+            "data": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "tf_genesymbol": {
+                    "type": "string"
+                  },
+                  "target_genesymbol": {
+                    "type": "string"
+                  },
+                  "is_stimulation": {
+                    "type": "boolean"
+                  },
+                  "is_inhibition": {
+                    "type": "boolean"
+                  },
+                  "dorothea_level": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "curation_effort": {
+                    "type": "integer"
+                  }
+                }
+              }
+            },
+            "metadata": {
+              "type": "object"
+            }
+          }
+        },
+        {
+          "type": "object",
+          "required": [
+            "error"
+          ],
+          "properties": {
+            "error": {
+              "type": "string"
+            }
+          }
+        }
+      ]
+    },
+    "test_examples": [
+      {
+        "tf_gene": "TP53",
+        "confidence_level": "A"
+      }
+    ]
+  },
+  {
+    "name": "OmniPath_get_dorothea_regulon",
+    "type": "OmniPathTool",
+    "description": "Get the complete DoRothEA regulon for a transcription factor from OmniPath. Returns all target genes with mode of regulation (MoR: +1=activation, -1=repression), DoRothEA confidence levels, and source databases. Optionally filter by confidence levels (A, B, C). DoRothEA is the standard resource for TF activity estimation in tools like VIPER, decoupleR, and PROGENy. Use for: TF regulon retrieval for activity scoring, network analysis.",
+    "fields": {
+      "endpoint": "dorothea"
+    },
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "tf_gene": {
+          "type": "string",
+          "description": "Transcription factor gene symbol (e.g., 'TP53', 'MYC', 'STAT3', 'NF2')"
+        },
+        "confidence_levels": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Comma-separated DoRothEA confidence levels to include (e.g., 'A,B' for high confidence only). Options: A, B, C, D, E. Default: all levels."
+        }
+      },
+      "required": [
+        "tf_gene"
+      ]
+    },
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "object",
+          "required": [
+            "data",
+            "metadata"
+          ],
+          "properties": {
+            "data": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "tf_genesymbol": {
+                    "type": "string"
+                  },
+                  "target_genesymbol": {
+                    "type": "string"
+                  },
+                  "mor": {
+                    "type": [
+                      "integer",
+                      "null"
+                    ]
+                  },
+                  "dorothea_level": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  }
+                }
+              }
+            },
+            "metadata": {
+              "type": "object"
+            }
+          }
+        },
+        {
+          "type": "object",
+          "required": [
+            "error"
+          ],
+          "properties": {
+            "error": {
+              "type": "string"
+            }
+          }
+        }
+      ]
+    },
+    "test_examples": [
+      {
+        "operation": "get_dorothea_regulon",
+        "tf_gene": "TP53"
+      }
+    ]
   }
 ]

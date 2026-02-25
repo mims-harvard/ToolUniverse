@@ -1,0 +1,560 @@
+[
+  {
+    "name": "DNA_find_restriction_sites",
+    "type": "DNATool",
+    "description": "Find restriction enzyme recognition sites in a DNA sequence using the NEB enzyme library (24 common enzymes including EcoRI, BamHI, HindIII, NotI, etc.). Returns positions, recognition sequences, and cut counts for each enzyme that has sites. Use for: cloning strategy design, vector linearization planning, molecular biology workflows.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "operation": {
+          "type": "string",
+          "enum": ["find_restriction_sites"],
+          "description": "Operation type"
+        },
+        "sequence": {
+          "type": "string",
+          "description": "DNA sequence (A, T, G, C, N only). Case insensitive. Spaces and newlines are ignored."
+        },
+        "enzymes": {
+          "type": ["array", "null"],
+          "items": {"type": "string"},
+          "description": "Optional list of specific enzyme names to check (e.g., ['EcoRI', 'BamHI']). If null, checks all 24 NEB enzymes."
+        }
+      },
+      "required": ["operation", "sequence"]
+    },
+    "return_schema": {
+      "type": "object",
+      "properties": {
+        "sequence_length": {"type": "integer"},
+        "enzymes_with_sites": {"type": "object"},
+        "enzymes_cutting": {"type": "array"},
+        "num_enzymes_cutting": {"type": "integer"}
+      }
+    },
+    "test_examples": [
+      {
+        "operation": "find_restriction_sites",
+        "sequence": "ATGGAGGAGCCGCAGTCAGATCCTAGCGTTGAATTCGGATCCAAGCTT"
+      }
+    ]
+  },
+  {
+    "name": "DNA_find_orfs",
+    "type": "DNATool",
+    "description": "Find open reading frames (ORFs) in a DNA sequence by scanning for ATG start codons followed by stop codons (TAA, TAG, TGA). Returns ORFs sorted by length with positions, strand, and reading frame. Supports forward strand, reverse strand, or both. Use for: gene prediction, identifying protein-coding regions, analyzing synthetic sequences.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "operation": {
+          "type": "string",
+          "enum": ["find_orfs"],
+          "description": "Operation type"
+        },
+        "sequence": {
+          "type": "string",
+          "description": "DNA sequence (A, T, G, C, N only)"
+        },
+        "min_length": {
+          "type": "integer",
+          "minimum": 1,
+          "default": 100,
+          "description": "Minimum ORF length in nucleotides (default: 100 nt = ~33 amino acids)"
+        },
+        "strand": {
+          "type": ["string", "null"],
+          "enum": ["forward", "reverse", "both", null],
+          "default": "both",
+          "description": "Which strand to search: 'forward', 'reverse', or 'both' (default)"
+        }
+      },
+      "required": ["operation", "sequence"]
+    },
+    "return_schema": {
+      "type": "object",
+      "properties": {
+        "sequence_length": {"type": "integer"},
+        "min_length_nt": {"type": "integer"},
+        "num_orfs_found": {"type": "integer"},
+        "orfs": {"type": "array", "items": {"type": "object"}}
+      }
+    },
+    "test_examples": [
+      {
+        "operation": "find_orfs",
+        "sequence": "ATGAAACCCGGGTTTTAA",
+        "min_length": 15
+      }
+    ]
+  },
+  {
+    "name": "DNA_calculate_gc_content",
+    "type": "DNATool",
+    "description": "Calculate GC content percentage and full nucleotide composition of a DNA sequence. Returns GC%, AT%, individual base counts (A, T, G, C, N), and interpretation (low/normal/high GC). Useful for primer design quality checks, cloning efficiency prediction, and sequence characterization. High GC (>60%) sequences may require special PCR conditions.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "operation": {
+          "type": "string",
+          "enum": ["calculate_gc_content"],
+          "description": "Operation type"
+        },
+        "sequence": {
+          "type": "string",
+          "description": "DNA sequence (A, T, G, C, N only). Case insensitive."
+        }
+      },
+      "required": ["operation", "sequence"]
+    },
+    "return_schema": {
+      "type": "object",
+      "properties": {
+        "gc_content_percent": {"type": "number"},
+        "at_content_percent": {"type": "number"},
+        "nucleotide_counts": {"type": "object"},
+        "sequence_length": {"type": "integer"},
+        "effective_length": {"type": "integer"},
+        "interpretation": {"type": "string"}
+      }
+    },
+    "test_examples": [
+      {
+        "operation": "calculate_gc_content",
+        "sequence": "GCGCGCGCGCATATATAT"
+      }
+    ]
+  },
+  {
+    "name": "DNA_reverse_complement",
+    "type": "DNATool",
+    "description": "Generate the reverse complement of a DNA sequence. Complements each base (A↔T, G↔C) then reverses the sequence. Essential for: designing reverse primers, understanding antisense strand, converting sequences between conventions. N bases are preserved as N in the reverse complement.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "operation": {
+          "type": "string",
+          "enum": ["reverse_complement"],
+          "description": "Operation type"
+        },
+        "sequence": {
+          "type": "string",
+          "description": "DNA sequence (A, T, G, C, N only). Case insensitive."
+        }
+      },
+      "required": ["operation", "sequence"]
+    },
+    "return_schema": {
+      "type": "object",
+      "properties": {
+        "original": {"type": "string"},
+        "reverse_complement": {"type": "string"},
+        "length": {"type": "integer"}
+      }
+    },
+    "test_examples": [
+      {
+        "operation": "reverse_complement",
+        "sequence": "ATGGAGGAGCCGCAGTCAGATCC"
+      }
+    ]
+  },
+  {
+    "name": "DNA_translate_sequence",
+    "type": "DNATool",
+    "description": "Translate a DNA coding sequence to protein using the standard genetic code (NCBI Code 1). Returns protein sequence (single-letter amino acids), stop codon positions, and protein length. Trims at first stop codon by default. Use for: checking synthetic gene constructs, verifying reading frames, predicting protein sequence from genomic DNA.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "operation": {
+          "type": "string",
+          "enum": ["translate_sequence"],
+          "description": "Operation type"
+        },
+        "sequence": {
+          "type": "string",
+          "description": "DNA coding sequence starting with ATG (A, T, G, C only). Should be in-frame."
+        },
+        "codon_table": {
+          "type": ["string", "null"],
+          "enum": ["standard", null],
+          "default": "standard",
+          "description": "Genetic code to use. Currently only 'standard' (NCBI Code 1) is supported."
+        }
+      },
+      "required": ["operation", "sequence"]
+    },
+    "return_schema": {
+      "type": "object",
+      "properties": {
+        "protein_sequence": {"type": "string"},
+        "protein_length_aa": {"type": "integer"},
+        "stop_codons_found": {"type": "integer"},
+        "codon_table": {"type": "string"}
+      }
+    },
+    "test_examples": [
+      {
+        "operation": "translate_sequence",
+        "sequence": "ATGAAACCCGGGTTTTAA"
+      }
+    ]
+  },
+  {
+    "name": "DNA_codon_optimize",
+    "type": "DNATool",
+    "description": "Codon-optimize an amino acid sequence for expression in a target species (human, ecoli, mouse, or yeast) using species-specific codon frequency tables. Returns the optimized DNA sequence, GC content, Codon Adaptation Index (CAI), and sequence length. Use for: synthetic gene design, heterologous protein expression, improving codon usage for a target host organism.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "operation": {
+          "type": "string",
+          "enum": ["codon_optimize"],
+          "description": "Operation type"
+        },
+        "sequence": {
+          "type": "string",
+          "description": "Amino acid sequence in single-letter code (e.g., 'MEPVDDLPL'). Stop codon (*) is optional at the end."
+        },
+        "species": {
+          "type": ["string", "null"],
+          "enum": ["human", "ecoli", "mouse", "yeast", null],
+          "default": "human",
+          "description": "Target expression organism. Options: 'human' (default), 'ecoli', 'mouse', 'yeast'."
+        }
+      },
+      "required": ["operation", "sequence"]
+    },
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "object",
+          "properties": {
+            "optimized_dna": {"type": "string"},
+            "gc_content": {"type": "number"},
+            "cai": {"type": "number"},
+            "length_bp": {"type": "integer"}
+          },
+          "required": ["optimized_dna", "gc_content", "cai", "length_bp"]
+        },
+        {
+          "type": "object",
+          "properties": {"error": {"type": "string"}},
+          "required": ["error"]
+        }
+      ]
+    },
+    "test_examples": [
+      {
+        "operation": "codon_optimize",
+        "sequence": "MEPVDDLPLPEIESLPETFGSLPLDSLETPVAFEGVKTEP",
+        "species": "human"
+      },
+      {
+        "operation": "codon_optimize",
+        "sequence": "MEPVDDLPLPEIESLPETFGSLPLDSLETPVAFEGVKTEP",
+        "species": "ecoli"
+      }
+    ]
+  },
+  {
+    "name": "DNA_virtual_digest",
+    "type": "DNATool",
+    "description": "Perform a virtual restriction enzyme digest on a DNA sequence using the NEB enzyme library (24 enzymes). Returns all resulting fragments with their sequences, lengths, and positions, plus a list of cut sites. Supports both linear and circular DNA. Use for: cloning planning, gel electrophoresis prediction, verifying construct integrity.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "operation": {
+          "type": "string",
+          "enum": ["virtual_digest"],
+          "description": "Operation type"
+        },
+        "sequence": {
+          "type": "string",
+          "description": "DNA sequence (A, T, G, C, N only). Case insensitive."
+        },
+        "enzymes": {
+          "type": ["array", "null"],
+          "items": {"type": "string"},
+          "description": "List of enzyme names to use for digestion (e.g., ['EcoRI', 'BamHI']). If null, uses all 24 NEB enzymes."
+        },
+        "circular": {
+          "type": ["boolean", "null"],
+          "default": false,
+          "description": "Treat sequence as circular DNA (e.g., plasmid). Default: false (linear)."
+        }
+      },
+      "required": ["operation", "sequence"]
+    },
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "object",
+          "properties": {
+            "fragments": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "sequence": {"type": "string"},
+                  "length": {"type": "integer"},
+                  "start": {"type": "integer"},
+                  "end": {"type": "integer"}
+                }
+              }
+            },
+            "n_fragments": {"type": "integer"},
+            "enzymes_used": {"type": "array", "items": {"type": "string"}},
+            "cut_sites": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "enzyme": {"type": "string"},
+                  "position": {"type": "integer"}
+                }
+              }
+            }
+          },
+          "required": ["fragments", "n_fragments", "enzymes_used", "cut_sites"]
+        },
+        {
+          "type": "object",
+          "properties": {"error": {"type": "string"}},
+          "required": ["error"]
+        }
+      ]
+    },
+    "test_examples": [
+      {
+        "operation": "virtual_digest",
+        "sequence": "ATGGAGGAGCCGCAGTCAGATCCTAGCGTTGAATTCGGATCCAAGCTTACGTACGT",
+        "enzymes": ["EcoRI", "BamHI", "HindIII"],
+        "circular": false
+      }
+    ]
+  },
+  {
+    "name": "DNA_primer_design",
+    "type": "DNATool",
+    "description": "Design forward and reverse PCR primers for a target DNA region using the SantaLucia 1998 nearest-neighbor thermodynamic model. Selects primers with Tm closest to the target (default 60°C), GC content 40-60%, length 18-25 bp, and no 3'-end repeats. Use for: PCR amplification, genotyping, diagnostic assay design, amplicon sequencing.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "operation": {
+          "type": "string",
+          "enum": ["primer_design"],
+          "description": "Operation type"
+        },
+        "sequence": {
+          "type": "string",
+          "description": "DNA template sequence (A, T, G, C, N only). Must be at least 200 bp for good primer design."
+        },
+        "target_start": {
+          "type": ["integer", "null"],
+          "description": "0-based start position of the target region to amplify. Defaults to 0."
+        },
+        "target_end": {
+          "type": ["integer", "null"],
+          "description": "0-based end position of the target region to amplify. Defaults to sequence length."
+        },
+        "tm_target": {
+          "type": ["number", "null"],
+          "default": 60.0,
+          "description": "Target melting temperature in Celsius (default: 60.0°C)."
+        },
+        "product_size_min": {
+          "type": ["integer", "null"],
+          "default": 100,
+          "description": "Minimum acceptable PCR product size in bp (default: 100)."
+        },
+        "product_size_max": {
+          "type": ["integer", "null"],
+          "default": 1000,
+          "description": "Maximum acceptable PCR product size in bp (default: 1000)."
+        }
+      },
+      "required": ["operation", "sequence"]
+    },
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "object",
+          "properties": {
+            "forward_primer": {
+              "type": "object",
+              "properties": {
+                "sequence": {"type": "string"},
+                "tm": {"type": "number"},
+                "gc_content": {"type": "number"},
+                "length": {"type": "integer"},
+                "start": {"type": "integer"}
+              }
+            },
+            "reverse_primer": {
+              "type": "object",
+              "properties": {
+                "sequence": {"type": "string"},
+                "tm": {"type": "number"},
+                "gc_content": {"type": "number"},
+                "length": {"type": "integer"},
+                "end": {"type": "integer"}
+              }
+            },
+            "product_size": {"type": "integer"}
+          },
+          "required": ["forward_primer", "reverse_primer", "product_size"]
+        },
+        {
+          "type": "object",
+          "properties": {"error": {"type": "string"}},
+          "required": ["error"]
+        }
+      ]
+    },
+    "test_examples": [
+      {
+        "operation": "primer_design",
+        "sequence": "ATGGAGGAGCCGCAGTCAGATCCTAGCGTTGAATTCGGATCCAAGCTTACGTACGTATGGAGGAGCCGCAGTCAGATCCTAGCGTTGAATTCGGATCCAAGCTTACGTACGTATGGAGGAGCCGCAGTCAGATCCTAGCGTTGAATTCGGATCCAAGCTTACGTACGTATGGAGGAGCCGCAGTCAGATCCTAGCGTTGAATTCGGATCCAAGCTTACGTACGT",
+        "target_start": 50,
+        "target_end": 180,
+        "tm_target": 60.0
+      }
+    ]
+  },
+  {
+    "name": "DNA_gibson_design",
+    "type": "DNATool",
+    "description": "Design Gibson Assembly overlaps for seamless DNA fragment assembly. For each fragment, computes the 5' overhang (from the previous fragment's 3' end) and 3' overhang (from the next fragment's 5' end) based on the specified overlap length (default 20 bp). Returns the modified fragment sequences ready for Gibson Assembly cloning. Use for: seamless cloning, multi-fragment assembly, vector backbone insertion.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "operation": {
+          "type": "string",
+          "enum": ["gibson_design"],
+          "description": "Operation type"
+        },
+        "fragments": {
+          "type": "array",
+          "items": {"type": "string"},
+          "description": "List of DNA fragment sequences (at least 2). Each must be longer than overlap_length."
+        },
+        "overlap_length": {
+          "type": ["integer", "null"],
+          "default": 20,
+          "description": "Overlap length in bp for Gibson Assembly (default: 20 bp). Must be at least 1."
+        }
+      },
+      "required": ["operation", "fragments"]
+    },
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "object",
+          "properties": {
+            "assembly_fragments": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "name": {"type": "string"},
+                  "original_sequence": {"type": "string"},
+                  "with_overlaps": {"type": "string"},
+                  "left_overlap": {"type": "string"},
+                  "right_overlap": {"type": "string"}
+                }
+              }
+            },
+            "n_fragments": {"type": "integer"},
+            "overlap_length": {"type": "integer"}
+          },
+          "required": ["assembly_fragments", "n_fragments", "overlap_length"]
+        },
+        {
+          "type": "object",
+          "properties": {"error": {"type": "string"}},
+          "required": ["error"]
+        }
+      ]
+    },
+    "test_examples": [
+      {
+        "operation": "gibson_design",
+        "fragments": [
+          "ATGGAGGAGCCGCAGTCAGATCCTAGCGTTGAATTCGGATCCAAGCTTACGTACGT",
+          "CGTACGTAAGCTTGGATCCGAATTCAAGCGATAGGATCTGACTGCGGCTCCTCCAT",
+          "TCCATGGAGGAGCCGCAGTCAGATCCTAGCGTTGAATTCGGATCCAAGCTTACGTACGT"
+        ],
+        "overlap_length": 20
+      }
+    ]
+  },
+  {
+    "name": "DNA_golden_gate_design",
+    "type": "DNATool",
+    "description": "Design Golden Gate Assembly parts with Type IIS restriction enzyme sites (BsaI or BbsI). Assigns unique non-palindromic 4-bp overhangs to each junction and builds the full synthetic part sequences including enzyme recognition sites. Use for: scarless multi-part assembly, modular cloning (MoClo), Golden Gate cloning workflows.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "operation": {
+          "type": "string",
+          "enum": ["golden_gate_design"],
+          "description": "Operation type"
+        },
+        "parts": {
+          "type": "array",
+          "items": {"type": "string"},
+          "description": "List of DNA part sequences to assemble (at least 2). A, T, G, C only."
+        },
+        "enzyme": {
+          "type": ["string", "null"],
+          "enum": ["BsaI", "BbsI", null],
+          "default": "BsaI",
+          "description": "Type IIS restriction enzyme to use. Options: 'BsaI' (default) or 'BbsI'."
+        }
+      },
+      "required": ["operation", "parts"]
+    },
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "object",
+          "properties": {
+            "parts_with_overhangs": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "name": {"type": "string"},
+                  "sequence": {"type": "string"},
+                  "left_overhang": {"type": "string"},
+                  "right_overhang": {"type": "string"},
+                  "full_sequence": {"type": "string"}
+                }
+              }
+            },
+            "overhangs": {"type": "array", "items": {"type": "string"}},
+            "enzyme": {"type": "string"},
+            "protocol_note": {"type": "string"}
+          },
+          "required": ["parts_with_overhangs", "overhangs", "enzyme", "protocol_note"]
+        },
+        {
+          "type": "object",
+          "properties": {"error": {"type": "string"}},
+          "required": ["error"]
+        }
+      ]
+    },
+    "test_examples": [
+      {
+        "operation": "golden_gate_design",
+        "parts": [
+          "ATGGAGGAGCCGCAGTCAGATCCTAGCGTTGAATTCGGATCC",
+          "GGATCCAAGCTTACGTACGTATGGAGGAGCCGCAGTCAGAT",
+          "CCTAGCGTTGAATTCGGATCCAAGCTTACGTACGTATGGAG"
+        ],
+        "enzyme": "BsaI"
+      }
+    ]
+  }
+]

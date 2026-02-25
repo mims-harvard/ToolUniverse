@@ -1,36 +1,33 @@
 """
-ORCID_search_researchers
+DNA_codon_optimize
 
-Search ORCID registry for researchers by keyword query. Returns ORCID iDs matching the search. Su...
+Codon-optimize an amino acid sequence for expression in a target species (human, ecoli, mouse, or...
 """
 
 from typing import Any, Optional, Callable
 from ._shared_client import get_shared_client
 
 
-def ORCID_search_researchers(
+def DNA_codon_optimize(
     operation: str,
-    query: str,
-    start: Optional[int] = 0,
-    rows: Optional[int] = 10,
+    sequence: str,
+    species: Optional[str | Any] = "human",
     *,
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> list[Any]:
+) -> Any:
     """
-    Search ORCID registry for researchers by keyword query. Returns ORCID iDs matching the search. Su...
+    Codon-optimize an amino acid sequence for expression in a target species (human, ecoli, mouse, or...
 
     Parameters
     ----------
     operation : str
         Operation type
-    query : str
-        Search query (e.g., 'BRCA1 cancer genetics', 'Harvard genomics')
-    start : int
-        Pagination offset (0-based)
-    rows : int
-        Number of results to return
+    sequence : str
+        Amino acid sequence in single-letter code (e.g., 'MEPVDDLPL'). Stop codon (*)...
+    species : str | Any
+        Target expression organism. Options: 'human' (default), 'ecoli', 'mouse', 'ye...
     stream_callback : Callable, optional
         Callback for streaming output
     use_cache : bool, default False
@@ -40,18 +37,17 @@ def ORCID_search_researchers(
 
     Returns
     -------
-    list[Any]
+    Any
     """
     # Handle mutable defaults to avoid B006 linting error
 
     return get_shared_client().run_one_function(
         {
-            "name": "ORCID_search_researchers",
+            "name": "DNA_codon_optimize",
             "arguments": {
                 "operation": operation,
-                "query": query,
-                "start": start,
-                "rows": rows,
+                "sequence": sequence,
+                "species": species,
             },
         },
         stream_callback=stream_callback,
@@ -60,4 +56,4 @@ def ORCID_search_researchers(
     )
 
 
-__all__ = ["ORCID_search_researchers"]
+__all__ = ["DNA_codon_optimize"]

@@ -1,36 +1,33 @@
 """
-ORCID_search_researchers
+CLUE_get_cell_lines
 
-Search ORCID registry for researchers by keyword query. Returns ORCID iDs matching the search. Su...
+Get cell line information used in L1000 Connectivity Map experiments. Returns cell line metadata ...
 """
 
 from typing import Any, Optional, Callable
 from ._shared_client import get_shared_client
 
 
-def ORCID_search_researchers(
+def CLUE_get_cell_lines(
     operation: str,
-    query: str,
-    start: Optional[int] = 0,
-    rows: Optional[int] = 10,
+    cell_id: Optional[str | Any] = None,
+    limit: Optional[int] = 50,
     *,
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
 ) -> list[Any]:
     """
-    Search ORCID registry for researchers by keyword query. Returns ORCID iDs matching the search. Su...
+    Get cell line information used in L1000 Connectivity Map experiments. Returns cell line metadata ...
 
     Parameters
     ----------
     operation : str
         Operation type
-    query : str
-        Search query (e.g., 'BRCA1 cancer genetics', 'Harvard genomics')
-    start : int
-        Pagination offset (0-based)
-    rows : int
-        Number of results to return
+    cell_id : str | Any
+        Cell line identifier (e.g., 'MCF7', 'A375', 'PC3')
+    limit : int
+        Maximum number of results
     stream_callback : Callable, optional
         Callback for streaming output
     use_cache : bool, default False
@@ -46,13 +43,8 @@ def ORCID_search_researchers(
 
     return get_shared_client().run_one_function(
         {
-            "name": "ORCID_search_researchers",
-            "arguments": {
-                "operation": operation,
-                "query": query,
-                "start": start,
-                "rows": rows,
-            },
+            "name": "CLUE_get_cell_lines",
+            "arguments": {"operation": operation, "cell_id": cell_id, "limit": limit},
         },
         stream_callback=stream_callback,
         use_cache=use_cache,
@@ -60,4 +52,4 @@ def ORCID_search_researchers(
     )
 
 
-__all__ = ["ORCID_search_researchers"]
+__all__ = ["CLUE_get_cell_lines"]

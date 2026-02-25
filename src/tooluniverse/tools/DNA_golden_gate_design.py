@@ -1,30 +1,33 @@
 """
-ORCID_get_works
+DNA_golden_gate_design
 
-Get list of publications and works for an ORCID researcher. Returns titles, publication types, da...
+Design Golden Gate Assembly parts with Type IIS restriction enzyme sites (BsaI or BbsI). Assigns ...
 """
 
 from typing import Any, Optional, Callable
 from ._shared_client import get_shared_client
 
 
-def ORCID_get_works(
+def DNA_golden_gate_design(
     operation: str,
-    orcid: str,
+    parts: list[str],
+    enzyme: Optional[str | Any] = "BsaI",
     *,
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> list[Any]:
+) -> Any:
     """
-    Get list of publications and works for an ORCID researcher. Returns titles, publication types, da...
+    Design Golden Gate Assembly parts with Type IIS restriction enzyme sites (BsaI or BbsI). Assigns ...
 
     Parameters
     ----------
     operation : str
         Operation type
-    orcid : str
-        ORCID iD in format XXXX-XXXX-XXXX-XXXX
+    parts : list[str]
+        List of DNA part sequences to assemble (at least 2). A, T, G, C only.
+    enzyme : str | Any
+        Type IIS restriction enzyme to use. Options: 'BsaI' (default) or 'BbsI'.
     stream_callback : Callable, optional
         Callback for streaming output
     use_cache : bool, default False
@@ -34,14 +37,14 @@ def ORCID_get_works(
 
     Returns
     -------
-    list[Any]
+    Any
     """
     # Handle mutable defaults to avoid B006 linting error
 
     return get_shared_client().run_one_function(
         {
-            "name": "ORCID_get_works",
-            "arguments": {"operation": operation, "orcid": orcid},
+            "name": "DNA_golden_gate_design",
+            "arguments": {"operation": operation, "parts": parts, "enzyme": enzyme},
         },
         stream_callback=stream_callback,
         use_cache=use_cache,
@@ -49,4 +52,4 @@ def ORCID_get_works(
     )
 
 
-__all__ = ["ORCID_get_works"]
+__all__ = ["DNA_golden_gate_design"]

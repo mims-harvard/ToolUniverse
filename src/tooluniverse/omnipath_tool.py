@@ -75,6 +75,10 @@ class OmniPathTool(BaseTool):
             return self._get_annotations(arguments)
         elif self.endpoint == "enz_sub":
             return self._get_enzyme_substrate(arguments)
+        elif self.endpoint == "tf_target":
+            return self._get_tf_target_interactions(arguments)
+        elif self.endpoint == "dorothea":
+            return self._get_dorothea_regulon(arguments)
         else:
             return {"error": f"Unknown endpoint: {self.endpoint}"}
 
@@ -412,5 +416,126 @@ class OmniPathTool(BaseTool):
                 "source": "OmniPath Enzyme-Substrate (omnipathdb.org)",
                 "total_ptms": len(results),
                 "description": "PTM data from PhosphoSite, phosphoELM, dbPTM, SIGNOR, and other databases",
+            },
+        }
+
+    def _get_tf_target_interactions(self, arguments: Dict[str, Any]) -> Dict[str, Any]:
+        tf_gene = arguments.get("tf_gene")
+        target_gene = arguments.get("target_gene")
+        confidence_level = arguments.get("confidence_level")
+
+        if not tf_gene and not target_gene:
+            return {"error": "At least one of 'tf_gene' or 'target_gene' is required"}
+
+        params = {
+            "genesymbols": "yes",
+            "fields": "sources,references,curation_effort,type",
+            "datasets": "dorothea,collectri",
+        }
+
+        if tf_gene:
+            params["sources"] = tf_gene
+        if target_gene:
+            params["targets"] = target_gene
+
+        data = self._make_request("interactions/", params)
+
+        if not isinstance(data, list):
+            return {"error": f"Unexpected response format from OmniPath: {type(data)}"}
+
+        interactions = []
+        for item in data:
+            dorothea_level = item.get("dorothea_level")
+            if (
+                confidence_level
+                and dorothea_level
+                and dorothea_level != confidence_level
+            ):
+                continue
+
+            interactions.append(
+                {
+                    "tf_uniprot": item.get("source"),
+                    "target_uniprot": item.get("target"),
+                    "tf_genesymbol": item.get("source_genesymbol"),
+                    "target_genesymbol": item.get("target_genesymbol"),
+                    "is_stimulation": bool(item.get("is_stimulation", 0)),
+                    "is_inhibition": bool(item.get("is_inhibition", 0)),
+                    "dorothea_level": dorothea_level,
+                    "sources": item.get("sources", []),
+                    "curation_effort": item.get("curation_effort"),
+                }
+            )
+
+        interactions.sort(key=lambda x: x.get("curation_effort") or 0, reverse=True)
+
+        return {
+            "data": interactions,
+            "metadata": {
+                "source": "OmniPath DoRothEA + CollecTRI (omnipathdb.org)",
+                "total_interactions": len(interactions),
+                "description": "TF-target interactions from DoRothEA and CollecTRI regulons",
+            },
+        }
+
+    def _get_dorothea_regulon(self, arguments: Dict[str, Any]) -> Dict[str, Any]:
+        tf_gene = arguments.get("tf_gene")
+        if not tf_gene:
+            return {"error": "'tf_gene' is required for DoRothEA regulon query"}
+
+        confidence_levels = arguments.get("confidence_levels")
+
+        params = {
+            "genesymbols": "yes",
+            "fields": "sources,references,curation_effort,type",
+            "datasets": "dorothea",
+            "sources": tf_gene,
+        }
+
+        data = self._make_request("interactions/", params)
+
+        if not isinstance(data, list):
+            return {"error": f"Unexpected response format from OmniPath: {type(data)}"}
+
+        interactions = []
+        for item in data:
+            dorothea_level = item.get("dorothea_level")
+
+            if confidence_levels:
+                levels = [level.strip() for level in confidence_levels.split(",")]
+                if dorothea_level not in levels:
+                    continue
+
+            interactions.append(
+                {
+                    "tf_genesymbol": item.get("source_genesymbol"),
+                    "target_genesymbol": item.get("target_genesymbol"),
+                    "target_uniprot": item.get("target"),
+                    "mor": 1
+                    if item.get("is_stimulation")
+                    else (-1 if item.get("is_inhibition") else 0),
+                    "is_stimulation": bool(item.get("is_stimulation", 0)),
+                    "is_inhibition": bool(item.get("is_inhibition", 0)),
+                    "dorothea_level": dorothea_level,
+                    "sources": item.get("sources", []),
+                    "curation_effort": item.get("curation_effort"),
+                }
+            )
+
+        interactions.sort(key=lambda x: x.get("curation_effort") or 0, reverse=True)
+
+        by_level = {}
+        for i in interactions:
+            lvl = i.get("dorothea_level") or "unknown"
+            by_level.setdefault(lvl, []).append(i)
+
+        return {
+            "data": interactions,
+            "metadata": {
+                "source": "OmniPath DoRothEA (omnipathdb.org)",
+                "tf_gene": tf_gene,
+                "total_targets": len(interactions),
+                "by_confidence_level": {k: len(v) for k, v in by_level.items()},
+                "description": "DoRothEA regulon with mode of regulation (MoR): +1=activation, -1=repression",
             },
         }

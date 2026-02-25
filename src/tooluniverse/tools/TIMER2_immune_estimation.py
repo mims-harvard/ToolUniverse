@@ -1,30 +1,33 @@
 """
-ORCID_get_works
+TIMER2_immune_estimation
 
-Get list of publications and works for an ORCID researcher. Returns titles, publication types, da...
+Estimate immune cell abundance in TCGA cancer samples using TIMER-equivalent marker gene expressi...
 """
 
 from typing import Any, Optional, Callable
 from ._shared_client import get_shared_client
 
 
-def ORCID_get_works(
+def TIMER2_immune_estimation(
     operation: str,
-    orcid: str,
+    cancer: str,
+    gene: Optional[str | Any] = None,
     *,
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> list[Any]:
+) -> Any:
     """
-    Get list of publications and works for an ORCID researcher. Returns titles, publication types, da...
+    Estimate immune cell abundance in TCGA cancer samples using TIMER-equivalent marker gene expressi...
 
     Parameters
     ----------
     operation : str
         Operation type
-    orcid : str
-        ORCID iD in format XXXX-XXXX-XXXX-XXXX
+    cancer : str
+        TCGA cancer type abbreviation (e.g., 'BRCA', 'LUAD', 'COAD', 'SKCM', 'GBM')
+    gene : str | Any
+        Optional gene symbol to correlate with immune infiltration (e.g., 'CD8A', 'PD...
     stream_callback : Callable, optional
         Callback for streaming output
     use_cache : bool, default False
@@ -34,14 +37,14 @@ def ORCID_get_works(
 
     Returns
     -------
-    list[Any]
+    Any
     """
     # Handle mutable defaults to avoid B006 linting error
 
     return get_shared_client().run_one_function(
         {
-            "name": "ORCID_get_works",
-            "arguments": {"operation": operation, "orcid": orcid},
+            "name": "TIMER2_immune_estimation",
+            "arguments": {"operation": operation, "cancer": cancer, "gene": gene},
         },
         stream_callback=stream_callback,
         use_cache=use_cache,
@@ -49,4 +52,4 @@ def ORCID_get_works(
     )
 
 
-__all__ = ["ORCID_get_works"]
+__all__ = ["TIMER2_immune_estimation"]
