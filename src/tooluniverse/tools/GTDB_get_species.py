@@ -1,33 +1,33 @@
 """
-NCBI_get_sequence
+GTDB_get_species
 
-Retrieve DNA/RNA sequence data from NCBI by accession number. Returns sequences in specified form...
+Get detailed information about a GTDB species cluster, including all genomes assigned to that spe...
 """
 
 from typing import Any, Optional, Callable
 from ._shared_client import get_shared_client
 
 
-def NCBI_get_sequence(
+def GTDB_get_species(
     operation: str,
-    accession: str,
-    format: Optional[str] = "fasta",
+    species: str,
+    max_genomes: Optional[int] = None,
     *,
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> str:
+) -> Any:
     """
-    Retrieve DNA/RNA sequence data from NCBI by accession number. Returns sequences in specified form...
+    Get detailed information about a GTDB species cluster, including all genomes assigned to that spe...
 
     Parameters
     ----------
     operation : str
-        Operation type (fixed: fetch_sequence)
-    accession : str
-        NCBI accession number (e.g., 'U00096', 'NC_045512', 'NM_000546'). Works with ...
-    format : str
-        Sequence format: 'fasta' for FASTA, 'gb' for GenBank, 'embl' for EMBL, 'gp' f...
+        Operation type (fixed: get_species)
+    species : str
+        Species name WITHOUT the s__ prefix (e.g., 'Escherichia coli', 'Hydrogenother...
+    max_genomes : int
+        Maximum number of genomes to return (default: 20). Species clusters can have ...
     stream_callback : Callable, optional
         Callback for streaming output
     use_cache : bool, default False
@@ -37,17 +37,17 @@ def NCBI_get_sequence(
 
     Returns
     -------
-    str
+    Any
     """
     # Handle mutable defaults to avoid B006 linting error
 
     return get_shared_client().run_one_function(
         {
-            "name": "NCBI_get_sequence",
+            "name": "GTDB_get_species",
             "arguments": {
                 "operation": operation,
-                "accession": accession,
-                "format": format,
+                "species": species,
+                "max_genomes": max_genomes,
             },
         },
         stream_callback=stream_callback,
@@ -56,4 +56,4 @@ def NCBI_get_sequence(
     )
 
 
-__all__ = ["NCBI_get_sequence"]
+__all__ = ["GTDB_get_species"]

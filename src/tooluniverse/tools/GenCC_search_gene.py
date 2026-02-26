@@ -1,33 +1,33 @@
 """
-NCBI_get_sequence
+GenCC_search_gene
 
-Retrieve DNA/RNA sequence data from NCBI by accession number. Returns sequences in specified form...
+Get gene-disease validity classifications for a gene from GenCC (Gene Curation Coalition). Return...
 """
 
 from typing import Any, Optional, Callable
 from ._shared_client import get_shared_client
 
 
-def NCBI_get_sequence(
+def GenCC_search_gene(
     operation: str,
-    accession: str,
-    format: Optional[str] = "fasta",
+    gene_symbol: str,
+    classification: Optional[str] = "",
     *,
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> str:
+) -> dict[str, Any]:
     """
-    Retrieve DNA/RNA sequence data from NCBI by accession number. Returns sequences in specified form...
+    Get gene-disease validity classifications for a gene from GenCC (Gene Curation Coalition). Return...
 
     Parameters
     ----------
     operation : str
-        Operation type (fixed: fetch_sequence)
-    accession : str
-        NCBI accession number (e.g., 'U00096', 'NC_045512', 'NM_000546'). Works with ...
-    format : str
-        Sequence format: 'fasta' for FASTA, 'gb' for GenBank, 'embl' for EMBL, 'gp' f...
+        Operation type (fixed: search_gene)
+    gene_symbol : str
+        HGNC gene symbol (e.g., BRCA2, TP53, FBN1, CFTR)
+    classification : str
+        Optional filter by classification level (e.g., Definitive, Strong, Moderate, ...
     stream_callback : Callable, optional
         Callback for streaming output
     use_cache : bool, default False
@@ -37,17 +37,17 @@ def NCBI_get_sequence(
 
     Returns
     -------
-    str
+    dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 
     return get_shared_client().run_one_function(
         {
-            "name": "NCBI_get_sequence",
+            "name": "GenCC_search_gene",
             "arguments": {
                 "operation": operation,
-                "accession": accession,
-                "format": format,
+                "gene_symbol": gene_symbol,
+                "classification": classification,
             },
         },
         stream_callback=stream_callback,
@@ -56,4 +56,4 @@ def NCBI_get_sequence(
     )
 
 
-__all__ = ["NCBI_get_sequence"]
+__all__ = ["GenCC_search_gene"]

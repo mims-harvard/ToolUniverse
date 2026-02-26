@@ -1,30 +1,30 @@
 """
-NCBI_fetch_accessions
+PROSITE_scan_sequence
 
-Convert GenBank UIDs to accession numbers (U00096, NC_045512, etc.). Takes UIDs from NCBI_search_...
+Scan a raw protein amino acid sequence against all PROSITE patterns and profiles to find matching...
 """
 
 from typing import Any, Optional, Callable
 from ._shared_client import get_shared_client
 
 
-def NCBI_fetch_accessions(
-    operation: str,
-    uids: list[str] | str,
+def PROSITE_scan_sequence(
+    sequence: str,
+    skip_frequent: Optional[bool] = None,
     *,
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> list[Any]:
+) -> Any:
     """
-    Convert GenBank UIDs to accession numbers (U00096, NC_045512, etc.). Takes UIDs from NCBI_search_...
+    Scan a raw protein amino acid sequence against all PROSITE patterns and profiles to find matching...
 
     Parameters
     ----------
-    operation : str
-        Operation type (fixed: fetch_accession)
-    uids : list[str] | str
-        GenBank UID(s) from NCBI_search_nucleotide. Can be single UID or array of UIDs.
+    sequence : str
+        Protein amino acid sequence in single-letter code (e.g., 'MKTAYIAKQRQ...'). M...
+    skip_frequent : bool
+        If true (default), skip frequent low-information patterns like glycosylation ...
     stream_callback : Callable, optional
         Callback for streaming output
     use_cache : bool, default False
@@ -34,14 +34,14 @@ def NCBI_fetch_accessions(
 
     Returns
     -------
-    list[Any]
+    Any
     """
     # Handle mutable defaults to avoid B006 linting error
 
     return get_shared_client().run_one_function(
         {
-            "name": "NCBI_fetch_accessions",
-            "arguments": {"operation": operation, "uids": uids},
+            "name": "PROSITE_scan_sequence",
+            "arguments": {"sequence": sequence, "skip_frequent": skip_frequent},
         },
         stream_callback=stream_callback,
         use_cache=use_cache,
@@ -49,4 +49,4 @@ def NCBI_fetch_accessions(
     )
 
 
-__all__ = ["NCBI_fetch_accessions"]
+__all__ = ["PROSITE_scan_sequence"]

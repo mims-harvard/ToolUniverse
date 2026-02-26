@@ -15,7 +15,7 @@ def NCBI_SRA_link_to_biosample(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> list[Any]:
     """
     Link SRA sequencing runs to their associated BioSample records to access biological sample metada...
 
@@ -34,7 +34,7 @@ def NCBI_SRA_link_to_biosample(
 
     Returns
     -------
-    Any
+    list[Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

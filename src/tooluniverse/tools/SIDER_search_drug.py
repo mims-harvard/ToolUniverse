@@ -1,30 +1,30 @@
 """
-NCBI_fetch_accessions
+SIDER_search_drug
 
-Convert GenBank UIDs to accession numbers (U00096, NC_045512, etc.). Takes UIDs from NCBI_search_...
+Search the SIDER drug side effects database for a drug by name. Returns matching drugs with SIDER...
 """
 
 from typing import Any, Optional, Callable
 from ._shared_client import get_shared_client
 
 
-def NCBI_fetch_accessions(
+def SIDER_search_drug(
     operation: str,
-    uids: list[str] | str,
+    drug_name: str,
     *,
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> list[Any]:
+) -> dict[str, Any]:
     """
-    Convert GenBank UIDs to accession numbers (U00096, NC_045512, etc.). Takes UIDs from NCBI_search_...
+    Search the SIDER drug side effects database for a drug by name. Returns matching drugs with SIDER...
 
     Parameters
     ----------
     operation : str
-        Operation type (fixed: fetch_accession)
-    uids : list[str] | str
-        GenBank UID(s) from NCBI_search_nucleotide. Can be single UID or array of UIDs.
+        Operation type
+    drug_name : str
+        Drug name to search for (e.g., 'aspirin', 'ibuprofen', 'metformin', 'warfarin')
     stream_callback : Callable, optional
         Callback for streaming output
     use_cache : bool, default False
@@ -34,14 +34,14 @@ def NCBI_fetch_accessions(
 
     Returns
     -------
-    list[Any]
+    dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 
     return get_shared_client().run_one_function(
         {
-            "name": "NCBI_fetch_accessions",
-            "arguments": {"operation": operation, "uids": uids},
+            "name": "SIDER_search_drug",
+            "arguments": {"operation": operation, "drug_name": drug_name},
         },
         stream_callback=stream_callback,
         use_cache=use_cache,
@@ -49,4 +49,4 @@ def NCBI_fetch_accessions(
     )
 
 
-__all__ = ["NCBI_fetch_accessions"]
+__all__ = ["SIDER_search_drug"]

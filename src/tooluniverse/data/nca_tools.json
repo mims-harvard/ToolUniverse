@@ -1,0 +1,275 @@
+[
+  {
+    "name": "NCA_compute_parameters",
+    "description": "Perform Non-Compartmental Analysis (NCA) on time-concentration pharmacokinetic data. Computes key PK parameters: Cmax (peak concentration), Tmax (time to peak), AUC0-t (area under curve to last measured point using linear-log trapezoidal method), AUC0-inf (extrapolated), terminal elimination half-life (t½), elimination rate constant (λz), clearance (CL), and volume of distribution (Vd) when dose is provided. Follows FDA/EMA NCA guidelines. Use this when you have raw plasma concentration vs. time data from a PK study. Output includes goodness of AUC extrapolation assessment.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "times": {
+          "type": "array",
+          "items": {"type": "number"},
+          "description": "Time points in consistent units (hours recommended). Example: [0, 0.25, 0.5, 1, 2, 4, 8, 12, 24]."
+        },
+        "concentrations": {
+          "type": "array",
+          "items": {"type": "number"},
+          "description": "Plasma concentrations at each time point (same length as times). Example: [0, 150, 280, 220, 180, 120, 60, 30, 8]."
+        },
+        "dose": {
+          "type": ["number", "null"],
+          "description": "Administered dose (optional). Required to calculate CL and Vd. Example: 100 (for 100 mg dose)."
+        },
+        "route": {
+          "type": ["string", "null"],
+          "description": "Route of administration: 'iv' (default) or 'po'. Affects Vd calculation formula."
+        },
+        "dose_unit": {
+          "type": ["string", "null"],
+          "description": "Unit of dose (default: 'mg'). Examples: 'mg', 'ug', 'nmol'."
+        },
+        "conc_unit": {
+          "type": ["string", "null"],
+          "description": "Unit of concentration (default: 'ng/mL'). Examples: 'ng/mL', 'ug/L', 'nM'."
+        },
+        "time_unit": {
+          "type": ["string", "null"],
+          "description": "Unit of time (default: 'h'). Examples: 'h', 'min', 'd'."
+        }
+      },
+      "required": ["times", "concentrations"]
+    },
+    "fields": {
+      "endpoint": "compute_parameters"
+    },
+    "type": "NCATool",
+    "test_examples": [
+      {
+        "times": [0, 0.25, 0.5, 1, 2, 4, 8, 12, 24],
+        "concentrations": [0, 150, 280, 220, 180, 120, 60, 30, 8],
+        "dose": 100,
+        "route": "iv",
+        "dose_unit": "mg",
+        "conc_unit": "ng/mL",
+        "time_unit": "h"
+      },
+      {
+        "times": [0, 0.5, 1, 2, 4, 6, 8, 12],
+        "concentrations": [0, 45, 120, 180, 160, 110, 70, 25],
+        "dose": 200,
+        "route": "po"
+      }
+    ],
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "object",
+          "properties": {
+            "data": {
+              "type": "object",
+              "properties": {
+                "Cmax": {"type": "number", "description": "Maximum concentration"},
+                "Tmax": {"type": "number", "description": "Time of maximum concentration"},
+                "Clast": {"type": "number", "description": "Last measured positive concentration"},
+                "Tlast": {"type": "number", "description": "Time of last measured positive concentration"},
+                "lambda_z": {"type": ["number", "null"], "description": "Terminal elimination rate constant (1/time_unit)"},
+                "t_half": {"type": ["number", "null"], "description": "Terminal half-life in time_unit"},
+                "r_squared_terminal_fit": {"type": ["number", "null"], "description": "R² of terminal log-linear regression"},
+                "AUC0-inf": {"type": ["number", "null"], "description": "AUC extrapolated to infinity"},
+                "AUC_extrapolation_pct": {"type": ["number", "null"], "description": "Percent of AUC from extrapolation (should be <20%)"},
+                "clearance_CL": {"type": ["number", "null"], "description": "Systemic clearance (dose/AUC)"},
+                "volume_distribution_Vd": {"type": ["number", "null"], "description": "Volume of distribution"},
+                "method": {"type": "string"},
+                "note": {"type": "string"},
+                "units": {"type": "object"}
+              }
+            },
+            "metadata": {
+              "type": "object",
+              "properties": {
+                "source": {"type": "string"},
+                "n_timepoints": {"type": "integer"},
+                "route_of_administration": {"type": "string"},
+                "reference": {"type": "string"}
+              }
+            }
+          },
+          "required": ["data"]
+        },
+        {
+          "type": "object",
+          "properties": {
+            "error": {"type": "string"}
+          },
+          "required": ["error"]
+        }
+      ]
+    }
+  },
+  {
+    "name": "NCA_fit_one_compartment",
+    "description": "Fit a one-compartment IV bolus pharmacokinetic model (C(t) = C0 × exp(-k_el × t)) to plasma concentration-time data using nonlinear least squares. Returns C0 (initial concentration), k_el (elimination rate constant), t½ (half-life), R², and when dose is provided: Vd (volume of distribution) and CL (clearance). Assumes mono-exponential decline — appropriate for drugs with rapid distribution and linear elimination. If R² < 0.85, consider a two-compartment model. Use NCA_compute_parameters for model-independent analysis.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "times": {
+          "type": "array",
+          "items": {"type": "number"},
+          "description": "Time points after IV administration. Example: [0, 0.5, 1, 2, 4, 8, 12, 24]."
+        },
+        "concentrations": {
+          "type": "array",
+          "items": {"type": "number"},
+          "description": "Plasma concentrations at each time point. Example: [500, 380, 290, 170, 60, 8, 1.1, 0.1]."
+        },
+        "dose": {
+          "type": ["number", "null"],
+          "description": "Administered IV dose. Required to calculate Vd and CL."
+        },
+        "dose_unit": {
+          "type": ["string", "null"],
+          "description": "Unit of dose (default: 'mg')."
+        },
+        "conc_unit": {
+          "type": ["string", "null"],
+          "description": "Unit of concentration (default: 'ng/mL')."
+        },
+        "time_unit": {
+          "type": ["string", "null"],
+          "description": "Unit of time (default: 'h')."
+        }
+      },
+      "required": ["times", "concentrations"]
+    },
+    "fields": {
+      "endpoint": "fit_one_compartment"
+    },
+    "type": "NCATool",
+    "test_examples": [
+      {
+        "times": [0, 0.5, 1, 2, 4, 8, 12, 24],
+        "concentrations": [500, 380, 290, 170, 60, 8, 1.1, 0.01],
+        "dose": 100,
+        "dose_unit": "mg",
+        "conc_unit": "ng/mL",
+        "time_unit": "h"
+      },
+      {
+        "times": [0.5, 1, 2, 4, 8, 12],
+        "concentrations": [320, 280, 200, 120, 40, 12],
+        "dose": 50
+      }
+    ],
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "object",
+          "properties": {
+            "data": {
+              "type": "object",
+              "properties": {
+                "model": {"type": "string"},
+                "equation": {"type": "string"},
+                "C0_initial_concentration": {"type": "number"},
+                "k_el_elimination_rate": {"type": "number"},
+                "t_half": {"type": "number"},
+                "r_squared": {"type": "number"},
+                "goodness_of_fit": {"type": "string"},
+                "standard_errors": {"type": "object"},
+                "volume_distribution_Vd": {"type": ["number", "null"]},
+                "clearance_CL": {"type": ["number", "null"]},
+                "AUC0_inf_model": {"type": ["number", "null"]},
+                "units": {"type": "object"}
+              }
+            },
+            "metadata": {
+              "type": "object",
+              "properties": {
+                "source": {"type": "string"},
+                "n_timepoints_fitted": {"type": "integer"}
+              }
+            }
+          },
+          "required": ["data"]
+        },
+        {
+          "type": "object",
+          "properties": {
+            "error": {"type": "string"}
+          },
+          "required": ["error"]
+        }
+      ]
+    }
+  },
+  {
+    "name": "NCA_calculate_bioavailability",
+    "description": "Calculate absolute oral bioavailability (F) from paired IV and PO pharmacokinetic study AUC values and doses. Formula: F = (AUC_PO × Dose_IV) / (AUC_IV × Dose_PO). Classifies result as High (≥80%), Moderate (30–80%), Low (10–30%), or Very Low (<10%) with clinical interpretation. F > 20% is typically considered acceptable for small molecule oral drugs. F ≥ 80% required for bioequivalence. Use after NCA_compute_parameters to calculate AUC from raw time-concentration data for both IV and PO arms.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "auc_po": {
+          "type": "number",
+          "description": "AUC from the oral (PO) arm. Must be in same units as auc_iv. Example: 2400 (ng/mL·h)."
+        },
+        "dose_po": {
+          "type": "number",
+          "description": "Dose administered orally. Must be in same units as dose_iv. Example: 100 (mg)."
+        },
+        "auc_iv": {
+          "type": "number",
+          "description": "AUC from the intravenous (IV) arm. Example: 3500 (ng/mL·h)."
+        },
+        "dose_iv": {
+          "type": "number",
+          "description": "Dose administered intravenously. Example: 50 (mg)."
+        }
+      },
+      "required": ["auc_po", "dose_po", "auc_iv", "dose_iv"]
+    },
+    "fields": {
+      "endpoint": "calculate_bioavailability"
+    },
+    "type": "NCATool",
+    "test_examples": [
+      {"auc_po": 2400, "dose_po": 100, "auc_iv": 3500, "dose_iv": 50},
+      {"auc_po": 800, "dose_po": 200, "auc_iv": 2000, "dose_iv": 10},
+      {"auc_po": 5000, "dose_po": 100, "auc_iv": 4800, "dose_iv": 50}
+    ],
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "object",
+          "properties": {
+            "data": {
+              "type": "object",
+              "properties": {
+                "bioavailability_F": {"type": "number", "description": "Absolute bioavailability as fraction (0-1)"},
+                "bioavailability_pct": {"type": "number", "description": "Bioavailability as percentage"},
+                "category": {"type": "string"},
+                "clinical_note": {"type": "string"},
+                "formula": {"type": "string"},
+                "inputs": {"type": "object"},
+                "general_note": {"type": "string"}
+              }
+            },
+            "metadata": {
+              "type": "object",
+              "properties": {
+                "source": {"type": "string"},
+                "method": {"type": "string"}
+              }
+            }
+          },
+          "required": ["data"]
+        },
+        {
+          "type": "object",
+          "properties": {
+            "error": {"type": "string"}
+          },
+          "required": ["error"]
+        }
+      ]
+    }
+  }
+]

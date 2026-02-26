@@ -15,7 +15,7 @@ def NCBI_SRA_get_download_urls(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> list[Any]:
     """
     Get FTP and cloud storage URLs for downloading FASTQ sequencing data from SRA runs. Returns multi...
 
@@ -34,7 +34,7 @@ def NCBI_SRA_get_download_urls(
 
     Returns
     -------
-    Any
+    list[Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

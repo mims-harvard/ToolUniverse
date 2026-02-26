@@ -15,7 +15,7 @@ def NCBI_SRA_get_run_info(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> list[Any]:
     """
     Get detailed metadata for SRA run accessions including sequencing platform (ILLUMINA, Oxford Nano...
 
@@ -34,7 +34,7 @@ def NCBI_SRA_get_run_info(
 
     Returns
     -------
-    Any
+    list[Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

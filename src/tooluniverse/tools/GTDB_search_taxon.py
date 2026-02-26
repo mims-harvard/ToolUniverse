@@ -1,30 +1,33 @@
 """
-NCBI_fetch_accessions
+GTDB_search_taxon
 
-Convert GenBank UIDs to accession numbers (U00096, NC_045512, etc.). Takes UIDs from NCBI_search_...
+Search the Genome Taxonomy Database (GTDB) for prokaryotic taxa by partial name. GTDB provides a ...
 """
 
 from typing import Any, Optional, Callable
 from ._shared_client import get_shared_client
 
 
-def NCBI_fetch_accessions(
+def GTDB_search_taxon(
     operation: str,
-    uids: list[str] | str,
+    query: str,
+    limit: Optional[int] = None,
     *,
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> list[Any]:
+) -> Any:
     """
-    Convert GenBank UIDs to accession numbers (U00096, NC_045512, etc.). Takes UIDs from NCBI_search_...
+    Search the Genome Taxonomy Database (GTDB) for prokaryotic taxa by partial name. GTDB provides a ...
 
     Parameters
     ----------
     operation : str
-        Operation type (fixed: fetch_accession)
-    uids : list[str] | str
-        GenBank UID(s) from NCBI_search_nucleotide. Can be single UID or array of UIDs.
+        Operation type (fixed: search_taxon)
+    query : str
+        Partial taxon name to search for (e.g., 'Lachnospiraceae', 'Escherichia', 'Ba...
+    limit : int
+        Maximum number of results per rank (default: 20, max: 100)
     stream_callback : Callable, optional
         Callback for streaming output
     use_cache : bool, default False
@@ -34,14 +37,14 @@ def NCBI_fetch_accessions(
 
     Returns
     -------
-    list[Any]
+    Any
     """
     # Handle mutable defaults to avoid B006 linting error
 
     return get_shared_client().run_one_function(
         {
-            "name": "NCBI_fetch_accessions",
-            "arguments": {"operation": operation, "uids": uids},
+            "name": "GTDB_search_taxon",
+            "arguments": {"operation": operation, "query": query, "limit": limit},
         },
         stream_callback=stream_callback,
         use_cache=use_cache,
@@ -49,4 +52,4 @@ def NCBI_fetch_accessions(
     )
 
 
-__all__ = ["NCBI_fetch_accessions"]
+__all__ = ["GTDB_search_taxon"]

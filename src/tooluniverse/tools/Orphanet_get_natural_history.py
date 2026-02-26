@@ -1,30 +1,30 @@
 """
-NCBI_fetch_accessions
+Orphanet_get_natural_history
 
-Convert GenBank UIDs to accession numbers (U00096, NC_045512, etc.). Takes UIDs from NCBI_search_...
+Get natural history data for a rare disease from Orphanet. Returns average age of onset and type ...
 """
 
 from typing import Any, Optional, Callable
 from ._shared_client import get_shared_client
 
 
-def NCBI_fetch_accessions(
+def Orphanet_get_natural_history(
     operation: str,
-    uids: list[str] | str,
+    orpha_code: str,
     *,
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> list[Any]:
+) -> dict[str, Any]:
     """
-    Convert GenBank UIDs to accession numbers (U00096, NC_045512, etc.). Takes UIDs from NCBI_search_...
+    Get natural history data for a rare disease from Orphanet. Returns average age of onset and type ...
 
     Parameters
     ----------
     operation : str
-        Operation type (fixed: fetch_accession)
-    uids : list[str] | str
-        GenBank UID(s) from NCBI_search_nucleotide. Can be single UID or array of UIDs.
+        Operation type (fixed: get_natural_history)
+    orpha_code : str
+        Orphanet ORPHA code (e.g., 558 for Marfan, 399 for Huntington)
     stream_callback : Callable, optional
         Callback for streaming output
     use_cache : bool, default False
@@ -34,14 +34,14 @@ def NCBI_fetch_accessions(
 
     Returns
     -------
-    list[Any]
+    dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 
     return get_shared_client().run_one_function(
         {
-            "name": "NCBI_fetch_accessions",
-            "arguments": {"operation": operation, "uids": uids},
+            "name": "Orphanet_get_natural_history",
+            "arguments": {"operation": operation, "orpha_code": orpha_code},
         },
         stream_callback=stream_callback,
         use_cache=use_cache,
@@ -49,4 +49,4 @@ def NCBI_fetch_accessions(
     )
 
 
-__all__ = ["NCBI_fetch_accessions"]
+__all__ = ["Orphanet_get_natural_history"]

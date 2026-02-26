@@ -1,0 +1,425 @@
+# nca_tool.py
+"""
+Non-Compartmental Analysis (NCA) Tool for Pharmacokinetics
+
+Implements standard NCA methods per FDA/EMA regulatory guidelines:
+- Full NCA parameter calculation from time-concentration data
+  (Cmax, Tmax, AUC0-t, AUC0-inf, t½, CL, Vd)
+- One-compartment IV bolus model fitting: C(t) = C0 * exp(-k_el * t)
+- Oral bioavailability (F) calculation
+
+No external API calls. Uses numpy/scipy for computation.
+
+References:
+- FDA Guidance for Industry: Pharmacokinetics in Patients with Impaired Renal Function
+- Gabrielsson & Weiner, Pharmacokinetic and Pharmacodynamic Data Analysis (2016)
+- Rowland & Tozer, Clinical Pharmacokinetics and Pharmacodynamics (2011)
+"""
+
+from typing import Dict, Any
+
+from .base_tool import BaseTool
+from .tool_registry import register_tool
+
+try:
+    import numpy as np
+
+    HAS_NUMPY = True
+except ImportError:
+    HAS_NUMPY = False
+
+try:
+    from scipy.optimize import curve_fit
+    from scipy.stats import linregress
+
+    HAS_SCIPY = True
+except ImportError:
+    HAS_SCIPY = False
+
+
+@register_tool("NCATool")
+class NCATool(BaseTool):
+    """
+    Non-Compartmental Analysis (NCA) for pharmacokinetics.
+
+    Endpoints:
+    - compute_parameters: Full NCA from time-concentration data
+    - fit_one_compartment: 1-compartment IV bolus model fitting
+    - calculate_bioavailability: Oral bioavailability F calculation
+    """
+
+    def __init__(self, tool_config: Dict[str, Any]):
+        super().__init__(tool_config)
+        fields = tool_config.get("fields", {})
+        self.endpoint = fields.get("endpoint", "compute_parameters")
+
+    def run(self, arguments: Dict[str, Any]) -> Dict[str, Any]:
+        if not HAS_NUMPY:
+            return {
+                "error": "numpy is required for NCA calculations. Install with: pip install numpy"
+            }
+
+        try:
+            if self.endpoint == "compute_parameters":
+                return self._compute_parameters(arguments)
+            elif self.endpoint == "fit_one_compartment":
+                return self._fit_one_compartment(arguments)
+            elif self.endpoint == "calculate_bioavailability":
+                return self._calculate_bioavailability(arguments)
+            else:
+                return {"error": f"Unknown endpoint: {self.endpoint}"}
+        except Exception as e:
+            return {"error": f"NCA calculation error: {str(e)}"}
+
+    def _auc_trapezoid(self, times: "np.ndarray", concs: "np.ndarray") -> float:
+        """
+        Linear-log trapezoidal AUC calculation.
+
+        Uses logarithmic trapezoid for declining phases (more accurate),
+        linear trapezoid for ascending phases and zero concentrations.
+        """
+        auc = 0.0
+        for i in range(len(times) - 1):
+            dt = float(times[i + 1] - times[i])
+            c1, c2 = float(concs[i]), float(concs[i + 1])
+            if c1 <= 0 or c2 <= 0:
+                # Linear trapezoid when values near zero
+                auc += dt * (c1 + c2) / 2.0
+            elif c2 < c1:
+                # Logarithmic trapezoid (declining phase)
+                auc += dt * (c1 - c2) / np.log(c1 / c2)
+            else:
+                # Linear trapezoid (ascending phase)
+                auc += dt * (c1 + c2) / 2.0
+        return auc
+
+    def _estimate_terminal_slope(
+        self, times: "np.ndarray", concs: "np.ndarray", n_points: int = 3
+    ):
+        """
+        Estimate terminal elimination rate constant (λz) from log-linear regression.
+
+        Returns: (lambda_z, r_squared, intercept) or (None, None, None) on failure.
+        """
+        if not HAS_SCIPY:
+            return None, None, None
+
+        # Use positive concentrations only
+        valid = concs > 0
+        t_valid = times[valid]
+        c_valid = concs[valid]
+
+        if len(t_valid) < 2:
+            return None, None, None
+
+        n_points = min(n_points, len(t_valid))
+
+        t_term = t_valid[-n_points:]
+        c_term = c_valid[-n_points:]
+
+        # log-linear fit: ln(C) = intercept - λz * t
+        slope, intercept, r_value, _, _ = linregress(t_term, np.log(c_term))
+
+        if slope >= 0:
+            return None, None, None  # Must be negative (declining)
+
+        lambda_z = -slope  # λz positive
+        r_squared = r_value**2
+
+        return float(lambda_z), float(r_squared), float(intercept)
+
+    def _compute_parameters(self, arguments: Dict[str, Any]) -> Dict[str, Any]:
+        """Full NCA computation from time-concentration data."""
+        times = arguments.get("times", [])
+        concentrations = arguments.get("concentrations", [])
+        dose = arguments.get("dose")
+        route = arguments.get("route", "iv")
+        dose_unit = arguments.get("dose_unit", "mg")
+        conc_unit = arguments.get("conc_unit", "ng/mL")
+        time_unit = arguments.get("time_unit", "h")
+
+        if not times or not concentrations:
+            return {
+                "error": "times and concentrations are required. Provide paired lists of time points and measured concentrations."
+            }
+        if len(times) != len(concentrations):
+            return {"error": "times and concentrations must have the same length"}
+        if len(times) < 3:
+            return {
+                "error": "At least 3 time-concentration points are required for NCA"
+            }
+
+        try:
+            t = np.array([float(x) for x in times])
+            c = np.array([float(x) for x in concentrations])
+        except (ValueError, TypeError) as e:
+            return {"error": f"Invalid numeric values: {e}"}
+
+        # Sort by time
+        sort_idx = np.argsort(t)
+        t = t[sort_idx]
+        c = c[sort_idx]
+
+        # Basic parameters
+        cmax = float(np.max(c))
+        tmax = float(t[np.argmax(c)])
+        pos_mask = c > 0
+        clast = float(c[pos_mask][-1]) if any(pos_mask) else 0.0
+        tlast = float(t[pos_mask][-1]) if any(pos_mask) else 0.0
+
+        # AUC0-t (linear-log trapezoidal)
+        auc0t = self._auc_trapezoid(t, c)
+
+        # Terminal phase parameters
+        lambda_z, r_sq_terminal, _ = self._estimate_terminal_slope(t, c)
+
+        result = {
+            "Cmax": round(cmax, 4),
+            "Tmax": round(tmax, 4),
+            "Clast": round(clast, 4),
+            "Tlast": round(tlast, 4),
+            f"AUC0-{tlast:.1f}": round(auc0t, 4),
+            "units": {
+                "Cmax": conc_unit,
+                "Tmax": time_unit,
+                "AUC": f"{conc_unit}·{time_unit}",
+            },
+        }
+
+        if lambda_z is not None:
+            t_half = np.log(2) / lambda_z
+            # AUC0-inf = AUC0-t + Clast/λz
+            auc0inf = auc0t + clast / lambda_z
+            result["lambda_z"] = round(float(lambda_z), 6)
+            result["t_half"] = round(float(t_half), 4)
+            result["r_squared_terminal_fit"] = round(float(r_sq_terminal), 4)
+            result["AUC0-inf"] = round(float(auc0inf), 4)
+            result["AUC_extrapolation_pct"] = round(
+                float((clast / lambda_z) / auc0inf * 100), 1
+            )
+
+            if dose is not None:
+                try:
+                    dose_val = float(dose)
+                    cl = dose_val / auc0inf
+                    result["clearance_CL"] = round(float(cl), 6)
+                    result["clearance_CL_unit"] = (
+                        f"{dose_unit}/({conc_unit}·{time_unit})"
+                    )
+                    if route == "iv":
+                        vd = cl / lambda_z
+                        result["volume_distribution_Vd"] = round(float(vd), 4)
+                        result["Vd_unit"] = f"{dose_unit}/{conc_unit}"
+                        result["MRT_iv"] = round(float(1.0 / lambda_z), 4)
+                except (ValueError, TypeError):
+                    pass
+        else:
+            result["terminal_phase_warning"] = (
+                "Could not estimate terminal slope (λz). "
+                "Add more time points in the terminal elimination phase."
+            )
+
+        result["method"] = "Linear-log trapezoidal NCA"
+        result["note"] = (
+            "AUC uses linear trapezoid for ascending phases and log-trapezoid "
+            "for declining phases (FDA/EMA recommended method). "
+            "Terminal t½ estimated from log-linear regression of last 3+ positive concentrations."
+        )
+
+        return {
+            "data": result,
+            "metadata": {
+                "source": "Local NCA computation (numpy/scipy)",
+                "n_timepoints": len(t),
+                "route_of_administration": route,
+                "reference": "FDA NCA Guidance; Gabrielsson & Weiner (2016)",
+            },
+        }
+
+    def _fit_one_compartment(self, arguments: Dict[str, Any]) -> Dict[str, Any]:
+        """Fit 1-compartment IV bolus model: C(t) = C0 * exp(-k_el * t)."""
+        if not HAS_SCIPY:
+            return {
+                "error": "scipy is required for model fitting. Install with: pip install scipy"
+            }
+
+        times = arguments.get("times", [])
+        concentrations = arguments.get("concentrations", [])
+        dose = arguments.get("dose")
+        dose_unit = arguments.get("dose_unit", "mg")
+        conc_unit = arguments.get("conc_unit", "ng/mL")
+        time_unit = arguments.get("time_unit", "h")
+
+        if not times or not concentrations:
+            return {"error": "times and concentrations are required"}
+        if len(times) != len(concentrations):
+            return {"error": "times and concentrations must have the same length"}
+
+        try:
+            t = np.array([float(x) for x in times])
+            c = np.array([float(x) for x in concentrations])
+        except (ValueError, TypeError) as e:
+            return {"error": f"Invalid numeric values: {e}"}
+
+        # Use positive concentrations only
+        valid = c > 0
+        if sum(valid) < 3:
+            return {
+                "error": "At least 3 positive concentration values required for model fitting"
+            }
+
+        t_fit = t[valid]
+        c_fit = c[valid]
+
+        def one_compartment(t_arr, c0, k_el):
+            return c0 * np.exp(-k_el * t_arr)
+
+        try:
+            c0_init = float(c_fit[0]) if c_fit[0] > 0 else float(np.max(c_fit))
+            k_init = np.log(2) / (float(t_fit[-1]) / 2 + 1e-9)
+
+            popt, pcov = curve_fit(
+                one_compartment,
+                t_fit,
+                c_fit,
+                p0=[c0_init, k_init],
+                bounds=([0.0, 1e-9], [np.inf, np.inf]),
+                maxfev=10000,
+            )
+            c0_fit, k_el_fit = popt
+            perr = np.sqrt(np.diag(pcov))
+        except Exception as e:
+            return {
+                "error": f"Model fitting failed: {str(e)}. Ensure data follows mono-exponential decline."
+            }
+
+        t_half = np.log(2) / k_el_fit
+
+        # R² on fitted points
+        c_pred = one_compartment(t_fit, c0_fit, k_el_fit)
+        ss_res = float(np.sum((c_fit - c_pred) ** 2))
+        ss_tot = float(np.sum((c_fit - np.mean(c_fit)) ** 2))
+        r_squared = float(1.0 - ss_res / ss_tot) if ss_tot > 0 else 0.0
+
+        if r_squared >= 0.95:
+            gof = "Good (R²≥0.95)"
+        elif r_squared >= 0.85:
+            gof = "Moderate (0.85≤R²<0.95)"
+        else:
+            gof = "Poor (R²<0.85) — consider multi-compartment model"
+
+        result = {
+            "model": "1-compartment IV bolus",
+            "equation": "C(t) = C0 × exp(-k_el × t)",
+            "C0_initial_concentration": round(float(c0_fit), 4),
+            "k_el_elimination_rate": round(float(k_el_fit), 6),
+            "t_half": round(float(t_half), 4),
+            "r_squared": round(r_squared, 4),
+            "goodness_of_fit": gof,
+            "standard_errors": {
+                "C0": round(float(perr[0]), 4),
+                "k_el": round(float(perr[1]), 6),
+            },
+            "units": {
+                "C0": conc_unit,
+                "k_el": f"1/{time_unit}",
+                "t_half": time_unit,
+            },
+        }
+
+        if dose is not None:
+            try:
+                dose_val = float(dose)
+                vd = dose_val / c0_fit
+                cl = k_el_fit * vd
+                auc0inf = c0_fit / k_el_fit
+                result["volume_distribution_Vd"] = round(float(vd), 4)
+                result["clearance_CL"] = round(float(cl), 6)
+                result["AUC0_inf_model"] = round(float(auc0inf), 4)
+                result["derived_units"] = {
+                    "Vd": f"{dose_unit}/{conc_unit}",
+                    "CL": f"{dose_unit}/({conc_unit}·{time_unit})",
+                    "AUC": f"{conc_unit}·{time_unit}",
+                }
+            except (ValueError, TypeError):
+                pass
+
+        return {
+            "data": result,
+            "metadata": {
+                "source": "Local 1-compartment model fit (scipy.optimize.curve_fit)",
+                "n_timepoints_fitted": int(sum(valid)),
+            },
+        }
+
+    def _calculate_bioavailability(self, arguments: Dict[str, Any]) -> Dict[str, Any]:
+        """Calculate oral bioavailability F from IV and PO AUC and dose."""
+        auc_po = arguments.get("auc_po")
+        dose_po = arguments.get("dose_po")
+        auc_iv = arguments.get("auc_iv")
+        dose_iv = arguments.get("dose_iv")
+
+        if auc_po is None or dose_po is None:
+            return {"error": "auc_po and dose_po are required (PO arm AUC and dose)"}
+        if auc_iv is None or dose_iv is None:
+            return {"error": "auc_iv and dose_iv are required (IV arm AUC and dose)"}
+
+        try:
+            auc_po = float(auc_po)
+            dose_po = float(dose_po)
+            auc_iv = float(auc_iv)
+            dose_iv = float(dose_iv)
+        except (ValueError, TypeError) as e:
+            return {"error": f"Invalid numeric values: {e}"}
+
+        if auc_iv <= 0 or dose_iv <= 0 or dose_po <= 0:
+            return {
+                "error": "AUC_IV, dose_IV, and dose_PO must all be positive numbers"
+            }
+
+        # F = (AUC_PO × Dose_IV) / (AUC_IV × Dose_PO)
+        f = (auc_po * dose_iv) / (auc_iv * dose_po)
+        f_pct = f * 100.0
+
+        auc_po_norm = auc_po / dose_po
+        auc_iv_norm = auc_iv / dose_iv
+
+        if f_pct >= 80.0:
+            category = "High (≥80%)"
+            note = "Excellent oral bioavailability. Suitable for oral dosing."
+        elif f_pct >= 30.0:
+            category = "Moderate (30–80%)"
+            note = "Acceptable oral bioavailability for most indications."
+        elif f_pct >= 10.0:
+            category = "Low (10–30%)"
+            note = "Poor oral absorption. Consider prodrug strategy or formulation optimization."
+        else:
+            category = "Very low (<10%)"
+            note = "Insufficient oral bioavailability. Likely requires IV/SC/inhaled route."
+
+        return {
+            "data": {
+                "bioavailability_F": round(float(f), 4),
+                "bioavailability_pct": round(float(f_pct), 2),
+                "category": category,
+                "clinical_note": note,
+                "formula": "F = (AUC_PO × Dose_IV) / (AUC_IV × Dose_PO)",
+                "inputs": {
+                    "AUC_PO": auc_po,
+                    "Dose_PO": dose_po,
+                    "AUC_IV": auc_iv,
+                    "Dose_IV": dose_iv,
+                    "AUC_PO_dose_normalized": round(float(auc_po_norm), 4),
+                    "AUC_IV_dose_normalized": round(float(auc_iv_norm), 4),
+                },
+                "general_note": (
+                    "F > 20% is typically considered acceptable for small molecule drugs. "
+                    "F ≥ 80% is required for bioequivalence studies. "
+                    "Low F may indicate poor absorption, first-pass metabolism, or low solubility."
+                ),
+            },
+            "metadata": {
+                "source": "Local calculation",
+                "method": "Dose-normalized AUC ratio (Rowland & Tozer, 2011)",
+            },
+        }

@@ -1,30 +1,30 @@
 """
-NCBI_fetch_accessions
+Mondo_get_disease_phenotypes
 
-Convert GenBank UIDs to accession numbers (U00096, NC_045512, etc.). Takes UIDs from NCBI_search_...
+Get HPO (Human Phenotype Ontology) phenotypes associated with a Mondo disease. Returns the phenot...
 """
 
 from typing import Any, Optional, Callable
 from ._shared_client import get_shared_client
 
 
-def NCBI_fetch_accessions(
-    operation: str,
-    uids: list[str] | str,
+def Mondo_get_disease_phenotypes(
+    disease_id: str,
+    limit: Optional[int] = None,
     *,
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> list[Any]:
+) -> Any:
     """
-    Convert GenBank UIDs to accession numbers (U00096, NC_045512, etc.). Takes UIDs from NCBI_search_...
+    Get HPO (Human Phenotype Ontology) phenotypes associated with a Mondo disease. Returns the phenot...
 
     Parameters
     ----------
-    operation : str
-        Operation type (fixed: fetch_accession)
-    uids : list[str] | str
-        GenBank UID(s) from NCBI_search_nucleotide. Can be single UID or array of UIDs.
+    disease_id : str
+        Mondo disease identifier. Examples: 'MONDO:0004975' (Alzheimer disease, 95 ph...
+    limit : int
+        Maximum number of phenotypes to return (default: 20, max: 200).
     stream_callback : Callable, optional
         Callback for streaming output
     use_cache : bool, default False
@@ -34,14 +34,14 @@ def NCBI_fetch_accessions(
 
     Returns
     -------
-    list[Any]
+    Any
     """
     # Handle mutable defaults to avoid B006 linting error
 
     return get_shared_client().run_one_function(
         {
-            "name": "NCBI_fetch_accessions",
-            "arguments": {"operation": operation, "uids": uids},
+            "name": "Mondo_get_disease_phenotypes",
+            "arguments": {"disease_id": disease_id, "limit": limit},
         },
         stream_callback=stream_callback,
         use_cache=use_cache,
@@ -49,4 +49,4 @@ def NCBI_fetch_accessions(
     )
 
 
-__all__ = ["NCBI_fetch_accessions"]
+__all__ = ["Mondo_get_disease_phenotypes"]

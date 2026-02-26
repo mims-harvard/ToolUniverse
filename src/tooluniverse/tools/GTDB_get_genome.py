@@ -1,30 +1,30 @@
 """
-NCBI_fetch_accessions
+GTDB_get_genome
 
-Convert GenBank UIDs to accession numbers (U00096, NC_045512, etc.). Takes UIDs from NCBI_search_...
+Get comprehensive metadata for a specific genome by NCBI accession from GTDB. Returns nucleotide ...
 """
 
 from typing import Any, Optional, Callable
 from ._shared_client import get_shared_client
 
 
-def NCBI_fetch_accessions(
+def GTDB_get_genome(
     operation: str,
-    uids: list[str] | str,
+    accession: str,
     *,
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> list[Any]:
+) -> Any:
     """
-    Convert GenBank UIDs to accession numbers (U00096, NC_045512, etc.). Takes UIDs from NCBI_search_...
+    Get comprehensive metadata for a specific genome by NCBI accession from GTDB. Returns nucleotide ...
 
     Parameters
     ----------
     operation : str
-        Operation type (fixed: fetch_accession)
-    uids : list[str] | str
-        GenBank UID(s) from NCBI_search_nucleotide. Can be single UID or array of UIDs.
+        Operation type (fixed: get_genome)
+    accession : str
+        NCBI genome accession (e.g., 'GCF_000005845.2' for E. coli K-12, 'GCF_0000090...
     stream_callback : Callable, optional
         Callback for streaming output
     use_cache : bool, default False
@@ -34,14 +34,14 @@ def NCBI_fetch_accessions(
 
     Returns
     -------
-    list[Any]
+    Any
     """
     # Handle mutable defaults to avoid B006 linting error
 
     return get_shared_client().run_one_function(
         {
-            "name": "NCBI_fetch_accessions",
-            "arguments": {"operation": operation, "uids": uids},
+            "name": "GTDB_get_genome",
+            "arguments": {"operation": operation, "accession": accession},
         },
         stream_callback=stream_callback,
         use_cache=use_cache,
@@ -49,4 +49,4 @@ def NCBI_fetch_accessions(
     )
 
 
-__all__ = ["NCBI_fetch_accessions"]
+__all__ = ["GTDB_get_genome"]

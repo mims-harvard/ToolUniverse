@@ -1,33 +1,33 @@
 """
-NCBI_get_sequence
+SIDER_get_drug_indications
 
-Retrieve DNA/RNA sequence data from NCBI by accession number. Returns sequences in specified form...
+Get the therapeutic indications for a drug from SIDER. Indications are medical conditions that a ...
 """
 
 from typing import Any, Optional, Callable
 from ._shared_client import get_shared_client
 
 
-def NCBI_get_sequence(
+def SIDER_get_drug_indications(
     operation: str,
-    accession: str,
-    format: Optional[str] = "fasta",
+    drug_name: Optional[str | Any] = None,
+    sider_drug_id: Optional[str | Any] = None,
     *,
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> str:
+) -> dict[str, Any]:
     """
-    Retrieve DNA/RNA sequence data from NCBI by accession number. Returns sequences in specified form...
+    Get the therapeutic indications for a drug from SIDER. Indications are medical conditions that a ...
 
     Parameters
     ----------
     operation : str
-        Operation type (fixed: fetch_sequence)
-    accession : str
-        NCBI accession number (e.g., 'U00096', 'NC_045512', 'NM_000546'). Works with ...
-    format : str
-        Sequence format: 'fasta' for FASTA, 'gb' for GenBank, 'embl' for EMBL, 'gp' f...
+        Operation type
+    drug_name : str | Any
+        Drug name (e.g., 'aspirin', 'metformin'). Will search SIDER and use first match.
+    sider_drug_id : str | Any
+        SIDER drug ID (PubChem CID) from SIDER_search_drug (e.g., '2244' for aspirin)
     stream_callback : Callable, optional
         Callback for streaming output
     use_cache : bool, default False
@@ -37,17 +37,17 @@ def NCBI_get_sequence(
 
     Returns
     -------
-    str
+    dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 
     return get_shared_client().run_one_function(
         {
-            "name": "NCBI_get_sequence",
+            "name": "SIDER_get_drug_indications",
             "arguments": {
                 "operation": operation,
-                "accession": accession,
-                "format": format,
+                "drug_name": drug_name,
+                "sider_drug_id": sider_drug_id,
             },
         },
         stream_callback=stream_callback,
@@ -56,4 +56,4 @@ def NCBI_get_sequence(
     )
 
 
-__all__ = ["NCBI_get_sequence"]
+__all__ = ["SIDER_get_drug_indications"]

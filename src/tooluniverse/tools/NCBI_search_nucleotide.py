@@ -22,7 +22,7 @@ def NCBI_search_nucleotide(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> dict[str, Any]:
     """
     Search NCBI Nucleotide database (GenBank/EMBL/RefSeq) by organism, gene name, or keywords. Return...
 
@@ -55,7 +55,7 @@ def NCBI_search_nucleotide(
 
     Returns
     -------
-    Any
+    dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

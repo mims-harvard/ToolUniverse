@@ -22,7 +22,7 @@ def NCBI_SRA_search_runs(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> dict[str, Any]:
     """
     Search NCBI Sequence Read Archive (SRA) for NGS/RNA-seq sequencing runs by study accession, organ...
 
@@ -55,7 +55,7 @@ def NCBI_SRA_search_runs(
 
     Returns
     -------
-    Any
+    dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

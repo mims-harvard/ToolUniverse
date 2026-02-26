@@ -1,0 +1,238 @@
+[
+  {
+    "name": "DrugProps_lipinski_filter",
+    "description": "Check drug-likeness of a compound using Lipinski Rule of Five (Ro5), Veber, Pfizer 3/75, Egan, and Ghose filters. Returns MW, cLogP, HBD, HBA, TPSA, RotBonds, Csp3 fraction, and pass/fail status for each filter. Essential first step in hit-to-lead optimization. Lipinski Ro5 (pass = drug-like): MW≤500, cLogP≤5, HBD≤5, HBA≤10 (max 1 violation). Veber (oral bioavailability): RotBonds≤10, TPSA≤140. Pfizer 3/75 (reduces promiscuity): cLogP≤3, TPSA≥75. Examples: aspirin ('CC(=O)Oc1ccccc1C(=O)O') passes all filters; venetoclax fails Ro5 due to MW>900 (beyond-Ro5 territory).",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "smiles": {
+          "type": "string",
+          "description": "SMILES string of the molecule. Examples: 'CC(=O)Oc1ccccc1C(=O)O' (aspirin), 'CC(C)Cc1ccc(cc1)C(C)C(=O)O' (ibuprofen), 'c1ccc2c(c1)cc1ccc3cccc4ccc2c1c34' (pyrene, non-drug-like)."
+        }
+      },
+      "required": ["smiles"]
+    },
+    "fields": {
+      "endpoint": "lipinski_filter"
+    },
+    "type": "DrugPropertiesTool",
+    "test_examples": [
+      {"smiles": "CC(=O)Oc1ccccc1C(=O)O"},
+      {"smiles": "CC(C)Cc1ccc(cc1)C(C)C(=O)O"},
+      {"smiles": "CN1CCC[C@H]1c2cccnc2"}
+    ],
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "object",
+          "properties": {
+            "data": {
+              "type": "object",
+              "properties": {
+                "smiles": {"type": "string"},
+                "descriptors": {
+                  "type": "object",
+                  "properties": {
+                    "molecular_weight_Da": {"type": "number"},
+                    "cLogP": {"type": "number"},
+                    "HBD": {"type": "integer"},
+                    "HBA": {"type": "integer"},
+                    "rotatable_bonds": {"type": "integer"},
+                    "TPSA_A2": {"type": "number"},
+                    "aromatic_rings": {"type": "integer"},
+                    "heavy_atoms": {"type": "integer"},
+                    "molar_refractivity": {"type": "number"},
+                    "Csp3_fraction": {"type": "number"}
+                  }
+                },
+                "filters": {
+                  "type": "object",
+                  "properties": {
+                    "lipinski_ro5": {
+                      "type": "object",
+                      "properties": {
+                        "pass": {"type": "boolean"},
+                        "violations": {"type": "integer"},
+                        "rule": {"type": "string"}
+                      }
+                    },
+                    "veber": {"type": "object"},
+                    "pfizer_3_75": {"type": "object"},
+                    "egan": {"type": "object"},
+                    "ghose": {"type": "object"},
+                    "beyond_ro5_territory": {"type": "object"}
+                  }
+                },
+                "overall_drug_likeness": {"type": "string"}
+              }
+            },
+            "metadata": {
+              "type": "object",
+              "properties": {
+                "source": {"type": "string"},
+                "filters_applied": {"type": "string"}
+              }
+            }
+          },
+          "required": ["data"]
+        },
+        {
+          "type": "object",
+          "properties": {
+            "error": {"type": "string"}
+          },
+          "required": ["error"]
+        }
+      ]
+    }
+  },
+  {
+    "name": "DrugProps_calculate_qed",
+    "description": "Calculate Quantitative Estimate of Drug-likeness (QED) score for a compound using the Bickerton et al. (2012) method. QED integrates 8 molecular descriptors (MW, AlogP, HBA, HBD, PSA, rotatable bonds, aromatic rings, structural alerts) into a single score from 0 (non-drug-like) to 1 (most drug-like). Median QED of approved oral drugs is ~0.49. High QED (≥0.67) = drug-like; Medium (0.34–0.67) = borderline; Low (<0.34) = non-drug-like. Use after DrugProps_lipinski_filter for a more nuanced drug-likeness assessment.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "smiles": {
+          "type": "string",
+          "description": "SMILES string of the molecule. Examples: 'CC(=O)Oc1ccccc1C(=O)O' (aspirin, QED~0.55), 'c1ccc2c(c1)cc1ccc3cccc4ccc2c1c34' (pyrene, low QED)."
+        }
+      },
+      "required": ["smiles"]
+    },
+    "fields": {
+      "endpoint": "calculate_qed"
+    },
+    "type": "DrugPropertiesTool",
+    "test_examples": [
+      {"smiles": "CC(=O)Oc1ccccc1C(=O)O"},
+      {"smiles": "Clc1ccc2[nH]c(=O)/C(=C/c3ccco3)c2c1"},
+      {"smiles": "CN1CCC[C@H]1c2cccnc2"}
+    ],
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "object",
+          "properties": {
+            "data": {
+              "type": "object",
+              "properties": {
+                "smiles": {"type": "string"},
+                "qed_score": {"type": "number", "description": "QED score 0-1"},
+                "qed_category": {"type": "string"},
+                "qed_components": {
+                  "type": "object",
+                  "properties": {
+                    "MW": {"type": "number"},
+                    "ALOGP": {"type": "number"},
+                    "HBA": {"type": "integer"},
+                    "HBD": {"type": "integer"},
+                    "PSA": {"type": "number"},
+                    "ROTB": {"type": "integer"},
+                    "AROM": {"type": "integer"},
+                    "ALERTS": {"type": "integer"}
+                  }
+                },
+                "additional_descriptors": {"type": "object"},
+                "interpretation": {"type": "string"}
+              }
+            },
+            "metadata": {
+              "type": "object",
+              "properties": {
+                "source": {"type": "string"},
+                "reference": {"type": "string"}
+              }
+            }
+          },
+          "required": ["data"]
+        },
+        {
+          "type": "object",
+          "properties": {
+            "error": {"type": "string"}
+          },
+          "required": ["error"]
+        }
+      ]
+    }
+  },
+  {
+    "name": "DrugProps_pains_filter",
+    "description": "Screen a compound for PAINS (Pan-Assay Interference Compounds), Brenk undesirable substructures, and NIH alerts using RDKit FilterCatalog. PAINS compounds produce false positives in biochemical assays due to non-specific activity mechanisms (rhodanines, quinones, catechols, etc.). Brenk filter flags reactive/toxic groups (Michael acceptors, epoxides, nitroaromatics, etc.). Returns match details and remediation recommendations. Essential quality filter before committing to high-throughput screening hits. Use before investing in hit validation.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "smiles": {
+          "type": "string",
+          "description": "SMILES string of the molecule to screen. Examples: 'O=C1CSC(=S)N1' (rhodanine PAINS), 'O=C1C=CC(=O)c2ccccc21' (quinone PAINS), 'CC(=O)Oc1ccccc1C(=O)O' (aspirin, clean)."
+        }
+      },
+      "required": ["smiles"]
+    },
+    "fields": {
+      "endpoint": "pains_filter"
+    },
+    "type": "DrugPropertiesTool",
+    "test_examples": [
+      {"smiles": "CC(=O)Oc1ccccc1C(=O)O"},
+      {"smiles": "O=C1CSC(=S)N1"},
+      {"smiles": "Oc1ccc(O)cc1"}
+    ],
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "object",
+          "properties": {
+            "data": {
+              "type": "object",
+              "properties": {
+                "smiles": {"type": "string"},
+                "is_clean": {"type": "boolean", "description": "True if no PAINS or Brenk alerts"},
+                "pains": {
+                  "type": "object",
+                  "properties": {
+                    "pass": {"type": "boolean"},
+                    "matches": {"type": "array", "items": {"type": "object"}},
+                    "count": {"type": "integer"}
+                  }
+                },
+                "brenk": {
+                  "type": "object",
+                  "properties": {
+                    "pass": {"type": "boolean"},
+                    "matches": {"type": "array", "items": {"type": "string"}},
+                    "count": {"type": "integer"}
+                  }
+                },
+                "nih": {
+                  "type": "object",
+                  "properties": {
+                    "pass": {"type": "boolean"},
+                    "matches": {"type": "array", "items": {"type": "string"}},
+                    "count": {"type": "integer"}
+                  }
+                },
+                "recommendation": {"type": "string"}
+              }
+            },
+            "metadata": {
+              "type": "object",
+              "properties": {
+                "source": {"type": "string"},
+                "filters": {"type": "string"}
+              }
+            }
+          },
+          "required": ["data"]
+        },
+        {
+          "type": "object",
+          "properties": {
+            "error": {"type": "string"}
+          },
+          "required": ["error"]
+        }
+      ]
+    }
+  }
+]

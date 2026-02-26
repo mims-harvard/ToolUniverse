@@ -1,30 +1,30 @@
 """
-NCBI_fetch_accessions
+Mondo_search_disease
 
-Convert GenBank UIDs to accession numbers (U00096, NC_045512, etc.). Takes UIDs from NCBI_search_...
+Search the Mondo Disease Ontology for diseases by name or keyword. Mondo unifies disease identifi...
 """
 
 from typing import Any, Optional, Callable
 from ._shared_client import get_shared_client
 
 
-def NCBI_fetch_accessions(
-    operation: str,
-    uids: list[str] | str,
+def Mondo_search_disease(
+    query: str,
+    limit: Optional[int] = None,
     *,
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> list[Any]:
+) -> Any:
     """
-    Convert GenBank UIDs to accession numbers (U00096, NC_045512, etc.). Takes UIDs from NCBI_search_...
+    Search the Mondo Disease Ontology for diseases by name or keyword. Mondo unifies disease identifi...
 
     Parameters
     ----------
-    operation : str
-        Operation type (fixed: fetch_accession)
-    uids : list[str] | str
-        GenBank UID(s) from NCBI_search_nucleotide. Can be single UID or array of UIDs.
+    query : str
+        Disease name or keyword to search. Examples: 'Alzheimer', 'breast cancer', 't...
+    limit : int
+        Maximum number of results to return (default: 10, max: 50).
     stream_callback : Callable, optional
         Callback for streaming output
     use_cache : bool, default False
@@ -34,19 +34,16 @@ def NCBI_fetch_accessions(
 
     Returns
     -------
-    list[Any]
+    Any
     """
     # Handle mutable defaults to avoid B006 linting error
 
     return get_shared_client().run_one_function(
-        {
-            "name": "NCBI_fetch_accessions",
-            "arguments": {"operation": operation, "uids": uids},
-        },
+        {"name": "Mondo_search_disease", "arguments": {"query": query, "limit": limit}},
         stream_callback=stream_callback,
         use_cache=use_cache,
         validate=validate,
     )
 
 
-__all__ = ["NCBI_fetch_accessions"]
+__all__ = ["Mondo_search_disease"]

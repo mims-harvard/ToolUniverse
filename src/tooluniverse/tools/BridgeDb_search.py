@@ -1,30 +1,33 @@
 """
-NCBI_fetch_accessions
+BridgeDb_search
 
-Convert GenBank UIDs to accession numbers (U00096, NC_045512, etc.). Takes UIDs from NCBI_search_...
+Search for biological identifiers by name using BridgeDb. Enter a gene name, metabolite name, or ...
 """
 
 from typing import Any, Optional, Callable
 from ._shared_client import get_shared_client
 
 
-def NCBI_fetch_accessions(
+def BridgeDb_search(
     operation: str,
-    uids: list[str] | str,
+    query: str,
+    organism: Optional[str] = None,
     *,
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> list[Any]:
+) -> Any:
     """
-    Convert GenBank UIDs to accession numbers (U00096, NC_045512, etc.). Takes UIDs from NCBI_search_...
+    Search for biological identifiers by name using BridgeDb. Enter a gene name, metabolite name, or ...
 
     Parameters
     ----------
     operation : str
-        Operation type (fixed: fetch_accession)
-    uids : list[str] | str
-        GenBank UID(s) from NCBI_search_nucleotide. Can be single UID or array of UIDs.
+        Operation type (fixed: search)
+    query : str
+        Name to search for (e.g., 'glucose', 'TP53', 'ATP')
+    organism : str
+        Organism name (default: Human). Options: Human, Mouse, Rat, Yeast, Worm, Frui...
     stream_callback : Callable, optional
         Callback for streaming output
     use_cache : bool, default False
@@ -34,14 +37,14 @@ def NCBI_fetch_accessions(
 
     Returns
     -------
-    list[Any]
+    Any
     """
     # Handle mutable defaults to avoid B006 linting error
 
     return get_shared_client().run_one_function(
         {
-            "name": "NCBI_fetch_accessions",
-            "arguments": {"operation": operation, "uids": uids},
+            "name": "BridgeDb_search",
+            "arguments": {"operation": operation, "query": query, "organism": organism},
         },
         stream_callback=stream_callback,
         use_cache=use_cache,
@@ -49,4 +52,4 @@ def NCBI_fetch_accessions(
     )
 
 
-__all__ = ["NCBI_fetch_accessions"]
+__all__ = ["BridgeDb_search"]

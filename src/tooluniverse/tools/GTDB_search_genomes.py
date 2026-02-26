@@ -1,33 +1,36 @@
 """
-NCBI_get_sequence
+GTDB_search_genomes
 
-Retrieve DNA/RNA sequence data from NCBI by accession number. Returns sequences in specified form...
+Search for prokaryotic genomes in GTDB by organism name. Returns genome accessions with both NCBI...
 """
 
 from typing import Any, Optional, Callable
 from ._shared_client import get_shared_client
 
 
-def NCBI_get_sequence(
+def GTDB_search_genomes(
     operation: str,
-    accession: str,
-    format: Optional[str] = "fasta",
+    query: str,
+    page: Optional[int] = None,
+    items_per_page: Optional[int] = None,
     *,
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> str:
+) -> Any:
     """
-    Retrieve DNA/RNA sequence data from NCBI by accession number. Returns sequences in specified form...
+    Search for prokaryotic genomes in GTDB by organism name. Returns genome accessions with both NCBI...
 
     Parameters
     ----------
     operation : str
-        Operation type (fixed: fetch_sequence)
-    accession : str
-        NCBI accession number (e.g., 'U00096', 'NC_045512', 'NM_000546'). Works with ...
-    format : str
-        Sequence format: 'fasta' for FASTA, 'gb' for GenBank, 'embl' for EMBL, 'gp' f...
+        Operation type (fixed: search_genomes)
+    query : str
+        Search query for organism name (e.g., 'Escherichia', 'Staphylococcus aureus',...
+    page : int
+        Page number for pagination (default: 1)
+    items_per_page : int
+        Number of results per page (default: 10, max: 50)
     stream_callback : Callable, optional
         Callback for streaming output
     use_cache : bool, default False
@@ -37,17 +40,18 @@ def NCBI_get_sequence(
 
     Returns
     -------
-    str
+    Any
     """
     # Handle mutable defaults to avoid B006 linting error
 
     return get_shared_client().run_one_function(
         {
-            "name": "NCBI_get_sequence",
+            "name": "GTDB_search_genomes",
             "arguments": {
                 "operation": operation,
-                "accession": accession,
-                "format": format,
+                "query": query,
+                "page": page,
+                "items_per_page": items_per_page,
             },
         },
         stream_callback=stream_callback,
@@ -56,4 +60,4 @@ def NCBI_get_sequence(
     )
 
 
-__all__ = ["NCBI_get_sequence"]
+__all__ = ["GTDB_search_genomes"]

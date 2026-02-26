@@ -977,6 +977,12 @@ default_tool_files = {
     "bridgedb": os.path.join(current_dir, "data", "bridgedb_tools.json"),
     # GTDB - Genome Taxonomy Database for standardized prokaryotic taxonomy
     "gtdb": os.path.join(current_dir, "data", "gtdb_tools.json"),
+    # Drug property filters: Lipinski Ro5, QED, PAINS, Veber, Egan, Ghose (RDKit)
+    "drug_properties": os.path.join(current_dir, "data", "drug_properties_tools.json"),
+    # Non-Compartmental Analysis (NCA) for pharmacokinetics: AUC, t½, CL, Vd, F
+    "nca": os.path.join(current_dir, "data", "nca_tools.json"),
+    # RDKit cheminformatics: pharmacophore features and matched molecular pairs (MMP)
+    "rdkit_cheminfo": os.path.join(current_dir, "data", "rdkit_cheminfo_tools.json"),
 }
 
 # Auto-load any user-provided tools from ~/.tooluniverse/user_tools/

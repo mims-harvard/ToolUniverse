@@ -15,7 +15,7 @@ def EMDB_search_structures(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> list[Any]:
     """
     Search the Electron Microscopy Data Bank (EMDB) for cryo-EM structures using keywords. Returns a ...
 
@@ -34,7 +34,7 @@ def EMDB_search_structures(
 
     Returns
     -------
-    Any
+    list[Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

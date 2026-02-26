@@ -1,33 +1,33 @@
 """
-NCBI_get_sequence
+DynaMut2_get_job
 
-Retrieve DNA/RNA sequence data from NCBI by accession number. Returns sequences in specified form...
+Retrieve results for a previously submitted DynaMut2 stability prediction job. If the job is stil...
 """
 
 from typing import Any, Optional, Callable
 from ._shared_client import get_shared_client
 
 
-def NCBI_get_sequence(
+def DynaMut2_get_job(
     operation: str,
-    accession: str,
-    format: Optional[str] = "fasta",
+    job_id: str,
+    endpoint: Optional[str | Any] = "prediction_single",
     *,
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> str:
+) -> dict[str, Any]:
     """
-    Retrieve DNA/RNA sequence data from NCBI by accession number. Returns sequences in specified form...
+    Retrieve results for a previously submitted DynaMut2 stability prediction job. If the job is stil...
 
     Parameters
     ----------
     operation : str
-        Operation type (fixed: fetch_sequence)
-    accession : str
-        NCBI accession number (e.g., 'U00096', 'NC_045512', 'NM_000546'). Works with ...
-    format : str
-        Sequence format: 'fasta' for FASTA, 'gb' for GenBank, 'embl' for EMBL, 'gp' f...
+        Operation type
+    job_id : str
+        DynaMut2 job identifier returned from a previous predict_stability call.
+    endpoint : str | Any
+        API endpoint for the job type. Default: 'prediction_single'. Other options: '...
     stream_callback : Callable, optional
         Callback for streaming output
     use_cache : bool, default False
@@ -37,17 +37,17 @@ def NCBI_get_sequence(
 
     Returns
     -------
-    str
+    dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 
     return get_shared_client().run_one_function(
         {
-            "name": "NCBI_get_sequence",
+            "name": "DynaMut2_get_job",
             "arguments": {
                 "operation": operation,
-                "accession": accession,
-                "format": format,
+                "job_id": job_id,
+                "endpoint": endpoint,
             },
         },
         stream_callback=stream_callback,
@@ -56,4 +56,4 @@ def NCBI_get_sequence(
     )
 
 
-__all__ = ["NCBI_get_sequence"]
+__all__ = ["DynaMut2_get_job"]
