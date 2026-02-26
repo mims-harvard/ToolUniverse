@@ -944,8 +944,15 @@ default_tool_files = {
     "swiss_target": os.path.join(current_dir, "data", "swiss_target_tools.json"),
     # PDC - NCI Proteomics Data Commons (CPTAC, ICPC, APOLLO cancer proteomics)
     "pdc": os.path.join(current_dir, "data", "pdc_tools.json"),
+    "proteomicsdb": os.path.join(current_dir, "data", "proteomicsdb_tools.json"),
     # MEME Suite - Motif analysis (FIMO scan, MEME discovery, TOMTOM comparison)
     "meme": os.path.join(current_dir, "data", "meme_tools.json"),
+    # CellMarker 2.0 - Curated cell type markers for scRNA-seq annotation
+    "cellmarker": os.path.join(current_dir, "data", "cellmarker_tools.json"),
+    # SwissADME - ADMET properties, drug-likeness, medicinal chemistry from SMILES
+    "swissadme": os.path.join(current_dir, "data", "swissadme_tools.json"),
+    # MetaboAnalyst - Metabolomics pathway enrichment, name mapping, biomarker sets (KEGG + local stats)
+    "metaboanalyst": os.path.join(current_dir, "data", "metaboanalyst_tools.json"),
 }
 
 # Auto-load any user-provided tools from ~/.tooluniverse/user_tools/

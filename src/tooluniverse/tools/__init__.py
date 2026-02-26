@@ -1,7 +1,7 @@
 """
 ToolUniverse Tools
 
-Type-safe Python interface to 1992 scientific tools.
+Type-safe Python interface to 2006 scientific tools.
 Each tool is in its own module for minimal import overhead.
 
 Usage:
@@ -188,6 +188,10 @@ from .CancerPrognosis_get_gene_expression import CancerPrognosis_get_gene_expres
 from .CancerPrognosis_get_study_summary import CancerPrognosis_get_study_summary
 from .CancerPrognosis_get_survival_data import CancerPrognosis_get_survival_data
 from .CancerPrognosis_search_studies import CancerPrognosis_search_studies
+from .CellMarker_list_cell_types import CellMarker_list_cell_types
+from .CellMarker_search_by_cell_type import CellMarker_search_by_cell_type
+from .CellMarker_search_by_gene import CellMarker_search_by_gene
+from .CellMarker_search_cancer_markers import CellMarker_search_cancer_markers
 from .CellPainting_get_screen_plates import CellPainting_get_screen_plates
 from .CellPainting_get_well_data import CellPainting_get_well_data
 from .CellPainting_search_screens import CellPainting_search_screens
@@ -1116,6 +1120,10 @@ from .MetaCyc_get_compound import MetaCyc_get_compound
 from .MetaCyc_get_pathway import MetaCyc_get_pathway
 from .MetaCyc_get_reaction import MetaCyc_get_reaction
 from .MetaCyc_search_pathways import MetaCyc_search_pathways
+from .MetaboAnalyst_biomarker_enrichment import MetaboAnalyst_biomarker_enrichment
+from .MetaboAnalyst_get_pathway_library import MetaboAnalyst_get_pathway_library
+from .MetaboAnalyst_name_to_id import MetaboAnalyst_name_to_id
+from .MetaboAnalyst_pathway_enrichment import MetaboAnalyst_pathway_enrichment
 from .MetabolomicsWorkbench_get_compound_by_pubchem_cid import (
     MetabolomicsWorkbench_get_compound_by_pubchem_cid,
 )
@@ -1562,6 +1570,10 @@ from .ProteinsPlus_profile_structure_quality import (
 )
 from .ProteomeXchange_get_dataset import ProteomeXchange_get_dataset
 from .ProteomeXchange_search_datasets import ProteomeXchange_search_datasets
+from .ProteomicsDB_get_expression_summary import ProteomicsDB_get_expression_summary
+from .ProteomicsDB_get_protein_expression import ProteomicsDB_get_protein_expression
+from .ProteomicsDB_list_tissues import ProteomicsDB_list_tissues
+from .ProteomicsDB_search_proteins import ProteomicsDB_search_proteins
 from .ProtocolOptimizer import ProtocolOptimizer
 from .PubChemBioAssay_get_assay import PubChemBioAssay_get_assay
 from .PubChemBioAssay_get_assay_summary import PubChemBioAssay_get_assay_summary
@@ -1740,6 +1752,8 @@ from .SunriseSunset_get_times import SunriseSunset_get_times
 from .Survival_cox_regression import Survival_cox_regression
 from .Survival_kaplan_meier import Survival_kaplan_meier
 from .Survival_log_rank_test import Survival_log_rank_test
+from .SwissADME_calculate_adme import SwissADME_calculate_adme
+from .SwissADME_check_druglikeness import SwissADME_check_druglikeness
 from .SwissDock_check_job_status import SwissDock_check_job_status
 from .SwissDock_dock_ligand import SwissDock_dock_ligand
 from .SwissDock_retrieve_results import SwissDock_retrieve_results
@@ -2658,6 +2672,10 @@ __all__ = [
     "CancerPrognosis_get_study_summary",
     "CancerPrognosis_get_survival_data",
     "CancerPrognosis_search_studies",
+    "CellMarker_list_cell_types",
+    "CellMarker_search_by_cell_type",
+    "CellMarker_search_by_gene",
+    "CellMarker_search_cancer_markers",
     "CellPainting_get_screen_plates",
     "CellPainting_get_well_data",
     "CellPainting_search_screens",
@@ -3352,6 +3370,10 @@ __all__ = [
     "MetaCyc_get_pathway",
     "MetaCyc_get_reaction",
     "MetaCyc_search_pathways",
+    "MetaboAnalyst_biomarker_enrichment",
+    "MetaboAnalyst_get_pathway_library",
+    "MetaboAnalyst_name_to_id",
+    "MetaboAnalyst_pathway_enrichment",
     "MetabolomicsWorkbench_get_compound_by_pubchem_cid",
     "MetabolomicsWorkbench_get_refmet_info",
     "MetabolomicsWorkbench_get_study",
@@ -3668,6 +3690,10 @@ __all__ = [
     "ProteinsPlus_profile_structure_quality",
     "ProteomeXchange_get_dataset",
     "ProteomeXchange_search_datasets",
+    "ProteomicsDB_get_expression_summary",
+    "ProteomicsDB_get_protein_expression",
+    "ProteomicsDB_list_tissues",
+    "ProteomicsDB_search_proteins",
     "ProtocolOptimizer",
     "PubChemBioAssay_get_assay",
     "PubChemBioAssay_get_assay_summary",
@@ -3826,6 +3852,8 @@ __all__ = [
     "Survival_cox_regression",
     "Survival_kaplan_meier",
     "Survival_log_rank_test",
+    "SwissADME_calculate_adme",
+    "SwissADME_check_druglikeness",
     "SwissDock_check_job_status",
     "SwissDock_dock_ligand",
     "SwissDock_retrieve_results",
