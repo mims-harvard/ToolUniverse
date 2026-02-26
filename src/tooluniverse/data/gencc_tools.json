@@ -1,0 +1,223 @@
+[
+  {
+    "name": "GenCC_search_gene",
+    "description": "Get gene-disease validity classifications for a gene from GenCC (Gene Curation Coalition). Returns curated evidence levels (Definitive, Strong, Moderate, Limited, Disputed, Refuted) from multiple expert panels including ClinGen, Ambry Genetics, Genomics England PanelApp, and Orphanet. Essential for assessing clinical validity of gene-disease associations in genetic testing.",
+    "type": "GenCCTool",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "operation": {
+          "type": "string",
+          "const": "search_gene",
+          "description": "Operation type (fixed: search_gene)"
+        },
+        "gene_symbol": {
+          "type": "string",
+          "description": "HGNC gene symbol (e.g., BRCA2, TP53, FBN1, CFTR)"
+        },
+        "classification": {
+          "type": "string",
+          "description": "Optional filter by classification level (e.g., Definitive, Strong, Moderate, Limited)",
+          "default": ""
+        }
+      },
+      "required": ["operation", "gene_symbol"]
+    },
+    "return_schema": {
+      "type": "object",
+      "properties": {
+        "status": {
+          "type": "string"
+        },
+        "data": {
+          "type": "object",
+          "properties": {
+            "gene_symbol": {
+              "type": "string"
+            },
+            "submissions": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "gene_symbol": {"type": "string"},
+                  "gene_curie": {"type": "string"},
+                  "disease_title": {"type": "string"},
+                  "disease_curie": {"type": "string"},
+                  "classification": {"type": "string"},
+                  "mode_of_inheritance": {"type": "string"},
+                  "submitter": {"type": "string"},
+                  "submitted_date": {"type": "string"}
+                }
+              }
+            },
+            "submission_count": {
+              "type": "integer"
+            },
+            "unique_diseases": {
+              "type": "integer"
+            }
+          }
+        }
+      }
+    },
+    "test_examples": [
+      {
+        "operation": "search_gene",
+        "gene_symbol": "BRCA2"
+      },
+      {
+        "operation": "search_gene",
+        "gene_symbol": "FBN1",
+        "classification": "Definitive"
+      }
+    ]
+  },
+  {
+    "name": "GenCC_search_disease",
+    "description": "Find genes with validity evidence for a disease from GenCC (Gene Curation Coalition). Search by disease name or MONDO/OMIM identifier. Returns gene-disease validity classifications from multiple expert curators. Useful for identifying established gene-disease relationships for clinical interpretation.",
+    "type": "GenCCTool",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "operation": {
+          "type": "string",
+          "const": "search_disease",
+          "description": "Operation type (fixed: search_disease)"
+        },
+        "disease": {
+          "type": "string",
+          "description": "Disease name or ID to search (e.g., 'Marfan syndrome', 'MONDO:0007947', 'breast cancer')"
+        },
+        "classification": {
+          "type": "string",
+          "description": "Optional filter by classification level (e.g., Definitive, Strong)",
+          "default": ""
+        }
+      },
+      "required": ["operation", "disease"]
+    },
+    "return_schema": {
+      "type": "object",
+      "properties": {
+        "status": {
+          "type": "string"
+        },
+        "data": {
+          "type": "object",
+          "properties": {
+            "disease": {
+              "type": "string"
+            },
+            "submissions": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "gene_symbol": {"type": "string"},
+                  "gene_curie": {"type": "string"},
+                  "disease_title": {"type": "string"},
+                  "disease_curie": {"type": "string"},
+                  "classification": {"type": "string"},
+                  "mode_of_inheritance": {"type": "string"},
+                  "submitter": {"type": "string"},
+                  "submitted_date": {"type": "string"}
+                }
+              }
+            },
+            "submission_count": {
+              "type": "integer"
+            },
+            "unique_genes": {
+              "type": "integer"
+            }
+          }
+        }
+      }
+    },
+    "test_examples": [
+      {
+        "operation": "search_disease",
+        "disease": "Marfan syndrome"
+      },
+      {
+        "operation": "search_disease",
+        "disease": "Huntington disease",
+        "classification": "Definitive"
+      }
+    ]
+  },
+  {
+    "name": "GenCC_get_classifications",
+    "description": "Get summary statistics of gene-disease validity classifications from GenCC (Gene Curation Coalition). Returns counts for each classification level (Definitive, Strong, Moderate, Limited, etc.), total submissions, unique genes, unique diseases, and top contributing organizations. Useful for understanding the landscape of curated gene-disease evidence.",
+    "type": "GenCCTool",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "operation": {
+          "type": "string",
+          "const": "get_classifications",
+          "description": "Operation type (fixed: get_classifications)"
+        },
+        "submitter": {
+          "type": "string",
+          "description": "Optional filter by submitting organization name (e.g., 'ClinGen', 'Ambry', 'Genomics England')",
+          "default": ""
+        }
+      },
+      "required": ["operation"]
+    },
+    "return_schema": {
+      "type": "object",
+      "properties": {
+        "status": {
+          "type": "string"
+        },
+        "data": {
+          "type": "object",
+          "properties": {
+            "classifications": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "classification": {"type": "string"},
+                  "count": {"type": "integer"},
+                  "rank": {"type": "integer"}
+                }
+              }
+            },
+            "total_submissions": {
+              "type": "integer"
+            },
+            "unique_genes": {
+              "type": "integer"
+            },
+            "unique_diseases": {
+              "type": "integer"
+            },
+            "top_submitters": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "name": {"type": "string"},
+                  "count": {"type": "integer"}
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "test_examples": [
+      {
+        "operation": "get_classifications"
+      },
+      {
+        "operation": "get_classifications",
+        "submitter": "ClinGen"
+      }
+    ]
+  }
+]
