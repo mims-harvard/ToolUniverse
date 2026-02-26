@@ -354,6 +354,7 @@ STATIC_LAZY_REGISTRY = {
     "OpentargetTool": "graphql_tool",
     "OpentargetToolDrugNameMatch": "graphql_tool",
     "OrphanetTool": "orphanet_tool",
+    "GenCCTool": "gencc_tool",
     "OrthoDBTool": "orthodb_tool",
     "OxOTool": "oxo_tool",
     "PANTHERTool": "panther_tool",

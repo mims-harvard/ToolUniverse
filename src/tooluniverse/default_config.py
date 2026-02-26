@@ -308,6 +308,8 @@ default_tool_files = {
     "omim": os.path.join(current_dir, "data", "omim_tools.json"),
     # Orphanet - Rare Disease Encyclopedia
     "orphanet": os.path.join(current_dir, "data", "orphanet_tools.json"),
+    # GenCC - Gene Curation Coalition (Gene-Disease Validity)
+    "gencc": os.path.join(current_dir, "data", "gencc_tools.json"),
     # DisGeNET - Gene-Disease Associations
     "disgenet": os.path.join(current_dir, "data", "disgenet_tools.json"),
     # BindingDB - Protein-Ligand Binding Affinities

@@ -293,8 +293,31 @@ class MonarchV3Tool(BaseTool):
             if isinstance(ac, dict):
                 assoc_counts[ac.get("label", "")] = ac.get("count", 0)
 
-        # Extract causal genes
-        causal_genes = data.get("causal_gene", []) or []
+        # Extract causal genes (API returns full entity objects, extract key fields)
+        raw_genes = data.get("causal_gene", []) or []
+        causal_genes = []
+        for gene in raw_genes:
+            if isinstance(gene, dict):
+                causal_genes.append(
+                    {
+                        "id": gene.get("id"),
+                        "name": gene.get("name"),
+                    }
+                )
+            elif isinstance(gene, str):
+                causal_genes.append({"id": gene, "name": None})
+
+        # Extract inheritance pattern (API returns full entity object or None)
+        raw_inheritance = data.get("inheritance")
+        if isinstance(raw_inheritance, dict):
+            inheritance = {
+                "id": raw_inheritance.get("id"),
+                "name": raw_inheritance.get("name"),
+            }
+        elif isinstance(raw_inheritance, str):
+            inheritance = {"id": None, "name": raw_inheritance}
+        else:
+            inheritance = None
 
         return {
             "data": {
@@ -307,7 +330,7 @@ class MonarchV3Tool(BaseTool):
                 "parent_diseases": parent_diseases,
                 "subtypes_count": len(data.get("has_descendant", []) or []),
                 "causal_genes": causal_genes,
-                "inheritance": data.get("inheritance"),
+                "inheritance": inheritance,
                 "association_counts": assoc_counts,
             },
             "metadata": {

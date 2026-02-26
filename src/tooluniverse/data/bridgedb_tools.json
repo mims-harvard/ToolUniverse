@@ -1,0 +1,309 @@
+[
+  {
+    "name": "BridgeDb_xrefs",
+    "description": "Map a biological identifier across databases using BridgeDb. Given an identifier from one database (e.g., HMDB0000122 from HMDB), returns equivalent identifiers in all other supported databases (ChEBI, KEGG, PubChem, Wikidata, CAS, etc.). Supports genes, proteins, metabolites, and other biological entities across 45+ databases and 30+ organisms. System codes: Ch=HMDB, Ce=ChEBI, Ck=KEGG Compound, En=Ensembl, H=HGNC, S=UniProt, L=NCBI Gene, Cpc=PubChem-compound, Ik=InChIKey. Use this when you need to convert between database identifiers for the same biological entity.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "operation": {
+          "type": "string",
+          "enum": ["xrefs"],
+          "description": "Operation type (fixed: xrefs)"
+        },
+        "identifier": {
+          "type": "string",
+          "description": "The identifier to look up (e.g., 'HMDB0000122' for glucose, 'ENSG00000141510' for TP53, '17234' for ChEBI glucose)"
+        },
+        "source": {
+          "type": "string",
+          "description": "Source database name or system code. Common codes: Ch=HMDB, Ce=ChEBI, Ck=KEGG Compound, En=Ensembl, H=HGNC, S=UniProt, L=NCBI Gene, Cpc=PubChem-compound"
+        },
+        "organism": {
+          "type": "string",
+          "description": "Organism name (default: Human). Options include: Human, Mouse, Rat, Yeast, Worm, Fruit fly, Zebra fish, Arabidopsis thaliana, and others."
+        },
+        "target_source": {
+          "type": "string",
+          "description": "Optional: filter results to a specific target database. Use database name or system code."
+        }
+      },
+      "required": ["operation", "identifier", "source"]
+    },
+    "type": "BridgeDbTool",
+    "test_examples": [
+      {
+        "operation": "xrefs",
+        "identifier": "HMDB0000122",
+        "source": "Ch"
+      },
+      {
+        "operation": "xrefs",
+        "identifier": "C00031",
+        "source": "Ck"
+      },
+      {
+        "operation": "xrefs",
+        "identifier": "ENSG00000141510",
+        "source": "En"
+      }
+    ],
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "object",
+          "description": "Cross-reference mapping results",
+          "properties": {
+            "query_identifier": {
+              "type": "string",
+              "description": "The queried identifier"
+            },
+            "query_source": {
+              "type": "string",
+              "description": "The source database"
+            },
+            "organism": {
+              "type": "string",
+              "description": "The organism used for the lookup"
+            },
+            "cross_references": {
+              "type": "array",
+              "description": "Array of cross-reference entries",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "identifier": {
+                    "type": "string",
+                    "description": "The mapped identifier"
+                  },
+                  "database": {
+                    "type": "string",
+                    "description": "The database name"
+                  },
+                  "system_code": {
+                    "type": "string",
+                    "description": "BridgeDb system code for this database"
+                  }
+                }
+              }
+            },
+            "count": {
+              "type": "integer",
+              "description": "Number of cross-references found"
+            }
+          }
+        },
+        {
+          "type": "object",
+          "properties": {
+            "error": {
+              "type": "string",
+              "description": "Error message"
+            }
+          },
+          "required": ["error"]
+        }
+      ]
+    }
+  },
+  {
+    "name": "BridgeDb_search",
+    "description": "Search for biological identifiers by name using BridgeDb. Enter a gene name, metabolite name, or protein name and get matching identifiers from supported databases. Useful for finding database-specific IDs when you only know the common name. Searches across all database sources available for the specified organism. Returns identifier-database pairs. For example, searching 'glucose' returns matches from MetaCyc, KEGG, and other databases.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "operation": {
+          "type": "string",
+          "enum": ["search"],
+          "description": "Operation type (fixed: search)"
+        },
+        "query": {
+          "type": "string",
+          "description": "Name to search for (e.g., 'glucose', 'TP53', 'ATP')"
+        },
+        "organism": {
+          "type": "string",
+          "description": "Organism name (default: Human). Options: Human, Mouse, Rat, Yeast, Worm, Fruit fly, Zebra fish, etc."
+        }
+      },
+      "required": ["operation", "query"]
+    },
+    "type": "BridgeDbTool",
+    "test_examples": [
+      {
+        "operation": "search",
+        "query": "glucose"
+      },
+      {
+        "operation": "search",
+        "query": "TP53"
+      },
+      {
+        "operation": "search",
+        "query": "ATP"
+      }
+    ],
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "object",
+          "description": "Search results with matching identifiers",
+          "properties": {
+            "query": {
+              "type": "string",
+              "description": "The search query"
+            },
+            "organism": {
+              "type": "string",
+              "description": "The organism used for the search"
+            },
+            "results": {
+              "type": "array",
+              "description": "Array of matching identifiers",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "identifier": {
+                    "type": "string",
+                    "description": "The matched identifier"
+                  },
+                  "database": {
+                    "type": "string",
+                    "description": "The database name"
+                  },
+                  "system_code": {
+                    "type": "string",
+                    "description": "BridgeDb system code"
+                  }
+                }
+              }
+            },
+            "count": {
+              "type": "integer",
+              "description": "Number of matches found"
+            }
+          }
+        },
+        {
+          "type": "object",
+          "properties": {
+            "error": {
+              "type": "string",
+              "description": "Error message"
+            }
+          },
+          "required": ["error"]
+        }
+      ]
+    }
+  },
+  {
+    "name": "BridgeDb_attributes",
+    "description": "Get properties and attributes for a biological identifier from BridgeDb. Returns metadata such as molecular formula, molecular weight, InChI, InChIKey, synonyms, and other database-specific attributes. Especially useful for metabolites (HMDB, ChEBI, KEGG compound IDs) to get chemical properties, and for genes to get symbol and name information. System codes: Ch=HMDB, Ce=ChEBI, Ck=KEGG Compound, En=Ensembl, H=HGNC, S=UniProt.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "operation": {
+          "type": "string",
+          "enum": ["attributes"],
+          "description": "Operation type (fixed: attributes)"
+        },
+        "identifier": {
+          "type": "string",
+          "description": "The identifier to look up (e.g., 'HMDB0000122' for glucose, '17234' for ChEBI glucose)"
+        },
+        "source": {
+          "type": "string",
+          "description": "Source database name or system code. Common: Ch=HMDB, Ce=ChEBI, Ck=KEGG Compound, En=Ensembl, H=HGNC, S=UniProt"
+        },
+        "organism": {
+          "type": "string",
+          "description": "Organism name (default: Human). Options: Human, Mouse, Rat, Yeast, etc."
+        }
+      },
+      "required": ["operation", "identifier", "source"]
+    },
+    "type": "BridgeDbTool",
+    "test_examples": [
+      {
+        "operation": "attributes",
+        "identifier": "HMDB0000122",
+        "source": "Ch"
+      },
+      {
+        "operation": "attributes",
+        "identifier": "HMDB0000064",
+        "source": "Ch"
+      },
+      {
+        "operation": "attributes",
+        "identifier": "ENSG00000141510",
+        "source": "En"
+      }
+    ],
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "object",
+          "description": "Attribute data for the identifier",
+          "properties": {
+            "query_identifier": {
+              "type": "string",
+              "description": "The queried identifier"
+            },
+            "query_source": {
+              "type": "string",
+              "description": "The source database"
+            },
+            "organism": {
+              "type": "string",
+              "description": "The organism used"
+            },
+            "attributes": {
+              "type": "object",
+              "description": "Key-value pairs of attributes. Common keys: Symbol, BrutoFormula, Monoisotopic Weight, InChI, InChIKey, Synonyms (array)",
+              "properties": {
+                "Symbol": {
+                  "type": ["string", "null"],
+                  "description": "Common symbol/name"
+                },
+                "BrutoFormula": {
+                  "type": ["string", "null"],
+                  "description": "Molecular formula"
+                },
+                "InChI": {
+                  "type": ["string", "null"],
+                  "description": "InChI chemical identifier"
+                },
+                "InChIKey": {
+                  "type": ["string", "null"],
+                  "description": "InChIKey hash"
+                },
+                "Monoisotopic Weight": {
+                  "type": ["string", "null"],
+                  "description": "Monoisotopic molecular weight"
+                },
+                "Synonyms": {
+                  "type": "array",
+                  "description": "Alternative names",
+                  "items": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          }
+        },
+        {
+          "type": "object",
+          "properties": {
+            "error": {
+              "type": "string",
+              "description": "Error message"
+            }
+          },
+          "required": ["error"]
+        }
+      ]
+    }
+  }
+]

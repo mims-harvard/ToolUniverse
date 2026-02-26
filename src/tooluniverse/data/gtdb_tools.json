@@ -1,0 +1,459 @@
+[
+  {
+    "name": "GTDB_search_taxon",
+    "description": "Search the Genome Taxonomy Database (GTDB) for prokaryotic taxa by partial name. GTDB provides a standardized genome-based taxonomy for Bacteria and Archaea, resolving polyphyletic groups in NCBI taxonomy. Returns matching taxon names with GTDB rank prefixes (d__=domain, p__=phylum, c__=class, o__=order, f__=family, g__=genus, s__=species). Search is case-insensitive and matches partial names. Use this for looking up standardized prokaryotic taxonomy names, finding correct GTDB identifiers, or exploring taxonomic groups like Lachnospiraceae, Enterobacteriaceae, or Clostridia.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "operation": {
+          "type": "string",
+          "enum": ["search_taxon"],
+          "description": "Operation type (fixed: search_taxon)"
+        },
+        "query": {
+          "type": "string",
+          "description": "Partial taxon name to search for (e.g., 'Lachnospiraceae', 'Escherichia', 'Bacillota'). Case-insensitive."
+        },
+        "limit": {
+          "type": "integer",
+          "description": "Maximum number of results per rank (default: 20, max: 100)"
+        }
+      },
+      "required": ["operation", "query"]
+    },
+    "type": "GTDBTool",
+    "test_examples": [
+      {
+        "operation": "search_taxon",
+        "query": "Lachnospiraceae"
+      },
+      {
+        "operation": "search_taxon",
+        "query": "Escherichia"
+      },
+      {
+        "operation": "search_taxon",
+        "query": "Clostridia"
+      }
+    ],
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "object",
+          "description": "Taxon search results",
+          "properties": {
+            "query": {
+              "type": "string",
+              "description": "The search query"
+            },
+            "matches": {
+              "type": "array",
+              "description": "Matching GTDB taxon names with rank prefixes",
+              "items": {
+                "type": "string"
+              }
+            },
+            "count": {
+              "type": "integer",
+              "description": "Number of matches"
+            }
+          }
+        },
+        {
+          "type": "object",
+          "properties": {
+            "error": {
+              "type": "string",
+              "description": "Error message"
+            }
+          },
+          "required": ["error"]
+        }
+      ]
+    }
+  },
+  {
+    "name": "GTDB_get_species",
+    "description": "Get detailed information about a GTDB species cluster, including all genomes assigned to that species. A GTDB species cluster groups genomes by average nucleotide identity (ANI). Returns the full list of genomes with their accessions, NCBI organism names, NCBI taxonomy, and whether they are the GTDB species representative or NCBI type material. Useful for exploring species diversity, finding representative genomes, and comparing GTDB vs NCBI classifications.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "operation": {
+          "type": "string",
+          "enum": ["get_species"],
+          "description": "Operation type (fixed: get_species)"
+        },
+        "species": {
+          "type": "string",
+          "description": "Species name WITHOUT the s__ prefix (e.g., 'Escherichia coli', 'Hydrogenothermus marinus', 'Bacillus subtilis')"
+        },
+        "max_genomes": {
+          "type": "integer",
+          "description": "Maximum number of genomes to return (default: 20). Species clusters can have thousands of genomes."
+        }
+      },
+      "required": ["operation", "species"]
+    },
+    "type": "GTDBTool",
+    "test_examples": [
+      {
+        "operation": "get_species",
+        "species": "Escherichia coli",
+        "max_genomes": 5
+      },
+      {
+        "operation": "get_species",
+        "species": "Bacillus subtilis",
+        "max_genomes": 5
+      }
+    ],
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "object",
+          "description": "Species cluster details",
+          "properties": {
+            "species_name": {
+              "type": "string",
+              "description": "The GTDB species name"
+            },
+            "total_genomes": {
+              "type": "integer",
+              "description": "Total number of genomes in this species cluster"
+            },
+            "genomes_shown": {
+              "type": "integer",
+              "description": "Number of genomes in the response (may be limited)"
+            },
+            "genomes": {
+              "type": "array",
+              "description": "Genome entries in the species cluster",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "accession": {
+                    "type": "string",
+                    "description": "NCBI genome accession (GCA/GCF prefix)"
+                  },
+                  "ncbi_org_name": {
+                    "type": "string",
+                    "description": "NCBI organism name"
+                  },
+                  "ncbi_tax": {
+                    "type": "string",
+                    "description": "NCBI taxonomy string"
+                  },
+                  "gtdb_species_rep": {
+                    "type": "boolean",
+                    "description": "Whether this is the GTDB species representative genome"
+                  },
+                  "ncbi_type_material": {
+                    "type": "string",
+                    "description": "NCBI type material designation"
+                  }
+                }
+              }
+            }
+          }
+        },
+        {
+          "type": "object",
+          "properties": {
+            "error": {
+              "type": "string",
+              "description": "Error message"
+            }
+          },
+          "required": ["error"]
+        }
+      ]
+    }
+  },
+  {
+    "name": "GTDB_get_taxon_info",
+    "description": "Get information about a GTDB taxon including its rank, total genome count, higher-rank lineage, and release history. GTDB uses rank prefixes: d__ (domain), p__ (phylum), c__ (class), o__ (order), f__ (family), g__ (genus), s__ (species). For example, f__Lachnospiraceae returns its rank (Family), genome count, and lineage (Bacteria > Bacillota > Clostridia > Lachnospirales). Also returns the full lineage breakdown from domain to species. Useful for understanding where a taxon fits in the GTDB tree and how many genomes support it.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "operation": {
+          "type": "string",
+          "enum": ["get_taxon_info"],
+          "description": "Operation type (fixed: get_taxon_info)"
+        },
+        "taxon": {
+          "type": "string",
+          "description": "GTDB taxon name with rank prefix (e.g., 'f__Lachnospiraceae', 'd__Bacteria', 'g__Escherichia', 's__Escherichia coli'). Use GTDB_search_taxon to find valid names."
+        }
+      },
+      "required": ["operation", "taxon"]
+    },
+    "type": "GTDBTool",
+    "test_examples": [
+      {
+        "operation": "get_taxon_info",
+        "taxon": "f__Lachnospiraceae"
+      },
+      {
+        "operation": "get_taxon_info",
+        "taxon": "g__Escherichia"
+      },
+      {
+        "operation": "get_taxon_info",
+        "taxon": "p__Bacillota"
+      }
+    ],
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "object",
+          "description": "Taxon card information",
+          "properties": {
+            "taxon": {
+              "type": "string",
+              "description": "The GTDB taxon name"
+            },
+            "rank": {
+              "type": ["string", "null"],
+              "description": "Taxonomic rank (Domain, Phylum, Class, Order, Family, Genus, Species)"
+            },
+            "n_genomes": {
+              "type": ["integer", "null"],
+              "description": "Total number of genomes classified under this taxon"
+            },
+            "higher_ranks": {
+              "type": "array",
+              "description": "Parent taxa from domain down to parent rank",
+              "items": {
+                "type": "string"
+              }
+            },
+            "in_releases": {
+              "type": "array",
+              "description": "GTDB releases this taxon appears in",
+              "items": {
+                "type": "string"
+              }
+            },
+            "lineage": {
+              "type": ["object", "null"],
+              "description": "Full lineage from domain (d) to species (s), keys: d, p, c, o, f, g, s"
+            }
+          }
+        },
+        {
+          "type": "object",
+          "properties": {
+            "error": {
+              "type": "string",
+              "description": "Error message"
+            }
+          },
+          "required": ["error"]
+        }
+      ]
+    }
+  },
+  {
+    "name": "GTDB_search_genomes",
+    "description": "Search for prokaryotic genomes in GTDB by organism name. Returns genome accessions with both NCBI and GTDB taxonomy classifications, allowing comparison between the two taxonomic systems. Each result shows the genome accession (GCA/GCF), NCBI organism name, NCBI taxonomy, GTDB taxonomy, and whether the genome is a GTDB species representative. Supports pagination. Useful for finding genome accessions, exploring taxonomic reclassifications, and linking genomes to the GTDB taxonomy.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "operation": {
+          "type": "string",
+          "enum": ["search_genomes"],
+          "description": "Operation type (fixed: search_genomes)"
+        },
+        "query": {
+          "type": "string",
+          "description": "Search query for organism name (e.g., 'Escherichia', 'Staphylococcus aureus', 'Lactobacillus')"
+        },
+        "page": {
+          "type": "integer",
+          "description": "Page number for pagination (default: 1)"
+        },
+        "items_per_page": {
+          "type": "integer",
+          "description": "Number of results per page (default: 10, max: 50)"
+        }
+      },
+      "required": ["operation", "query"]
+    },
+    "type": "GTDBTool",
+    "test_examples": [
+      {
+        "operation": "search_genomes",
+        "query": "Escherichia",
+        "items_per_page": 5
+      },
+      {
+        "operation": "search_genomes",
+        "query": "Lactobacillus",
+        "items_per_page": 5
+      }
+    ],
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "object",
+          "description": "Genome search results",
+          "properties": {
+            "query": {
+              "type": "string",
+              "description": "The search query"
+            },
+            "total_results": {
+              "type": "integer",
+              "description": "Total number of matching genomes"
+            },
+            "page": {
+              "type": "integer",
+              "description": "Current page number"
+            },
+            "results": {
+              "type": "array",
+              "description": "Genome search results",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "gid": {
+                    "type": "string",
+                    "description": "Genome ID / accession"
+                  },
+                  "accession": {
+                    "type": "string",
+                    "description": "NCBI genome accession"
+                  },
+                  "ncbiOrgName": {
+                    "type": "string",
+                    "description": "NCBI organism name"
+                  },
+                  "ncbiTaxonomy": {
+                    "type": "string",
+                    "description": "Full NCBI taxonomy string"
+                  },
+                  "gtdbTaxonomy": {
+                    "type": "string",
+                    "description": "Full GTDB taxonomy string"
+                  },
+                  "isGtdbSpeciesRep": {
+                    "type": "boolean",
+                    "description": "Whether this is a GTDB species representative"
+                  },
+                  "isNcbiTypeMaterial": {
+                    "type": "boolean",
+                    "description": "Whether this is NCBI type material"
+                  }
+                }
+              }
+            },
+            "count": {
+              "type": "integer",
+              "description": "Number of results on this page"
+            }
+          }
+        },
+        {
+          "type": "object",
+          "properties": {
+            "error": {
+              "type": "string",
+              "description": "Error message"
+            }
+          },
+          "required": ["error"]
+        }
+      ]
+    }
+  },
+  {
+    "name": "GTDB_get_genome",
+    "description": "Get comprehensive metadata for a specific genome by NCBI accession from GTDB. Returns nucleotide statistics (genome size, GC%, contig count, N50), gene-level metrics (completeness via CheckM/CheckM2, contamination, SSU/LSU counts, protein count, coding density), NCBI metadata (assembly level, BioProject, BioSample, isolation source, geographic coordinates), and taxonomic history across GTDB releases. Useful for evaluating genome quality, finding genome properties, and tracking taxonomic changes across GTDB versions.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "operation": {
+          "type": "string",
+          "enum": ["get_genome"],
+          "description": "Operation type (fixed: get_genome)"
+        },
+        "accession": {
+          "type": "string",
+          "description": "NCBI genome accession (e.g., 'GCF_000005845.2' for E. coli K-12, 'GCF_000009045.1' for B. subtilis)"
+        }
+      },
+      "required": ["operation", "accession"]
+    },
+    "type": "GTDBTool",
+    "test_examples": [
+      {
+        "operation": "get_genome",
+        "accession": "GCF_000005845.2"
+      },
+      {
+        "operation": "get_genome",
+        "accession": "GCF_000009045.1"
+      }
+    ],
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "object",
+          "description": "Comprehensive genome metadata",
+          "properties": {
+            "genome": {
+              "type": "object",
+              "description": "Basic genome info (accession, name)"
+            },
+            "metadata_nucleotide": {
+              "type": "object",
+              "description": "Nucleotide-level statistics: contig_count, n50_contigs, genome_size, gc_percentage, ambiguous_bases, etc."
+            },
+            "metadata_gene": {
+              "type": "object",
+              "description": "Gene-level metrics: checkm_completeness, checkm_contamination, checkm2_completeness, ssu_count, protein_count, coding_density, etc."
+            },
+            "metadata_ncbi": {
+              "type": "object",
+              "description": "NCBI metadata: assembly_level, assembly_name, bioproject, biosample, country, date, isolation_source, etc."
+            },
+            "gtdb_taxonomy": {
+              "type": "object",
+              "description": "GTDB taxonomic classification with domain to species rank assignments"
+            },
+            "taxon_history": {
+              "type": "array",
+              "description": "Taxonomic history across GTDB releases, showing how classification changed over time",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "release": {
+                    "type": "string",
+                    "description": "GTDB release version"
+                  },
+                  "d": { "type": "string" },
+                  "p": { "type": "string" },
+                  "c": { "type": "string" },
+                  "o": { "type": "string" },
+                  "f": { "type": "string" },
+                  "g": { "type": "string" },
+                  "s": { "type": "string" }
+                }
+              }
+            }
+          }
+        },
+        {
+          "type": "object",
+          "properties": {
+            "error": {
+              "type": "string",
+              "description": "Error message"
+            }
+          },
+          "required": ["error"]
+        }
+      ]
+    }
+  }
+]
