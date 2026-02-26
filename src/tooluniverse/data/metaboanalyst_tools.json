@@ -1,0 +1,176 @@
+[
+  {
+    "name": "MetaboAnalyst_pathway_enrichment",
+    "type": "MetaboAnalystTool",
+    "description": "Perform metabolite pathway enrichment analysis (over-representation analysis) using hypergeometric test. Maps metabolite names to KEGG compound IDs, then tests which KEGG metabolic pathways are statistically enriched for the input metabolites. Returns pathways ranked by p-value with fold enrichment, FDR correction, and hit metabolites. Use for: identifying dysregulated metabolic pathways from a list of differentially abundant metabolites.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "metabolites": {
+          "type": "array",
+          "items": {"type": "string"},
+          "description": "List of metabolite names to test for pathway enrichment. Example: ['glucose', 'pyruvate', 'lactate', 'alanine', 'glycine']"
+        },
+        "organism": {
+          "type": "string",
+          "description": "KEGG organism code. Default 'hsa' (human). Common: hsa=human, mmu=mouse, rno=rat, dme=fly, sce=yeast, eco=E.coli."
+        }
+      },
+      "required": ["metabolites"]
+    },
+    "fields": {
+      "endpoint": "pathway_enrichment"
+    },
+    "return_schema": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "pathway_id": {"type": "string"},
+          "pathway_name": {"type": "string"},
+          "p_value": {"type": "number"},
+          "fold_enrichment": {"type": "number"},
+          "hit_count": {"type": "integer"},
+          "pathway_size": {"type": "integer"},
+          "hit_metabolites": {
+            "type": "array",
+            "items": {"type": "string"}
+          },
+          "fdr": {"type": "number"}
+        }
+      }
+    },
+    "test_examples": [
+      {
+        "metabolites": ["glucose", "pyruvate", "lactate", "alanine", "glycine"]
+      },
+      {
+        "metabolites": ["citrate", "succinate", "fumarate", "malate"],
+        "organism": "hsa"
+      }
+    ]
+  },
+  {
+    "name": "MetaboAnalyst_name_to_id",
+    "type": "MetaboAnalystTool",
+    "description": "Map metabolite common names to database identifiers (KEGG, HMDB, PubChem, ChEBI). Resolves metabolite names against the KEGG compound database and retrieves cross-references to HMDB, PubChem, and ChEBI. Returns matched name, molecular formula, and exact mass for each metabolite. Use for: converting metabolite lists to standardized IDs before pathway or enrichment analysis.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "metabolites": {
+          "type": "array",
+          "items": {"type": "string"},
+          "description": "List of metabolite common names to map. Example: ['glucose', 'pyruvate', 'lactate']"
+        }
+      },
+      "required": ["metabolites"]
+    },
+    "fields": {
+      "endpoint": "name_to_id"
+    },
+    "return_schema": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "query": {"type": "string"},
+          "match": {"type": ["string", "null"]},
+          "kegg_id": {"type": ["string", "null"]},
+          "hmdb_id": {"type": ["string", "null"]},
+          "pubchem_sid": {"type": ["string", "null"]},
+          "chebi_id": {"type": ["string", "null"]},
+          "formula": {"type": ["string", "null"]},
+          "exact_mass": {"type": ["number", "null"]}
+        }
+      }
+    },
+    "test_examples": [
+      {
+        "metabolites": ["glucose", "pyruvate", "lactate"]
+      },
+      {
+        "metabolites": ["palmitic acid", "oleic acid", "arachidonic acid"]
+      }
+    ]
+  },
+  {
+    "name": "MetaboAnalyst_get_pathway_library",
+    "type": "MetaboAnalystTool",
+    "description": "List available KEGG metabolic pathways for a species with compound counts. Returns all pathways with their IDs, names, category (metabolic vs non-metabolic), and number of metabolites in each pathway. Use for: browsing available pathway libraries before running enrichment analysis, or identifying pathways relevant to a metabolomics study.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "organism": {
+          "type": "string",
+          "description": "KEGG organism code. Default 'hsa' (human). Common codes: hsa=human, mmu=mouse, rno=rat, dme=fly, sce=yeast, eco=E.coli."
+        }
+      },
+      "required": ["organism"]
+    },
+    "fields": {
+      "endpoint": "get_pathway_library"
+    },
+    "return_schema": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "pathway_id": {"type": "string"},
+          "pathway_name": {"type": "string"},
+          "category": {"type": "string"},
+          "compound_count": {"type": "integer"}
+        }
+      }
+    },
+    "test_examples": [
+      {
+        "organism": "hsa"
+      }
+    ]
+  },
+  {
+    "name": "MetaboAnalyst_biomarker_enrichment",
+    "type": "MetaboAnalystTool",
+    "description": "Find statistically enriched metabolite sets (biomarker panels) from a list of metabolites. Tests input metabolites against curated metabolite set libraries derived from SMPDB and HMDB, including glycolysis, TCA cycle, urea cycle, amino acid metabolism, fatty acid pathways, purine/pyrimidine metabolism, glutathione metabolism, tryptophan metabolism, bile acid biosynthesis, ketone body metabolism, pentose phosphate pathway, sphingolipid metabolism, and more. Uses hypergeometric test with Benjamini-Hochberg FDR correction. Use for: identifying which biochemical processes or biomarker panels are represented in a metabolite list.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "metabolites": {
+          "type": "array",
+          "items": {"type": "string"},
+          "description": "List of metabolite names to test for set enrichment. Example: ['glucose', 'pyruvate', 'lactate', 'alanine', 'glycine']"
+        }
+      },
+      "required": ["metabolites"]
+    },
+    "fields": {
+      "endpoint": "biomarker_enrichment"
+    },
+    "return_schema": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "metabolite_set": {"type": "string"},
+          "p_value": {"type": "number"},
+          "fold_enrichment": {"type": "number"},
+          "hit_count": {"type": "integer"},
+          "set_size": {"type": "integer"},
+          "hit_metabolites": {
+            "type": "array",
+            "items": {"type": "string"}
+          },
+          "fdr": {"type": "number"}
+        }
+      }
+    },
+    "test_examples": [
+      {
+        "metabolites": ["glucose", "pyruvate", "lactate", "alanine", "glycine"]
+      },
+      {
+        "metabolites": ["palmitic acid", "oleic acid", "carnitine", "acetylcarnitine"]
+      }
+    ]
+  }
+]
