@@ -935,6 +935,10 @@ default_tool_files = {
     "neb_tm": os.path.join(current_dir, "data", "neb_tm_tools.json"),
     # Addgene - Plasmid repository search, detail, and depositor queries
     "addgene": os.path.join(current_dir, "data", "addgene_tools.json"),
+    # IDT OligoAnalyzer - Oligo Tm, GC%, MW, extinction coefficient, self-dimer analysis
+    "idt": os.path.join(current_dir, "data", "idt_tools.json"),
+    # SwissTargetPrediction - Predict protein targets of small molecules from SMILES
+    "swiss_target": os.path.join(current_dir, "data", "swiss_target_tools.json"),
 }
 
 # Auto-load any user-provided tools from ~/.tooluniverse/user_tools/

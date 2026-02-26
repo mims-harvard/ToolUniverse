@@ -1,0 +1,210 @@
+[
+  {
+    "name": "IDT_analyze_oligo",
+    "description": "Analyze an oligonucleotide using the IDT OligoAnalyzer API. Calculates melting temperature (Tm), GC content, molecular weight, molar extinction coefficient, and nmol/OD260 and ug/OD260 yields. Tm is calculated using nearest-neighbor thermodynamic parameters (SantaLucia 1998) under user-specified salt conditions (Na+, Mg2+, dNTPs). Supports DNA and RNA oligos up to 200 bases. Use this BEFORE ordering primers/probes to verify Tm, check GC balance, and estimate synthesis yields. Complements NEB_Tm_calculate (which provides polymerase-specific Tm with salt corrections) and DNA_calculate_gc_content (local, no Tm). For self-dimer/homodimer assessment, use IDT_check_self_dimer.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "sequence": {
+          "type": "string",
+          "description": "Oligonucleotide sequence (5' to 3'). Must contain only A, T, C, G (DNA) or A, U, C, G (RNA) bases. Length: 5-200 bases. Example: 'AGCGGATAACAATTTCACACAGGA'"
+        },
+        "na_concentration_mm": {
+          "type": ["number", "null"],
+          "description": "Sodium (Na+) concentration in millimolar (mM). Affects Tm calculation. Typical range: 0-1000 mM. Default: 50 mM. Standard PCR buffer is ~50 mM."
+        },
+        "mg_concentration_mm": {
+          "type": ["number", "null"],
+          "description": "Magnesium (Mg2+) concentration in millimolar (mM). Stabilizes duplexes, raising Tm. Typical range: 0-20 mM. Default: 0 mM. Standard PCR uses 1.5-3.0 mM."
+        },
+        "dntps_concentration_mm": {
+          "type": ["number", "null"],
+          "description": "dNTPs concentration in millimolar (mM). dNTPs chelate Mg2+, reducing effective Mg2+. Typical range: 0-10 mM. Default: 0 mM. Standard PCR uses 0.2-0.8 mM."
+        },
+        "oligo_concentration_um": {
+          "type": ["number", "null"],
+          "description": "Oligo concentration in micromolar (uM). Affects Tm slightly. Default: 0.25 uM."
+        },
+        "oligo_type": {
+          "type": ["string", "null"],
+          "description": "Type of oligonucleotide: 'DNA' or 'RNA'. Default: 'DNA'."
+        }
+      },
+      "required": ["sequence"]
+    },
+    "fields": {
+      "endpoint": "analyze"
+    },
+    "type": "IDTTool",
+    "test_examples": [
+      {
+        "sequence": "AGCGGATAACAATTTCACACAGGA",
+        "na_concentration_mm": 50,
+        "mg_concentration_mm": 0,
+        "oligo_type": "DNA"
+      },
+      {
+        "sequence": "CCTCACTAAAGGGAACAAAAGCTG",
+        "na_concentration_mm": 50,
+        "mg_concentration_mm": 1.5,
+        "dntps_concentration_mm": 0.2
+      },
+      {
+        "sequence": "ATCGATCGATCGATCGATCG"
+      }
+    ],
+    "return_schema": {
+      "type": "object",
+      "properties": {
+        "sequence": {
+          "type": "string",
+          "description": "Input sequence (spaces removed)"
+        },
+        "complement": {
+          "type": "string",
+          "description": "Complement sequence (5' to 3')"
+        },
+        "length": {
+          "type": "integer",
+          "description": "Sequence length in nucleotides"
+        },
+        "base_count": {
+          "type": "integer",
+          "description": "Number of bases"
+        },
+        "gc_content_percent": {
+          "type": "number",
+          "description": "GC content as percentage (0-100)"
+        },
+        "melting_temperature_celsius": {
+          "type": "number",
+          "description": "Calculated melting temperature (Tm) in Celsius"
+        },
+        "molecular_weight_daltons": {
+          "type": "number",
+          "description": "Molecular weight in Daltons"
+        },
+        "extinction_coefficient": {
+          "type": "number",
+          "description": "Molar extinction coefficient at 260 nm (L/(mol*cm))"
+        },
+        "nmole_per_od260": {
+          "type": "number",
+          "description": "Nanomoles per OD260 unit"
+        },
+        "ug_per_od260": {
+          "type": "number",
+          "description": "Micrograms per OD260 unit"
+        },
+        "oligo_type": {
+          "type": "string",
+          "description": "Oligo type used (DNA or RNA)"
+        },
+        "conditions": {
+          "type": "object",
+          "properties": {
+            "na_concentration_mm": {"type": "number"},
+            "mg_concentration_mm": {"type": "number"},
+            "dntps_concentration_mm": {"type": "number"},
+            "oligo_concentration_um": {"type": "number"}
+          }
+        }
+      }
+    }
+  },
+  {
+    "name": "IDT_check_self_dimer",
+    "description": "Check an oligonucleotide for self-complementarity and homodimer (self-dimer) formation using the IDT OligoAnalyzer API. Returns predicted self-dimer structures with their thermodynamic stability (delta-G in kcal/mol), number of base pairs, and alignment diagrams. A more negative delta-G indicates a more stable (problematic) dimer. Risk assessment: delta-G > -3.0 kcal/mol is low risk, -3.0 to -6.0 is moderate risk, < -6.0 is high risk. Use this tool AFTER designing primers (DNA_primer_design or manual) and BEFORE ordering, to verify primers won't form stable homodimers that reduce PCR efficiency. For basic oligo properties (Tm, GC%, MW), use IDT_analyze_oligo instead.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "sequence": {
+          "type": "string",
+          "description": "Oligonucleotide sequence (5' to 3'). Must contain only A, T, C, G, U bases. Length: 5-200 bases. Example: 'AGCGGATAACAATTTCACACAGGA'"
+        },
+        "na_concentration_mm": {
+          "type": ["number", "null"],
+          "description": "Sodium (Na+) concentration in millimolar (mM). Affects dimer stability. Default: 50 mM."
+        },
+        "mg_concentration_mm": {
+          "type": ["number", "null"],
+          "description": "Magnesium (Mg2+) concentration in millimolar (mM). Default: 0 mM."
+        },
+        "temperature_celsius": {
+          "type": ["number", "null"],
+          "description": "Temperature in Celsius for dimer stability calculation. Use your expected annealing temperature. Default: 25."
+        }
+      },
+      "required": ["sequence"]
+    },
+    "fields": {
+      "endpoint": "selfdimer"
+    },
+    "type": "IDTTool",
+    "test_examples": [
+      {
+        "sequence": "AGCGGATAACAATTTCACACAGGA",
+        "na_concentration_mm": 50,
+        "mg_concentration_mm": 0,
+        "temperature_celsius": 25
+      },
+      {
+        "sequence": "CCTCACTAAAGGGAACAAAAGCTG"
+      },
+      {
+        "sequence": "GCGATCGATCGATCGATCGC",
+        "temperature_celsius": 55
+      }
+    ],
+    "return_schema": {
+      "type": "object",
+      "properties": {
+        "sequence": {
+          "type": "string",
+          "description": "Input sequence analyzed"
+        },
+        "num_dimers_found": {
+          "type": "integer",
+          "description": "Total number of possible self-dimer conformations found"
+        },
+        "worst_delta_g_kcal_per_mol": {
+          "type": "number",
+          "description": "Most negative (most stable) delta-G among all dimers. More negative = more problematic."
+        },
+        "self_dimer_risk": {
+          "type": "string",
+          "description": "Risk assessment: 'low' (deltaG > -3.0), 'moderate' (-3.0 to -6.0), or 'high' (< -6.0)"
+        },
+        "dimers": {
+          "type": "array",
+          "description": "Top 5 most stable self-dimer structures, ordered by delta-G",
+          "items": {
+            "type": "object",
+            "properties": {
+              "delta_g_kcal_per_mol": {
+                "type": "number",
+                "description": "Gibbs free energy change in kcal/mol. More negative = more stable."
+              },
+              "base_pairs": {
+                "type": "integer",
+                "description": "Number of base pairs in the dimer"
+              },
+              "alignment": {
+                "type": "string",
+                "description": "ASCII alignment diagram showing the dimer structure"
+              }
+            }
+          }
+        },
+        "conditions": {
+          "type": "object",
+          "properties": {
+            "na_concentration_mm": {"type": "number"},
+            "mg_concentration_mm": {"type": "number"},
+            "temperature_celsius": {"type": "number"}
+          }
+        }
+      }
+    }
+  }
+]

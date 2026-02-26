@@ -1,7 +1,7 @@
 """
 ToolUniverse Tools
 
-Type-safe Python interface to 1967 scientific tools.
+Type-safe Python interface to 1975 scientific tools.
 Each tool is in its own module for minimal import overhead.
 
 Usage:
@@ -50,9 +50,6 @@ from .ADMETAnalyzerAgent import ADMETAnalyzerAgent
 from .AHA_ACC_get_guideline import AHA_ACC_get_guideline
 from .AHA_ACC_search_guidelines import AHA_ACC_search_guidelines
 from .AHA_list_guidelines import AHA_list_guidelines
-from .Addgene_get_plasmid import Addgene_get_plasmid
-from .Addgene_search_depositors import Addgene_search_depositors
-from .Addgene_search_plasmids import Addgene_search_plasmids
 from .AdvancedCodeQualityAnalyzer import AdvancedCodeQualityAnalyzer
 from .AdverseEventICDMapper import AdverseEventICDMapper
 from .AdverseEventPredictionQuestionGenerator import (
@@ -331,7 +328,9 @@ from .DrugInteractionAnalyzerAgent import DrugInteractionAnalyzerAgent
 from .DrugOptimizationAgent import DrugOptimizationAgent
 from .DrugSafetyAnalyzer import DrugSafetyAnalyzer
 from .DrugSynergy_calculate_bliss import DrugSynergy_calculate_bliss
+from .DrugSynergy_calculate_ci import DrugSynergy_calculate_ci
 from .DrugSynergy_calculate_hsa import DrugSynergy_calculate_hsa
+from .DrugSynergy_calculate_loewe import DrugSynergy_calculate_loewe
 from .DrugSynergy_calculate_zip import DrugSynergy_calculate_zip
 from .Dryad_get_dataset import Dryad_get_dataset
 from .Dryad_get_dataset_files import Dryad_get_dataset_files
@@ -999,6 +998,8 @@ from .ICD11_search_diseases import ICD11_search_diseases
 from .IDR_get_study import IDR_get_study
 from .IDR_get_study_datasets import IDR_get_study_datasets
 from .IDR_list_studies import IDR_list_studies
+from .IDT_analyze_oligo import IDT_analyze_oligo
+from .IDT_check_self_dimer import IDT_check_self_dimer
 from .IMGT_get_gene_info import IMGT_get_gene_info
 from .IMGT_get_sequence import IMGT_get_sequence
 from .IMGT_search_genes import IMGT_search_genes
@@ -1727,6 +1728,8 @@ from .SwissDock_dock_ligand import SwissDock_dock_ligand
 from .SwissDock_retrieve_results import SwissDock_retrieve_results
 from .SwissModel_get_models import SwissModel_get_models
 from .SwissModel_get_summary import SwissModel_get_summary
+from .SwissTargetPrediction_organisms import SwissTargetPrediction_organisms
+from .SwissTargetPrediction_predict import SwissTargetPrediction_predict
 from .SynBioHub_get_collections import SynBioHub_get_collections
 from .SynBioHub_get_part import SynBioHub_get_part
 from .SynBioHub_search_parts import SynBioHub_search_parts
@@ -1863,6 +1866,11 @@ from .ZFIN_get_gene_alleles import ZFIN_get_gene_alleles
 from .ZFIN_get_gene_expression import ZFIN_get_gene_expression
 from .ZFIN_get_gene_orthologs import ZFIN_get_gene_orthologs
 from .ZFIN_get_gene_phenotypes import ZFIN_get_gene_phenotypes
+from .ZINC_get_compound import ZINC_get_compound
+from .ZINC_get_purchasable import ZINC_get_purchasable
+from .ZINC_search_by_properties import ZINC_search_by_properties
+from .ZINC_search_by_smiles import ZINC_search_by_smiles
+from .ZINC_search_compounds import ZINC_search_compounds
 from .Zenodo_get_license import Zenodo_get_license
 from .Zenodo_get_record import Zenodo_get_record
 from .Zenodo_get_record_files import Zenodo_get_record_files
@@ -2499,9 +2507,6 @@ __all__ = [
     "AHA_ACC_get_guideline",
     "AHA_ACC_search_guidelines",
     "AHA_list_guidelines",
-    "Addgene_get_plasmid",
-    "Addgene_search_depositors",
-    "Addgene_search_plasmids",
     "AdvancedCodeQualityAnalyzer",
     "AdverseEventICDMapper",
     "AdverseEventPredictionQuestionGenerator",
@@ -2774,7 +2779,9 @@ __all__ = [
     "DrugOptimizationAgent",
     "DrugSafetyAnalyzer",
     "DrugSynergy_calculate_bliss",
+    "DrugSynergy_calculate_ci",
     "DrugSynergy_calculate_hsa",
+    "DrugSynergy_calculate_loewe",
     "DrugSynergy_calculate_zip",
     "Dryad_get_dataset",
     "Dryad_get_dataset_files",
@@ -3214,6 +3221,8 @@ __all__ = [
     "IDR_get_study",
     "IDR_get_study_datasets",
     "IDR_list_studies",
+    "IDT_analyze_oligo",
+    "IDT_check_self_dimer",
     "IMGT_get_gene_info",
     "IMGT_get_sequence",
     "IMGT_search_genes",
@@ -3788,6 +3797,8 @@ __all__ = [
     "SwissDock_retrieve_results",
     "SwissModel_get_models",
     "SwissModel_get_summary",
+    "SwissTargetPrediction_organisms",
+    "SwissTargetPrediction_predict",
     "SynBioHub_get_collections",
     "SynBioHub_get_part",
     "SynBioHub_search_parts",
@@ -3914,6 +3925,11 @@ __all__ = [
     "ZFIN_get_gene_expression",
     "ZFIN_get_gene_orthologs",
     "ZFIN_get_gene_phenotypes",
+    "ZINC_get_compound",
+    "ZINC_get_purchasable",
+    "ZINC_search_by_properties",
+    "ZINC_search_by_smiles",
+    "ZINC_search_compounds",
     "Zenodo_get_license",
     "Zenodo_get_record",
     "Zenodo_get_record_files",

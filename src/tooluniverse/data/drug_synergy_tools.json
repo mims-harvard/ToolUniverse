@@ -160,5 +160,166 @@
         ]
       }
     ]
+  },
+  {
+    "name": "DrugSynergy_calculate_loewe",
+    "type": "DrugSynergyTool",
+    "description": "Calculate Loewe Additivity synergy score for a drug combination. The Loewe model is the most widely used reference model for drug interaction: d_a/D_a(E) + d_b/D_b(E) = 1 at additivity. If sum < 1, the combination is synergistic (needs less drug than expected); if > 1, it is antagonistic. Requires single-agent dose-response data for each drug (to fit Hill curves) plus the combination doses and observed effect. Based on Loewe & Muischnek (1926). Use for: rigorous synergy quantification with dose-response data, comparison with Bliss/HSA/ZIP models.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "operation": {
+          "type": "string",
+          "enum": ["calculate_loewe"],
+          "description": "Operation type"
+        },
+        "doses_a_single": {
+          "type": "array",
+          "items": {"type": "number"},
+          "description": "Concentration values for drug A single-agent dose-response (e.g., [0.01, 0.1, 1, 10, 100])"
+        },
+        "effects_a_single": {
+          "type": "array",
+          "items": {"type": "number"},
+          "description": "Fractional inhibition of drug A alone at each dose (0-1 scale, same length as doses_a_single)"
+        },
+        "doses_b_single": {
+          "type": "array",
+          "items": {"type": "number"},
+          "description": "Concentration values for drug B single-agent dose-response"
+        },
+        "effects_b_single": {
+          "type": "array",
+          "items": {"type": "number"},
+          "description": "Fractional inhibition of drug B alone at each dose (0-1 scale, same length as doses_b_single)"
+        },
+        "dose_a_combo": {
+          "type": "number",
+          "description": "Dose of drug A used in the combination"
+        },
+        "dose_b_combo": {
+          "type": "number",
+          "description": "Dose of drug B used in the combination"
+        },
+        "effect_combo": {
+          "type": "number",
+          "description": "Observed fractional inhibition of the combination (0-1 scale)"
+        }
+      },
+      "required": ["operation", "doses_a_single", "effects_a_single", "doses_b_single", "effects_b_single", "dose_a_combo", "dose_b_combo", "effect_combo"]
+    },
+    "return_schema": {
+      "type": "object",
+      "properties": {
+        "model": {"type": "string"},
+        "loewe_additivity_index": {"type": "number"},
+        "loewe_excess_score": {"type": "number"},
+        "interpretation": {"type": "string"},
+        "combination_dose_a": {"type": "number"},
+        "combination_dose_b": {"type": "number"},
+        "combination_effect_observed": {"type": "number"},
+        "equivalent_dose_a_alone": {"type": "number"},
+        "equivalent_dose_b_alone": {"type": "number"},
+        "drug_a_fit": {"type": "object"},
+        "drug_b_fit": {"type": "object"},
+        "note": {"type": "string"}
+      }
+    },
+    "test_examples": [
+      {
+        "operation": "calculate_loewe",
+        "doses_a_single": [0.01, 0.1, 1.0, 10.0, 100.0],
+        "effects_a_single": [0.02, 0.08, 0.30, 0.65, 0.85],
+        "doses_b_single": [0.01, 0.1, 1.0, 10.0, 100.0],
+        "effects_b_single": [0.03, 0.10, 0.35, 0.70, 0.90],
+        "dose_a_combo": 1.0,
+        "dose_b_combo": 1.0,
+        "effect_combo": 0.75
+      }
+    ]
+  },
+  {
+    "name": "DrugSynergy_calculate_ci",
+    "type": "DrugSynergyTool",
+    "description": "Calculate Chou-Talalay Combination Index (CI) for drug synergy quantification. CI is derived from the Median Effect Equation: fa/fu = (D/Dm)^m. CI < 1 indicates synergy, CI = 1 is additive, CI > 1 is antagonism. Also computes the Dose Reduction Index (DRI) showing how much each drug dose can be reduced in combination. Supports both mutually exclusive (drugs with similar mechanisms) and mutually non-exclusive (drugs with different mechanisms) assumptions. Based on Chou & Talalay (1984). Use for: quantitative synergy assessment, dose optimization, isobologram analysis.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "operation": {
+          "type": "string",
+          "enum": ["calculate_ci"],
+          "description": "Operation type"
+        },
+        "doses_a_single": {
+          "type": "array",
+          "items": {"type": "number"},
+          "description": "Concentration values for drug A single-agent dose-response (e.g., [0.01, 0.1, 1, 10, 100])"
+        },
+        "effects_a_single": {
+          "type": "array",
+          "items": {"type": "number"},
+          "description": "Fractional inhibition of drug A alone at each dose (0-1 scale)"
+        },
+        "doses_b_single": {
+          "type": "array",
+          "items": {"type": "number"},
+          "description": "Concentration values for drug B single-agent dose-response"
+        },
+        "effects_b_single": {
+          "type": "array",
+          "items": {"type": "number"},
+          "description": "Fractional inhibition of drug B alone at each dose (0-1 scale)"
+        },
+        "dose_a_combo": {
+          "type": "number",
+          "description": "Dose of drug A used in the combination"
+        },
+        "dose_b_combo": {
+          "type": "number",
+          "description": "Dose of drug B used in the combination"
+        },
+        "effect_combo": {
+          "type": "number",
+          "description": "Observed fractional inhibition of the combination (0-1 scale, must be between 0 and 1 exclusive)"
+        },
+        "assumption": {
+          "type": "string",
+          "enum": ["mutually_exclusive", "mutually_non_exclusive"],
+          "description": "Whether drugs have similar (mutually_exclusive) or different (mutually_non_exclusive) mechanisms of action. Default: mutually_exclusive"
+        }
+      },
+      "required": ["operation", "doses_a_single", "effects_a_single", "doses_b_single", "effects_b_single", "dose_a_combo", "dose_b_combo", "effect_combo"]
+    },
+    "return_schema": {
+      "type": "object",
+      "properties": {
+        "model": {"type": "string"},
+        "combination_index": {"type": "number"},
+        "interpretation": {"type": "string"},
+        "assumption": {"type": "string"},
+        "dose_reduction_index": {"type": "object"},
+        "combination_dose_a": {"type": "number"},
+        "combination_dose_b": {"type": "number"},
+        "combination_effect": {"type": "number"},
+        "equivalent_dose_a_alone": {"type": "number"},
+        "equivalent_dose_b_alone": {"type": "number"},
+        "drug_a_fit": {"type": "object"},
+        "drug_b_fit": {"type": "object"},
+        "note": {"type": "string"}
+      }
+    },
+    "test_examples": [
+      {
+        "operation": "calculate_ci",
+        "doses_a_single": [0.01, 0.1, 1.0, 10.0, 100.0],
+        "effects_a_single": [0.02, 0.08, 0.30, 0.65, 0.85],
+        "doses_b_single": [0.01, 0.1, 1.0, 10.0, 100.0],
+        "effects_b_single": [0.03, 0.10, 0.35, 0.70, 0.90],
+        "dose_a_combo": 1.0,
+        "dose_b_combo": 1.0,
+        "effect_combo": 0.75,
+        "assumption": "mutually_exclusive"
+      }
+    ]
   }
 ]

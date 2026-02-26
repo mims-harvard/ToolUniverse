@@ -1,0 +1,55 @@
+"""
+ZINC_search_by_smiles
+
+Search the ZINC database by SMILES structure string. Finds exact or similar compounds matching th...
+"""
+
+from typing import Any, Optional, Callable
+from ._shared_client import get_shared_client
+
+
+def ZINC_search_by_smiles(
+    operation: str,
+    smiles: str,
+    count: Optional[int] = 10,
+    *,
+    stream_callback: Optional[Callable[[str], None]] = None,
+    use_cache: bool = False,
+    validate: bool = True,
+) -> list[Any]:
+    """
+    Search the ZINC database by SMILES structure string. Finds exact or similar compounds matching th...
+
+    Parameters
+    ----------
+    operation : str
+        Operation type
+    smiles : str
+        SMILES string to search for. Examples: CC(=O)Oc1ccccc1C(=O)O (aspirin), Cn1c(...
+    count : int
+        Maximum number of results (default: 10, max: 100)
+    stream_callback : Callable, optional
+        Callback for streaming output
+    use_cache : bool, default False
+        Enable caching
+    validate : bool, default True
+        Validate parameters
+
+    Returns
+    -------
+    list[Any]
+    """
+    # Handle mutable defaults to avoid B006 linting error
+
+    return get_shared_client().run_one_function(
+        {
+            "name": "ZINC_search_by_smiles",
+            "arguments": {"operation": operation, "smiles": smiles, "count": count},
+        },
+        stream_callback=stream_callback,
+        use_cache=use_cache,
+        validate=validate,
+    )
+
+
+__all__ = ["ZINC_search_by_smiles"]
