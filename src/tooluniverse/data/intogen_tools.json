@@ -1,0 +1,337 @@
+[
+  {
+    "name": "IntOGen_get_drivers",
+    "description": "Get cancer driver genes for a specific cancer type from IntOGen. Returns genes identified as drivers by computational methods (dNdScv, OncodriveFML, OncodriveCLUSTL, HotMAPS, smRegions, CBaSE, MutPanning) applied to somatic mutation data from thousands of tumors. Each result includes the gene symbol, number of mutations and mutated samples across cohorts. Use IntOGen_list_cancer_types to see available cancer type codes. Example: cancer_type='BRCA' returns 118 driver genes for breast cancer including TP53, PIK3CA, GATA3.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "cancer_type": {
+          "type": "string",
+          "description": "IntOGen cancer type code. Examples: 'BRCA' (breast), 'LUAD' (lung adenocarcinoma), 'COADREAD' (colorectal), 'AML' (acute myeloid leukemia), 'SKCM' (melanoma), 'GBM' (glioblastoma). Use IntOGen_list_cancer_types to see all available codes."
+        }
+      },
+      "required": ["cancer_type"]
+    },
+    "fields": {
+      "endpoint": "get_drivers"
+    },
+    "type": "IntOGenTool",
+    "test_examples": [
+      {
+        "cancer_type": "BRCA"
+      },
+      {
+        "cancer_type": "LUAD"
+      },
+      {
+        "cancer_type": "AML"
+      }
+    ],
+    "return_schema": {
+      "type": "object",
+      "properties": {
+        "cancer_type": {
+          "type": "string",
+          "description": "Cancer type code queried"
+        },
+        "driver_genes": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "gene": {
+                "type": "string",
+                "description": "Gene symbol (e.g., TP53, KRAS)"
+              },
+              "mutations": {
+                "type": "integer",
+                "description": "Total number of somatic mutations across cohorts"
+              },
+              "samples": {
+                "type": "integer",
+                "description": "Number of samples with mutations in this gene"
+              },
+              "cohorts": {
+                "type": "integer",
+                "description": "Number of cohorts where gene is detected as driver"
+              }
+            }
+          },
+          "description": "List of driver genes for the cancer type"
+        },
+        "total_drivers": {
+          "type": "integer",
+          "description": "Total number of driver genes identified"
+        },
+        "total_cohorts": {
+          "type": "integer",
+          "description": "Total number of cohorts analyzed for this cancer type"
+        }
+      }
+    },
+    "label": [
+      "IntOGen",
+      "Cancer",
+      "Driver Genes"
+    ],
+    "metadata": {
+      "tags": [
+        "cancer",
+        "driver genes",
+        "somatic mutations",
+        "oncogenes",
+        "tumor suppressors"
+      ],
+      "estimated_execution_time": "< 10 seconds"
+    }
+  },
+  {
+    "name": "IntOGen_get_gene_info",
+    "description": "Get driver gene classification for a specific gene across all cancer types from IntOGen. Returns the list of cancer types where the gene is identified as a cancer driver, along with the detection methods used (dNdScv, OncodriveFML, OncodriveCLUSTL, HotMAPS, smRegions, CBaSE, MutPanning) and mutation statistics. Example: gene='TP53' is a driver in 74 cancer types; gene='KRAS' is a driver in 22 cancer types.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "gene": {
+          "type": "string",
+          "description": "Gene symbol (HUGO nomenclature). Examples: 'TP53', 'KRAS', 'PIK3CA', 'BRAF', 'EGFR', 'PTEN', 'APC', 'BRCA1', 'IDH1', 'NRAS'."
+        }
+      },
+      "required": ["gene"]
+    },
+    "fields": {
+      "endpoint": "get_gene_info"
+    },
+    "type": "IntOGenTool",
+    "test_examples": [
+      {
+        "gene": "TP53"
+      },
+      {
+        "gene": "KRAS"
+      },
+      {
+        "gene": "BRAF"
+      }
+    ],
+    "return_schema": {
+      "type": "object",
+      "properties": {
+        "gene": {
+          "type": "string",
+          "description": "Gene symbol queried"
+        },
+        "cancer_types": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "cancer_type": {
+                "type": "string",
+                "description": "Cancer type code (e.g., BRCA, LUAD)"
+              },
+              "cancer_name": {
+                "type": "string",
+                "description": "Full cancer type name"
+              },
+              "methods": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                },
+                "description": "Detection methods that identified this gene as a driver (e.g., dndscv, hotmaps, oncodrivefml, smregions, cbase, mutpanning, oncodriveclustl, combination)"
+              },
+              "mutated_samples": {
+                "type": "integer",
+                "description": "Number of samples with mutations in this gene"
+              },
+              "total_samples": {
+                "type": "integer",
+                "description": "Total number of samples in the cancer type"
+              }
+            }
+          },
+          "description": "Cancer types where the gene is classified as a driver"
+        },
+        "num_cancer_types": {
+          "type": "integer",
+          "description": "Number of cancer types where gene is a driver"
+        }
+      }
+    },
+    "label": [
+      "IntOGen",
+      "Cancer",
+      "Gene Analysis"
+    ],
+    "metadata": {
+      "tags": [
+        "cancer",
+        "driver genes",
+        "gene classification",
+        "somatic mutations",
+        "computational methods"
+      ],
+      "estimated_execution_time": "< 10 seconds"
+    }
+  },
+  {
+    "name": "IntOGen_list_cohorts",
+    "description": "List available cancer cohorts from IntOGen with sample counts and tumor types. Returns cohort IDs, names, data sources (TCGA, ICGC, Hartwig, etc.), sample counts, tumor type (Primary/Metastasis), and age group (Adult/Pediatric). Optionally filter by cancer type. IntOGen includes 271 cohorts from major genomic studies. Example: cancer_type='BRCA' returns 14 breast cancer cohorts from TCGA, Hartwig, ICGC, and others.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "cancer_type": {
+          "type": ["string", "null"],
+          "description": "Optional cancer type code to filter cohorts. If omitted, returns all 271 cohorts. Examples: 'BRCA', 'LUAD', 'COADREAD'."
+        }
+      },
+      "required": []
+    },
+    "fields": {
+      "endpoint": "list_cohorts"
+    },
+    "type": "IntOGenTool",
+    "test_examples": [
+      {
+        "cancer_type": "BRCA"
+      },
+      {
+        "cancer_type": "LUAD"
+      }
+    ],
+    "return_schema": {
+      "type": "object",
+      "properties": {
+        "cohorts": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "cohort_id": {
+                "type": "string",
+                "description": "Unique cohort identifier"
+              },
+              "name": {
+                "type": "string",
+                "description": "Full descriptive name of the cohort"
+              },
+              "nickname": {
+                "type": ["string", "null"],
+                "description": "Short cohort nickname"
+              },
+              "cancer_type": {
+                "type": ["string", "null"],
+                "description": "Cancer type code (only in all-cohorts mode)"
+              },
+              "cancer_name": {
+                "type": ["string", "null"],
+                "description": "Full cancer type name (only in all-cohorts mode)"
+              },
+              "samples": {
+                "type": "integer",
+                "description": "Number of samples in the cohort"
+              },
+              "drivers": {
+                "type": ["integer", "null"],
+                "description": "Number of driver genes found (only in all-cohorts mode)"
+              },
+              "mutations": {
+                "type": ["integer", "null"],
+                "description": "Total mutations (only in all-cohorts mode)"
+              },
+              "source": {
+                "type": ["string", "null"],
+                "description": "Data source (only in cancer-type-filtered mode)"
+              },
+              "tumor_type": {
+                "type": ["string", "null"],
+                "description": "Tumor type: Primary or Metastasis"
+              },
+              "age_group": {
+                "type": ["string", "null"],
+                "description": "Age group: Adult or Pediatric"
+              }
+            }
+          },
+          "description": "List of cancer cohorts"
+        },
+        "total_cohorts": {
+          "type": "integer",
+          "description": "Total number of cohorts returned"
+        }
+      }
+    },
+    "label": [
+      "IntOGen",
+      "Cancer",
+      "Cohorts"
+    ],
+    "metadata": {
+      "tags": [
+        "cancer",
+        "cohorts",
+        "genomic studies",
+        "TCGA",
+        "ICGC",
+        "tumor samples"
+      ],
+      "estimated_execution_time": "< 10 seconds"
+    }
+  },
+  {
+    "name": "IntOGen_list_cancer_types",
+    "description": "List all 87 cancer types available in IntOGen with their codes and full names. Returns cancer type identifiers (e.g., BRCA, LUAD, COADREAD, AML, SKCM) that can be used with IntOGen_get_drivers and IntOGen_list_cohorts. IntOGen covers 87 cancer types spanning solid tumors, hematological malignancies, and pediatric cancers.",
+    "parameter": {
+      "type": "object",
+      "properties": {},
+      "required": []
+    },
+    "fields": {
+      "endpoint": "list_cancer_types"
+    },
+    "type": "IntOGenTool",
+    "test_examples": [
+      {}
+    ],
+    "return_schema": {
+      "type": "object",
+      "properties": {
+        "cancer_types": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "cancer_type_id": {
+                "type": "string",
+                "description": "Cancer type code (e.g., BRCA, LUAD, AML)"
+              },
+              "cancer_name": {
+                "type": "string",
+                "description": "Full descriptive name of the cancer type"
+              }
+            }
+          },
+          "description": "List of all cancer types in IntOGen"
+        },
+        "total_cancer_types": {
+          "type": "integer",
+          "description": "Total number of cancer types available"
+        }
+      }
+    },
+    "label": [
+      "IntOGen",
+      "Cancer",
+      "Cancer Types"
+    ],
+    "metadata": {
+      "tags": [
+        "cancer",
+        "cancer types",
+        "tumor types",
+        "classification"
+      ],
+      "estimated_execution_time": "< 3 seconds"
+    }
+  }
+]

@@ -1,0 +1,276 @@
+[
+  {
+    "name": "PDC_search_studies",
+    "type": "PDCTool",
+    "description": "Search the NCI Proteomics Data Commons (PDC) for cancer proteomics studies by keyword. PDC houses annotated data from CPTAC, ICPC, APOLLO, and other cancer proteomics programs covering 19+ cancer types with 160+ datasets. Search by disease name (e.g., 'Breast', 'Lung', 'CCRCC'), program name (e.g., 'CPTAC', 'HTAN'), or analytical fraction (e.g., 'Proteome', 'Phosphoproteome'). Returns matching study IDs, names, and PDC accession numbers. Use PDC study IDs with PDC_get_study_summary for detailed metadata.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "operation": {
+          "type": "string",
+          "enum": ["search_studies"],
+          "description": "Operation type"
+        },
+        "query": {
+          "type": "string",
+          "description": "Search keyword for studies. Can be disease name (Breast, Lung, Renal), program name (CPTAC, HTAN), or fraction type (Proteome, Phosphoproteome, Acetylome)."
+        }
+      },
+      "required": ["operation", "query"]
+    },
+    "return_schema": {
+      "type": "object",
+      "properties": {
+        "query": {"type": "string", "description": "The search query used"},
+        "studies": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "study_id": {"type": "string", "description": "PDC internal UUID for the study"},
+              "name": {"type": "string", "description": "Full study name"},
+              "pdc_study_id": {"type": "string", "description": "PDC accession number (e.g., PDC000127)"},
+              "submitter_id_name": {"type": ["string", "null"], "description": "Submitter-provided study name"}
+            }
+          }
+        },
+        "num_results": {"type": "integer", "description": "Number of matching studies"}
+      }
+    },
+    "test_examples": [
+      {
+        "operation": "search_studies",
+        "query": "Breast"
+      }
+    ]
+  },
+  {
+    "name": "PDC_get_gene_protein",
+    "type": "PDCTool",
+    "description": "Get protein information and proteomics study coverage for a gene from the NCI Proteomics Data Commons (PDC). Given a gene symbol (e.g., TP53, EGFR, MYC), returns the gene description, NCBI gene ID, HGNC authority, associated protein accessions (UniProt, RefSeq, Ensembl), and spectral count data across all PDC studies where the protein was detected. Spectral counts indicate protein abundance evidence in each study. Useful for understanding which cancer proteomics datasets have measured a specific protein.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "operation": {
+          "type": "string",
+          "enum": ["get_gene_protein"],
+          "description": "Operation type"
+        },
+        "gene_name": {
+          "type": "string",
+          "description": "Gene symbol to look up (e.g., 'TP53', 'EGFR', 'BRCA1', 'MYC')"
+        }
+      },
+      "required": ["operation", "gene_name"]
+    },
+    "return_schema": {
+      "type": "object",
+      "properties": {
+        "gene_id": {"type": "string", "description": "PDC internal gene UUID"},
+        "gene_name": {"type": "string", "description": "Gene symbol"},
+        "ncbi_gene_id": {"type": "string", "description": "NCBI Gene ID"},
+        "authority": {"type": "string", "description": "HGNC authority code"},
+        "description": {"type": "string", "description": "Gene description"},
+        "organism": {"type": "string", "description": "Species"},
+        "proteins": {
+          "type": "array",
+          "items": {"type": "string"},
+          "description": "List of protein accessions (UniProt, RefSeq, Ensembl)"
+        },
+        "num_proteins": {"type": "integer", "description": "Number of protein accessions"},
+        "spectral_counts": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "study_id": {"type": "string"},
+              "pdc_study_id": {"type": "string"},
+              "project_id": {"type": "string"},
+              "spectral_count": {"type": "integer"},
+              "distinct_peptide": {"type": "integer"},
+              "unshared_peptide": {"type": "integer"}
+            }
+          },
+          "description": "Spectral count data per study"
+        },
+        "num_studies": {"type": "integer", "description": "Number of studies with data for this gene"}
+      }
+    },
+    "test_examples": [
+      {
+        "operation": "get_gene_protein",
+        "gene_name": "TP53"
+      }
+    ]
+  },
+  {
+    "name": "PDC_list_programs",
+    "type": "PDCTool",
+    "description": "List all programs and projects in the NCI Proteomics Data Commons (PDC). Returns the complete hierarchy of programs (CPTAC, ICPC, APOLLO, CBTN, Georgetown, Broad Institute, etc.) and their constituent projects. Each program represents a major cancer proteomics initiative, and projects within a program correspond to specific cancer studies or sub-studies. Use program/project IDs to explore associated studies.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "operation": {
+          "type": "string",
+          "enum": ["list_programs"],
+          "description": "Operation type"
+        }
+      },
+      "required": ["operation"]
+    },
+    "return_schema": {
+      "type": "object",
+      "properties": {
+        "programs": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "program_id": {"type": "string", "description": "Program UUID"},
+              "name": {"type": "string", "description": "Program name (e.g., Clinical Proteomic Tumor Analysis Consortium)"},
+              "projects": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "project_id": {"type": "string", "description": "Project UUID"},
+                    "name": {"type": "string", "description": "Project name"}
+                  }
+                }
+              }
+            }
+          }
+        },
+        "num_programs": {"type": "integer", "description": "Total number of programs"}
+      }
+    },
+    "test_examples": [
+      {
+        "operation": "list_programs"
+      }
+    ]
+  },
+  {
+    "name": "PDC_get_study_summary",
+    "type": "PDCTool",
+    "description": "Get detailed metadata for a specific cancer proteomics study from the NCI Proteomics Data Commons (PDC). Given a PDC study accession number (e.g., PDC000127), returns comprehensive study information including disease type, primary site, analytical fraction (Proteome, Phosphoproteome, Acetylome, Glycoproteome), experiment type (TMT10, TMT11, iTRAQ, LFQ), sample counts, program/project names, embargo status, and file counts by data category. Useful for understanding study scope, data availability, and experimental design before downloading data.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "operation": {
+          "type": "string",
+          "enum": ["get_study_summary"],
+          "description": "Operation type"
+        },
+        "pdc_study_id": {
+          "type": "string",
+          "description": "PDC study accession number (e.g., 'PDC000127', 'PDC000120', 'PDC000173')"
+        }
+      },
+      "required": ["operation", "pdc_study_id"]
+    },
+    "return_schema": {
+      "type": "object",
+      "properties": {
+        "study_id": {"type": "string", "description": "PDC internal UUID"},
+        "study_name": {"type": "string", "description": "Full study name"},
+        "pdc_study_id": {"type": "string", "description": "PDC accession number"},
+        "disease_type": {"type": ["string", "null"], "description": "Disease types (semicolon-separated if multiple)"},
+        "primary_site": {"type": ["string", "null"], "description": "Primary anatomical sites"},
+        "analytical_fraction": {"type": ["string", "null"], "description": "Proteomics fraction analyzed (Proteome, Phosphoproteome, etc.)"},
+        "experiment_type": {"type": ["string", "null"], "description": "Mass spec experiment type (TMT10, TMT11, iTRAQ, LFQ, etc.)"},
+        "cases_count": {"type": ["integer", "null"], "description": "Number of cases/patients in the study"},
+        "aliquots_count": {"type": ["integer", "null"], "description": "Number of aliquots analyzed"},
+        "program_name": {"type": ["string", "null"], "description": "Parent program name"},
+        "project_name": {"type": ["string", "null"], "description": "Parent project name"},
+        "embargo_date": {"type": ["string", "null"], "description": "Data embargo date if applicable"},
+        "file_counts": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "data_category": {"type": "string"},
+              "file_type": {"type": "string"},
+              "files_count": {"type": "integer"}
+            }
+          },
+          "description": "File counts by data category and type"
+        }
+      }
+    },
+    "test_examples": [
+      {
+        "operation": "get_study_summary",
+        "pdc_study_id": "PDC000127"
+      }
+    ]
+  },
+  {
+    "name": "PDC_get_clinical_data",
+    "type": "PDCTool",
+    "description": "Get clinical metadata for patient cases in a cancer proteomics study from the NCI Proteomics Data Commons (PDC). Given a PDC study accession number, returns paginated clinical data including case IDs, disease type, primary site, and demographic information (gender, ethnicity, race) for each patient. Supports pagination with offset and limit parameters. Use this to understand the patient population in a proteomics study for downstream analysis or to link proteomics data with clinical characteristics.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "operation": {
+          "type": "string",
+          "enum": ["get_clinical_data"],
+          "description": "Operation type"
+        },
+        "pdc_study_id": {
+          "type": "string",
+          "description": "PDC study accession number (e.g., 'PDC000127')"
+        },
+        "offset": {
+          "type": "integer",
+          "description": "Pagination offset (default: 0)"
+        },
+        "limit": {
+          "type": "integer",
+          "description": "Number of records to return (default: 20, max varies by study)"
+        }
+      },
+      "required": ["operation", "pdc_study_id"]
+    },
+    "return_schema": {
+      "type": "object",
+      "properties": {
+        "pdc_study_id": {"type": "string", "description": "PDC study accession queried"},
+        "total_cases": {"type": "integer", "description": "Total number of cases in the study"},
+        "offset": {"type": "integer", "description": "Current pagination offset"},
+        "limit": {"type": "integer", "description": "Requested page size"},
+        "cases": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "case_id": {"type": "string", "description": "Case UUID"},
+              "case_submitter_id": {"type": "string", "description": "Submitter case identifier (e.g., C3L-00791)"},
+              "disease_type": {"type": "string", "description": "Disease classification"},
+              "primary_site": {"type": "string", "description": "Anatomical site"},
+              "demographics": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "gender": {"type": ["string", "null"]},
+                    "ethnicity": {"type": ["string", "null"]},
+                    "race": {"type": ["string", "null"]}
+                  }
+                }
+              }
+            }
+          }
+        },
+        "num_returned": {"type": "integer", "description": "Number of cases returned in this page"}
+      }
+    },
+    "test_examples": [
+      {
+        "operation": "get_clinical_data",
+        "pdc_study_id": "PDC000127",
+        "limit": 5
+      }
+    ]
+  }
+]

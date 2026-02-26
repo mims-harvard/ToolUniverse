@@ -1,0 +1,75 @@
+"""
+MEME_discover_motifs
+
+Run de novo motif discovery on a set of DNA sequences using the MEME algorithm from the MEME Suit...
+"""
+
+from typing import Any, Optional, Callable
+from ._shared_client import get_shared_client
+
+
+def MEME_discover_motifs(
+    operation: str,
+    sequences: str,
+    nmotifs: Optional[int | Any] = 3,
+    minw: Optional[int | Any] = 6,
+    maxw: Optional[int | Any] = 50,
+    distribution: Optional[str | Any] = "zoops",
+    scan_rc: Optional[bool | Any] = True,
+    *,
+    stream_callback: Optional[Callable[[str], None]] = None,
+    use_cache: bool = False,
+    validate: bool = True,
+) -> dict[str, Any]:
+    """
+    Run de novo motif discovery on a set of DNA sequences using the MEME algorithm from the MEME Suit...
+
+    Parameters
+    ----------
+    operation : str
+        Operation type
+    sequences : str
+        Multiple DNA sequences in FASTA format (minimum 2 sequences). Should contain ...
+    nmotifs : int | Any
+        Maximum number of motifs to find. Default 3.
+    minw : int | Any
+        Minimum motif width in nucleotides. Default 6.
+    maxw : int | Any
+        Maximum motif width in nucleotides. Default 50.
+    distribution : str | Any
+        Motif site distribution model. 'oops' = one per sequence, 'zoops' = zero or o...
+    scan_rc : bool | Any
+        If true (default), search both strands.
+    stream_callback : Callable, optional
+        Callback for streaming output
+    use_cache : bool, default False
+        Enable caching
+    validate : bool, default True
+        Validate parameters
+
+    Returns
+    -------
+    dict[str, Any]
+    """
+    # Handle mutable defaults to avoid B006 linting error
+
+    return get_shared_client().run_one_function(
+        {
+            "name": "MEME_discover_motifs",
+            "arguments": {
+                "operation": operation,
+                "sequences": sequences,
+                "nmotifs": nmotifs,
+                "minw": minw,
+                "maxw": maxw,
+                "distribution": distribution,
+                "scan_rc": scan_rc,
+            },
+        },
+        stream_callback=stream_callback,
+        use_cache=use_cache,
+        validate=validate,
+    )
+
+
+__all__ = ["MEME_discover_motifs"]

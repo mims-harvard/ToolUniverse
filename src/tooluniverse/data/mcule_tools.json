@@ -1,0 +1,203 @@
+[
+  {
+    "name": "Mcule_lookup_compound",
+    "type": "MculeTool",
+    "description": "Look up purchasable compounds on Mcule by SMILES, InChIKey, or Mcule ID. Mcule aggregates 30M+ compounds from multiple chemical suppliers. Returns matching Mcule IDs and SMILES structures. Accepts any chemical identifier: SMILES string (e.g., CC(=O)Oc1ccccc1C(=O)O for aspirin), InChIKey (e.g., BSYNRYMUTXBXSQ-UHFFFAOYSA-N), or Mcule ID (e.g., MCULE-3199019536). Use this as the first step to find a compound's Mcule ID, then use Mcule_get_compound for full details. Public endpoint, no auth required (rate limit: 10/min).",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "operation": {
+          "type": "string",
+          "enum": ["lookup_compound"],
+          "description": "Operation type"
+        },
+        "query": {
+          "type": "string",
+          "description": "Chemical identifier to look up: SMILES string, InChIKey, or Mcule ID (e.g., CC(=O)Oc1ccccc1C(=O)O, BSYNRYMUTXBXSQ-UHFFFAOYSA-N, or MCULE-3199019536)"
+        }
+      },
+      "required": ["operation", "query"]
+    },
+    "return_schema": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "mcule_id": {"type": "string", "description": "Mcule compound identifier (e.g., MCULE-3199019536)"},
+          "url": {"type": "string", "description": "URL to compound page on mcule.com"},
+          "smiles": {"type": "string", "description": "Canonical SMILES structure"}
+        }
+      }
+    },
+    "test_examples": [
+      {
+        "operation": "lookup_compound",
+        "query": "CC(=O)Oc1ccccc1C(=O)O"
+      }
+    ]
+  },
+  {
+    "name": "Mcule_get_compound",
+    "type": "MculeTool",
+    "description": "Get detailed compound information from Mcule by its Mcule ID. Returns SMILES, InChIKey, standard InChI, molecular formula, CAS numbers, stereo type, and molecular properties (molecular mass, LogP, H-bond donors/acceptors, rotatable bonds, polar surface area, Lipinski Rule-of-5 violations, ring count, heavy atoms, stereocenters). Use after Mcule_lookup_compound to get full chemical data. Public endpoint, no auth required (rate limit: 10/min).",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "operation": {
+          "type": "string",
+          "enum": ["get_compound"],
+          "description": "Operation type"
+        },
+        "mcule_id": {
+          "type": "string",
+          "description": "Mcule compound identifier, e.g., MCULE-3199019536 (aspirin), MCULE-9475454445 (ibuprofen racemic)"
+        }
+      },
+      "required": ["operation", "mcule_id"]
+    },
+    "return_schema": {
+      "type": "object",
+      "properties": {
+        "mcule_id": {"type": "string", "description": "Mcule compound identifier"},
+        "url": {"type": ["string", "null"], "description": "URL to compound page on mcule.com"},
+        "smiles": {"type": "string", "description": "Canonical SMILES structure"},
+        "inchi_key": {"type": ["string", "null"], "description": "InChIKey identifier"},
+        "std_inchi": {"type": ["string", "null"], "description": "Standard InChI string"},
+        "formula": {"type": ["string", "null"], "description": "Molecular formula (e.g., C9H8O4)"},
+        "stereo_type": {"type": ["string", "null"], "description": "Stereochemistry type: none, absolute, or mixed"},
+        "cas_numbers": {
+          "type": "array",
+          "items": {"type": "string"},
+          "description": "CAS registry numbers for this compound"
+        },
+        "properties": {
+          "type": "object",
+          "properties": {
+            "mol_mass": {"type": ["number", "null"], "description": "Molecular mass in Da"},
+            "logp": {"type": ["number", "null"], "description": "Calculated LogP (octanol-water partition coefficient)"},
+            "h_bond_acceptors": {"type": ["integer", "null"], "description": "Number of hydrogen bond acceptors"},
+            "h_bond_donors": {"type": ["integer", "null"], "description": "Number of hydrogen bond donors"},
+            "rotatable_bonds": {"type": ["integer", "null"], "description": "Number of rotatable bonds"},
+            "psa": {"type": ["number", "null"], "description": "Polar surface area (A^2)"},
+            "r5_violations": {"type": ["integer", "null"], "description": "Lipinski Rule-of-5 violations"},
+            "rings": {"type": ["integer", "null"], "description": "Number of rings"},
+            "heavy_atoms": {"type": ["integer", "null"], "description": "Number of heavy (non-hydrogen) atoms"},
+            "stereocenters": {"type": ["integer", "null"], "description": "Number of stereocenters"}
+          },
+          "description": "Computed molecular properties"
+        }
+      }
+    },
+    "test_examples": [
+      {
+        "operation": "get_compound",
+        "mcule_id": "MCULE-3199019536"
+      }
+    ]
+  },
+  {
+    "name": "Mcule_list_databases",
+    "type": "MculeTool",
+    "description": "List available compound database files from Mcule for bulk download. Mcule provides pre-built databases of purchasable compounds including: Full (139M+ entries), In Stock (7M+), Building Blocks (6.4M+), Virtual (132M+), Known Stock Amounts, Bioactive, and more. Returns database names, descriptions, entry counts, last updated dates, and download links (SDF.gz and SMILES.gz formats). Useful for setting up local compound databases for virtual screening. Public endpoint, no auth required.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "operation": {
+          "type": "string",
+          "enum": ["list_databases"],
+          "description": "Operation type"
+        },
+        "public_only": {
+          "type": ["boolean", "null"],
+          "default": true,
+          "description": "If true (default), only return publicly accessible databases"
+        }
+      },
+      "required": ["operation"]
+    },
+    "return_schema": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "id": {"type": "integer", "description": "Database file ID"},
+          "name": {"type": "string", "description": "Database name (e.g., Mcule Full, Mcule In Stock)"},
+          "description": {"type": "string", "description": "Database description"},
+          "entry_count": {"type": "integer", "description": "Number of compounds in the database"},
+          "last_updated": {"type": "string", "description": "Date of last update (YYYY-MM-DD)"},
+          "public": {"type": "boolean", "description": "Whether the database is publicly accessible"},
+          "group": {"type": "string", "description": "Database group classification"},
+          "files": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "filename": {"type": "string", "description": "Download filename"},
+                "file_type": {"type": "string", "description": "File format (sdf.gz, smi.gz)"},
+                "size_mb": {"type": "integer", "description": "File size in MB"},
+                "download_url": {"type": "string", "description": "Direct download URL"}
+              }
+            },
+            "description": "Available download files for this database"
+          }
+        }
+      }
+    },
+    "test_examples": [
+      {
+        "operation": "list_databases"
+      }
+    ]
+  },
+  {
+    "name": "Mcule_get_database",
+    "type": "MculeTool",
+    "description": "Get detailed information for a specific Mcule compound database file by its ID. Returns database name, description, entry count, last updated date, and download file links with checksums. Known database IDs: 1 (Mcule Full, 139M+ compounds), 2 (Mcule In Stock, 7M+), 15 (Building Blocks, 6.4M+), 3 (Known Stock Amounts, 4.4M+), 16 (Virtual, 132M+). Public endpoint, no auth required.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "operation": {
+          "type": "string",
+          "enum": ["get_database"],
+          "description": "Operation type"
+        },
+        "database_id": {
+          "type": "integer",
+          "description": "Database file ID. Known IDs: 1 (Full), 2 (In Stock), 15 (Building Blocks), 3 (Known Stock Amounts), 16 (Virtual)"
+        }
+      },
+      "required": ["operation", "database_id"]
+    },
+    "return_schema": {
+      "type": "object",
+      "properties": {
+        "id": {"type": "integer", "description": "Database file ID"},
+        "name": {"type": "string", "description": "Database name"},
+        "description": {"type": "string", "description": "Database description"},
+        "entry_count": {"type": "integer", "description": "Number of compounds"},
+        "last_updated": {"type": "string", "description": "Date of last update (YYYY-MM-DD)"},
+        "public": {"type": "boolean", "description": "Whether publicly accessible"},
+        "group": {"type": "string", "description": "Database group classification"},
+        "files": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "filename": {"type": "string", "description": "Download filename"},
+              "file_type": {"type": "string", "description": "File format (sdf.gz, smi.gz)"},
+              "size_mb": {"type": "integer", "description": "File size in MB"},
+              "download_url": {"type": "string", "description": "Direct download URL"}
+            }
+          },
+          "description": "Available download files"
+        }
+      }
+    },
+    "test_examples": [
+      {
+        "operation": "get_database",
+        "database_id": 1
+      }
+    ]
+  }
+]

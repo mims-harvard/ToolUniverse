@@ -136,6 +136,7 @@ default_tool_files = {
     "interpro": os.path.join(current_dir, "data", "interpro_tools.json"),
     "ebi_search": os.path.join(current_dir, "data", "ebi_search_tools.json"),
     "intact": os.path.join(current_dir, "data", "intact_tools.json"),
+    "intogen": os.path.join(current_dir, "data", "intogen_tools.json"),
     "metabolights": os.path.join(current_dir, "data", "metabolights_tools.json"),
     "proteins_api": os.path.join(current_dir, "data", "proteins_api_tools.json"),
     "arrayexpress": os.path.join(current_dir, "data", "arrayexpress_tools.json"),
@@ -327,6 +328,8 @@ default_tool_files = {
     "enamine": os.path.join(current_dir, "data", "enamine_tools.json"),
     # eMolecules - Vendor Aggregator
     "emolecules": os.path.join(current_dir, "data", "emolecules_tools.json"),
+    # Mcule - Compound Purchasing Platform
+    "mcule": os.path.join(current_dir, "data", "mcule_tools.json"),
     # Pharos/TCRD - NIH IDG Understudied Proteins Database
     "pharos": os.path.join(current_dir, "data", "pharos_tools.json"),
     # AlphaMissense - DeepMind Pathogenicity Predictions
@@ -939,6 +942,10 @@ default_tool_files = {
     "idt": os.path.join(current_dir, "data", "idt_tools.json"),
     # SwissTargetPrediction - Predict protein targets of small molecules from SMILES
     "swiss_target": os.path.join(current_dir, "data", "swiss_target_tools.json"),
+    # PDC - NCI Proteomics Data Commons (CPTAC, ICPC, APOLLO cancer proteomics)
+    "pdc": os.path.join(current_dir, "data", "pdc_tools.json"),
+    # MEME Suite - Motif analysis (FIMO scan, MEME discovery, TOMTOM comparison)
+    "meme": os.path.join(current_dir, "data", "meme_tools.json"),
 }
 
 # Auto-load any user-provided tools from ~/.tooluniverse/user_tools/

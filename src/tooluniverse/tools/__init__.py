@@ -1,7 +1,7 @@
 """
 ToolUniverse Tools
 
-Type-safe Python interface to 1975 scientific tools.
+Type-safe Python interface to 1992 scientific tools.
 Each tool is in its own module for minimal import overhead.
 
 Usage:
@@ -1016,6 +1016,10 @@ from .IdentifiersOrg_list_namespaces import IdentifiersOrg_list_namespaces
 from .IdentifiersOrg_resolve import IdentifiersOrg_resolve
 from .IdentifiersOrg_search_namespaces import IdentifiersOrg_search_namespaces
 from .InspireHEP_search_papers import InspireHEP_search_papers
+from .IntOGen_get_drivers import IntOGen_get_drivers
+from .IntOGen_get_gene_info import IntOGen_get_gene_info
+from .IntOGen_list_cancer_types import IntOGen_list_cancer_types
+from .IntOGen_list_cohorts import IntOGen_list_cohorts
 from .IntentAnalyzerAgent import IntentAnalyzerAgent
 from .InterProScan_get_job_results import InterProScan_get_job_results
 from .InterProScan_get_job_status import InterProScan_get_job_status
@@ -1071,6 +1075,10 @@ from .MAGICapp_get_guideline import MAGICapp_get_guideline
 from .MAGICapp_get_recommendations import MAGICapp_get_recommendations
 from .MAGICapp_get_sections import MAGICapp_get_sections
 from .MAGICapp_list_guidelines import MAGICapp_list_guidelines
+from .MEME_discover_motifs import MEME_discover_motifs
+from .MEME_fimo_scan import MEME_fimo_scan
+from .MEME_list_databases import MEME_list_databases
+from .MEME_tomtom_compare import MEME_tomtom_compare
 from .MGnify_get_genome import MGnify_get_genome
 from .MGnify_get_study_detail import MGnify_get_study_detail
 from .MGnify_list_analyses import MGnify_list_analyses
@@ -1086,6 +1094,10 @@ from .MarineRegions_get_record import MarineRegions_get_record
 from .MarineRegions_search_by_name import MarineRegions_search_by_name
 from .MassBank_search_by_compound import MassBank_search_by_compound
 from .MassBank_search_by_formula import MassBank_search_by_formula
+from .Mcule_get_compound import Mcule_get_compound
+from .Mcule_get_database import Mcule_get_database
+from .Mcule_list_databases import Mcule_list_databases
+from .Mcule_lookup_compound import Mcule_lookup_compound
 from .MeSH_get_descriptor import MeSH_get_descriptor
 from .MeSH_search_descriptors import MeSH_search_descriptors
 from .MeSH_search_terms import MeSH_search_terms
@@ -1487,6 +1499,11 @@ from .PDBe_get_residue_listing import PDBe_get_residue_listing
 from .PDBe_get_structure_ligands import PDBe_get_structure_ligands
 from .PDBe_get_uniprot_mappings import PDBe_get_uniprot_mappings
 from .PDBe_get_uniprot_structure_coverage import PDBe_get_uniprot_structure_coverage
+from .PDC_get_clinical_data import PDC_get_clinical_data
+from .PDC_get_gene_protein import PDC_get_gene_protein
+from .PDC_get_study_summary import PDC_get_study_summary
+from .PDC_list_programs import PDC_list_programs
+from .PDC_search_studies import PDC_search_studies
 from .PMC_search_papers import PMC_search_papers
 from .POWO_get_taxon import POWO_get_taxon
 from .POWO_search_plants import POWO_search_plants
@@ -3239,6 +3256,10 @@ __all__ = [
     "IdentifiersOrg_resolve",
     "IdentifiersOrg_search_namespaces",
     "InspireHEP_search_papers",
+    "IntOGen_get_drivers",
+    "IntOGen_get_gene_info",
+    "IntOGen_list_cancer_types",
+    "IntOGen_list_cohorts",
     "IntentAnalyzerAgent",
     "InterProScan_get_job_results",
     "InterProScan_get_job_status",
@@ -3292,6 +3313,10 @@ __all__ = [
     "MAGICapp_get_recommendations",
     "MAGICapp_get_sections",
     "MAGICapp_list_guidelines",
+    "MEME_discover_motifs",
+    "MEME_fimo_scan",
+    "MEME_list_databases",
+    "MEME_tomtom_compare",
     "MGnify_get_genome",
     "MGnify_get_study_detail",
     "MGnify_list_analyses",
@@ -3307,6 +3332,10 @@ __all__ = [
     "MarineRegions_search_by_name",
     "MassBank_search_by_compound",
     "MassBank_search_by_formula",
+    "Mcule_get_compound",
+    "Mcule_get_database",
+    "Mcule_list_databases",
+    "Mcule_lookup_compound",
     "MeSH_get_descriptor",
     "MeSH_search_descriptors",
     "MeSH_search_terms",
@@ -3582,6 +3611,11 @@ __all__ = [
     "PDBe_get_structure_ligands",
     "PDBe_get_uniprot_mappings",
     "PDBe_get_uniprot_structure_coverage",
+    "PDC_get_clinical_data",
+    "PDC_get_gene_protein",
+    "PDC_get_study_summary",
+    "PDC_list_programs",
+    "PDC_search_studies",
     "PMC_search_papers",
     "POWO_get_taxon",
     "POWO_search_plants",
