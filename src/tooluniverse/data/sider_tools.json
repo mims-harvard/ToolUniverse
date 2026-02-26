@@ -1,0 +1,285 @@
+[
+  {
+    "name": "SIDER_search_drug",
+    "type": "SiderTool",
+    "description": "Search the SIDER drug side effects database for a drug by name. Returns matching drugs with SIDER IDs and any related side effects. SIDER contains adverse drug reaction data extracted from drug labels for marketed medicines. Use this to find the SIDER drug ID needed for other SIDER operations (get_side_effects, get_indications).",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "operation": {
+          "type": "string",
+          "enum": ["search_drug"],
+          "description": "Operation type"
+        },
+        "drug_name": {
+          "type": "string",
+          "description": "Drug name to search for (e.g., 'aspirin', 'ibuprofen', 'metformin', 'warfarin')"
+        }
+      },
+      "required": ["operation", "drug_name"]
+    },
+    "return_schema": {
+      "type": "object",
+      "properties": {
+        "query": {"type": "string", "description": "Search query used"},
+        "drugs": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "sider_drug_id": {"type": "string", "description": "SIDER internal drug ID (PubChem CID)"},
+              "drug_name": {"type": "string", "description": "Drug name"},
+              "url": {"type": "string", "description": "URL to drug page on SIDER"}
+            }
+          }
+        },
+        "related_side_effects": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "meddra_code": {"type": "string", "description": "MedDRA concept code (UMLS CUI)"},
+              "side_effect_name": {"type": "string", "description": "Side effect name"}
+            }
+          }
+        }
+      }
+    },
+    "test_examples": [
+      {
+        "operation": "search_drug",
+        "drug_name": "aspirin"
+      },
+      {
+        "operation": "search_drug",
+        "drug_name": "metformin"
+      }
+    ]
+  },
+  {
+    "name": "SIDER_get_drug_side_effects",
+    "type": "SiderTool",
+    "description": "Get the list of known side effects for a drug from SIDER, including frequency data when available. Side effects are extracted from drug labels and include MedDRA codes, frequency percentages from clinical trials (e.g., '21% - 57.5%'), and placebo comparison rates. Provide either a drug name (will auto-search) or a SIDER drug ID from SIDER_search_drug. Returns adverse reactions recorded in official drug labels.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "operation": {
+          "type": "string",
+          "enum": ["get_side_effects"],
+          "description": "Operation type"
+        },
+        "drug_name": {
+          "type": ["string", "null"],
+          "description": "Drug name (e.g., 'ibuprofen', 'metformin'). Will search SIDER and use first match. Mutually exclusive with sider_drug_id."
+        },
+        "sider_drug_id": {
+          "type": ["string", "null"],
+          "description": "SIDER drug ID (PubChem CID) from SIDER_search_drug results (e.g., '3672' for ibuprofen, '4091' for metformin)"
+        },
+        "limit": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 500,
+          "default": 50,
+          "description": "Maximum number of side effects to return (default: 50)"
+        }
+      },
+      "required": ["operation"]
+    },
+    "return_schema": {
+      "type": "object",
+      "properties": {
+        "drug_name": {"type": "string", "description": "Resolved drug name from SIDER"},
+        "sider_drug_id": {"type": "string", "description": "SIDER drug ID"},
+        "total_side_effects": {"type": "integer", "description": "Total number of side effects found"},
+        "side_effects": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "meddra_code": {"type": "string", "description": "MedDRA concept code (UMLS CUI, e.g., C0027497 for Nausea)"},
+              "side_effect_name": {"type": "string", "description": "Side effect name"},
+              "frequency": {"type": ["string", "null"], "description": "Reported frequency range (e.g., '21% - 57.5%' or '6%') or null if unavailable"},
+              "placebo_frequency": {"type": ["string", "null"], "description": "Placebo group frequency if available"},
+              "description": {"type": ["string", "null"], "description": "MedDRA concept description"}
+            }
+          }
+        }
+      }
+    },
+    "test_examples": [
+      {
+        "operation": "get_side_effects",
+        "drug_name": "ibuprofen",
+        "limit": 10
+      },
+      {
+        "operation": "get_side_effects",
+        "sider_drug_id": "4091",
+        "limit": 10
+      }
+    ]
+  },
+  {
+    "name": "SIDER_get_drug_indications",
+    "type": "SiderTool",
+    "description": "Get the therapeutic indications for a drug from SIDER. Indications are medical conditions that a drug is approved to treat, extracted from the indications and usage sections of drug labels. Returns MedDRA-coded conditions with descriptions. Provide either a drug name or SIDER drug ID.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "operation": {
+          "type": "string",
+          "enum": ["get_indications"],
+          "description": "Operation type"
+        },
+        "drug_name": {
+          "type": ["string", "null"],
+          "description": "Drug name (e.g., 'aspirin', 'metformin'). Will search SIDER and use first match."
+        },
+        "sider_drug_id": {
+          "type": ["string", "null"],
+          "description": "SIDER drug ID (PubChem CID) from SIDER_search_drug (e.g., '2244' for aspirin)"
+        }
+      },
+      "required": ["operation"]
+    },
+    "return_schema": {
+      "type": "object",
+      "properties": {
+        "drug_name": {"type": "string", "description": "Resolved drug name from SIDER"},
+        "sider_drug_id": {"type": "string", "description": "SIDER drug ID"},
+        "total_indications": {"type": "integer", "description": "Total number of indications found"},
+        "indications": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "meddra_code": {"type": "string", "description": "MedDRA concept code (UMLS CUI)"},
+              "indication_name": {"type": "string", "description": "Indication name"},
+              "description": {"type": ["string", "null"], "description": "Medical description of the indication"}
+            }
+          }
+        }
+      }
+    },
+    "test_examples": [
+      {
+        "operation": "get_indications",
+        "drug_name": "aspirin"
+      },
+      {
+        "operation": "get_indications",
+        "sider_drug_id": "4091"
+      }
+    ]
+  },
+  {
+    "name": "SIDER_get_drugs_for_side_effect",
+    "type": "SiderTool",
+    "description": "Find all drugs associated with a specific side effect in SIDER. Returns drugs known to cause the given adverse reaction, with frequency information when available (e.g., '7%', '5% - 18%', 'postmarketing', 'common'). Provide either a MedDRA code (e.g., C0018681 for headache) or a side effect name (will auto-search). Useful for drug safety comparisons and adverse event analysis.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "operation": {
+          "type": "string",
+          "enum": ["get_drugs_for_side_effect"],
+          "description": "Operation type"
+        },
+        "meddra_code": {
+          "type": ["string", "null"],
+          "description": "MedDRA concept code / UMLS CUI (e.g., 'C0018681' for headache, 'C0027497' for nausea)"
+        },
+        "side_effect_name": {
+          "type": ["string", "null"],
+          "description": "Side effect name to search (e.g., 'headache', 'nausea', 'diarrhea'). Will search SIDER and use first match."
+        },
+        "limit": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 2000,
+          "default": 50,
+          "description": "Maximum number of drugs to return (default: 50)"
+        }
+      },
+      "required": ["operation"]
+    },
+    "return_schema": {
+      "type": "object",
+      "properties": {
+        "meddra_code": {"type": "string", "description": "MedDRA concept code used"},
+        "side_effect_name": {"type": "string", "description": "Side effect name"},
+        "total_drugs": {"type": "integer", "description": "Total number of drugs associated with this side effect"},
+        "drugs": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "sider_drug_id": {"type": "string", "description": "SIDER drug ID (PubChem CID)"},
+              "drug_name": {"type": "string", "description": "Drug name"},
+              "frequency_info": {"type": ["string", "null"], "description": "Frequency information (e.g., '7%', '5% - 18%', 'postmarketing', 'common', 'rare')"}
+            }
+          }
+        }
+      }
+    },
+    "test_examples": [
+      {
+        "operation": "get_drugs_for_side_effect",
+        "meddra_code": "C0018681",
+        "limit": 10
+      },
+      {
+        "operation": "get_drugs_for_side_effect",
+        "side_effect_name": "nausea",
+        "limit": 10
+      }
+    ]
+  },
+  {
+    "name": "SIDER_search_side_effect",
+    "type": "SiderTool",
+    "description": "Search for a side effect by name in SIDER. Returns matching side effects with their MedDRA codes (UMLS CUIs). Use this to find the correct MedDRA code for a side effect before querying SIDER_get_drugs_for_side_effect. SIDER uses MedDRA (Medical Dictionary for Regulatory Activities) terminology for standardized adverse event reporting.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "operation": {
+          "type": "string",
+          "enum": ["search_side_effect"],
+          "description": "Operation type"
+        },
+        "side_effect_name": {
+          "type": "string",
+          "description": "Side effect name to search (e.g., 'headache', 'nausea', 'diarrhea', 'liver')"
+        }
+      },
+      "required": ["operation", "side_effect_name"]
+    },
+    "return_schema": {
+      "type": "object",
+      "properties": {
+        "query": {"type": "string", "description": "Search query used"},
+        "side_effects": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "meddra_code": {"type": "string", "description": "MedDRA concept code (UMLS CUI)"},
+              "side_effect_name": {"type": "string", "description": "Side effect name"},
+              "drug_count": {"type": ["integer", "null"], "description": "Number of drugs associated with this side effect"}
+            }
+          }
+        }
+      }
+    },
+    "test_examples": [
+      {
+        "operation": "search_side_effect",
+        "side_effect_name": "headache"
+      },
+      {
+        "operation": "search_side_effect",
+        "side_effect_name": "nausea"
+      }
+    ]
+  }
+]

@@ -274,6 +274,8 @@ default_tool_files = {
     # DisGeNET - Gene-Disease Associations
     # DGIdb - Drug Gene Interactions
     "dgidb": os.path.join(current_dir, "data", "dgidb_tools.json"),
+    # LOVD - Leiden Open Variation Database
+    "lovd": os.path.join(current_dir, "data", "lovd_tools.json"),
     # STITCH - Chemical-Protein Interactions
     "stitch": os.path.join(current_dir, "data", "stitch_tools.json"),
     # CIViC - Clinical Interpretation of Variants in Cancer
@@ -711,6 +713,10 @@ default_tool_files = {
     "mibig": os.path.join(current_dir, "data", "mibig_tools.json"),
     # ScanProsite - Protein motif scanning against PROSITE patterns (ExPASy/SIB)
     "scanprosite": os.path.join(current_dir, "data", "scanprosite_tools.json"),
+    # PROSITE - Protein motif/domain database entry lookup and search (ExPASy/SIB)
+    "prosite": os.path.join(current_dir, "data", "prosite_tools.json"),
+    # Mondo Disease Ontology - unified disease search, details, and phenotypes
+    "mondo": os.path.join(current_dir, "data", "mondo_tools.json"),
     # PDBe Graph API - Bound molecules, UniProt mappings, compound details, FunPDBe
     "pdbe_graph": os.path.join(current_dir, "data", "pdbe_graph_tools.json"),
     # NCBI Gene - E-utilities gene search and summary (Entrez Gene)
@@ -959,6 +965,16 @@ default_tool_files = {
     "pdbepisa": os.path.join(current_dir, "data", "pdbepisa_tools.json"),
     # DynaMut2 - Protein stability prediction from single-point mutations (ddG)
     "dynamut2": os.path.join(current_dir, "data", "dynamut2_tools.json"),
+    # SIDER - Drug side effects from drug labels (MedDRA-coded, with frequencies)
+    "sider": os.path.join(current_dir, "data", "sider_tools.json"),
+    # OpenFDA Drug Approvals - FDA drug approval history, products, and submissions
+    "openfda_approvals": os.path.join(
+        current_dir, "data", "openfda_approval_tools.json"
+    ),
+    # BridgeDb - Biological identifier mapping across 45+ databases (HMDB, ChEBI, KEGG, PubChem, etc.)
+    "bridgedb": os.path.join(current_dir, "data", "bridgedb_tools.json"),
+    # GTDB - Genome Taxonomy Database for standardized prokaryotic taxonomy
+    "gtdb": os.path.join(current_dir, "data", "gtdb_tools.json"),
 }
 
 # Auto-load any user-provided tools from ~/.tooluniverse/user_tools/

@@ -1,0 +1,30 @@
+{
+  "api_name": "DrugCentral REST API",
+  "base_url": "https://drugcentral.org/api/",
+  "failure_mode": "HTTP 404 on all /api/ endpoints",
+  "root_cause": "DrugCentral (University of New Mexico) has no public REST API. The site is a Django web application with HTML-only pages. All tested /api/ endpoint patterns return 404. The '/OpenAPI' page references a Pharos API iframe (pharos-api.newdrugtargets.org) but that server has an expired SSL certificate. The TRAPI wrapper (automat.transltr.io/drugcentral) returns empty results for all tested CURIE identifiers. The BioThings repoDB API (biothings.ncats.io/repodb) returns 503.",
+  "confirmed_broken_date": "2026-02-26",
+  "last_retry_date": "2026-02-26",
+  "retry_count": 3,
+  "github_issues": [],
+  "retry_after": "never",
+  "workaround": "OpenFDA Drugs@FDA API (api.fda.gov/drug/drugsfda.json) provides FDA drug approval data including submission history, sponsor names, application numbers, and approved products. Existing OpenFDA tools (openfda_tools.json, openfda_label_tools.json) cover labels, adverse events, and NDC. New OpenFDA_search_drug_approvals, OpenFDA_get_approval_history, OpenFDA_get_approved_products tools added.",
+  "workaround_tool_file": "src/tooluniverse/data/openfda_approval_tools.json",
+  "investigation_notes": [
+    "Tested 30+ URL patterns: /api/drug, /api/v1/drugs, /api/search, /api/structures, /rest/v1/drug, etc. - all 404",
+    "drugcentral.org/drugcard/84 returns HTML (aspirin page) but no JSON endpoint",
+    "drugcentral.org/OpenAPI page embeds iframe from pharos-api.newdrugtargets.org but SSL cert expired",
+    "TRAPI wrapper automat.transltr.io/drugcentral has metadata but returns empty for PUBCHEM.COMPOUND:2244, CHEBI:15365, DRUGBANK:DB00945, DrugCentral:84, UNII:R16CO5Y76E",
+    "BioThings repoDB API at biothings.ncats.io/repodb returns 503 Service Unavailable",
+    "DrugCentral data is available as PostgreSQL dump download (unmtid-shinyapps.net/download/DrugCentral/) but not via REST API",
+    "SmartAPI registry shows only TRAPI wrapper, no direct DrugCentral REST API registered"
+  ],
+  "attempted_config": {
+    "name": "DrugCentral_search_drug",
+    "type": "BaseRESTTool",
+    "fields": {
+      "endpoint": "https://drugcentral.org/api/drug"
+    },
+    "note": "Never built - all endpoints return 404"
+  }
+}

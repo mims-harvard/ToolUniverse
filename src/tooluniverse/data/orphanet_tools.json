@@ -291,5 +291,331 @@
         "exact": true
       }
     ]
+  },
+  {
+    "name": "Orphanet_get_phenotypes",
+    "description": "Get HPO (Human Phenotype Ontology) phenotypes associated with a rare disease from Orphanet. Returns HPO terms with their frequency (Very frequent, Frequent, Occasional, Very rare, Excluded) and whether they are diagnostic criteria. Essential for phenotype-driven rare disease diagnosis.",
+    "type": "OrphanetTool",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "operation": {
+          "type": "string",
+          "const": "get_phenotypes",
+          "description": "Operation type (fixed: get_phenotypes)"
+        },
+        "orpha_code": {
+          "type": "string",
+          "description": "Orphanet ORPHA code (e.g., 558 for Marfan, 586 for Cystic Fibrosis)"
+        }
+      },
+      "required": ["operation", "orpha_code"]
+    },
+    "return_schema": {
+      "type": "object",
+      "properties": {
+        "status": {
+          "type": "string"
+        },
+        "data": {
+          "type": "object",
+          "properties": {
+            "orpha_code": {
+              "type": "string"
+            },
+            "preferred_term": {
+              "type": "string"
+            },
+            "phenotypes": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "hpo_id": {"type": "string"},
+                  "hpo_term": {"type": "string"},
+                  "frequency": {"type": "string"},
+                  "diagnostic_criteria": {"type": ["string", "null"]}
+                }
+              }
+            },
+            "phenotype_count": {
+              "type": "integer"
+            }
+          }
+        }
+      }
+    },
+    "test_examples": [
+      {
+        "operation": "get_phenotypes",
+        "orpha_code": "558"
+      },
+      {
+        "operation": "get_phenotypes",
+        "orpha_code": "586"
+      }
+    ]
+  },
+  {
+    "name": "Orphanet_get_epidemiology",
+    "description": "Get epidemiology data (prevalence, incidence) for a rare disease from Orphanet. Returns prevalence estimates by geographic region and type (point prevalence, birth prevalence, annual incidence). Data includes validation status and literature sources.",
+    "type": "OrphanetTool",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "operation": {
+          "type": "string",
+          "const": "get_epidemiology",
+          "description": "Operation type (fixed: get_epidemiology)"
+        },
+        "orpha_code": {
+          "type": "string",
+          "description": "Orphanet ORPHA code (e.g., 558 for Marfan, 586 for Cystic Fibrosis)"
+        }
+      },
+      "required": ["operation", "orpha_code"]
+    },
+    "return_schema": {
+      "type": "object",
+      "properties": {
+        "status": {
+          "type": "string"
+        },
+        "data": {
+          "type": "object",
+          "properties": {
+            "orpha_code": {
+              "type": "string"
+            },
+            "preferred_term": {
+              "type": "string"
+            },
+            "prevalences": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "type": {"type": "string"},
+                  "class": {"type": "string"},
+                  "geographic": {"type": "string"},
+                  "mean_value": {"type": "string"},
+                  "source": {"type": "string"},
+                  "validation_status": {"type": "string"}
+                }
+              }
+            },
+            "prevalence_count": {
+              "type": "integer"
+            }
+          }
+        }
+      }
+    },
+    "test_examples": [
+      {
+        "operation": "get_epidemiology",
+        "orpha_code": "558"
+      },
+      {
+        "operation": "get_epidemiology",
+        "orpha_code": "586"
+      }
+    ]
+  },
+  {
+    "name": "Orphanet_get_natural_history",
+    "description": "Get natural history data for a rare disease from Orphanet. Returns average age of onset and type of inheritance. Useful for understanding disease progression patterns and genetic counseling.",
+    "type": "OrphanetTool",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "operation": {
+          "type": "string",
+          "const": "get_natural_history",
+          "description": "Operation type (fixed: get_natural_history)"
+        },
+        "orpha_code": {
+          "type": "string",
+          "description": "Orphanet ORPHA code (e.g., 558 for Marfan, 399 for Huntington)"
+        }
+      },
+      "required": ["operation", "orpha_code"]
+    },
+    "return_schema": {
+      "type": "object",
+      "properties": {
+        "status": {
+          "type": "string"
+        },
+        "data": {
+          "type": "object",
+          "properties": {
+            "orpha_code": {
+              "type": "string"
+            },
+            "preferred_term": {
+              "type": "string"
+            },
+            "average_age_of_onset": {
+              "type": "array",
+              "items": {"type": "string"}
+            },
+            "type_of_inheritance": {
+              "type": "array",
+              "items": {"type": "string"}
+            },
+            "disorder_group": {
+              "type": "string"
+            },
+            "typology": {
+              "type": "string"
+            }
+          }
+        }
+      }
+    },
+    "test_examples": [
+      {
+        "operation": "get_natural_history",
+        "orpha_code": "558"
+      },
+      {
+        "operation": "get_natural_history",
+        "orpha_code": "399"
+      }
+    ]
+  },
+  {
+    "name": "Orphanet_get_gene_diseases",
+    "description": "Get rare diseases associated with a gene from Orphanet. Search by gene name keyword (e.g., 'fibrillin', 'huntingtin', 'dystrophin') to find all rare diseases linked to genes matching that name. Returns disease ORPHA codes, gene symbols, association types, and genomic locus information.",
+    "type": "OrphanetTool",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "operation": {
+          "type": "string",
+          "const": "get_gene_diseases",
+          "description": "Operation type (fixed: get_gene_diseases)"
+        },
+        "gene_name": {
+          "type": "string",
+          "description": "Gene name keyword to search (e.g., 'fibrillin', 'huntingtin', 'collagen', 'dystrophin')"
+        }
+      },
+      "required": ["operation", "gene_name"]
+    },
+    "return_schema": {
+      "type": "object",
+      "properties": {
+        "status": {
+          "type": "string"
+        },
+        "data": {
+          "type": "object",
+          "properties": {
+            "gene_name": {
+              "type": "string"
+            },
+            "diseases": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "orpha_code": {"type": ["string", "integer"]},
+                  "preferred_term": {"type": "string"},
+                  "disorder_group": {"type": "string"},
+                  "typology": {"type": "string"},
+                  "genes": {
+                    "type": "array",
+                    "items": {
+                      "type": "object",
+                      "properties": {
+                        "symbol": {"type": "string"},
+                        "name": {"type": "string"},
+                        "association_type": {"type": "string"}
+                      }
+                    }
+                  }
+                }
+              }
+            },
+            "disease_count": {
+              "type": "integer"
+            }
+          }
+        }
+      }
+    },
+    "test_examples": [
+      {
+        "operation": "get_gene_diseases",
+        "gene_name": "fibrillin"
+      },
+      {
+        "operation": "get_gene_diseases",
+        "gene_name": "dystrophin"
+      }
+    ]
+  },
+  {
+    "name": "Orphanet_get_icd_mapping",
+    "description": "Get cross-references between Orphanet ORPHA codes and other medical coding systems (ICD-10, ICD-11, OMIM, SNOMED-CT). Essential for mapping rare disease codes across clinical and research nomenclatures. Returns mapping relationships and validation status.",
+    "type": "OrphanetTool",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "operation": {
+          "type": "string",
+          "const": "get_icd_mapping",
+          "description": "Operation type (fixed: get_icd_mapping)"
+        },
+        "orpha_code": {
+          "type": "string",
+          "description": "Orphanet ORPHA code (e.g., 558 for Marfan, 586 for Cystic Fibrosis)"
+        },
+        "coding_system": {
+          "type": "string",
+          "description": "Which coding system to retrieve: all, icd10, icd11, omim, snomed. Default: all",
+          "default": "all"
+        },
+        "lang": {
+          "type": "string",
+          "description": "Language code (default: en)",
+          "default": "en"
+        }
+      },
+      "required": ["operation", "orpha_code"]
+    },
+    "return_schema": {
+      "type": "object",
+      "properties": {
+        "status": {
+          "type": "string"
+        },
+        "data": {
+          "type": "object",
+          "properties": {
+            "orpha_code": {
+              "type": "string"
+            },
+            "mappings": {
+              "type": "object",
+              "description": "Cross-reference mappings keyed by coding system (ICD10, ICD11, OMIM, SNOMED-CT)"
+            }
+          }
+        }
+      }
+    },
+    "test_examples": [
+      {
+        "operation": "get_icd_mapping",
+        "orpha_code": "558"
+      },
+      {
+        "operation": "get_icd_mapping",
+        "orpha_code": "586",
+        "coding_system": "omim"
+      }
+    ]
   }
 ]

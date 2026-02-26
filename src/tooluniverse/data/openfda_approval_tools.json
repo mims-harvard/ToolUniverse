@@ -1,0 +1,217 @@
+[
+  {
+    "name": "OpenFDA_search_drug_approvals",
+    "type": "OpenFDAApprovalTool",
+    "description": "Search the FDA Drugs@FDA database for drug approval records by drug name, sponsor/manufacturer, or application number. Returns FDA application details including NDA/ANDA/BLA numbers, sponsor names, approved dosage forms and strengths, active ingredients, original approval dates, and submission counts. Use this to find FDA-approved drugs, check approval status, or look up generic vs brand drug registrations.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "operation": {
+          "type": "string",
+          "enum": ["search_approvals"],
+          "description": "Operation type"
+        },
+        "drug_name": {
+          "type": ["string", "null"],
+          "description": "Drug name to search (brand or generic, e.g., 'aspirin', 'metformin', 'Lipitor', 'atorvastatin')"
+        },
+        "sponsor": {
+          "type": ["string", "null"],
+          "description": "Sponsor/manufacturer name (e.g., 'PFIZER', 'MERCK', 'NOVARTIS')"
+        },
+        "application_number": {
+          "type": ["string", "null"],
+          "description": "FDA application number (e.g., 'NDA021457', 'ANDA078372', 'BLA125554')"
+        },
+        "limit": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 20,
+          "default": 5,
+          "description": "Maximum number of results (default: 5, max: 20)"
+        }
+      },
+      "required": ["operation"]
+    },
+    "return_schema": {
+      "type": "object",
+      "properties": {
+        "query": {"type": "string", "description": "Search query used"},
+        "total": {"type": "integer", "description": "Total matching approvals in FDA database"},
+        "approvals": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "application_number": {"type": ["string", "null"], "description": "FDA application number (NDA/ANDA/BLA)"},
+              "sponsor_name": {"type": ["string", "null"], "description": "Sponsor/manufacturer name"},
+              "brand_name": {"type": ["string", "null"], "description": "Brand name(s)"},
+              "generic_name": {"type": ["string", "null"], "description": "Generic name(s)"},
+              "active_ingredients": {"type": ["array", "null"], "description": "List of active ingredients"},
+              "dosage_forms": {"type": ["array", "null"], "description": "Dosage forms (TABLET, CAPSULE, etc.)"},
+              "routes": {"type": ["array", "null"], "description": "Administration routes (ORAL, INTRAVENOUS, etc.)"},
+              "strengths": {"type": ["array", "null"], "description": "Available strengths"},
+              "original_approval_date": {"type": ["string", "null"], "description": "Original approval date (YYYY-MM-DD)"},
+              "most_recent_submission_date": {"type": ["string", "null"], "description": "Most recent submission date"},
+              "total_submissions": {"type": "integer", "description": "Total FDA submissions for this application"},
+              "product_count": {"type": "integer", "description": "Number of approved products"}
+            }
+          }
+        }
+      }
+    },
+    "test_examples": [
+      {
+        "operation": "search_approvals",
+        "drug_name": "metformin",
+        "limit": 3
+      },
+      {
+        "operation": "search_approvals",
+        "drug_name": "aspirin",
+        "limit": 3
+      }
+    ]
+  },
+  {
+    "name": "OpenFDA_get_approval_history",
+    "type": "OpenFDAApprovalTool",
+    "description": "Get the complete FDA submission and approval history for a specific drug. Returns chronological list of all submissions (original, supplements, labeling changes) with dates, review priority (STANDARD/PRIORITY), submission types (ORIG/SUPPL), and linked FDA review documents. Useful for tracking a drug's regulatory history from initial approval through all subsequent changes.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "operation": {
+          "type": "string",
+          "enum": ["get_approval_history"],
+          "description": "Operation type"
+        },
+        "drug_name": {
+          "type": ["string", "null"],
+          "description": "Drug name (brand or generic, e.g., 'warfarin', 'Eliquis', 'pembrolizumab')"
+        },
+        "application_number": {
+          "type": ["string", "null"],
+          "description": "FDA application number (e.g., 'NDA021457'). More specific than drug_name."
+        }
+      },
+      "required": ["operation"]
+    },
+    "return_schema": {
+      "type": "object",
+      "properties": {
+        "application_number": {"type": ["string", "null"], "description": "FDA application number"},
+        "sponsor_name": {"type": ["string", "null"], "description": "Sponsor/manufacturer"},
+        "brand_name": {"type": ["string", "null"], "description": "Brand name(s)"},
+        "generic_name": {"type": ["string", "null"], "description": "Generic name(s)"},
+        "total_submissions": {"type": "integer", "description": "Total number of submissions"},
+        "submission_history": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "submission_type": {"type": ["string", "null"], "description": "Type: ORIG (original), SUPPL (supplement)"},
+              "submission_number": {"type": ["string", "null"], "description": "Submission sequence number"},
+              "submission_status": {"type": ["string", "null"], "description": "Status: AP (approved), TA (tentative approval)"},
+              "submission_status_date": {"type": ["string", "null"], "description": "Status date (YYYY-MM-DD)"},
+              "review_priority": {"type": ["string", "null"], "description": "Review priority: STANDARD or PRIORITY"},
+              "submission_class_code": {"type": ["string", "null"], "description": "Class code (e.g., LABELING, MANUF, EFFICACY)"},
+              "submission_class_description": {"type": ["string", "null"], "description": "Human-readable class description"},
+              "application_docs": {
+                "type": ["array", "null"],
+                "description": "Linked FDA review documents",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "id": {"type": ["string", "null"]},
+                    "type": {"type": ["string", "null"]},
+                    "title": {"type": ["string", "null"]},
+                    "url": {"type": ["string", "null"]}
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "test_examples": [
+      {
+        "operation": "get_approval_history",
+        "drug_name": "metformin"
+      },
+      {
+        "operation": "get_approval_history",
+        "drug_name": "pembrolizumab"
+      }
+    ]
+  },
+  {
+    "name": "OpenFDA_get_approved_products",
+    "type": "OpenFDAApprovalTool",
+    "description": "Get FDA-approved product details for a drug including all marketed formulations, active ingredients with strengths, dosage forms, administration routes, therapeutic equivalence (TE) codes, and marketing status. Returns the full list of products under an FDA application. Useful for comparing available formulations, checking generic equivalence, or identifying all strengths of a drug.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "operation": {
+          "type": "string",
+          "enum": ["get_approved_products"],
+          "description": "Operation type"
+        },
+        "drug_name": {
+          "type": ["string", "null"],
+          "description": "Drug name (brand or generic, e.g., 'atorvastatin', 'Lipitor')"
+        },
+        "application_number": {
+          "type": ["string", "null"],
+          "description": "FDA application number (e.g., 'NDA020702')"
+        }
+      },
+      "required": ["operation"]
+    },
+    "return_schema": {
+      "type": "object",
+      "properties": {
+        "application_number": {"type": ["string", "null"], "description": "FDA application number"},
+        "sponsor_name": {"type": ["string", "null"], "description": "Sponsor/manufacturer"},
+        "brand_name": {"type": ["string", "null"], "description": "Brand name(s)"},
+        "generic_name": {"type": ["string", "null"], "description": "Generic name(s)"},
+        "total_products": {"type": "integer", "description": "Total number of approved products"},
+        "products": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "product_number": {"type": ["string", "null"], "description": "Product number within the application"},
+              "brand_name": {"type": ["string", "null"], "description": "Product brand name"},
+              "active_ingredients": {
+                "type": ["array", "null"],
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "name": {"type": ["string", "null"], "description": "Active ingredient name"},
+                    "strength": {"type": ["string", "null"], "description": "Strength (e.g., '500MG', '10MG/ML')"}
+                  }
+                }
+              },
+              "dosage_form": {"type": ["string", "null"], "description": "Dosage form (TABLET, CAPSULE, INJECTION, etc.)"},
+              "route": {"type": ["string", "null"], "description": "Administration route (ORAL, INTRAVENOUS, etc.)"},
+              "marketing_status": {"type": ["string", "null"], "description": "Marketing status (e.g., Prescription, Over-the-counter)"},
+              "reference_drug": {"type": ["string", "null"], "description": "Whether this is the reference listed drug (Yes/No)"},
+              "te_code": {"type": ["string", "null"], "description": "Therapeutic equivalence code (e.g., AB, AA)"}
+            }
+          }
+        }
+      }
+    },
+    "test_examples": [
+      {
+        "operation": "get_approved_products",
+        "drug_name": "metformin"
+      },
+      {
+        "operation": "get_approved_products",
+        "drug_name": "atorvastatin"
+      }
+    ]
+  }
+]

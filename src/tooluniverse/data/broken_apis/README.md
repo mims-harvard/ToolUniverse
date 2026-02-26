@@ -72,3 +72,7 @@ Review entries periodically:
 | File | API | Broken Since | Workaround |
 |------|-----|-------------|------------|
 | `metaboanalyst_rest.json` | MetaboAnalyst public REST API | 2024-12 | KEGG REST + local scipy |
+| `drugcentral_rest.json` | DrugCentral REST API | 2026-02 | OpenFDA Drugs@FDA API (openfda_approval_tools.json) |
+| `ttd_rest.json` | TTD (Therapeutic Target Database) REST API | 2026-02 | Open Targets, DGIdb, ChEMBL, Pharos |
+| `repodb_rest.json` | RepoDB Drug Repurposing Database | 2026-02 | Open Targets, ChEMBL, ClinicalTrials.gov |
+| `scop2_rest.json` | SCOP2 (Structural Classification of Proteins 2) | 2026-02 | CATH, InterPro, PDBe |

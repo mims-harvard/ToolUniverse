@@ -61,6 +61,12 @@ class MonarchV3Tool(BaseTool):
             return self._get_associations(arguments)
         elif self.endpoint == "search":
             return self._search(arguments)
+        elif self.endpoint == "mondo_search":
+            return self._mondo_search(arguments)
+        elif self.endpoint == "mondo_disease":
+            return self._mondo_get_disease(arguments)
+        elif self.endpoint == "mondo_phenotypes":
+            return self._mondo_get_phenotypes(arguments)
         else:
             return {"error": f"Unknown endpoint: {self.endpoint}"}
 
@@ -190,5 +196,166 @@ class MonarchV3Tool(BaseTool):
                 "source": "Monarch Initiative V3",
                 "query": query,
                 "total_results": data.get("total", len(results)),
+            },
+        }
+
+    # --- Mondo Disease Ontology specific endpoints ---
+
+    def _mondo_search(self, arguments: Dict[str, Any]) -> Dict[str, Any]:
+        """Search for diseases in the Mondo Disease Ontology via Monarch."""
+        query = arguments.get("query", "").strip()
+        if not query:
+            return {
+                "error": "query parameter is required (e.g., 'Alzheimer', 'breast cancer', 'diabetes')"
+            }
+
+        limit = arguments.get("limit") or 10
+
+        url = f"{MONARCH_BASE_URL}/search"
+        params = {
+            "q": query,
+            "category": "biolink:Disease",
+            "limit": min(limit, 50),
+        }
+
+        response = requests.get(url, params=params, timeout=self.timeout)
+        response.raise_for_status()
+        data = response.json()
+
+        results = []
+        for item in data.get("items", []):
+            results.append(
+                {
+                    "id": item.get("id"),
+                    "name": item.get("name"),
+                    "category": item.get("category"),
+                    "description": item.get("description"),
+                    "xref": item.get("xref", []),
+                }
+            )
+
+        return {
+            "data": results,
+            "metadata": {
+                "source": "Mondo Disease Ontology (via Monarch Initiative V3)",
+                "query": query,
+                "total_results": data.get("total", len(results)),
+            },
+        }
+
+    def _mondo_get_disease(self, arguments: Dict[str, Any]) -> Dict[str, Any]:
+        """Get detailed Mondo disease information including hierarchy and cross-references."""
+        disease_id = arguments.get("disease_id", "").strip()
+        if not disease_id:
+            return {
+                "error": "disease_id parameter is required (e.g., MONDO:0004975, MONDO:0005148)"
+            }
+
+        url = f"{MONARCH_BASE_URL}/entity/{disease_id}"
+        response = requests.get(url, timeout=self.timeout)
+        response.raise_for_status()
+        data = response.json()
+
+        # Verify this is a disease
+        category = data.get("category", "")
+        if category and "Disease" not in category:
+            return {
+                "error": f"Entity {disease_id} is not a disease (category: {category})"
+            }
+
+        # Extract hierarchy
+        hierarchy = data.get("node_hierarchy", {})
+        parent_diseases = []
+        if hierarchy and isinstance(hierarchy, dict):
+            for parent in hierarchy.get("super_classes", []):
+                if isinstance(parent, dict):
+                    parent_diseases.append(
+                        {
+                            "id": parent.get("id"),
+                            "name": parent.get("name"),
+                        }
+                    )
+
+        # Extract mappings (cross-references to other ontologies)
+        mappings = []
+        for m in data.get("mappings", []) or []:
+            if isinstance(m, dict):
+                mappings.append(
+                    {
+                        "id": m.get("id"),
+                        "url": m.get("url"),
+                    }
+                )
+
+        # Extract association counts
+        assoc_counts = {}
+        for ac in data.get("association_counts", []) or []:
+            if isinstance(ac, dict):
+                assoc_counts[ac.get("label", "")] = ac.get("count", 0)
+
+        # Extract causal genes
+        causal_genes = data.get("causal_gene", []) or []
+
+        return {
+            "data": {
+                "id": data.get("id"),
+                "name": data.get("name"),
+                "description": data.get("description"),
+                "synonyms": data.get("synonym", []),
+                "xrefs": data.get("xref", []),
+                "mappings": mappings,
+                "parent_diseases": parent_diseases,
+                "subtypes_count": len(data.get("has_descendant", []) or []),
+                "causal_genes": causal_genes,
+                "inheritance": data.get("inheritance"),
+                "association_counts": assoc_counts,
+            },
+            "metadata": {
+                "source": "Mondo Disease Ontology (via Monarch Initiative V3)",
+                "disease_id": disease_id,
+            },
+        }
+
+    def _mondo_get_phenotypes(self, arguments: Dict[str, Any]) -> Dict[str, Any]:
+        """Get HPO phenotypes associated with a Mondo disease."""
+        disease_id = arguments.get("disease_id", "").strip()
+        if not disease_id:
+            return {
+                "error": "disease_id parameter is required (e.g., MONDO:0004975, MONDO:0005148)"
+            }
+
+        limit = arguments.get("limit") or 20
+
+        url = f"{MONARCH_BASE_URL}/association"
+        params = {
+            "subject": disease_id,
+            "category": "biolink:DiseaseToPhenotypicFeatureAssociation",
+            "limit": min(limit, 200),
+        }
+
+        response = requests.get(url, params=params, timeout=self.timeout)
+        response.raise_for_status()
+        data = response.json()
+
+        phenotypes = []
+        for item in data.get("items", []):
+            phenotypes.append(
+                {
+                    "phenotype_id": item.get("object"),
+                    "phenotype_name": item.get("object_label"),
+                    "disease_subtype": item.get("subject_label"),
+                    "disease_subtype_id": item.get("subject"),
+                    "predicate": item.get("predicate"),
+                    "negated": item.get("negated"),
+                    "primary_knowledge_source": item.get("primary_knowledge_source"),
+                }
+            )
+
+        return {
+            "data": phenotypes,
+            "metadata": {
+                "source": "Mondo Disease Ontology (via Monarch Initiative V3)",
+                "disease_id": disease_id,
+                "total_phenotypes": data.get("total", len(phenotypes)),
             },
         }
