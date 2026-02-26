@@ -76,3 +76,4 @@ Review entries periodically:
 | `ttd_rest.json` | TTD (Therapeutic Target Database) REST API | 2026-02 | Open Targets, DGIdb, ChEMBL, Pharos |
 | `repodb_rest.json` | RepoDB Drug Repurposing Database | 2026-02 | Open Targets, ChEMBL, ClinicalTrials.gov |
 | `scop2_rest.json` | SCOP2 (Structural Classification of Proteins 2) | 2026-02 | CATH, InterPro, PDBe |
+| `decipher_api.json` | DECIPHER Rare Disease Variants API | 2026-02 | Orphanet (Orphadata + RDcode) + GenCC |
