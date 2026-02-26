@@ -50,7 +50,25 @@
     "required_api_keys": ["BIOGRID_ACCESS_KEY"],
     "return_schema": {
       "type": "object",
-      "description": "BioGRID API response with interaction data including interactor IDs, experimental systems, publications, and evidence codes"
+      "description": "BioGRID API response keyed by interaction ID. Each value is an interaction object.",
+      "additionalProperties": {
+        "type": "object",
+        "properties": {
+          "BIOGRID_INTERACTION_ID": {"type": "integer"},
+          "ENTREZ_GENE_A": {"type": "string"},
+          "ENTREZ_GENE_B": {"type": "string"},
+          "OFFICIAL_SYMBOL_A": {"type": "string"},
+          "OFFICIAL_SYMBOL_B": {"type": "string"},
+          "SYNONYMS_A": {"type": "string"},
+          "SYNONYMS_B": {"type": "string"},
+          "EXPERIMENTAL_SYSTEM": {"type": "string"},
+          "EXPERIMENTAL_SYSTEM_TYPE": {"type": "string"},
+          "PUBMED_ID": {"type": "integer"},
+          "THROUGHPUT": {"type": "string"},
+          "ORGANISM_A_ID": {"type": "integer"},
+          "ORGANISM_B_ID": {"type": "integer"}
+        }
+      }
     },
     "fields": {
       "endpoint": "/interactions/",
@@ -125,7 +143,19 @@
     "required_api_keys": ["BIOGRID_ACCESS_KEY"],
     "return_schema": {
       "type": "object",
-      "description": "Chemical-protein interaction data including compound information, target proteins, action types, and supporting evidence"
+      "description": "BioGRID chemical-protein interaction data keyed by interaction ID.",
+      "additionalProperties": {
+        "type": "object",
+        "properties": {
+          "BIOGRID_INTERACTION_ID": {"type": "integer"},
+          "OFFICIAL_SYMBOL_A": {"type": "string"},
+          "OFFICIAL_SYMBOL_B": {"type": "string"},
+          "EXPERIMENTAL_SYSTEM": {"type": "string"},
+          "EXPERIMENTAL_SYSTEM_TYPE": {"type": "string"},
+          "PUBMED_ID": {"type": "integer"},
+          "THROUGHPUT": {"type": "string"}
+        }
+      }
     },
     "fields": {
       "endpoint": "/interactions/",
@@ -277,7 +307,19 @@
     "required_api_keys": ["BIOGRID_ACCESS_KEY"],
     "return_schema": {
       "type": "object",
-      "description": "PTM data including modification types, residue positions, modifying enzymes, substrates, and experimental evidence"
+      "description": "BioGRID PTM data keyed by interaction ID. Each value contains modification details, interactors, and evidence.",
+      "additionalProperties": {
+        "type": "object",
+        "properties": {
+          "BIOGRID_INTERACTION_ID": {"type": "integer"},
+          "OFFICIAL_SYMBOL_A": {"type": "string"},
+          "OFFICIAL_SYMBOL_B": {"type": "string"},
+          "EXPERIMENTAL_SYSTEM": {"type": "string"},
+          "EXPERIMENTAL_SYSTEM_TYPE": {"type": "string"},
+          "PUBMED_ID": {"type": "integer"},
+          "THROUGHPUT": {"type": "string"}
+        }
+      }
     },
     "fields": {
       "endpoint": "/interactions/",

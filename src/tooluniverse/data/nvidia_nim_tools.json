@@ -53,6 +53,11 @@
       "timeout": 900
     },
     "required_api_keys": ["NVIDIA_API_KEY"],
+    "return_schema": {
+      "type": "object",
+      "description": "AlphaFold2 structure prediction result with PDB coordinates, confidence scores, and model metrics",
+      "additionalProperties": true
+    },
     "test_examples": [
       {
         "sequence": "MVLSPADKTNVKAAWGKVGAHAGEYGAEALERMFLSFPTTKTYFPHFDLSH"
@@ -95,6 +100,11 @@
       "timeout": 900
     },
     "required_api_keys": ["NVIDIA_API_KEY"],
+    "return_schema": {
+      "type": "object",
+      "description": "AlphaFold2-Multimer complex structure prediction with multi-chain PDB coordinates and confidence scores",
+      "additionalProperties": true
+    },
     "test_examples": [
       {
         "sequences": ["MNVIDIAIAMAI", "IAMNVIDIAAI"]
@@ -123,6 +133,10 @@
       "timeout": 120
     },
     "required_api_keys": ["NVIDIA_API_KEY"],
+    "return_schema": {
+      "type": ["string", "null"],
+      "description": "PDB format structure text (returned via 'structure' field, not 'data'). Contains ATOM records with coordinates and pLDDT confidence in B-factor column."
+    },
     "test_examples": [
       {
         "sequence": "ARNDCQEGHILKMFPSTWYV"
@@ -162,6 +176,11 @@
       "timeout": 600
     },
     "required_api_keys": ["NVIDIA_API_KEY"],
+    "return_schema": {
+      "type": "object",
+      "description": "OpenFold2 structure prediction with PDB coordinates and model quality metrics",
+      "additionalProperties": true
+    },
     "test_examples": [
       {
         "sequence": "MVLSPADKTNVKAAWGKVGAHAGEYGAEALERMFLSFPTTKTYFPHFDLSH",
@@ -206,6 +225,11 @@
       "timeout": 900
     },
     "required_api_keys": ["NVIDIA_API_KEY"],
+    "return_schema": {
+      "type": "object",
+      "description": "OpenFold3 biomolecular complex structure prediction (proteins, DNA, RNA, ligands) with coordinates and confidence metrics",
+      "additionalProperties": true
+    },
     "test_examples": [
       {
         "inputs": [{
@@ -289,6 +313,11 @@
       "timeout": 900
     },
     "required_api_keys": ["NVIDIA_API_KEY"],
+    "return_schema": {
+      "type": "object",
+      "description": "Boltz2 multi-molecular complex structure prediction (proteins, DNA, RNA, ligands) in mmCIF format with confidence scores",
+      "additionalProperties": true
+    },
     "test_examples": [
       {
         "polymers": [{"id": "A", "molecule_type": "protein", "sequence": "MKTVRQERLKSIVR"}],
@@ -338,6 +367,11 @@
       "timeout": 120
     },
     "required_api_keys": ["NVIDIA_API_KEY"],
+    "return_schema": {
+      "type": "object",
+      "description": "ProteinMPNN inverse folding result with designed sequences in Multi-FASTA format and per-residue log-probabilities",
+      "additionalProperties": true
+    },
     "test_examples": [
       {
         "input_pdb": "ATOM      1  N   ALA A   1       0.000   0.000   0.000  1.00  0.00           N",
@@ -385,6 +419,11 @@
       "timeout": 600
     },
     "required_api_keys": ["NVIDIA_API_KEY"],
+    "return_schema": {
+      "type": "object",
+      "description": "RFdiffusion de novo protein design result with generated PDB structure coordinates",
+      "additionalProperties": true
+    },
     "test_examples": [
       {
         "contigs": "50-100",
@@ -453,6 +492,11 @@
       "timeout": 600
     },
     "required_api_keys": ["NVIDIA_API_KEY"],
+    "return_schema": {
+      "type": "object",
+      "description": "DiffDock blind molecular docking result with predicted ligand binding poses and confidence scores",
+      "additionalProperties": true
+    },
     "test_examples": [
       {
         "protein": "ATOM      1  N   ALA A   1       0.000   0.000   0.000  1.00  0.00           N",
@@ -515,6 +559,11 @@
       "timeout": 120
     },
     "required_api_keys": ["NVIDIA_API_KEY"],
+    "return_schema": {
+      "type": "object",
+      "description": "GenMol generated molecules with SMILES strings and property scores (QED or LogP)",
+      "additionalProperties": true
+    },
     "test_examples": [
       {
         "smiles": "CC(=O)OC1=CC=CC=C1[*{5-10}]",
@@ -557,6 +606,11 @@
       "timeout": 120
     },
     "required_api_keys": ["NVIDIA_API_KEY"],
+    "return_schema": {
+      "type": "object",
+      "description": "MolMIM controlled molecule generation result with optimized SMILES and property scores",
+      "additionalProperties": true
+    },
     "test_examples": [
       {
         "smi": "c1ccccc1",
@@ -615,6 +669,11 @@
       "timeout": 120
     },
     "required_api_keys": ["NVIDIA_API_KEY"],
+    "return_schema": {
+      "type": "object",
+      "description": "Evo2 DNA sequence generation result with generated nucleotide sequence and optional per-nucleotide probabilities",
+      "additionalProperties": true
+    },
     "test_examples": [
       {
         "sequence": "ACTGACTGACTGACTG",
@@ -670,6 +729,11 @@
       "timeout": 600
     },
     "required_api_keys": ["NVIDIA_API_KEY"],
+    "return_schema": {
+      "type": "object",
+      "description": "MSA search result with multiple sequence alignments in a3m/fasta format from database searches",
+      "additionalProperties": true
+    },
     "test_examples": [
       {
         "sequence": "SGSMKTAISLPDETFDRVSRRASELGMSRSEFFTKAAQR",
@@ -706,6 +770,10 @@
       "timeout": 120
     },
     "required_api_keys": ["NVIDIA_API_KEY"],
+    "return_schema": {
+      "type": "string",
+      "description": "Binary NPZ or JSON embedding data. For NPZ format: '<Binary data, N bytes>'. For JSON format: embedding vectors as nested arrays."
+    },
     "test_examples": [
       {
         "sequences": ["MVLSPADKTNVKAAWGKVGAHAGEYGAEALERMFLSFPTTKTYFPHFDLSH"],
@@ -786,6 +854,10 @@
       "timeout": 300
     },
     "required_api_keys": ["NVIDIA_API_KEY"],
+    "return_schema": {
+      "type": "string",
+      "description": "ZIP file containing synthetic CT images (NIfTI/NRRD) and segmentation masks. Returned as '<ZIP file, N bytes>'."
+    },
     "test_examples": [
       {
         "num_output_samples": 1,
@@ -832,6 +904,10 @@
       "timeout": 300
     },
     "required_api_keys": ["NVIDIA_API_KEY"],
+    "return_schema": {
+      "type": "string",
+      "description": "ZIP file containing 3D segmentation masks (NIfTI/NRRD) for requested anatomical structures. Returned as '<ZIP file, N bytes>'."
+    },
     "test_examples": [
       {
         "image": "https://assets.ngc.nvidia.com/products/api-catalog/vista3d/example-1.nii.gz",

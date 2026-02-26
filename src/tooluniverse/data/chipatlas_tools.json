@@ -55,7 +55,14 @@
     "return_schema": {
       "type": "object",
       "description": "Response object with enrichment analysis URL and parameters",
-      "additionalProperties": true
+      "additionalProperties": true,
+      "properties": {
+        "message": {"type": "string"},
+        "genes": {"type": "array", "items": {"type": "string"}},
+        "distance_from_tss": {"type": "string"},
+        "url": {"type": "string"},
+        "note": {"type": "string"}
+      }
     },
     "test_examples": [
       {
@@ -103,8 +110,17 @@
     },
     "return_schema": {
       "type": "object",
-      "description": "Response with experiment metadata list",
-      "additionalProperties": true
+      "description": "Response with experiment metadata including URLs and file info",
+      "additionalProperties": true,
+      "properties": {
+        "message": {"type": "string"},
+        "metadata_file_url": {"type": "string"},
+        "web_search_url": {"type": "string"},
+        "file_size": {"type": "string"},
+        "total_experiments": {"type": "string"},
+        "filters_requested": {"type": "object", "additionalProperties": true},
+        "recommendation": {"type": "string"}
+      }
     },
     "test_examples": [
       {
@@ -155,7 +171,14 @@
     "return_schema": {
       "type": "object",
       "description": "Response with download URL for peak data",
-      "additionalProperties": true
+      "additionalProperties": true,
+      "properties": {
+        "experiment_id": {"type": "string"},
+        "genome": {"type": "string"},
+        "format": {"type": "string"},
+        "url": {"type": "string"},
+        "message": {"type": "string"}
+      }
     },
     "test_examples": [
       {
@@ -198,7 +221,26 @@
     "return_schema": {
       "type": "object",
       "description": "Response with search results for datasets",
-      "additionalProperties": true
+      "additionalProperties": true,
+      "properties": {
+        "search_key": {"type": "string"},
+        "search_value": {"type": "string"},
+        "genome": {"type": "string"},
+        "num_results": {"type": "integer"},
+        "results": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "genome": {"type": "string"},
+              "class": {"type": "string"},
+              "name": {"type": "string"},
+              "num_experiments": {"type": "string"},
+              "experiment_ids": {"type": "array", "items": {"type": "string"}}
+            }
+          }
+        }
+      }
     },
     "test_examples": [
       {

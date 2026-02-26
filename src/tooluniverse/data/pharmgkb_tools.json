@@ -26,7 +26,15 @@
         "return_schema": {
             "type": "array",
             "items": {
-                "type": "object"
+                "type": "object",
+                "properties": {
+                    "objCls": {"type": "string"},
+                    "id": {"type": "string"},
+                    "name": {"type": "string"},
+                    "inChi": {"type": "string"},
+                    "smiles": {"type": "string"},
+                    "types": {"type": "array", "items": {"type": "string"}}
+                }
             }
         }
     },
@@ -55,7 +63,15 @@
             }
         ],
         "return_schema": {
-            "type": "object"
+            "type": "object",
+            "properties": {
+                "objCls": {"type": "string"},
+                "id": {"type": "string"},
+                "name": {"type": "string"},
+                "pediatric": {"type": "boolean"},
+                "types": {"type": "array", "items": {"type": "string"}}
+            },
+            "additionalProperties": true
         }
     },
     {
@@ -85,7 +101,15 @@
         "return_schema": {
             "type": "array",
             "items": {
-                "type": "object"
+                "type": "object",
+                "properties": {
+                    "objCls": {"type": "string"},
+                    "id": {"type": "string"},
+                    "symbol": {"type": "string"},
+                    "name": {"type": "string"},
+                    "chr": {"type": "object", "additionalProperties": true}
+                },
+                "additionalProperties": true
             }
         }
     },
@@ -114,7 +138,18 @@
             }
         ],
         "return_schema": {
-            "type": "object"
+            "type": "object",
+            "properties": {
+                "objCls": {"type": "string"},
+                "id": {"type": "string"},
+                "symbol": {"type": "string"},
+                "name": {"type": "string"},
+                "chr": {"type": "object", "additionalProperties": true},
+                "strand": {"type": "string"},
+                "cpicGene": {"type": "boolean"},
+                "pharmVarGene": {"type": "boolean"}
+            },
+            "additionalProperties": true
         }
     },
     {
@@ -144,7 +179,20 @@
             }
         ],
         "return_schema": {
-            "type": "object"
+            "type": "object",
+            "properties": {
+                "id": {"type": "integer"},
+                "accessionId": {"type": "string"},
+                "objCls": {"type": "string"},
+                "name": {"type": "string"},
+                "levelOfEvidence": {"type": "object", "additionalProperties": true},
+                "score": {"type": "number"},
+                "relatedChemicals": {"type": "array"},
+                "relatedDiseases": {"type": "array"},
+                "relatedGuidelines": {"type": "array"},
+                "types": {"type": "array"}
+            },
+            "additionalProperties": true
         }
     },
     {
@@ -174,7 +222,15 @@
         "return_schema": {
             "type": "array",
             "items": {
-                "type": "object"
+                "type": "object",
+                "properties": {
+                    "objCls": {"type": "string"},
+                    "id": {"type": "string"},
+                    "name": {"type": "string"},
+                    "location": {"type": "object"},
+                    "gene": {"type": "object"}
+                },
+                "additionalProperties": true
             }
         }
     },
@@ -205,7 +261,18 @@
             }
         ],
         "return_schema": {
-            "type": "object"
+            "type": "object",
+            "properties": {
+                "objCls": {"type": "string"},
+                "id": {"type": "string"},
+                "name": {"type": "string"},
+                "source": {"type": "string"},
+                "summaryMarkdown": {"type": "object"},
+                "textMarkdown": {"type": "object"},
+                "relatedChemicals": {"type": "array"},
+                "relatedGenes": {"type": "array"}
+            },
+            "additionalProperties": true
         }
     }
 ]

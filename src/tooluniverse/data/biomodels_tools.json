@@ -149,7 +149,34 @@
     "return_schema": {
       "type": "object",
       "additionalProperties": true,
-      "description": "File listing with metadata containing 'main' and 'additional' file arrays"
+      "description": "File listing with metadata containing 'main' and 'additional' file arrays",
+      "properties": {
+        "main": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "name": {"type": "string"},
+              "description": {"type": "string"},
+              "fileSize": {"type": "string"},
+              "mimeType": {"type": "string"}
+            }
+          }
+        },
+        "additional": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "name": {"type": "string"},
+              "description": {"type": "string"},
+              "fileSize": {"type": "string"},
+              "mimeType": {"type": "string"},
+              "md5sum": {"type": "string"}
+            }
+          }
+        }
+      }
     },
     "test_examples": [
       {
@@ -244,7 +271,20 @@
     "return_schema": {
       "type": "object",
       "additionalProperties": true,
-      "description": "Parameter search results with model IDs and parameter details"
+      "description": "Parameter search results with model IDs and parameter details",
+      "properties": {
+        "entries": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "fields": {"type": "object", "additionalProperties": true}
+            }
+          }
+        },
+        "recordsFiltered": {"type": "integer"},
+        "recordsTotal": {"type": "integer"}
+      }
     },
     "test_examples": [
       {

@@ -84,7 +84,20 @@
     },
     "return_schema": {
       "type": ["array", "null"],
-      "items": {"type": "object"}
+      "items": {
+        "type": "object",
+        "properties": {
+          "cell_type": {"type": "string"},
+          "tissue_general": {"type": "string"},
+          "disease": {"type": "string"},
+          "assay": {"type": "string"},
+          "sex": {"type": "string"},
+          "donor_id": {"type": "string"},
+          "dataset_id": {"type": "string"},
+          "soma_joinid": {"type": "integer"}
+        },
+        "additionalProperties": true
+      }
     },
     "test_examples": [
       {
@@ -137,7 +150,17 @@
     },
     "return_schema": {
       "type": ["array", "null"],
-      "items": {"type": "object"}
+      "items": {
+        "type": "object",
+        "properties": {
+          "feature_id": {"type": "string", "description": "Ensembl gene ID"},
+          "feature_name": {"type": "string", "description": "Gene symbol"},
+          "feature_length": {"type": "integer"},
+          "feature_biotype": {"type": "string"},
+          "soma_joinid": {"type": "integer"}
+        },
+        "additionalProperties": true
+      }
     },
     "test_examples": [
       {

@@ -623,7 +623,27 @@
       {"aid": 1000}
     ],
     "return_schema": {
-      "type": "object"
+      "type": "object",
+      "properties": {
+        "AssaySummaries": {
+          "type": "object",
+          "properties": {
+            "AssaySummary": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "AID": {"type": "integer"},
+                  "SourceName": {"type": "string"},
+                  "SourceID": {"type": "string"},
+                  "Name": {"type": "string"},
+                  "Description": {"type": "array", "items": {"type": "string"}}
+                }
+              }
+            }
+          }
+        }
+      }
     }
   },
   {
@@ -812,7 +832,35 @@
       {"aid": 504526}
     ],
     "return_schema": {
-      "type": "object"
+      "type": "object",
+      "properties": {
+        "Table": {
+          "type": "object",
+          "properties": {
+            "Columns": {
+              "type": "object",
+              "properties": {
+                "Column": {
+                  "type": "array",
+                  "items": {"type": "string"}
+                }
+              }
+            },
+            "Row": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "Cell": {
+                    "type": "array",
+                    "items": {"type": "string"}
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
     }
   },
   {

@@ -148,46 +148,19 @@
       "return_format": "JSON"
     },
     "return_schema": {
-      "type": [
-        "array",
-        "object",
-        "null"
-      ],
-      "description": "Search results with EMDB entries.",
-      "additionalProperties": true,
-      "properties": {
-        "numFound": {
-          "type": "integer"
-        },
-        "docs": {
-          "type": "array",
-          "items": {
-            "type": "object",
-            "additionalProperties": true,
-            "properties": {
-              "emdb_id": {
-                "type": "string"
-              },
-              "title": {
-                "type": "string"
-              },
-              "organism": {
-                "type": "array"
-              },
-              "method": {
-                "type": "string"
-              },
-              "resolution": {
-                "type": "number"
-              },
-              "deposition_date": {
-                "type": "string"
-              },
-              "release_date": {
-                "type": "string"
-              }
-            }
-          }
+      "type": "array",
+      "description": "Array of EMDB entry objects from search results.",
+      "items": {
+        "type": "object",
+        "additionalProperties": true,
+        "properties": {
+          "_id": {"type": "string"},
+          "emdb_id": {"type": "string"},
+          "admin": {"type": "object", "additionalProperties": true},
+          "map": {"type": "object", "additionalProperties": true},
+          "sample": {"type": "object", "additionalProperties": true},
+          "crossreferences": {"type": "object", "additionalProperties": true},
+          "interpretation": {"type": "object", "additionalProperties": true}
         }
       }
     },

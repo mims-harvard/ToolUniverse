@@ -88,6 +88,28 @@
       },
       "required": ["status"]
     },
+    "return_schema": {
+      "type": "object",
+      "properties": {
+        "uids": {
+          "type": "array",
+          "items": {"type": "string"},
+          "description": "List of SRA UIDs"
+        },
+        "count": {
+          "type": "integer",
+          "description": "Total number of matching results"
+        },
+        "returned": {
+          "type": "integer",
+          "description": "Number of UIDs returned"
+        },
+        "search_term": {
+          "type": "string",
+          "description": "Generated NCBI search term used"
+        }
+      }
+    },
     "test_examples": [
       {
         "operation": "search",
@@ -176,6 +198,30 @@
       },
       "required": ["status"]
     },
+    "return_schema": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "run_accession": {"type": "string"},
+          "experiment_accession": {"type": "string"},
+          "study_accession": {"type": "string"},
+          "study_title": {"type": "string"},
+          "sample_accession": {"type": "string"},
+          "organism": {"type": "string"},
+          "platform": {"type": "string"},
+          "instrument": {"type": "string"},
+          "library_strategy": {"type": "string"},
+          "library_source": {"type": "string"},
+          "library_selection": {"type": "string"},
+          "library_layout": {"type": "string"},
+          "total_spots": {"type": "string"},
+          "total_bases": {"type": "string"},
+          "published": {"type": "string"}
+        }
+      },
+      "description": "Array of run metadata objects"
+    },
     "test_examples": [
       {
         "operation": "get_run_info",
@@ -261,6 +307,21 @@
       },
       "required": ["status"]
     },
+    "return_schema": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "accession": {"type": "string"},
+          "ftp_url": {"type": "string", "description": "FTP URL for .sra file download"},
+          "s3_url": {"type": "string", "description": "AWS S3 URL for cloud access"},
+          "ncbi_url": {"type": "string", "description": "NCBI web interface URL"},
+          "note": {"type": "string", "description": "Instructions for file conversion"},
+          "error": {"type": "string"}
+        }
+      },
+      "description": "Array of download URL objects"
+    },
     "test_examples": [
       {
         "operation": "get_download_urls",
@@ -336,6 +397,22 @@
         }
       },
       "required": ["status"]
+    },
+    "return_schema": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "sra_uid": {"type": "string", "description": "SRA UID"},
+          "biosample_uids": {
+            "type": "array",
+            "items": {"type": "string"},
+            "description": "Array of linked BioSample UIDs"
+          },
+          "biosample_count": {"type": "integer", "description": "Number of linked BioSample records"}
+        }
+      },
+      "description": "Array of SRA-to-BioSample link objects"
     },
     "test_examples": [
       {
