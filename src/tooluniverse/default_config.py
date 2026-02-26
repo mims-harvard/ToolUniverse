@@ -953,6 +953,10 @@ default_tool_files = {
     "swissadme": os.path.join(current_dir, "data", "swissadme_tools.json"),
     # MetaboAnalyst - Metabolomics pathway enrichment, name mapping, biomarker sets (KEGG + local stats)
     "metaboanalyst": os.path.join(current_dir, "data", "metaboanalyst_tools.json"),
+    # VDJdb - TCR/BCR clonotype database with antigen specificity (226K+ records)
+    "vdjdb": os.path.join(current_dir, "data", "vdjdb_tools.json"),
+    # PDBePISA - Protein Interfaces, Surfaces and Assemblies analysis
+    "pdbepisa": os.path.join(current_dir, "data", "pdbepisa_tools.json"),
 }
 
 # Auto-load any user-provided tools from ~/.tooluniverse/user_tools/

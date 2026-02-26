@@ -1,0 +1,246 @@
+[
+  {
+    "name": "VDJDB_search_cdr3",
+    "type": "VDJDBTool",
+    "description": "Search VDJdb for TCR/BCR CDR3 sequences linked to antigen specificity. Given a CDR3 amino acid sequence, finds matching records with epitope, MHC, V/J gene usage, species, and confidence scores. Supports exact match, fuzzy (Levenshtein distance), and pattern matching. Filter by species (HomoSapiens, MusMusculus, MacacaMulatta) and TCR chain (TRA, TRB). Connects to IMGT gene nomenclature upstream and IEDB epitope data downstream.",
+    "category": "Immunology",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "operation": {
+          "type": "string",
+          "enum": ["search_cdr3"],
+          "description": "Operation type"
+        },
+        "cdr3": {
+          "type": "string",
+          "description": "CDR3 amino acid sequence to search (e.g., 'CASSIRSSYEQYF', 'CAAAASGGSYIPTF')"
+        },
+        "species": {
+          "type": ["string", "null"],
+          "description": "Species filter: HomoSapiens, MusMusculus, or MacacaMulatta"
+        },
+        "gene": {
+          "type": ["string", "null"],
+          "description": "TCR chain filter: TRA (alpha) or TRB (beta)"
+        },
+        "match_type": {
+          "type": "string",
+          "enum": ["exact", "fuzzy", "pattern"],
+          "default": "exact",
+          "description": "Match type: 'exact' for exact CDR3 match, 'fuzzy' for Levenshtein distance, 'pattern' for regex pattern"
+        },
+        "substitutions": {
+          "type": ["integer", "null"],
+          "description": "Max substitutions for fuzzy match (default: 1). Only used with match_type='fuzzy'"
+        },
+        "insertions": {
+          "type": ["integer", "null"],
+          "description": "Max insertions for fuzzy match (default: 1). Only used with match_type='fuzzy'"
+        },
+        "deletions": {
+          "type": ["integer", "null"],
+          "description": "Max deletions for fuzzy match (default: 1). Only used with match_type='fuzzy'"
+        },
+        "page": {
+          "type": "integer",
+          "minimum": 0,
+          "default": 0,
+          "description": "Page number (0-indexed) for paginated results"
+        },
+        "page_size": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 100,
+          "default": 25,
+          "description": "Number of results per page (default: 25, max: 100)"
+        }
+      },
+      "required": ["operation", "cdr3"]
+    },
+    "return_schema": {
+      "type": "object",
+      "properties": {
+        "records": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "gene": {"type": "string"},
+              "cdr3": {"type": "string"},
+              "v.segm": {"type": "string"},
+              "j.segm": {"type": "string"},
+              "species": {"type": "string"},
+              "mhc.a": {"type": "string"},
+              "mhc.b": {"type": "string"},
+              "mhc.class": {"type": "string"},
+              "antigen.epitope": {"type": "string"},
+              "antigen.gene": {"type": "string"},
+              "antigen.species": {"type": "string"},
+              "reference.id": {"type": "string"},
+              "vdjdb.score": {"type": "integer"}
+            }
+          }
+        },
+        "records_found": {"type": "integer"},
+        "page": {"type": "integer"},
+        "page_size": {"type": "integer"},
+        "page_count": {"type": "integer"}
+      }
+    },
+    "test_examples": [
+      {
+        "operation": "search_cdr3",
+        "cdr3": "CASSIRSSYEQYF",
+        "species": "HomoSapiens",
+        "gene": "TRB",
+        "page": 0,
+        "page_size": 5
+      },
+      {
+        "operation": "search_cdr3",
+        "cdr3": "CAAAASGGSYIPTF",
+        "page": 0,
+        "page_size": 5
+      }
+    ]
+  },
+  {
+    "name": "VDJDB_get_antigen_specificity",
+    "type": "VDJDBTool",
+    "description": "Search VDJdb by epitope peptide sequence to find all TCRs with confirmed specificity for a given antigen. Returns CDR3 sequences, V/J gene usage, MHC restriction, and confidence scores for TCRs recognizing the epitope. Filter by species, TCR chain, MHC class (MHCI/MHCII), and minimum VDJdb confidence score (0-3). Connects to IEDB epitope tools upstream and IMGT nomenclature downstream.",
+    "category": "Immunology",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "operation": {
+          "type": "string",
+          "enum": ["get_antigen_specificity"],
+          "description": "Operation type"
+        },
+        "epitope": {
+          "type": "string",
+          "description": "Epitope peptide sequence to search (e.g., 'GILGFVFTL' for Influenza M1, 'GLCTLVAML' for EBV BMLF1)"
+        },
+        "species": {
+          "type": ["string", "null"],
+          "description": "Species filter: HomoSapiens, MusMusculus, or MacacaMulatta"
+        },
+        "gene": {
+          "type": ["string", "null"],
+          "description": "TCR chain filter: TRA (alpha) or TRB (beta)"
+        },
+        "mhc_class": {
+          "type": ["string", "null"],
+          "description": "MHC class filter: MHCI or MHCII"
+        },
+        "min_score": {
+          "type": ["integer", "null"],
+          "description": "Minimum VDJdb confidence score (0-3). Score 3 = highest confidence with multiple verification methods."
+        },
+        "page": {
+          "type": "integer",
+          "minimum": 0,
+          "default": 0,
+          "description": "Page number (0-indexed) for paginated results"
+        },
+        "page_size": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 100,
+          "default": 25,
+          "description": "Number of results per page (default: 25, max: 100)"
+        }
+      },
+      "required": ["operation", "epitope"]
+    },
+    "return_schema": {
+      "type": "object",
+      "properties": {
+        "records": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "gene": {"type": "string"},
+              "cdr3": {"type": "string"},
+              "v.segm": {"type": "string"},
+              "j.segm": {"type": "string"},
+              "species": {"type": "string"},
+              "mhc.a": {"type": "string"},
+              "mhc.b": {"type": "string"},
+              "mhc.class": {"type": "string"},
+              "antigen.epitope": {"type": "string"},
+              "antigen.gene": {"type": "string"},
+              "antigen.species": {"type": "string"},
+              "reference.id": {"type": "string"},
+              "vdjdb.score": {"type": "integer"}
+            }
+          }
+        },
+        "records_found": {"type": "integer"},
+        "page": {"type": "integer"},
+        "page_size": {"type": "integer"},
+        "page_count": {"type": "integer"}
+      }
+    },
+    "test_examples": [
+      {
+        "operation": "get_antigen_specificity",
+        "epitope": "GILGFVFTL",
+        "species": "HomoSapiens",
+        "gene": "TRB",
+        "page": 0,
+        "page_size": 5
+      },
+      {
+        "operation": "get_antigen_specificity",
+        "epitope": "GLCTLVAML",
+        "page": 0,
+        "page_size": 5
+      }
+    ]
+  },
+  {
+    "name": "VDJDB_get_database_summary",
+    "type": "VDJDBTool",
+    "description": "Get VDJdb database metadata and statistics including total record count, available columns (gene, cdr3, v.segm, j.segm, species, MHC, antigen, etc.), and their data types. Useful for understanding the database schema and current data coverage before querying.",
+    "category": "Immunology",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "operation": {
+          "type": "string",
+          "enum": ["get_database_summary"],
+          "description": "Operation type"
+        }
+      },
+      "required": ["operation"]
+    },
+    "return_schema": {
+      "type": "object",
+      "properties": {
+        "total_records": {"type": "integer"},
+        "number_of_columns": {"type": "integer"},
+        "columns": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "name": {"type": "string"},
+              "title": {"type": "string"},
+              "data_type": {"type": "string"},
+              "column_type": {"type": "string"},
+              "comment": {"type": "string"}
+            }
+          }
+        }
+      }
+    },
+    "test_examples": [
+      {
+        "operation": "get_database_summary"
+      }
+    ]
+  }
+]

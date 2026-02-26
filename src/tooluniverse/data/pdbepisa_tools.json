@@ -1,0 +1,213 @@
+[
+  {
+    "name": "PDBePISA_get_interfaces",
+    "type": "PDBePISATool",
+    "description": "Analyze protein-protein and protein-ligand interfaces in a crystal structure using PDBePISA. Returns interface area, solvation energy, p-value, hydrogen bonds, salt bridges, disulfide bonds, and per-molecule contributions for each interface. Use after retrieving a PDB structure from RCSB/PDBe tools to assess biological relevance of crystal contacts. Low p-value (<0.5) and negative solvation energy suggest biologically relevant interfaces.",
+    "category": "Structural Biology",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "operation": {
+          "type": "string",
+          "enum": ["get_interfaces"],
+          "description": "Operation type"
+        },
+        "pdb_id": {
+          "type": "string",
+          "description": "PDB entry ID (4-character code, e.g., '4hhb' for hemoglobin, '1cbs' for CRABP-II)"
+        }
+      },
+      "required": ["operation", "pdb_id"]
+    },
+    "return_schema": {
+      "type": "object",
+      "properties": {
+        "pdb_code": {"type": "string"},
+        "n_interfaces": {"type": "integer"},
+        "interfaces": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "id": {"type": ["integer", "null"]},
+              "type": {"type": ["integer", "null"]},
+              "n_occurrences": {"type": ["integer", "null"]},
+              "interface_area": {"type": ["number", "null"]},
+              "solvation_energy": {"type": ["number", "null"]},
+              "p_value": {"type": ["number", "null"]},
+              "stabilization_energy": {"type": ["number", "null"]},
+              "css_score": {"type": ["number", "null"]},
+              "overlap": {"type": "string"},
+              "x_rel": {"type": "string"},
+              "fixed": {"type": "string"},
+              "h_bonds": {
+                "type": "object",
+                "properties": {
+                  "count": {"type": "integer"},
+                  "bonds": {"type": "array"}
+                }
+              },
+              "salt_bridges": {
+                "type": "object",
+                "properties": {
+                  "count": {"type": "integer"},
+                  "bonds": {"type": "array"}
+                }
+              },
+              "molecules": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "id": {"type": ["integer", "null"]},
+                    "chain_id": {"type": "string"},
+                    "mol_class": {"type": "string"}
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "test_examples": [
+      {
+        "operation": "get_interfaces",
+        "pdb_id": "4hhb"
+      },
+      {
+        "operation": "get_interfaces",
+        "pdb_id": "1cbs"
+      }
+    ]
+  },
+  {
+    "name": "PDBePISA_get_assemblies",
+    "type": "PDBePISATool",
+    "description": "Get predicted biological assemblies from a crystal structure using PDBePISA. Analyzes crystal packing to predict the most likely biological assembly (monomer, dimer, tetramer, etc.) with stability scores, dissociation energy, accessible/buried surface areas, and composition. Use after structure retrieval from RCSB/PDBe to determine the biologically relevant oligomeric state. Positive dissociation energy indicates a stable assembly.",
+    "category": "Structural Biology",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "operation": {
+          "type": "string",
+          "enum": ["get_assemblies"],
+          "description": "Operation type"
+        },
+        "pdb_id": {
+          "type": "string",
+          "description": "PDB entry ID (4-character code, e.g., '4hhb' for hemoglobin tetramer, '3hl2' for insulin dimer)"
+        }
+      },
+      "required": ["operation", "pdb_id"]
+    },
+    "return_schema": {
+      "type": "object",
+      "properties": {
+        "pdb_code": {"type": "string"},
+        "total_assemblies": {"type": "integer"},
+        "assembly_sets": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "set_number": {"type": ["integer", "null"]},
+              "assemblies": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "id": {"type": ["integer", "null"]},
+                    "size": {"type": ["integer", "null"]},
+                    "macromolecular_size": {"type": ["integer", "null"]},
+                    "stability_score": {"type": "string"},
+                    "dissociation_energy": {"type": ["number", "null"]},
+                    "accessible_surface_area": {"type": ["number", "null"]},
+                    "buried_surface_area": {"type": ["number", "null"]},
+                    "entropy": {"type": ["number", "null"]},
+                    "dissociation_area": {"type": ["number", "null"]},
+                    "interaction_energy": {"type": ["number", "null"]},
+                    "formula": {"type": "string"},
+                    "composition": {"type": "string"}
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "test_examples": [
+      {
+        "operation": "get_assemblies",
+        "pdb_id": "4hhb"
+      },
+      {
+        "operation": "get_assemblies",
+        "pdb_id": "3hl2"
+      }
+    ]
+  },
+  {
+    "name": "PDBePISA_get_monomer_analysis",
+    "type": "PDBePISATool",
+    "description": "Analyze solvent-accessible surface area and interface participation for each chain in a PDB structure using PDBePISA. Returns per-chain total interface area, number of interface contacts, and detailed interface participations. Useful for identifying which chains are most involved in crystal contacts and protein interactions. Use with RCSB/PDBe structure data and STRING network analysis.",
+    "category": "Structural Biology",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "operation": {
+          "type": "string",
+          "enum": ["get_monomer_analysis"],
+          "description": "Operation type"
+        },
+        "pdb_id": {
+          "type": "string",
+          "description": "PDB entry ID (4-character code, e.g., '4hhb' for hemoglobin, '1cbs' for CRABP-II)"
+        }
+      },
+      "required": ["operation", "pdb_id"]
+    },
+    "return_schema": {
+      "type": "object",
+      "properties": {
+        "pdb_code": {"type": "string"},
+        "n_interfaces": {"type": "integer"},
+        "chains": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "chain_id": {"type": "string"},
+              "mol_class": {"type": "string"},
+              "total_interface_area": {"type": "number"},
+              "interface_count": {"type": "integer"},
+              "interface_participations": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "interface_id": {"type": ["integer", "null"]},
+                    "interface_area": {"type": ["number", "null"]},
+                    "solvation_energy": {"type": ["number", "null"]},
+                    "interface_residues": {"type": ["integer", "null"]}
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "test_examples": [
+      {
+        "operation": "get_monomer_analysis",
+        "pdb_id": "4hhb"
+      },
+      {
+        "operation": "get_monomer_analysis",
+        "pdb_id": "1cbs"
+      }
+    ]
+  }
+]
