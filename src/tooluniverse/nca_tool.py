@@ -36,6 +36,33 @@ try:
 except ImportError:
     HAS_SCIPY = False
 
+# Unit conversion tables for automatic PK unit standardization
+_MASS_TO_NG: dict = {
+    "pg": 1e-3,
+    "ng": 1.0,
+    "μg": 1e3,
+    "ug": 1e3,
+    "mcg": 1e3,
+    "mg": 1e6,
+    "g": 1e9,
+    "kg": 1e12,
+}
+_CONC_TO_NG_PER_ML: dict = {
+    "pg/ml": 1e-3,
+    "pg/l": 1e-6,
+    "ng/ml": 1.0,
+    "ng/l": 1e-3,
+    "μg/ml": 1e3,
+    "ug/ml": 1e3,
+    "mcg/ml": 1e3,
+    "μg/l": 1.0,
+    "ug/l": 1.0,
+    "mg/ml": 1e6,
+    "mg/l": 1e3,
+    "g/ml": 1e9,
+    "g/l": 1e6,
+}
+
 
 @register_tool("NCATool")
 class NCATool(BaseTool):
@@ -128,6 +155,19 @@ class NCATool(BaseTool):
 
         return float(lambda_z), float(r_squared), float(intercept)
 
+    def _try_pk_unit_conversion(self, dose_val: float, dose_unit: str, conc_unit: str):
+        """
+        Try to convert dose and concentration to standard base units (ng, ng/mL).
+
+        Returns (dose_ng, conc_factor, True) on success, or (None, None, False) for
+        unknown units.  conc_factor multiplies raw concentration to obtain ng/mL.
+        """
+        mass_factor = _MASS_TO_NG.get(dose_unit.lower().strip())
+        conc_factor = _CONC_TO_NG_PER_ML.get(conc_unit.lower().strip())
+        if mass_factor is not None and conc_factor is not None:
+            return dose_val * mass_factor, conc_factor, True
+        return None, None, False
+
     def _compute_parameters(self, arguments: Dict[str, Any]) -> Dict[str, Any]:
         """Full NCA computation from time-concentration data."""
         times = arguments.get("times", [])
@@ -201,16 +241,37 @@ class NCATool(BaseTool):
             if dose is not None:
                 try:
                     dose_val = float(dose)
-                    cl = dose_val / auc0inf
-                    result["clearance_CL"] = round(float(cl), 6)
-                    result["clearance_CL_unit"] = (
-                        f"{dose_unit}/({conc_unit}·{time_unit})"
+                    dose_ng, conc_factor, converted = self._try_pk_unit_conversion(
+                        dose_val, dose_unit, conc_unit
                     )
-                    if route == "iv":
-                        vd = cl / lambda_z
-                        result["volume_distribution_Vd"] = round(float(vd), 4)
-                        result["Vd_unit"] = f"{dose_unit}/{conc_unit}"
-                        result["MRT_iv"] = round(float(1.0 / lambda_z), 4)
+                    if converted:
+                        # AUC in (ng/mL)·time_unit after applying conc_factor
+                        auc_ng_ml = auc0inf * conc_factor
+                        cl_ml = dose_ng / auc_ng_ml  # mL/time_unit
+                        cl_l = cl_ml / 1000.0  # L/time_unit
+                        result["clearance_CL"] = round(float(cl_l), 6)
+                        result["clearance_CL_unit"] = f"L/{time_unit}"
+                        if route == "iv":
+                            vd_l = cl_l / lambda_z  # L
+                            result["volume_distribution_Vd"] = round(float(vd_l), 4)
+                            result["Vd_unit"] = "L"
+                            result["MRT_iv"] = round(float(1.0 / lambda_z), 4)
+                    else:
+                        cl = dose_val / auc0inf
+                        result["clearance_CL"] = round(float(cl), 6)
+                        result["clearance_CL_unit"] = (
+                            f"{dose_unit}/({conc_unit}·{time_unit})"
+                        )
+                        result["pk_unit_note"] = (
+                            f"Automatic unit conversion not available for "
+                            f"dose_unit='{dose_unit}' / conc_unit='{conc_unit}'. "
+                            "CL and Vd are in raw ratio units; convert manually."
+                        )
+                        if route == "iv":
+                            vd = cl / lambda_z
+                            result["volume_distribution_Vd"] = round(float(vd), 4)
+                            result["Vd_unit"] = f"{dose_unit}/{conc_unit}"
+                            result["MRT_iv"] = round(float(1.0 / lambda_z), 4)
                 except (ValueError, TypeError):
                     pass
         else:
@@ -330,17 +391,33 @@ class NCATool(BaseTool):
         if dose is not None:
             try:
                 dose_val = float(dose)
-                vd = dose_val / c0_fit
-                cl = k_el_fit * vd
                 auc0inf = c0_fit / k_el_fit
-                result["volume_distribution_Vd"] = round(float(vd), 4)
-                result["clearance_CL"] = round(float(cl), 6)
+                dose_ng, conc_factor, converted = self._try_pk_unit_conversion(
+                    dose_val, dose_unit, conc_unit
+                )
+                if converted:
+                    c0_ng_per_ml = c0_fit * conc_factor
+                    vd_ml = dose_ng / c0_ng_per_ml  # mL
+                    vd_l = vd_ml / 1000.0  # L
+                    cl_l = k_el_fit * vd_l  # L/time_unit
+                    result["volume_distribution_Vd"] = round(float(vd_l), 4)
+                    result["Vd_unit"] = "L"
+                    result["clearance_CL"] = round(float(cl_l), 6)
+                    result["CL_unit"] = f"L/{time_unit}"
+                else:
+                    vd_raw = dose_val / c0_fit
+                    cl_raw = k_el_fit * vd_raw
+                    result["volume_distribution_Vd"] = round(float(vd_raw), 4)
+                    result["Vd_unit"] = f"{dose_unit}/{conc_unit}"
+                    result["clearance_CL"] = round(float(cl_raw), 6)
+                    result["CL_unit"] = f"{dose_unit}/({conc_unit}·{time_unit})"
+                    result["pk_unit_note"] = (
+                        f"Automatic unit conversion not available for "
+                        f"dose_unit='{dose_unit}' / conc_unit='{conc_unit}'. "
+                        "Vd and CL are in raw ratio units; convert manually."
+                    )
                 result["AUC0_inf_model"] = round(float(auc0inf), 4)
-                result["derived_units"] = {
-                    "Vd": f"{dose_unit}/{conc_unit}",
-                    "CL": f"{dose_unit}/({conc_unit}·{time_unit})",
-                    "AUC": f"{conc_unit}·{time_unit}",
-                }
+                result["AUC_unit"] = f"{conc_unit}·{time_unit}"
             except (ValueError, TypeError):
                 pass
 
