@@ -1,0 +1,31 @@
+{
+    "api_name": "SCOP2 (Structural Classification of Proteins 2) REST API",
+    "base_url": "https://scop.mrc-lmb.cam.ac.uk/api",
+    "failure_mode": "HTTP 404 on all API endpoints",
+    "root_cause": "SCOP2 website exists at scop.mrc-lmb.cam.ac.uk but has no REST API. All /api/* routes return Apache 404. The website is HTML-only with no JSON/REST endpoints. SCOP data is available as downloadable flat files only.",
+    "confirmed_broken_date": "2026-02-26",
+    "last_retry_date": "2026-02-26",
+    "retry_count": 3,
+    "github_issues": [],
+    "retry_after": "never",
+    "workaround": "Use existing tools: CATH (protein domain classification), InterPro (protein domain/family annotation), PDBe (protein structure data). SCOP domain annotations are also available through InterPro cross-references.",
+    "workaround_tool_file": "Already covered by cath_tools.json, interpro_tools.json, pdbe_tools.json",
+    "investigation_notes": [
+        "scop.mrc-lmb.cam.ac.uk/api returns 404 (Apache)",
+        "scop.mrc-lmb.cam.ac.uk/api/description returns 404",
+        "scop.mrc-lmb.cam.ac.uk/api/description?query=globin returns 404",
+        "scop.mrc-lmb.cam.ac.uk/api/search?q=globin returns 404",
+        "scop.mrc-lmb.cam.ac.uk/api/description/46457 returns 404",
+        "No JSON Content-Type returned from any tested endpoint",
+        "Website is static HTML served by Apache/2.4.52 on Ubuntu"
+    ],
+    "attempted_config": {
+        "endpoints_tested": [
+            "https://scop.mrc-lmb.cam.ac.uk/api",
+            "https://scop.mrc-lmb.cam.ac.uk/api/description",
+            "https://scop.mrc-lmb.cam.ac.uk/api/description?query=globin",
+            "https://scop.mrc-lmb.cam.ac.uk/api/search?q=globin",
+            "https://scop.mrc-lmb.cam.ac.uk/api/description/46457"
+        ]
+    }
+}

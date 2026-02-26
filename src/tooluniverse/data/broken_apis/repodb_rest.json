@@ -1,0 +1,30 @@
+{
+    "api_name": "RepoDB (Drug Repurposing Database) REST API",
+    "base_url": "https://repodb.net/",
+    "failure_mode": "No REST API exists - R Shiny app only",
+    "root_cause": "RepoDB is an R Shiny web application hosted at unmtid-shinyapps.net/shiny/repodb/. The repodb.net website is a static Jekyll site with no API endpoints (returns 404 on /api/ and /download/). The api.repodb.net subdomain has an SSL certificate mismatch. The only programmatic data access is through downloading the SQLite database file, which requires local processing. No REST/JSON API exists.",
+    "confirmed_broken_date": "2026-02-26",
+    "last_retry_date": "2026-02-26",
+    "retry_count": 3,
+    "github_issues": [],
+    "retry_after": "never",
+    "workaround": "Use existing tools: Open Targets (drug-disease associations with clinical trial phases), ChEMBL (drug indications with max_phase_for_ind), ClinicalTrials.gov (16 tools for trial searches), DGIdb (drug-gene interactions). These databases collectively cover the drug repurposing use case with real-time API access.",
+    "workaround_tool_file": "Already covered by opentarget_tools.json, chembl_tools.json, clinicaltrials_gov_tools.json, dgidb_tools.json",
+    "investigation_notes": [
+        "repodb.net/api/ returns 404 (static Jekyll site)",
+        "repodb.net/download/ returns 404",
+        "api.repodb.net has SSL certificate mismatch (cert not valid for api.repodb.net)",
+        "unmtid-shinyapps.net/shiny/repodb/ returns 200 but is an R Shiny app (HTML with Shiny JavaScript dependencies)",
+        "No REST/JSON endpoints available anywhere",
+        "Data originally from ClinicalTrials.gov drug-indication pairs",
+        "RepoDB paper (Brown & Patel, 2017) describes a static database, not a REST service"
+    ],
+    "attempted_config": {
+        "endpoints_tested": [
+            "https://repodb.net/api/",
+            "https://repodb.net/download/",
+            "https://api.repodb.net/",
+            "https://unmtid-shinyapps.net/shiny/repodb/"
+        ]
+    }
+}

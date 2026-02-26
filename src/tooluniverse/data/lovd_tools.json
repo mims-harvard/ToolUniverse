@@ -1,0 +1,170 @@
+[
+    {
+        "name": "LOVD_get_gene",
+        "description": "Get gene information from LOVD (Leiden Open Variation Database). Returns HGNC ID, Entrez ID, chromosomal location, RefSeq transcript(s), genomic build, curation details, and dates. LOVD hosts curated variant databases for over 23,000 genes used in clinical diagnostics.",
+        "parameter": {
+            "type": "object",
+            "properties": {
+                "gene_symbol": {
+                    "type": "string",
+                    "description": "HGNC gene symbol (e.g., 'TP53', 'BRCA1', 'BRCA2', 'EGFR')."
+                }
+            },
+            "required": ["gene_symbol"]
+        },
+        "fields": {
+            "operation": "get_gene"
+        },
+        "type": "LOVDTool",
+        "test_examples": [
+            {
+                "gene_symbol": "TP53"
+            },
+            {
+                "gene_symbol": "BRCA2"
+            }
+        ],
+        "return_schema": {
+            "type": "object",
+            "properties": {
+                "id": {"type": "string"},
+                "hgnc_id": {"type": "integer"},
+                "entrez_id": {"type": "integer"},
+                "symbol": {"type": "string"},
+                "name": {"type": "string"},
+                "chromosome": {"type": "string"},
+                "chromosome_location": {"type": "string"},
+                "position_start": {"type": "string"},
+                "position_end": {"type": "string"},
+                "refseq_genomic": {"type": "string"},
+                "refseq_mrna": {
+                    "type": "array",
+                    "items": {"type": "string"}
+                },
+                "refseq_build": {"type": "string"},
+                "created_by": {"type": "string"},
+                "created_date": {"type": "string"},
+                "curators": {
+                    "type": "array",
+                    "items": {"type": "string"}
+                },
+                "updated_date": {"type": "string"}
+            }
+        }
+    },
+    {
+        "name": "LOVD_get_variants",
+        "description": "Get all curated variants for a gene from LOVD. Returns variant details including HGVS DNA/RNA/protein notation, genomic positions (hg19), LOVD variant DBID, and reporting count. Note: some genes may have hundreds or thousands of variants.",
+        "parameter": {
+            "type": "object",
+            "properties": {
+                "gene_symbol": {
+                    "type": "string",
+                    "description": "HGNC gene symbol (e.g., 'TP53', 'BRCA1')."
+                }
+            },
+            "required": ["gene_symbol"]
+        },
+        "fields": {
+            "operation": "get_variants"
+        },
+        "type": "LOVDTool",
+        "test_examples": [
+            {
+                "gene_symbol": "TP53"
+            }
+        ],
+        "return_schema": {
+            "type": "array",
+            "items": {
+                "type": "object",
+                "properties": {
+                    "symbol": {"type": "string"},
+                    "id": {"type": "string"},
+                    "position_mRNA": {
+                        "type": "array",
+                        "items": {"type": "string"}
+                    },
+                    "position_genomic": {"type": "object"},
+                    "variant_genomic": {"type": "object"},
+                    "variants_on_transcripts": {"type": "object"},
+                    "Variant/DNA": {
+                        "type": "array",
+                        "items": {"type": "string"}
+                    },
+                    "Variant/DBID": {"type": "string"},
+                    "Times_reported": {"type": "string"},
+                    "owned_by": {
+                        "type": "array",
+                        "items": {"type": "string"}
+                    },
+                    "created_by": {
+                        "type": "array",
+                        "items": {"type": "string"}
+                    },
+                    "created_date": {"type": "string"},
+                    "edited_date": {"type": "string"}
+                }
+            }
+        }
+    },
+    {
+        "name": "LOVD_search_variants",
+        "description": "Search variants in LOVD by DBID or HGVS DNA notation. Use variant_dbid for exact LOVD variant IDs (e.g., 'TP53_010464') or dna_notation for HGVS notation without RefSeq prefix (e.g., 'c.*2609C>A'). At least one search parameter is required.",
+        "parameter": {
+            "type": "object",
+            "properties": {
+                "gene_symbol": {
+                    "type": "string",
+                    "description": "HGNC gene symbol (e.g., 'TP53', 'BRCA1')."
+                },
+                "variant_dbid": {
+                    "type": "string",
+                    "description": "LOVD variant DBID (e.g., 'TP53_010464'). Unique identifier assigned by LOVD."
+                },
+                "dna_notation": {
+                    "type": "string",
+                    "description": "HGVS DNA notation without RefSeq prefix (e.g., 'c.*2609C>A', 'c.742C>T'). Use coding 'c.' notation."
+                }
+            },
+            "required": ["gene_symbol"]
+        },
+        "fields": {
+            "operation": "search_variants"
+        },
+        "type": "LOVDTool",
+        "test_examples": [
+            {
+                "gene_symbol": "TP53",
+                "variant_dbid": "TP53_010464"
+            },
+            {
+                "gene_symbol": "TP53",
+                "dna_notation": "c.*2609C>A"
+            }
+        ],
+        "return_schema": {
+            "type": "array",
+            "items": {
+                "type": "object",
+                "properties": {
+                    "symbol": {"type": "string"},
+                    "id": {"type": "string"},
+                    "position_mRNA": {
+                        "type": "array",
+                        "items": {"type": "string"}
+                    },
+                    "position_genomic": {"type": "object"},
+                    "variant_genomic": {"type": "object"},
+                    "variants_on_transcripts": {"type": "object"},
+                    "Variant/DNA": {
+                        "type": "array",
+                        "items": {"type": "string"}
+                    },
+                    "Variant/DBID": {"type": "string"},
+                    "Times_reported": {"type": "string"}
+                }
+            }
+        }
+    }
+]
