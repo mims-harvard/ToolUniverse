@@ -84,17 +84,19 @@ class DrugSynergyTool(BaseTool):
 
     def _interpret_synergy_score(self, score: float, model: str) -> str:
         if model in ("bliss", "hsa"):
-            if score > 10:
+            # Scores are fractional (0-1 scale, same as inputs)
+            if score > 0.10:
                 return "Strong synergy"
             elif score > 0:
                 return "Synergy"
             elif score == 0:
                 return "Additivity"
-            elif score > -10:
+            elif score > -0.10:
                 return "Antagonism"
             else:
                 return "Strong antagonism"
         else:
+            # ZIP scores are in percentage points (×100); thresholds ±10 pp
             if score > 10:
                 return "Synergy"
             elif score > -10:
@@ -142,7 +144,7 @@ class DrugSynergyTool(BaseTool):
                 }
 
         expected = ea + eb - ea * eb
-        synergy_score = (ec - expected) * 100  # Express as percentage points
+        synergy_score = ec - expected  # Fractional units (same scale as inputs)
 
         return {
             "status": "success",
@@ -154,7 +156,7 @@ class DrugSynergyTool(BaseTool):
                 "effect_combination_expected": round(expected, 4),
                 "bliss_synergy_score": round(synergy_score, 2),
                 "interpretation": self._interpret_synergy_score(synergy_score, "bliss"),
-                "note": "Positive score = synergy; Negative = antagonism. Based on Bliss (1939).",
+                "note": "Scores in fractional units (0-1 scale, same as inputs). Positive = synergy; Negative = antagonism. |score| > 0.1 = strong effect. Based on Bliss (1939).",
             },
         }
 
@@ -189,7 +191,7 @@ class DrugSynergyTool(BaseTool):
             }
 
         hsa = np.maximum(ea, eb)
-        synergy_matrix = (ec - hsa) * 100  # percentage points
+        synergy_matrix = ec - hsa  # Fractional units (same scale as inputs)
 
         return {
             "status": "success",
@@ -205,7 +207,7 @@ class DrugSynergyTool(BaseTool):
                 "interpretation": self._interpret_synergy_score(
                     float(np.mean(synergy_matrix)), "hsa"
                 ),
-                "note": "Positive score = synergy over best single agent; Negative = antagonism.",
+                "note": "Scores in fractional units (0-1 scale, same as inputs). Positive = synergy over best single agent; Negative = antagonism. |score| > 0.1 = strong effect.",
             },
         }
 
@@ -453,9 +455,8 @@ class DrugSynergyTool(BaseTool):
         # Loewe Additivity Index: CI = d_a/D_a(E) + d_b/D_b(E)
         loewe_index = da_combo / da_equiv + db_combo / db_equiv
 
-        # Loewe synergy score (similar to other models): convert to interpretable scale
-        # CI < 1 => synergy, CI = 1 => additive, CI > 1 => antagonism
-        loewe_excess = (1.0 - loewe_index) * 100  # percentage-based excess
+        # Loewe excess score: positive = synergy (CI < 1), negative = antagonism (CI > 1)
+        loewe_excess = 1.0 - loewe_index
 
         # Interpretation
         if loewe_index < 0.3:

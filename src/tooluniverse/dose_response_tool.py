@@ -230,9 +230,11 @@ class DoseResponseTool(BaseTool):
         if not fold_shift:
             return "Equal potency"
         if fold_shift > 1:
-            return f"Compound A is {round(1 / fold_shift, 2)}x more potent than B"
+            # IC50_B > IC50_A → A is fold_shift times more potent
+            return f"Compound A is {round(fold_shift, 2)}x more potent than B"
         if fold_shift < 1:
-            return f"Compound B is {round(fold_shift, 2)}x more potent than A"
+            # IC50_A > IC50_B → B is (1/fold_shift) times more potent
+            return f"Compound B is {round(1 / fold_shift, 2)}x more potent than A"
         return "Equal potency"
 
     def _compare_potency(self, arguments: Dict[str, Any]) -> Dict[str, Any]:

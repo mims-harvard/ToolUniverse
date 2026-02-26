@@ -37,24 +37,41 @@ try:
 except ImportError:
     HAS_MMPA = False
 
-# SMARTS patterns for pharmacophore features
-# Using validated patterns from common cheminformatics implementations
-_PHARM_SMARTS = {
-    "HBD": "[#7;!H0;v3,v4&+1],[#8;!H0],[#16;!H0]",
-    "HBA": "[#7;H0;v3,$([N;H0;+0;$(N-a)])],[#8;H0;+0],[o;H0],[#16;H0;v2]",
-    "Aromatic": "a",
-    "Hydrophobic": "[c,s,Br,I,S&H0&v2,$([D2&!#6;!#7;!#8;!#16]),"
-    "$([#6;+0;!$([#6;=O]),$([#6;=N]),$([#6;=S])"
-    "])]",
-    "PosIonizable": "[$([NH2;+0;$(N-[!$([OH,OX1])])]),"
-    "$([NH;+0;$(N(-[!$([OH,OX1])])-[!$([OH,OX1])])]),"
-    "$([N;H0;+0;$(N(-[!$([OH,OX1])])"
-    "(-[!$([OH,OX1])])-[!$([OH,OX1])])]),"
-    "$([n;H0;+0]),"
-    "$([NH;+]),"
-    "$([NH2;+])]",
-    "NegIonizable": "[$([C,S](=[O,S,P])-[O;H1,H0&-1]),"
-    "$([#7;v5;$(N(-[O;H0&-1])-[OX2;H0])])]",
+# SMARTS patterns for pharmacophore features.
+# Each dict value is a LIST of complete SMARTS strings (not comma-joined),
+# because complex patterns (Hydrophobic, PosIonizable, NegIonizable) contain
+# internal commas as OR operators that must not be used as separators.
+_PHARM_SMARTS: Dict[str, list] = {
+    # Three separate SMARTS: N–H donors, O–H donors, S–H donors
+    "HBD": ["[#7;!H0;v3,v4&+1]", "[#8;!H0]", "[#16;!H0]"],
+    # Four separate SMARTS: tertiary N acceptors, ether/carbonyl O, aromatic O, S acceptors
+    "HBA": [
+        "[#7;H0;v3,$([N;H0;+0;$(N-a)])]",
+        "[#8;H0;+0]",
+        "[o;H0]",
+        "[#16;H0;v2]",
+    ],
+    "Aromatic": ["a"],
+    # Hydrophobic: split into simple, valid SMARTS to avoid nested-SMARTS parse errors.
+    # Aromatic/heteroaromatic + heavy halogens + non-polar S; aliphatic sp3 C (CH3/CH2/CH)
+    "Hydrophobic": [
+        "[c,s,Br,I,S&H0&v2]",  # aromatic C/S, heavy halogens, thioether S
+        "[CX4H3]",  # methyl carbons
+        "[CX4H2]",  # methylene carbons
+        "[CX4H1]",  # methine carbons
+    ],
+    # Single recursive SMARTS — must not be split
+    "PosIonizable": [
+        "[$([NH2;+0;$(N-[!$([OH,OX1])])]),"
+        "$([NH;+0;$(N(-[!$([OH,OX1])])-[!$([OH,OX1])])]),"
+        "$([N;H0;+0;$(N(-[!$([OH,OX1])])"
+        "(-[!$([OH,OX1])])-[!$([OH,OX1])])]),"
+        "$([n;H0;+0]),$([NH;+]),$([NH2;+])]"
+    ],
+    # Single recursive SMARTS — must not be split
+    "NegIonizable": [
+        "[$([C,S](=[O,S,P])-[O;H1,H0&-1]),$([#7;v5;$(N(-[O;H0&-1])-[OX2;H0])])]"
+    ],
 }
 
 
@@ -125,10 +142,9 @@ class RDKitCheminfoTool(BaseTool):
             if feature_name not in _PHARM_SMARTS:
                 continue
 
-            smarts_parts = _PHARM_SMARTS[feature_name].split(",")
             atom_indices: set = set()
 
-            for smarts in smarts_parts:
+            for smarts in _PHARM_SMARTS[feature_name]:  # already a list
                 smarts = smarts.strip()
                 if not smarts:
                     continue
