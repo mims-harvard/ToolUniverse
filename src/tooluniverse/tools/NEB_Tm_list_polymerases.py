@@ -1,30 +1,27 @@
 """
-Chem_sa_score
+NEB_Tm_list_polymerases
 
-Compute the synthetic accessibility (SA) score for a molecule supplied as a SMILES string, using ...
+List all NEB DNA polymerase products available for Tm calculation. Returns product codes (prodcod...
 """
 
 from typing import Any, Optional, Callable
 from ._shared_client import get_shared_client
 
 
-def Chem_sa_score(
-    operation: str,
-    smiles: str,
+def NEB_Tm_list_polymerases(
+    filter: Optional[str | Any] = None,
     *,
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> list[Any]:
     """
-    Compute the synthetic accessibility (SA) score for a molecule supplied as a SMILES string, using ...
+    List all NEB DNA polymerase products available for Tm calculation. Returns product codes (prodcod...
 
     Parameters
     ----------
-    operation : str
-        Operation type
-    smiles : str
-        SMILES string of the molecule (e.g., 'CC(=O)Oc1ccccc1C(=O)O' for aspirin)
+    filter : str | Any
+        Optional keyword to filter products by name, product code, or catalog number....
     stream_callback : Callable, optional
         Callback for streaming output
     use_cache : bool, default False
@@ -34,19 +31,16 @@ def Chem_sa_score(
 
     Returns
     -------
-    Any
+    list[Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 
     return get_shared_client().run_one_function(
-        {
-            "name": "Chem_sa_score",
-            "arguments": {"operation": operation, "smiles": smiles},
-        },
+        {"name": "NEB_Tm_list_polymerases", "arguments": {"filter": filter}},
         stream_callback=stream_callback,
         use_cache=use_cache,
         validate=validate,
     )
 
 
-__all__ = ["Chem_sa_score"]
+__all__ = ["NEB_Tm_list_polymerases"]

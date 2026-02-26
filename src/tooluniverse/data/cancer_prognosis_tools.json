@@ -1,0 +1,311 @@
+[
+  {
+    "name": "CancerPrognosis_get_survival_data",
+    "type": "CancerPrognosisTool",
+    "description": "Retrieve patient-level overall survival (OS) and disease-free survival (DFS) data from a TCGA or cBioPortal cancer study. Returns per-patient survival times, event status, and age. Data can be directly used with Survival_kaplan_meier or Survival_log_rank_test tools for custom survival analyses. Supports 33 TCGA cancer types (BRCA, LUAD, COAD, GBM, etc.) and 400+ cBioPortal studies.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "operation": {
+          "type": "string",
+          "enum": ["get_survival_data"],
+          "description": "Operation type"
+        },
+        "cancer": {
+          "type": "string",
+          "description": "TCGA cancer type abbreviation (e.g., 'BRCA', 'LUAD', 'COAD', 'GBM') or cBioPortal study ID (e.g., 'brca_tcga', 'luad_tcga_pan_can_atlas_2018')"
+        },
+        "max_patients": {
+          "type": ["integer", "null"],
+          "description": "Maximum number of patient records to return (default 500, max 2000)"
+        }
+      },
+      "required": ["operation", "cancer"]
+    },
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "object",
+          "properties": {
+            "data": {
+              "type": "object",
+              "properties": {
+                "study_id": {"type": "string"},
+                "cancer": {"type": "string"},
+                "total_patients": {"type": "integer"},
+                "overall_survival": {
+                  "type": "object",
+                  "properties": {
+                    "n_patients": {"type": "integer"},
+                    "n_events": {"type": "integer"},
+                    "patients": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "patient_id": {"type": "string"},
+                          "os_months": {"type": "number"},
+                          "os_status": {"type": "string"},
+                          "event": {"type": "integer"}
+                        }
+                      }
+                    }
+                  }
+                },
+                "disease_free_survival": {
+                  "type": "object",
+                  "properties": {
+                    "n_patients": {"type": "integer"},
+                    "n_events": {"type": "integer"}
+                  }
+                }
+              }
+            },
+            "metadata": {"type": "object"}
+          }
+        },
+        {
+          "type": "object",
+          "properties": {
+            "error": {"type": "string"}
+          },
+          "required": ["error"]
+        }
+      ]
+    },
+    "test_examples": [
+      {
+        "operation": "get_survival_data",
+        "cancer": "BRCA",
+        "max_patients": 50
+      }
+    ]
+  },
+  {
+    "name": "CancerPrognosis_get_gene_expression",
+    "type": "CancerPrognosisTool",
+    "description": "Fetch gene expression values (RNA-seq) for a specific gene across cancer samples in a TCGA or cBioPortal study. Returns per-sample expression values with summary statistics (mean, median, min, max). Output can be combined with survival data for expression-based prognostic analysis. Supports 33 TCGA cancer types and any cBioPortal study with mRNA expression data.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "operation": {
+          "type": "string",
+          "enum": ["get_gene_expression"],
+          "description": "Operation type"
+        },
+        "cancer": {
+          "type": "string",
+          "description": "TCGA cancer type abbreviation (e.g., 'BRCA', 'LUAD') or cBioPortal study ID"
+        },
+        "gene": {
+          "type": "string",
+          "description": "Gene symbol (e.g., 'TP53', 'BRCA1', 'EGFR', 'CD8A')"
+        },
+        "max_samples": {
+          "type": ["integer", "null"],
+          "description": "Maximum number of sample records to return (default 500, max 2000)"
+        }
+      },
+      "required": ["operation", "cancer", "gene"]
+    },
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "object",
+          "properties": {
+            "data": {
+              "type": "object",
+              "properties": {
+                "study_id": {"type": "string"},
+                "gene": {"type": "string"},
+                "entrez_gene_id": {"type": "integer"},
+                "profile_id": {"type": "string"},
+                "n_samples": {"type": "integer"},
+                "expression_summary": {
+                  "type": "object",
+                  "properties": {
+                    "mean": {"type": "number"},
+                    "median": {"type": "number"},
+                    "min": {"type": "number"},
+                    "max": {"type": "number"}
+                  }
+                },
+                "samples": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "sample_id": {"type": "string"},
+                      "patient_id": {"type": "string"},
+                      "value": {"type": "number"}
+                    }
+                  }
+                }
+              }
+            },
+            "metadata": {"type": "object"}
+          }
+        },
+        {
+          "type": "object",
+          "properties": {
+            "error": {"type": "string"}
+          },
+          "required": ["error"]
+        }
+      ]
+    },
+    "test_examples": [
+      {
+        "operation": "get_gene_expression",
+        "cancer": "BRCA",
+        "gene": "TP53",
+        "max_samples": 50
+      }
+    ]
+  },
+  {
+    "name": "CancerPrognosis_search_studies",
+    "type": "CancerPrognosisTool",
+    "description": "Search cBioPortal for cancer genomics studies by keyword. Find studies by cancer type, institution, or data type. Returns study IDs that can be used with other CancerPrognosis tools. Covers 400+ studies including all TCGA projects, AACR GENIE, MSK-IMPACT, and institutional cohorts.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "operation": {
+          "type": "string",
+          "enum": ["search_studies"],
+          "description": "Operation type"
+        },
+        "keyword": {
+          "type": "string",
+          "description": "Search keyword (e.g., 'breast', 'lung', 'TCGA', 'melanoma', 'glioblastoma')"
+        },
+        "limit": {
+          "type": ["integer", "null"],
+          "description": "Maximum number of results to return (default 20, max 100)"
+        }
+      },
+      "required": ["operation", "keyword"]
+    },
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "object",
+          "properties": {
+            "data": {
+              "type": "object",
+              "properties": {
+                "keyword": {"type": "string"},
+                "n_results": {"type": "integer"},
+                "studies": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "study_id": {"type": "string"},
+                      "name": {"type": "string"},
+                      "cancer_type_id": {"type": "string"},
+                      "sample_count": {"type": "integer"}
+                    }
+                  }
+                }
+              }
+            },
+            "metadata": {"type": "object"}
+          }
+        },
+        {
+          "type": "object",
+          "properties": {
+            "error": {"type": "string"}
+          },
+          "required": ["error"]
+        }
+      ]
+    },
+    "test_examples": [
+      {
+        "operation": "search_studies",
+        "keyword": "breast",
+        "limit": 10
+      }
+    ]
+  },
+  {
+    "name": "CancerPrognosis_get_study_summary",
+    "type": "CancerPrognosisTool",
+    "description": "Get summary information for a cancer study including available molecular profiles (mutations, expression, CNV), survival-related clinical attributes, and sample counts. Useful for determining what data is available before querying expression or survival data. Lists all 33 supported TCGA cancer type abbreviations.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "operation": {
+          "type": "string",
+          "enum": ["get_study_summary"],
+          "description": "Operation type"
+        },
+        "cancer": {
+          "type": "string",
+          "description": "TCGA cancer type abbreviation (e.g., 'BRCA', 'LUAD') or cBioPortal study ID"
+        }
+      },
+      "required": ["operation", "cancer"]
+    },
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "object",
+          "properties": {
+            "data": {
+              "type": "object",
+              "properties": {
+                "study_id": {"type": "string"},
+                "name": {"type": "string"},
+                "cancer_type_id": {"type": "string"},
+                "sample_count": {"type": "integer"},
+                "molecular_profiles": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "profile_id": {"type": "string"},
+                      "name": {"type": "string"},
+                      "type": {"type": "string"}
+                    }
+                  }
+                },
+                "survival_attributes": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "id": {"type": "string"},
+                      "name": {"type": "string"}
+                    }
+                  }
+                },
+                "available_tcga_types": {
+                  "type": "array",
+                  "items": {"type": "string"}
+                }
+              }
+            },
+            "metadata": {"type": "object"}
+          }
+        },
+        {
+          "type": "object",
+          "properties": {
+            "error": {"type": "string"}
+          },
+          "required": ["error"]
+        }
+      ]
+    },
+    "test_examples": [
+      {
+        "operation": "get_study_summary",
+        "cancer": "LUAD"
+      }
+    ]
+  }
+]

@@ -1,30 +1,33 @@
 """
-Chem_sa_score
+CancerPrognosis_search_studies
 
-Compute the synthetic accessibility (SA) score for a molecule supplied as a SMILES string, using ...
+Search cBioPortal for cancer genomics studies by keyword. Find studies by cancer type, institutio...
 """
 
 from typing import Any, Optional, Callable
 from ._shared_client import get_shared_client
 
 
-def Chem_sa_score(
+def CancerPrognosis_search_studies(
     operation: str,
-    smiles: str,
+    keyword: str,
+    limit: Optional[int | Any] = None,
     *,
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
 ) -> Any:
     """
-    Compute the synthetic accessibility (SA) score for a molecule supplied as a SMILES string, using ...
+    Search cBioPortal for cancer genomics studies by keyword. Find studies by cancer type, institutio...
 
     Parameters
     ----------
     operation : str
         Operation type
-    smiles : str
-        SMILES string of the molecule (e.g., 'CC(=O)Oc1ccccc1C(=O)O' for aspirin)
+    keyword : str
+        Search keyword (e.g., 'breast', 'lung', 'TCGA', 'melanoma', 'glioblastoma')
+    limit : int | Any
+        Maximum number of results to return (default 20, max 100)
     stream_callback : Callable, optional
         Callback for streaming output
     use_cache : bool, default False
@@ -40,8 +43,8 @@ def Chem_sa_score(
 
     return get_shared_client().run_one_function(
         {
-            "name": "Chem_sa_score",
-            "arguments": {"operation": operation, "smiles": smiles},
+            "name": "CancerPrognosis_search_studies",
+            "arguments": {"operation": operation, "keyword": keyword, "limit": limit},
         },
         stream_callback=stream_callback,
         use_cache=use_cache,
@@ -49,4 +52,4 @@ def Chem_sa_score(
     )
 
 
-__all__ = ["Chem_sa_score"]
+__all__ = ["CancerPrognosis_search_studies"]

@@ -1,0 +1,117 @@
+[
+  {
+    "name": "NEB_Tm_calculate",
+    "description": "Calculate primer melting temperature (Tm) and annealing temperature (Ta) using the NEB Tm Calculator API. Uses thermodynamic nearest-neighbor calculations (SantaLucia 1998) with polymerase-specific salt corrections for accurate PCR temperature predictions. Supports all NEB DNA polymerases including Q5, Phusion, Taq, OneTaq, and custom buffer conditions. When two primers are provided, also calculates the recommended annealing temperature (Ta). Complements the local DNA_primer_design tool by providing manufacturer-validated Tm values. Common polymerase codes: 'q5-0' (Q5 High-Fidelity), 'phusion-0' (Phusion HF Buffer), 'taq-0' (Taq Standard Buffer), 'onetaq-0' (OneTaq Standard Buffer). Use NEB_Tm_list_polymerases to see all available product codes.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "primer_sequence": {
+          "type": "string",
+          "description": "Forward primer DNA sequence (5' to 3'). Must contain only A, T, C, G bases and be at least 10 nt long. Example: 'AGCGGATAACAATTTCACACAGGA'"
+        },
+        "primer_sequence_2": {
+          "type": ["string", "null"],
+          "description": "Optional reverse primer DNA sequence (5' to 3'). When provided, the API also calculates annealing temperature (Ta). Example: 'CCTCACTAAAGGGAACAAAAGCTG'"
+        },
+        "polymerase": {
+          "type": ["string", "null"],
+          "description": "NEB polymerase product code. Determines buffer composition for Tm calculation. Common codes: 'q5-0' (Q5 HF, default), 'phusion-0' (Phusion HF Buffer), 'taq-0' (Taq Standard Buffer), 'onetaq-0' (OneTaq Standard Buffer), 'custom' (specify monovalent_salt_mm). Use NEB_Tm_list_polymerases for full list. Default: 'q5-0'."
+        },
+        "primer_concentration": {
+          "type": ["integer", "null"],
+          "description": "Primer concentration in nanomolar (nM). Affects Tm calculation. Common values: 200-500 nM. Default: 250."
+        },
+        "monovalent_salt_mm": {
+          "type": ["integer", "null"],
+          "description": "Monovalent salt concentration in mM. Only used when polymerase is 'custom'. Typical range: 20-100 mM. Default: 50."
+        }
+      },
+      "required": ["primer_sequence"]
+    },
+    "fields": {
+      "endpoint": "calculate_tm"
+    },
+    "type": "NEBTmTool",
+    "test_examples": [
+      {
+        "primer_sequence": "AGCGGATAACAATTTCACACAGGA",
+        "primer_sequence_2": "CCTCACTAAAGGGAACAAAAGCTG",
+        "polymerase": "q5-0",
+        "primer_concentration": 250
+      },
+      {
+        "primer_sequence": "ATCGATCGATCGATCGATCG",
+        "polymerase": "taq-0",
+        "primer_concentration": 500
+      }
+    ],
+    "return_schema": {
+      "type": "object",
+      "properties": {
+        "primer_1": {
+          "type": "object",
+          "properties": {
+            "sequence": {"type": "string", "description": "Primer 1 sequence (uppercase)"},
+            "length": {"type": "integer", "description": "Primer 1 length in nucleotides"},
+            "gc_content": {"type": "number", "description": "GC content as percentage (0-100)"},
+            "tm_celsius": {"type": "number", "description": "Calculated melting temperature in Celsius"},
+            "tm_range": {
+              "type": "array",
+              "items": {"type": ["integer", "null"]},
+              "description": "Tm range [min, max] in Celsius"
+            }
+          }
+        },
+        "primer_2": {
+          "type": ["object", "null"],
+          "description": "Primer 2 data (only when primer_sequence_2 provided)"
+        },
+        "annealing_temperature_celsius": {
+          "type": ["integer", "null"],
+          "description": "Recommended annealing temperature (only with two primers)"
+        },
+        "polymerase": {"type": "string", "description": "Polymerase product code used"},
+        "primer_concentration_nM": {"type": "integer", "description": "Primer concentration used (nM)"},
+        "notes": {"type": ["array", "null"], "items": {"type": "string"}}
+      }
+    }
+  },
+  {
+    "name": "NEB_Tm_list_polymerases",
+    "description": "List all NEB DNA polymerase products available for Tm calculation. Returns product codes (prodcode), product names, and NEB catalog numbers for all 54 supported polymerases/kits. Includes Q5, Phusion, Taq, OneTaq, LongAmp, Vent, Deep Vent, and specialty polymerases. Use the returned prodcode values with NEB_Tm_calculate to get polymerase-specific melting temperatures. Can optionally filter by keyword (e.g., 'Q5', 'Phusion', 'hot start').",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "filter": {
+          "type": ["string", "null"],
+          "description": "Optional keyword to filter products by name, product code, or catalog number. Case-insensitive. Examples: 'Q5', 'Phusion', 'hot start', 'master mix', 'M0530'."
+        }
+      },
+      "required": []
+    },
+    "fields": {
+      "endpoint": "list_products"
+    },
+    "type": "NEBTmTool",
+    "test_examples": [
+      {},
+      {
+        "filter": "Q5"
+      },
+      {
+        "filter": "Phusion"
+      }
+    ],
+    "return_schema": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "prodcode": {"type": "string", "description": "Product code (e.g., 'q5-0', 'taq-0')"},
+          "name": {"type": "string", "description": "Product name"},
+          "catalog_number": {"type": "string", "description": "NEB catalog number"}
+        }
+      }
+    }
+  }
+]

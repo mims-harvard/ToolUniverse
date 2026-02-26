@@ -1,7 +1,7 @@
 """
 ToolUniverse Tools
 
-Type-safe Python interface to 1945 scientific tools.
+Type-safe Python interface to 1967 scientific tools.
 Each tool is in its own module for minimal import overhead.
 
 Usage:
@@ -50,6 +50,9 @@ from .ADMETAnalyzerAgent import ADMETAnalyzerAgent
 from .AHA_ACC_get_guideline import AHA_ACC_get_guideline
 from .AHA_ACC_search_guidelines import AHA_ACC_search_guidelines
 from .AHA_list_guidelines import AHA_list_guidelines
+from .Addgene_get_plasmid import Addgene_get_plasmid
+from .Addgene_search_depositors import Addgene_search_depositors
+from .Addgene_search_plasmids import Addgene_search_plasmids
 from .AdvancedCodeQualityAnalyzer import AdvancedCodeQualityAnalyzer
 from .AdverseEventICDMapper import AdverseEventICDMapper
 from .AdverseEventPredictionQuestionGenerator import (
@@ -184,6 +187,10 @@ from .CTD_get_gene_diseases import CTD_get_gene_diseases
 from .CTFPHC_list_guidelines import CTFPHC_list_guidelines
 from .CTFPHC_search_guidelines import CTFPHC_search_guidelines
 from .CallAgent import CallAgent
+from .CancerPrognosis_get_gene_expression import CancerPrognosis_get_gene_expression
+from .CancerPrognosis_get_study_summary import CancerPrognosis_get_study_summary
+from .CancerPrognosis_get_survival_data import CancerPrognosis_get_survival_data
+from .CancerPrognosis_search_studies import CancerPrognosis_search_studies
 from .CellPainting_get_screen_plates import CellPainting_get_screen_plates
 from .CellPainting_get_well_data import CellPainting_get_well_data
 from .CellPainting_search_screens import CellPainting_search_screens
@@ -1181,6 +1188,8 @@ from .NCI_search_cancer_resources import NCI_search_cancer_resources
 from .NDEx_get_network import NDEx_get_network
 from .NDEx_get_network_summary import NDEx_get_network_summary
 from .NDEx_search_networks import NDEx_search_networks
+from .NEB_Tm_calculate import NEB_Tm_calculate
+from .NEB_Tm_list_polymerases import NEB_Tm_list_polymerases
 from .NICE_Clinical_Guidelines_Search import NICE_Clinical_Guidelines_Search
 from .NICE_Guideline_Full_Text import NICE_Guideline_Full_Text
 from .NWS_get_active_alerts import NWS_get_active_alerts
@@ -1503,6 +1512,12 @@ from .PharmGKB_search_genes import PharmGKB_search_genes
 from .PharmGKB_search_variants import PharmGKB_search_variants
 from .PharmVar_get_alleles import PharmVar_get_alleles
 from .PharmVar_list_genes import PharmVar_list_genes
+from .PharmacoDB_get_biomarker_assoc import PharmacoDB_get_biomarker_assoc
+from .PharmacoDB_get_cell_line import PharmacoDB_get_cell_line
+from .PharmacoDB_get_compound import PharmacoDB_get_compound
+from .PharmacoDB_get_experiments import PharmacoDB_get_experiments
+from .PharmacoDB_list_datasets import PharmacoDB_list_datasets
+from .PharmacoDB_search import PharmacoDB_search
 from .Pharos_get_disease_targets import Pharos_get_disease_targets
 from .Pharos_get_target import Pharos_get_target
 from .Pharos_get_tdl_summary import Pharos_get_tdl_summary
@@ -1684,6 +1699,13 @@ from .STRING_get_network import STRING_get_network
 from .STRING_get_protein_interactions import STRING_get_protein_interactions
 from .STRING_map_identifiers import STRING_map_identifiers
 from .STRING_ppi_enrichment import STRING_ppi_enrichment
+from .SYNERGxDB_get_combo_matrix import SYNERGxDB_get_combo_matrix
+from .SYNERGxDB_get_combo_stats import SYNERGxDB_get_combo_stats
+from .SYNERGxDB_get_drug import SYNERGxDB_get_drug
+from .SYNERGxDB_list_cell_lines import SYNERGxDB_list_cell_lines
+from .SYNERGxDB_list_datasets import SYNERGxDB_list_datasets
+from .SYNERGxDB_list_drugs import SYNERGxDB_list_drugs
+from .SYNERGxDB_search_combos import SYNERGxDB_search_combos
 from .ScanProsite_scan_protein import ScanProsite_scan_protein
 from .ScientificTextSummarizer import ScientificTextSummarizer
 from .SemanticScholar_get_author import SemanticScholar_get_author
@@ -2477,6 +2499,9 @@ __all__ = [
     "AHA_ACC_get_guideline",
     "AHA_ACC_search_guidelines",
     "AHA_list_guidelines",
+    "Addgene_get_plasmid",
+    "Addgene_search_depositors",
+    "Addgene_search_plasmids",
     "AdvancedCodeQualityAnalyzer",
     "AdverseEventICDMapper",
     "AdverseEventPredictionQuestionGenerator",
@@ -2607,6 +2632,10 @@ __all__ = [
     "CTFPHC_list_guidelines",
     "CTFPHC_search_guidelines",
     "CallAgent",
+    "CancerPrognosis_get_gene_expression",
+    "CancerPrognosis_get_study_summary",
+    "CancerPrognosis_get_survival_data",
+    "CancerPrognosis_search_studies",
     "CellPainting_get_screen_plates",
     "CellPainting_get_well_data",
     "CellPainting_search_screens",
@@ -3362,6 +3391,8 @@ __all__ = [
     "NDEx_get_network",
     "NDEx_get_network_summary",
     "NDEx_search_networks",
+    "NEB_Tm_calculate",
+    "NEB_Tm_list_polymerases",
     "NICE_Clinical_Guidelines_Search",
     "NICE_Guideline_Full_Text",
     "NWS_get_active_alerts",
@@ -3568,6 +3599,12 @@ __all__ = [
     "PharmGKB_search_variants",
     "PharmVar_get_alleles",
     "PharmVar_list_genes",
+    "PharmacoDB_get_biomarker_assoc",
+    "PharmacoDB_get_cell_line",
+    "PharmacoDB_get_compound",
+    "PharmacoDB_get_experiments",
+    "PharmacoDB_list_datasets",
+    "PharmacoDB_search",
     "Pharos_get_disease_targets",
     "Pharos_get_target",
     "Pharos_get_tdl_summary",
@@ -3723,6 +3760,13 @@ __all__ = [
     "STRING_get_protein_interactions",
     "STRING_map_identifiers",
     "STRING_ppi_enrichment",
+    "SYNERGxDB_get_combo_matrix",
+    "SYNERGxDB_get_combo_stats",
+    "SYNERGxDB_get_drug",
+    "SYNERGxDB_list_cell_lines",
+    "SYNERGxDB_list_datasets",
+    "SYNERGxDB_list_drugs",
+    "SYNERGxDB_search_combos",
     "ScanProsite_scan_protein",
     "ScientificTextSummarizer",
     "SemanticScholar_get_author",

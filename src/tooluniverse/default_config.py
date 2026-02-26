@@ -913,6 +913,8 @@ default_tool_files = {
     "dna_tools": os.path.join(current_dir, "data", "dna_tools.json"),
     # Drug Synergy - Bliss, HSA, ZIP synergy models (local computation)
     "drug_synergy": os.path.join(current_dir, "data", "drug_synergy_tools.json"),
+    # SYNERGxDB - Drug combination synergy database (22,507 combos, 151 cell lines, 9 studies)
+    "synergxdb": os.path.join(current_dir, "data", "synergxdb_tools.json"),
     # Dose-Response Analysis - 4PL curve fitting and IC50 calculation (local)
     "dose_response": os.path.join(current_dir, "data", "dose_response_tools.json"),
     # Survival Analysis - Kaplan-Meier, log-rank test, Cox regression (local)
@@ -923,6 +925,16 @@ default_tool_files = {
     "l1000fwd": os.path.join(current_dir, "data", "l1000fwd_tools.json"),
     # Cell Painting - IDR high-content microscopy screens, plates, and well-level data
     "cellpainting": os.path.join(current_dir, "data", "cellpainting_tools.json"),
+    # PharmacoDB - Integrated cancer pharmacogenomics (CCLE, GDSC, CTRPv2, PRISM, etc.)
+    "pharmacodb": os.path.join(current_dir, "data", "pharmacodb_tools.json"),
+    # Cancer Prognosis - cBioPortal survival data, expression, study search
+    "cancer_prognosis": os.path.join(
+        current_dir, "data", "cancer_prognosis_tools.json"
+    ),
+    # NEB Tm Calculator - Primer melting/annealing temperature via NEB API
+    "neb_tm": os.path.join(current_dir, "data", "neb_tm_tools.json"),
+    # Addgene - Plasmid repository search, detail, and depositor queries
+    "addgene": os.path.join(current_dir, "data", "addgene_tools.json"),
 }
 
 # Auto-load any user-provided tools from ~/.tooluniverse/user_tools/

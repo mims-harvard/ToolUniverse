@@ -1,0 +1,359 @@
+[
+  {
+    "name": "PharmacoDB_search",
+    "type": "PharmacoDBTool",
+    "description": "Search PharmacoDB for compounds, cell lines, tissues, or genes by name. PharmacoDB integrates cancer pharmacogenomics data from 10 major datasets (CCLE, CTRPv2, FIMM, GDSC1, GDSC2, GRAY, NCI60, PRISM, UHNBreast, gCSI). Returns matching entities with their PharmacoDB UIDs and type (compound, cell_line, tissue, gene). Use this to find PharmacoDB identifiers for use with other PharmacoDB tools. Example: search for 'paclitaxel' to find its PharmacoDB compound ID.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "operation": {
+          "type": "string",
+          "enum": ["search"],
+          "description": "Operation type"
+        },
+        "query": {
+          "type": "string",
+          "description": "Text query to search across compounds, cell lines, tissues, and genes. Examples: 'paclitaxel', 'MCF-7', 'Breast', 'TP53'"
+        }
+      },
+      "required": ["operation", "query"]
+    },
+    "return_schema": {
+      "type": "object",
+      "properties": {
+        "query": {"type": "string"},
+        "results": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "id": {"type": "string", "description": "PharmacoDB UID (e.g., PDBC00058)"},
+              "value": {"type": "string", "description": "Entity name"},
+              "type": {"type": "string", "description": "Entity type: compound, cell_line, tissue, or gene"}
+            }
+          }
+        },
+        "num_results": {"type": "integer"}
+      }
+    },
+    "test_examples": [
+      {
+        "operation": "search",
+        "query": "paclitaxel"
+      }
+    ]
+  },
+  {
+    "name": "PharmacoDB_get_compound",
+    "type": "PharmacoDBTool",
+    "description": "Get detailed information about a compound/drug from PharmacoDB, including chemical annotations (SMILES, InChIKey, PubChem CID, ChEMBL ID, FDA approval status), the datasets it has been profiled in, and its known molecular targets with associated genes. Look up by compound name or PharmacoDB compound ID. Useful for characterizing drug properties and identifying which pharmacogenomics datasets include a specific compound. Example: get details for Paclitaxel, Erlotinib, or Lapatinib.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "operation": {
+          "type": "string",
+          "enum": ["get_compound"],
+          "description": "Operation type"
+        },
+        "compound_name": {
+          "type": ["string", "null"],
+          "description": "Compound name (e.g., 'Paclitaxel', 'Erlotinib'). Mutually exclusive with compound_id."
+        },
+        "compound_id": {
+          "type": ["integer", "null"],
+          "description": "PharmacoDB compound database ID (e.g., 49658 for Paclitaxel). Mutually exclusive with compound_name."
+        }
+      },
+      "required": ["operation"]
+    },
+    "return_schema": {
+      "type": "object",
+      "properties": {
+        "compound": {
+          "type": "object",
+          "properties": {
+            "id": {"type": "integer"},
+            "name": {"type": "string"},
+            "uid": {"type": "string"},
+            "annotation": {
+              "type": "object",
+              "properties": {
+                "smiles": {"type": ["string", "null"]},
+                "inchikey": {"type": ["string", "null"]},
+                "pubchem": {"type": ["string", "null"]},
+                "fda_status": {"type": ["string", "null"]},
+                "chembl": {"type": ["string", "null"]},
+                "reactome": {"type": ["string", "null"]}
+              }
+            },
+            "datasets": {"type": "array", "items": {"type": "object"}}
+          }
+        },
+        "targets": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "target_id": {"type": "integer"},
+              "target_name": {"type": "string"},
+              "genes": {"type": "array"}
+            }
+          }
+        }
+      }
+    },
+    "test_examples": [
+      {
+        "operation": "get_compound",
+        "compound_name": "Paclitaxel"
+      }
+    ]
+  },
+  {
+    "name": "PharmacoDB_get_cell_line",
+    "type": "PharmacoDBTool",
+    "description": "Get detailed information about a cancer cell line from PharmacoDB, including tissue of origin, disease annotations, dataset-specific synonyms, and accession IDs. Look up by cell line name or PharmacoDB cell ID. PharmacoDB harmonizes cell line identifiers across 10 pharmacogenomics datasets. Example: get details for MCF-7 breast cancer or A549 lung cancer cell line.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "operation": {
+          "type": "string",
+          "enum": ["get_cell_line"],
+          "description": "Operation type"
+        },
+        "cell_name": {
+          "type": ["string", "null"],
+          "description": "Cell line name (e.g., 'MCF-7', 'A549', 'HeLa'). Mutually exclusive with cell_id."
+        },
+        "cell_id": {
+          "type": ["integer", "null"],
+          "description": "PharmacoDB cell line database ID (e.g., 273 for MCF-7). Mutually exclusive with cell_name."
+        }
+      },
+      "required": ["operation"]
+    },
+    "return_schema": {
+      "type": "object",
+      "properties": {
+        "id": {"type": "integer"},
+        "name": {"type": "string"},
+        "uid": {"type": "string"},
+        "tissue": {
+          "type": "object",
+          "properties": {
+            "id": {"type": "integer"},
+            "name": {"type": "string"}
+          }
+        },
+        "synonyms": {"type": "array"},
+        "diseases": {"type": "array", "items": {"type": "string"}},
+        "accession_id": {"type": ["string", "null"]}
+      }
+    },
+    "test_examples": [
+      {
+        "operation": "get_cell_line",
+        "cell_name": "MCF-7"
+      }
+    ]
+  },
+  {
+    "name": "PharmacoDB_get_experiments",
+    "type": "PharmacoDBTool",
+    "description": "Get drug sensitivity experiments from PharmacoDB with dose-response curves and pharmacological profiles. Returns experiment data including raw dose-response measurements and fitted parameters (IC50, EC50, AAC, Hill slope, Einf, DSS1/2/3). Filter by compound name, cell line name, and/or dataset. Integrates data from CCLE, CTRPv2, FIMM, GDSC1, GDSC2, GRAY, NCI60, PRISM, UHNBreast, and gCSI. Essential for comparing drug sensitivity across cell lines and datasets. Example: get Paclitaxel dose-response data across all cell lines.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "operation": {
+          "type": "string",
+          "enum": ["get_experiments"],
+          "description": "Operation type"
+        },
+        "compound_name": {
+          "type": ["string", "null"],
+          "description": "Compound/drug name to filter experiments (e.g., 'Paclitaxel', 'Erlotinib')"
+        },
+        "cell_line_name": {
+          "type": ["string", "null"],
+          "description": "Cell line name to filter experiments (e.g., 'MCF-7', 'A549')"
+        },
+        "dataset_name": {
+          "type": ["string", "null"],
+          "description": "Dataset name to filter (e.g., 'GDSC1', 'CCLE', 'CTRPv2', 'PRISM')"
+        },
+        "per_page": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 100,
+          "default": 10,
+          "description": "Number of experiments to return per page (default 10, max 100)"
+        }
+      },
+      "required": ["operation"]
+    },
+    "return_schema": {
+      "type": "object",
+      "properties": {
+        "experiments": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "id": {"type": "integer"},
+              "cell_line": {"type": "object"},
+              "tissue": {"type": "object"},
+              "compound": {"type": "object"},
+              "dataset": {"type": "object"},
+              "profile": {
+                "type": "object",
+                "properties": {
+                  "IC50": {"type": ["number", "null"]},
+                  "EC50": {"type": ["number", "null"]},
+                  "AAC": {"type": ["number", "null"]},
+                  "HS": {"type": ["number", "null"]},
+                  "Einf": {"type": ["number", "null"]},
+                  "DSS1": {"type": ["number", "null"]},
+                  "DSS2": {"type": ["number", "null"]},
+                  "DSS3": {"type": ["number", "null"]}
+                }
+              },
+              "dose_response": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "dose": {"type": "number"},
+                    "response": {"type": "number"}
+                  }
+                }
+              }
+            }
+          }
+        },
+        "num_experiments": {"type": "integer"},
+        "filters_applied": {"type": "object"}
+      }
+    },
+    "test_examples": [
+      {
+        "operation": "get_experiments",
+        "compound_name": "Paclitaxel",
+        "per_page": 5
+      }
+    ]
+  },
+  {
+    "name": "PharmacoDB_list_datasets",
+    "type": "PharmacoDBTool",
+    "description": "List all cancer pharmacogenomics datasets available in PharmacoDB. Returns dataset names and IDs for the integrated collection including CCLE (Cancer Cell Line Encyclopedia), CTRPv2 (Cancer Therapeutics Response Portal), FIMM (Institute for Molecular Medicine Finland), GDSC1/GDSC2 (Genomics of Drug Sensitivity in Cancer), GRAY, NCI60, PRISM, UHNBreast, and gCSI (Genentech Cell Screening Initiative). Use dataset names to filter experiments and biomarker queries.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "operation": {
+          "type": "string",
+          "enum": ["list_datasets"],
+          "description": "Operation type"
+        }
+      },
+      "required": ["operation"]
+    },
+    "return_schema": {
+      "type": "object",
+      "properties": {
+        "datasets": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "id": {"type": "integer"},
+              "name": {"type": "string"}
+            }
+          }
+        },
+        "num_datasets": {"type": "integer"}
+      }
+    },
+    "test_examples": [
+      {
+        "operation": "list_datasets"
+      }
+    ]
+  },
+  {
+    "name": "PharmacoDB_get_biomarker_assoc",
+    "type": "PharmacoDBTool",
+    "description": "Get gene-compound biomarker associations from PharmacoDB showing how gene expression or other molecular features correlate with drug sensitivity. Returns statistical associations including effect estimate, p-values, FDR, sensitivity statistic (AAC/IC50), molecular data type (rna/cnv/mutation), sample size, and tissue/dataset context. Filter by compound, gene (Ensembl ID), tissue, and molecular data type. Useful for pharmacogenomics biomarker discovery and validating drug sensitivity predictors. Example: find genes associated with Paclitaxel sensitivity in breast cancer.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "operation": {
+          "type": "string",
+          "enum": ["get_biomarker_associations"],
+          "description": "Operation type"
+        },
+        "compound_name": {
+          "type": ["string", "null"],
+          "description": "Compound name (e.g., 'Paclitaxel', 'Erlotinib'). Either compound_name or compound_id required."
+        },
+        "compound_id": {
+          "type": ["integer", "null"],
+          "description": "PharmacoDB compound ID. Either compound_name or compound_id required."
+        },
+        "gene_name": {
+          "type": ["string", "null"],
+          "description": "Gene Ensembl ID to filter (e.g., 'ENSG00000141510' for TP53)"
+        },
+        "tissue_name": {
+          "type": ["string", "null"],
+          "description": "Tissue type to filter (e.g., 'Breast', 'Lung', 'Skin')"
+        },
+        "mdata_type": {
+          "type": ["string", "null"],
+          "description": "Molecular data type: 'rna' (gene expression), 'cnv' (copy number), 'mutation'"
+        },
+        "per_page": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 100,
+          "default": 20,
+          "description": "Number of results per page (default 20, max 100)"
+        }
+      },
+      "required": ["operation"]
+    },
+    "return_schema": {
+      "type": "object",
+      "properties": {
+        "associations": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "id": {"type": "integer"},
+              "gene": {"type": "object"},
+              "compound": {"type": "object"},
+              "tissue": {"type": "object"},
+              "dataset": {"type": "object"},
+              "estimate": {"type": ["number", "null"], "description": "Effect size estimate"},
+              "pvalue_analytic": {"type": ["number", "null"], "description": "Analytic p-value"},
+              "fdr_analytic": {"type": ["number", "null"], "description": "FDR-corrected p-value"},
+              "sens_stat": {"type": "string", "description": "Sensitivity statistic used (AAC or IC50)"},
+              "mDataType": {"type": "string", "description": "Molecular data type (rna, cnv, mutation)"},
+              "n": {"type": ["integer", "null"], "description": "Number of samples"}
+            }
+          }
+        },
+        "num_associations": {"type": "integer"},
+        "filters_applied": {"type": "object"}
+      }
+    },
+    "test_examples": [
+      {
+        "operation": "get_biomarker_associations",
+        "compound_id": 49658,
+        "tissue_name": "Breast",
+        "per_page": 5
+      }
+    ]
+  }
+]

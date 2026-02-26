@@ -1,30 +1,30 @@
 """
-Chem_sa_score
+CancerPrognosis_get_study_summary
 
-Compute the synthetic accessibility (SA) score for a molecule supplied as a SMILES string, using ...
+Get summary information for a cancer study including available molecular profiles (mutations, exp...
 """
 
 from typing import Any, Optional, Callable
 from ._shared_client import get_shared_client
 
 
-def Chem_sa_score(
+def CancerPrognosis_get_study_summary(
     operation: str,
-    smiles: str,
+    cancer: str,
     *,
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
 ) -> Any:
     """
-    Compute the synthetic accessibility (SA) score for a molecule supplied as a SMILES string, using ...
+    Get summary information for a cancer study including available molecular profiles (mutations, exp...
 
     Parameters
     ----------
     operation : str
         Operation type
-    smiles : str
-        SMILES string of the molecule (e.g., 'CC(=O)Oc1ccccc1C(=O)O' for aspirin)
+    cancer : str
+        TCGA cancer type abbreviation (e.g., 'BRCA', 'LUAD') or cBioPortal study ID
     stream_callback : Callable, optional
         Callback for streaming output
     use_cache : bool, default False
@@ -40,8 +40,8 @@ def Chem_sa_score(
 
     return get_shared_client().run_one_function(
         {
-            "name": "Chem_sa_score",
-            "arguments": {"operation": operation, "smiles": smiles},
+            "name": "CancerPrognosis_get_study_summary",
+            "arguments": {"operation": operation, "cancer": cancer},
         },
         stream_callback=stream_callback,
         use_cache=use_cache,
@@ -49,4 +49,4 @@ def Chem_sa_score(
     )
 
 
-__all__ = ["Chem_sa_score"]
+__all__ = ["CancerPrognosis_get_study_summary"]
