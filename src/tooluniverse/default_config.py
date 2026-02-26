@@ -957,6 +957,8 @@ default_tool_files = {
     "vdjdb": os.path.join(current_dir, "data", "vdjdb_tools.json"),
     # PDBePISA - Protein Interfaces, Surfaces and Assemblies analysis
     "pdbepisa": os.path.join(current_dir, "data", "pdbepisa_tools.json"),
+    # DynaMut2 - Protein stability prediction from single-point mutations (ddG)
+    "dynamut2": os.path.join(current_dir, "data", "dynamut2_tools.json"),
 }
 
 # Auto-load any user-provided tools from ~/.tooluniverse/user_tools/

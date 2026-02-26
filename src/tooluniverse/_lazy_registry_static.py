@@ -96,6 +96,7 @@ STATIC_LAZY_REGISTRY = {
     "DiseaseTargetScoreTool": "graphql_tool",
     "DoseResponseTool": "dose_response_tool",
     "DrugSynergyTool": "drug_synergy_tool",
+    "DynaMut2Tool": "dynamut2_tool",
     "DynamicPackageDiscovery": "package_discovery_tool",
     "EBIProteinsCoordinatesTool": "ebi_proteins_coordinates_tool",
     "EBIProteinsEpitopeTool": "ebi_proteins_epitope_tool",
