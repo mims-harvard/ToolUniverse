@@ -606,17 +606,24 @@ class DNATool(BaseTool):
                         f"{sorted(NEB_ENZYMES.keys())}"
                     ),
                 }
-            enzyme_dict = {
-                name: seq
-                for name, seq in NEB_ENZYMES.items()
-                if name in enzymes_requested
-            }
-            not_found = [e for e in enzymes_requested if e not in NEB_ENZYMES]
-            if not_found:
+            # Case-insensitive normalization: enzyme names like "ecori", "ECORI",
+            # or "EcoRi" are silently mapped to the canonical form "EcoRI".
+            _neb_lower = {name.lower(): name for name in NEB_ENZYMES}
+            normalized_requested = []
+            unknown_enzymes = []
+            for e in enzymes_requested:
+                if e in NEB_ENZYMES:
+                    normalized_requested.append(e)
+                elif e.lower() in _neb_lower:
+                    normalized_requested.append(_neb_lower[e.lower()])
+                else:
+                    unknown_enzymes.append(e)
+            if unknown_enzymes:
                 return {
                     "status": "error",
-                    "error": f"Unknown enzymes: {not_found}. Available: {sorted(NEB_ENZYMES.keys())}",
+                    "error": f"Unknown enzymes: {unknown_enzymes}. Available: {sorted(NEB_ENZYMES.keys())}",
                 }
+            enzyme_dict = {name: NEB_ENZYMES[name] for name in normalized_requested}
         else:
             enzyme_dict = NEB_ENZYMES
 
@@ -714,7 +721,7 @@ class DNATool(BaseTool):
 
         _STOP_SET = {"TAA", "TAG", "TGA"}
 
-        def find_orfs_in_sequence(seq: str, is_reverse: bool = False) -> List[Dict]:
+        def find_orfs_in_sequence(seq: str, is_reverse: bool = False):
             """Scan all three reading frames using a state-machine (open/closed).
 
             Note: Uses a greedy open/close state machine — opens at the first ATG
@@ -722,8 +729,13 @@ class DNATool(BaseTool):
             (ATG codons embedded within an already-open reading frame) are not
             detected; only the outermost ORF starting at the earliest ATG is
             reported per reading frame.
+
+            Returns: (closed_orfs, open_orf_starts)
+              - closed_orfs: list of ORFs that have an in-frame stop codon
+              - open_orf_starts: list of (frame, start_1based) for ORFs with no stop
             """
             orfs = []
+            open_starts = []
             seq_len = len(seq)
             strand_label = "-" if is_reverse else "+"
 
@@ -761,28 +773,76 @@ class DNATool(BaseTool):
                                 )
                             orf_open = False
                     pos += 3
-            return orfs
+
+                # After exhausting all codons in this frame: if orf_open is still
+                # True, the ORF started but never encountered an in-frame stop codon.
+                # This is a truncated/open ORF — record it so callers are informed.
+                if orf_open:
+                    partial_len = seq_len - orf_start_idx
+                    if partial_len >= min_length:
+                        if is_reverse:
+                            open_coord = seq_len - orf_start_idx  # 1-based end
+                        else:
+                            open_coord = orf_start_idx + 1  # 1-based start
+                        open_starts.append(
+                            {
+                                "frame": frame_offset + 1,
+                                "strand": strand_label,
+                                "start": open_coord,
+                                "partial_length_nt": partial_len,
+                            }
+                        )
+            return orfs, open_starts
 
         all_orfs = []
+        all_open_starts = []
 
         if strand in ("forward", "both"):
-            all_orfs.extend(find_orfs_in_sequence(sequence, is_reverse=False))
+            closed, opens = find_orfs_in_sequence(sequence, is_reverse=False)
+            all_orfs.extend(closed)
+            all_open_starts.extend(opens)
 
         if strand in ("reverse", "both"):
             rev_comp = sequence.translate(COMPLEMENT)[::-1]
-            all_orfs.extend(find_orfs_in_sequence(rev_comp, is_reverse=True))
+            closed, opens = find_orfs_in_sequence(rev_comp, is_reverse=True)
+            all_orfs.extend(closed)
+            all_open_starts.extend(opens)
 
         all_orfs.sort(key=lambda x: x["length_nt"], reverse=True)
 
-        return {
-            "status": "success",
-            "data": {
-                "sequence_length": len(sequence),
-                "min_length_nt": min_length,
-                "num_orfs_found": len(all_orfs),
-                "orfs": all_orfs[:50],
-            },
+        total_found = len(all_orfs)
+        displayed = all_orfs[:50]
+
+        data = {
+            "sequence_length": len(sequence),
+            "min_length_nt": min_length,
+            "num_orfs_found": total_found,
+            "orfs": displayed,
         }
+        # Warn when the result list is truncated: num_orfs_found > 50 but only
+        # 50 entries are returned, which would appear as missing results.
+        if total_found > 50:
+            data["results_truncated"] = True
+            data["results_truncated_note"] = (
+                f"Only the 50 longest ORFs are shown out of {total_found} found. "
+                "num_orfs_found reflects the full count."
+            )
+        # Warn about open ORFs (no in-frame stop codon before end of sequence).
+        # These are common in partial transcripts, incomplete assemblies, or
+        # CDS sequences deliberately lacking a stop codon.
+        if all_open_starts:
+            data["open_orfs_warning"] = (
+                f"{len(all_open_starts)} open ORF(s) detected "
+                f"(ATG with no in-frame stop codon before end of sequence): "
+                + ", ".join(
+                    f"frame {o['frame']} strand {o['strand']} at position {o['start']} "
+                    f"({o['partial_length_nt']} nt partial)"
+                    for o in all_open_starts
+                )
+                + ". These may be truncated sequences or CDSs lacking a stop codon."
+            )
+
+        return {"status": "success", "data": data}
 
     def _calculate_gc_content(self, arguments: Dict[str, Any]) -> Dict[str, Any]:
         """Calculate GC content and nucleotide composition of a DNA sequence."""
@@ -1054,13 +1114,23 @@ class DNATool(BaseTool):
                         f"{sorted(NEB_ENZYMES.keys())}"
                     ),
                 }
-            not_found = [e for e in enzymes_requested if e not in NEB_ENZYMES]
-            if not_found:
+            # Case-insensitive normalization: "ecori" → "EcoRI", etc.
+            _neb_lower = {name.lower(): name for name in NEB_ENZYMES}
+            normalized_requested = []
+            unknown_enzymes = []
+            for e in enzymes_requested:
+                if e in NEB_ENZYMES:
+                    normalized_requested.append(e)
+                elif e.lower() in _neb_lower:
+                    normalized_requested.append(_neb_lower[e.lower()])
+                else:
+                    unknown_enzymes.append(e)
+            if unknown_enzymes:
                 return {
                     "status": "error",
-                    "error": f"Unknown enzymes: {not_found}. Available: {sorted(NEB_ENZYMES.keys())}",
+                    "error": f"Unknown enzymes: {unknown_enzymes}. Available: {sorted(NEB_ENZYMES.keys())}",
                 }
-            enzyme_dict = {name: NEB_ENZYMES[name] for name in enzymes_requested}
+            enzyme_dict = {name: NEB_ENZYMES[name] for name in normalized_requested}
         else:
             enzyme_dict = NEB_ENZYMES
 
@@ -1686,6 +1756,64 @@ class DNATool(BaseTool):
         else:
             # BbsI site: GAAGACNN where NN is 2 bp spacer
             fwd_site_prefix = "GAAGACAA"
+
+        # Compute the recognition sequences and their lengths once.
+        rec_seq_len = len(rec_seqs[0][0])  # all rec seqs same length (6 for BsaI/BbsI)
+        overlap_len = (
+            rec_seq_len - 1
+        )  # = 5; a site can span up to 5 chars of part boundary
+
+        # Pre-check all junctions BEFORE building full_sequences, so errors are
+        # reported before any partial results are emitted.
+        junction_errors = []
+        for i, part in enumerate(parts_clean):
+            left_oh = overhangs[i]
+            right_oh = overhangs[i + 1]
+            rev_right_oh = rev_comp(right_oh)
+
+            # Left junction: last overlap_len chars of left_oh + first overlap_len
+            # chars of part. The selected overhangs are 4 bp; overlap_len = 5 means
+            # we need all 4 chars of left_oh + first 1 char of part.
+            left_junction = left_oh[-overlap_len:] + part[:overlap_len]
+            # Right junction: last overlap_len chars of part + first overlap_len
+            # chars of rev_right_oh (which is rev_comp(right_oh)).
+            right_junction = part[-overlap_len:] + rev_right_oh[:overlap_len]
+
+            for rec_seq, direction in rec_seqs:
+                if rec_seq in left_junction:
+                    pos = left_junction.find(rec_seq)
+                    junction_errors.append(
+                        f"Part {i + 1}: an unintended {enzyme_display} recognition "
+                        f"site ({rec_seq}, {direction}) is created at the left junction "
+                        f"between overhang '{left_oh}' and the part sequence "
+                        f"(window: '{left_junction}', site at offset {pos}). "
+                        "Modify the first few nucleotides of the part sequence to "
+                        "eliminate this unintended site."
+                    )
+                if rec_seq in right_junction:
+                    pos = right_junction.find(rec_seq)
+                    # Report position relative to the part sequence end
+                    part_chars = min(overlap_len, len(part))
+                    junction_errors.append(
+                        f"Part {i + 1}: an unintended {enzyme_display} recognition "
+                        f"site ({rec_seq}, {direction}) is created at the right junction "
+                        f"between the part sequence and the reverse complement of overhang "
+                        f"'{right_oh}' (rc='{rev_right_oh}', window: '{right_junction}', "
+                        f"site at offset {pos}). Modify the last {part_chars} nucleotides "
+                        "of the part sequence to eliminate this unintended site."
+                    )
+
+        if junction_errors:
+            return {
+                "status": "error",
+                "error": (
+                    f"Golden Gate design failed — unintended {enzyme_display} recognition "
+                    f"site(s) created at part/overhang junction(s). This would cause the "
+                    f"enzyme to cut within the assembled product, destroying the construct. "
+                    f"Fix {len(junction_errors)} issue(s): "
+                    + " | ".join(junction_errors)
+                ),
+            }
 
         parts_with_overhangs = []
         for i, part in enumerate(parts_clean):

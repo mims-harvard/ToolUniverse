@@ -199,6 +199,19 @@ class DoseResponseTool(BaseTool):
             # When n_data == n_parameters (e.g. exactly 4 points for a 4PL model),
             # scipy sets pcov to all-inf (zero degrees of freedom for residuals).
             # Guard: replace inf with None so the output is valid JSON.
+            # Stimulatory curve check (compute once; applied to both singular and main paths).
+            # In the 4PL model: f(x→0) = emin, f(x→∞) = emax.
+            # Inhibitory curves: emin > emax.  Stimulatory curves: emax > emin.
+            stimulatory_warning = None
+            if float(emax) > float(emin):
+                stimulatory_warning = (
+                    "Stimulatory dose-response detected: the fitted curve rises with "
+                    f"increasing concentration (emin = {round(float(emin), 4)}, "
+                    f"emax = {round(float(emax), 4)}, emax > emin). "
+                    "The fitted EC50 represents activation potency (EC50), not inhibitory "
+                    "potency (IC50). Interpret as EC50/ED50 rather than IC50."
+                )
+
             perr = np.sqrt(np.diag(np.abs(pcov)))
             if not np.all(np.isfinite(perr)):
                 # Covariance is singular — CIs and SEs are not estimable.
@@ -220,6 +233,8 @@ class DoseResponseTool(BaseTool):
                 }
                 if hill_bound_warning:
                     singular_result["hill_slope_warning"] = hill_bound_warning
+                if stimulatory_warning:
+                    singular_result["stimulatory_curve_warning"] = stimulatory_warning
                 return singular_result
 
             # Log-scale delta method CI (Motulsky & Christopoulos 2004):
@@ -265,6 +280,8 @@ class DoseResponseTool(BaseTool):
                 main_result["ci_note"] = ci_overflow_note
             if hill_bound_warning:
                 main_result["hill_slope_warning"] = hill_bound_warning
+            if stimulatory_warning:
+                main_result["stimulatory_curve_warning"] = stimulatory_warning
             return main_result
         except RuntimeError:
             return {"error": "4PL curve fitting did not converge. Check data quality."}
@@ -315,6 +332,8 @@ class DoseResponseTool(BaseTool):
             data["ci_note"] = result["ci_note"]
         if "hill_slope_warning" in result:
             data["hill_slope_warning"] = result["hill_slope_warning"]
+        if "stimulatory_curve_warning" in result:
+            data["stimulatory_curve_warning"] = result["stimulatory_curve_warning"]
         return {"status": "success", "data": data}
 
     def _calculate_ic50(self, arguments: Dict[str, Any]) -> Dict[str, Any]:
@@ -355,6 +374,8 @@ class DoseResponseTool(BaseTool):
             data["ci_note"] = result["ci_note"]
         if "hill_slope_warning" in result:
             data["hill_slope_warning"] = result["hill_slope_warning"]
+        if "stimulatory_curve_warning" in result:
+            data["stimulatory_curve_warning"] = result["stimulatory_curve_warning"]
 
         # Warn if the IC50 falls outside the tested concentration range
         # (extrapolated IC50 values are unreliable).
@@ -398,11 +419,22 @@ class DoseResponseTool(BaseTool):
         if not math.isfinite(fold_shift):
             return "Cannot determine potency (non-finite fold shift)"
         if fold_shift > 1:
-            # IC50_B > IC50_A → A is fold_shift times more potent
-            return f"Compound A is {round(fold_shift, 2)}x more potent than B"
+            # IC50_B > IC50_A → A is fold_shift times more potent.
+            # Guard near-unity: round(1.004, 2) = 1.0 via IEEE 754, which would
+            # produce "Compound A is 1.0x more potent" — contradicting more_potent='A'.
+            display = round(fold_shift, 2)
+            if display <= 1.0:
+                return f"Compound A marginally more potent than B (fold shift = {fold_shift:.4g})"
+            return f"Compound A is {display}x more potent than B"
         if fold_shift < 1:
-            # IC50_A > IC50_B → B is (1/fold_shift) times more potent
-            return f"Compound B is {round(1 / fold_shift, 2)}x more potent than A"
+            # IC50_A > IC50_B → B is (1/fold_shift) times more potent.
+            inv = 1 / fold_shift
+            inv_display = round(inv, 2)
+            if inv_display <= 1.0:
+                return (
+                    f"Compound B marginally more potent than A (fold shift = {inv:.4g})"
+                )
+            return f"Compound B is {inv_display}x more potent than A"
         return "Equal potency"
 
     def _compare_potency(self, arguments: Dict[str, Any]) -> Dict[str, Any]:
@@ -445,25 +477,41 @@ class DoseResponseTool(BaseTool):
         # potent". Both fields must use the same underlying value to avoid contradictions.
         fold_shift_out = float(fold_shift) if fold_shift is not None else None
 
-        return {
-            "status": "success",
-            "data": {
-                "compound_a": {
-                    "ic50": ic50_a,
-                    "hill_slope": result_a["hill_slope"],
-                    "emax": result_a["top"],
-                    "r_squared": result_a["r_squared"],
-                },
-                "compound_b": {
-                    "ic50": ic50_b,
-                    "hill_slope": result_b["hill_slope"],
-                    "emax": result_b["top"],
-                    "r_squared": result_b["r_squared"],
-                },
-                "ic50_fold_shift_b_over_a": fold_shift_out,
-                "more_potent": "A"
-                if ic50_a < ic50_b
-                else ("B" if ic50_b < ic50_a else "Equal"),
-                "potency_interpretation": self._interpret_potency(fold_shift),
+        # Warn when either compound's fit is poor (R² < 0.8): the IC50 and
+        # fold-shift derived from a poorly-fitted curve are unreliable.
+        poor_fit_warnings = []
+        rsq_a = result_a["r_squared"]
+        rsq_b = result_b["r_squared"]
+        if rsq_a < 0.8:
+            poor_fit_warnings.append(
+                f"Compound A R² = {round(rsq_a, 4)} (< 0.8): poor curve fit. "
+                "The IC50 estimate for compound A is unreliable."
+            )
+        if rsq_b < 0.8:
+            poor_fit_warnings.append(
+                f"Compound B R² = {round(rsq_b, 4)} (< 0.8): poor curve fit. "
+                "The IC50 estimate for compound B is unreliable."
+            )
+
+        data = {
+            "compound_a": {
+                "ic50": ic50_a,
+                "hill_slope": result_a["hill_slope"],
+                "emax": result_a["top"],
+                "r_squared": rsq_a,
             },
+            "compound_b": {
+                "ic50": ic50_b,
+                "hill_slope": result_b["hill_slope"],
+                "emax": result_b["top"],
+                "r_squared": rsq_b,
+            },
+            "ic50_fold_shift_b_over_a": fold_shift_out,
+            "more_potent": "A"
+            if ic50_a < ic50_b
+            else ("B" if ic50_b < ic50_a else "Equal"),
+            "potency_interpretation": self._interpret_potency(fold_shift),
         }
+        if poor_fit_warnings:
+            data["poor_fit_warning"] = " | ".join(poor_fit_warnings)
+        return {"status": "success", "data": data}

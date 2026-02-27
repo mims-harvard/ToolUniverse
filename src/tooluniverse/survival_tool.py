@@ -596,6 +596,34 @@ class SurvivalTool(BaseTool):
                 ),
             }
 
+        # Detect pairwise collinearity: identical or perfectly correlated covariates
+        # silently split their combined coefficient between the two columns, producing
+        # halved (wrong) hazard ratios with no error or warning in the current code.
+        for i in range(p):
+            for j in range(i + 1, p):
+                if np.allclose(X[:, i], X[:, j]) or np.allclose(X[:, i], -X[:, j]):
+                    return {
+                        "status": "error",
+                        "error": (
+                            f"Covariates '{cov_names[i]}' and '{cov_names[j]}' are "
+                            "perfectly collinear (identical or perfectly anti-correlated). "
+                            "Cox regression cannot distinguish their effects — remove one "
+                            "of the duplicated covariates before fitting."
+                        ),
+                    }
+
+        # Low EPV (events-per-variable) warning: standard practice requires ≥10 events
+        # per covariate. Below this threshold, coefficients may be unstable or overfitted.
+        low_epv_warning = None
+        if n_events < 10 * p:
+            low_epv_warning = (
+                f"Low events-per-variable (EPV = {n_events} events / {p} covariate(s) "
+                f"= {n_events / p:.1f}). Standard practice recommends at least 10 events "
+                "per covariate for reliable Cox regression estimates. With low EPV, "
+                "coefficients may be unstable or overfitted. Consider reducing the "
+                "number of covariates or collecting more event data."
+            )
+
         X_std[X_std == 0] = 1
         X_std_norm = (X - X_mean) / X_std
 
@@ -719,15 +747,15 @@ class SurvivalTool(BaseTool):
                 entry["separation_warning"] = separation_warning
             coef_results.append(entry)
 
-        return {
-            "status": "success",
-            "data": {
-                "method": "Cox Proportional Hazards",
-                "n_subjects": n,
-                "n_events": int(np.sum(evs == 1)),
-                "coefficients": coef_results,
-                "log_likelihood": round(float(-result.fun), 4),
-                "convergence": result.success,
-                "note": "HR > 1 indicates increased hazard (worse survival); HR < 1 indicates decreased hazard (better survival).",
-            },
+        result_data = {
+            "method": "Cox Proportional Hazards",
+            "n_subjects": n,
+            "n_events": int(np.sum(evs == 1)),
+            "coefficients": coef_results,
+            "log_likelihood": round(float(-result.fun), 4),
+            "convergence": result.success,
+            "note": "HR > 1 indicates increased hazard (worse survival); HR < 1 indicates decreased hazard (better survival).",
         }
+        if low_epv_warning:
+            result_data["low_epv_warning"] = low_epv_warning
+        return {"status": "success", "data": result_data}

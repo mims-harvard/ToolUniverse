@@ -637,6 +637,21 @@ class NCATool(BaseTool):
             },
         }
 
+        # Warn when the fit quality is extremely poor (R² < 0.1): this typically
+        # indicates a flat concentration profile (no appreciable elimination over
+        # the sampling window) or data too noisy for 1-compartment modeling.
+        # The reported t½ and k_el are unreliable — they reflect the optimizer
+        # landing at an arbitrary (often boundary) parameter set, not real PK.
+        if r_squared < 0.1:
+            result["fit_quality_warning"] = (
+                f"Very poor fit (R² = {round(r_squared, 4)}): the 1-compartment "
+                "model explains < 10% of the variance in the concentration data. "
+                "This often indicates a flat profile (no measurable elimination "
+                "over the sampling window), highly noisy data, or a multi-phasic "
+                "decline requiring a 2-compartment or non-compartmental approach. "
+                "The t½ and k_el estimates are unreliable."
+            )
+
         # Warn when k_el is at or near the optimization lower bound (1e-9).
         # At the bound, the optimizer could not find a smaller value — the half-life
         # estimate (ln2/k_el) may be astronomically large and unreliable.

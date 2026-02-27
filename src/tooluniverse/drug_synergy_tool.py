@@ -332,26 +332,36 @@ class DrugSynergyTool(BaseTool):
             }
 
         # Scale detection: convert viability → inhibition = 1 - viability.
-        # Robust heuristic: use max > 2 (not > 1) as the percentage-scale threshold.
-        # The old threshold (> 1) corrupts fractional-scale data when any cell
-        # slightly exceeds 1.0 due to normalization noise (e.g., 1.05) — the entire
-        # matrix would be divided by 100, misinterpreting 0.80 viability as 0.008
-        # (99.2% inhibition). Values in (1, 2] are likely fractional data with noise.
+        # Threshold rationale:
+        #   > 5: unambiguously percentage scale (typical values like 50, 80, 95)
+        #   (1, 5]: ambiguous — most likely fractional with noise or mild outliers;
+        #           treat as fractional and warn (old threshold of > 2 silently treated
+        #           values like 2.05 as percentage scale, corrupting the data)
+        #   ≤ 1: clearly fractional scale (0–1)
         vm_max = float(vm.max())
         scale_note = None
-        if vm_max > 2:
-            # Clearly percentage scale (0–100)
+        if vm_max > 5:
+            # Unambiguously percentage scale (0–100): values like 50, 80, 95
             inhibition = 1 - vm / 100
         elif vm_max > 1:
-            # Ambiguous: max exceeds 1 but is ≤ 2. Most likely fractional data
-            # with measurement noise. Treat as fractional and warn.
+            # Ambiguous or clearly fractional with noise. Values slightly above 1.0
+            # (e.g., 1.05) are common normalization artefacts; values up to ~5 could
+            # be fractional outliers. In all cases, treat as fractional scale and warn.
             inhibition = 1 - vm
-            scale_note = (
-                f"viability_matrix max ({vm_max:.4f}) slightly exceeds 1.0. "
-                "Treating as fractional scale (0–1). If data is in percentage (0–100), "
-                "divide all values by 100 before passing to this function, or ensure "
-                "your vehicle control viability is normalized to 1.0."
-            )
+            if vm_max > 2:
+                scale_note = (
+                    f"viability_matrix max ({vm_max:.4f}) exceeds 2.0. "
+                    "Treating as fractional scale (0–1). If data is in percentage "
+                    "(0–100), divide all values by 100 before passing to this function. "
+                    "Values > 5 are treated as unambiguously percentage scale."
+                )
+            else:
+                scale_note = (
+                    f"viability_matrix max ({vm_max:.4f}) slightly exceeds 1.0. "
+                    "Treating as fractional scale (0–1). If data is in percentage (0–100), "
+                    "divide all values by 100 before passing to this function, or ensure "
+                    "your vehicle control viability is normalized to 1.0."
+                )
         else:
             # Clearly fractional scale (0–1)
             inhibition = 1 - vm
