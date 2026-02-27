@@ -255,6 +255,22 @@ class DrugSynergyTool(BaseTool):
                 "error": "doses_a, doses_b, and viability_matrix are all required",
             }
 
+        # BUG-2 fix: a flat (1D) viability_matrix produces a misleading error
+        # "Invalid numeric values: 'float' object is not iterable" because the
+        # nested comprehension iterates over individual floats rather than rows.
+        # Detect 1D input early with a clear, actionable message.
+        if viability_matrix and not hasattr(viability_matrix[0], "__iter__"):
+            return {
+                "status": "error",
+                "error": (
+                    "viability_matrix must be a 2D array (list of lists), "
+                    f"but received a 1D array with {len(viability_matrix)} elements. "
+                    "Each row should contain viability values for one concentration of "
+                    "drug A across all concentrations of drug B. "
+                    f"Expected shape: ({len(doses_a)}, {len(doses_b)})."
+                ),
+            }
+
         try:
             da = np.array([float(x) for x in doses_a])
             db = np.array([float(x) for x in doses_b])
@@ -919,6 +935,24 @@ class DrugSynergyTool(BaseTool):
         ci = da_combo / dx_a + db_combo / dx_b
         if assumption == "mutually_non_exclusive":
             ci += (da_combo * db_combo) / (dx_a * dx_b)
+
+        # BUG-1 fix: MNEE term (da_combo*db_combo)/(dx_a*dx_b) can overflow to inf
+        # when dx_a or dx_b is extremely small (effect near single-agent Emax, so the
+        # equivalent single-drug dose is astronomically large relative to the combination
+        # dose). ci=inf propagates to "Very strong antagonism" label but round(inf, 4)
+        # is still inf, which is invalid JSON. Return an informative error instead.
+        if not math.isfinite(ci):
+            return {
+                "status": "error",
+                "error": (
+                    f"Combination Index is non-finite (CI = {ci}). This occurs when "
+                    "dx_a or dx_b (the single-agent doses that produce the combination "
+                    "effect level) are extremely small or zero, meaning the combination "
+                    "effect is near or exceeds the single-agent Emax. "
+                    "Verify that effect_combo is within the range of the single-agent "
+                    "dose-response curves, or use the 'mutually_exclusive' assumption."
+                ),
+            }
 
         # Dose Reduction Index (DRI): how many fold dose can be reduced
         dri_a = dx_a / da_combo if da_combo > 0 else float("inf")

@@ -881,6 +881,16 @@ class DNATool(BaseTool):
 
         if len(sequence) % 3 != 0:
             trimmed_len = len(sequence) - (len(sequence) % 3)
+            # BUG-4 fix: sequences shorter than 3 nt trim to 0 nt and produce a
+            # success response with an empty protein.  Fail explicitly instead.
+            if trimmed_len == 0:
+                return {
+                    "status": "error",
+                    "error": (
+                        f"Sequence length {len(sequence)} is too short to contain a "
+                        "complete codon. At least 3 nucleotides are required for translation."
+                    ),
+                }
             sequence_trimmed = sequence[:trimmed_len]
             warning = f"Sequence length {len(sequence)} is not divisible by 3; trimmed to {trimmed_len} nt"
         else:
@@ -1001,7 +1011,10 @@ class DNATool(BaseTool):
             log_sum = sum(math.log(v) for v in cai_values if v > 0)
             cai = round(math.exp(log_sum / len(cai_values)), 4)
         else:
-            cai = 0.0
+            # BUG-3 fix: CAI = 0.0 is misleading for stop-codon-only sequences.
+            # CAI is defined only for sense codons; a sequence with no sense codons
+            # (e.g., a single "*") has an undefined CAI, not a CAI of 0.
+            cai = None
 
         return {
             "status": "success",
@@ -1099,14 +1112,23 @@ class DNATool(BaseTool):
                     end = boundaries[(i + 1) % len(boundaries)]
                     if end > start:
                         frag_seq = sequence[start:end]
+                        wrap = False
                     else:
+                        # BUG-2 fix: when start >= end the fragment spans the circular
+                        # origin.  This includes the single-cut case (start == end)
+                        # where the single fragment is the full circular sequence.
+                        # is_wrap_around=True tells the caller that coordinates are
+                        # non-contiguous in linear notation (start..end_of_sequence
+                        # + beginning_of_sequence..end).
                         frag_seq = sequence[start:] + sequence[:end]
+                        wrap = True
                     fragments.append(
                         {
                             "sequence": frag_seq,
                             "length": len(frag_seq),
                             "start": start,
                             "end": end,
+                            "is_wrap_around": wrap,
                         }
                     )
             else:
@@ -1246,6 +1268,19 @@ class DNATool(BaseTool):
                 "error": (
                     f"product_size_min ({product_size_min}) must be <= "
                     f"product_size_max ({product_size_max})."
+                ),
+            }
+
+        # BUG-1 fix: target_start beyond the sequence silently clamps target_end to
+        # seq_len and produces a confusing "Target region (-N bp) is smaller than
+        # product_size_min" error.  Detect and report out-of-bounds target_start early.
+        if target_start is not None and int(target_start) >= seq_len:
+            return {
+                "status": "error",
+                "error": (
+                    f"target_start ({int(target_start)}) is at or beyond the sequence "
+                    f"length ({seq_len} bp). target_start must be a 0-based index less "
+                    "than the sequence length."
                 ),
             }
 
@@ -1627,9 +1662,18 @@ class DNATool(BaseTool):
             used_set.add(rc_oh)  # block the RC from being used
 
         if len(rc_free_overhangs) < n_parts + 1:
+            # BUG-5 fix: report the actual maximum supported by the built-in overhang
+            # library so the user understands the constraint, not just an opaque failure.
+            max_parts = len(rc_free_overhangs) - 1
             return {
                 "status": "error",
-                "error": f"Cannot generate enough unique overhangs for {n_parts} parts",
+                "error": (
+                    f"Cannot generate enough unique non-RC-paired overhangs for "
+                    f"{n_parts} parts. The built-in 4-bp overhang library supports a "
+                    f"maximum of {max_parts} parts. For larger assemblies, consider "
+                    "hierarchical (two-step) cloning or providing a custom extended "
+                    "overhang set."
+                ),
             }
 
         overhangs = rc_free_overhangs[: n_parts + 1]

@@ -315,16 +315,39 @@ class NCATool(BaseTool):
             pre_dose_times = []
         auc0t = self._auc_trapezoid(t_auc, c_auc)
 
+        # BUG-1 fix: np.float64 overflow — round(np.float64(huge), 4) multiplies by
+        # 10^4 internally, overflowing to np.inf for values near the float max.
+        # Guard with an isfinite check immediately after computing AUC.
+        if not math.isfinite(float(auc0t)):
+            return {
+                "status": "error",
+                "error": (
+                    f"AUC computation resulted in a non-finite value ({float(auc0t)}). "
+                    "This typically indicates extremely large concentration or time values. "
+                    "Check input data units — rescaling may be required (e.g., ng/mL → μg/mL, "
+                    "hours → days)."
+                ),
+            }
+
         # Terminal phase parameters — use all post-Tmax points per FDA NCA guidance
         lambda_z, r_sq_terminal, _ = self._estimate_terminal_slope(t, c, tmax=tmax)
 
+        # BUG-2/3 fix: round(..., 4) truncates to 0.0 for sub-nanosecond values
+        # (e.g., round(5e-5, 4) = 0.0), producing contradictory output (Tlast=0
+        # but non-zero AUC or extrapolation_pct). Use full float precision so that
+        # extreme-scale profiles are self-consistent.  This matches the lambda_z
+        # treatment at line ~376: "Preserve full precision for lambda_z."
+        # BUG-1 additional protection: round(float(x), 4) overflows for x > ~1.79e304
+        # because x * 10^4 exceeds the float maximum.  Use full precision (no rounding)
+        # for AUC — consistent with the lambda_z / t_half treatment above.
+        _auc0t = float(auc0t)
         result = {
-            "Cmax": round(cmax, 4),
-            "Tmax": round(tmax, 4),
-            "Clast": round(clast, 4),
-            "Tlast": round(tlast, 4),
-            f"AUC0-{tlast:.1f}": round(auc0t, 4),
-            "AUC0_last": round(auc0t, 4),  # stable alias for programmatic access
+            "Cmax": float(cmax),
+            "Tmax": float(tmax),
+            "Clast": float(clast),
+            "Tlast": float(tlast),
+            f"AUC0-{float(tlast):.6g}": _auc0t,
+            "AUC0_last": _auc0t,  # stable alias for programmatic access
             "units": {
                 "Cmax": conc_unit,
                 "Tmax": time_unit,
@@ -373,10 +396,11 @@ class NCATool(BaseTool):
             auc0inf = auc0t + clast / lambda_z
             extrap_pct = float((clast / lambda_z) / auc0inf * 100)
             # Preserve full precision for lambda_z: round(1e-9, 6) = 0.0 which is wrong.
+            # Same applies to t_half: round(1.44e-9, 4) = 0.0 for sub-nanosecond t½.
             result["lambda_z"] = round(float(lambda_z), 9)
-            result["t_half"] = round(float(t_half), 4)
+            result["t_half"] = float(t_half)
             result["r_squared_terminal_fit"] = round(float(r_sq_terminal), 4)
-            result["AUC0-inf"] = round(float(auc0inf), 4)
+            result["AUC0-inf"] = float(auc0inf)
             result["AUC_extrapolation_pct"] = round(extrap_pct, 1)
             if extrap_pct > 20.0:
                 result["AUC_extrapolation_warning"] = (
@@ -534,8 +558,12 @@ class NCATool(BaseTool):
                 ),
             }
 
-        # Use positive concentrations only
-        valid = c > 0
+        # Use positive concentrations at non-negative times only.
+        # BUG-4 fix: pre-dose (t < 0) data points represent baseline/endogenous levels
+        # and should not be included in a mono-exponential IV bolus fit.  The original
+        # `valid = c > 0` silently included negative-time data, biasing the C0 and
+        # k_el estimates.  FDA/EMA NCA guidance excludes pre-dose samples from PK fitting.
+        valid = (c > 0) & (t >= 0)
         if sum(valid) < 3:
             return {
                 "status": "error",
@@ -585,6 +613,7 @@ class NCATool(BaseTool):
 
         # Preserve full precision for k_el: round(1e-9, 6) = 0.0, which is wrong
         # for drugs near the lower optimization bound (1e-9 h⁻¹ ≡ t½ ≈ 693M h).
+        # Same applies to t_half: round(float(t_half), 4) = 0.0 for sub-ns half-lives.
         k_el_val = float(k_el_fit)
         # SE of k_el needs same precision to avoid reporting 0.0.
         k_el_se_val = float(perr[1])
@@ -594,7 +623,7 @@ class NCATool(BaseTool):
             "equation": "C(t) = C0 × exp(-k_el × t)",
             "C0_initial_concentration": round(float(c0_fit), 4),
             "k_el_elimination_rate": k_el_val,
-            "t_half": round(float(t_half), 4),
+            "t_half": float(t_half),
             "r_squared": round(r_squared, 4),
             "goodness_of_fit": gof,
             "standard_errors": {
@@ -755,28 +784,47 @@ class NCATool(BaseTool):
             category = "Very low (<10%)"
             note = "Insufficient oral bioavailability. Likely requires IV/SC/inhaled route."
 
+        # BUG-5 fix: F > 1.0 (> 100%) is physically unusual for most drugs.
+        # While theoretically possible (e.g., saturable first-pass extraction reversal,
+        # IV formulation with poor tolerability requiring dose reduction), it more
+        # commonly indicates mismatched dose units or a data entry error.
+        anomalous_f_warning = None
+        if f > 1.0:
+            anomalous_f_warning = (
+                f"Bioavailability F = {f_pct:.2f}% (> 100%). This is physically unusual "
+                "for most small molecule drugs. Common causes include: (1) mismatched AUC "
+                "or dose units between the PO and IV arms, (2) different dose levels "
+                "triggering saturable first-pass extraction, or (3) a data entry error. "
+                "Verify that AUC_PO, AUC_IV, dose_PO, and dose_IV are expressed in "
+                "consistent units."
+            )
+
+        result_data: dict = {
+            "bioavailability_F": round(float(f), 4),
+            "bioavailability_pct": round(float(f_pct), 2),
+            "category": category,
+            "clinical_note": note,
+            "formula": "F = (AUC_PO × Dose_IV) / (AUC_IV × Dose_PO)",
+            "inputs": {
+                "AUC_PO": auc_po,
+                "Dose_PO": dose_po,
+                "AUC_IV": auc_iv,
+                "Dose_IV": dose_iv,
+                "AUC_PO_dose_normalized": round(float(auc_po_norm), 4),
+                "AUC_IV_dose_normalized": round(float(auc_iv_norm), 4),
+            },
+            "general_note": (
+                "F > 20% is typically considered acceptable for small molecule drugs. "
+                "F ≥ 80% is required for bioequivalence studies. "
+                "Low F may indicate poor absorption, first-pass metabolism, or low solubility."
+            ),
+        }
+        if anomalous_f_warning:
+            result_data["anomalous_f_warning"] = anomalous_f_warning
+
         return {
             "status": "success",
-            "data": {
-                "bioavailability_F": round(float(f), 4),
-                "bioavailability_pct": round(float(f_pct), 2),
-                "category": category,
-                "clinical_note": note,
-                "formula": "F = (AUC_PO × Dose_IV) / (AUC_IV × Dose_PO)",
-                "inputs": {
-                    "AUC_PO": auc_po,
-                    "Dose_PO": dose_po,
-                    "AUC_IV": auc_iv,
-                    "Dose_IV": dose_iv,
-                    "AUC_PO_dose_normalized": round(float(auc_po_norm), 4),
-                    "AUC_IV_dose_normalized": round(float(auc_iv_norm), 4),
-                },
-                "general_note": (
-                    "F > 20% is typically considered acceptable for small molecule drugs. "
-                    "F ≥ 80% is required for bioequivalence studies. "
-                    "Low F may indicate poor absorption, first-pass metabolism, or low solubility."
-                ),
-            },
+            "data": result_data,
             "metadata": {
                 "source": "Local calculation",
                 "method": "Dose-normalized AUC ratio (Rowland & Tozer, 2011)",

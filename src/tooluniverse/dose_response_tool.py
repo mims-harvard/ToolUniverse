@@ -109,6 +109,20 @@ class DoseResponseTool(BaseTool):
         if np.any(x <= 0):
             return {"error": "All concentrations must be positive (> 0)"}
 
+        # Detect all-identical concentrations: if every x value is the same, the
+        # dose-response curve is unidentifiable regardless of the response values.
+        # This is distinct from the flat-response guard below — here the problem is
+        # zero dose range (no concentration gradient), not zero effect range.
+        if len(np.unique(x)) < 2:
+            return {
+                "error": (
+                    "All concentration values are identical (no dose range). "
+                    "IC50 estimation requires at least 2 distinct concentration levels "
+                    "to define the dose-response relationship. Use a dose series spanning "
+                    "multiple orders of magnitude (e.g., 0.001–100 μM)."
+                )
+            }
+
         # Detect flat response data: if all responses are identical (or near-identical),
         # the 4PL model is not identifiable — IC50 cannot be estimated.
         y_range = float(np.max(y) - np.min(y))
