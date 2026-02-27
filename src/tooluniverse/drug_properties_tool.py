@@ -53,7 +53,8 @@ class DrugPropertiesTool(BaseTool):
     def run(self, arguments: Dict[str, Any]) -> Dict[str, Any]:
         if not HAS_RDKIT:
             return {
-                "error": "RDKit is required for drug property calculations. Install with: pip install rdkit"
+                "status": "error",
+                "error": "RDKit is required for drug property calculations. Install with: pip install rdkit",
             }
 
         try:
@@ -64,19 +65,29 @@ class DrugPropertiesTool(BaseTool):
             elif self.endpoint == "pains_filter":
                 return self._pains_filter(arguments)
             else:
-                return {"error": f"Unknown endpoint: {self.endpoint}"}
+                return {
+                    "status": "error",
+                    "error": f"Unknown endpoint: {self.endpoint}",
+                }
         except Exception as e:
-            return {"error": f"Drug property calculation error: {str(e)}"}
+            return {
+                "status": "error",
+                "error": f"Drug property calculation error: {str(e)}",
+            }
 
     def _parse_smiles(self, arguments: Dict[str, Any]):
         smiles = arguments.get("smiles", "").strip()
         if not smiles:
             return None, {
-                "error": "smiles parameter is required (SMILES string of the molecule)"
+                "status": "error",
+                "error": "smiles parameter is required (SMILES string of the molecule)",
             }
         mol = Chem.MolFromSmiles(smiles)
         if mol is None:
-            return None, {"error": f"Invalid SMILES string: {smiles}"}
+            return None, {
+                "status": "error",
+                "error": f"Invalid SMILES string: {smiles}",
+            }
         return mol, None
 
     def _lipinski_filter(self, arguments: Dict[str, Any]) -> Dict[str, Any]:
@@ -131,6 +142,7 @@ class DrugPropertiesTool(BaseTool):
             overall = "non-drug-like"
 
         return {
+            "status": "success",
             "data": {
                 "smiles": arguments.get("smiles", ""),
                 "descriptors": {
@@ -205,6 +217,7 @@ class DrugPropertiesTool(BaseTool):
             qed_category = "Low (non-drug-like)"
 
         return {
+            "status": "success",
             "data": {
                 "smiles": arguments.get("smiles", ""),
                 "qed_score": round(qed_score, 4),
@@ -290,6 +303,7 @@ class DrugPropertiesTool(BaseTool):
             )
 
         return {
+            "status": "success",
             "data": {
                 "smiles": arguments.get("smiles", ""),
                 "is_clean": is_clean,

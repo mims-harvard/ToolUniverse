@@ -242,6 +242,22 @@ class DrugSynergyTool(BaseTool):
                 "error": f"viability_matrix shape {vm.shape} must be ({len(da)}, {len(db)})",
             }
 
+        # ZIP requires dose=0 as the first element in each dose array so that
+        # the first row (inhibition[0, :]) and first column (inhibition[:, 0])
+        # represent single-drug marginals (drug B alone and drug A alone).
+        has_zero_a = float(da[0]) == 0.0
+        has_zero_b = float(db[0]) == 0.0
+        if not has_zero_a or not has_zero_b:
+            return {
+                "status": "error",
+                "error": (
+                    "ZIP model requires doses_a[0] == 0 and doses_b[0] == 0 so that "
+                    "the first row/column of viability_matrix represents single-drug "
+                    "effects. Please include a zero-dose (vehicle control) as the "
+                    "first element of each dose array."
+                ),
+            }
+
         # Inhibition matrix (1 - viability)
         inhibition = 1 - vm / 100 if vm.max() > 1 else 1 - vm
 
@@ -265,13 +281,9 @@ class DrugSynergyTool(BaseTool):
             except Exception:
                 return None
 
-        # Get marginal effects
-        effects_a_marginal = (
-            inhibition[:, 0] if inhibition.shape[1] > 0 else inhibition.mean(axis=1)
-        )
-        effects_b_marginal = (
-            inhibition[0, :] if inhibition.shape[0] > 0 else inhibition.mean(axis=0)
-        )
+        # Marginals: first column = drug A alone (db=0), first row = drug B alone (da=0)
+        effects_a_marginal = inhibition[:, 0]  # drug A at each dose, drug B = 0
+        effects_b_marginal = inhibition[0, :]  # drug B at each dose, drug A = 0
 
         params_a = fit_hill(da, effects_a_marginal)
         params_b = fit_hill(db, effects_b_marginal)

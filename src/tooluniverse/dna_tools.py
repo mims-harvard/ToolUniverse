@@ -482,6 +482,39 @@ NEB_ENZYMES = {
     "SfiI": "GGCCNNNNNGGCC",
 }
 
+# Enzyme-specific cut offset (0-based, from start of recognition sequence)
+# Represents where the phosphodiester bond is cleaved on the top strand.
+# E.g., EcoRI: G^AATTC → cut after position 1 → offset = 1
+# EcoRV: GAT^ATC → blunt, offset = 3
+# KpnI: GGTAC^C → 3' overhang, offset = 5
+NEB_CUT_OFFSETS: Dict[str, int] = {
+    "EcoRI": 1,  # G^AATTC  (4-base 5' overhang)
+    "BamHI": 1,  # G^GATCC  (4-base 5' overhang)
+    "HindIII": 1,  # A^AGCTT  (4-base 5' overhang)
+    "NcoI": 1,  # C^CATGG  (4-base 5' overhang)
+    "NdeI": 2,  # CA^TATG  (4-base 5' overhang)
+    "XhoI": 1,  # C^TCGAG  (4-base 5' overhang)
+    "XbaI": 1,  # T^CTAGA  (4-base 5' overhang)
+    "SalI": 1,  # G^TCGAC  (4-base 5' overhang)
+    "SmaI": 3,  # CCC^GGG  (blunt)
+    "KpnI": 5,  # GGTAC^C  (4-base 3' overhang)
+    "SacI": 5,  # GAGCT^C  (4-base 3' overhang)
+    "ClaI": 2,  # AT^CGAT  (4-base 5' overhang, partial methylation sensitivity)
+    "SpeI": 1,  # A^CTAGT  (4-base 5' overhang)
+    "NotI": 2,  # GC^GGCCGC (4-base 5' overhang)
+    "PstI": 5,  # CTGCA^G  (4-base 3' overhang)
+    "EcoRV": 3,  # GAT^ATC  (blunt)
+    "NheI": 1,  # G^CTAGC  (4-base 5' overhang)
+    "MluI": 1,  # A^CGCGT  (4-base 5' overhang)
+    "ApaI": 5,  # GGGCC^C  (4-base 3' overhang)
+    "SphI": 5,  # GCATG^C  (4-base 3' overhang)
+    "BglII": 1,  # A^GATCT  (4-base 5' overhang)
+    "AgeI": 1,  # A^CCGGT  (4-base 5' overhang)
+    "AscI": 2,  # GG^CGCGCC (4-base 5' overhang)
+    "PacI": 5,  # TTAAT^TAA (2-base 3' overhang)
+    "SfiI": 8,  # GGCCNNNN^NGGCC (3-base 3' overhang)
+}
+
 
 @register_tool("DNATool")
 class DNATool(BaseTool):
@@ -923,8 +956,10 @@ class DNATool(BaseTool):
                     positions.append(pos)
                     start = pos + 1
 
+            # Use enzyme-specific cut offset; default to midpoint if unknown
+            cut_offset = NEB_CUT_OFFSETS.get(enzyme_name, len(recognition_seq) // 2)
             for pos in positions:
-                cut_pos = pos + len(recognition_seq)
+                cut_pos = pos + cut_offset  # 0-based cut position on top strand
                 cut_sites_list.append({"enzyme": enzyme_name, "position": cut_pos})
 
             if positions:

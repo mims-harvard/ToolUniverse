@@ -83,7 +83,8 @@ class NCATool(BaseTool):
     def run(self, arguments: Dict[str, Any]) -> Dict[str, Any]:
         if not HAS_NUMPY:
             return {
-                "error": "numpy is required for NCA calculations. Install with: pip install numpy"
+                "status": "error",
+                "error": "numpy is required for NCA calculations. Install with: pip install numpy",
             }
 
         try:
@@ -94,9 +95,12 @@ class NCATool(BaseTool):
             elif self.endpoint == "calculate_bioavailability":
                 return self._calculate_bioavailability(arguments)
             else:
-                return {"error": f"Unknown endpoint: {self.endpoint}"}
+                return {
+                    "status": "error",
+                    "error": f"Unknown endpoint: {self.endpoint}",
+                }
         except Exception as e:
-            return {"error": f"NCA calculation error: {str(e)}"}
+            return {"status": "error", "error": f"NCA calculation error: {str(e)}"}
 
     def _auc_trapezoid(self, times: "np.ndarray", concs: "np.ndarray") -> float:
         """
@@ -180,20 +184,25 @@ class NCATool(BaseTool):
 
         if not times or not concentrations:
             return {
-                "error": "times and concentrations are required. Provide paired lists of time points and measured concentrations."
+                "status": "error",
+                "error": "times and concentrations are required. Provide paired lists of time points and measured concentrations.",
             }
         if len(times) != len(concentrations):
-            return {"error": "times and concentrations must have the same length"}
+            return {
+                "status": "error",
+                "error": "times and concentrations must have the same length",
+            }
         if len(times) < 3:
             return {
-                "error": "At least 3 time-concentration points are required for NCA"
+                "status": "error",
+                "error": "At least 3 time-concentration points are required for NCA",
             }
 
         try:
             t = np.array([float(x) for x in times])
             c = np.array([float(x) for x in concentrations])
         except (ValueError, TypeError) as e:
-            return {"error": f"Invalid numeric values: {e}"}
+            return {"status": "error", "error": f"Invalid numeric values: {e}"}
 
         # Sort by time
         sort_idx = np.argsort(t)
@@ -288,6 +297,7 @@ class NCATool(BaseTool):
         )
 
         return {
+            "status": "success",
             "data": result,
             "metadata": {
                 "source": "Local NCA computation (numpy/scipy)",
@@ -301,7 +311,8 @@ class NCATool(BaseTool):
         """Fit 1-compartment IV bolus model: C(t) = C0 * exp(-k_el * t)."""
         if not HAS_SCIPY:
             return {
-                "error": "scipy is required for model fitting. Install with: pip install scipy"
+                "status": "error",
+                "error": "scipy is required for model fitting. Install with: pip install scipy",
             }
 
         times = arguments.get("times", [])
@@ -312,21 +323,25 @@ class NCATool(BaseTool):
         time_unit = arguments.get("time_unit", "h")
 
         if not times or not concentrations:
-            return {"error": "times and concentrations are required"}
+            return {"status": "error", "error": "times and concentrations are required"}
         if len(times) != len(concentrations):
-            return {"error": "times and concentrations must have the same length"}
+            return {
+                "status": "error",
+                "error": "times and concentrations must have the same length",
+            }
 
         try:
             t = np.array([float(x) for x in times])
             c = np.array([float(x) for x in concentrations])
         except (ValueError, TypeError) as e:
-            return {"error": f"Invalid numeric values: {e}"}
+            return {"status": "error", "error": f"Invalid numeric values: {e}"}
 
         # Use positive concentrations only
         valid = c > 0
         if sum(valid) < 3:
             return {
-                "error": "At least 3 positive concentration values required for model fitting"
+                "status": "error",
+                "error": "At least 3 positive concentration values required for model fitting",
             }
 
         t_fit = t[valid]
@@ -351,7 +366,8 @@ class NCATool(BaseTool):
             perr = np.sqrt(np.diag(pcov))
         except Exception as e:
             return {
-                "error": f"Model fitting failed: {str(e)}. Ensure data follows mono-exponential decline."
+                "status": "error",
+                "error": f"Model fitting failed: {str(e)}. Ensure data follows mono-exponential decline.",
             }
 
         t_half = np.log(2) / k_el_fit
@@ -422,6 +438,7 @@ class NCATool(BaseTool):
                 pass
 
         return {
+            "status": "success",
             "data": result,
             "metadata": {
                 "source": "Local 1-compartment model fit (scipy.optimize.curve_fit)",
@@ -437,9 +454,15 @@ class NCATool(BaseTool):
         dose_iv = arguments.get("dose_iv")
 
         if auc_po is None or dose_po is None:
-            return {"error": "auc_po and dose_po are required (PO arm AUC and dose)"}
+            return {
+                "status": "error",
+                "error": "auc_po and dose_po are required (PO arm AUC and dose)",
+            }
         if auc_iv is None or dose_iv is None:
-            return {"error": "auc_iv and dose_iv are required (IV arm AUC and dose)"}
+            return {
+                "status": "error",
+                "error": "auc_iv and dose_iv are required (IV arm AUC and dose)",
+            }
 
         try:
             auc_po = float(auc_po)
@@ -447,11 +470,12 @@ class NCATool(BaseTool):
             auc_iv = float(auc_iv)
             dose_iv = float(dose_iv)
         except (ValueError, TypeError) as e:
-            return {"error": f"Invalid numeric values: {e}"}
+            return {"status": "error", "error": f"Invalid numeric values: {e}"}
 
         if auc_iv <= 0 or dose_iv <= 0 or dose_po <= 0:
             return {
-                "error": "AUC_IV, dose_IV, and dose_PO must all be positive numbers"
+                "status": "error",
+                "error": "AUC_IV, dose_IV, and dose_PO must all be positive numbers",
             }
 
         # F = (AUC_PO × Dose_IV) / (AUC_IV × Dose_PO)
@@ -475,6 +499,7 @@ class NCATool(BaseTool):
             note = "Insufficient oral bioavailability. Likely requires IV/SC/inhaled route."
 
         return {
+            "status": "success",
             "data": {
                 "bioavailability_F": round(float(f), 4),
                 "bioavailability_pct": round(float(f_pct), 2),

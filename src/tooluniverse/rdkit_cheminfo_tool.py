@@ -92,7 +92,10 @@ class RDKitCheminfoTool(BaseTool):
 
     def run(self, arguments: Dict[str, Any]) -> Dict[str, Any]:
         if not HAS_RDKIT:
-            return {"error": "RDKit is required. Install with: pip install rdkit"}
+            return {
+                "status": "error",
+                "error": "RDKit is required. Install with: pip install rdkit",
+            }
 
         try:
             if self.endpoint == "pharmacophore_features":
@@ -100,9 +103,15 @@ class RDKitCheminfoTool(BaseTool):
             elif self.endpoint == "matched_molecular_pair":
                 return self._matched_molecular_pair(arguments)
             else:
-                return {"error": f"Unknown endpoint: {self.endpoint}"}
+                return {
+                    "status": "error",
+                    "error": f"Unknown endpoint: {self.endpoint}",
+                }
         except Exception as e:
-            return {"error": f"RDKit cheminformatics error: {str(e)}"}
+            return {
+                "status": "error",
+                "error": f"RDKit cheminformatics error: {str(e)}",
+            }
 
     def _parse_smiles(self, smiles: str):
         if not smiles or not smiles.strip():
@@ -129,7 +138,7 @@ class RDKitCheminfoTool(BaseTool):
         smiles = arguments.get("smiles", "").strip()
         mol, err = self._parse_smiles(smiles)
         if err:
-            return {"error": err}
+            return {"status": "error", "error": err}
 
         include_features = arguments.get("include_features")
         if include_features is None:
@@ -196,6 +205,7 @@ class RDKitCheminfoTool(BaseTool):
         n_hydro = feature_counts.get("Hydrophobic", 0)
 
         return {
+            "status": "success",
             "data": {
                 "smiles": smiles,
                 "pharmacophore_features": features_found,
@@ -234,11 +244,11 @@ class RDKitCheminfoTool(BaseTool):
 
         mol_a, err = self._parse_smiles(smiles_a)
         if err:
-            return {"error": f"smiles_a: {err}"}
+            return {"status": "error", "error": f"smiles_a: {err}"}
 
         mol_b, err = self._parse_smiles(smiles_b)
         if err:
-            return {"error": f"smiles_b: {err}"}
+            return {"status": "error", "error": f"smiles_b: {err}"}
 
         canonical_a = Chem.MolToSmiles(mol_a)
         canonical_b = Chem.MolToSmiles(mol_b)
@@ -267,21 +277,36 @@ class RDKitCheminfoTool(BaseTool):
                     mol_b, minCuts=1, maxCuts=1, maxCutBonds=100
                 )
 
+                # rdMMPA.FragmentMol returns (None, combined_mol) tuples where
+                # combined_mol contains both sidechain and core as disconnected
+                # fragments joined by '.' in the SMILES (both carry [*:1] attachment).
+                # Use GetMolFrags to separate them; larger fragment = core.
+                from rdkit.Chem import rdmolops
+
+                def _split_frag_pair(frag_pair):
+                    """Return (core_smi, sc_smi) or (None, None) on failure."""
+                    if len(frag_pair) < 2 or frag_pair[1] is None:
+                        return None, None
+                    combined = frag_pair[1]
+                    parts = rdmolops.GetMolFrags(combined, asMols=True)
+                    if len(parts) != 2:
+                        return None, None
+                    # Larger fragment = core; smaller = sidechain
+                    parts_sorted = sorted(parts, key=lambda m: m.GetNumHeavyAtoms())
+                    sc_mol, core_mol = parts_sorted[0], parts_sorted[1]
+                    return Chem.MolToSmiles(core_mol), Chem.MolToSmiles(sc_mol)
+
                 cores_a: Dict[str, str] = {}
                 for frag_pair in frags_a:
-                    if len(frag_pair) >= 2 and frag_pair[0] and frag_pair[1]:
-                        core_smi = Chem.MolToSmiles(frag_pair[0])
-                        sc_smi = Chem.MolToSmiles(frag_pair[1])
-                        if core_smi:
-                            cores_a[core_smi] = sc_smi
+                    core_smi, sc_smi = _split_frag_pair(frag_pair)
+                    if core_smi:
+                        cores_a[core_smi] = sc_smi or ""
 
                 cores_b: Dict[str, str] = {}
                 for frag_pair in frags_b:
-                    if len(frag_pair) >= 2 and frag_pair[0] and frag_pair[1]:
-                        core_smi = Chem.MolToSmiles(frag_pair[0])
-                        sc_smi = Chem.MolToSmiles(frag_pair[1])
-                        if core_smi:
-                            cores_b[core_smi] = sc_smi
+                    core_smi, sc_smi = _split_frag_pair(frag_pair)
+                    if core_smi:
+                        cores_b[core_smi] = sc_smi or ""
 
                 common = set(cores_a.keys()) & set(cores_b.keys())
                 if common:
@@ -332,6 +357,7 @@ class RDKitCheminfoTool(BaseTool):
             sim_label = None
 
         return {
+            "status": "success",
             "data": {
                 "smiles_a": canonical_a,
                 "smiles_b": canonical_b,
