@@ -456,6 +456,19 @@ class SurvivalTool(BaseTool):
 
         X = np.array(cov_matrix).T  # shape (n, p)
 
+        n_events = int(np.sum(evs == 1))
+        p = len(cov_names)
+        if n_events <= p:
+            return {
+                "status": "error",
+                "error": (
+                    f"Cox regression requires the number of events ({n_events}) to "
+                    f"exceed the number of covariates ({p}). The partial likelihood "
+                    "is not identifiable when events ≤ covariates. Reduce the number "
+                    "of covariates or collect more event data."
+                ),
+            }
+
         X_mean = X.mean(axis=0)
         X_std = X.std(axis=0)
 

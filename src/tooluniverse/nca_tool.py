@@ -241,6 +241,16 @@ class NCATool(BaseTool):
         clast = float(c[pos_mask][-1]) if any(pos_mask) else 0.0
         tlast = float(t[pos_mask][-1]) if any(pos_mask) else 0.0
 
+        # Detect mid-profile zeros: a zero concentration that appears between two
+        # positive values is biologically implausible and may indicate assay failure,
+        # sample swap, or re-absorption.  Collect positions for a warning.
+        mid_profile_zero_times = []
+        first_pos = int(np.argmax(pos_mask)) if any(pos_mask) else len(c)
+        last_pos = len(c) - 1 - int(np.argmax(pos_mask[::-1])) if any(pos_mask) else -1
+        for idx in range(first_pos + 1, last_pos):
+            if c[idx] == 0.0:
+                mid_profile_zero_times.append(float(t[idx]))
+
         # AUC0-t (linear-log trapezoidal)
         auc0t = self._auc_trapezoid(t, c)
 
@@ -318,6 +328,15 @@ class NCATool(BaseTool):
             result["terminal_phase_warning"] = (
                 "Could not estimate terminal slope (λz). "
                 "Add more time points in the terminal elimination phase."
+            )
+
+        if mid_profile_zero_times:
+            result["mid_profile_zero_warning"] = (
+                f"Zero concentration detected at t={mid_profile_zero_times} between "
+                "positive values. This is biologically implausible and may indicate "
+                "assay failure, sample swap, or re-absorption. "
+                "AUC calculation proceeds via linear trapezoid at those intervals "
+                "but the result may be unreliable."
             )
 
         result["method"] = "Linear-log trapezoidal NCA"
