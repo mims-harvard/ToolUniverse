@@ -162,12 +162,11 @@ class NCATool(BaseTool):
                 t_term = t_valid[post_tmax]
                 c_term = c_valid[post_tmax]
             else:
-                # Fallback: not enough post-Tmax points, use last n_points
-                n_use = min(n_points, len(t_valid))
-                if n_use < 2:
-                    return None, None, None
-                t_term = t_valid[-n_use:]
-                c_term = c_valid[-n_use:]
+                # Insufficient post-Tmax points: cannot reliably estimate λz.
+                # Including Tmax or pre-Tmax points in the regression would
+                # violate FDA NCA guidance (terminal phase begins after Tmax).
+                # The caller will emit a terminal_phase_warning.
+                return None, None, None
         else:
             n_use = min(n_points, len(t_valid))
             t_term = t_valid[-n_use:]

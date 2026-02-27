@@ -654,7 +654,14 @@ class DNATool(BaseTool):
         _STOP_SET = {"TAA", "TAG", "TGA"}
 
         def find_orfs_in_sequence(seq: str, is_reverse: bool = False) -> List[Dict]:
-            """Scan all three reading frames using a state-machine (open/closed)."""
+            """Scan all three reading frames using a state-machine (open/closed).
+
+            Note: Uses a greedy open/close state machine — opens at the first ATG
+            in each frame and closes at the first in-frame stop codon. Nested ORFs
+            (ATG codons embedded within an already-open reading frame) are not
+            detected; only the outermost ORF starting at the earliest ATG is
+            reported per reading frame.
+            """
             orfs = []
             seq_len = len(seq)
             strand_label = "-" if is_reverse else "+"
@@ -1152,6 +1159,10 @@ class DNATool(BaseTool):
                 if end > seq_len:
                     break
                 primer = sequence[start:end]
+                # Skip primers containing N bases: NN thermodynamic parameters
+                # are undefined for ambiguous bases, causing underestimated Tm.
+                if "N" in primer:
+                    continue
                 gc = gc_content(primer)
                 if gc < 40 or gc > 60:
                     continue
@@ -1186,6 +1197,9 @@ class DNATool(BaseTool):
                 primer_template = sequence[start:end]
                 # Reverse primer is reverse complement of template
                 rev_primer = primer_template.translate(complement_map)[::-1]
+                # Skip if the template (or its complement) contains N bases
+                if "N" in rev_primer:
+                    continue
                 gc = gc_content(rev_primer)
                 if gc < 40 or gc > 60:
                     continue

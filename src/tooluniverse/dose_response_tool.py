@@ -123,6 +123,21 @@ class DoseResponseTool(BaseTool):
             )
             emin, emax, ec50, n_hill = popt
 
+            # Detect Hill slope at numerical lower bound (0.05).
+            # This occurs when the optimal n would be even smaller — typically
+            # a stimulatory dose-response, very shallow curve, or insufficient
+            # data range.  Flag with a warning rather than silently returning
+            # what look like plausible (but physically incorrect) parameters.
+            hill_bound_warning = None
+            if float(n_hill) <= 0.05 + 1e-4:
+                hill_bound_warning = (
+                    "Hill slope converged at the lower bound (0.05). "
+                    "This may indicate a stimulatory (increasing) dose-response, "
+                    "a very shallow curve, or data that do not span the sigmoidal "
+                    "range. Verify that responses decrease with increasing "
+                    "concentration. The 4PL model may not be appropriate."
+                )
+
             # Coefficient of determination: R² = 1 - SSE/SST
             y_hat = _hill_equation(x, *popt)
             y_mean = float(np.mean(y))
@@ -143,7 +158,7 @@ class DoseResponseTool(BaseTool):
             perr = np.sqrt(np.diag(np.abs(pcov)))
             if not np.all(np.isfinite(perr)):
                 # Covariance is singular — CIs and SEs are not estimable.
-                return {
+                singular_result = {
                     "bottom": round(float(emin), 4),
                     "top": round(float(emax), 4),
                     "ic50": ec50_f,
@@ -159,6 +174,9 @@ class DoseResponseTool(BaseTool):
                     ),
                     "fitted_values": [round(float(v), 4) for v in y_hat],
                 }
+                if hill_bound_warning:
+                    singular_result["hill_slope_warning"] = hill_bound_warning
+                return singular_result
 
             # Log-scale delta method CI (Motulsky & Christopoulos 2004):
             #   SE_log = SE_ec50 / ec50  (delta method applied to log(EC50))
@@ -173,7 +191,7 @@ class DoseResponseTool(BaseTool):
             ci0_f = float(ci_ec50[0])
             ci1_f = float(ci_ec50[1])
 
-            return {
+            main_result = {
                 "bottom": round(float(emin), 4),
                 "top": round(float(emax), 4),
                 "ic50": ec50_f,
@@ -188,6 +206,9 @@ class DoseResponseTool(BaseTool):
                 },
                 "fitted_values": [round(float(v), 4) for v in y_hat],
             }
+            if hill_bound_warning:
+                main_result["hill_slope_warning"] = hill_bound_warning
+            return main_result
         except RuntimeError:
             return {"error": "4PL curve fitting did not converge. Check data quality."}
         except Exception as e:
@@ -235,6 +256,8 @@ class DoseResponseTool(BaseTool):
         }
         if "ci_note" in result:
             data["ci_note"] = result["ci_note"]
+        if "hill_slope_warning" in result:
+            data["hill_slope_warning"] = result["hill_slope_warning"]
         return {"status": "success", "data": data}
 
     def _calculate_ic50(self, arguments: Dict[str, Any]) -> Dict[str, Any]:
@@ -273,6 +296,8 @@ class DoseResponseTool(BaseTool):
         }
         if "ci_note" in result:
             data["ci_note"] = result["ci_note"]
+        if "hill_slope_warning" in result:
+            data["hill_slope_warning"] = result["hill_slope_warning"]
         return {"status": "success", "data": data}
 
     @staticmethod

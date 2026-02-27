@@ -85,13 +85,14 @@ class DrugSynergyTool(BaseTool):
     def _interpret_synergy_score(self, score: float, model: str) -> str:
         if model in ("bliss", "hsa"):
             # Scores are fractional (0-1 scale, same as inputs)
-            if score > 0.10:
+            # Boundary |score| = 0.10 is classified as "Strong" (inclusive threshold)
+            if score >= 0.10:
                 return "Strong synergy"
             elif score > 0:
                 return "Synergy"
             elif score == 0:
                 return "Additivity"
-            elif score > -0.10:
+            elif score >= -0.10:
                 return "Antagonism"
             else:
                 return "Strong antagonism"
@@ -156,7 +157,7 @@ class DrugSynergyTool(BaseTool):
                 "effect_combination_expected": round(expected, 4),
                 "bliss_synergy_score": round(synergy_score, 2),
                 "interpretation": self._interpret_synergy_score(synergy_score, "bliss"),
-                "note": "Scores in fractional units (0-1 scale, same as inputs). Positive = synergy; Negative = antagonism. |score| > 0.1 = strong effect. Based on Bliss (1939).",
+                "note": "Scores in fractional units (0-1 scale, same as inputs). Positive = synergy; Negative = antagonism. |score| ≥ 0.1 = strong effect. Based on Bliss (1939).",
             },
         }
 
@@ -207,7 +208,7 @@ class DrugSynergyTool(BaseTool):
                 "interpretation": self._interpret_synergy_score(
                     float(np.mean(synergy_matrix)), "hsa"
                 ),
-                "note": "Scores in fractional units (0-1 scale, same as inputs). Positive = synergy over best single agent; Negative = antagonism. |score| > 0.1 = strong effect.",
+                "note": "Scores in fractional units (0-1 scale, same as inputs). Positive = synergy over best single agent; Negative = antagonism. |score| ≥ 0.1 = strong effect.",
             },
         }
 
@@ -431,6 +432,31 @@ class DrugSynergyTool(BaseTool):
         except (ValueError, TypeError) as e:
             return {"status": "error", "error": f"Invalid numeric values: {e}"}
 
+        # Validate effect values are in [0,1]
+        if not (0 <= e_combo <= 1):
+            return {
+                "status": "error",
+                "error": f"effect_combo={e_combo} must be between 0 and 1 (fractional effect)",
+            }
+        try:
+            ea_arr = [float(x) for x in effects_a_single]
+            eb_arr = [float(x) for x in effects_b_single]
+        except (ValueError, TypeError) as e:
+            return {
+                "status": "error",
+                "error": f"Invalid numeric values in effects: {e}",
+            }
+        for name, arr in [("effects_a_single", ea_arr), ("effects_b_single", eb_arr)]:
+            bad = [i for i, v in enumerate(arr) if not (0 <= v <= 1)]
+            if bad:
+                return {
+                    "status": "error",
+                    "error": (
+                        f"{name} values must be between 0 and 1 (fractional effects). "
+                        f"Invalid values at indices: {bad}"
+                    ),
+                }
+
         # Fit Hill curves to single-agent data
         params_a = self._fit_hill_for_loewe(doses_a_single, effects_a_single)
         params_b = self._fit_hill_for_loewe(doses_b_single, effects_b_single)
@@ -599,6 +625,26 @@ class DrugSynergyTool(BaseTool):
                 "status": "error",
                 "error": f"effect_combo={fa_combo} must be between 0 and 1 (exclusive) for CI calculation",
             }
+
+        # Validate single-agent effect values are in [0,1]
+        try:
+            ea_arr = [float(x) for x in effects_a_single]
+            eb_arr = [float(x) for x in effects_b_single]
+        except (ValueError, TypeError) as e:
+            return {
+                "status": "error",
+                "error": f"Invalid numeric values in effects: {e}",
+            }
+        for name, arr in [("effects_a_single", ea_arr), ("effects_b_single", eb_arr)]:
+            bad = [i for i, v in enumerate(arr) if not (0 <= v <= 1)]
+            if bad:
+                return {
+                    "status": "error",
+                    "error": (
+                        f"{name} values must be between 0 and 1 (fractional effects). "
+                        f"Invalid values at indices: {bad}"
+                    ),
+                }
 
         # Fit Hill curves to single-agent data (using same method)
         params_a = self._fit_hill_for_loewe(doses_a_single, effects_a_single)
