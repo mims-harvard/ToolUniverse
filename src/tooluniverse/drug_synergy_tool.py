@@ -830,7 +830,11 @@ class DrugSynergyTool(BaseTool):
                     "hill_slope": round(float(m_b), 4),
                     "emax": round(float(emax_b), 4),
                 },
-                "note": "Loewe index < 1 = synergy; = 1 = additive; > 1 = antagonism. Based on Loewe & Muischnek (1926).",
+                "note": (
+                    "Loewe index < 1 = synergy; = 1 = additive; > 1 = antagonism. "
+                    "loewe_excess_score = 1 - index: positive = synergy, negative = antagonism. "
+                    "Based on Loewe & Muischnek (1926)."
+                ),
             },
         }
 

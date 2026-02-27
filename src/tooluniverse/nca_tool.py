@@ -318,6 +318,21 @@ class NCATool(BaseTool):
                     "Provide at least one time point at t ≥ 0 (time of dosing or later)."
                 ),
             }
+        # BUG-5 fix: the minimum-3 check at the top counts ALL time points including
+        # pre-dose samples.  Two pre-dose + one post-dose = 3 total passes the guard
+        # but yields AUC=0 (single-point trapezoid) silently under status=success.
+        # Enforce a minimum of 2 POST-DOSE points for a non-trivial AUC.
+        _n_postdose = int(np.sum(t >= 0))
+        if _n_postdose < 2:
+            return {
+                "status": "error",
+                "error": (
+                    f"Only {_n_postdose} post-dose time point(s) (t ≥ 0) found "
+                    f"(total input points: {len(t)}, pre-dose points: {len(t) - _n_postdose}). "
+                    "At least 2 post-dose time points are required to compute a "
+                    "non-trivial AUC (trapezoidal integration requires ≥2 points)."
+                ),
+            }
 
         # Detect duplicate time points: the linear-log trapezoid computes
         # dt = t[i+1] - t[i] = 0 for duplicates, contributing zero area.
@@ -331,8 +346,15 @@ class NCATool(BaseTool):
         duplicate_times = [k for k, cnt in seen.items() if cnt > 1]
 
         # Basic parameters
-        cmax = float(np.max(c))
-        tmax = float(t[np.argmax(c)])
+        # BUG-1 fix: Cmax/Tmax must be computed from POST-DOSE samples only (t >= 0).
+        # Pre-dose residual drug can exceed the new dose's Cmax, causing Tmax < 0 and
+        # cascading into lambda_z (terminal phase selection uses t > Tmax).
+        _postdose_mask = t >= 0
+        c_post = c[_postdose_mask]
+        t_post = t[_postdose_mask]
+        # _postdose_mask guarantees len > 0 (all-pre-dose already caught above).
+        cmax = float(np.max(c_post))
+        tmax = float(t_post[np.argmax(c_post)])
         pos_mask = c > 0
         clast = float(c[pos_mask][-1]) if any(pos_mask) else 0.0
         tlast = float(t[pos_mask][-1]) if any(pos_mask) else 0.0
@@ -404,13 +426,27 @@ class NCATool(BaseTool):
             # so the key should reflect the actual integration bounds to avoid a 24%+
             # overstatement when the user reads "AUC0-24" but actually gets AUC_2-24.
             f"AUC{float(t_auc[0]):.6g}-{float(tlast):.6g}": _auc0t,
-            "AUC0_last": _auc0t,  # stable alias for programmatic access
+            # BUG-4 fix: "AUC0_last" is misleading when data starts after t=0 (no t=0
+            # sample), because "0" implies integration from time of dosing (t=0) but
+            # the actual integral starts at the first observed time (e.g., t=2).
+            # Keep for backward compatibility; add an explanatory note when t[0] > 0.
+            "AUC0_last": _auc0t,
             "units": {
                 "Cmax": conc_unit,
                 "Tmax": time_unit,
                 "AUC": f"{conc_unit}·{time_unit}",
             },
         }
+
+        # BUG-4 fix: clarify that AUC0_last does NOT start at t=0 when first sample > 0.
+        if float(t_auc[0]) > 0:
+            result["auc_start_note"] = (
+                f"AUC integration starts at the first observed post-dose time "
+                f"(t={float(t_auc[0]):.6g}), not at t=0 (no sample at dosing time). "
+                f"AUC0_last and {float(t_auc[0]):.6g}-{float(tlast):.6g} both reflect "
+                "AUC from the first sample to Tlast, which underestimates true AUC0-last "
+                "by the missing pre-first-sample area."
+            )
 
         # Warn when pre-dose (t < 0) time points were excluded from AUC integration.
         if pre_dose_times:
@@ -552,6 +588,17 @@ class NCATool(BaseTool):
                         # doses in ng).  Use full precision consistent with lambda_z/AUC.
                         result["clearance_CL"] = float(cl_l)
                         result["clearance_CL_unit"] = f"L/{time_unit}"
+                        # BUG-2 fix: for non-IV routes, Dose/AUC = CL/F (apparent
+                        # clearance), NOT true systemic clearance (which requires IV
+                        # data or a known bioavailability F).  Label it clearly so
+                        # users don't compare oral and IV CL values without adjustment.
+                        if route != "iv":
+                            result["clearance_note"] = (
+                                "clearance_CL is CL/F (apparent clearance) for non-IV "
+                                f"route='{route}'. True systemic CL = CL/F × F, where "
+                                "bioavailability F is unknown without an IV reference. "
+                                "Do not compare directly with IV-derived clearance."
+                            )
                         if route == "iv":
                             vd_l = cl_l / lambda_z  # L
                             # BUG-1 fix: round(vd_l, 4) truncates Vd to 0.0 for any

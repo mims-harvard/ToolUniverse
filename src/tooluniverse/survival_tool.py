@@ -263,17 +263,26 @@ class SurvivalTool(BaseTool):
                 "ci_method": "Greenwood log-log (Collett 2015 / R survfit default)",
                 "follow_up_time": float(np.max(dur)),
             }
-            # When no events occurred (all-censored), the survival table only contains
-            # the baseline row (t=0, censored=0). The 'censored' column correctly shows
-            # 0 because KM tables record censored counts only at event times, not at
-            # arbitrary censoring times. Add a note so the discrepancy is not confusing.
-            if n_events_total == 0 and n_censored_total > 0:
-                result_data["all_censored_note"] = (
-                    f"No events were observed (all {n_censored_total} subjects censored). "
-                    "The survival function S(t) = 1.0 throughout follow-up. "
-                    "The survival table 'censored' column shows only subjects censored at "
-                    "event times (standard KM convention); see n_censored for the total."
+            # BUG-2 fix: the note explaining the KM 'censored' column convention was
+            # only emitted in the all-censored case.  In the typical mixed case (events
+            # + subjects censored between event times), sum(table['censored']) = 0 while
+            # n_censored > 0 — a silent discrepancy with no explanation.  Emit the note
+            # whenever any censored subjects exist.
+            if n_censored_total > 0:
+                _km_cens_note = (
+                    "The survival table 'censored' column records only subjects "
+                    "censored AT observed event times (standard Kaplan-Meier "
+                    "convention); subjects censored between event times do not appear "
+                    "in this column. sum(table['censored']) may be less than n_censored. "
+                    "Use n_censored for the total censored count."
                 )
+                if n_events_total == 0:
+                    _km_cens_note = (
+                        f"No events were observed (all {n_censored_total} subjects "
+                        "censored). The survival function S(t) = 1.0 throughout "
+                        "follow-up. " + _km_cens_note
+                    )
+                result_data["km_censored_convention_note"] = _km_cens_note
             return {"status": "success", "data": result_data}
         else:
             # Stratified analysis
@@ -773,7 +782,19 @@ class SurvivalTool(BaseTool):
             # Preserve full precision for HR: round(3.3e-6, 4) = 0.0, which is
             # factually wrong and creates a contradiction when the CI shows a
             # large ratio (indicating a very small HR, not zero).
-            hr_out = float(raw_hr) if np.isfinite(raw_hr) else None
+            # BUG-1 fix: apply the same sys.float_info.min guard as ci_lo_out.
+            # When beta is very large negative (separation), np.exp(beta) underflows
+            # to 0.0 in IEEE-754. np.isfinite(0.0) = True, so the old guard allowed
+            # hr_out = 0.0 while ci_lo_out = None — internally inconsistent.
+            # sys.float_info.min ≈ 2.2e-308 is the smallest normal IEEE-754 double;
+            # anything below that (including exact 0.0 and subnormals) is numerical noise.
+            import sys as _sys
+
+            hr_out = (
+                float(raw_hr)
+                if np.isfinite(raw_hr) and raw_hr >= _sys.float_info.min
+                else None
+            )
             # BUG-4 fix: ci_lo can underflow to exactly 0.0 in IEEE 754 when
             # beta − 1.96*se_scaled is very large and negative (complete separation).
             # np.isfinite(0.0) is True, so the old guard silently returned 0.0 as a
@@ -781,9 +802,6 @@ class SurvivalTool(BaseTool):
             # The asymmetric (0.0, None) tuple is internally inconsistent: both bounds
             # arise from the same numerical failure.  Treat underflow-to-zero (or to
             # a subnormal float like 5e-324) the same way as overflow-to-inf → None.
-            # sys.float_info.min ≈ 2.2e-308 is the smallest normal IEEE-754 double;
-            # anything below that (including exact 0.0 and subnormals) is numerical noise.
-            import sys as _sys
 
             ci_lo_out = (
                 float(raw_ci_lo)
@@ -800,6 +818,7 @@ class SurvivalTool(BaseTool):
             if separation_warning is not None:
                 p_val_out = None
                 p_underflow_note = None  # separation is the operative explanation
+                hr_out = None  # BUG-1 fix: ensure HR is also None under separation
             # Determine significant field:
             # - underflow (p_val == 0 or rounds to 0) AND no separation → True (highly sig)
             # - separation → None (unknown)

@@ -583,17 +583,20 @@ class DoseResponseTool(BaseTool):
                 "The IC50 estimate for compound B is unreliable."
             )
 
+        # BUG-3 fix: apply the same R15-BUG-4 emax correction here.
+        # result_a["top"] is the high-concentration asymptote (floor ≈0% for inhibitory);
+        # emax should be the numerically LARGER asymptote = max(top, bottom).
         data = {
             "compound_a": {
                 "ic50": ic50_a,
                 "hill_slope": result_a["hill_slope"],
-                "emax": result_a["top"],
+                "emax": max(result_a["top"], result_a["bottom"]),
                 "r_squared": rsq_a,
             },
             "compound_b": {
                 "ic50": ic50_b,
                 "hill_slope": result_b["hill_slope"],
-                "emax": result_b["top"],
+                "emax": max(result_b["top"], result_b["bottom"]),
                 "r_squared": rsq_b,
             },
             "ic50_fold_shift_b_over_a": fold_shift_out,

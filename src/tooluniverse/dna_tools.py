@@ -618,7 +618,10 @@ class DNATool(BaseTool):
                     normalized_requested.append(_neb_lower[e.lower()])
                 else:
                     unknown_enzymes.append(e)
-            if unknown_enzymes:
+            # BUG-1 fix: previously the whole call failed when ANY enzyme was unknown,
+            # discarding results for valid enzymes.  Now: proceed with recognized enzymes
+            # and report unknown ones in a warning.  Only fail if ALL are unknown.
+            if unknown_enzymes and not normalized_requested:
                 return {
                     "status": "error",
                     "error": f"Unknown enzymes: {unknown_enzymes}. Available: {sorted(NEB_ENZYMES.keys())}",
@@ -626,6 +629,7 @@ class DNATool(BaseTool):
             enzyme_dict = {name: NEB_ENZYMES[name] for name in normalized_requested}
         else:
             enzyme_dict = NEB_ENZYMES
+            unknown_enzymes = []
 
         seq_len = len(sequence)
         # For circular DNA, search the doubled sequence to detect sites that
@@ -659,13 +663,13 @@ class DNATool(BaseTool):
                     positions.append(pos + 1)  # 1-based
                     start = pos + 1
 
+            cut_off = NEB_CUT_OFFSETS.get(enzyme_name, len(recognition_seq) // 2)
             if positions:
                 # BUG-4 fix: `cut_sites` reports 1-based recognition sequence start
                 # positions, NOT the actual phosphodiester bond cleavage positions.
                 # For enzymes like KpnI (GGTAC^C, cut_offset=5), the difference is 4 bp.
                 # Add `cleavage_positions` (1-based) so callers can determine the exact
                 # cut site without having to look up enzyme-specific offsets.
-                cut_off = NEB_CUT_OFFSETS.get(enzyme_name, len(recognition_seq) // 2)
                 cleavage_pos = sorted(
                     set(((p - 1 + cut_off) % seq_len) + 1 for p in positions)
                 )
@@ -675,13 +679,36 @@ class DNATool(BaseTool):
                     "cleavage_positions": cleavage_pos,  # 1-based actual CUT positions
                     "num_cuts": len(positions),
                 }
+            elif enzymes_requested:
+                # BUG-2 fix: explicitly requested enzymes that find 0 sites were
+                # previously absent from enzymes_with_sites entirely.  A caller
+                # doing results["enzymes_with_sites"]["EcoRI"] would get a KeyError
+                # with no way to distinguish "not requested" from "0 sites found."
+                # Only applies when user specified an enzyme list; all-enzyme scans
+                # (enzymes=None) skip this to avoid 100+ empty entries.
+                results[enzyme_name] = {
+                    "recognition_sequence": recognition_seq,
+                    "cut_sites": [],
+                    "cleavage_positions": [],
+                    "num_cuts": 0,
+                }
 
         data = {
             "sequence_length": seq_len,
             "enzymes_with_sites": results,
-            "enzymes_cutting": sorted(results.keys()),
-            "num_enzymes_cutting": len(results),
+            "enzymes_cutting": sorted(
+                k for k, v in results.items() if v["num_cuts"] > 0
+            ),
+            "num_enzymes_cutting": sum(
+                1 for v in results.values() if v["num_cuts"] > 0
+            ),
         }
+        if unknown_enzymes:
+            data["unknown_enzymes_warning"] = (
+                f"The following enzyme name(s) were not recognized and were skipped: "
+                f"{unknown_enzymes}. Check spelling or see available enzymes in the "
+                "enzyme_list operation."
+            )
         if circular:
             data["circular"] = True
 
@@ -1228,7 +1255,8 @@ class DNATool(BaseTool):
                     normalized_requested.append(_neb_lower[e.lower()])
                 else:
                     unknown_enzymes.append(e)
-            if unknown_enzymes:
+            # BUG-1 fix: same as _find_restriction_sites — proceed with valid enzymes.
+            if unknown_enzymes and not normalized_requested:
                 return {
                     "status": "error",
                     "error": f"Unknown enzymes: {unknown_enzymes}. Available: {sorted(NEB_ENZYMES.keys())}",
@@ -1236,6 +1264,7 @@ class DNATool(BaseTool):
             enzyme_dict = {name: NEB_ENZYMES[name] for name in normalized_requested}
         else:
             enzyme_dict = NEB_ENZYMES
+            unknown_enzymes = []
 
         # BUG-01 fix: search a doubled sequence for circular DNA to detect recognition
         # sites that straddle the origin.  This mirrors the logic in _find_restriction_sites.
