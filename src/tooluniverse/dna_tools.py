@@ -1091,7 +1091,12 @@ class DNATool(BaseTool):
             # in full_translation but no explanation of the truncation.
             n_total_codons = len(sequence_trimmed) // 3
             first_stop_codon_pos = first_stop + 1  # 1-based
-            if first_stop_codon_pos < n_total_codons and non_atg_warning is None:
+            # Round 20 BUG-9 fix: `and non_atg_warning is None` silently suppressed
+            # premature_stop_warning whenever the start codon was non-ATG — even for
+            # genuine internal stop codons (e.g. a GTG-start CDS with a nonsense
+            # mutation).  Both warnings can coexist: the non_atg warning flags the
+            # start; the premature_stop warns that translation terminates early.
+            if first_stop_codon_pos < n_total_codons:
                 premature_stop_warning = (
                     f"Premature stop codon at position {first_stop_codon_pos} "
                     f"(of {n_total_codons} codons). Translation terminates at "

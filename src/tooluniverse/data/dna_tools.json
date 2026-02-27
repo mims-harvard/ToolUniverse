@@ -29,7 +29,9 @@
         "sequence_length": {"type": "integer"},
         "enzymes_with_sites": {"type": "object"},
         "enzymes_cutting": {"type": "array"},
-        "num_enzymes_cutting": {"type": "integer"}
+        "num_enzymes_cutting": {"type": "integer"},
+        "circular": {"type": "boolean"},
+        "unknown_enzymes_warning": {"type": "string"}
       }
     },
     "test_examples": [
@@ -76,7 +78,10 @@
         "sequence_length": {"type": "integer"},
         "min_length_nt": {"type": "integer"},
         "num_orfs_found": {"type": "integer"},
-        "orfs": {"type": "array", "items": {"type": "object"}}
+        "orfs": {"type": "array", "items": {"type": "object"}},
+        "open_orfs_warning": {"type": "string"},
+        "results_truncated": {"type": "boolean"},
+        "results_truncated_note": {"type": "string"}
       }
     },
     "test_examples": [
@@ -186,10 +191,17 @@
     "return_schema": {
       "type": "object",
       "properties": {
+        "dna_sequence": {"type": "string"},
         "protein_sequence": {"type": "string"},
+        "full_translation": {"type": "string"},
         "protein_length_aa": {"type": "integer"},
         "stop_codons_found": {"type": "integer"},
-        "codon_table": {"type": "string"}
+        "stop_codon_positions": {"type": "array", "items": {"type": "integer"}},
+        "codon_table": {"type": "string"},
+        "warning": {"type": "string"},
+        "non_atg_start_warning": {"type": "string"},
+        "premature_stop_warning": {"type": "string"},
+        "ambiguous_codon_warning": {"type": "string"}
       }
     },
     "test_examples": [

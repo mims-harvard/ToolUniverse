@@ -109,7 +109,7 @@
   {
     "name": "DrugSynergy_calculate_zip",
     "type": "DrugSynergyTool",
-    "description": "Calculate ZIP (Zero Interaction Potency) delta synergy score from a full dose-response matrix. Fits Hill curves to marginal dose-response data for each drug and calculates expected additivity. Returns delta matrix where positive values indicate synergy. Based on Yadav et al. (2015). Use for: comprehensive combination screening matrices.",
+    "description": "Calculate ZIP (Zero Interaction Potency) delta synergy score from a full dose-response matrix. Fits Hill curves to marginal dose-response data for each drug and calculates expected additivity. Returns delta matrix where positive values indicate synergy. Based on Yadav et al. (2015). IMPORTANT: Each drug must have ≥3 non-zero dose points with measurable inhibition for Hill curve fitting to succeed. A 3×3 matrix with non-zero doses_a and doses_b (no zero-dose rows/columns) is the minimum; 4×4 or larger matrices are recommended. If Hill fitting fails, use calculate_bliss instead. Interpretation: score > 10 = Synergy, -10 to 10 = Additivity, < -10 = Antagonism. Use for: comprehensive combination screening matrices.",
     "parameter": {
       "type": "object",
       "properties": {
@@ -144,6 +144,8 @@
       "properties": {
         "model": {"type": "string"},
         "mean_zip_score": {"type": "number"},
+        "max_zip_score": {"type": "number"},
+        "min_zip_score": {"type": "number"},
         "zip_delta_matrix": {"type": "array"},
         "interpretation": {"type": "string"}
       }
