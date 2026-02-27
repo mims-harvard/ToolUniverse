@@ -261,6 +261,30 @@ class DrugSynergyTool(BaseTool):
         except (ValueError, TypeError) as e:
             return {"status": "error", "error": f"Invalid numeric values: {e}"}
 
+        # NaN in dose arrays bypasses the >= 0 guard below (NaN < 0 = False) and
+        # corrupts Hill fits, producing misleading "fitting failed" messages.
+        for arr, name in [(da, "doses_a"), (db, "doses_b")]:
+            if np.any(~np.isfinite(arr)):
+                return {
+                    "status": "error",
+                    "error": (
+                        f"{name} contains non-finite values (NaN or inf). "
+                        "All dose values must be finite real numbers."
+                    ),
+                }
+
+        # NaN/inf in viability_matrix propagates to inhibition → ZIP scores are NaN
+        # or -inf, which are invalid JSON and produce meaningless synergy labels.
+        if np.any(~np.isfinite(vm)):
+            return {
+                "status": "error",
+                "error": (
+                    "viability_matrix contains non-finite values (NaN or inf). "
+                    "All viability values must be finite real numbers. "
+                    "Replace missing values (NaN) or outliers (inf) before computing ZIP scores."
+                ),
+            }
+
         if vm.shape != (len(da), len(db)):
             return {
                 "status": "error",
@@ -338,6 +362,11 @@ class DrugSynergyTool(BaseTool):
                 # parameters (IC50 near zero, arbitrary hill slope).
                 emax_init = float(max(e))
                 if emax_init <= 0:
+                    return None
+                # Flat dose-response: constant (non-zero) inhibition is also
+                # degenerate — IC50 is not identifiable and curve_fit converges
+                # to an arbitrary parameter set.  Same check as _fit_hill_for_loewe.
+                if float(np.max(e) - np.min(e)) < 1e-6:
                     return None
                 p0 = [np.median(d), 1.0, emax_init]
                 bounds = ([0, 0.1, 0], [np.inf, 10, 1])
@@ -547,6 +576,27 @@ class DrugSynergyTool(BaseTool):
                     ),
                 }
 
+        # NaN in dose arrays is silently dropped by _fit_hill_for_loewe (valid = doses > 0
+        # returns False for NaN), potentially leaving too few points for a reliable fit.
+        # Detect and reject up front with a clear error.
+        try:
+            da_arr = np.array([float(x) for x in doses_a_single])
+            db_arr = np.array([float(x) for x in doses_b_single])
+        except (ValueError, TypeError) as e:
+            return {
+                "status": "error",
+                "error": f"Invalid numeric values in dose arrays: {e}",
+            }
+        for arr, name in [(da_arr, "doses_a_single"), (db_arr, "doses_b_single")]:
+            if np.any(~np.isfinite(arr)):
+                return {
+                    "status": "error",
+                    "error": (
+                        f"{name} contains non-finite values (NaN or inf). "
+                        "All dose values must be finite real numbers."
+                    ),
+                }
+
         # Fit Hill curves to single-agent data
         params_a = self._fit_hill_for_loewe(doses_a_single, effects_a_single)
         params_b = self._fit_hill_for_loewe(doses_b_single, effects_b_single)
@@ -745,6 +795,26 @@ class DrugSynergyTool(BaseTool):
                     "error": (
                         f"{name} values must be between 0 and 1 (fractional effects). "
                         f"Invalid values at indices: {bad}"
+                    ),
+                }
+
+        # NaN in dose arrays is silently dropped by _fit_hill_for_loewe (valid = doses > 0
+        # returns False for NaN), potentially leaving too few points for a reliable fit.
+        try:
+            da_arr_ci = np.array([float(x) for x in doses_a_single])
+            db_arr_ci = np.array([float(x) for x in doses_b_single])
+        except (ValueError, TypeError) as e:
+            return {
+                "status": "error",
+                "error": f"Invalid numeric values in dose arrays: {e}",
+            }
+        for arr, name in [(da_arr_ci, "doses_a_single"), (db_arr_ci, "doses_b_single")]:
+            if np.any(~np.isfinite(arr)):
+                return {
+                    "status": "error",
+                    "error": (
+                        f"{name} contains non-finite values (NaN or inf). "
+                        "All dose values must be finite real numbers."
                     ),
                 }
 

@@ -204,6 +204,19 @@ class SurvivalTool(BaseTool):
         except (ValueError, TypeError) as e:
             return {"status": "error", "error": f"Invalid values: {e}"}
 
+        # NaN comparison always returns False: np.any(NaN < 0) == False, so NaN
+        # bypasses the negative-duration guard and corrupts all downstream
+        # at-risk counts and survival probabilities.  Check isfinite first.
+        if np.any(~np.isfinite(dur)):
+            return {
+                "status": "error",
+                "error": (
+                    "durations contain non-finite values (NaN or inf). "
+                    "All survival times must be finite real numbers. "
+                    "Remove or correct the affected observations."
+                ),
+            }
+
         if np.any(dur < 0):
             return {"status": "error", "error": "All durations must be non-negative"}
 
@@ -331,6 +344,29 @@ class SurvivalTool(BaseTool):
                 "status": "error",
                 "error": "durations and events must have matching lengths within each group",
             }
+
+        # NaN comparison always returns False, so NaN bypasses all < 0 guards and
+        # corrupts at-risk counts, observed/expected events, and the chi2 statistic.
+        for arr, name in [
+            (da, "durations_a"),
+            (db, "durations_b"),
+        ]:
+            if np.any(~np.isfinite(arr)):
+                return {
+                    "status": "error",
+                    "error": (
+                        f"{name} contains non-finite values (NaN or inf). "
+                        "All survival times must be finite real numbers."
+                    ),
+                }
+
+        # Negative survival times are not physically meaningful.
+        for arr, name in [(da, "durations_a"), (db, "durations_b")]:
+            if np.any(arr < 0):
+                return {
+                    "status": "error",
+                    "error": f"All {name} must be non-negative. Negative survival times are not valid.",
+                }
 
         for arr, name in [(ea, "events_a"), (eb, "events_b")]:
             if not np.all(np.isin(arr, [0, 1])):
@@ -470,6 +506,17 @@ class SurvivalTool(BaseTool):
             evs = np.array([int(x) for x in event_observed])
         except (ValueError, TypeError) as e:
             return {"status": "error", "error": f"Invalid duration/event values: {e}"}
+
+        # NaN comparison always returns False, bypassing the < 0 guard below.
+        if np.any(~np.isfinite(dur)):
+            return {
+                "status": "error",
+                "error": (
+                    "durations contain non-finite values (NaN or inf). "
+                    "All survival times must be finite real numbers. "
+                    "Remove or correct the affected observations."
+                ),
+            }
 
         if np.any(dur < 0):
             return {

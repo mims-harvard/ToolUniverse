@@ -267,6 +267,17 @@ class NCATool(BaseTool):
         t = t[sort_idx]
         c = c[sort_idx]
 
+        # Detect duplicate time points: the linear-log trapezoid computes
+        # dt = t[i+1] - t[i] = 0 for duplicates, contributing zero area.
+        # Duplicate times are often caused by data entry errors or sample labelling
+        # issues.  Warn, but continue — AUC may be underestimated.
+        duplicate_times = []
+        seen = {}
+        for ti in t:
+            key = float(ti)
+            seen[key] = seen.get(key, 0) + 1
+        duplicate_times = [k for k, cnt in seen.items() if cnt > 1]
+
         # Basic parameters
         cmax = float(np.max(c))
         tmax = float(t[np.argmax(c)])
@@ -326,6 +337,16 @@ class NCATool(BaseTool):
                 f"Pre-dose time points (t < 0) at t={pre_dose_times} were excluded "
                 "from AUC integration. AUC0-t is computed from t=0 per FDA/EMA NCA "
                 "guidance. Pre-dose samples are retained for visual inspection only."
+            )
+
+        # Warn when duplicate time points are present: dt=0 for duplicates means
+        # those intervals contribute zero area to the trapezoid, so AUC is
+        # underestimated.  This typically indicates a data entry or labelling error.
+        if duplicate_times:
+            result["duplicate_time_warning"] = (
+                f"Duplicate time points detected at t={duplicate_times}. Each duplicate "
+                "contributes a zero-width trapezoid interval (area = 0), which may "
+                "underestimate AUC. Check for data entry errors or sample labelling issues."
             )
 
         # Check monotonicity of post-Tmax concentrations.
@@ -470,6 +491,18 @@ class NCATool(BaseTool):
             c = np.array([float(x) for x in concentrations])
         except (ValueError, TypeError) as e:
             return {"status": "error", "error": f"Invalid numeric values: {e}"}
+
+        # Validate times array: NaN in times gives a misleading "mono-exponential
+        # decline" error from curve_fit instead of the true cause.
+        if np.any(~np.isfinite(t)):
+            return {
+                "status": "error",
+                "error": (
+                    "Times contain non-finite values (NaN or inf). "
+                    "All time values must be finite real numbers. "
+                    "Remove or correct the affected time points."
+                ),
+            }
 
         # Validate concentration array (consistent with _compute_parameters).
         if np.any(~np.isfinite(c)):

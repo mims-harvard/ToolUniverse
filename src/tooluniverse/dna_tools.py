@@ -592,9 +592,20 @@ class DNATool(BaseTool):
         # span the origin of the molecule.
         circular = bool(arguments.get("circular", False))
 
-        if enzymes_requested:
+        # Use `is not None` instead of truthiness: an empty list [] is explicitly
+        # "no enzymes requested" and must not silently fall through to all enzymes.
+        if enzymes_requested is not None:
             if isinstance(enzymes_requested, str):
                 enzymes_requested = [enzymes_requested]
+            if not enzymes_requested:
+                return {
+                    "status": "error",
+                    "error": (
+                        "enzymes list is empty. Provide at least one enzyme name, "
+                        f"or omit the parameter to search all available enzymes: "
+                        f"{sorted(NEB_ENZYMES.keys())}"
+                    ),
+                }
             enzyme_dict = {
                 name: seq
                 for name, seq in NEB_ENZYMES.items()
@@ -674,6 +685,19 @@ class DNATool(BaseTool):
             return {"status": "error", "error": error}
 
         min_length = arguments.get("min_length", 100)  # minimum nt length
+        try:
+            min_length = int(min_length)
+        except (ValueError, TypeError):
+            return {
+                "status": "error",
+                "error": "min_length must be a non-negative integer",
+            }
+        if min_length < 0:
+            return {
+                "status": "error",
+                "error": f"min_length ({min_length}) must be non-negative. "
+                "A negative minimum length is biologically meaningless.",
+            }
         strand = arguments.get("strand", "both")  # "forward", "reverse", "both"
 
         # Validate strand parameter: case-sensitive match required.
@@ -995,9 +1019,20 @@ class DNATool(BaseTool):
         enzymes_requested = arguments.get("enzymes")
         circular = bool(arguments.get("circular", False))
 
-        if enzymes_requested:
+        # Use `is not None` instead of truthiness: an empty list [] must not
+        # silently fall through to using all NEB enzymes.
+        if enzymes_requested is not None:
             if isinstance(enzymes_requested, str):
                 enzymes_requested = [enzymes_requested]
+            if not enzymes_requested:
+                return {
+                    "status": "error",
+                    "error": (
+                        "enzymes list is empty. Provide at least one enzyme name, "
+                        f"or omit the parameter to digest with all available enzymes: "
+                        f"{sorted(NEB_ENZYMES.keys())}"
+                    ),
+                }
             not_found = [e for e in enzymes_requested if e not in NEB_ENZYMES]
             if not_found:
                 return {
@@ -1162,9 +1197,14 @@ class DNATool(BaseTool):
         seq_len = len(sequence)
         target_start = arguments.get("target_start")
         target_end = arguments.get("target_end")
-        tm_target = float(arguments.get("tm_target") or 60.0)
-        product_size_min = int(arguments.get("product_size_min") or 100)
-        product_size_max = int(arguments.get("product_size_max") or 1000)
+        # Use explicit None checks: Python's `x or default` treats 0 as falsy,
+        # silently replacing a user-supplied 0 with the default value.
+        _tm_raw = arguments.get("tm_target")
+        tm_target = float(_tm_raw if _tm_raw is not None else 60.0)
+        _psmin_raw = arguments.get("product_size_min")
+        product_size_min = int(_psmin_raw if _psmin_raw is not None else 100)
+        _psmax_raw = arguments.get("product_size_max")
+        product_size_max = int(_psmax_raw if _psmax_raw is not None else 1000)
         # GC filter bounds in percentage (0–100). Previously hardcoded as 40–60;
         # now read from arguments so callers can override (e.g., gc_min=55, gc_max=70
         # for high-GC amplicons).
@@ -1351,7 +1391,9 @@ class DNATool(BaseTool):
             }
 
         circular = bool(arguments.get("circular", True))
-        overlap_length = int(arguments.get("overlap_length") or 20)
+        # Explicit None check: `int(0 or 20)` = 20, silently ignoring user-supplied 0.
+        _ol_raw = arguments.get("overlap_length")
+        overlap_length = int(_ol_raw if _ol_raw is not None else 20)
         if overlap_length < 1:
             return {"status": "error", "error": "overlap_length must be at least 1"}
 
