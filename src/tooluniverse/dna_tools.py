@@ -797,12 +797,24 @@ class DNATool(BaseTool):
                                 else:
                                     coord_start = orf_start_idx + 1  # 1-based
                                     coord_end = pos + 3
+                                # For minus-strand ORFs, report the reading frame at the 5'
+                                # end of the ORF in plus-strand coordinates (GFF convention).
+                                # The 5' end on the minus strand is coord_end (the highest
+                                # plus-strand coordinate, where the ATG resides).
+                                # frame = (coord_end - 1) % 3 + 1 (1-based).
+                                # For plus-strand ORFs, frame_offset + 1 equals
+                                # (coord_start - 1) % 3 + 1, which is already correct.
+                                _orf_frame = (
+                                    (coord_end - 1) % 3 + 1
+                                    if is_reverse
+                                    else frame_offset + 1
+                                )
                                 orf_entry = {
                                     "start": coord_start,
                                     "end": coord_end,
                                     "length_nt": orf_nt_len,
                                     "length_aa": orf_nt_len // 3 - 1,
-                                    "frame": frame_offset + 1,
+                                    "frame": _orf_frame,
                                     "strand": strand_label,
                                     "sequence": seq[orf_start_idx : pos + 3],
                                 }
@@ -842,9 +854,19 @@ class DNATool(BaseTool):
                             )  # 1-based GFF start
                         else:
                             open_coord = orf_start_idx + 1  # 1-based start
+                        # For minus-strand open ORFs, derive the GFF-convention reading
+                        # frame from the ATG's highest plus-strand coordinate:
+                        #   atg_coord_end = seq_len - orf_start_idx
+                        #   frame = (atg_coord_end - 1) % 3 + 1
+                        # This is identical to (seq_len - orf_start_idx - 1) % 3 + 1.
+                        _open_frame = (
+                            (seq_len - orf_start_idx - 1) % 3 + 1
+                            if is_reverse
+                            else frame_offset + 1
+                        )
                         open_starts.append(
                             {
-                                "frame": frame_offset + 1,
+                                "frame": _open_frame,
                                 "strand": strand_label,
                                 "start": open_coord,
                                 "partial_length_nt": partial_len,
@@ -1087,6 +1109,29 @@ class DNATool(BaseTool):
             protein_seq_no_stop = protein_seq
             stop_positions_reported = []
 
+        # BUG-1 fix (Round 19): check for ambiguous 'X' residues in the translated
+        # protein.  STANDARD_CODON_TABLE.get(codon, 'X') silently returns 'X' for
+        # any codon not in the table (e.g. NNN, NAA, ANT, etc.).  No warning was
+        # issued, so callers received a protein with unknown residues without any
+        # indication of which positions are ambiguous.
+        ambiguous_codon_warning = None
+        _x_positions = [
+            i + 1  # 1-based codon position
+            for i, aa in enumerate(protein_seq_no_stop)
+            if aa == "X"
+        ]
+        if _x_positions:
+            _ambig_codons = [
+                sequence_trimmed[(p - 1) * 3 : (p - 1) * 3 + 3] for p in _x_positions
+            ]
+            ambiguous_codon_warning = (
+                f"Ambiguous codon(s) at position(s) {_x_positions} "
+                f"(codons: {_ambig_codons}) translated to 'X' (unknown amino acid). "
+                "These positions contain IUPAC ambiguity bases (N, R, Y, etc.) or "
+                "non-standard nucleotides not in the codon table. "
+                "The protein sequence may be incomplete or incorrect at these positions."
+            )
+
         result = {
             "status": "success",
             "data": {
@@ -1105,6 +1150,8 @@ class DNATool(BaseTool):
             result["data"]["non_atg_start_warning"] = non_atg_warning
         if premature_stop_warning:
             result["data"]["premature_stop_warning"] = premature_stop_warning
+        if ambiguous_codon_warning:
+            result["data"]["ambiguous_codon_warning"] = ambiguous_codon_warning
 
         return result
 

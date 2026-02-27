@@ -536,15 +536,26 @@ class DrugSynergyTool(BaseTool):
 
         delta = (inhibition - expected_zip) * 100
 
+        # BUG-1 fix (Round 19): the ZIP delta mean was computed over ALL cells including
+        # the first row (drug A = 0, i.e. drug B single-agent) and first column (drug B
+        # = 0, i.e. drug A single-agent).  These border cells are structural zeros by
+        # construction (the Hill fits are calibrated to exactly those marginal values),
+        # so including them in the mean dilutes the true interior synergy score.  Per
+        # Yadav et al. (2015), the summary ZIP score uses the interior combination cells
+        # only.  Exclude row 0 and column 0 from the mean/max/min.
+        if delta.shape[0] > 1 and delta.shape[1] > 1:
+            delta_interior = delta[1:, 1:]
+        else:
+            delta_interior = delta  # fallback if only 1 dose per compound
         # Apply + 0.0 to eliminate IEEE-754 negative zero (-0.0) from all rounded
         # ZIP scores, consistent with the Bliss and HSA fix applied in Round 17.
         # round(-0.004, 2) returns -0.0 in Python; json.dumps serializes it as "-0.0".
-        _mean_zip = round(float(np.mean(delta)), 2) + 0.0
+        _mean_zip = round(float(np.mean(delta_interior)), 2) + 0.0
         zip_data = {
             "model": "ZIP (Zero Interaction Potency)",
             "mean_zip_score": _mean_zip,
-            "max_zip_score": round(float(np.max(delta)), 2) + 0.0,
-            "min_zip_score": round(float(np.min(delta)), 2) + 0.0,
+            "max_zip_score": round(float(np.max(delta_interior)), 2) + 0.0,
+            "min_zip_score": round(float(np.min(delta_interior)), 2) + 0.0,
             "zip_delta_matrix": [
                 [round(float(v), 2) + 0.0 for v in row] for row in delta
             ],

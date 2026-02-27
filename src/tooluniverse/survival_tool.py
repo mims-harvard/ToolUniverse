@@ -820,6 +820,19 @@ class SurvivalTool(BaseTool):
                 else None
             )
             ci_hi_out = float(raw_ci_hi) if np.isfinite(raw_ci_hi) else None
+            # BUG-2 fix (Round 19): coefficient is rounded to 4 decimal places, but
+            # hr_out and CI bounds were reported at full IEEE-754 precision (~16 dp).
+            # A user who reads coefficient=0.4832 and computes exp(0.4832) gets a
+            # value that does not match the returned hr_out (they differ by ~3e-5).
+            # Round HR and CI to 4 dp for display consistency.  The rounding is only
+            # applied if the value is not None (separation or overflow cases already
+            # return None and need no change).
+            if hr_out is not None:
+                hr_out = round(hr_out, 4)
+            if ci_lo_out is not None:
+                ci_lo_out = round(ci_lo_out, 4)
+            if ci_hi_out is not None:
+                ci_hi_out = round(ci_hi_out, 4)
 
             # BUG-1 fix (Round 14): when separation is detected, the Wald p-value is
             # computed from the same near-singular Hessian that makes the CI unreliable.

@@ -367,7 +367,14 @@ class NCATool(BaseTool):
         # so that all t ≥ Tmax data genuinely represents the declining terminal phase.
         _cmax_val = np.max(c_post)
         cmax = float(_cmax_val)
-        tmax = float(t_post[np.where(c_post == _cmax_val)[0][-1]])
+        # BUG-1 fix (Round 19): when all post-dose concentrations are 0 (all BLQ),
+        # _cmax_val=0 and np.where(c_post==0)[0][-1] points to the LAST sample,
+        # reporting Tmax=last_sample_time (e.g., 24h) — physically meaningless.
+        # When Cmax=0, Tmax should be the first post-dose time (t=0 or first sample).
+        if cmax == 0.0:
+            tmax = float(t_post[0])
+        else:
+            tmax = float(t_post[np.where(c_post == _cmax_val)[0][-1]])
         pos_mask = c > 0
         clast = float(c[pos_mask][-1]) if any(pos_mask) else 0.0
         tlast = float(t[pos_mask][-1]) if any(pos_mask) else 0.0
@@ -411,11 +418,15 @@ class NCATool(BaseTool):
             pre_dose_times = [float(x) for x in t[:first_nonneg_idx]]
         else:
             # BUG-1 fix: all post-dose concentrations are zero (all BLQ/undetectable).
-            # AUC will be 0; use the full observation window for the key label, not
-            # tlast=0.0 (which misrepresents the integration window as [0,0]).
-            t_auc = t
-            c_auc = c
-            pre_dose_times = []
+            # AUC will be 0; use the post-dose observation window for the key label.
+            # BUG-2 fix (Round 19): when pre-dose samples exist, the old code set
+            # t_auc = t (the full array including pre-dose times), giving a key like
+            # "AUC-2-8" and omitting pre_dose_time_warning. Apply the same
+            # first_nonneg_idx filtering as the positive-concentrations path.
+            _first_nonneg_idx = int(np.argmax(t >= 0)) if np.any(t >= 0) else 0
+            t_auc = t[_first_nonneg_idx:]
+            c_auc = c[_first_nonneg_idx:]
+            pre_dose_times = [float(x) for x in t[:_first_nonneg_idx]]
         auc0t = self._auc_trapezoid(t_auc, c_auc)
         # BUG-1 (MRT) fix: AUMC_0-t for later use in model-independent MRT computation.
         aumc0t = self._aumc_trapezoid(t_auc, c_auc)
@@ -660,7 +671,11 @@ class NCATool(BaseTool):
                                 result["MRT_iv"] = round(_mrt_iv, 4)
                     else:
                         cl = dose_val / auc0inf
-                        result["clearance_CL"] = round(float(cl), 6)
+                        # BUG-3 fix (Round 19): round(float(cl), 6) silently truncates
+                        # CL to 0.0 for any CL < 5e-7.  The identical fix was applied
+                        # to the known-units path (line ~625: float(cl_l) full precision)
+                        # but was never ported here.  Use full float precision.
+                        result["clearance_CL"] = float(cl)
                         result["clearance_CL_unit"] = (
                             f"{dose_unit}/({conc_unit}·{time_unit})"
                         )
@@ -671,7 +686,8 @@ class NCATool(BaseTool):
                         )
                         if route == "iv":
                             vd = cl / lambda_z
-                            result["volume_distribution_Vd"] = round(float(vd), 4)
+                            # BUG-3 fix: same full-precision fix for Vd.
+                            result["volume_distribution_Vd"] = float(vd)
                             result["Vd_unit"] = f"{dose_unit}/{conc_unit}"
                             # BUG-1 fix: MRT_iv = AUMC_0-inf / AUC_0-inf (model-independent NCA).
                             # The previous formula 1/lambda_z is only valid for a
@@ -945,16 +961,21 @@ class NCATool(BaseTool):
                     vd_ml = dose_ng / c0_ng_per_ml  # mL
                     vd_l = vd_ml / 1000.0  # L
                     cl_l = k_el_fit * vd_l  # L/time_unit
-                    result["volume_distribution_Vd"] = round(float(vd_l), 4)
+                    # BUG-4 fix (Round 19): round(vd_l, 4) silently truncates Vd to
+                    # 0.0 for any Vd < 5e-5 L (e.g., 1 ng dose ÷ 100 ng/mL = 1e-5 L).
+                    # The _compute_parameters path already uses float(vd_l) (full
+                    # precision); apply the identical fix here.
+                    result["volume_distribution_Vd"] = float(vd_l)
                     result["Vd_unit"] = "L"
-                    result["clearance_CL"] = round(float(cl_l), 6)
+                    result["clearance_CL"] = float(cl_l)
                     result["CL_unit"] = f"L/{time_unit}"
                 else:
                     vd_raw = dose_val / c0_fit
                     cl_raw = k_el_fit * vd_raw
-                    result["volume_distribution_Vd"] = round(float(vd_raw), 4)
+                    # BUG-4 fix: same full-precision fix for unknown-units path.
+                    result["volume_distribution_Vd"] = float(vd_raw)
                     result["Vd_unit"] = f"{dose_unit}/{conc_unit}"
-                    result["clearance_CL"] = round(float(cl_raw), 6)
+                    result["clearance_CL"] = float(cl_raw)
                     result["CL_unit"] = f"{dose_unit}/({conc_unit}·{time_unit})"
                     result["pk_unit_note"] = (
                         f"Automatic unit conversion not available for "
