@@ -383,6 +383,23 @@ class SurvivalTool(BaseTool):
 
         X_mean = X.mean(axis=0)
         X_std = X.std(axis=0)
+
+        # Detect zero-variance covariates (all subjects share the same value).
+        # Such covariates carry no information for Cox regression: the partial
+        # likelihood is flat, the Hessian is zero, and the resulting standard
+        # error is 0/0 = NaN.  Return an informative error immediately instead
+        # of propagating NaN (which is also invalid JSON per RFC 8259).
+        zero_var_names = [cov_names[i] for i, s in enumerate(X_std) if s == 0]
+        if zero_var_names:
+            return {
+                "status": "error",
+                "error": (
+                    f"Covariate(s) have zero variance (all subjects share the same value): "
+                    f"{zero_var_names}. Cox regression requires variation in each covariate "
+                    "to estimate a hazard ratio. Remove the constant covariate(s) before fitting."
+                ),
+            }
+
         X_std[X_std == 0] = 1
         X_std_norm = (X - X_mean) / X_std
 
@@ -436,27 +453,31 @@ class SurvivalTool(BaseTool):
         except Exception:
             se = np.full_like(beta_fitted, np.nan)
 
-        z_scores = beta_original / (se / X_std)
+        # Compute z-scores; guard against division producing NaN if se==0
+        # (should not occur after the zero-variance check above, but be safe).
+        with np.errstate(invalid="ignore", divide="ignore"):
+            z_scores = beta_original / (se / X_std)
         p_values = 2 * (1 - stats.norm.cdf(np.abs(z_scores)))
         hazard_ratios = np.exp(beta_original)
 
         coef_results = []
         for i, name in enumerate(cov_names):
+            p_val = float(p_values[i])
+            p_val_out = None if np.isnan(p_val) else round(p_val, 4)
+            se_scaled = float(se[i]) / float(X_std[i])
             coef_results.append(
                 {
                     "covariate": name,
                     "coefficient": round(float(beta_original[i]), 4),
                     "hazard_ratio": round(float(hazard_ratios[i]), 4),
                     "hazard_ratio_95ci": (
-                        round(
-                            float(np.exp(beta_original[i] - 1.96 * se[i] / X_std[i])), 4
-                        ),
-                        round(
-                            float(np.exp(beta_original[i] + 1.96 * se[i] / X_std[i])), 4
-                        ),
+                        round(float(np.exp(beta_original[i] - 1.96 * se_scaled)), 4),
+                        round(float(np.exp(beta_original[i] + 1.96 * se_scaled)), 4),
                     ),
-                    "p_value": round(float(p_values[i]), 4),
-                    "significant": bool(p_values[i] < 0.05),
+                    "p_value": p_val_out,
+                    "significant": bool(p_val < 0.05)
+                    if p_val_out is not None
+                    else False,
                 }
             )
 

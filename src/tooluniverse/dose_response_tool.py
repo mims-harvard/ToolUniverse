@@ -87,6 +87,18 @@ class DoseResponseTool(BaseTool):
         if np.any(x <= 0):
             return {"error": "All concentrations must be positive (> 0)"}
 
+        # Detect flat response data: if all responses are identical (or near-identical),
+        # the 4PL model is not identifiable — IC50 cannot be estimated.
+        y_range = float(np.max(y) - np.min(y))
+        if y_range < 1e-10:
+            return {
+                "error": (
+                    "All response values are identical (flat data). "
+                    "Cannot estimate IC50 — the dose-response relationship is not identifiable. "
+                    "A sigmoidal model requires variation in response across concentrations."
+                )
+            }
+
         # Starting estimates:
         # Emin / Emax: 10th / 90th percentile (robust to outliers at curve extremes)
         # EC50: geometric centre of the concentration range (natural for log-spaced data)
@@ -122,17 +134,26 @@ class DoseResponseTool(BaseTool):
             perr = np.sqrt(np.diag(np.abs(pcov)))
             ci_ec50 = (ec50 - 2.0 * perr[2], ec50 + 2.0 * perr[2])
 
+            # Use full float precision for IC50 and related values.
+            # Rounding to a fixed number of decimal places (e.g. round(x, 6))
+            # silently truncates IC50 values < 5e-7 to 0.0, which is incorrect for
+            # typical pharmacological IC50s in the nanomolar range (1e-9 to 1e-7 M).
+            ec50_f = float(ec50)
+            perr2_f = float(perr[2])
+            ci0_f = float(ci_ec50[0])
+            ci1_f = float(ci_ec50[1])
+
             return {
                 "bottom": round(float(emin), 4),
                 "top": round(float(emax), 4),
-                "ic50": round(float(ec50), 6),
+                "ic50": ec50_f,
                 "hill_slope": round(float(n_hill), 4),
                 "r_squared": round(float(r_sq), 4),
-                "ic50_95ci": [round(float(ci_ec50[0]), 6), round(float(ci_ec50[1]), 6)],
+                "ic50_95ci": [ci0_f, ci1_f],
                 "standard_errors": {
                     "bottom": round(float(perr[0]), 4),
                     "top": round(float(perr[1]), 4),
-                    "ic50": round(float(perr[2]), 6),
+                    "ic50": perr2_f,
                     "hill": round(float(perr[3]), 4),
                 },
                 "fitted_values": [round(float(v), 4) for v in y_hat],
