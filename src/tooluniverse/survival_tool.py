@@ -83,10 +83,18 @@ class SurvivalTool(BaseTool):
         All returned lists have the same length (N+1), with index 0 representing
         the baseline (t=0, S=1, all subjects at risk, zero events/censored).
 
-        95% confidence intervals use Greenwood's formula (Greenwood 1926, JRSS):
-            Var[S(t)] = S(t)^2 * sum_j( d_j / (n_j * (n_j - d_j)) )
-            SE[S(t)]  = S(t) * sqrt( cumulative Greenwood sum )
-            CI        = S(t) ± 1.96 * SE[S(t)], clamped to [0, 1]
+        95% confidence intervals use the log-log (complementary log-log) transformation,
+        the default in R survfit() and recommended by Collett (2015):
+            Greenwood sum G = sum_j( d_j / (n_j * (n_j - d_j)) )
+            U        = log(-log(S(t)))              (complementary log-log)
+            SE_U     = sqrt(G) / |log(S(t))|        (delta method)
+            CI       = [S(t)^exp(+1.96*SE_U), S(t)^exp(-1.96*SE_U)]
+        Result is naturally in (0, 1) without clamping.
+        Edge cases: S=1 → CI=[1,1]; S=0 → CI=[0,0];
+        |log(S)| < 1e-10 → plain linear fallback to avoid numerical blow-up.
+
+        References: Collett (2015) Modelling Survival Data in Medical Research, §2.3;
+                    Kalbfleisch & Prentice (2002) §1.3.
         """
         event_times = np.sort(np.unique(durations[events == 1]))
 
@@ -116,9 +124,20 @@ class SurvivalTool(BaseTool):
             # (if n_risk == d_i, S(t) = 0 and the CI collapses to [0, 0])
             if n_risk > d_i and s > 0:
                 greenwood_sum += d_i / (n_risk * (n_risk - d_i))
-                se = s * np.sqrt(greenwood_sum)
-                ci_lower = float(max(0.0, s - 1.96 * se))
-                ci_upper = float(min(1.0, s + 1.96 * se))
+                log_s = np.log(s)  # always ≤ 0 since 0 < s ≤ 1
+                if abs(log_s) < 1e-10:
+                    # S very close to 1: SE_U = sqrt(G)/|log(S)| is numerically unstable;
+                    # fall back to plain linear Greenwood CI
+                    se = s * np.sqrt(greenwood_sum)
+                    ci_lower = float(max(0.0, s - 1.96 * se))
+                    ci_upper = float(min(1.0, s + 1.96 * se))
+                else:
+                    # Log-log (complementary log-log) CI — Collett (2015), R survfit default
+                    # U = log(-log(S)), SE_U = sqrt(G)/|log(S)|, CI = S^exp(±1.96*SE_U)
+                    # because log(-log(·)) is a decreasing function, +z gives the lower bound
+                    se_u = np.sqrt(greenwood_sum) / abs(log_s)
+                    ci_lower = float(s ** np.exp(+1.96 * se_u))
+                    ci_upper = float(s ** np.exp(-1.96 * se_u))
             else:
                 ci_lower = 0.0
                 ci_upper = 0.0
@@ -214,7 +233,7 @@ class SurvivalTool(BaseTool):
                         "events": km_events,
                         "censored": km_censored,
                     },
-                    "ci_method": "Greenwood (1926)",
+                    "ci_method": "Greenwood log-log (Collett 2015 / R survfit default)",
                     "follow_up_time": float(np.max(dur)),
                 },
             }
@@ -262,7 +281,7 @@ class SurvivalTool(BaseTool):
                 "status": "success",
                 "data": {
                     "method": "Kaplan-Meier (stratified)",
-                    "ci_method": "Greenwood (1926)",
+                    "ci_method": "Greenwood log-log (Collett 2015 / R survfit default)",
                     "n_groups": len(groups),
                     "groups": groups,
                 },

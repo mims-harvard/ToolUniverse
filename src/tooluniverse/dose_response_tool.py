@@ -132,7 +132,15 @@ class DoseResponseTool(BaseTool):
 
             # Parameter standard errors from diagonal of covariance matrix
             perr = np.sqrt(np.diag(np.abs(pcov)))
-            ci_ec50 = (ec50 - 2.0 * perr[2], ec50 + 2.0 * perr[2])
+            # Log-scale delta method CI (Motulsky & Christopoulos 2004):
+            #   SE_log = SE_ec50 / ec50  (delta method applied to log(EC50))
+            #   CI = [ec50 * exp(-1.96*SE_log), ec50 * exp(+1.96*SE_log)]
+            # Always positive and asymmetric; uses z=1.96 for exact 95%.
+            se_log_ec50 = perr[2] / ec50
+            ci_ec50 = (
+                ec50 * np.exp(-1.96 * se_log_ec50),
+                ec50 * np.exp(+1.96 * se_log_ec50),
+            )
 
             # Use full float precision for IC50 and related values.
             # Rounding to a fixed number of decimal places (e.g. round(x, 6))
