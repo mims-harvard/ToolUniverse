@@ -85,13 +85,15 @@ class SurvivalTool(BaseTool):
         """
         event_times = np.sort(np.unique(durations[events == 1]))
 
-        # Include baseline row (t=0) so all columns have consistent length N+1
+        # Include baseline row (t=0) so all columns have consistent length N+1.
+        # Only add if t=0 is not already the first event time (avoids duplicate rows).
         n_total = int(len(durations))
-        km_times = [0.0]
-        km_survival = [1.0]
-        km_at_risk: List[int] = [n_total]
-        km_events: List[int] = [0]
-        km_censored: List[int] = [0]
+        first_event_at_zero = len(event_times) > 0 and float(event_times[0]) == 0.0
+        km_times = [] if first_event_at_zero else [0.0]
+        km_survival = [] if first_event_at_zero else [1.0]
+        km_at_risk: List[int] = [] if first_event_at_zero else [n_total]
+        km_events: List[int] = [] if first_event_at_zero else [0]
+        km_censored: List[int] = [] if first_event_at_zero else [0]
 
         s = 1.0
         for t_i in event_times:
@@ -283,13 +285,21 @@ class SurvivalTool(BaseTool):
                 var_total += (n1 * n2 * o * (n - o)) / (n**2 * (n - 1))
 
         if var_total <= 0:
-            return {
-                "status": "error",
-                "error": "Cannot compute log-rank test (no variance in event times)",
-            }
-
-        chi2_stat = (O1_total - E1_total) ** 2 / var_total
-        p_value = 1 - stats.chi2.cdf(chi2_stat, df=1)
+            # Zero variance occurs when all events share the same time point and the
+            # split is proportional (O==E for every stratum).  In this degenerate case
+            # chi2 = 0 and p = 1.0 is the correct, well-defined answer: there is no
+            # evidence of a difference between the two groups.
+            if abs(O1_total - E1_total) < 1e-10 and abs(O2_total - E2_total) < 1e-10:
+                chi2_stat = 0.0
+                p_value = 1.0
+            else:
+                return {
+                    "status": "error",
+                    "error": "Cannot compute log-rank test: zero variance with non-zero observed-expected difference (degenerate data).",
+                }
+        else:
+            chi2_stat = (O1_total - E1_total) ** 2 / var_total
+            p_value = 1 - stats.chi2.cdf(chi2_stat, df=1)
 
         return {
             "status": "success",

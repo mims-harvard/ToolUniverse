@@ -290,7 +290,9 @@ class DoseResponseTool(BaseTool):
                 "ic50_fold_shift_b_over_a": round(float(fold_shift), 2)
                 if fold_shift
                 else None,
-                "more_potent": "A" if ic50_a < ic50_b else "B",
+                "more_potent": "A"
+                if ic50_a < ic50_b
+                else ("B" if ic50_b < ic50_a else "Equal"),
                 "potency_interpretation": self._interpret_potency(fold_shift),
             },
         }
