@@ -613,6 +613,28 @@ class NCATool(BaseTool):
         except (ValueError, TypeError) as e:
             return {"status": "error", "error": f"Invalid numeric values: {e}"}
 
+        # Validate all inputs are finite (guards against inf propagating to F=inf).
+        for name, val in [
+            ("auc_po", auc_po),
+            ("dose_po", dose_po),
+            ("auc_iv", auc_iv),
+            ("dose_iv", dose_iv),
+        ]:
+            if not np.isfinite(val):
+                return {
+                    "status": "error",
+                    "error": f"{name} must be a finite number (received {val}).",
+                }
+
+        if auc_po < 0:
+            return {
+                "status": "error",
+                "error": (
+                    f"auc_po ({auc_po}) must be non-negative. "
+                    "A negative AUC is not physically meaningful."
+                ),
+            }
+
         if auc_iv <= 0 or dose_iv <= 0 or dose_po <= 0:
             return {
                 "status": "error",

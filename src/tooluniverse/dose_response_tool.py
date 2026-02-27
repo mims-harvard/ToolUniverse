@@ -341,11 +341,14 @@ class DoseResponseTool(BaseTool):
     @staticmethod
     def _interpret_potency(fold_shift):
         """Return a human-readable potency comparison string."""
-        # Use `is None` instead of truthiness: `if not fold_shift` conflates None
-        # (computation failed) and 0.0 (impossible but logically wrong), returning
-        # "Equal potency" for both — which is misleading for the None case.
+        # Use explicit `is None` check: `not fold_shift` conflates None and 0.0.
         if fold_shift is None:
-            return "Equal potency"
+            return "Cannot determine potency (IC50 computation failed)"
+        # Guard against zero: fold_shift = IC50_B / IC50_A; EC50 bounds prevent
+        # this in normal operation, but direct callers could pass 0.0, which would
+        # cause ZeroDivisionError in the `1 / fold_shift` branch below.
+        if fold_shift == 0.0:
+            return "Cannot determine potency (IC50 is zero)"
         if fold_shift > 1:
             # IC50_B > IC50_A → A is fold_shift times more potent
             return f"Compound A is {round(fold_shift, 2)}x more potent than B"

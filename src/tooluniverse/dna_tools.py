@@ -1137,6 +1137,20 @@ class DNATool(BaseTool):
         gc_max_pct = (
             float(arguments["gc_max"]) if arguments.get("gc_max") is not None else 60.0
         )
+        # Validate GC bounds: must be in [0, 100] and gc_min ≤ gc_max.
+        if not (0 <= gc_min_pct <= 100) or not (0 <= gc_max_pct <= 100):
+            return {
+                "status": "error",
+                "error": (
+                    f"gc_min ({gc_min_pct}) and gc_max ({gc_max_pct}) must be in "
+                    "[0, 100] (percentage units)."
+                ),
+            }
+        if gc_min_pct > gc_max_pct:
+            return {
+                "status": "error",
+                "error": (f"gc_min ({gc_min_pct}) must be ≤ gc_max ({gc_max_pct})."),
+            }
 
         if target_start is None:
             target_start = 0
@@ -1226,7 +1240,7 @@ class DNATool(BaseTool):
                 if "N" in rev_primer:
                     continue
                 gc = gc_content(rev_primer)
-                if gc < 40 or gc > 60:
+                if gc < gc_min_pct or gc > gc_max_pct:
                     continue
                 if has_3prime_repeat(rev_primer):
                     continue
@@ -1361,6 +1375,11 @@ class DNATool(BaseTool):
 
         for i, part in enumerate(parts):
             part_upper = part.upper().replace(" ", "").replace("\n", "")
+            if len(part_upper) == 0:
+                return {
+                    "status": "error",
+                    "error": f"Part {i + 1} is empty. All parts must contain at least one nucleotide.",
+                }
             err = self._validate_dna_sequence(part_upper)
             if err:
                 return {"status": "error", "error": f"Part {i + 1}: {err}"}
