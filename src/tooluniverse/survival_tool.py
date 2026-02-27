@@ -80,14 +80,18 @@ class SurvivalTool(BaseTool):
         """Compute Kaplan-Meier product-limit survival estimate.
 
         Returns (times, survival, at_risk, events_at_t, n_censored).
+        All returned lists have the same length (N+1), with index 0 representing
+        the baseline (t=0, S=1, all subjects at risk, zero events/censored).
         """
         event_times = np.sort(np.unique(durations[events == 1]))
 
+        # Include baseline row (t=0) so all columns have consistent length N+1
+        n_total = int(len(durations))
         km_times = [0.0]
         km_survival = [1.0]
-        km_at_risk: List[int] = []
-        km_events: List[int] = []
-        km_censored: List[int] = []
+        km_at_risk: List[int] = [n_total]
+        km_events: List[int] = [0]
+        km_censored: List[int] = [0]
 
         s = 1.0
         for t_i in event_times:
@@ -140,6 +144,12 @@ class SurvivalTool(BaseTool):
         if np.any(dur < 0):
             return {"status": "error", "error": "All durations must be non-negative"}
 
+        if not np.all(np.isin(evs, [0, 1])):
+            return {
+                "status": "error",
+                "error": "event_observed values must be 0 (censored) or 1 (event occurred)",
+            }
+
         if group_labels is None:
             # Single group
             km_times, km_survival, km_at_risk, km_events, km_censored = (
@@ -155,8 +165,8 @@ class SurvivalTool(BaseTool):
                 "data": {
                     "method": "Kaplan-Meier",
                     "n_subjects": len(dur),
-                    "n_events": int(np.sum(evs)),
-                    "n_censored": int(np.sum(1 - evs)),
+                    "n_events": int(np.sum(evs == 1)),
+                    "n_censored": int(np.sum(evs == 0)),
                     "median_survival_time": median_survival,
                     "survival_table": {
                         "times": km_times,
@@ -236,6 +246,13 @@ class SurvivalTool(BaseTool):
                 "status": "error",
                 "error": "durations and events must have matching lengths within each group",
             }
+
+        for arr, name in [(ea, "events_a"), (eb, "events_b")]:
+            if not np.all(np.isin(arr, [0, 1])):
+                return {
+                    "status": "error",
+                    "error": f"{name} values must be 0 (censored) or 1 (event occurred)",
+                }
 
         all_times = np.unique(np.concatenate([da[ea == 1], db[eb == 1]]))
 

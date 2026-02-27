@@ -239,13 +239,19 @@ class NCATool(BaseTool):
             t_half = np.log(2) / lambda_z
             # AUC0-inf = AUC0-t + Clast/λz
             auc0inf = auc0t + clast / lambda_z
+            extrap_pct = float((clast / lambda_z) / auc0inf * 100)
             result["lambda_z"] = round(float(lambda_z), 6)
             result["t_half"] = round(float(t_half), 4)
             result["r_squared_terminal_fit"] = round(float(r_sq_terminal), 4)
             result["AUC0-inf"] = round(float(auc0inf), 4)
-            result["AUC_extrapolation_pct"] = round(
-                float((clast / lambda_z) / auc0inf * 100), 1
-            )
+            result["AUC_extrapolation_pct"] = round(extrap_pct, 1)
+            if extrap_pct > 20.0:
+                result["AUC_extrapolation_warning"] = (
+                    f"AUC extrapolation is {extrap_pct:.1f}% (>20%). "
+                    "AUC0-inf may be unreliable. Add more late time points to "
+                    "better characterize the terminal elimination phase "
+                    "(FDA/EMA guideline: extrapolation should be <20%)."
+                )
 
             if dose is not None:
                 try:

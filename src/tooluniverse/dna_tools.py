@@ -889,7 +889,11 @@ class DNATool(BaseTool):
                         "error": f"No codon found for amino acid: {aa}",
                     }
             dna_codons.append(codon)
-            cai_values.append(cai_table.get(codon, 1.0))
+            # Exclude stop codons from CAI: CAI is defined only for sense codons.
+            # Stop codons are not present in CAI reference tables; including them
+            # with a default value of 1.0 would inflate the score.
+            if aa != "*":
+                cai_values.append(cai_table.get(codon, 1.0))
 
         optimized_dna = "".join(dna_codons)
         length_bp = len(optimized_dna)
@@ -1024,7 +1028,13 @@ class DNATool(BaseTool):
         }
 
     def _calc_tm_nn(self, primer: str) -> float:
-        """Calculate melting temperature using SantaLucia 1998 nearest-neighbor model."""
+        """Calculate melting temperature using SantaLucia 1998 nearest-neighbor model.
+
+        Uses terminal-specific initiation parameters (SantaLucia 1998, Table 2):
+          GC terminal: dH = +0.1 kcal/mol, dS = -2.8 cal/mol/K (per end)
+          AT terminal: dH = +2.3 kcal/mol, dS = +4.1 cal/mol/K (per end)
+        Applied to both the 5' and 3' terminal base pairs.
+        """
         seq = primer.upper()
         n = len(seq)
         if n < 2:
@@ -1033,9 +1043,15 @@ class DNATool(BaseTool):
         dH = 0.0  # kcal/mol
         dS = 0.0  # cal/mol/K
 
-        # Initiation parameters (SantaLucia 1998)
-        dH += 0.2
-        dS += -5.7
+        # Terminal-specific initiation corrections (SantaLucia 1998, Table 2)
+        # Applied once for each end (5' terminal and 3' terminal base pair)
+        for terminal_base in (seq[0], seq[-1]):
+            if terminal_base in "GC":
+                dH += 0.1
+                dS += -2.8
+            else:  # A or T terminal
+                dH += 2.3
+                dS += 4.1
 
         for i in range(n - 1):
             dinuc = seq[i : i + 2]
