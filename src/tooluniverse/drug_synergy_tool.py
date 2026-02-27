@@ -384,6 +384,17 @@ class DrugSynergyTool(BaseTool):
                 # and scipy warns about covariance estimation failure).
                 if len(np.unique(d)) < 3:
                     return None
+                # Guard: majority-negative inhibition indicates the scale_warning
+                # scenario (viability > 1.0 treated as fractional, then 1-vm < 0).
+                # curve_fit can still "succeed" on mixed negative/positive arrays,
+                # producing parameters that look plausible but are physically wrong
+                # (e.g., IC50 extrapolated to a dose that barely produces inhibition).
+                # Reject: if more than half of effects are negative, the data is
+                # too corrupted by scale ambiguity for reliable Hill fitting.
+                n_negative = int(np.sum(e < 0))
+                if n_negative > len(e) / 2:
+                    return None
+
                 # Drug has no measurable inhibition: emax_init=0 puts the initial
                 # guess on the lower bound — curve_fit produces degenerate Hill
                 # parameters (IC50 near zero, arbitrary hill slope).

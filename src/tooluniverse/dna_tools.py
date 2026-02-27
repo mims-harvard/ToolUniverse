@@ -884,13 +884,19 @@ class DNATool(BaseTool):
         else:
             interpretation = "Normal GC"
 
+        # BUG-2 fix: for all-N sequences, gc_content_percent is scientifically
+        # undefined (not zero). Return None so callers are not misled into thinking
+        # the sequence has 0% GC (i.e., is AT-rich).
+        gc_pct = None if effective_total == 0 else round(gc_content, 2)
+        at_pct = (
+            None if effective_total == 0 else round(at_count / effective_total * 100, 2)
+        )
+
         return {
             "status": "success",
             "data": {
-                "gc_content_percent": round(gc_content, 2),
-                "at_content_percent": round(
-                    (at_count / effective_total * 100) if effective_total > 0 else 0, 2
-                ),
+                "gc_content_percent": gc_pct,
+                "at_content_percent": at_pct,
                 "nucleotide_counts": counts,
                 "sequence_length": total,
                 "effective_length": effective_total,
@@ -1501,6 +1507,23 @@ class DNATool(BaseTool):
             return {
                 "status": "error",
                 "error": f"Designed product size ({product_size} bp) is outside the range [{product_size_min}, {product_size_max}] bp",
+            }
+
+        # BUG-1 fix: verify the product actually spans the requested target region.
+        # Primer search windows are centered ±50 bp around target_start/target_end, so
+        # when the target falls near a sequence boundary the best primers may sit
+        # entirely before (or after) the target, producing a valid product that misses
+        # the declared target. Detect and report instead of silently returning wrong coords.
+        if best_fwd["start"] > target_start or best_rev["end"] < target_end:
+            return {
+                "status": "error",
+                "error": (
+                    f"Could not design a primer pair that fully spans the target region "
+                    f"[{target_start}, {target_end}]. "
+                    f"Best candidate product [{best_fwd['start']}, {best_rev['end']}] "
+                    f"does not cover the target. "
+                    "Try widening the target region, relaxing primer constraints, or using a longer sequence."
+                ),
             }
 
         return {

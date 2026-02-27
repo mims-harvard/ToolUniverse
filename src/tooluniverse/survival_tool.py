@@ -243,27 +243,38 @@ class SurvivalTool(BaseTool):
             below = np.where(km_surv_arr <= 0.5)[0]
             median_survival = float(km_times[below[0]]) if len(below) > 0 else None
 
-            return {
-                "status": "success",
-                "data": {
-                    "method": "Kaplan-Meier",
-                    "n_subjects": len(dur),
-                    "n_events": int(np.sum(evs == 1)),
-                    "n_censored": int(np.sum(evs == 0)),
-                    "median_survival_time": median_survival,
-                    "survival_table": {
-                        "times": km_times,
-                        "survival_probability": km_survival,
-                        "ci_lower_95": km_ci_lower,
-                        "ci_upper_95": km_ci_upper,
-                        "at_risk": km_at_risk,
-                        "events": km_events,
-                        "censored": km_censored,
-                    },
-                    "ci_method": "Greenwood log-log (Collett 2015 / R survfit default)",
-                    "follow_up_time": float(np.max(dur)),
+            n_events_total = int(np.sum(evs == 1))
+            n_censored_total = int(np.sum(evs == 0))
+            result_data = {
+                "method": "Kaplan-Meier",
+                "n_subjects": len(dur),
+                "n_events": n_events_total,
+                "n_censored": n_censored_total,
+                "median_survival_time": median_survival,
+                "survival_table": {
+                    "times": km_times,
+                    "survival_probability": km_survival,
+                    "ci_lower_95": km_ci_lower,
+                    "ci_upper_95": km_ci_upper,
+                    "at_risk": km_at_risk,
+                    "events": km_events,
+                    "censored": km_censored,
                 },
+                "ci_method": "Greenwood log-log (Collett 2015 / R survfit default)",
+                "follow_up_time": float(np.max(dur)),
             }
+            # When no events occurred (all-censored), the survival table only contains
+            # the baseline row (t=0, censored=0). The 'censored' column correctly shows
+            # 0 because KM tables record censored counts only at event times, not at
+            # arbitrary censoring times. Add a note so the discrepancy is not confusing.
+            if n_events_total == 0 and n_censored_total > 0:
+                result_data["all_censored_note"] = (
+                    f"No events were observed (all {n_censored_total} subjects censored). "
+                    "The survival function S(t) = 1.0 throughout follow-up. "
+                    "The survival table 'censored' column shows only subjects censored at "
+                    "event times (standard KM convention); see n_censored for the total."
+                )
+            return {"status": "success", "data": result_data}
         else:
             # Stratified analysis
             if len(group_labels) != len(dur):
@@ -687,7 +698,19 @@ class SurvivalTool(BaseTool):
         coef_results = []
         for i, name in enumerate(cov_names):
             p_val = float(p_values[i])
-            p_val_out = None if np.isnan(p_val) else round(p_val, 4)
+            # Guard against exact 0.0 p-value produced by complete separation:
+            # when z → ∞, norm.cdf(∞) = 1.0 exactly, so 2*(1-1.0) = 0.0.
+            # This is a floating-point artifact, not a true p-value of exactly 0.
+            # Report None (with a note) rather than 0.0, which would misleadingly
+            # imply infinite precision and suppress the separation_warning context.
+            if np.isnan(p_val):
+                p_val_out = None
+            elif p_val == 0.0:
+                p_val_out = (
+                    None  # separation artifact — exact zero is not a valid p-value
+                )
+            else:
+                p_val_out = round(p_val, 4)
             se_scaled = float(se[i]) / float(X_std[i])
 
             # Guard CI computation against overflow (complete separation produces a

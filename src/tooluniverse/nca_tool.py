@@ -268,6 +268,20 @@ class NCATool(BaseTool):
         t = t[sort_idx]
         c = c[sort_idx]
 
+        # Reject all-negative-time profiles: if every time point is negative (pre-dose
+        # only), there is no post-administration pharmacokinetic data to analyse.
+        # Without a t≥0 anchor, AUC0-t would integrate over the pre-dose window —
+        # a physically meaningless result that would be returned silently.
+        if not np.any(t >= 0):
+            return {
+                "status": "error",
+                "error": (
+                    "All time points are negative (pre-dose only). "
+                    "No post-dose data is available for NCA calculation. "
+                    "Provide at least one time point at t ≥ 0 (time of dosing or later)."
+                ),
+            }
+
         # Detect duplicate time points: the linear-log trapezoid computes
         # dt = t[i+1] - t[i] = 0 for duplicates, contributing zero area.
         # Duplicate times are often caused by data entry errors or sample labelling
@@ -389,6 +403,36 @@ class NCATool(BaseTool):
                     "This may indicate re-absorption, enterohepatic circulation, a secondary "
                     "Cmax, or assay variability. Terminal slope (lambda_z) may be unreliable."
                 )
+
+        # Validate dose unconditionally — before the lambda_z branch.
+        # BUG-A fix: the original validation was nested inside `if lambda_z is not None:`,
+        # so invalid doses (negative, zero, NaN, inf) were silently accepted when
+        # lambda_z could not be estimated (sparse terminal phase data).
+        if dose is not None:
+            try:
+                _dose_early = float(dose)
+            except (ValueError, TypeError):
+                return {
+                    "status": "error",
+                    "error": "dose must be a numeric value. Non-numeric dose is not valid.",
+                }
+            if not math.isfinite(_dose_early):
+                return {
+                    "status": "error",
+                    "error": (
+                        f"dose ({_dose_early}) must be a finite positive number. "
+                        "NaN and inf are not valid dose values."
+                    ),
+                }
+            if _dose_early <= 0:
+                return {
+                    "status": "error",
+                    "error": (
+                        f"dose ({_dose_early}) must be positive (> 0). "
+                        "Negative or zero dose is not physically meaningful. "
+                        "CL and Vd cannot be computed without a positive dose."
+                    ),
+                }
 
         if lambda_z is not None:
             t_half = np.log(2) / lambda_z
@@ -637,20 +681,28 @@ class NCATool(BaseTool):
             },
         }
 
-        # Warn when the fit quality is extremely poor (R² < 0.1): this typically
-        # indicates a flat concentration profile (no appreciable elimination over
-        # the sampling window) or data too noisy for 1-compartment modeling.
-        # The reported t½ and k_el are unreliable — they reflect the optimizer
-        # landing at an arbitrary (often boundary) parameter set, not real PK.
-        if r_squared < 0.1:
-            result["fit_quality_warning"] = (
-                f"Very poor fit (R² = {round(r_squared, 4)}): the 1-compartment "
-                "model explains < 10% of the variance in the concentration data. "
-                "This often indicates a flat profile (no measurable elimination "
-                "over the sampling window), highly noisy data, or a multi-phasic "
-                "decline requiring a 2-compartment or non-compartmental approach. "
-                "The t½ and k_el estimates are unreliable."
-            )
+        # Emit a structured fit_quality_warning for poor fits (R² < 0.85).
+        # The goodness_of_fit label transitions at 0.85/0.95, so R² < 0.85 is
+        # already labelled "Poor". Providing a machine-readable field allows
+        # programmatic callers to detect and flag poor fits without parsing strings.
+        # Threshold aligns with the existing "Poor (R²<0.85)" label.
+        if r_squared < 0.85:
+            if r_squared < 0.1:
+                fit_warn_msg = (
+                    f"Very poor fit (R² = {round(r_squared, 4)}): the 1-compartment "
+                    "model explains < 10% of the variance in the concentration data. "
+                    "This often indicates a flat profile (no measurable elimination "
+                    "over the sampling window), highly noisy data, or a multi-phasic "
+                    "decline. The t½ and k_el estimates are unreliable."
+                )
+            else:
+                fit_warn_msg = (
+                    f"Poor fit (R² = {round(r_squared, 4)} < 0.85): the 1-compartment "
+                    "model does not describe the data well. Consider a 2-compartment "
+                    "model or non-compartmental analysis. The t½ and k_el estimates "
+                    "should be interpreted with caution."
+                )
+            result["fit_quality_warning"] = fit_warn_msg
 
         # Warn when k_el is at or near the optimization lower bound (1e-9).
         # At the bound, the optimizer could not find a smaller value — the half-life
