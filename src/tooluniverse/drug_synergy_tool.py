@@ -92,7 +92,9 @@ class DrugSynergyTool(BaseTool):
                 return "Synergy"
             elif score == 0:
                 return "Additivity"
-            elif score >= -0.10:
+            elif score > -0.10:
+                # Asymmetric boundary fix: -0.10 should be "Strong antagonism"
+                # to match the symmetric positive side (0.10 → "Strong synergy").
                 return "Antagonism"
             else:
                 return "Strong antagonism"
@@ -326,6 +328,11 @@ class DrugSynergyTool(BaseTool):
                 d, e = doses[valid], effects[valid]
                 if len(d) < 3:
                     return None
+                # Require at least 3 unique concentration levels: curve_fit on a
+                # single unique x-value is degenerate (produces meaningless parameters
+                # and scipy warns about covariance estimation failure).
+                if len(np.unique(d)) < 3:
+                    return None
                 p0 = [np.median(d), 1.0, max(e)]
                 bounds = ([0, 0.1, 0], [np.inf, 10, 1])
                 popt, _ = curve_fit(hill_curve, d, e, p0=p0, bounds=bounds, maxfev=5000)
@@ -493,17 +500,21 @@ class DrugSynergyTool(BaseTool):
                 ),
             }
 
-        # Validate effect values in (0, 1] — zero effect (DS-4) causes inverse_hill
-        # to return 0.0 for the equivalent dose, which then fails with a confusing
-        # "equivalent dose is zero" error.  Detecting it early gives a clearer message.
-        if not (0 < e_combo <= 1):
+        # Validate effect values in (0, 1) exclusive on both ends.
+        # Zero: causes inverse_hill to return 0.0, triggering a confusing downstream error.
+        # 1.0: nearly always causes inverse_hill to return inf because the Hill model
+        # bounds emax to [1e-6, 1.0], making emax < 1.0 in almost all real fits.
+        # An effect_combo = 1.0 effectively requests 100% inhibition which exceeds
+        # the single-agent maximum — the Loewe index is undefined.
+        if not (0 < e_combo < 1):
             return {
                 "status": "error",
                 "error": (
-                    f"effect_combo={e_combo} must be in (0, 1] (fractional effect, "
-                    "exclusive zero). The Loewe model is undefined when the combination "
-                    "effect is zero — a zero effect requires zero dose of each drug alone, "
-                    "making the additivity index indeterminate."
+                    f"effect_combo={e_combo} must be in (0, 1) exclusive on both ends. "
+                    "Zero effect makes the Loewe index indeterminate (no dose needed). "
+                    "An effect of 1.0 (100% inhibition) nearly always exceeds the fitted "
+                    "single-agent maximum, making inverse_hill undefined. Use a value "
+                    "strictly between 0 and 1 (e.g., 0.5 for IC50)."
                 ),
             }
         try:

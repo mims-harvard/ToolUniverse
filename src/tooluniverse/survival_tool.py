@@ -98,18 +98,30 @@ class SurvivalTool(BaseTool):
         """
         event_times = np.sort(np.unique(durations[events == 1]))
 
-        # Always include a baseline row (t=0, S=1.0) representing the state
-        # before any events occur.  When events occur exactly at t=0, the loop
-        # appends a second row at t=0 showing the post-event S — forming the
-        # correct step-function representation of the KM curve.
+        # Include a baseline row (t=0, S=1.0) only when no event occurs at t=0.
+        # If the first event time is 0, adding a separate t=0 baseline row would
+        # produce duplicate timestamps [0.0, 0.0, ...], which is non-standard and
+        # breaks downstream code that assumes unique time points (plots, indexers).
+        # Standard KM implementations (R survfit, lifelines) use a single row per
+        # unique event time with no duplicate at t=0.
         n_total = int(len(durations))
-        km_times: List[float] = [0.0]
-        km_survival: List[float] = [1.0]
-        km_at_risk: List[int] = [n_total]
-        km_events: List[int] = [0]
-        km_censored: List[int] = [0]
-        km_ci_lower: List[float] = [1.0]
-        km_ci_upper: List[float] = [1.0]
+        has_t0_event = len(event_times) > 0 and float(event_times[0]) == 0.0
+        if has_t0_event:
+            km_times: List[float] = []
+            km_survival: List[float] = []
+            km_at_risk: List[int] = []
+            km_events: List[int] = []
+            km_censored: List[int] = []
+            km_ci_lower: List[float] = []
+            km_ci_upper: List[float] = []
+        else:
+            km_times = [0.0]
+            km_survival = [1.0]
+            km_at_risk = [n_total]
+            km_events = [0]
+            km_censored = [0]
+            km_ci_lower = [1.0]
+            km_ci_upper = [1.0]
 
         s = 1.0
         greenwood_sum = 0.0  # cumulative: Σ dⱼ / (nⱼ × (nⱼ − dⱼ))
@@ -381,32 +393,50 @@ class SurvivalTool(BaseTool):
             chi2_stat = (O1_total - E1_total) ** 2 / var_total
             p_value = 1 - stats.chi2.cdf(chi2_stat, df=1)
 
-        return {
-            "status": "success",
-            "data": {
-                "method": "Log-Rank Test (Mantel-Cox)",
-                "group_a": {
-                    "n_subjects": len(da),
-                    "n_events": int(np.sum(ea)),
-                    "observed": round(float(O1_total), 2),
-                    "expected": round(float(E1_total), 2),
-                },
-                "group_b": {
-                    "n_subjects": len(db),
-                    "n_events": int(np.sum(eb)),
-                    "observed": round(float(O2_total), 2),
-                    "expected": round(float(E2_total), 2),
-                },
-                "chi2_statistic": round(float(chi2_stat), 4),
-                "p_value": round(float(p_value), 6),
-                "degrees_of_freedom": 1,
-                "interpretation": (
-                    "Statistically significant difference in survival (p < 0.05)"
-                    if p_value < 0.05
-                    else "No statistically significant difference in survival (p >= 0.05)"
-                ),
+        # n_events_in_statistic counts only events that contributed to the chi2.
+        # Events at time points where n=n1+n2 < 2 are excluded by the loop guard
+        # (hypergeometric variance is 0 when total at-risk < 2). In such cases,
+        # n_events_in_statistic < n_events, and the distinction matters for interpretation.
+        n_events_in_stat_a = int(round(O1_total))
+        n_events_in_stat_b = int(round(O2_total))
+        n_events_excluded = (int(np.sum(ea)) - n_events_in_stat_a) + (
+            int(np.sum(eb)) - n_events_in_stat_b
+        )
+
+        result_data = {
+            "method": "Log-Rank Test (Mantel-Cox)",
+            "group_a": {
+                "n_subjects": len(da),
+                "n_events": int(np.sum(ea)),
+                "n_events_in_statistic": n_events_in_stat_a,
+                "observed": round(float(O1_total), 2),
+                "expected": round(float(E1_total), 2),
             },
+            "group_b": {
+                "n_subjects": len(db),
+                "n_events": int(np.sum(eb)),
+                "n_events_in_statistic": n_events_in_stat_b,
+                "observed": round(float(O2_total), 2),
+                "expected": round(float(E2_total), 2),
+            },
+            "chi2_statistic": round(float(chi2_stat), 4),
+            "p_value": round(float(p_value), 6),
+            "degrees_of_freedom": 1,
+            "interpretation": (
+                "Statistically significant difference in survival (p < 0.05)"
+                if p_value < 0.05
+                else "No statistically significant difference in survival (p >= 0.05)"
+            ),
         }
+        if n_events_excluded > 0:
+            result_data["events_excluded_note"] = (
+                f"{n_events_excluded} event(s) were excluded from the chi2 statistic "
+                "because at the time of the event, fewer than 2 subjects were at risk "
+                "across both groups (hypergeometric variance = 0 at those time points). "
+                "n_events_in_statistic reflects only events that contributed to the test."
+            )
+
+        return {"status": "success", "data": result_data}
 
     def _cox_regression(self, arguments: Dict[str, Any]) -> Dict[str, Any]:
         """
