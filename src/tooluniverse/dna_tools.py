@@ -577,7 +577,9 @@ class DNATool(BaseTool):
     def _find_restriction_sites(self, arguments: Dict[str, Any]) -> Dict[str, Any]:
         """Find restriction enzyme recognition sites in a DNA sequence."""
         sequence = arguments.get("sequence", "")
-        if not sequence:
+        # Strip whitespace before checking emptiness — a whitespace-only input
+        # is truthy but produces an empty sequence after cleaning.
+        if not sequence or not sequence.strip():
             return {"status": "error", "error": "sequence is required"}
 
         sequence = sequence.upper().replace(" ", "").replace("\n", "")
@@ -586,6 +588,10 @@ class DNATool(BaseTool):
             return {"status": "error", "error": error}
 
         enzymes_requested = arguments.get("enzymes")
+        # Support circular DNA: search a doubled sequence to catch sites that
+        # span the origin of the molecule.
+        circular = bool(arguments.get("circular", False))
+
         if enzymes_requested:
             if isinstance(enzymes_requested, str):
                 enzymes_requested = [enzymes_requested]
@@ -603,20 +609,35 @@ class DNATool(BaseTool):
         else:
             enzyme_dict = NEB_ENZYMES
 
+        seq_len = len(sequence)
+        # For circular DNA, search the doubled sequence to detect sites that
+        # wrap around the origin. Only positions 0..seq_len-1 are collected
+        # (positions ≥ seq_len are duplicates of non-wrapping sites).
+        search_seq = (sequence + sequence) if circular else sequence
+
         results = {}
         for enzyme_name, recognition_seq in enzyme_dict.items():
             if "N" in recognition_seq:
                 pattern = recognition_seq.replace("N", "[ATGC]")
-                positions = [
-                    m.start() + 1 for m in re.finditer(f"(?={pattern})", sequence)
-                ]
+                if circular:
+                    positions = [
+                        m.start() + 1
+                        for m in re.finditer(f"(?={pattern})", search_seq)
+                        if m.start() < seq_len
+                    ]
+                else:
+                    positions = [
+                        m.start() + 1 for m in re.finditer(f"(?={pattern})", search_seq)
+                    ]
             else:
                 positions = []
                 start = 0
                 while True:
-                    pos = sequence.find(recognition_seq, start)
+                    pos = search_seq.find(recognition_seq, start)
                     if pos == -1:
                         break
+                    if circular and pos >= seq_len:
+                        break  # stop at duplicates
                     positions.append(pos + 1)  # 1-based
                     start = pos + 1
 
@@ -627,20 +648,24 @@ class DNATool(BaseTool):
                     "num_cuts": len(positions),
                 }
 
+        data = {
+            "sequence_length": seq_len,
+            "enzymes_with_sites": results,
+            "enzymes_cutting": sorted(results.keys()),
+            "num_enzymes_cutting": len(results),
+        }
+        if circular:
+            data["circular"] = True
+
         return {
             "status": "success",
-            "data": {
-                "sequence_length": len(sequence),
-                "enzymes_with_sites": results,
-                "enzymes_cutting": sorted(results.keys()),
-                "num_enzymes_cutting": len(results),
-            },
+            "data": data,
         }
 
     def _find_orfs(self, arguments: Dict[str, Any]) -> Dict[str, Any]:
         """Find open reading frames (ORFs) in a DNA sequence."""
         sequence = arguments.get("sequence", "")
-        if not sequence:
+        if not sequence or not sequence.strip():
             return {"status": "error", "error": "sequence is required"}
 
         sequence = sequence.upper().replace(" ", "").replace("\n", "")
@@ -650,6 +675,18 @@ class DNATool(BaseTool):
 
         min_length = arguments.get("min_length", 100)  # minimum nt length
         strand = arguments.get("strand", "both")  # "forward", "reverse", "both"
+
+        # Validate strand parameter: case-sensitive match required.
+        # An invalid value (e.g., "BOTH", "Forward") silently returns 0 ORFs.
+        _valid_strands = ("forward", "reverse", "both")
+        if strand not in _valid_strands:
+            return {
+                "status": "error",
+                "error": (
+                    f"Invalid strand value '{strand}'. "
+                    "Must be 'forward', 'reverse', or 'both' (case-sensitive)."
+                ),
+            }
 
         _STOP_SET = {"TAA", "TAG", "TGA"}
 
@@ -780,7 +817,7 @@ class DNATool(BaseTool):
     def _reverse_complement(self, arguments: Dict[str, Any]) -> Dict[str, Any]:
         """Generate the reverse complement of a DNA sequence."""
         sequence = arguments.get("sequence", "")
-        if not sequence:
+        if not sequence or not sequence.strip():
             return {"status": "error", "error": "sequence is required"}
 
         sequence = sequence.upper().replace(" ", "").replace("\n", "")
@@ -803,7 +840,7 @@ class DNATool(BaseTool):
     def _translate_sequence(self, arguments: Dict[str, Any]) -> Dict[str, Any]:
         """Translate a DNA sequence to protein using the standard codon table."""
         sequence = arguments.get("sequence", "")
-        if not sequence:
+        if not sequence or not sequence.strip():
             return {"status": "error", "error": "sequence is required"}
 
         sequence = sequence.upper().replace(" ", "").replace("\n", "")
@@ -947,7 +984,7 @@ class DNATool(BaseTool):
     def _virtual_digest(self, arguments: Dict[str, Any]) -> Dict[str, Any]:
         """Perform a virtual restriction digest of a DNA sequence."""
         sequence = arguments.get("sequence", "")
-        if not sequence:
+        if not sequence or not sequence.strip():
             return {"status": "error", "error": "sequence is required"}
 
         sequence = sequence.upper().replace(" ", "").replace("\n", "")
@@ -1151,6 +1188,32 @@ class DNATool(BaseTool):
                 "status": "error",
                 "error": (f"gc_min ({gc_min_pct}) must be ≤ gc_max ({gc_max_pct})."),
             }
+
+        # Validate product size constraints upfront to give a clear error message.
+        # Without this check, the user gets a confusing "Designed product size (N)
+        # is outside the range [min, max]" message when min > max.
+        if product_size_min > product_size_max:
+            return {
+                "status": "error",
+                "error": (
+                    f"product_size_min ({product_size_min}) must be <= "
+                    f"product_size_max ({product_size_max})."
+                ),
+            }
+
+        # Validate target coordinates before clamping: if target_start > target_end,
+        # the region size becomes negative and produces a confusing error downstream.
+        if target_start is not None and target_end is not None:
+            t_start_raw = int(target_start)
+            t_end_raw = int(target_end)
+            if t_start_raw > t_end_raw:
+                return {
+                    "status": "error",
+                    "error": (
+                        f"target_start ({t_start_raw}) must be less than or equal to "
+                        f"target_end ({t_end_raw})."
+                    ),
+                }
 
         if target_start is None:
             target_start = 0

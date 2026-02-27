@@ -333,7 +333,13 @@ class DrugSynergyTool(BaseTool):
                 # and scipy warns about covariance estimation failure).
                 if len(np.unique(d)) < 3:
                     return None
-                p0 = [np.median(d), 1.0, max(e)]
+                # Drug has no measurable inhibition: emax_init=0 puts the initial
+                # guess on the lower bound — curve_fit produces degenerate Hill
+                # parameters (IC50 near zero, arbitrary hill slope).
+                emax_init = float(max(e))
+                if emax_init <= 0:
+                    return None
+                p0 = [np.median(d), 1.0, emax_init]
                 bounds = ([0, 0.1, 0], [np.inf, 10, 1])
                 popt, _ = curve_fit(hill_curve, d, e, p0=p0, bounds=bounds, maxfev=5000)
                 return popt
@@ -411,6 +417,11 @@ class DrugSynergyTool(BaseTool):
             d, e = doses[valid], effects[valid]
             if len(d) < 3:
                 return None
+            # Flat dose-response: all effects are identical (or nearly so).
+            # curve_fit converges to IC50 at the lower bound (1e-15), which rounds
+            # to 0.0 — a scientifically invalid IC50 suggesting infinite potency.
+            if float(np.max(e) - np.min(e)) < 1e-6:
+                return None  # IC50 is not identifiable for flat data
             # Initial guesses
             emax_init = float(np.max(e))
             if emax_init <= 0:

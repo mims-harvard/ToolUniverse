@@ -7,6 +7,7 @@ Calculates IC50, Hill slope, Emax, Emin, and curve fitting statistics.
 No external API calls. Uses scipy.optimize for curve fitting.
 """
 
+import math
 from typing import Dict, Any, List
 from .base_tool import BaseTool
 from .tool_registry import register_tool
@@ -123,6 +124,20 @@ class DoseResponseTool(BaseTool):
             )
             emin, emax, ec50, n_hill = popt
 
+            # Detect inverted fit: when fitted top < bottom the 4PL curve is
+            # inverted.  This typically means the data does not span the midpoint
+            # of the sigmoid (the IC50 is extrapolated, not interpolated) or the
+            # response is stimulatory rather than inhibitory.
+            inverted_fit_warning = None
+            if float(emax) < float(emin):
+                inverted_fit_warning = (
+                    f"Inverted model: fitted top ({float(emax):.4g}) < bottom "
+                    f"({float(emin):.4g}). The data may not span the half-maximal "
+                    "response level, or the response is stimulatory. "
+                    "IC50 interpretation may be unreliable. Verify that responses "
+                    "decrease with increasing concentration."
+                )
+
             # Detect Hill slope at numerical lower bound (0.05).
             # This occurs when the optimal n would be even smaller — typically
             # a stimulatory dose-response, very shallow curve, or insufficient
@@ -174,6 +189,8 @@ class DoseResponseTool(BaseTool):
                     ),
                     "fitted_values": [round(float(v), 4) for v in y_hat],
                 }
+                if inverted_fit_warning:
+                    singular_result["inverted_fit_warning"] = inverted_fit_warning
                 if hill_bound_warning:
                     singular_result["hill_slope_warning"] = hill_bound_warning
                 return singular_result
@@ -219,6 +236,8 @@ class DoseResponseTool(BaseTool):
             }
             if ci_overflow_note:
                 main_result["ci_note"] = ci_overflow_note
+            if inverted_fit_warning:
+                main_result["inverted_fit_warning"] = inverted_fit_warning
             if hill_bound_warning:
                 main_result["hill_slope_warning"] = hill_bound_warning
             return main_result
@@ -269,6 +288,8 @@ class DoseResponseTool(BaseTool):
         }
         if "ci_note" in result:
             data["ci_note"] = result["ci_note"]
+        if "inverted_fit_warning" in result:
+            data["inverted_fit_warning"] = result["inverted_fit_warning"]
         if "hill_slope_warning" in result:
             data["hill_slope_warning"] = result["hill_slope_warning"]
         return {"status": "success", "data": data}
@@ -309,6 +330,8 @@ class DoseResponseTool(BaseTool):
         }
         if "ci_note" in result:
             data["ci_note"] = result["ci_note"]
+        if "inverted_fit_warning" in result:
+            data["inverted_fit_warning"] = result["inverted_fit_warning"]
         if "hill_slope_warning" in result:
             data["hill_slope_warning"] = result["hill_slope_warning"]
 
@@ -349,6 +372,10 @@ class DoseResponseTool(BaseTool):
         # cause ZeroDivisionError in the `1 / fold_shift` branch below.
         if fold_shift == 0.0:
             return "Cannot determine potency (IC50 is zero)"
+        # Guard against NaN/inf: IEEE 754 NaN comparisons always return False, so
+        # NaN would fall through to "Equal potency" — a misleading result.
+        if not math.isfinite(fold_shift):
+            return "Cannot determine potency (non-finite fold shift)"
         if fold_shift > 1:
             # IC50_B > IC50_A → A is fold_shift times more potent
             return f"Compound A is {round(fold_shift, 2)}x more potent than B"

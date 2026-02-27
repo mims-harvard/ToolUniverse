@@ -228,6 +228,18 @@ class NCATool(BaseTool):
         except (ValueError, TypeError) as e:
             return {"status": "error", "error": f"Invalid numeric values: {e}"}
 
+        # NaN/inf in times must be rejected: np.argsort on a NaN-containing array
+        # produces undefined ordering, silently propagating NaN through all PK parameters.
+        if np.any(~np.isfinite(t)):
+            return {
+                "status": "error",
+                "error": (
+                    "Times contain non-finite values (NaN or inf). "
+                    "All time values must be finite real numbers. "
+                    "Remove or correct the affected time points."
+                ),
+            }
+
         # NaN/inf must be rejected before any comparison (np.any(c < 0) returns False
         # for NaN, silently bypassing the negative-value guard).
         if np.any(~np.isfinite(c)):
@@ -459,6 +471,25 @@ class NCATool(BaseTool):
         except (ValueError, TypeError) as e:
             return {"status": "error", "error": f"Invalid numeric values: {e}"}
 
+        # Validate concentration array (consistent with _compute_parameters).
+        if np.any(~np.isfinite(c)):
+            return {
+                "status": "error",
+                "error": (
+                    "Concentrations contain non-finite values (NaN or inf). "
+                    "Replace with valid measured values."
+                ),
+            }
+        if np.any(c < 0):
+            return {
+                "status": "error",
+                "error": (
+                    "All concentrations must be non-negative. Negative values likely "
+                    "represent below-LOQ (BLQ) measurements. Per FDA/EMA NCA guidance, "
+                    "replace BLQ values with 0 before submitting."
+                ),
+            }
+
         # Use positive concentrations only
         valid = c > 0
         if sum(valid) < 3:
@@ -548,6 +579,17 @@ class NCATool(BaseTool):
         if dose is not None:
             try:
                 dose_val = float(dose)
+                # Validate dose: zero or negative doses are not physically meaningful.
+                # (Consistent with _compute_parameters which also rejects dose ≤ 0.)
+                if dose_val <= 0:
+                    return {
+                        "status": "error",
+                        "error": (
+                            f"dose ({dose_val}) must be positive (> 0). "
+                            "Zero or negative doses are not physically meaningful. "
+                            "Vd and CL cannot be computed without a positive dose."
+                        ),
+                    }
                 auc0inf = c0_fit / k_el_fit
                 dose_ng, conc_factor, converted = self._try_pk_unit_conversion(
                     dose_val, dose_unit, conc_unit
