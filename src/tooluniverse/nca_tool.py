@@ -251,8 +251,18 @@ class NCATool(BaseTool):
             if c[idx] == 0.0:
                 mid_profile_zero_times.append(float(t[idx]))
 
-        # AUC0-t (linear-log trapezoidal)
-        auc0t = self._auc_trapezoid(t, c)
+        # AUC0-t (linear-log trapezoidal).
+        # FDA NCA convention: AUC0-t is integrated only up to Tlast, the time of
+        # the last *positive* (measurable) concentration.  Trailing zeros beyond
+        # Tlast represent BLQ samples and must not inflate the integral.
+        if any(pos_mask):
+            last_pos_idx = int(np.where(pos_mask)[0][-1])
+            t_auc = t[: last_pos_idx + 1]
+            c_auc = c[: last_pos_idx + 1]
+        else:
+            t_auc = t
+            c_auc = c
+        auc0t = self._auc_trapezoid(t_auc, c_auc)
 
         # Terminal phase parameters — use all post-Tmax points per FDA NCA guidance
         lambda_z, r_sq_terminal, _ = self._estimate_terminal_slope(t, c, tmax=tmax)

@@ -130,8 +130,36 @@ class DoseResponseTool(BaseTool):
             sse_total = float(np.sum((y - y_mean) ** 2))
             r_sq = (1.0 - sse_resid / sse_total) if sse_total > 1e-15 else 0.0
 
-            # Parameter standard errors from diagonal of covariance matrix
+            # Use full float precision for IC50.
+            # Rounding to a fixed number of decimal places (e.g. round(x, 6))
+            # silently truncates IC50 values < 5e-7 to 0.0, which is incorrect for
+            # typical pharmacological IC50s in the nanomolar range (1e-9 to 1e-7 M).
+            ec50_f = float(ec50)
+
+            # Parameter standard errors from diagonal of covariance matrix.
+            # When n_data == n_parameters (e.g. exactly 4 points for a 4PL model),
+            # scipy sets pcov to all-inf (zero degrees of freedom for residuals).
+            # Guard: replace inf with None so the output is valid JSON.
             perr = np.sqrt(np.diag(np.abs(pcov)))
+            if not np.all(np.isfinite(perr)):
+                # Covariance is singular — CIs and SEs are not estimable.
+                return {
+                    "bottom": round(float(emin), 4),
+                    "top": round(float(emax), 4),
+                    "ic50": ec50_f,
+                    "hill_slope": round(float(n_hill), 4),
+                    "r_squared": round(float(r_sq), 4),
+                    "ic50_95ci": None,
+                    "standard_errors": None,
+                    "ci_note": (
+                        "Covariance matrix is singular (zero residual degrees of "
+                        "freedom, n_data == n_parameters). Standard errors and "
+                        "confidence intervals cannot be estimated. Add more data "
+                        "points to enable uncertainty quantification."
+                    ),
+                    "fitted_values": [round(float(v), 4) for v in y_hat],
+                }
+
             # Log-scale delta method CI (Motulsky & Christopoulos 2004):
             #   SE_log = SE_ec50 / ec50  (delta method applied to log(EC50))
             #   CI = [ec50 * exp(-1.96*SE_log), ec50 * exp(+1.96*SE_log)]
@@ -141,12 +169,6 @@ class DoseResponseTool(BaseTool):
                 ec50 * np.exp(-1.96 * se_log_ec50),
                 ec50 * np.exp(+1.96 * se_log_ec50),
             )
-
-            # Use full float precision for IC50 and related values.
-            # Rounding to a fixed number of decimal places (e.g. round(x, 6))
-            # silently truncates IC50 values < 5e-7 to 0.0, which is incorrect for
-            # typical pharmacological IC50s in the nanomolar range (1e-9 to 1e-7 M).
-            ec50_f = float(ec50)
             perr2_f = float(perr[2])
             ci0_f = float(ci_ec50[0])
             ci1_f = float(ci_ec50[1])
@@ -193,27 +215,27 @@ class DoseResponseTool(BaseTool):
         if "error" in result:
             return {"status": "error", "error": result["error"]}
 
-        return {
-            "status": "success",
-            "data": {
-                "model": "4-Parameter Logistic (4PL)",
-                "formula": "f(x) = Bottom + (Top - Bottom) / (1 + (IC50/x)^Hill)",
-                "parameters": {
-                    "bottom_emin": result["bottom"],
-                    "top_emax": result["top"],
-                    "ic50": result["ic50"],
-                    "hill_slope": result["hill_slope"],
-                },
-                "goodness_of_fit": {
-                    "r_squared": result["r_squared"],
-                },
-                "ic50_95_confidence_interval": result["ic50_95ci"],
-                "standard_errors": result["standard_errors"],
-                "fitted_values": result["fitted_values"],
-                "input_concentrations": list(concentrations),
-                "input_responses": list(responses),
+        data = {
+            "model": "4-Parameter Logistic (4PL)",
+            "formula": "f(x) = Bottom + (Top - Bottom) / (1 + (IC50/x)^Hill)",
+            "parameters": {
+                "bottom_emin": result["bottom"],
+                "top_emax": result["top"],
+                "ic50": result["ic50"],
+                "hill_slope": result["hill_slope"],
             },
+            "goodness_of_fit": {
+                "r_squared": result["r_squared"],
+            },
+            "ic50_95_confidence_interval": result["ic50_95ci"],
+            "standard_errors": result["standard_errors"],
+            "fitted_values": result["fitted_values"],
+            "input_concentrations": list(concentrations),
+            "input_responses": list(responses),
         }
+        if "ci_note" in result:
+            data["ci_note"] = result["ci_note"]
+        return {"status": "success", "data": data}
 
     def _calculate_ic50(self, arguments: Dict[str, Any]) -> Dict[str, Any]:
         """Extract IC50 from dose-response data via 4PL fitting."""
@@ -237,21 +259,21 @@ class DoseResponseTool(BaseTool):
         if "error" in result:
             return {"status": "error", "error": result["error"]}
 
-        return {
-            "status": "success",
-            "data": {
-                "ic50": result["ic50"],
-                "ic50_95_confidence_interval": result["ic50_95ci"],
-                "hill_slope": result["hill_slope"],
-                "emax": result["top"],
-                "emin": result["bottom"],
-                "r_squared": result["r_squared"],
-                "log_ic50": round(float(np.log10(result["ic50"])), 4)
-                if result["ic50"] > 0
-                else None,
-                "note": "IC50 estimated via 4PL curve fitting",
-            },
+        data = {
+            "ic50": result["ic50"],
+            "ic50_95_confidence_interval": result["ic50_95ci"],
+            "hill_slope": result["hill_slope"],
+            "emax": result["top"],
+            "emin": result["bottom"],
+            "r_squared": result["r_squared"],
+            "log_ic50": round(float(np.log10(result["ic50"])), 4)
+            if result["ic50"] > 0
+            else None,
+            "note": "IC50 estimated via 4PL curve fitting",
         }
+        if "ci_note" in result:
+            data["ci_note"] = result["ci_note"]
+        return {"status": "success", "data": data}
 
     @staticmethod
     def _interpret_potency(fold_shift):
