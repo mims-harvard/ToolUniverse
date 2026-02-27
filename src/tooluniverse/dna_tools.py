@@ -876,6 +876,21 @@ class DNATool(BaseTool):
                 "error": f"Invalid amino acid characters: {invalid}. Use single-letter codes.",
             }
 
+        # Validate stop codon placement: * is only allowed as the final residue.
+        # An internal stop codon (*) would produce a truncated, non-functional protein.
+        stop_positions = [i for i, aa in enumerate(sequence) if aa == "*"]
+        if stop_positions:
+            internal_stops = [p for p in stop_positions if p != len(sequence) - 1]
+            if internal_stops:
+                return {
+                    "status": "error",
+                    "error": (
+                        f"Internal stop codon(s) (*) at position(s) "
+                        f"{[p + 1 for p in internal_stops]} (1-indexed). "
+                        "Stop codons are only permitted at the terminal position of the sequence."
+                    ),
+                }
+
         dna_codons = []
         cai_values = []
         for aa in sequence:
@@ -1241,12 +1256,22 @@ class DNATool(BaseTool):
         assembly_fragments = []
 
         for i, frag in enumerate(fragments_clean):
-            prev_frag = fragments_clean[(i - 1) % n]
             next_frag = fragments_clean[(i + 1) % n]
 
-            left_overlap = prev_frag[-overlap_length:]
+            # Overlap convention: the overlap at each junction is the first
+            # overlap_length bases of the RIGHT fragment (next_frag).
+            # - left_overlap: first N bases of this fragment — this is the overlap
+            #   region shared with the previous fragment (the previous fragment's
+            #   right primer adds these bases as a 5'-tail).  It is already part
+            #   of this fragment's sequence; no extra left primer tail is needed.
+            # - right_overlap: first N bases of the next fragment — added to this
+            #   fragment's PCR product via the right primer 5'-tail.
+            # Consistency check: Fragment i's right_overlap == Fragment i+1's
+            #   left_overlap (both equal next_frag[:overlap_length]). ✓
+            left_overlap = frag[:overlap_length]
             right_overlap = next_frag[:overlap_length]
-            with_overlaps = left_overlap + frag + right_overlap
+            # PCR product = this fragment's sequence + right primer overhang tail
+            with_overlaps = frag + right_overlap
 
             assembly_fragments.append(
                 {
