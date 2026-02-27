@@ -146,6 +146,8 @@ class DrugSynergyTool(BaseTool):
 
         expected = ea + eb - ea * eb
         synergy_score = ec - expected  # Fractional units (same scale as inputs)
+        # Round before interpretation so displayed score and label are consistent.
+        synergy_score_rounded = round(synergy_score, 2)
 
         return {
             "status": "success",
@@ -155,8 +157,10 @@ class DrugSynergyTool(BaseTool):
                 "effect_b": eb,
                 "effect_combination_observed": ec,
                 "effect_combination_expected": round(expected, 4),
-                "bliss_synergy_score": round(synergy_score, 2),
-                "interpretation": self._interpret_synergy_score(synergy_score, "bliss"),
+                "bliss_synergy_score": synergy_score_rounded,
+                "interpretation": self._interpret_synergy_score(
+                    synergy_score_rounded, "bliss"
+                ),
                 "note": "Scores in fractional units (0-1 scale, same as inputs). Positive = synergy; Negative = antagonism. |score| ≥ 0.1 = strong effect. Based on Bliss (1939).",
             },
         }
@@ -193,12 +197,14 @@ class DrugSynergyTool(BaseTool):
 
         hsa = np.maximum(ea, eb)
         synergy_matrix = ec - hsa  # Fractional units (same scale as inputs)
+        # Round mean before interpretation so displayed score and label are consistent.
+        mean_score_rounded = round(float(np.mean(synergy_matrix)), 2)
 
         return {
             "status": "success",
             "data": {
                 "model": "Highest Single Agent (HSA)",
-                "mean_hsa_synergy_score": round(float(np.mean(synergy_matrix)), 2),
+                "mean_hsa_synergy_score": mean_score_rounded,
                 "max_hsa_synergy_score": round(float(np.max(synergy_matrix)), 2),
                 "min_hsa_synergy_score": round(float(np.min(synergy_matrix)), 2),
                 "synergy_scores_per_point": [
@@ -206,7 +212,7 @@ class DrugSynergyTool(BaseTool):
                 ],
                 "hsa_expected": [round(float(h), 4) for h in hsa],
                 "interpretation": self._interpret_synergy_score(
-                    float(np.mean(synergy_matrix)), "hsa"
+                    mean_score_rounded, "hsa"
                 ),
                 "note": "Scores in fractional units (0-1 scale, same as inputs). Positive = synergy over best single agent; Negative = antagonism. |score| ≥ 0.1 = strong effect.",
             },

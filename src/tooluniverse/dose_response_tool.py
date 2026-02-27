@@ -183,13 +183,24 @@ class DoseResponseTool(BaseTool):
             #   CI = [ec50 * exp(-1.96*SE_log), ec50 * exp(+1.96*SE_log)]
             # Always positive and asymmetric; uses z=1.96 for exact 95%.
             se_log_ec50 = perr[2] / ec50
-            ci_ec50 = (
-                ec50 * np.exp(-1.96 * se_log_ec50),
-                ec50 * np.exp(+1.96 * se_log_ec50),
-            )
             perr2_f = float(perr[2])
-            ci0_f = float(ci_ec50[0])
-            ci1_f = float(ci_ec50[1])
+            # Guard against overflow: when IC50 lies far outside the tested
+            # concentration range the SE is enormous and exp overflows to inf.
+            # Return None for the CI with an explanatory note.
+            with np.errstate(over="ignore"):
+                ci_lo_raw = float(ec50 * np.exp(-1.96 * se_log_ec50))
+                ci_hi_raw = float(ec50 * np.exp(+1.96 * se_log_ec50))
+            if np.isfinite(ci_lo_raw) and np.isfinite(ci_hi_raw):
+                ic50_ci = [ci_lo_raw, ci_hi_raw]
+                ci_overflow_note = None
+            else:
+                ic50_ci = None
+                ci_overflow_note = (
+                    "IC50 confidence interval could not be computed: the SE of "
+                    "log(IC50) is too large, likely because the IC50 lies outside "
+                    "the tested concentration range. Extend the concentration range "
+                    "to include the half-maximal response."
+                )
 
             main_result = {
                 "bottom": round(float(emin), 4),
@@ -197,7 +208,7 @@ class DoseResponseTool(BaseTool):
                 "ic50": ec50_f,
                 "hill_slope": round(float(n_hill), 4),
                 "r_squared": round(float(r_sq), 4),
-                "ic50_95ci": [ci0_f, ci1_f],
+                "ic50_95ci": ic50_ci,
                 "standard_errors": {
                     "bottom": round(float(perr[0]), 4),
                     "top": round(float(perr[1]), 4),
@@ -206,6 +217,8 @@ class DoseResponseTool(BaseTool):
                 },
                 "fitted_values": [round(float(v), 4) for v in y_hat],
             }
+            if ci_overflow_note:
+                main_result["ci_note"] = ci_overflow_note
             if hill_bound_warning:
                 main_result["hill_slope_warning"] = hill_bound_warning
             return main_result

@@ -228,6 +228,16 @@ class NCATool(BaseTool):
         except (ValueError, TypeError) as e:
             return {"status": "error", "error": f"Invalid numeric values: {e}"}
 
+        if np.any(c < 0):
+            return {
+                "status": "error",
+                "error": (
+                    "All concentrations must be non-negative. Negative values likely "
+                    "represent below-LOQ (BLQ) measurements. Per FDA/EMA NCA guidance, "
+                    "replace BLQ values with 0 before submitting."
+                ),
+            }
+
         # Sort by time
         sort_idx = np.argsort(t)
         t = t[sort_idx]

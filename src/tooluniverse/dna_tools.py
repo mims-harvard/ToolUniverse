@@ -843,7 +843,7 @@ class DNATool(BaseTool):
         result = {
             "status": "success",
             "data": {
-                "dna_sequence": sequence,
+                "dna_sequence": sequence_trimmed,
                 "protein_sequence": protein_seq_no_stop,
                 "full_translation": protein_seq,
                 "protein_length_aa": len(protein_seq_no_stop),
@@ -1248,6 +1248,7 @@ class DNATool(BaseTool):
                 "error": "fragments must be a list of at least 2 DNA sequences",
             }
 
+        circular = bool(arguments.get("circular", True))
         overlap_length = int(arguments.get("overlap_length") or 20)
         if overlap_length < 1:
             return {"status": "error", "error": "overlap_length must be at least 1"}
@@ -1270,22 +1271,33 @@ class DNATool(BaseTool):
         assembly_fragments = []
 
         for i, frag in enumerate(fragments_clean):
-            next_frag = fragments_clean[(i + 1) % n]
+            # For circular assemblies every fragment has a successor; for linear
+            # assemblies the last fragment is the terminus and has no right overlap
+            # (adding one would produce incorrect PCR products).
+            is_last_linear = (not circular) and (i == n - 1)
+
+            if is_last_linear:
+                next_frag = None
+            else:
+                next_frag = fragments_clean[(i + 1) % n]
 
             # Overlap convention: the overlap at each junction is the first
             # overlap_length bases of the RIGHT fragment (next_frag).
-            # - left_overlap: first N bases of this fragment — this is the overlap
-            #   region shared with the previous fragment (the previous fragment's
-            #   right primer adds these bases as a 5'-tail).  It is already part
-            #   of this fragment's sequence; no extra left primer tail is needed.
+            # - left_overlap: first N bases of this fragment — shared with the
+            #   previous fragment's right overlap; no extra left primer tail needed.
             # - right_overlap: first N bases of the next fragment — added to this
             #   fragment's PCR product via the right primer 5'-tail.
             # Consistency check: Fragment i's right_overlap == Fragment i+1's
             #   left_overlap (both equal next_frag[:overlap_length]). ✓
             left_overlap = frag[:overlap_length]
-            right_overlap = next_frag[:overlap_length]
-            # PCR product = this fragment's sequence + right primer overhang tail
-            with_overlaps = frag + right_overlap
+            if next_frag is not None:
+                right_overlap = next_frag[:overlap_length]
+                # PCR product = this fragment's body + right primer overhang tail
+                with_overlaps = frag + right_overlap
+            else:
+                # Linear terminus: no right primer tail
+                right_overlap = ""
+                with_overlaps = frag
 
             assembly_fragments.append(
                 {
@@ -1303,6 +1315,7 @@ class DNATool(BaseTool):
                 "assembly_fragments": assembly_fragments,
                 "n_fragments": n,
                 "overlap_length": overlap_length,
+                "topology": "circular" if circular else "linear",
             },
         }
 

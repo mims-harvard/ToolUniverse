@@ -98,17 +98,18 @@ class SurvivalTool(BaseTool):
         """
         event_times = np.sort(np.unique(durations[events == 1]))
 
-        # Include baseline row (t=0) so all columns have consistent length N+1.
-        # Only add if t=0 is not already the first event time (avoids duplicate rows).
+        # Always include a baseline row (t=0, S=1.0) representing the state
+        # before any events occur.  When events occur exactly at t=0, the loop
+        # appends a second row at t=0 showing the post-event S — forming the
+        # correct step-function representation of the KM curve.
         n_total = int(len(durations))
-        first_event_at_zero = len(event_times) > 0 and float(event_times[0]) == 0.0
-        km_times = [] if first_event_at_zero else [0.0]
-        km_survival = [] if first_event_at_zero else [1.0]
-        km_at_risk: List[int] = [] if first_event_at_zero else [n_total]
-        km_events: List[int] = [] if first_event_at_zero else [0]
-        km_censored: List[int] = [] if first_event_at_zero else [0]
-        km_ci_lower: List[float] = [] if first_event_at_zero else [1.0]
-        km_ci_upper: List[float] = [] if first_event_at_zero else [1.0]
+        km_times: List[float] = [0.0]
+        km_survival: List[float] = [1.0]
+        km_at_risk: List[int] = [n_total]
+        km_events: List[int] = [0]
+        km_censored: List[int] = [0]
+        km_ci_lower: List[float] = [1.0]
+        km_ci_upper: List[float] = [1.0]
 
         s = 1.0
         greenwood_sum = 0.0  # cumulative: Σ dⱼ / (nⱼ × (nⱼ − dⱼ))
@@ -268,12 +269,16 @@ class SurvivalTool(BaseTool):
                 groups[str(label)] = {
                     "n_subjects": int(np.sum(mask)),
                     "n_events": int(np.sum(g_evs)),
+                    "n_censored": int(np.sum(mask)) - int(np.sum(g_evs)),
                     "median_survival_time": median_survival,
                     "survival_table": {
                         "times": km_times,
                         "survival_probability": km_survival,
                         "ci_lower_95": km_ci_lower,
                         "ci_upper_95": km_ci_upper,
+                        "at_risk": km_at_risk,
+                        "events": km_events,
+                        "censored": km_censored,
                     },
                 }
 
@@ -436,6 +441,12 @@ class SurvivalTool(BaseTool):
         except (ValueError, TypeError) as e:
             return {"status": "error", "error": f"Invalid duration/event values: {e}"}
 
+        if np.any(dur < 0):
+            return {
+                "status": "error",
+                "error": "All durations must be non-negative. Negative survival times are not valid.",
+            }
+
         n = len(dur)
         cov_names = list(covariates.keys())
         cov_matrix = []
@@ -546,28 +557,48 @@ class SurvivalTool(BaseTool):
         with np.errstate(invalid="ignore", divide="ignore"):
             z_scores = beta_original / (se / X_std)
         p_values = 2 * (1 - stats.norm.cdf(np.abs(z_scores)))
-        hazard_ratios = np.exp(beta_original)
+        # hazard_ratios computed per-covariate below (with overflow guard)
 
         coef_results = []
         for i, name in enumerate(cov_names):
             p_val = float(p_values[i])
             p_val_out = None if np.isnan(p_val) else round(p_val, 4)
             se_scaled = float(se[i]) / float(X_std[i])
-            coef_results.append(
-                {
-                    "covariate": name,
-                    "coefficient": round(float(beta_original[i]), 4),
-                    "hazard_ratio": round(float(hazard_ratios[i]), 4),
-                    "hazard_ratio_95ci": (
-                        round(float(np.exp(beta_original[i] - 1.96 * se_scaled)), 4),
-                        round(float(np.exp(beta_original[i] + 1.96 * se_scaled)), 4),
-                    ),
-                    "p_value": p_val_out,
-                    "significant": bool(p_val < 0.05)
-                    if p_val_out is not None
-                    else False,
-                }
-            )
+
+            # Guard CI computation against overflow (complete separation produces a
+            # near-singular Hessian → huge se_scaled → exp overflows to inf).
+            # Replace non-finite values with None and add a warning.
+            with np.errstate(over="ignore"):
+                raw_hr = float(np.exp(float(beta_original[i])))
+                raw_ci_lo = float(np.exp(float(beta_original[i]) - 1.96 * se_scaled))
+                raw_ci_hi = float(np.exp(float(beta_original[i]) + 1.96 * se_scaled))
+            separation_warning = None
+            if (
+                not np.isfinite(raw_hr)
+                or not np.isfinite(raw_ci_lo)
+                or not np.isfinite(raw_ci_hi)
+            ):
+                separation_warning = (
+                    "Complete or quasi-complete separation detected: the covariate "
+                    f"'{name}' perfectly (or nearly perfectly) predicts the outcome. "
+                    "The hazard ratio and CI cannot be estimated reliably. Consider "
+                    "Firth's penalized regression or exact logistic regression."
+                )
+            hr_out = round(raw_hr, 4) if np.isfinite(raw_hr) else None
+            ci_lo_out = round(raw_ci_lo, 4) if np.isfinite(raw_ci_lo) else None
+            ci_hi_out = round(raw_ci_hi, 4) if np.isfinite(raw_ci_hi) else None
+
+            entry = {
+                "covariate": name,
+                "coefficient": round(float(beta_original[i]), 4),
+                "hazard_ratio": hr_out,
+                "hazard_ratio_95ci": (ci_lo_out, ci_hi_out),
+                "p_value": p_val_out,
+                "significant": bool(p_val < 0.05) if p_val_out is not None else False,
+            }
+            if separation_warning:
+                entry["separation_warning"] = separation_warning
+            coef_results.append(entry)
 
         return {
             "status": "success",
