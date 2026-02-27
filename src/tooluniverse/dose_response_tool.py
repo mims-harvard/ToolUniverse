@@ -204,7 +204,7 @@ class DoseResponseTool(BaseTool):
             # Inhibitory curves: emin > emax.  Stimulatory curves: emax > emin.
             stimulatory_warning = None
             if float(emax) > float(emin):
-                # BUG-4 fix: apply + 0.0 to eliminate IEEE-754 negative zero (-0.0)
+                # Apply + 0.0 to eliminate IEEE-754 negative zero (-0.0)
                 # that arises from round(~0.0, 4) when scipy returns a value like
                 # -7.8e-15.  Same pattern applied to bottom/top fields below.
                 _emin_disp = round(float(emin), 4) + 0.0
@@ -319,7 +319,7 @@ class DoseResponseTool(BaseTool):
             "model": "4-Parameter Logistic (4PL)",
             "formula": "f(x) = Bottom + (Top - Bottom) / (1 + (IC50/x)^Hill)",
             "parameters": {
-                # BUG-4 fix: labels corrected to match pharmacological convention.
+                # Labels corrected to match pharmacological convention.
                 # emax = numerically larger asymptote (uninhibited baseline ≈100% for inhibitory).
                 # emin = numerically smaller asymptote (inhibited floor ≈0% for inhibitory).
                 "top_emax": max(result["top"], result["bottom"]),
@@ -342,7 +342,7 @@ class DoseResponseTool(BaseTool):
             data["hill_slope_warning"] = result["hill_slope_warning"]
         if "stimulatory_curve_warning" in result:
             data["stimulatory_curve_warning"] = result["stimulatory_curve_warning"]
-        # BUG-3 fix: warn when 4PL fit quality is poor.  _compare_potency already
+        # Warn when 4PL fit quality is poor.  _compare_potency already
         # warns when R² < 0.8; _fit_curve and _calculate_ic50 had no equivalent
         # check, so the same bad IC50 was silently accepted here.
         r_sq_val = result["r_squared"]
@@ -353,7 +353,7 @@ class DoseResponseTool(BaseTool):
                 "Check for noisy data, insufficient data points, or a non-sigmoidal "
                 "dose-response relationship."
             )
-        # BUG-3 (fit_curve) fix: _calculate_ic50 already emits ic50_extrapolation_warning
+        # _calculate_ic50 already emits ic50_extrapolation_warning
         # and ic50_range_warning, but _fit_curve silently omitted them even though it
         # returns the same IC50 parameter.  Add the same checks here.
         ic50_val = result["ic50"]
@@ -409,7 +409,7 @@ class DoseResponseTool(BaseTool):
         if "error" in result:
             return {"status": "error", "error": result["error"]}
 
-        # BUG-6 fix: np.log10(x) where x ≈ 1.0 can return a value like −1.93e-16,
+        # Np.log10(x) where x ≈ 1.0 can return a value like −1.93e-16,
         # which round(…, 4) maps to −0.0 (IEEE 754 negative zero).  −0.0 is equal to
         # 0.0 mathematically but looks wrong in JSON output and confuses downstream
         # consumers.  Adding 0.0 converts negative zero to positive zero per IEEE 754.
@@ -419,7 +419,7 @@ class DoseResponseTool(BaseTool):
             else None
         )
 
-        # BUG-4 fix: emax/emin were inverted relative to pharmacological convention.
+        # Emax/emin were inverted relative to pharmacological convention.
         # The 4PL Hill equation f(x) = emin_param + (emax_param - emin_param)/(1+(EC50/x)^n)
         # means: emin_param = f(x→0) = low-dose asymptote = uninhibited baseline (≈100%)
         # and emax_param = f(x→∞) = high-dose asymptote = inhibited floor (≈0%) for an
@@ -445,7 +445,7 @@ class DoseResponseTool(BaseTool):
             data["hill_slope_warning"] = result["hill_slope_warning"]
         if "stimulatory_curve_warning" in result:
             data["stimulatory_curve_warning"] = result["stimulatory_curve_warning"]
-        # BUG-3 fit_quality_warning (shared with _fit_curve)
+        # fit_quality_warning (shared with _fit_curve)
         r_sq_val = result["r_squared"]
         if r_sq_val < 0.8:
             data["fit_quality_warning"] = (
@@ -467,7 +467,7 @@ class DoseResponseTool(BaseTool):
                 "Extend the concentration range to include the half-maximal response."
             )
 
-        # BUG-4 fix: the previous ic50_range_warning used a midpoint derived from the
+        # The previous ic50_range_warning used a midpoint derived from the
         # *fitted* top/bottom.  When the 4PL model must extrapolate heavily (e.g., data
         # spans only the top 15% of the curve), the fitted dynamic range can be enormous,
         # causing midpoint to fall inside the narrow observed response window even though
@@ -588,7 +588,7 @@ class DoseResponseTool(BaseTool):
                 "The IC50 estimate for compound B is unreliable."
             )
 
-        # BUG-3 fix: apply the same R15-BUG-4 emax correction here.
+        # Apply the same emax correction here.
         # result_a["top"] is the high-concentration asymptote (floor ≈0% for inhibitory);
         # emax should be the numerically LARGER asymptote = max(top, bottom).
         data = {
@@ -612,7 +612,7 @@ class DoseResponseTool(BaseTool):
         }
         if poor_fit_warnings:
             data["poor_fit_warning"] = " | ".join(poor_fit_warnings)
-        # BUG-1/2 fix: forward stimulatory_curve_warning and hill_slope_warning from
+        # Forward stimulatory_curve_warning and hill_slope_warning from
         # each compound's _fit_4pl result.  Without this, comparing an inhibitory
         # compound A against a stimulatory compound B (whose "IC50" is actually an EC50)
         # would silently report a fold-shift and "more potent" interpretation with no

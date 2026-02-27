@@ -176,7 +176,7 @@ class NCATool(BaseTool):
         # FDA NCA guidance requires ≥3 points for reliable λz: a 2-point regression
         # is a perfect fit by construction (R²=1 always), giving no quality signal.
         if tmax is not None:
-            # BUG-3 fix: use >= so the Tmax point itself (C_max) is the first point
+            # Use >= so the Tmax point itself (C_max) is the first point
             # of the terminal regression.  FDA NCA guidance defines the terminal phase
             # as starting AT Tmax (the concentration-time curve begins declining from
             # Cmax).  Using strict > excluded the Cmax point, leaving only the
@@ -198,7 +198,7 @@ class NCATool(BaseTool):
             t_term = t_valid[-n_use:]
             c_term = c_valid[-n_use:]
 
-        # BUG-2 fix: if duplicate time points survive into the terminal phase
+        # If duplicate time points survive into the terminal phase
         # (e.g., re-measured samples at t=1 with different concentrations), the
         # log-linear regression treats them as independent observations.  Two points at
         # the same time but different concentrations pull the slope toward zero, causing
@@ -324,7 +324,7 @@ class NCATool(BaseTool):
                     "Provide at least one time point at t ≥ 0 (time of dosing or later)."
                 ),
             }
-        # BUG-5 fix: the minimum-3 check at the top counts ALL time points including
+        # The minimum-3 check at the top counts ALL time points including
         # pre-dose samples.  Two pre-dose + one post-dose = 3 total passes the guard
         # but yields AUC=0 (single-point trapezoid) silently under status=success.
         # Enforce a minimum of 2 POST-DOSE points for a non-trivial AUC.
@@ -352,14 +352,14 @@ class NCATool(BaseTool):
         duplicate_times = [k for k, cnt in seen.items() if cnt > 1]
 
         # Basic parameters
-        # BUG-1 fix: Cmax/Tmax must be computed from POST-DOSE samples only (t >= 0).
+        # Cmax/Tmax must be computed from POST-DOSE samples only (t >= 0).
         # Pre-dose residual drug can exceed the new dose's Cmax, causing Tmax < 0 and
         # cascading into lambda_z (terminal phase selection uses t > Tmax).
         _postdose_mask = t >= 0
         c_post = c[_postdose_mask]
         t_post = t[_postdose_mask]
         # _postdose_mask guarantees len > 0 (all-pre-dose already caught above).
-        # BUG-3 fix: when multiple post-dose samples tie at Cmax (plateau profile),
+        # When multiple post-dose samples tie at Cmax (plateau profile),
         # np.argmax returns the FIRST index, so Tmax is set to the plateau start.
         # The terminal-slope filter then includes plateau points in the regression,
         # inflating t_half by up to 80% and underestimating lambda_z by up to 44%.
@@ -367,7 +367,7 @@ class NCATool(BaseTool):
         # so that all t ≥ Tmax data genuinely represents the declining terminal phase.
         _cmax_val = np.max(c_post)
         cmax = float(_cmax_val)
-        # BUG-1 fix (Round 19): when all post-dose concentrations are 0 (all BLQ),
+        # When all post-dose concentrations are 0 (all BLQ),
         # _cmax_val=0 and np.where(c_post==0)[0][-1] points to the LAST sample,
         # reporting Tmax=last_sample_time (e.g., 24h) — physically meaningless.
         # When Cmax=0, Tmax should be the first post-dose time (t=0 or first sample).
@@ -401,7 +401,7 @@ class NCATool(BaseTool):
             first_nonneg_idx = int(np.argmax(t >= 0)) if np.any(t >= 0) else 0
             t_auc = t[first_nonneg_idx : last_pos_idx + 1]
             c_auc = c[first_nonneg_idx : last_pos_idx + 1]
-            # BUG-2 fix: t_auc is empty when all positive concentrations are pre-dose
+            # T_auc is empty when all positive concentrations are pre-dose
             # (last_pos_idx < first_nonneg_idx). The old code reached t_auc[0] below,
             # raising IndexError: "index 0 is out of bounds for axis 0 with size 0",
             # which was swallowed by the outer except and returned as an opaque message.
@@ -417,9 +417,9 @@ class NCATool(BaseTool):
                 }
             pre_dose_times = [float(x) for x in t[:first_nonneg_idx]]
         else:
-            # BUG-1 fix: all post-dose concentrations are zero (all BLQ/undetectable).
+            # All post-dose concentrations are zero (all BLQ/undetectable).
             # AUC will be 0; use the post-dose observation window for the key label.
-            # BUG-2 fix (Round 19): when pre-dose samples exist, the old code set
+            # When pre-dose samples exist, the old code set
             # t_auc = t (the full array including pre-dose times), giving a key like
             # "AUC-2-8" and omitting pre_dose_time_warning. Apply the same
             # first_nonneg_idx filtering as the positive-concentrations path.
@@ -428,10 +428,10 @@ class NCATool(BaseTool):
             c_auc = c[_first_nonneg_idx:]
             pre_dose_times = [float(x) for x in t[:_first_nonneg_idx]]
         auc0t = self._auc_trapezoid(t_auc, c_auc)
-        # BUG-1 (MRT) fix: AUMC_0-t for later use in model-independent MRT computation.
+        # AUMC_0-t for later use in model-independent MRT computation.
         aumc0t = self._aumc_trapezoid(t_auc, c_auc)
 
-        # BUG-1 fix: np.float64 overflow — round(np.float64(huge), 4) multiplies by
+        # Np.float64 overflow — round(np.float64(huge), 4) multiplies by
         # 10^4 internally, overflowing to np.inf for values near the float max.
         # Guard with an isfinite check immediately after computing AUC.
         if not math.isfinite(float(auc0t)):
@@ -448,12 +448,12 @@ class NCATool(BaseTool):
         # Terminal phase parameters — use all post-Tmax points per FDA NCA guidance
         lambda_z, r_sq_terminal, _ = self._estimate_terminal_slope(t, c, tmax=tmax)
 
-        # BUG-2/3 fix: round(..., 4) truncates to 0.0 for sub-nanosecond values
+        # Round(..., 4) truncates to 0.0 for sub-nanosecond values
         # (e.g., round(5e-5, 4) = 0.0), producing contradictory output (Tlast=0
         # but non-zero AUC or extrapolation_pct). Use full float precision so that
         # extreme-scale profiles are self-consistent.  This matches the lambda_z
         # treatment at line ~376: "Preserve full precision for lambda_z."
-        # BUG-1 additional protection: round(float(x), 4) overflows for x > ~1.79e304
+        # Additional protection: round(float(x), 4) overflows for x > ~1.79e304
         # because x * 10^4 exceeds the float maximum.  Use full precision (no rounding)
         # for AUC — consistent with the lambda_z / t_half treatment above.
         _auc0t = float(auc0t)
@@ -462,16 +462,16 @@ class NCATool(BaseTool):
             "Tmax": float(tmax),
             "Clast": float(clast),
             "Tlast": float(tlast),
-            # BUG-3 fix: key was always "AUC0-X" even when data starts after t=0.
+            # Key was always "AUC0-X" even when data starts after t=0.
             # If the first time point is > 0, the integral starts there (not at 0),
             # so the key should reflect the actual integration bounds to avoid a 24%+
             # overstatement when the user reads "AUC0-24" but actually gets AUC_2-24.
-            # BUG-1 fix: use t_auc[-1] (actual upper integration bound) instead of
+            # Use t_auc[-1] (actual upper integration bound) instead of
             # tlast (last POSITIVE concentration time). When all concentrations are
             # zero, tlast=0.0 but integration spans 0 to the last observation time.
             # For non-zero profiles t_auc[-1]==tlast, so this is backward compatible.
             f"AUC{float(t_auc[0]):.6g}-{float(t_auc[-1]):.6g}": _auc0t,
-            # BUG-4 fix: "AUC0_last" is misleading when data starts after t=0 (no t=0
+            # "AUC0_last" is misleading when data starts after t=0 (no t=0
             # sample), because "0" implies integration from time of dosing (t=0) but
             # the actual integral starts at the first observed time (e.g., t=2).
             # Keep for backward compatibility; add an explanatory note when t[0] > 0.
@@ -483,7 +483,7 @@ class NCATool(BaseTool):
             },
         }
 
-        # BUG-4 fix: clarify that AUC0_last does NOT start at t=0 when first sample > 0.
+        # Clarify that AUC0_last does NOT start at t=0 when first sample > 0.
         if float(t_auc[0]) > 0:
             result["auc_start_note"] = (
                 f"AUC integration starts at the first observed post-dose time "
@@ -520,9 +520,7 @@ class NCATool(BaseTool):
         valid_mask = c > 0
         t_valid_all = t[valid_mask]
         c_valid_all = c[valid_mask]
-        post_tmax_mask = (
-            t_valid_all >= tmax
-        )  # BUG-3 fix: use >= to match terminal slope
+        post_tmax_mask = t_valid_all >= tmax  # use >= to match terminal slope
         if np.sum(post_tmax_mask) >= 3:
             c_post = c_valid_all[post_tmax_mask]
             if np.any(np.diff(c_post) > 0):
@@ -533,7 +531,7 @@ class NCATool(BaseTool):
                 )
 
         # Validate dose unconditionally — before the lambda_z branch.
-        # BUG-A fix: the original validation was nested inside `if lambda_z is not None:`,
+        # The original validation was nested inside `if lambda_z is not None:`,
         # so invalid doses (negative, zero, NaN, inf) were silently accepted when
         # lambda_z could not be estimated (sparse terminal phase data).
         if dose is not None:
@@ -575,7 +573,7 @@ class NCATool(BaseTool):
             result["lambda_z"] = float(lambda_z)
             result["t_half"] = float(t_half)
             result["r_squared_terminal_fit"] = round(float(r_sq_terminal), 4)
-            # BUG-5 fix: emit a terminal_fit_quality_warning when the log-linear terminal
+            # Emit a terminal_fit_quality_warning when the log-linear terminal
             # phase R² is poor.  _fit_one_compartment already has a similar guard
             # (R² < 0.85), but _compute_parameters never checked its own terminal fit.
             # A poor terminal R² means lambda_z, t_half, AUC0-inf, CL, and Vd are all
@@ -630,16 +628,16 @@ class NCATool(BaseTool):
                         auc_ng_ml = auc0inf * conc_factor
                         cl_ml = dose_ng / auc_ng_ml  # mL/time_unit
                         cl_l = cl_ml / 1000.0  # L/time_unit
-                        # BUG-1 fix: round(cl_l, 6) silently truncates CL to 0.0 for
+                        # Round(cl_l, 6) silently truncates CL to 0.0 for
                         # any CL < 5e-7 L/time (e.g., rare biotech analytes with tiny
                         # doses in ng).  Use full precision consistent with lambda_z/AUC.
                         result["clearance_CL"] = float(cl_l)
                         result["clearance_CL_unit"] = f"L/{time_unit}"
-                        # BUG-2 fix: for non-IV routes, Dose/AUC = CL/F (apparent
+                        # For non-IV routes, Dose/AUC = CL/F (apparent
                         # clearance), NOT true systemic clearance (which requires IV
                         # data or a known bioavailability F).  Label it clearly so
                         # users don't compare oral and IV CL values without adjustment.
-                        # BUG-1 fix (Round 18): 'infusion' is also an intravenous route
+                        # 'infusion' is also an intravenous route
                         # (F=1 by definition); the old `route != "iv"` check incorrectly
                         # labeled IV infusion clearance as CL/F (apparent clearance).
                         if route not in ("iv", "infusion"):
@@ -649,17 +647,17 @@ class NCATool(BaseTool):
                                 "bioavailability F is unknown without an IV reference. "
                                 "Do not compare directly with IV-derived clearance."
                             )
-                        # Round 20 BUG-1 fix: 'infusion' is an IV route (F=1), so Vd
+                        # 'infusion' is an IV route (F=1), so Vd
                         # and MRT_iv are just as valid for infusion as for iv bolus.
                         # The clearance_note guard already uses ("iv", "infusion");
                         # the Vd/MRT block was never updated to match.
                         if route in ("iv", "infusion"):
                             vd_l = cl_l / lambda_z  # L
-                            # BUG-1 fix: round(vd_l, 4) truncates Vd to 0.0 for any
+                            # Round(vd_l, 4) truncates Vd to 0.0 for any
                             # Vd < 5e-5 L.  Use full precision (same rationale as CL).
                             result["volume_distribution_Vd"] = float(vd_l)
                             result["Vd_unit"] = "L"
-                            # BUG-1 fix: MRT_iv = AUMC_0-inf / AUC_0-inf (model-independent NCA).
+                            # MRT_iv = AUMC_0-inf / AUC_0-inf (model-independent NCA).
                             # The previous formula 1/lambda_z is only valid for a
                             # mono-exponential model.  For multi-compartment profiles the
                             # error can reach 10%+.  AUMC_0-inf = AUMC_0-t + Clast*(tlast/λz + 1/λz²).
@@ -675,7 +673,7 @@ class NCATool(BaseTool):
                                 result["MRT_iv"] = round(_mrt_iv, 4)
                     else:
                         cl = dose_val / auc0inf
-                        # BUG-3 fix (Round 19): round(float(cl), 6) silently truncates
+                        # Round(float(cl), 6) silently truncates
                         # CL to 0.0 for any CL < 5e-7.  The identical fix was applied
                         # to the known-units path (line ~625: float(cl_l) full precision)
                         # but was never ported here.  Use full float precision.
@@ -688,13 +686,13 @@ class NCATool(BaseTool):
                             f"dose_unit='{dose_unit}' / conc_unit='{conc_unit}'. "
                             "CL and Vd are in raw ratio units; convert manually."
                         )
-                        # Round 20 BUG-1 fix: same infusion fix for unknown-units path.
+                        # Same infusion fix for unknown-units path.
                         if route in ("iv", "infusion"):
                             vd = cl / lambda_z
-                            # BUG-3 fix: same full-precision fix for Vd.
+                            # Same full-precision fix for Vd.
                             result["volume_distribution_Vd"] = float(vd)
                             result["Vd_unit"] = f"{dose_unit}/{conc_unit}"
-                            # BUG-1 fix: MRT_iv = AUMC_0-inf / AUC_0-inf (model-independent NCA).
+                            # MRT_iv = AUMC_0-inf / AUC_0-inf (model-independent NCA).
                             # The previous formula 1/lambda_z is only valid for a
                             # mono-exponential model.  For multi-compartment profiles the
                             # error can reach 10%+.  AUMC_0-inf = AUMC_0-t + Clast*(tlast/λz + 1/λz²).
@@ -716,7 +714,7 @@ class NCATool(BaseTool):
                 "Add more time points in the terminal elimination phase."
             )
 
-        # BUG-2+3 fix (Round 18): when the first sample is at t > 0, AUC0-inf is
+        # When the first sample is at t > 0, AUC0-inf is
         # underestimated (the pre-first-sample area is missing).  CL = Dose/AUC0-inf,
         # Vd = CL/λz, and MRT = AUMC0-inf/AUC0-inf are all derived from AUC0-inf
         # and therefore carry the same bias.  The existing auc_start_note documents
@@ -822,7 +820,7 @@ class NCATool(BaseTool):
             }
 
         # Use positive concentrations at non-negative times only.
-        # BUG-4 fix: pre-dose (t < 0) data points represent baseline/endogenous levels
+        # Pre-dose (t < 0) data points represent baseline/endogenous levels
         # and should not be included in a mono-exponential IV bolus fit.  The original
         # `valid = c > 0` silently included negative-time data, biasing the C0 and
         # k_el estimates.  FDA/EMA NCA guidance excludes pre-dose samples from PK fitting.
@@ -836,7 +834,7 @@ class NCATool(BaseTool):
         t_fit = t[valid]
         c_fit = c[valid]
 
-        # Round 20 BUG-2 fix: all-identical time values make exponential fitting
+        # All-identical time values make exponential fitting
         # degenerate — the optimizer receives five observations all at the same
         # independent-variable value and returns an arbitrary k_el. Detect this
         # and return a clear error rather than a misleading result.
@@ -880,7 +878,7 @@ class NCATool(BaseTool):
         c_pred = one_compartment(t_fit, c0_fit, k_el_fit)
         ss_res = float(np.sum((c_fit - c_pred) ** 2))
         ss_tot = float(np.sum((c_fit - np.mean(c_fit)) ** 2))
-        # Round 20 BUG-3 fix: `1.0 - ss_res/ss_tot` can produce -0.0 (IEEE-754
+        # `1.0 - ss_res/ss_tot` can produce -0.0 (IEEE-754
         # negative zero) when ss_res ≈ ss_tot.  Apply the same `+ 0.0` pattern
         # used by DoseResponse to eliminate negative zero from JSON output.
         r_squared = (float(1.0 - ss_res / ss_tot) + 0.0) if ss_tot > 0 else 0.0
@@ -905,7 +903,7 @@ class NCATool(BaseTool):
             "C0_initial_concentration": round(float(c0_fit), 4),
             "k_el_elimination_rate": k_el_val,
             "t_half": float(t_half),
-            # Round 20 BUG-3: apply + 0.0 AFTER round() because round() of a tiny
+            # Apply + 0.0 AFTER round() because round() of a tiny
             # negative value (e.g. -1e-17) produces -0.0 in IEEE-754 arithmetic.
             # The + 0.0 at the computation site (line above) eliminates -0.0 from the
             # variable, but round(-tiny, 4) can produce -0.0 afresh.
@@ -988,7 +986,7 @@ class NCATool(BaseTool):
                     vd_ml = dose_ng / c0_ng_per_ml  # mL
                     vd_l = vd_ml / 1000.0  # L
                     cl_l = k_el_fit * vd_l  # L/time_unit
-                    # BUG-4 fix (Round 19): round(vd_l, 4) silently truncates Vd to
+                    # Round(vd_l, 4) silently truncates Vd to
                     # 0.0 for any Vd < 5e-5 L (e.g., 1 ng dose ÷ 100 ng/mL = 1e-5 L).
                     # The _compute_parameters path already uses float(vd_l) (full
                     # precision); apply the identical fix here.
@@ -999,7 +997,7 @@ class NCATool(BaseTool):
                 else:
                     vd_raw = dose_val / c0_fit
                     cl_raw = k_el_fit * vd_raw
-                    # BUG-4 fix: same full-precision fix for unknown-units path.
+                    # Same full-precision fix for unknown-units path.
                     result["volume_distribution_Vd"] = float(vd_raw)
                     result["Vd_unit"] = f"{dose_unit}/{conc_unit}"
                     result["clearance_CL"] = float(cl_raw)
@@ -1097,7 +1095,7 @@ class NCATool(BaseTool):
             category = "Very low (<10%)"
             note = "Insufficient oral bioavailability. Likely requires IV/SC/inhaled route."
 
-        # BUG-5 fix: F > 1.0 (> 100%) is physically unusual for most drugs.
+        # F > 1.0 (> 100%) is physically unusual for most drugs.
         # While theoretically possible (e.g., saturable first-pass extraction reversal,
         # IV formulation with poor tolerability requiring dose reduction), it more
         # commonly indicates mismatched dose units or a data entry error.

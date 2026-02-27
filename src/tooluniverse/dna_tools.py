@@ -618,7 +618,7 @@ class DNATool(BaseTool):
                     normalized_requested.append(_neb_lower[e.lower()])
                 else:
                     unknown_enzymes.append(e)
-            # BUG-1 fix: previously the whole call failed when ANY enzyme was unknown,
+            # Previously the whole call failed when ANY enzyme was unknown,
             # discarding results for valid enzymes.  Now: proceed with recognized enzymes
             # and report unknown ones in a warning.  Only fail if ALL are unknown.
             if unknown_enzymes and not normalized_requested:
@@ -665,7 +665,7 @@ class DNATool(BaseTool):
 
             cut_off = NEB_CUT_OFFSETS.get(enzyme_name, len(recognition_seq) // 2)
             if positions:
-                # BUG-4 fix: `cut_sites` reports 1-based recognition sequence start
+                # `cut_sites` reports 1-based recognition sequence start
                 # positions, NOT the actual phosphodiester bond cleavage positions.
                 # For enzymes like KpnI (GGTAC^C, cut_offset=5), the difference is 4 bp.
                 # Add `cleavage_positions` (1-based) so callers can determine the exact
@@ -680,7 +680,7 @@ class DNATool(BaseTool):
                     "num_cuts": len(positions),
                 }
             elif enzymes_requested:
-                # BUG-2 fix: explicitly requested enzymes that find 0 sites were
+                # Explicitly requested enzymes that find 0 sites were
                 # previously absent from enzymes_with_sites entirely.  A caller
                 # doing results["enzymes_with_sites"]["EcoRI"] would get a KeyError
                 # with no way to distinguish "not requested" from "0 sites found."
@@ -819,7 +819,7 @@ class DNATool(BaseTool):
                                     "sequence": seq[orf_start_idx : pos + 3],
                                 }
                                 if is_reverse:
-                                    # BUG-3 fix: for minus-strand ORFs, `start` and `end`
+                                    # For minus-strand ORFs, `start` and `end`
                                     # are 1-based plus-strand coordinates (standard GFF/GTF
                                     # convention: start < end, strand='-').
                                     # `original_seq[start-1:end]` gives the PLUS-strand
@@ -843,7 +843,7 @@ class DNATool(BaseTool):
                     partial_len = seq_len - orf_start_idx
                     if partial_len >= min_length:
                         if is_reverse:
-                            # BUG-3 fix: was `seq_len - orf_start_idx` which is the
+                            # Was `seq_len - orf_start_idx` which is the
                             # GFF END (highest plus-strand coordinate = last base of ATG).
                             # Convention for closed minus-strand ORFs uses
                             # coord_start = GFF start (lower bound, consistent with GFF).
@@ -964,7 +964,7 @@ class DNATool(BaseTool):
         else:
             interpretation = "Normal GC"
 
-        # BUG-2 fix: for all-N sequences, gc_content_percent is scientifically
+        # For all-N sequences, gc_content_percent is scientifically
         # undefined (not zero). Return None so callers are not misled into thinking
         # the sequence has 0% GC (i.e., is AT-rich).
         gc_pct = None if effective_total == 0 else round(gc_content, 2)
@@ -1027,7 +1027,7 @@ class DNATool(BaseTool):
 
         if len(sequence) % 3 != 0:
             trimmed_len = len(sequence) - (len(sequence) % 3)
-            # BUG-4 fix: sequences shorter than 3 nt trim to 0 nt and produce a
+            # Sequences shorter than 3 nt trim to 0 nt and produce a
             # success response with an empty protein.  Fail explicitly instead.
             if trimmed_len == 0:
                 return {
@@ -1043,7 +1043,7 @@ class DNATool(BaseTool):
             sequence_trimmed = sequence
             warning = None
 
-        # BUG-1 fix: warn when the sequence does not start with ATG.
+        # Warn when the sequence does not start with ATG.
         # A non-ATG start is unusual for a canonical CDS and may indicate a
         # partial sequence, mis-framing, or non-coding input.  Report a warning
         # rather than silently returning a protein starting with a non-Met residue.
@@ -1052,7 +1052,7 @@ class DNATool(BaseTool):
             first_codon = sequence_trimmed[:3]
             first_aa = STANDARD_CODON_TABLE.get(first_codon, "X")
             if first_aa == "*":
-                # BUG-2 fix: first codon is a stop → protein will be empty.
+                # First codon is a stop → protein will be empty.
                 # Emit a dedicated warning so callers are not silently given "".
                 non_atg_warning = (
                     f"First codon '{first_codon}' is a stop codon; the protein_sequence "
@@ -1084,14 +1084,14 @@ class DNATool(BaseTool):
         if "*" in protein_seq:
             first_stop = protein_seq.index("*")
             protein_seq_no_stop = protein_seq[:first_stop]
-            # BUG-1 fix: when sequence starts with ATG but has an internal stop codon
+            # When sequence starts with ATG but has an internal stop codon
             # (not at the last codon position), warn that the stop is premature.
             # Previously, only non-ATG starts triggered a warning; ATG starts with
             # an internal stop were silently returned with post-stop codons visible
             # in full_translation but no explanation of the truncation.
             n_total_codons = len(sequence_trimmed) // 3
             first_stop_codon_pos = first_stop + 1  # 1-based
-            # Round 20 BUG-9 fix: `and non_atg_warning is None` silently suppressed
+            # `and non_atg_warning is None` silently suppressed
             # premature_stop_warning whenever the start codon was non-ATG — even for
             # genuine internal stop codons (e.g. a GTG-start CDS with a nonsense
             # mutation).  Both warnings can coexist: the non_atg warning flags the
@@ -1105,7 +1105,7 @@ class DNATool(BaseTool):
                     "translated. This may indicate mis-framing, a nonsense mutation, "
                     "or an incorrect sequence."
                 )
-            # BUG-2 fix: stop_codons_found and stop_codon_positions previously counted
+            # Stop_codons_found and stop_codon_positions previously counted
             # ALL stop codons in the full scan, including those after the first stop.
             # Biologically, the ribosome terminates at the first stop; downstream stop
             # codons are irrelevant.  Truncate to only the first stop codon.
@@ -1114,7 +1114,7 @@ class DNATool(BaseTool):
             protein_seq_no_stop = protein_seq
             stop_positions_reported = []
 
-        # BUG-1 fix (Round 19): check for ambiguous 'X' residues in the translated
+        # Check for ambiguous 'X' residues in the translated
         # protein.  STANDARD_CODON_TABLE.get(codon, 'X') silently returns 'X' for
         # any codon not in the table (e.g. NNN, NAA, ANT, etc.).  No warning was
         # issued, so callers received a protein with unknown residues without any
@@ -1194,7 +1194,7 @@ class DNATool(BaseTool):
                 "error": f"Invalid amino acid characters: {invalid}. Use single-letter codes.",
             }
 
-        # BUG-2 (codon_optimize) fix: the single-letter amino acid codes A, T, G, C are
+        # The single-letter amino acid codes A, T, G, C are
         # identical to DNA nucleotide characters.  A user who mistakenly passes a DNA CDS
         # (e.g., 'ATGAAATTT' = coding sequence for Met-Lys-Phe) instead of a protein
         # sequence ('MKF') will get a silent success: the 9 nucleotides are treated as 9
@@ -1263,7 +1263,7 @@ class DNATool(BaseTool):
             log_sum = sum(math.log(v) for v in cai_values if v > 0)
             cai = round(math.exp(log_sum / len(cai_values)), 4)
         else:
-            # BUG-3 fix: CAI = 0.0 is misleading for stop-codon-only sequences.
+            # CAI = 0.0 is misleading for stop-codon-only sequences.
             # CAI is defined only for sense codons; a sequence with no sense codons
             # (e.g., a single "*") has an undefined CAI, not a CAI of 0.
             cai = None
@@ -1272,7 +1272,7 @@ class DNATool(BaseTool):
             "optimized_dna": optimized_dna,
             "gc_content": gc_content,
             "cai": cai,
-            # BUG-03 fix: add explanatory note clarifying why CAI is always 1.0.
+            # Add explanatory note clarifying why CAI is always 1.0.
             # This tool selects the single highest-frequency codon for every amino
             # acid, which by definition has a CAI reference value of 1.0.  The
             # resulting sequence always achieves the maximum CAI possible.  To
@@ -1288,7 +1288,7 @@ class DNATool(BaseTool):
             else None,
             "length_bp": length_bp,
         }
-        # BUG-2 fix: add warning when input looks like a DNA CDS rather than protein.
+        # Add warning when input looks like a DNA CDS rather than protein.
         if _dna_aa_warning:
             result_data["dna_input_warning"] = _dna_aa_warning
         return {"status": "success", "data": result_data}
@@ -1332,7 +1332,7 @@ class DNATool(BaseTool):
                     normalized_requested.append(_neb_lower[e.lower()])
                 else:
                     unknown_enzymes.append(e)
-            # BUG-1 fix: same as _find_restriction_sites — proceed with valid enzymes.
+            # Same as _find_restriction_sites — proceed with valid enzymes.
             if unknown_enzymes and not normalized_requested:
                 return {
                     "status": "error",
@@ -1343,7 +1343,7 @@ class DNATool(BaseTool):
             enzyme_dict = NEB_ENZYMES
             unknown_enzymes = []
 
-        # BUG-01 fix: search a doubled sequence for circular DNA to detect recognition
+        # Search a doubled sequence for circular DNA to detect recognition
         # sites that straddle the origin.  This mirrors the logic in _find_restriction_sites.
         # For linear DNA, search_seq == sequence and all positions are valid.
         # For circular DNA, we search the doubled sequence but only keep positions
@@ -1405,7 +1405,7 @@ class DNATool(BaseTool):
                         frag_seq = sequence[start:end]
                         wrap = False
                     else:
-                        # BUG-2 fix: when start >= end the fragment spans the circular
+                        # When start >= end the fragment spans the circular
                         # origin.  This includes the single-cut case (start == end)
                         # where the single fragment is the full circular sequence.
                         # is_wrap_around=True tells the caller that coordinates are
@@ -1421,7 +1421,7 @@ class DNATool(BaseTool):
                         "is_wrap_around": wrap,
                     }
                     if wrap:
-                        # BUG-1 fix: for wrap-around fragments (is_wrap_around=True),
+                        # For wrap-around fragments (is_wrap_around=True),
                         # seq[start:end] is NOT a valid Python slice because end <= start.
                         # When start==end (single-cut: e.g., cut at position 0), seq[0:0]
                         # returns an empty string. The correct extraction is always:
@@ -1574,7 +1574,7 @@ class DNATool(BaseTool):
                 ),
             }
 
-        # BUG-1 fix: target_start beyond the sequence silently clamps target_end to
+        # Target_start beyond the sequence silently clamps target_end to
         # seq_len and produces a confusing "Target region (-N bp) is smaller than
         # product_size_min" error.  Detect and report out-of-bounds target_start early.
         if target_start is not None and int(target_start) >= seq_len:
@@ -1736,13 +1736,13 @@ class DNATool(BaseTool):
                 "error": f"Designed product size ({product_size} bp) is outside the range [{product_size_min}, {product_size_max}] bp",
             }
 
-        # BUG-1 fix: verify the product actually spans the requested target region.
+        # Verify the product actually spans the requested target region.
         # Primer search windows are centered ±50 bp around target_start/target_end, so
         # when the target falls near a sequence boundary the best primers may sit
         # entirely before (or after) the target, producing a valid product that misses
         # the declared target. Detect and report instead of silently returning wrong coords.
         #
-        # BUG-04 fix: skip the coverage check when the user requested full-sequence
+        # Skip the coverage check when the user requested full-sequence
         # amplification (target_start == 0 and target_end == seq_len).  In that case
         # the boundary conditions (fwd.start ≤ 0 and rev.end ≥ seq_len) can never both
         # be satisfied simultaneously — no primer can start before position 0 or end
@@ -2000,7 +2000,7 @@ class DNATool(BaseTool):
             used_set.add(rc_oh)  # block the RC from being used
 
         if len(rc_free_overhangs) < n_parts + 1:
-            # BUG-5 fix: report the actual maximum supported by the built-in overhang
+            # Report the actual maximum supported by the built-in overhang
             # library so the user understands the constraint, not just an opaque failure.
             max_parts = len(rc_free_overhangs) - 1
             return {

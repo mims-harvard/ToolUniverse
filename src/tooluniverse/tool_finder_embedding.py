@@ -364,7 +364,7 @@ class ToolFinderEmbedding(BaseTool):
             queries, prompt="", normalize_embeddings=True, convert_to_tensor=True
         )
 
-        # Bug fix: Ensure both embeddings are on the same device before similarity calculation
+        # Ensure both embeddings are on the same device before similarity calculation
         # Query embeddings are created on the model's device (GPU if available)
         # But tool embeddings might be on a different device (e.g., moved from CPU cache)
         # This prevents tensor device mismatch errors during similarity computation
@@ -462,7 +462,7 @@ class ToolFinderEmbedding(BaseTool):
 
         arguments = copy.deepcopy(arguments)
 
-        # Bug fix: Refresh embeddings if tool list has changed
+        # Refresh embeddings if tool list has changed
         # This ensures Tool_RAG works correctly when tools are loaded after initialization
         self._maybe_refresh_embeddings()
 

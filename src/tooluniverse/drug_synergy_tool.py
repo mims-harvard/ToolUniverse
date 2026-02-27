@@ -101,12 +101,12 @@ class DrugSynergyTool(BaseTool):
                 return "Strong antagonism"
         else:
             # ZIP scores are in percentage points (×100); thresholds ±10 pp.
-            # Round 20 BUG-2 fix: the result note documents "< -10: antagonism"
+            # The result note documents "< -10: antagonism"
             # (strict), so -10.0 exactly should be "Additivity" not "Antagonism".
             # Changed `elif score > -10` → `elif score >= -10` to make the negative
             # boundary exclusive (matching the positive boundary: > 10 for Synergy,
             # so 10.0 → "Additivity").
-            # Round 20 BUG-3 fix: use "Additivity" (matching Bliss/HSA labels) for
+            # Use "Additivity" (matching Bliss/HSA labels) for
             # the no-interaction label instead of "Additive" for consistency.
             if score > 10:
                 return "Synergy"
@@ -156,11 +156,11 @@ class DrugSynergyTool(BaseTool):
 
         expected = ea + eb - ea * eb
         synergy_score = ec - expected  # Fractional units (same scale as inputs)
-        # BUG-1 fix: use raw (unrounded) score for interpretation to avoid boundary
+        # Use raw (unrounded) score for interpretation to avoid boundary
         # misclassification. round(-0.099, 2) = -0.1, and -0.1 > -0.10 is False, so
         # the rounded score would label -0.099 as "Strong antagonism" instead of
         # "Antagonism". The display value is still rounded for readability.
-        # BUG-2 fix: add 0.0 to eliminate IEEE-754 negative zero (-0.0 + 0.0 = 0.0).
+        # Add 0.0 to eliminate IEEE-754 negative zero (-0.0 + 0.0 = 0.0).
         # round(-0.004, 2) returns -0.0 in Python; json.dumps serializes it as "-0.0",
         # which looks contradictory alongside interpretation="Additivity".
         synergy_score_rounded = round(synergy_score, 2) + 0.0
@@ -230,9 +230,9 @@ class DrugSynergyTool(BaseTool):
 
         hsa = np.maximum(ea, eb)
         synergy_matrix = ec - hsa  # Fractional units (same scale as inputs)
-        # BUG-1 fix: use raw mean score for interpretation to avoid boundary
+        # Use raw mean score for interpretation to avoid boundary
         # misclassification at round-to-threshold values (same as Bliss fix).
-        # BUG-2 fix: add 0.0 to eliminate IEEE-754 negative zero.
+        # Add 0.0 to eliminate IEEE-754 negative zero.
         _mean_raw = float(np.mean(synergy_matrix))
         mean_score_rounded = round(_mean_raw, 2) + 0.0
 
@@ -273,7 +273,7 @@ class DrugSynergyTool(BaseTool):
                 "error": "doses_a, doses_b, and viability_matrix are all required",
             }
 
-        # BUG-2 fix: a flat (1D) viability_matrix produces a misleading error
+        # A flat (1D) viability_matrix produces a misleading error
         # "Invalid numeric values: 'float' object is not iterable" because the
         # nested comprehension iterates over individual floats rather than rows.
         # Detect 1D input early with a clear, actionable message.
@@ -349,7 +349,7 @@ class DrugSynergyTool(BaseTool):
                 "error": "All dose values in doses_a and doses_b must be non-negative (>= 0).",
             }
 
-        # BUG-2 (control normalization) fix: the ZIP model anchors its marginal Hill curves
+        # The ZIP model anchors its marginal Hill curves
         # at inhibition=0 when dose=0.  This is only correct when the vehicle-control
         # viability (viability_matrix[0][0]) has been normalized to exactly 100% (or 1.0
         # for fractional scale).  If the control is 90% (under-normalized) or 110%
@@ -371,7 +371,7 @@ class DrugSynergyTool(BaseTool):
                 f"Consider normalizing: vm / vm[0,0] × {_expected_ctrl:.0f}."
             )
 
-        # BUG-1 fix: negative viability values are physically impossible.
+        # Negative viability values are physically impossible.
         # They typically arise from background-subtraction artefacts (e.g., a blank-well
         # value subtracted from low-signal wells).  Returning a "success" with inhibition
         # > 1.0 (= 1 − negative_viability) would silently corrupt every downstream metric.
@@ -424,7 +424,7 @@ class DrugSynergyTool(BaseTool):
             # Clearly fractional scale (0–1)
             inhibition = 1 - vm
 
-        # BUG-2 fix: after scale detection, verify that the computed inhibition values
+        # After scale detection, verify that the computed inhibition values
         # are physically plausible.  When a matrix contains mixed-scale data (e.g., one
         # row is fractional 0–1 while the rest are percentage 0–100), the scale detector
         # bases its decision on a single global max and misclassifies the minority rows.
@@ -432,7 +432,7 @@ class DrugSynergyTool(BaseTool):
         # that silently corrupt the ZIP score.  Detect and warn rather than silently
         # returning a meaningless result.
         n_impossible_high = int(np.sum(inhibition > 1.2))
-        # BUG-2 fix: strict `< -0.2` misses the IEEE-754 representation of exactly
+        # Strict `< -0.2` misses the IEEE-754 representation of exactly
         # 120% viability.  `1 - 120/100` evaluates to -0.19999999999999996 in float
         # (about 4e-17 above -0.2), so the exact boundary case silently bypasses the
         # impossible-inhibition guard.  Use `< -0.2 + 1e-9` (≈ -0.199999999) which
@@ -516,7 +516,7 @@ class DrugSynergyTool(BaseTool):
                 failed.append("drug A")
             if params_b is None:
                 failed.append("drug B")
-            # BUG-3 fix: include scale_note in the error so the user gets the
+            # Include scale_note in the error so the user gets the
             # actionable hint ("divide by 100 if data is in percentage") even when
             # Hill fitting fails (which it will when 1 < vm_max ≤ 5 because all
             # inhibition values are negative after 1 − fractional > 1).
@@ -543,7 +543,7 @@ class DrugSynergyTool(BaseTool):
 
         delta = (inhibition - expected_zip) * 100
 
-        # BUG-1 fix (Round 19): the ZIP delta mean was computed over ALL cells including
+        # The ZIP delta mean was computed over ALL cells including
         # the first row (drug A = 0, i.e. drug B single-agent) and first column (drug B
         # = 0, i.e. drug A single-agent).  These border cells are structural zeros by
         # construction (the Hill fits are calibrated to exactly those marginal values),
@@ -1070,7 +1070,7 @@ class DrugSynergyTool(BaseTool):
         if assumption == "mutually_non_exclusive":
             ci += (da_combo * db_combo) / (dx_a * dx_b)
 
-        # BUG-1 fix: MNEE term (da_combo*db_combo)/(dx_a*dx_b) can overflow to inf
+        # MNEE term (da_combo*db_combo)/(dx_a*dx_b) can overflow to inf
         # when dx_a or dx_b is extremely small (effect near single-agent Emax, so the
         # equivalent single-drug dose is astronomically large relative to the combination
         # dose). ci=inf propagates to "Very strong antagonism" label but round(inf, 4)

@@ -246,7 +246,7 @@ class SurvivalTool(BaseTool):
                 km_ci_upper,
             ) = self._km_estimator(dur, evs)
 
-            # Round 20 BUG-1 fix: use raw (unrounded) survival probabilities for the
+            # Use raw (unrounded) survival probabilities for the
             # median check.  Using the rounded display values causes false median
             # detection when the true S is just above 0.5 but rounds down to 0.5
             # (e.g., S=0.50005 → round(0.50005, 4)=0.5 ≤ 0.5 triggers false median).
@@ -274,7 +274,7 @@ class SurvivalTool(BaseTool):
                 "ci_method": "Greenwood log-log (Collett 2015 / R survfit default)",
                 "follow_up_time": float(np.max(dur)),
             }
-            # BUG-2 fix: the note explaining the KM 'censored' column convention was
+            # The note explaining the KM 'censored' column convention was
             # only emitted in the all-censored case.  In the typical mixed case (events
             # + subjects censored between event times), sum(table['censored']) = 0 while
             # n_censored > 0 — a silent discrepancy with no explanation.  Emit the note
@@ -320,7 +320,7 @@ class SurvivalTool(BaseTool):
                     km_ci_upper,
                 ) = self._km_estimator(g_dur, g_evs)
 
-                # Round 20 BUG-1 fix: use raw survival for median (same as single-group).
+                # Use raw survival for median (same as single-group).
                 km_surv_arr = np.array(km_survival_raw)
                 below = np.where(km_surv_arr <= 0.5)[0]
                 median_survival = float(km_times[below[0]]) if len(below) > 0 else None
@@ -341,7 +341,7 @@ class SurvivalTool(BaseTool):
                     },
                 }
 
-            # BUG-4 fix: emit the same km_censored_convention_note as the single-group
+            # Emit the same km_censored_convention_note as the single-group
             # path when any group has censored subjects.  The survival table 'censored'
             # column records only subjects censored AT observed event times; subjects
             # censored between event times contribute 0, creating a silent discrepancy
@@ -732,11 +732,11 @@ class SurvivalTool(BaseTool):
         for i, name in enumerate(cov_names):
             p_val = float(p_values[i])
             # Guard against exact 0.0 p-value and round-to-zero pathologies.
-            # BUG-1 fix: p_val == 0.0 can arise from norm.cdf underflow (|z| > ~8.2)
+            # p_val == 0.0 can arise from norm.cdf underflow (|z| > ~8.2)
             # on large datasets with a strong but finite covariate — NOT separation.
             # The previous code set p_val_out = None silently, with no explanation;
             # the user could not distinguish "insufficient data" from "p << 1e-15".
-            # BUG-3 fix: round(1e-6, 4) = 0.0 slipped through as p_value = 0.0 in
+            # round(1e-6, 4) = 0.0 slipped through as p_value = 0.0 in
             # the output, violating the code's own invariant that exact 0 is not valid.
             p_underflow_note = None
             if np.isnan(p_val):
@@ -806,7 +806,7 @@ class SurvivalTool(BaseTool):
             # Preserve full precision for HR: round(3.3e-6, 4) = 0.0, which is
             # factually wrong and creates a contradiction when the CI shows a
             # large ratio (indicating a very small HR, not zero).
-            # BUG-1 fix: apply the same sys.float_info.min guard as ci_lo_out.
+            # Apply the same sys.float_info.min guard as ci_lo_out.
             # When beta is very large negative (separation), np.exp(beta) underflows
             # to 0.0 in IEEE-754. np.isfinite(0.0) = True, so the old guard allowed
             # hr_out = 0.0 while ci_lo_out = None — internally inconsistent.
@@ -819,7 +819,7 @@ class SurvivalTool(BaseTool):
                 if np.isfinite(raw_hr) and raw_hr >= _sys.float_info.min
                 else None
             )
-            # BUG-4 fix: ci_lo can underflow to exactly 0.0 in IEEE 754 when
+            # ci_lo can underflow to exactly 0.0 in IEEE 754 when
             # beta − 1.96*se_scaled is very large and negative (complete separation).
             # np.isfinite(0.0) is True, so the old guard silently returned 0.0 as a
             # "valid" lower bound while ci_hi was returned as None (inf overflow).
@@ -833,7 +833,7 @@ class SurvivalTool(BaseTool):
                 else None
             )
             ci_hi_out = float(raw_ci_hi) if np.isfinite(raw_ci_hi) else None
-            # BUG-2 fix (Round 19): coefficient is rounded to 4 decimal places, but
+            # Coefficient is rounded to 4 decimal places, but
             # hr_out and CI bounds were reported at full IEEE-754 precision (~16 dp).
             # A user who reads coefficient=0.4832 and computes exp(0.4832) gets a
             # value that does not match the returned hr_out (they differ by ~3e-5).
@@ -847,7 +847,7 @@ class SurvivalTool(BaseTool):
             if ci_hi_out is not None:
                 ci_hi_out = round(ci_hi_out, 4)
 
-            # BUG-1 fix (Round 14): when separation is detected, the Wald p-value is
+            # When separation is detected, the Wald p-value is
             # computed from the same near-singular Hessian that makes the CI unreliable.
             # Under quasi-separation, z = beta/se → 0 (se is huge), so p → 1.0 — a
             # falsely reassuring "non-significant" result.  Set p_value and significant
@@ -855,8 +855,8 @@ class SurvivalTool(BaseTool):
             if separation_warning is not None:
                 p_val_out = None
                 p_underflow_note = None  # separation is the operative explanation
-                hr_out = None  # BUG-1 fix: ensure HR is also None under separation
-                # BUG-3 fix: CI bounds are computed from the same near-singular Hessian
+                hr_out = None  # Ensure HR is also None under separation
+                # CI bounds are computed from the same near-singular Hessian
                 # as HR and are equally unreliable under separation.  Return None for
                 # both so callers cannot silently use extreme CI values like (3e-197, 2e+184).
                 ci_lo_out = None
@@ -865,7 +865,7 @@ class SurvivalTool(BaseTool):
             # - underflow (p_val == 0 or rounds to 0) AND no separation → True (highly sig)
             # - separation → None (unknown)
             # - normal finite p_val_out → bool comparison
-            # BUG-5 fix: use p_val_out (the rounded display value) for the significance
+            # Use p_val_out (the rounded display value) for the significance
             # comparison.  If raw p_val=0.04998, p_val_out=round(0.04998,4)=0.05.
             # Using raw p_val < 0.05 would give significant=True while p_value=0.05,
             # contradicting the universal convention that p=0.05 is not significant.
