@@ -444,6 +444,21 @@ class NCATool(BaseTool):
             result["lambda_z"] = round(float(lambda_z), 9)
             result["t_half"] = float(t_half)
             result["r_squared_terminal_fit"] = round(float(r_sq_terminal), 4)
+            # BUG-5 fix: emit a terminal_fit_quality_warning when the log-linear terminal
+            # phase R² is poor.  _fit_one_compartment already has a similar guard
+            # (R² < 0.85), but _compute_parameters never checked its own terminal fit.
+            # A poor terminal R² means lambda_z, t_half, AUC0-inf, CL, and Vd are all
+            # unreliable — the user should be informed before acting on these values.
+            if r_sq_terminal < 0.85:
+                warn_level = "Very poor" if r_sq_terminal < 0.5 else "Poor"
+                result["terminal_fit_quality_warning"] = (
+                    f"{warn_level} terminal-phase fit (R² = {round(r_sq_terminal, 4)} < 0.85). "
+                    "lambda_z, t½, AUC0-inf, clearance, and Vd estimates may be unreliable. "
+                    "Possible causes: non-log-linear terminal decline (multi-compartment "
+                    "kinetics, redistribution), insufficient time points in the terminal "
+                    "phase, or assay variability. Consider adding more late time points "
+                    "or using a non-compartmental model review."
+                )
             result["AUC0-inf"] = float(auc0inf)
             result["AUC_extrapolation_pct"] = round(extrap_pct, 1)
             if extrap_pct > 20.0:

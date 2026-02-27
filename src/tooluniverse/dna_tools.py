@@ -1088,6 +1088,20 @@ class DNATool(BaseTool):
                 "optimized_dna": optimized_dna,
                 "gc_content": gc_content,
                 "cai": cai,
+                # BUG-03 fix: add explanatory note clarifying why CAI is always 1.0.
+                # This tool selects the single highest-frequency codon for every amino
+                # acid, which by definition has a CAI reference value of 1.0.  The
+                # resulting sequence always achieves the maximum CAI possible.  To
+                # compare your original sequence against the optimized one, calculate
+                # the CAI of the original sequence using an external tool (e.g., the
+                # OPTIMIZER web server or CAI2 Python package).
+                "cai_note": (
+                    "CAI = 1.0 is expected: this tool selects the highest-frequency "
+                    f"codon for each amino acid in {species}. To assess how much "
+                    "your original sequence differed, compute its CAI independently."
+                )
+                if cai is not None
+                else None,
                 "length_bp": length_bp,
             },
         }
@@ -1140,18 +1154,31 @@ class DNATool(BaseTool):
         else:
             enzyme_dict = NEB_ENZYMES
 
+        # BUG-01 fix: search a doubled sequence for circular DNA to detect recognition
+        # sites that straddle the origin.  This mirrors the logic in _find_restriction_sites.
+        # For linear DNA, search_seq == sequence and all positions are valid.
+        # For circular DNA, we search the doubled sequence but only keep positions
+        # where pos < seq_len (sites that START within the original sequence).  Cut
+        # positions ≥ seq_len are wrapped back into [0, seq_len) via modulo so that the
+        # fragment-building code (which always works in [0, seq_len]) remains correct.
+        seq_len = len(sequence)  # must be defined before search_seq loop below
+        search_seq = (sequence + sequence) if circular else sequence
         cut_sites_list = []
         enzymes_used = []
         for enzyme_name, recognition_seq in enzyme_dict.items():
             if "N" in recognition_seq:
                 pattern = recognition_seq.replace("N", "[ATGC]")
-                positions = [m.start() for m in re.finditer(f"(?={pattern})", sequence)]
+                positions = [
+                    m.start()
+                    for m in re.finditer(f"(?={pattern})", search_seq)
+                    if m.start() < seq_len
+                ]
             else:
                 positions = []
                 start = 0
                 while True:
-                    pos = sequence.find(recognition_seq, start)
-                    if pos == -1:
+                    pos = search_seq.find(recognition_seq, start)
+                    if pos == -1 or pos >= seq_len:
                         break
                     positions.append(pos)
                     start = pos + 1
@@ -1159,14 +1186,13 @@ class DNATool(BaseTool):
             # Use enzyme-specific cut offset; default to midpoint if unknown
             cut_offset = NEB_CUT_OFFSETS.get(enzyme_name, len(recognition_seq) // 2)
             for pos in positions:
-                cut_pos = pos + cut_offset  # 0-based cut position on top strand
+                cut_pos = (pos + cut_offset) % seq_len  # wrap into [0, seq_len)
                 cut_sites_list.append({"enzyme": enzyme_name, "position": cut_pos})
 
             if positions:
                 enzymes_used.append(enzyme_name)
 
         cut_sites_list.sort(key=lambda x: x["position"])
-        seq_len = len(sequence)
         fragments = []
 
         if not cut_sites_list:
@@ -1514,7 +1540,17 @@ class DNATool(BaseTool):
         # when the target falls near a sequence boundary the best primers may sit
         # entirely before (or after) the target, producing a valid product that misses
         # the declared target. Detect and report instead of silently returning wrong coords.
-        if best_fwd["start"] > target_start or best_rev["end"] < target_end:
+        #
+        # BUG-04 fix: skip the coverage check when the user requested full-sequence
+        # amplification (target_start == 0 and target_end == seq_len).  In that case
+        # the boundary conditions (fwd.start ≤ 0 and rev.end ≥ seq_len) can never both
+        # be satisfied simultaneously — no primer can start before position 0 or end
+        # after the last base.  Any valid primer pair covering the majority of the
+        # sequence is acceptable for full-sequence amplification.
+        is_full_sequence = target_start == 0 and target_end == seq_len
+        if not is_full_sequence and (
+            best_fwd["start"] > target_start or best_rev["end"] < target_end
+        ):
             return {
                 "status": "error",
                 "error": (

@@ -331,6 +331,24 @@ class DrugSynergyTool(BaseTool):
                 "error": "All dose values in doses_a and doses_b must be non-negative (>= 0).",
             }
 
+        # BUG-1 fix: negative viability values are physically impossible.
+        # They typically arise from background-subtraction artefacts (e.g., a blank-well
+        # value subtracted from low-signal wells).  Returning a "success" with inhibition
+        # > 1.0 (= 1 − negative_viability) would silently corrupt every downstream metric.
+        n_neg_vm = int(np.sum(vm < 0))
+        if n_neg_vm > 0:
+            return {
+                "status": "error",
+                "error": (
+                    f"viability_matrix contains {n_neg_vm} negative value(s) "
+                    f"(min = {float(vm.min()):.4g}). "
+                    "Cell viability cannot be negative. Negative values typically "
+                    "indicate background-subtraction artefacts. "
+                    "Clip values to 0 (e.g., np.clip(matrix, 0, None)) before calling "
+                    "this function, or review your normalization procedure."
+                ),
+            }
+
         # Scale detection: convert viability → inhibition = 1 - viability.
         # Threshold rationale:
         #   > 5: unambiguously percentage scale (typical values like 50, 80, 95)
@@ -365,6 +383,29 @@ class DrugSynergyTool(BaseTool):
         else:
             # Clearly fractional scale (0–1)
             inhibition = 1 - vm
+
+        # BUG-2 fix: after scale detection, verify that the computed inhibition values
+        # are physically plausible.  When a matrix contains mixed-scale data (e.g., one
+        # row is fractional 0–1 while the rest are percentage 0–100), the scale detector
+        # bases its decision on a single global max and misclassifies the minority rows.
+        # The resulting inhibition matrix will contain impossible values (> 1.2 or < −0.2)
+        # that silently corrupt the ZIP score.  Detect and warn rather than silently
+        # returning a meaningless result.
+        n_impossible_high = int(np.sum(inhibition > 1.2))
+        n_impossible_low = int(np.sum(inhibition < -0.2))
+        if n_impossible_high > 0 or n_impossible_low > 0:
+            mixed_scale_note = (
+                f"After scale conversion, {n_impossible_high + n_impossible_low} "
+                "cell(s) in viability_matrix produce inhibition outside [−0.2, 1.2] "
+                f"(impossible range). This indicates mixed-scale data "
+                f"(vm_max = {float(vm.max()):.4g}): some cells appear to be in "
+                "fractional (0–1) scale while others are in percentage (0–100) scale. "
+                "Ensure the entire matrix uses the same scale."
+            )
+            if scale_note:
+                scale_note = scale_note + " " + mixed_scale_note
+            else:
+                scale_note = mixed_scale_note
 
         # Fit simple Hill curves for each drug
         def hill_curve(x, ic50, hill, emax):
@@ -430,6 +471,11 @@ class DrugSynergyTool(BaseTool):
                 failed.append("drug A")
             if params_b is None:
                 failed.append("drug B")
+            # BUG-3 fix: include scale_note in the error so the user gets the
+            # actionable hint ("divide by 100 if data is in percentage") even when
+            # Hill fitting fails (which it will when 1 < vm_max ≤ 5 because all
+            # inhibition values are negative after 1 − fractional > 1).
+            scale_hint = f" {scale_note}" if scale_note else ""
             return {
                 "status": "error",
                 "error": (
@@ -437,6 +483,7 @@ class DrugSynergyTool(BaseTool):
                     f"failed for {' and '.join(failed)}. "
                     "Ensure each drug has ≥3 non-zero dose points with measurable inhibition. "
                     "Use calculate_bliss for a simpler non-parametric synergy score."
+                    f"{scale_hint}"
                 ),
             }
         else:

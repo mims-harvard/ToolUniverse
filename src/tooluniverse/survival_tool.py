@@ -755,7 +755,22 @@ class SurvivalTool(BaseTool):
             # factually wrong and creates a contradiction when the CI shows a
             # large ratio (indicating a very small HR, not zero).
             hr_out = float(raw_hr) if np.isfinite(raw_hr) else None
-            ci_lo_out = float(raw_ci_lo) if np.isfinite(raw_ci_lo) else None
+            # BUG-4 fix: ci_lo can underflow to exactly 0.0 in IEEE 754 when
+            # beta − 1.96*se_scaled is very large and negative (complete separation).
+            # np.isfinite(0.0) is True, so the old guard silently returned 0.0 as a
+            # "valid" lower bound while ci_hi was returned as None (inf overflow).
+            # The asymmetric (0.0, None) tuple is internally inconsistent: both bounds
+            # arise from the same numerical failure.  Treat underflow-to-zero (or to
+            # a subnormal float like 5e-324) the same way as overflow-to-inf → None.
+            # sys.float_info.min ≈ 2.2e-308 is the smallest normal IEEE-754 double;
+            # anything below that (including exact 0.0 and subnormals) is numerical noise.
+            import sys as _sys
+
+            ci_lo_out = (
+                float(raw_ci_lo)
+                if np.isfinite(raw_ci_lo) and raw_ci_lo >= _sys.float_info.min
+                else None
+            )
             ci_hi_out = float(raw_ci_hi) if np.isfinite(raw_ci_hi) else None
 
             entry = {

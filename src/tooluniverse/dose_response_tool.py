@@ -334,6 +334,17 @@ class DoseResponseTool(BaseTool):
             data["hill_slope_warning"] = result["hill_slope_warning"]
         if "stimulatory_curve_warning" in result:
             data["stimulatory_curve_warning"] = result["stimulatory_curve_warning"]
+        # BUG-3 fix: warn when 4PL fit quality is poor.  _compare_potency already
+        # warns when R² < 0.8; _fit_curve and _calculate_ic50 had no equivalent
+        # check, so the same bad IC50 was silently accepted here.
+        r_sq_val = result["r_squared"]
+        if r_sq_val < 0.8:
+            data["fit_quality_warning"] = (
+                f"Poor 4PL fit quality (R² = {round(r_sq_val, 4)} < 0.8). "
+                "The fitted parameters (IC50, Hill slope, Emax) may be unreliable. "
+                "Check for noisy data, insufficient data points, or a non-sigmoidal "
+                "dose-response relationship."
+            )
         return {"status": "success", "data": data}
 
     def _calculate_ic50(self, arguments: Dict[str, Any]) -> Dict[str, Any]:
@@ -358,6 +369,16 @@ class DoseResponseTool(BaseTool):
         if "error" in result:
             return {"status": "error", "error": result["error"]}
 
+        # BUG-6 fix: np.log10(x) where x ≈ 1.0 can return a value like −1.93e-16,
+        # which round(…, 4) maps to −0.0 (IEEE 754 negative zero).  −0.0 is equal to
+        # 0.0 mathematically but looks wrong in JSON output and confuses downstream
+        # consumers.  Adding 0.0 converts negative zero to positive zero per IEEE 754.
+        log_ic50_val = (
+            0.0 + round(float(np.log10(result["ic50"])), 4)
+            if result["ic50"] > 0
+            else None
+        )
+
         data = {
             "ic50": result["ic50"],
             "ic50_95_confidence_interval": result["ic50_95ci"],
@@ -365,9 +386,7 @@ class DoseResponseTool(BaseTool):
             "emax": result["top"],
             "emin": result["bottom"],
             "r_squared": result["r_squared"],
-            "log_ic50": round(float(np.log10(result["ic50"])), 4)
-            if result["ic50"] > 0
-            else None,
+            "log_ic50": log_ic50_val,
             "note": "IC50 estimated via 4PL curve fitting",
         }
         if "ci_note" in result:
@@ -376,6 +395,14 @@ class DoseResponseTool(BaseTool):
             data["hill_slope_warning"] = result["hill_slope_warning"]
         if "stimulatory_curve_warning" in result:
             data["stimulatory_curve_warning"] = result["stimulatory_curve_warning"]
+        # BUG-3 fit_quality_warning (shared with _fit_curve)
+        r_sq_val = result["r_squared"]
+        if r_sq_val < 0.8:
+            data["fit_quality_warning"] = (
+                f"Poor 4PL fit quality (R² = {round(r_sq_val, 4)} < 0.8). "
+                "The IC50 estimate may be unreliable. Check for noisy data, "
+                "insufficient data points, or a non-sigmoidal dose-response."
+            )
 
         # Warn if the IC50 falls outside the tested concentration range
         # (extrapolated IC50 values are unreliable).
@@ -390,15 +417,33 @@ class DoseResponseTool(BaseTool):
                 "Extend the concentration range to include the half-maximal response."
             )
 
-        # Warn if the response data does not span the midpoint between Emin and Emax,
-        # i.e., the data never crosses 50% of the fitted dynamic range.
-        midpoint = (result["top"] + result["bottom"]) / 2.0
+        # BUG-4 fix: the previous ic50_range_warning used a midpoint derived from the
+        # *fitted* top/bottom.  When the 4PL model must extrapolate heavily (e.g., data
+        # spans only the top 15% of the curve), the fitted dynamic range can be enormous,
+        # causing midpoint to fall inside the narrow observed response window even though
+        # the IC50 is effectively extrapolated.
+        # Fix: additionally warn when the observed response range is less than 50% of the
+        # fitted dynamic range — a direct indicator that the data does not adequately
+        # bracket the IC50.
         resp_arr = np.array(responses, dtype=float)
-        if float(np.min(resp_arr)) > midpoint or float(np.max(resp_arr)) < midpoint:
+        fitted_dynamic_range = abs(float(result["top"]) - float(result["bottom"]))
+        observed_range = float(np.max(resp_arr)) - float(np.min(resp_arr))
+        midpoint = (result["top"] + result["bottom"]) / 2.0
+        midpoint_check = (
+            float(np.min(resp_arr)) > midpoint or float(np.max(resp_arr)) < midpoint
+        )
+        narrow_coverage = (
+            fitted_dynamic_range > 0 and observed_range < 0.5 * fitted_dynamic_range
+        )
+        if midpoint_check or narrow_coverage:
             data["ic50_range_warning"] = (
-                "The response data may not span the half-maximal response level "
-                f"(midpoint ≈ {midpoint:.4g}). The IC50 is likely extrapolated outside "
-                "the measured range and should be interpreted with caution."
+                "The response data may not adequately bracket the half-maximal response. "
+                f"Observed response range ({observed_range:.4g}) covers "
+                f"{round(100 * observed_range / fitted_dynamic_range, 1) if fitted_dynamic_range > 0 else 'N/A'}% "
+                f"of the fitted dynamic range ({fitted_dynamic_range:.4g}). "
+                "The IC50 is likely extrapolated outside the measured range and should "
+                "be interpreted with caution. Extend the concentration range to include "
+                "both the upper and lower plateaus of the dose-response curve."
             )
 
         return {"status": "success", "data": data}
@@ -514,4 +559,15 @@ class DoseResponseTool(BaseTool):
         }
         if poor_fit_warnings:
             data["poor_fit_warning"] = " | ".join(poor_fit_warnings)
+        # BUG-1/2 fix: forward stimulatory_curve_warning and hill_slope_warning from
+        # each compound's _fit_4pl result.  Without this, comparing an inhibitory
+        # compound A against a stimulatory compound B (whose "IC50" is actually an EC50)
+        # would silently report a fold-shift and "more potent" interpretation with no
+        # indication that the comparison is scientifically invalid.  Hill slope warnings
+        # are forwarded for the same reason: a clamped Hill slope affects IC50 reliability.
+        for label, res in (("compound_a", result_a), ("compound_b", result_b)):
+            if "stimulatory_curve_warning" in res:
+                data[f"{label}_stimulatory_warning"] = res["stimulatory_curve_warning"]
+            if "hill_slope_warning" in res:
+                data[f"{label}_hill_slope_warning"] = res["hill_slope_warning"]
         return {"status": "success", "data": data}
