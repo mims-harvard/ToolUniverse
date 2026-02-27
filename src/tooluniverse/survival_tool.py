@@ -698,19 +698,38 @@ class SurvivalTool(BaseTool):
         coef_results = []
         for i, name in enumerate(cov_names):
             p_val = float(p_values[i])
-            # Guard against exact 0.0 p-value produced by complete separation:
-            # when z → ∞, norm.cdf(∞) = 1.0 exactly, so 2*(1-1.0) = 0.0.
-            # This is a floating-point artifact, not a true p-value of exactly 0.
-            # Report None (with a note) rather than 0.0, which would misleadingly
-            # imply infinite precision and suppress the separation_warning context.
+            # Guard against exact 0.0 p-value and round-to-zero pathologies.
+            # BUG-1 fix: p_val == 0.0 can arise from norm.cdf underflow (|z| > ~8.2)
+            # on large datasets with a strong but finite covariate — NOT separation.
+            # The previous code set p_val_out = None silently, with no explanation;
+            # the user could not distinguish "insufficient data" from "p << 1e-15".
+            # BUG-3 fix: round(1e-6, 4) = 0.0 slipped through as p_value = 0.0 in
+            # the output, violating the code's own invariant that exact 0 is not valid.
+            p_underflow_note = None
             if np.isnan(p_val):
                 p_val_out = None
             elif p_val == 0.0:
-                p_val_out = (
-                    None  # separation artifact — exact zero is not a valid p-value
+                # Exact zero from norm.cdf precision limit (|z| > ~8.2).
+                # Not a separation artifact by itself — the covariate is extremely
+                # significant.  Report None with a note so callers understand.
+                p_val_out = None
+                p_underflow_note = (
+                    "p-value underflow: the Wald test z-score exceeds IEEE-754 "
+                    "double precision (|z| > ~8.2; p < ~6e-16). The covariate is "
+                    "extremely statistically significant. Treat as p < 1e-15."
                 )
             else:
-                p_val_out = round(p_val, 4)
+                _rounded = round(p_val, 4)
+                if _rounded == 0.0:
+                    # round-to-zero: 0 < p_val < 5e-5; reporting 0.0 is misleading.
+                    p_val_out = None
+                    p_underflow_note = (
+                        f"p-value rounds to zero at 4-decimal precision "
+                        f"(raw value: {p_val:.2e}). "
+                        "The result is highly significant. Treat as p < 0.0001."
+                    )
+                else:
+                    p_val_out = _rounded
             se_scaled = float(se[i]) / float(X_std[i])
 
             # Guard CI computation against overflow (complete separation produces a
@@ -773,22 +792,35 @@ class SurvivalTool(BaseTool):
             )
             ci_hi_out = float(raw_ci_hi) if np.isfinite(raw_ci_hi) else None
 
-            # BUG-1 fix: when separation is detected, the Wald p-value is computed from
-            # the same near-singular Hessian that makes the CI unreliable.  Under
-            # quasi-separation, z = beta/se → 0 (se is huge), so p → 1.0 — a falsely
-            # reassuring "non-significant" result despite a coefficient of 15+ and HR of
-            # millions.  Set p_value and significant to None so automated pipelines see
-            # the same "unknown" status as the CI.
+            # BUG-1 fix (Round 14): when separation is detected, the Wald p-value is
+            # computed from the same near-singular Hessian that makes the CI unreliable.
+            # Under quasi-separation, z = beta/se → 0 (se is huge), so p → 1.0 — a
+            # falsely reassuring "non-significant" result.  Set p_value and significant
+            # to None.  Separation explanation supersedes underflow note.
             if separation_warning is not None:
                 p_val_out = None
+                p_underflow_note = None  # separation is the operative explanation
+            # Determine significant field:
+            # - underflow (p_val == 0 or rounds to 0) AND no separation → True (highly sig)
+            # - separation → None (unknown)
+            # - normal finite p_val_out → bool comparison
+            if p_val_out is not None:
+                _significant = bool(p_val < 0.05)
+            elif p_underflow_note is not None:
+                # Not separation; underflow → definitely significant
+                _significant = True
+            else:
+                _significant = None
             entry = {
                 "covariate": name,
                 "coefficient": round(float(beta_original[i]), 4),
                 "hazard_ratio": hr_out,
                 "hazard_ratio_95ci": (ci_lo_out, ci_hi_out),
                 "p_value": p_val_out,
-                "significant": bool(p_val < 0.05) if p_val_out is not None else None,
+                "significant": _significant,
             }
+            if p_underflow_note:
+                entry["p_value_note"] = p_underflow_note
             if separation_warning:
                 entry["separation_warning"] = separation_warning
             coef_results.append(entry)

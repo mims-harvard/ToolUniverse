@@ -314,8 +314,11 @@ class DoseResponseTool(BaseTool):
             "model": "4-Parameter Logistic (4PL)",
             "formula": "f(x) = Bottom + (Top - Bottom) / (1 + (IC50/x)^Hill)",
             "parameters": {
-                "bottom_emin": result["bottom"],
-                "top_emax": result["top"],
+                # BUG-4 fix: labels corrected to match pharmacological convention.
+                # emax = numerically larger asymptote (uninhibited baseline ≈100% for inhibitory).
+                # emin = numerically smaller asymptote (inhibited floor ≈0% for inhibitory).
+                "top_emax": max(result["top"], result["bottom"]),
+                "bottom_emin": min(result["top"], result["bottom"]),
                 "ic50": result["ic50"],
                 "hill_slope": result["hill_slope"],
             },
@@ -411,12 +414,22 @@ class DoseResponseTool(BaseTool):
             else None
         )
 
+        # BUG-4 fix: emax/emin were inverted relative to pharmacological convention.
+        # The 4PL Hill equation f(x) = emin_param + (emax_param - emin_param)/(1+(EC50/x)^n)
+        # means: emin_param = f(x→0) = low-dose asymptote = uninhibited baseline (≈100%)
+        # and emax_param = f(x→∞) = high-dose asymptote = inhibited floor (≈0%) for an
+        # inhibitory assay.  Reporting "emax" = emax_param = 0% and "emin" = 100% is the
+        # INVERSE of the standard definition (Emax = max effect = baseline ≈ 100%).
+        # Fix: emax = max(top, bottom) = numerically larger asymptote = uninhibited baseline;
+        #      emin = min(top, bottom) = numerically smaller asymptote = inhibited floor.
+        _top_val = result["top"]
+        _bot_val = result["bottom"]
         data = {
             "ic50": result["ic50"],
             "ic50_95_confidence_interval": result["ic50_95ci"],
             "hill_slope": result["hill_slope"],
-            "emax": result["top"],
-            "emin": result["bottom"],
+            "emax": max(_top_val, _bot_val),
+            "emin": min(_top_val, _bot_val),
             "r_squared": result["r_squared"],
             "log_ic50": log_ic50_val,
             "note": "IC50 estimated via 4PL curve fitting",

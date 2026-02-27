@@ -399,7 +399,11 @@ class NCATool(BaseTool):
             "Tmax": float(tmax),
             "Clast": float(clast),
             "Tlast": float(tlast),
-            f"AUC0-{float(tlast):.6g}": _auc0t,
+            # BUG-3 fix: key was always "AUC0-X" even when data starts after t=0.
+            # If the first time point is > 0, the integral starts there (not at 0),
+            # so the key should reflect the actual integration bounds to avoid a 24%+
+            # overstatement when the user reads "AUC0-24" but actually gets AUC_2-24.
+            f"AUC{float(t_auc[0]):.6g}-{float(tlast):.6g}": _auc0t,
             "AUC0_last": _auc0t,  # stable alias for programmatic access
             "units": {
                 "Cmax": conc_unit,
@@ -480,9 +484,12 @@ class NCATool(BaseTool):
             # AUC0-inf = AUC0-t + Clast/λz
             auc0inf = auc0t + clast / lambda_z
             extrap_pct = float((clast / lambda_z) / auc0inf * 100)
-            # Preserve full precision for lambda_z: round(1e-9, 6) = 0.0 which is wrong.
-            # Same applies to t_half: round(1.44e-9, 4) = 0.0 for sub-nanosecond t½.
-            result["lambda_z"] = round(float(lambda_z), 9)
+            # Preserve full precision for lambda_z: round(1e-9, 9) = 0.0 for any
+            # lambda_z < 5e-10 h⁻¹ (t½ > ~1.4 billion hours).  Stored 0.0 contradicts
+            # t_half and AUC0-inf (which both use the unrounded lambda_z) — a downstream
+            # caller that re-derives t_half from stored lambda_z = 0 would get inf.
+            # Use full float precision, consistent with t_half and AUC0-inf.
+            result["lambda_z"] = float(lambda_z)
             result["t_half"] = float(t_half)
             result["r_squared_terminal_fit"] = round(float(r_sq_terminal), 4)
             # BUG-5 fix: emit a terminal_fit_quality_warning when the log-linear terminal
@@ -540,11 +547,16 @@ class NCATool(BaseTool):
                         auc_ng_ml = auc0inf * conc_factor
                         cl_ml = dose_ng / auc_ng_ml  # mL/time_unit
                         cl_l = cl_ml / 1000.0  # L/time_unit
-                        result["clearance_CL"] = round(float(cl_l), 6)
+                        # BUG-1 fix: round(cl_l, 6) silently truncates CL to 0.0 for
+                        # any CL < 5e-7 L/time (e.g., rare biotech analytes with tiny
+                        # doses in ng).  Use full precision consistent with lambda_z/AUC.
+                        result["clearance_CL"] = float(cl_l)
                         result["clearance_CL_unit"] = f"L/{time_unit}"
                         if route == "iv":
                             vd_l = cl_l / lambda_z  # L
-                            result["volume_distribution_Vd"] = round(float(vd_l), 4)
+                            # BUG-1 fix: round(vd_l, 4) truncates Vd to 0.0 for any
+                            # Vd < 5e-5 L.  Use full precision (same rationale as CL).
+                            result["volume_distribution_Vd"] = float(vd_l)
                             result["Vd_unit"] = "L"
                             # BUG-1 fix: MRT_iv = AUMC_0-inf / AUC_0-inf (model-independent NCA).
                             # The previous formula 1/lambda_z is only valid for a

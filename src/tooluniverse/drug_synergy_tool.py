@@ -414,7 +414,12 @@ class DrugSynergyTool(BaseTool):
         # that silently corrupt the ZIP score.  Detect and warn rather than silently
         # returning a meaningless result.
         n_impossible_high = int(np.sum(inhibition > 1.2))
-        n_impossible_low = int(np.sum(inhibition < -0.2))
+        # BUG-2 fix: strict `< -0.2` misses the IEEE-754 representation of exactly
+        # 120% viability.  `1 - 120/100` evaluates to -0.19999999999999996 in float
+        # (about 4e-17 above -0.2), so the exact boundary case silently bypasses the
+        # impossible-inhibition guard.  Use `< -0.2 + 1e-9` (≈ -0.199999999) which
+        # lies above the float representation of -0.2 and correctly catches 120% viability.
+        n_impossible_low = int(np.sum(inhibition < -0.2 + 1e-9))
         if n_impossible_high > 0 or n_impossible_low > 0:
             mixed_scale_note = (
                 f"After scale conversion, {n_impossible_high + n_impossible_low} "

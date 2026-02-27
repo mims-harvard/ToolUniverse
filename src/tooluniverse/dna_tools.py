@@ -804,7 +804,15 @@ class DNATool(BaseTool):
                     partial_len = seq_len - orf_start_idx
                     if partial_len >= min_length:
                         if is_reverse:
-                            open_coord = seq_len - orf_start_idx  # 1-based end
+                            # BUG-3 fix: was `seq_len - orf_start_idx` which is the
+                            # GFF END (highest plus-strand coordinate = last base of ATG).
+                            # Convention for closed minus-strand ORFs uses
+                            # coord_start = GFF start (lower bound, consistent with GFF).
+                            # The GFF start of the ATG is:
+                            #   seq_len - (orf_start_idx + 3) + 1 = seq_len - orf_start_idx - 2
+                            open_coord = (
+                                seq_len - orf_start_idx - 2
+                            )  # 1-based GFF start
                         else:
                             open_coord = orf_start_idx + 1  # 1-based start
                         open_starts.append(
@@ -986,6 +994,30 @@ class DNATool(BaseTool):
             sequence_trimmed = sequence
             warning = None
 
+        # BUG-1 fix: warn when the sequence does not start with ATG.
+        # A non-ATG start is unusual for a canonical CDS and may indicate a
+        # partial sequence, mis-framing, or non-coding input.  Report a warning
+        # rather than silently returning a protein starting with a non-Met residue.
+        non_atg_warning = None
+        if len(sequence_trimmed) >= 3 and sequence_trimmed[:3] != "ATG":
+            first_codon = sequence_trimmed[:3]
+            first_aa = STANDARD_CODON_TABLE.get(first_codon, "X")
+            if first_aa == "*":
+                # BUG-2 fix: first codon is a stop → protein will be empty.
+                # Emit a dedicated warning so callers are not silently given "".
+                non_atg_warning = (
+                    f"First codon '{first_codon}' is a stop codon; the protein_sequence "
+                    "field will be empty. The sequence may be reversed, mis-framed, "
+                    "or contain a premature stop at position 1."
+                )
+            else:
+                non_atg_warning = (
+                    f"Sequence does not start with ATG (start codon); "
+                    f"first codon is '{first_codon}' ({first_aa}). "
+                    "This is unusual for a canonical CDS. The protein may be "
+                    "incorrect if the input is a partial or mis-framed sequence."
+                )
+
         protein = []
         stop_positions = []
         for i in range(0, len(sequence_trimmed), 3):
@@ -1019,6 +1051,8 @@ class DNATool(BaseTool):
         }
         if warning:
             result["data"]["warning"] = warning
+        if non_atg_warning:
+            result["data"]["non_atg_start_warning"] = non_atg_warning
 
         return result
 
