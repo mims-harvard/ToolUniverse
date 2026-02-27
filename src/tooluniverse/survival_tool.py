@@ -110,6 +110,9 @@ class SurvivalTool(BaseTool):
         if has_t0_event:
             km_times: List[float] = []
             km_survival: List[float] = []
+            km_survival_raw: List[
+                float
+            ] = []  # unrounded, for accurate median detection
             km_at_risk: List[int] = []
             km_events: List[int] = []
             km_censored: List[int] = []
@@ -118,6 +121,7 @@ class SurvivalTool(BaseTool):
         else:
             km_times = [0.0]
             km_survival = [1.0]
+            km_survival_raw = [1.0]
             km_at_risk = [n_total]
             km_events = [0]
             km_censored = [0]
@@ -158,6 +162,7 @@ class SurvivalTool(BaseTool):
 
             km_times.append(float(t_i))
             km_survival.append(round(s, 4))
+            km_survival_raw.append(s)  # raw unrounded value used for median detection
             km_at_risk.append(n_risk)
             km_events.append(d_i)
             km_censored.append(c_i)
@@ -167,6 +172,7 @@ class SurvivalTool(BaseTool):
         return (
             km_times,
             km_survival,
+            km_survival_raw,
             km_at_risk,
             km_events,
             km_censored,
@@ -232,6 +238,7 @@ class SurvivalTool(BaseTool):
             (
                 km_times,
                 km_survival,
+                km_survival_raw,
                 km_at_risk,
                 km_events,
                 km_censored,
@@ -239,7 +246,11 @@ class SurvivalTool(BaseTool):
                 km_ci_upper,
             ) = self._km_estimator(dur, evs)
 
-            km_surv_arr = np.array(km_survival)
+            # Round 20 BUG-1 fix: use raw (unrounded) survival probabilities for the
+            # median check.  Using the rounded display values causes false median
+            # detection when the true S is just above 0.5 but rounds down to 0.5
+            # (e.g., S=0.50005 → round(0.50005, 4)=0.5 ≤ 0.5 triggers false median).
+            km_surv_arr = np.array(km_survival_raw)
             below = np.where(km_surv_arr <= 0.5)[0]
             median_survival = float(km_times[below[0]]) if len(below) > 0 else None
 
@@ -301,6 +312,7 @@ class SurvivalTool(BaseTool):
                 (
                     km_times,
                     km_survival,
+                    km_survival_raw,
                     km_at_risk,
                     km_events,
                     km_censored,
@@ -308,7 +320,8 @@ class SurvivalTool(BaseTool):
                     km_ci_upper,
                 ) = self._km_estimator(g_dur, g_evs)
 
-                km_surv_arr = np.array(km_survival)
+                # Round 20 BUG-1 fix: use raw survival for median (same as single-group).
+                km_surv_arr = np.array(km_survival_raw)
                 below = np.where(km_surv_arr <= 0.5)[0]
                 median_survival = float(km_times[below[0]]) if len(below) > 0 else None
 

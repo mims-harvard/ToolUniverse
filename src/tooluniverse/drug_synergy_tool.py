@@ -100,11 +100,18 @@ class DrugSynergyTool(BaseTool):
             else:
                 return "Strong antagonism"
         else:
-            # ZIP scores are in percentage points (×100); thresholds ±10 pp
+            # ZIP scores are in percentage points (×100); thresholds ±10 pp.
+            # Round 20 BUG-2 fix: the result note documents "< -10: antagonism"
+            # (strict), so -10.0 exactly should be "Additivity" not "Antagonism".
+            # Changed `elif score > -10` → `elif score >= -10` to make the negative
+            # boundary exclusive (matching the positive boundary: > 10 for Synergy,
+            # so 10.0 → "Additivity").
+            # Round 20 BUG-3 fix: use "Additivity" (matching Bliss/HSA labels) for
+            # the no-interaction label instead of "Additive" for consistency.
             if score > 10:
                 return "Synergy"
-            elif score > -10:
-                return "Additive"
+            elif score >= -10:
+                return "Additivity"
             else:
                 return "Antagonism"
 

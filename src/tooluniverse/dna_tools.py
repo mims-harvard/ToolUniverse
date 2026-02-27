@@ -582,7 +582,7 @@ class DNATool(BaseTool):
         if not sequence or not sequence.strip():
             return {"status": "error", "error": "sequence is required"}
 
-        sequence = sequence.upper().replace(" ", "").replace("\n", "")
+        sequence = sequence.upper().replace(" ", "").replace("\n", "").replace("\t", "")
         error = self._validate_dna_sequence(sequence)
         if error:
             return {"status": "error", "error": error}
@@ -723,7 +723,7 @@ class DNATool(BaseTool):
         if not sequence or not sequence.strip():
             return {"status": "error", "error": "sequence is required"}
 
-        sequence = sequence.upper().replace(" ", "").replace("\n", "")
+        sequence = sequence.upper().replace(" ", "").replace("\n", "").replace("\t", "")
         error = self._validate_dna_sequence(sequence)
         if error:
             return {"status": "error", "error": error}
@@ -930,7 +930,7 @@ class DNATool(BaseTool):
         if not sequence:
             return {"status": "error", "error": "sequence is required"}
 
-        sequence = sequence.upper().replace(" ", "").replace("\n", "")
+        sequence = sequence.upper().replace(" ", "").replace("\n", "").replace("\t", "")
         error = self._validate_dna_sequence(sequence)
         if error:
             return {"status": "error", "error": error}
@@ -990,7 +990,7 @@ class DNATool(BaseTool):
         if not sequence or not sequence.strip():
             return {"status": "error", "error": "sequence is required"}
 
-        sequence = sequence.upper().replace(" ", "").replace("\n", "")
+        sequence = sequence.upper().replace(" ", "").replace("\n", "").replace("\t", "")
         error = self._validate_dna_sequence(sequence)
         if error:
             return {"status": "error", "error": error}
@@ -1013,7 +1013,7 @@ class DNATool(BaseTool):
         if not sequence or not sequence.strip():
             return {"status": "error", "error": "sequence is required"}
 
-        sequence = sequence.upper().replace(" ", "").replace("\n", "")
+        sequence = sequence.upper().replace(" ", "").replace("\n", "").replace("\t", "")
         error = self._validate_dna_sequence(sequence)
         if error:
             return {"status": "error", "error": error}
@@ -1294,7 +1294,7 @@ class DNATool(BaseTool):
         if not sequence or not sequence.strip():
             return {"status": "error", "error": "sequence is required"}
 
-        sequence = sequence.upper().replace(" ", "").replace("\n", "")
+        sequence = sequence.upper().replace(" ", "").replace("\n", "").replace("\t", "")
         error = self._validate_dna_sequence(sequence)
         if error:
             return {"status": "error", "error": error}
@@ -1517,7 +1517,7 @@ class DNATool(BaseTool):
         if not sequence:
             return {"status": "error", "error": "sequence is required"}
 
-        sequence = sequence.upper().replace(" ", "").replace("\n", "")
+        sequence = sequence.upper().replace(" ", "").replace("\n", "").replace("\t", "")
         error = self._validate_dna_sequence(sequence)
         if error:
             return {"status": "error", "error": error}
@@ -1784,7 +1784,9 @@ class DNATool(BaseTool):
             return {"status": "error", "error": "overlap_length must be at least 1"}
 
         for i, frag in enumerate(fragments):
-            frag_upper = frag.upper().replace(" ", "").replace("\n", "")
+            frag_upper = (
+                frag.upper().replace(" ", "").replace("\n", "").replace("\t", "")
+            )
             err = self._validate_dna_sequence(frag_upper)
             if err:
                 return {"status": "error", "error": f"Fragment {i + 1}: {err}"}
@@ -1795,7 +1797,8 @@ class DNATool(BaseTool):
                 }
 
         fragments_clean = [
-            f.upper().replace(" ", "").replace("\n", "") for f in fragments
+            f.upper().replace(" ", "").replace("\n", "").replace("\t", "")
+            for f in fragments
         ]
         n = len(fragments_clean)
         assembly_fragments = []
@@ -1865,7 +1868,9 @@ class DNATool(BaseTool):
         enzyme_display = "BsaI" if enzyme == "BSAI" else "BbsI"
 
         for i, part in enumerate(parts):
-            part_upper = part.upper().replace(" ", "").replace("\n", "")
+            part_upper = (
+                part.upper().replace(" ", "").replace("\n", "").replace("\t", "")
+            )
             if len(part_upper) == 0:
                 return {
                     "status": "error",
@@ -1875,7 +1880,10 @@ class DNATool(BaseTool):
             if err:
                 return {"status": "error", "error": f"Part {i + 1}: {err}"}
 
-        parts_clean = [p.upper().replace(" ", "").replace("\n", "") for p in parts]
+        parts_clean = [
+            p.upper().replace(" ", "").replace("\n", "").replace("\t", "")
+            for p in parts
+        ]
         n_parts = len(parts_clean)
 
         # Check for internal recognition sites in part sequences.

@@ -649,7 +649,11 @@ class NCATool(BaseTool):
                                 "bioavailability F is unknown without an IV reference. "
                                 "Do not compare directly with IV-derived clearance."
                             )
-                        if route == "iv":
+                        # Round 20 BUG-1 fix: 'infusion' is an IV route (F=1), so Vd
+                        # and MRT_iv are just as valid for infusion as for iv bolus.
+                        # The clearance_note guard already uses ("iv", "infusion");
+                        # the Vd/MRT block was never updated to match.
+                        if route in ("iv", "infusion"):
                             vd_l = cl_l / lambda_z  # L
                             # BUG-1 fix: round(vd_l, 4) truncates Vd to 0.0 for any
                             # Vd < 5e-5 L.  Use full precision (same rationale as CL).
@@ -684,7 +688,8 @@ class NCATool(BaseTool):
                             f"dose_unit='{dose_unit}' / conc_unit='{conc_unit}'. "
                             "CL and Vd are in raw ratio units; convert manually."
                         )
-                        if route == "iv":
+                        # Round 20 BUG-1 fix: same infusion fix for unknown-units path.
+                        if route in ("iv", "infusion"):
                             vd = cl / lambda_z
                             # BUG-3 fix: same full-precision fix for Vd.
                             result["volume_distribution_Vd"] = float(vd)
@@ -831,6 +836,21 @@ class NCATool(BaseTool):
         t_fit = t[valid]
         c_fit = c[valid]
 
+        # Round 20 BUG-2 fix: all-identical time values make exponential fitting
+        # degenerate — the optimizer receives five observations all at the same
+        # independent-variable value and returns an arbitrary k_el. Detect this
+        # and return a clear error rather than a misleading result.
+        if np.ptp(t_fit) == 0.0:  # peak-to-peak range == 0 means all times equal
+            return {
+                "status": "error",
+                "error": (
+                    "All time values are identical "
+                    f"(t = {float(t_fit[0])} for all {int(sum(valid))} positive "
+                    "concentration points). At least two distinct time points are "
+                    "required to estimate an elimination rate constant."
+                ),
+            }
+
         def one_compartment(t_arr, c0, k_el):
             return c0 * np.exp(-k_el * t_arr)
 
@@ -860,7 +880,10 @@ class NCATool(BaseTool):
         c_pred = one_compartment(t_fit, c0_fit, k_el_fit)
         ss_res = float(np.sum((c_fit - c_pred) ** 2))
         ss_tot = float(np.sum((c_fit - np.mean(c_fit)) ** 2))
-        r_squared = float(1.0 - ss_res / ss_tot) if ss_tot > 0 else 0.0
+        # Round 20 BUG-3 fix: `1.0 - ss_res/ss_tot` can produce -0.0 (IEEE-754
+        # negative zero) when ss_res ≈ ss_tot.  Apply the same `+ 0.0` pattern
+        # used by DoseResponse to eliminate negative zero from JSON output.
+        r_squared = (float(1.0 - ss_res / ss_tot) + 0.0) if ss_tot > 0 else 0.0
 
         if r_squared >= 0.95:
             gof = "Good (R²≥0.95)"
@@ -882,7 +905,11 @@ class NCATool(BaseTool):
             "C0_initial_concentration": round(float(c0_fit), 4),
             "k_el_elimination_rate": k_el_val,
             "t_half": float(t_half),
-            "r_squared": round(r_squared, 4),
+            # Round 20 BUG-3: apply + 0.0 AFTER round() because round() of a tiny
+            # negative value (e.g. -1e-17) produces -0.0 in IEEE-754 arithmetic.
+            # The + 0.0 at the computation site (line above) eliminates -0.0 from the
+            # variable, but round(-tiny, 4) can produce -0.0 afresh.
+            "r_squared": round(r_squared, 4) + 0.0,
             "goodness_of_fit": gof,
             "standard_errors": {
                 "C0": round(float(perr[0]), 4),
@@ -903,7 +930,7 @@ class NCATool(BaseTool):
         if r_squared < 0.85:
             if r_squared < 0.1:
                 fit_warn_msg = (
-                    f"Very poor fit (R² = {round(r_squared, 4)}): the 1-compartment "
+                    f"Very poor fit (R² = {round(r_squared, 4) + 0.0}): the 1-compartment "
                     "model explains < 10% of the variance in the concentration data. "
                     "This often indicates a flat profile (no measurable elimination "
                     "over the sampling window), highly noisy data, or a multi-phasic "
@@ -911,7 +938,7 @@ class NCATool(BaseTool):
                 )
             else:
                 fit_warn_msg = (
-                    f"Poor fit (R² = {round(r_squared, 4)} < 0.85): the 1-compartment "
+                    f"Poor fit (R² = {round(r_squared, 4) + 0.0} < 0.85): the 1-compartment "
                     "model does not describe the data well. Consider a 2-compartment "
                     "model or non-compartmental analysis. The t½ and k_el estimates "
                     "should be interpreted with caution."
