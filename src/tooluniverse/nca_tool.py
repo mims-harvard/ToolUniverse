@@ -228,6 +228,18 @@ class NCATool(BaseTool):
         except (ValueError, TypeError) as e:
             return {"status": "error", "error": f"Invalid numeric values: {e}"}
 
+        # NaN/inf must be rejected before any comparison (np.any(c < 0) returns False
+        # for NaN, silently bypassing the negative-value guard).
+        if np.any(~np.isfinite(c)):
+            return {
+                "status": "error",
+                "error": (
+                    "Concentrations contain non-finite values (NaN or inf). "
+                    "All concentration values must be finite real numbers. "
+                    "Replace NaN/inf with 0 (BLQ) or remove the affected time points."
+                ),
+            }
+
         if np.any(c < 0):
             return {
                 "status": "error",
@@ -264,13 +276,19 @@ class NCATool(BaseTool):
         # FDA NCA convention: AUC0-t is integrated only up to Tlast, the time of
         # the last *positive* (measurable) concentration.  Trailing zeros beyond
         # Tlast represent BLQ samples and must not inflate the integral.
+        # Pre-dose time points (t < 0) must also be excluded: including them inflates
+        # the area by integrating over negative-time intervals that are not part of
+        # the post-administration pharmacokinetic profile.
         if any(pos_mask):
             last_pos_idx = int(np.where(pos_mask)[0][-1])
-            t_auc = t[: last_pos_idx + 1]
-            c_auc = c[: last_pos_idx + 1]
+            first_nonneg_idx = int(np.argmax(t >= 0)) if np.any(t >= 0) else 0
+            t_auc = t[first_nonneg_idx : last_pos_idx + 1]
+            c_auc = c[first_nonneg_idx : last_pos_idx + 1]
+            pre_dose_times = [float(x) for x in t[:first_nonneg_idx]]
         else:
             t_auc = t
             c_auc = c
+            pre_dose_times = []
         auc0t = self._auc_trapezoid(t_auc, c_auc)
 
         # Terminal phase parameters — use all post-Tmax points per FDA NCA guidance
@@ -282,6 +300,7 @@ class NCATool(BaseTool):
             "Clast": round(clast, 4),
             "Tlast": round(tlast, 4),
             f"AUC0-{tlast:.1f}": round(auc0t, 4),
+            "AUC0_last": round(auc0t, 4),  # stable alias for programmatic access
             "units": {
                 "Cmax": conc_unit,
                 "Tmax": time_unit,
@@ -289,12 +308,38 @@ class NCATool(BaseTool):
             },
         }
 
+        # Warn when pre-dose (t < 0) time points were excluded from AUC integration.
+        if pre_dose_times:
+            result["pre_dose_time_warning"] = (
+                f"Pre-dose time points (t < 0) at t={pre_dose_times} were excluded "
+                "from AUC integration. AUC0-t is computed from t=0 per FDA/EMA NCA "
+                "guidance. Pre-dose samples are retained for visual inspection only."
+            )
+
+        # Check monotonicity of post-Tmax concentrations.
+        # Non-monotonic profiles (rising concentrations after Tmax) indicate
+        # re-absorption, enterohepatic circulation, or assay issues — making
+        # terminal slope estimation unreliable.
+        valid_mask = c > 0
+        t_valid_all = t[valid_mask]
+        c_valid_all = c[valid_mask]
+        post_tmax_mask = t_valid_all > tmax
+        if np.sum(post_tmax_mask) >= 3:
+            c_post = c_valid_all[post_tmax_mask]
+            if np.any(np.diff(c_post) > 0):
+                result["non_monotonic_terminal_warning"] = (
+                    "Post-Tmax concentrations are not monotonically decreasing. "
+                    "This may indicate re-absorption, enterohepatic circulation, a secondary "
+                    "Cmax, or assay variability. Terminal slope (lambda_z) may be unreliable."
+                )
+
         if lambda_z is not None:
             t_half = np.log(2) / lambda_z
             # AUC0-inf = AUC0-t + Clast/λz
             auc0inf = auc0t + clast / lambda_z
             extrap_pct = float((clast / lambda_z) / auc0inf * 100)
-            result["lambda_z"] = round(float(lambda_z), 6)
+            # Preserve full precision for lambda_z: round(1e-9, 6) = 0.0 which is wrong.
+            result["lambda_z"] = round(float(lambda_z), 9)
             result["t_half"] = round(float(t_half), 4)
             result["r_squared_terminal_fit"] = round(float(r_sq_terminal), 4)
             result["AUC0-inf"] = round(float(auc0inf), 4)
@@ -310,6 +355,15 @@ class NCATool(BaseTool):
             if dose is not None:
                 try:
                     dose_val = float(dose)
+                    if dose_val <= 0:
+                        return {
+                            "status": "error",
+                            "error": (
+                                f"dose ({dose_val}) must be positive (> 0). "
+                                "Negative or zero dose is not physically meaningful. "
+                                "CL and Vd cannot be computed without a positive dose."
+                            ),
+                        }
                     dose_ng, conc_factor, converted = self._try_pk_unit_conversion(
                         dose_val, dose_unit, conc_unit
                     )
@@ -454,17 +508,23 @@ class NCATool(BaseTool):
         else:
             gof = "Poor (R²<0.85) — consider multi-compartment model"
 
+        # Preserve full precision for k_el: round(1e-9, 6) = 0.0, which is wrong
+        # for drugs near the lower optimization bound (1e-9 h⁻¹ ≡ t½ ≈ 693M h).
+        k_el_val = float(k_el_fit)
+        # SE of k_el needs same precision to avoid reporting 0.0.
+        k_el_se_val = float(perr[1])
+
         result = {
             "model": "1-compartment IV bolus",
             "equation": "C(t) = C0 × exp(-k_el × t)",
             "C0_initial_concentration": round(float(c0_fit), 4),
-            "k_el_elimination_rate": round(float(k_el_fit), 6),
+            "k_el_elimination_rate": k_el_val,
             "t_half": round(float(t_half), 4),
             "r_squared": round(r_squared, 4),
             "goodness_of_fit": gof,
             "standard_errors": {
                 "C0": round(float(perr[0]), 4),
-                "k_el": round(float(perr[1]), 6),
+                "k_el": k_el_se_val,
             },
             "units": {
                 "C0": conc_unit,
@@ -472,6 +532,18 @@ class NCATool(BaseTool):
                 "t_half": time_unit,
             },
         }
+
+        # Warn when k_el is at or near the optimization lower bound (1e-9).
+        # At the bound, the optimizer could not find a smaller value — the half-life
+        # estimate (ln2/k_el) may be astronomically large and unreliable.
+        if k_el_val < 1e-8:
+            result["k_el_bound_warning"] = (
+                f"k_el ({k_el_val:.2e} 1/{time_unit}) is at or near the optimization "
+                "lower bound (1e-9). This may indicate an extremely long half-life drug "
+                "or that the data do not support reliable estimation of the elimination "
+                f"rate constant. Corresponding t½ = {float(t_half):.4g} {time_unit} "
+                "should be interpreted with great caution."
+            )
 
         if dose is not None:
             try:

@@ -195,6 +195,22 @@ class DrugSynergyTool(BaseTool):
                 "error": "effects_a, effects_b, and effects_combo must have the same length",
             }
 
+        # Validate [0,1] range — same requirement as Bliss and Loewe.
+        for name, arr in [
+            ("effects_a", list(ea)),
+            ("effects_b", list(eb)),
+            ("effects_combo", list(ec)),
+        ]:
+            bad = [i for i, v in enumerate(arr) if not (0 <= v <= 1)]
+            if bad:
+                return {
+                    "status": "error",
+                    "error": (
+                        f"{name} values must be between 0 and 1 (fractional inhibition). "
+                        f"Invalid values at indices: {bad}"
+                    ),
+                }
+
         hsa = np.maximum(ea, eb)
         synergy_matrix = ec - hsa  # Fractional units (same scale as inputs)
         # Round mean before interpretation so displayed score and label are consistent.
@@ -265,8 +281,37 @@ class DrugSynergyTool(BaseTool):
                 ),
             }
 
-        # Inhibition matrix (1 - viability)
-        inhibition = 1 - vm / 100 if vm.max() > 1 else 1 - vm
+        # Validate dose values are non-negative (DS-5).
+        if np.any(da < 0) or np.any(db < 0):
+            return {
+                "status": "error",
+                "error": "All dose values in doses_a and doses_b must be non-negative (>= 0).",
+            }
+
+        # Scale detection: convert viability → inhibition = 1 - viability.
+        # Robust heuristic: use max > 2 (not > 1) as the percentage-scale threshold.
+        # The old threshold (> 1) corrupts fractional-scale data when any cell
+        # slightly exceeds 1.0 due to normalization noise (e.g., 1.05) — the entire
+        # matrix would be divided by 100, misinterpreting 0.80 viability as 0.008
+        # (99.2% inhibition). Values in (1, 2] are likely fractional data with noise.
+        vm_max = float(vm.max())
+        scale_note = None
+        if vm_max > 2:
+            # Clearly percentage scale (0–100)
+            inhibition = 1 - vm / 100
+        elif vm_max > 1:
+            # Ambiguous: max exceeds 1 but is ≤ 2. Most likely fractional data
+            # with measurement noise. Treat as fractional and warn.
+            inhibition = 1 - vm
+            scale_note = (
+                f"viability_matrix max ({vm_max:.4f}) slightly exceeds 1.0. "
+                "Treating as fractional scale (0–1). If data is in percentage (0–100), "
+                "divide all values by 100 before passing to this function, or ensure "
+                "your vehicle control viability is normalized to 1.0."
+            )
+        else:
+            # Clearly fractional scale (0–1)
+            inhibition = 1 - vm
 
         # Fit simple Hill curves for each drug
         def hill_curve(x, ic50, hill, emax):
@@ -326,22 +371,21 @@ class DrugSynergyTool(BaseTool):
 
         delta = (inhibition - expected_zip) * 100
 
-        return {
-            "status": "success",
-            "data": {
-                "model": "ZIP (Zero Interaction Potency)",
-                "mean_zip_score": round(float(np.mean(delta)), 2),
-                "max_zip_score": round(float(np.max(delta)), 2),
-                "min_zip_score": round(float(np.min(delta)), 2),
-                "zip_delta_matrix": [
-                    [round(float(v), 2) for v in row] for row in delta
-                ],
-                "interpretation": self._interpret_synergy_score(
-                    float(np.mean(delta)), "zip"
-                ),
-                "note": "ZIP delta > 10: synergy; < -10: antagonism. Based on Yadav et al. (2015).",
-            },
+        zip_data = {
+            "model": "ZIP (Zero Interaction Potency)",
+            "mean_zip_score": round(float(np.mean(delta)), 2),
+            "max_zip_score": round(float(np.max(delta)), 2),
+            "min_zip_score": round(float(np.min(delta)), 2),
+            "zip_delta_matrix": [[round(float(v), 2) for v in row] for row in delta],
+            "interpretation": self._interpret_synergy_score(
+                float(np.mean(delta)), "zip"
+            ),
+            "note": "ZIP delta > 10: synergy; < -10: antagonism. Based on Yadav et al. (2015).",
         }
+        if scale_note:
+            zip_data["scale_warning"] = scale_note
+
+        return {"status": "success", "data": zip_data}
 
     def _fit_hill_for_loewe(self, doses, effects):
         """
@@ -438,11 +482,29 @@ class DrugSynergyTool(BaseTool):
         except (ValueError, TypeError) as e:
             return {"status": "error", "error": f"Invalid numeric values: {e}"}
 
-        # Validate effect values are in [0,1]
-        if not (0 <= e_combo <= 1):
+        # Zero or negative combination doses are physically impossible (DS-1).
+        if da_combo <= 0 or db_combo <= 0:
             return {
                 "status": "error",
-                "error": f"effect_combo={e_combo} must be between 0 and 1 (fractional effect)",
+                "error": (
+                    f"dose_a_combo ({da_combo}) and dose_b_combo ({db_combo}) must both "
+                    "be positive (> 0). Zero or negative doses are not physically "
+                    "meaningful in a combination experiment."
+                ),
+            }
+
+        # Validate effect values in (0, 1] — zero effect (DS-4) causes inverse_hill
+        # to return 0.0 for the equivalent dose, which then fails with a confusing
+        # "equivalent dose is zero" error.  Detecting it early gives a clearer message.
+        if not (0 < e_combo <= 1):
+            return {
+                "status": "error",
+                "error": (
+                    f"effect_combo={e_combo} must be in (0, 1] (fractional effect, "
+                    "exclusive zero). The Loewe model is undefined when the combination "
+                    "effect is zero — a zero effect requires zero dose of each drug alone, "
+                    "making the additivity index indeterminate."
+                ),
             }
         try:
             ea_arr = [float(x) for x in effects_a_single]
@@ -625,6 +687,18 @@ class DrugSynergyTool(BaseTool):
             fa_combo = float(effect_combo)
         except (ValueError, TypeError) as e:
             return {"status": "error", "error": f"Invalid numeric values: {e}"}
+
+        # Zero or negative combination doses are physically impossible (DS-1).
+        if da_combo <= 0 or db_combo <= 0:
+            return {
+                "status": "error",
+                "error": (
+                    f"dose_a_combo ({da_combo}) and dose_b_combo ({db_combo}) must both "
+                    "be positive (> 0). Zero or negative doses are not physically "
+                    "meaningful in a combination experiment and produce a CI of zero "
+                    "regardless of the combination effect, falsely suggesting synergy."
+                ),
+            }
 
         if not (0 < fa_combo < 1):
             return {

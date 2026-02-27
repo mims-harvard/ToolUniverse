@@ -584,9 +584,31 @@ class SurvivalTool(BaseTool):
                     "The hazard ratio and CI cannot be estimated reliably. Consider "
                     "Firth's penalized regression or exact logistic regression."
                 )
-            hr_out = round(raw_hr, 4) if np.isfinite(raw_hr) else None
-            ci_lo_out = round(raw_ci_lo, 4) if np.isfinite(raw_ci_lo) else None
-            ci_hi_out = round(raw_ci_hi, 4) if np.isfinite(raw_ci_hi) else None
+            elif (
+                np.isfinite(raw_hr)
+                and np.isfinite(raw_ci_lo)
+                and np.isfinite(raw_ci_hi)
+            ):
+                # Detect quasi-separation when CI is finite but astronomically wide
+                # (e.g., CI lower = 3e-6, CI upper = 1.8e+122): the existing isfinite
+                # guard does not fire, yet the estimate is meaningless.
+                # Trigger on: HR very small/large, or CI width ratio > 1e6.
+                ci_width_ratio = raw_ci_hi / max(raw_ci_lo, 1e-300)
+                if raw_hr < 1e-4 or raw_hr > 1e4 or ci_width_ratio > 1e6:
+                    separation_warning = (
+                        f"Possible quasi-complete separation: the hazard ratio "
+                        f"({raw_hr:.4g}) or its 95% CI ({raw_ci_lo:.4g}, {raw_ci_hi:.4g}) "
+                        f"is extreme (CI width ratio: {ci_width_ratio:.2g}). "
+                        "The coefficient is likely driven by complete separation in the data. "
+                        "Consider Firth's penalized regression or adding more event data."
+                    )
+
+            # Preserve full precision for HR: round(3.3e-6, 4) = 0.0, which is
+            # factually wrong and creates a contradiction when the CI shows a
+            # large ratio (indicating a very small HR, not zero).
+            hr_out = float(raw_hr) if np.isfinite(raw_hr) else None
+            ci_lo_out = float(raw_ci_lo) if np.isfinite(raw_ci_lo) else None
+            ci_hi_out = float(raw_ci_hi) if np.isfinite(raw_ci_hi) else None
 
             entry = {
                 "covariate": name,

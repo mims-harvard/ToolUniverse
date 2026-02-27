@@ -311,12 +311,40 @@ class DoseResponseTool(BaseTool):
             data["ci_note"] = result["ci_note"]
         if "hill_slope_warning" in result:
             data["hill_slope_warning"] = result["hill_slope_warning"]
+
+        # Warn if the IC50 falls outside the tested concentration range
+        # (extrapolated IC50 values are unreliable).
+        ic50_val = result["ic50"]
+        conc_min = float(np.min(concentrations))
+        conc_max = float(np.max(concentrations))
+        if ic50_val < conc_min or ic50_val > conc_max:
+            data["ic50_extrapolation_warning"] = (
+                f"The estimated IC50 ({ic50_val:.4g}) is outside the tested "
+                f"concentration range [{conc_min:.4g}, {conc_max:.4g}]. "
+                "This is an extrapolated value and may be unreliable. "
+                "Extend the concentration range to include the half-maximal response."
+            )
+
+        # Warn if the response data does not span the midpoint between Emin and Emax,
+        # i.e., the data never crosses 50% of the fitted dynamic range.
+        midpoint = (result["top"] + result["bottom"]) / 2.0
+        resp_arr = np.array(responses, dtype=float)
+        if float(np.min(resp_arr)) > midpoint or float(np.max(resp_arr)) < midpoint:
+            data["ic50_range_warning"] = (
+                "The response data may not span the half-maximal response level "
+                f"(midpoint ≈ {midpoint:.4g}). The IC50 is likely extrapolated outside "
+                "the measured range and should be interpreted with caution."
+            )
+
         return {"status": "success", "data": data}
 
     @staticmethod
     def _interpret_potency(fold_shift):
         """Return a human-readable potency comparison string."""
-        if not fold_shift:
+        # Use `is None` instead of truthiness: `if not fold_shift` conflates None
+        # (computation failed) and 0.0 (impossible but logically wrong), returning
+        # "Equal potency" for both — which is misleading for the None case.
+        if fold_shift is None:
             return "Equal potency"
         if fold_shift > 1:
             # IC50_B > IC50_A → A is fold_shift times more potent
@@ -361,6 +389,11 @@ class DoseResponseTool(BaseTool):
 
         fold_shift = ic50_b / ic50_a if ic50_a > 0 else None
 
+        # Preserve full float precision for fold_shift: round(1e-5, 2) = 0.0, which
+        # would be inconsistent with potency_interpretation reporting "100000x more
+        # potent". Both fields must use the same underlying value to avoid contradictions.
+        fold_shift_out = float(fold_shift) if fold_shift is not None else None
+
         return {
             "status": "success",
             "data": {
@@ -376,9 +409,7 @@ class DoseResponseTool(BaseTool):
                     "emax": result_b["top"],
                     "r_squared": result_b["r_squared"],
                 },
-                "ic50_fold_shift_b_over_a": round(float(fold_shift), 2)
-                if fold_shift
-                else None,
+                "ic50_fold_shift_b_over_a": fold_shift_out,
                 "more_potent": "A"
                 if ic50_a < ic50_b
                 else ("B" if ic50_b < ic50_a else "Equal"),

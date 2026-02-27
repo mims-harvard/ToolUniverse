@@ -752,6 +752,17 @@ class DNATool(BaseTool):
 
         gc_content = (gc_count / effective_total * 100) if effective_total > 0 else 0
 
+        # When effective_length == 0 (all-N sequence), GC content is undefined —
+        # reporting "Low GC" (gc_content == 0) is scientifically incorrect.
+        if effective_total == 0:
+            interpretation = "Undefined (no ATGC bases)"
+        elif gc_content > 60:
+            interpretation = "High GC"
+        elif gc_content < 40:
+            interpretation = "Low GC"
+        else:
+            interpretation = "Normal GC"
+
         return {
             "status": "success",
             "data": {
@@ -762,13 +773,7 @@ class DNATool(BaseTool):
                 "nucleotide_counts": counts,
                 "sequence_length": total,
                 "effective_length": effective_total,
-                "interpretation": (
-                    "High GC"
-                    if gc_content > 60
-                    else "Low GC"
-                    if gc_content < 40
-                    else "Normal GC"
-                ),
+                "interpretation": interpretation,
             },
         }
 
@@ -1056,10 +1061,21 @@ class DNATool(BaseTool):
           GC terminal: dH = +0.1 kcal/mol, dS = -2.8 cal/mol/K (per end)
           AT terminal: dH = +2.3 kcal/mol, dS = +4.1 cal/mol/K (per end)
         Applied to both the 5' and 3' terminal base pairs.
+
+        Requires a fully-resolved sequence (no ambiguous bases).  N-containing
+        dinucleotides are absent from NN_PARAMS; silently skipping them
+        underestimates dH/dS and produces an erroneously low Tm.
+        Returns 0.0 for sequences containing N (same sentinel as length < 2).
         """
         seq = primer.upper()
         n = len(seq)
         if n < 2:
+            return 0.0
+
+        # Ambiguous bases: thermodynamic parameters are undefined for N-containing
+        # dinucleotides.  Return 0.0 to signal failure rather than silently computing
+        # a drastically underestimated Tm from only the N-free portion of the sequence.
+        if "N" in seq:
             return 0.0
 
         dH = 0.0  # kcal/mol
@@ -1112,6 +1128,15 @@ class DNATool(BaseTool):
         tm_target = float(arguments.get("tm_target") or 60.0)
         product_size_min = int(arguments.get("product_size_min") or 100)
         product_size_max = int(arguments.get("product_size_max") or 1000)
+        # GC filter bounds in percentage (0–100). Previously hardcoded as 40–60;
+        # now read from arguments so callers can override (e.g., gc_min=55, gc_max=70
+        # for high-GC amplicons).
+        gc_min_pct = (
+            float(arguments["gc_min"]) if arguments.get("gc_min") is not None else 40.0
+        )
+        gc_max_pct = (
+            float(arguments["gc_max"]) if arguments.get("gc_max") is not None else 60.0
+        )
 
         if target_start is None:
             target_start = 0
@@ -1164,7 +1189,7 @@ class DNATool(BaseTool):
                 if "N" in primer:
                     continue
                 gc = gc_content(primer)
-                if gc < 40 or gc > 60:
+                if gc < gc_min_pct or gc > gc_max_pct:
                     continue
                 if has_3prime_repeat(primer):
                     continue
@@ -1342,6 +1367,35 @@ class DNATool(BaseTool):
 
         parts_clean = [p.upper().replace(" ", "").replace("\n", "") for p in parts]
         n_parts = len(parts_clean)
+
+        # Check for internal recognition sites in part sequences.
+        # During assembly, the restriction enzyme cuts every recognition site in the
+        # reaction — including any site inside an insert — producing incorrect fragments.
+        if enzyme == "BSAI":
+            rec_seqs = [("GGTCTC", "forward"), ("GAGACC", "reverse complement")]
+        else:
+            rec_seqs = [("GAAGAC", "forward"), ("GTCTTC", "reverse complement")]
+
+        internal_site_errors = []
+        for i, part in enumerate(parts_clean):
+            for rec_seq, direction in rec_seqs:
+                if rec_seq in part:
+                    internal_site_errors.append(
+                        f"Part {i + 1} contains an internal {enzyme_display} "
+                        f"recognition site ({rec_seq}, {direction} strand) at position "
+                        f"{part.index(rec_seq)}. The enzyme will cut within this insert "
+                        "during assembly, producing incorrect fragments."
+                    )
+        if internal_site_errors:
+            return {
+                "status": "error",
+                "error": (
+                    f"Golden Gate design failed — internal {enzyme_display} sites "
+                    f"detected in {len(internal_site_errors)} location(s). "
+                    "Remove or mutate these sites before assembly: "
+                    + " | ".join(internal_site_errors)
+                ),
+            }
 
         # BsaI: recognition GGTCTC(1), cuts 1 nt away on top, 5 nt away on bottom
         # Creating: GGTCTCN[4bp overhang] -- part -- NGAGACC (reverse complement BsaI site)
