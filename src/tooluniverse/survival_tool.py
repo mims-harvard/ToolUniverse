@@ -355,7 +355,16 @@ class SurvivalTool(BaseTool):
             # split is proportional (O==E for every stratum).  In this degenerate case
             # chi2 = 0 and p = 1.0 is the correct, well-defined answer: there is no
             # evidence of a difference between the two groups.
-            if abs(O1_total - E1_total) < 1e-10 and abs(O2_total - E2_total) < 1e-10:
+            # Use relative tolerance: floating-point sums over many events accumulate
+            # rounding errors proportional to total_events × machine epsilon (~2.2e-16),
+            # so an absolute threshold of 1e-10 is too tight for studies with thousands
+            # of events.  Relative tolerance 1e-8 is safe up to ~10^7 events.
+            total_events = O1_total + O2_total
+            rel_tol = 1e-8 * max(total_events, 1.0)
+            if (
+                abs(O1_total - E1_total) <= rel_tol
+                and abs(O2_total - E2_total) <= rel_tol
+            ):
                 chi2_stat = 0.0
                 p_value = 1.0
             else:

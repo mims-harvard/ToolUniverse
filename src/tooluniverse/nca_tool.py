@@ -153,15 +153,19 @@ class NCATool(BaseTool):
             return None, None, None
 
         # Select terminal phase points
+        # FDA NCA guidance requires ≥3 points for reliable λz: a 2-point regression
+        # is a perfect fit by construction (R²=1 always), giving no quality signal.
         if tmax is not None:
             post_tmax = t_valid > tmax
-            if np.sum(post_tmax) >= 2:
+            if np.sum(post_tmax) >= 3:
                 # FDA NCA: use all post-Tmax points for λz estimation
                 t_term = t_valid[post_tmax]
                 c_term = c_valid[post_tmax]
             else:
                 # Fallback: not enough post-Tmax points, use last n_points
                 n_use = min(n_points, len(t_valid))
+                if n_use < 2:
+                    return None, None, None
                 t_term = t_valid[-n_use:]
                 c_term = c_valid[-n_use:]
         else:

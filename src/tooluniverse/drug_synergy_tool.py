@@ -289,12 +289,24 @@ class DrugSynergyTool(BaseTool):
         params_b = fit_hill(db, effects_b_marginal)
 
         if params_a is None or params_b is None:
-            # Fallback: simplified ZIP using means
-            expected_zip = (
-                np.outer(effects_a_marginal, np.ones(len(db)))
-                + np.outer(np.ones(len(da)), effects_b_marginal)
-                - np.outer(effects_a_marginal, effects_b_marginal)
-            )
+            # ZIP fundamentally requires Hill curve fits for each drug to compute
+            # the expected interaction surface.  Without fitted Hill parameters we
+            # cannot compute a valid ZIP score — returning a Bliss-independence
+            # surface here would silently report the wrong model.
+            failed = []
+            if params_a is None:
+                failed.append("drug A")
+            if params_b is None:
+                failed.append("drug B")
+            return {
+                "status": "error",
+                "error": (
+                    f"ZIP model requires Hill curve fitting for each drug, but fitting "
+                    f"failed for {' and '.join(failed)}. "
+                    "Ensure each drug has ≥3 non-zero dose points with measurable inhibition. "
+                    "Use calculate_bliss for a simpler non-parametric synergy score."
+                ),
+            }
         else:
             # ZIP expected using Hill fits
             pred_a = np.array([hill_curve(d, *params_a) for d in da])
@@ -348,7 +360,7 @@ class DrugSynergyTool(BaseTool):
             dm_init = float(np.median(d))
             m_init = 1.0
             p0 = [dm_init, m_init, emax_init]
-            bounds = ([1e-15, 0.1, 1e-6], [np.inf, 10.0, 1.5])
+            bounds = ([1e-15, 0.1, 1e-6], [np.inf, 10.0, 1.0])
 
             def hill(x, dm, m, emax):
                 x = np.maximum(x, 1e-15)
