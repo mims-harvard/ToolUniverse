@@ -176,16 +176,22 @@ class NCATool(BaseTool):
         # FDA NCA guidance requires ≥3 points for reliable λz: a 2-point regression
         # is a perfect fit by construction (R²=1 always), giving no quality signal.
         if tmax is not None:
-            post_tmax = t_valid > tmax
+            # BUG-3 fix: use >= so the Tmax point itself (C_max) is the first point
+            # of the terminal regression.  FDA NCA guidance defines the terminal phase
+            # as starting AT Tmax (the concentration-time curve begins declining from
+            # Cmax).  Using strict > excluded the Cmax point, leaving only the
+            # declining portion.  For plateau profiles (multiple tied Cmax values)
+            # combined with the Tmax=last-Cmax fix, >= is required to include enough
+            # points (≥3) for a valid regression.
+            post_tmax = t_valid >= tmax
             if np.sum(post_tmax) >= 3:
                 # FDA NCA: use all post-Tmax points for λz estimation
                 t_term = t_valid[post_tmax]
                 c_term = c_valid[post_tmax]
             else:
-                # Insufficient post-Tmax points: cannot reliably estimate λz.
-                # Including Tmax or pre-Tmax points in the regression would
-                # violate FDA NCA guidance (terminal phase begins after Tmax).
-                # The caller will emit a terminal_phase_warning.
+                # Insufficient terminal-phase points (< 3): cannot reliably estimate λz.
+                # A 2-point regression is a perfect fit by construction (R²=1 always),
+                # giving no quality signal.  The caller will emit a terminal_phase_warning.
                 return None, None, None
         else:
             n_use = min(n_points, len(t_valid))
@@ -353,8 +359,15 @@ class NCATool(BaseTool):
         c_post = c[_postdose_mask]
         t_post = t[_postdose_mask]
         # _postdose_mask guarantees len > 0 (all-pre-dose already caught above).
-        cmax = float(np.max(c_post))
-        tmax = float(t_post[np.argmax(c_post)])
+        # BUG-3 fix: when multiple post-dose samples tie at Cmax (plateau profile),
+        # np.argmax returns the FIRST index, so Tmax is set to the plateau start.
+        # The terminal-slope filter then includes plateau points in the regression,
+        # inflating t_half by up to 80% and underestimating lambda_z by up to 44%.
+        # Per FDA NCA guidance, Tmax should be the LAST time at Cmax (end of plateau),
+        # so that all t ≥ Tmax data genuinely represents the declining terminal phase.
+        _cmax_val = np.max(c_post)
+        cmax = float(_cmax_val)
+        tmax = float(t_post[np.where(c_post == _cmax_val)[0][-1]])
         pos_mask = c > 0
         clast = float(c[pos_mask][-1]) if any(pos_mask) else 0.0
         tlast = float(t[pos_mask][-1]) if any(pos_mask) else 0.0
@@ -381,8 +394,25 @@ class NCATool(BaseTool):
             first_nonneg_idx = int(np.argmax(t >= 0)) if np.any(t >= 0) else 0
             t_auc = t[first_nonneg_idx : last_pos_idx + 1]
             c_auc = c[first_nonneg_idx : last_pos_idx + 1]
+            # BUG-2 fix: t_auc is empty when all positive concentrations are pre-dose
+            # (last_pos_idx < first_nonneg_idx). The old code reached t_auc[0] below,
+            # raising IndexError: "index 0 is out of bounds for axis 0 with size 0",
+            # which was swallowed by the outer except and returned as an opaque message.
+            if len(t_auc) == 0:
+                return {
+                    "status": "error",
+                    "error": (
+                        "All positive concentrations are pre-dose (t < 0). "
+                        "No post-dose positive concentrations found for AUC computation. "
+                        "Check that at least one sample with t ≥ 0 has a measurable "
+                        "concentration > 0."
+                    ),
+                }
             pre_dose_times = [float(x) for x in t[:first_nonneg_idx]]
         else:
+            # BUG-1 fix: all post-dose concentrations are zero (all BLQ/undetectable).
+            # AUC will be 0; use the full observation window for the key label, not
+            # tlast=0.0 (which misrepresents the integration window as [0,0]).
             t_auc = t
             c_auc = c
             pre_dose_times = []
@@ -425,7 +455,11 @@ class NCATool(BaseTool):
             # If the first time point is > 0, the integral starts there (not at 0),
             # so the key should reflect the actual integration bounds to avoid a 24%+
             # overstatement when the user reads "AUC0-24" but actually gets AUC_2-24.
-            f"AUC{float(t_auc[0]):.6g}-{float(tlast):.6g}": _auc0t,
+            # BUG-1 fix: use t_auc[-1] (actual upper integration bound) instead of
+            # tlast (last POSITIVE concentration time). When all concentrations are
+            # zero, tlast=0.0 but integration spans 0 to the last observation time.
+            # For non-zero profiles t_auc[-1]==tlast, so this is backward compatible.
+            f"AUC{float(t_auc[0]):.6g}-{float(t_auc[-1]):.6g}": _auc0t,
             # BUG-4 fix: "AUC0_last" is misleading when data starts after t=0 (no t=0
             # sample), because "0" implies integration from time of dosing (t=0) but
             # the actual integral starts at the first observed time (e.g., t=2).
@@ -443,7 +477,7 @@ class NCATool(BaseTool):
             result["auc_start_note"] = (
                 f"AUC integration starts at the first observed post-dose time "
                 f"(t={float(t_auc[0]):.6g}), not at t=0 (no sample at dosing time). "
-                f"AUC0_last and {float(t_auc[0]):.6g}-{float(tlast):.6g} both reflect "
+                f"AUC0_last and {float(t_auc[0]):.6g}-{float(t_auc[-1]):.6g} both reflect "
                 "AUC from the first sample to Tlast, which underestimates true AUC0-last "
                 "by the missing pre-first-sample area."
             )
@@ -475,7 +509,9 @@ class NCATool(BaseTool):
         valid_mask = c > 0
         t_valid_all = t[valid_mask]
         c_valid_all = c[valid_mask]
-        post_tmax_mask = t_valid_all > tmax
+        post_tmax_mask = (
+            t_valid_all >= tmax
+        )  # BUG-3 fix: use >= to match terminal slope
         if np.sum(post_tmax_mask) >= 3:
             c_post = c_valid_all[post_tmax_mask]
             if np.any(np.diff(c_post) > 0):

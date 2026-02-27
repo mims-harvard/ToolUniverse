@@ -149,8 +149,14 @@ class DrugSynergyTool(BaseTool):
 
         expected = ea + eb - ea * eb
         synergy_score = ec - expected  # Fractional units (same scale as inputs)
-        # Round before interpretation so displayed score and label are consistent.
-        synergy_score_rounded = round(synergy_score, 2)
+        # BUG-1 fix: use raw (unrounded) score for interpretation to avoid boundary
+        # misclassification. round(-0.099, 2) = -0.1, and -0.1 > -0.10 is False, so
+        # the rounded score would label -0.099 as "Strong antagonism" instead of
+        # "Antagonism". The display value is still rounded for readability.
+        # BUG-2 fix: add 0.0 to eliminate IEEE-754 negative zero (-0.0 + 0.0 = 0.0).
+        # round(-0.004, 2) returns -0.0 in Python; json.dumps serializes it as "-0.0",
+        # which looks contradictory alongside interpretation="Additivity".
+        synergy_score_rounded = round(synergy_score, 2) + 0.0
 
         return {
             "status": "success",
@@ -162,7 +168,8 @@ class DrugSynergyTool(BaseTool):
                 "effect_combination_expected": round(expected, 4),
                 "bliss_synergy_score": synergy_score_rounded,
                 "interpretation": self._interpret_synergy_score(
-                    synergy_score_rounded, "bliss"
+                    synergy_score,
+                    "bliss",  # raw score for correct boundary classification
                 ),
                 "note": "Scores in fractional units (0-1 scale, same as inputs). Positive = synergy; Negative = antagonism. |score| ≥ 0.1 = strong effect. Based on Bliss (1939).",
             },
@@ -216,22 +223,26 @@ class DrugSynergyTool(BaseTool):
 
         hsa = np.maximum(ea, eb)
         synergy_matrix = ec - hsa  # Fractional units (same scale as inputs)
-        # Round mean before interpretation so displayed score and label are consistent.
-        mean_score_rounded = round(float(np.mean(synergy_matrix)), 2)
+        # BUG-1 fix: use raw mean score for interpretation to avoid boundary
+        # misclassification at round-to-threshold values (same as Bliss fix).
+        # BUG-2 fix: add 0.0 to eliminate IEEE-754 negative zero.
+        _mean_raw = float(np.mean(synergy_matrix))
+        mean_score_rounded = round(_mean_raw, 2) + 0.0
 
         return {
             "status": "success",
             "data": {
                 "model": "Highest Single Agent (HSA)",
                 "mean_hsa_synergy_score": mean_score_rounded,
-                "max_hsa_synergy_score": round(float(np.max(synergy_matrix)), 2),
-                "min_hsa_synergy_score": round(float(np.min(synergy_matrix)), 2),
+                "max_hsa_synergy_score": round(float(np.max(synergy_matrix)), 2) + 0.0,
+                "min_hsa_synergy_score": round(float(np.min(synergy_matrix)), 2) + 0.0,
                 "synergy_scores_per_point": [
-                    round(float(s), 2) for s in synergy_matrix
+                    round(float(s), 2) + 0.0 for s in synergy_matrix
                 ],
                 "hsa_expected": [round(float(h), 4) for h in hsa],
                 "interpretation": self._interpret_synergy_score(
-                    mean_score_rounded, "hsa"
+                    _mean_raw,
+                    "hsa",  # raw score for correct boundary classification
                 ),
                 "note": "Scores in fractional units (0-1 scale, same as inputs). Positive = synergy over best single agent; Negative = antagonism. |score| ≥ 0.1 = strong effect.",
             },

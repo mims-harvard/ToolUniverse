@@ -328,15 +328,26 @@ class SurvivalTool(BaseTool):
                     },
                 }
 
-            return {
-                "status": "success",
-                "data": {
-                    "method": "Kaplan-Meier (stratified)",
-                    "ci_method": "Greenwood log-log (Collett 2015 / R survfit default)",
-                    "n_groups": len(groups),
-                    "groups": groups,
-                },
+            # BUG-4 fix: emit the same km_censored_convention_note as the single-group
+            # path when any group has censored subjects.  The survival table 'censored'
+            # column records only subjects censored AT observed event times; subjects
+            # censored between event times contribute 0, creating a silent discrepancy
+            # between n_censored and sum(table['censored']).
+            _strat_result: dict = {
+                "method": "Kaplan-Meier (stratified)",
+                "ci_method": "Greenwood log-log (Collett 2015 / R survfit default)",
+                "n_groups": len(groups),
+                "groups": groups,
             }
+            _total_censored = sum(g["n_censored"] for g in groups.values())
+            if _total_censored > 0:
+                _strat_result["km_censored_convention_note"] = (
+                    "The survival table 'censored' column records only subjects censored "
+                    "AT observed event times. Subjects censored between event times "
+                    "contribute 0 to that column. sum(table['censored']) may be less "
+                    "than n_censored. Use n_censored for the total censored count."
+                )
+            return {"status": "success", "data": _strat_result}
 
     def _log_rank_test(self, arguments: Dict[str, Any]) -> Dict[str, Any]:
         """
@@ -819,12 +830,21 @@ class SurvivalTool(BaseTool):
                 p_val_out = None
                 p_underflow_note = None  # separation is the operative explanation
                 hr_out = None  # BUG-1 fix: ensure HR is also None under separation
+                # BUG-3 fix: CI bounds are computed from the same near-singular Hessian
+                # as HR and are equally unreliable under separation.  Return None for
+                # both so callers cannot silently use extreme CI values like (3e-197, 2e+184).
+                ci_lo_out = None
+                ci_hi_out = None
             # Determine significant field:
             # - underflow (p_val == 0 or rounds to 0) AND no separation → True (highly sig)
             # - separation → None (unknown)
             # - normal finite p_val_out → bool comparison
+            # BUG-5 fix: use p_val_out (the rounded display value) for the significance
+            # comparison.  If raw p_val=0.04998, p_val_out=round(0.04998,4)=0.05.
+            # Using raw p_val < 0.05 would give significant=True while p_value=0.05,
+            # contradicting the universal convention that p=0.05 is not significant.
             if p_val_out is not None:
-                _significant = bool(p_val < 0.05)
+                _significant = bool(p_val_out < 0.05)
             elif p_underflow_note is not None:
                 # Not separation; underflow → definitely significant
                 _significant = True

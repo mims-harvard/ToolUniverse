@@ -1058,11 +1058,34 @@ class DNATool(BaseTool):
 
         protein_seq = "".join(protein)
 
+        premature_stop_warning = None
         if "*" in protein_seq:
             first_stop = protein_seq.index("*")
             protein_seq_no_stop = protein_seq[:first_stop]
+            # BUG-1 fix: when sequence starts with ATG but has an internal stop codon
+            # (not at the last codon position), warn that the stop is premature.
+            # Previously, only non-ATG starts triggered a warning; ATG starts with
+            # an internal stop were silently returned with post-stop codons visible
+            # in full_translation but no explanation of the truncation.
+            n_total_codons = len(sequence_trimmed) // 3
+            first_stop_codon_pos = first_stop + 1  # 1-based
+            if first_stop_codon_pos < n_total_codons and non_atg_warning is None:
+                premature_stop_warning = (
+                    f"Premature stop codon at position {first_stop_codon_pos} "
+                    f"(of {n_total_codons} codons). Translation terminates at "
+                    f"'{sequence_trimmed[(first_stop) * 3 : (first_stop) * 3 + 3]}'. "
+                    "Downstream codons are shown in full_translation but are not "
+                    "translated. This may indicate mis-framing, a nonsense mutation, "
+                    "or an incorrect sequence."
+                )
+            # BUG-2 fix: stop_codons_found and stop_codon_positions previously counted
+            # ALL stop codons in the full scan, including those after the first stop.
+            # Biologically, the ribosome terminates at the first stop; downstream stop
+            # codons are irrelevant.  Truncate to only the first stop codon.
+            stop_positions_reported = stop_positions[:1]
         else:
             protein_seq_no_stop = protein_seq
+            stop_positions_reported = []
 
         result = {
             "status": "success",
@@ -1071,8 +1094,8 @@ class DNATool(BaseTool):
                 "protein_sequence": protein_seq_no_stop,
                 "full_translation": protein_seq,
                 "protein_length_aa": len(protein_seq_no_stop),
-                "stop_codons_found": len(stop_positions),
-                "stop_codon_positions": stop_positions,
+                "stop_codons_found": len(stop_positions_reported),
+                "stop_codon_positions": stop_positions_reported,
                 "codon_table": codon_table_name,
             },
         }
@@ -1080,6 +1103,8 @@ class DNATool(BaseTool):
             result["data"]["warning"] = warning
         if non_atg_warning:
             result["data"]["non_atg_start_warning"] = non_atg_warning
+        if premature_stop_warning:
+            result["data"]["premature_stop_warning"] = premature_stop_warning
 
         return result
 
