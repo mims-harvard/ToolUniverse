@@ -773,13 +773,21 @@ class SurvivalTool(BaseTool):
             )
             ci_hi_out = float(raw_ci_hi) if np.isfinite(raw_ci_hi) else None
 
+            # BUG-1 fix: when separation is detected, the Wald p-value is computed from
+            # the same near-singular Hessian that makes the CI unreliable.  Under
+            # quasi-separation, z = beta/se → 0 (se is huge), so p → 1.0 — a falsely
+            # reassuring "non-significant" result despite a coefficient of 15+ and HR of
+            # millions.  Set p_value and significant to None so automated pipelines see
+            # the same "unknown" status as the CI.
+            if separation_warning is not None:
+                p_val_out = None
             entry = {
                 "covariate": name,
                 "coefficient": round(float(beta_original[i]), 4),
                 "hazard_ratio": hr_out,
                 "hazard_ratio_95ci": (ci_lo_out, ci_hi_out),
                 "p_value": p_val_out,
-                "significant": bool(p_val < 0.05) if p_val_out is not None else False,
+                "significant": bool(p_val < 0.05) if p_val_out is not None else None,
             }
             if separation_warning:
                 entry["separation_warning"] = separation_warning

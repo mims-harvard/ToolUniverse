@@ -331,6 +331,28 @@ class DrugSynergyTool(BaseTool):
                 "error": "All dose values in doses_a and doses_b must be non-negative (>= 0).",
             }
 
+        # BUG-2 (control normalization) fix: the ZIP model anchors its marginal Hill curves
+        # at inhibition=0 when dose=0.  This is only correct when the vehicle-control
+        # viability (viability_matrix[0][0]) has been normalized to exactly 100% (or 1.0
+        # for fractional scale).  If the control is 90% (under-normalized) or 110%
+        # (over-normalized), all inhibition values are shifted by ~10 percentage points,
+        # injecting systematic bias into the ZIP delta scores.  Warn the user if the
+        # control value deviates by more than 5% from the expected 100/1.0 anchor.
+        vm00 = float(vm[0, 0])
+        vm_max_check = float(vm.max())
+        _expected_ctrl = 100.0 if vm_max_check > 5 else 1.0
+        _ctrl_dev = abs(vm00 - _expected_ctrl) / _expected_ctrl
+        _control_norm_note = None
+        if _ctrl_dev > 0.05:
+            _control_norm_note = (
+                f"Vehicle-control viability (viability_matrix[0][0] = {vm00:.4g}) "
+                f"deviates by {round(_ctrl_dev * 100, 1)}% from the expected anchor of "
+                f"{_expected_ctrl:.0f}. The ZIP model assumes the control is normalized "
+                f"to {_expected_ctrl:.0f}; a mis-normalized control shifts all inhibition "
+                "values and biases ZIP scores toward false antagonism or false synergy. "
+                f"Consider normalizing: vm / vm[0,0] × {_expected_ctrl:.0f}."
+            )
+
         # BUG-1 fix: negative viability values are physically impossible.
         # They typically arise from background-subtraction artefacts (e.g., a blank-well
         # value subtracted from low-signal wells).  Returning a "success" with inhibition
@@ -511,6 +533,8 @@ class DrugSynergyTool(BaseTool):
         }
         if scale_note:
             zip_data["scale_warning"] = scale_note
+        if _control_norm_note:
+            zip_data["control_normalization_warning"] = _control_norm_note
 
         return {"status": "success", "data": zip_data}
 
@@ -784,7 +808,7 @@ class DrugSynergyTool(BaseTool):
             "data": {
                 "model": "Loewe Additivity",
                 "loewe_additivity_index": round(float(loewe_index), 4),
-                "loewe_excess_score": round(float(loewe_excess), 2),
+                "loewe_excess_score": 0.0 + round(float(loewe_excess), 2),
                 "interpretation": interpretation,
                 "combination_dose_a": da_combo,
                 "combination_dose_b": db_combo,

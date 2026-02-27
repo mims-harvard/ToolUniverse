@@ -660,9 +660,19 @@ class DNATool(BaseTool):
                     start = pos + 1
 
             if positions:
+                # BUG-4 fix: `cut_sites` reports 1-based recognition sequence start
+                # positions, NOT the actual phosphodiester bond cleavage positions.
+                # For enzymes like KpnI (GGTAC^C, cut_offset=5), the difference is 4 bp.
+                # Add `cleavage_positions` (1-based) so callers can determine the exact
+                # cut site without having to look up enzyme-specific offsets.
+                cut_off = NEB_CUT_OFFSETS.get(enzyme_name, len(recognition_seq) // 2)
+                cleavage_pos = sorted(
+                    set(((p - 1 + cut_off) % seq_len) + 1 for p in positions)
+                )
                 results[enzyme_name] = {
                     "recognition_sequence": recognition_seq,
-                    "cut_sites": positions,
+                    "cut_sites": positions,  # 1-based recognition site START positions
+                    "cleavage_positions": cleavage_pos,  # 1-based actual CUT positions
                     "num_cuts": len(positions),
                 }
 
@@ -760,17 +770,30 @@ class DNATool(BaseTool):
                                 else:
                                     coord_start = orf_start_idx + 1  # 1-based
                                     coord_end = pos + 3
-                                orfs.append(
-                                    {
-                                        "start": coord_start,
-                                        "end": coord_end,
-                                        "length_nt": orf_nt_len,
-                                        "length_aa": orf_nt_len // 3 - 1,
-                                        "frame": frame_offset + 1,
-                                        "strand": strand_label,
-                                        "sequence": seq[orf_start_idx : pos + 3],
-                                    }
-                                )
+                                orf_entry = {
+                                    "start": coord_start,
+                                    "end": coord_end,
+                                    "length_nt": orf_nt_len,
+                                    "length_aa": orf_nt_len // 3 - 1,
+                                    "frame": frame_offset + 1,
+                                    "strand": strand_label,
+                                    "sequence": seq[orf_start_idx : pos + 3],
+                                }
+                                if is_reverse:
+                                    # BUG-3 fix: for minus-strand ORFs, `start` and `end`
+                                    # are 1-based plus-strand coordinates (standard GFF/GTF
+                                    # convention: start < end, strand='-').
+                                    # `original_seq[start-1:end]` gives the PLUS-strand
+                                    # region, NOT the ORF.  The ORF is its reverse complement.
+                                    # The `sequence` field already contains the correct ORF
+                                    # (read 5'→3' on the minus strand).
+                                    orf_entry["coordinate_note"] = (
+                                        "Coordinates (start, end) are 1-based plus-strand "
+                                        "positions (GFF convention). To extract the ORF from "
+                                        "the original sequence: reverse_complement(seq[start-1:end]). "
+                                        "The 'sequence' field already contains the ORF."
+                                    )
+                                orfs.append(orf_entry)
                             orf_open = False
                     pos += 3
 
@@ -1033,6 +1056,31 @@ class DNATool(BaseTool):
                 "error": f"Invalid amino acid characters: {invalid}. Use single-letter codes.",
             }
 
+        # BUG-2 (codon_optimize) fix: the single-letter amino acid codes A, T, G, C are
+        # identical to DNA nucleotide characters.  A user who mistakenly passes a DNA CDS
+        # (e.g., 'ATGAAATTT' = coding sequence for Met-Lys-Phe) instead of a protein
+        # sequence ('MKF') will get a silent success: the 9 nucleotides are treated as 9
+        # amino acids, producing a 27 bp "optimized" sequence that is completely wrong.
+        # Detect the pattern: sequence consists only of A/T/G/C, is divisible by 3, and
+        # starts with ATG (canonical Met start) — all hallmarks of a DNA CDS input.
+        _dna_only = set(sequence) <= set("ATGC")
+        _looks_like_cds = (
+            _dna_only
+            and len(sequence) % 3 == 0
+            and sequence.startswith("ATG")
+            and len(sequence) >= 9  # at least 3 codons to avoid false positives
+        )
+        _dna_aa_warning = None
+        if _looks_like_cds:
+            _dna_aa_warning = (
+                f"Input sequence '{sequence[:20]}{'...' if len(sequence) > 20 else ''}' "
+                "consists only of A, T, G, C characters and starts with ATG — this looks "
+                "like a DNA CDS rather than a protein sequence. "
+                "codon_optimize expects single-letter amino acid codes (e.g., 'MKF'). "
+                "If you have a DNA CDS, use DNA_translate_sequence first to get the "
+                "protein sequence, then pass that to codon_optimize."
+            )
+
         # Validate stop codon placement: * is only allowed as the final residue.
         # An internal stop codon (*) would produce a truncated, non-functional protein.
         stop_positions = [i for i, aa in enumerate(sequence) if aa == "*"]
@@ -1082,29 +1130,30 @@ class DNATool(BaseTool):
             # (e.g., a single "*") has an undefined CAI, not a CAI of 0.
             cai = None
 
-        return {
-            "status": "success",
-            "data": {
-                "optimized_dna": optimized_dna,
-                "gc_content": gc_content,
-                "cai": cai,
-                # BUG-03 fix: add explanatory note clarifying why CAI is always 1.0.
-                # This tool selects the single highest-frequency codon for every amino
-                # acid, which by definition has a CAI reference value of 1.0.  The
-                # resulting sequence always achieves the maximum CAI possible.  To
-                # compare your original sequence against the optimized one, calculate
-                # the CAI of the original sequence using an external tool (e.g., the
-                # OPTIMIZER web server or CAI2 Python package).
-                "cai_note": (
-                    "CAI = 1.0 is expected: this tool selects the highest-frequency "
-                    f"codon for each amino acid in {species}. To assess how much "
-                    "your original sequence differed, compute its CAI independently."
-                )
-                if cai is not None
-                else None,
-                "length_bp": length_bp,
-            },
+        result_data = {
+            "optimized_dna": optimized_dna,
+            "gc_content": gc_content,
+            "cai": cai,
+            # BUG-03 fix: add explanatory note clarifying why CAI is always 1.0.
+            # This tool selects the single highest-frequency codon for every amino
+            # acid, which by definition has a CAI reference value of 1.0.  The
+            # resulting sequence always achieves the maximum CAI possible.  To
+            # compare your original sequence against the optimized one, calculate
+            # the CAI of the original sequence using an external tool (e.g., the
+            # OPTIMIZER web server or CAI2 Python package).
+            "cai_note": (
+                "CAI = 1.0 is expected: this tool selects the highest-frequency "
+                f"codon for each amino acid in {species}. To assess how much "
+                "your original sequence differed, compute its CAI independently."
+            )
+            if cai is not None
+            else None,
+            "length_bp": length_bp,
         }
+        # BUG-2 fix: add warning when input looks like a DNA CDS rather than protein.
+        if _dna_aa_warning:
+            result_data["dna_input_warning"] = _dna_aa_warning
+        return {"status": "success", "data": result_data}
 
     def _virtual_digest(self, arguments: Dict[str, Any]) -> Dict[str, Any]:
         """Perform a virtual restriction digest of a DNA sequence."""
@@ -1224,15 +1273,27 @@ class DNATool(BaseTool):
                         # + beginning_of_sequence..end).
                         frag_seq = sequence[start:] + sequence[:end]
                         wrap = True
-                    fragments.append(
-                        {
-                            "sequence": frag_seq,
-                            "length": len(frag_seq),
-                            "start": start,
-                            "end": end,
-                            "is_wrap_around": wrap,
-                        }
-                    )
+                    frag_entry = {
+                        "sequence": frag_seq,
+                        "length": len(frag_seq),
+                        "start": start,
+                        "end": end,
+                        "is_wrap_around": wrap,
+                    }
+                    if wrap:
+                        # BUG-1 fix: for wrap-around fragments (is_wrap_around=True),
+                        # seq[start:end] is NOT a valid Python slice because end <= start.
+                        # When start==end (single-cut: e.g., cut at position 0), seq[0:0]
+                        # returns an empty string. The correct extraction is always:
+                        #   seq[start:] + seq[:end]
+                        # which the `sequence` field already contains.  Add a note so
+                        # callers know to use sequence directly or the prescribed slice.
+                        frag_entry["coordinate_note"] = (
+                            f"For this wrap-around fragment use: "
+                            f"seq[{start}:] + seq[:{end}] (not seq[{start}:{end}]). "
+                            "The `sequence` field contains the pre-extracted fragment."
+                        )
+                    fragments.append(frag_entry)
             else:
                 starts = [0] + cut_positions
                 ends = cut_positions + [seq_len]

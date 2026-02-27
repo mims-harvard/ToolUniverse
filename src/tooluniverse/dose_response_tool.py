@@ -345,6 +345,38 @@ class DoseResponseTool(BaseTool):
                 "Check for noisy data, insufficient data points, or a non-sigmoidal "
                 "dose-response relationship."
             )
+        # BUG-3 (fit_curve) fix: _calculate_ic50 already emits ic50_extrapolation_warning
+        # and ic50_range_warning, but _fit_curve silently omitted them even though it
+        # returns the same IC50 parameter.  Add the same checks here.
+        ic50_val = result["ic50"]
+        conc_arr = np.array(concentrations, dtype=float)
+        resp_arr_fc = np.array(responses, dtype=float)
+        conc_min = float(np.min(conc_arr))
+        conc_max = float(np.max(conc_arr))
+        if ic50_val < conc_min or ic50_val > conc_max:
+            data["ic50_extrapolation_warning"] = (
+                f"The estimated IC50 ({ic50_val:.4g}) is outside the tested "
+                f"concentration range [{conc_min:.4g}, {conc_max:.4g}]. "
+                "This is an extrapolated value and may be unreliable. "
+                "Extend the concentration range to include the half-maximal response."
+            )
+        fitted_dr = abs(float(result["top"]) - float(result["bottom"]))
+        obs_range_fc = float(np.max(resp_arr_fc)) - float(np.min(resp_arr_fc))
+        midpt_fc = (result["top"] + result["bottom"]) / 2.0
+        midpt_check_fc = (
+            float(np.min(resp_arr_fc)) > midpt_fc
+            or float(np.max(resp_arr_fc)) < midpt_fc
+        )
+        narrow_cov_fc = fitted_dr > 0 and obs_range_fc < 0.5 * fitted_dr
+        if midpt_check_fc or narrow_cov_fc:
+            data["ic50_range_warning"] = (
+                "The response data may not adequately bracket the half-maximal response. "
+                f"Observed response range ({obs_range_fc:.4g}) covers "
+                f"{round(100 * obs_range_fc / fitted_dr, 1) if fitted_dr > 0 else 'N/A'}% "
+                f"of the fitted dynamic range ({fitted_dr:.4g}). "
+                "The IC50 is likely extrapolated outside the measured range and should "
+                "be interpreted with caution."
+            )
         return {"status": "success", "data": data}
 
     def _calculate_ic50(self, arguments: Dict[str, Any]) -> Dict[str, Any]:
