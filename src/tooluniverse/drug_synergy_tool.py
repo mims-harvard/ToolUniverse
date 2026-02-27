@@ -168,8 +168,8 @@ class DrugSynergyTool(BaseTool):
                 "effect_combination_expected": round(expected, 4),
                 "bliss_synergy_score": synergy_score_rounded,
                 "interpretation": self._interpret_synergy_score(
-                    synergy_score,
-                    "bliss",  # raw score for correct boundary classification
+                    synergy_score_rounded,
+                    "bliss",  # rounded (displayed) score keeps label consistent with value
                 ),
                 "note": "Scores in fractional units (0-1 scale, same as inputs). Positive = synergy; Negative = antagonism. |score| ≥ 0.1 = strong effect. Based on Bliss (1939).",
             },
@@ -241,8 +241,8 @@ class DrugSynergyTool(BaseTool):
                 ],
                 "hsa_expected": [round(float(h), 4) for h in hsa],
                 "interpretation": self._interpret_synergy_score(
-                    _mean_raw,
-                    "hsa",  # raw score for correct boundary classification
+                    mean_score_rounded,
+                    "hsa",  # rounded (displayed) score keeps label consistent with value
                 ),
                 "note": "Scores in fractional units (0-1 scale, same as inputs). Positive = synergy over best single agent; Negative = antagonism. |score| ≥ 0.1 = strong effect.",
             },
@@ -536,15 +536,19 @@ class DrugSynergyTool(BaseTool):
 
         delta = (inhibition - expected_zip) * 100
 
+        # Apply + 0.0 to eliminate IEEE-754 negative zero (-0.0) from all rounded
+        # ZIP scores, consistent with the Bliss and HSA fix applied in Round 17.
+        # round(-0.004, 2) returns -0.0 in Python; json.dumps serializes it as "-0.0".
+        _mean_zip = round(float(np.mean(delta)), 2) + 0.0
         zip_data = {
             "model": "ZIP (Zero Interaction Potency)",
-            "mean_zip_score": round(float(np.mean(delta)), 2),
-            "max_zip_score": round(float(np.max(delta)), 2),
-            "min_zip_score": round(float(np.min(delta)), 2),
-            "zip_delta_matrix": [[round(float(v), 2) for v in row] for row in delta],
-            "interpretation": self._interpret_synergy_score(
-                float(np.mean(delta)), "zip"
-            ),
+            "mean_zip_score": _mean_zip,
+            "max_zip_score": round(float(np.max(delta)), 2) + 0.0,
+            "min_zip_score": round(float(np.min(delta)), 2) + 0.0,
+            "zip_delta_matrix": [
+                [round(float(v), 2) + 0.0 for v in row] for row in delta
+            ],
+            "interpretation": self._interpret_synergy_score(_mean_zip, "zip"),
             "note": "ZIP delta > 10: synergy; < -10: antagonism. Based on Yadav et al. (2015).",
         }
         if scale_note:

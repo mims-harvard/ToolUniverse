@@ -204,10 +204,15 @@ class DoseResponseTool(BaseTool):
             # Inhibitory curves: emin > emax.  Stimulatory curves: emax > emin.
             stimulatory_warning = None
             if float(emax) > float(emin):
+                # BUG-4 fix: apply + 0.0 to eliminate IEEE-754 negative zero (-0.0)
+                # that arises from round(~0.0, 4) when scipy returns a value like
+                # -7.8e-15.  Same pattern applied to bottom/top fields below.
+                _emin_disp = round(float(emin), 4) + 0.0
+                _emax_disp = round(float(emax), 4) + 0.0
                 stimulatory_warning = (
                     "Stimulatory dose-response detected: the fitted curve rises with "
-                    f"increasing concentration (emin = {round(float(emin), 4)}, "
-                    f"emax = {round(float(emax), 4)}, emax > emin). "
+                    f"increasing concentration (emin = {_emin_disp}, "
+                    f"emax = {_emax_disp}, emax > emin). "
                     "The fitted EC50 represents activation potency (EC50), not inhibitory "
                     "potency (IC50). Interpret as EC50/ED50 rather than IC50."
                 )
@@ -216,8 +221,8 @@ class DoseResponseTool(BaseTool):
             if not np.all(np.isfinite(perr)):
                 # Covariance is singular — CIs and SEs are not estimable.
                 singular_result = {
-                    "bottom": round(float(emin), 4),
-                    "top": round(float(emax), 4),
+                    "bottom": round(float(emin), 4) + 0.0,
+                    "top": round(float(emax), 4) + 0.0,
                     "ic50": ec50_f,
                     "hill_slope": round(float(n_hill), 4),
                     "r_squared": round(float(r_sq), 4),
@@ -262,8 +267,8 @@ class DoseResponseTool(BaseTool):
                 )
 
             main_result = {
-                "bottom": round(float(emin), 4),
-                "top": round(float(emax), 4),
+                "bottom": round(float(emin), 4) + 0.0,
+                "top": round(float(emax), 4) + 0.0,
                 "ic50": ec50_f,
                 "hill_slope": round(float(n_hill), 4),
                 "r_squared": round(float(r_sq), 4),

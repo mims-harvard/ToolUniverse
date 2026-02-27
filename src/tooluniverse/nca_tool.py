@@ -628,7 +628,10 @@ class NCATool(BaseTool):
                         # clearance), NOT true systemic clearance (which requires IV
                         # data or a known bioavailability F).  Label it clearly so
                         # users don't compare oral and IV CL values without adjustment.
-                        if route != "iv":
+                        # BUG-1 fix (Round 18): 'infusion' is also an intravenous route
+                        # (F=1 by definition); the old `route != "iv"` check incorrectly
+                        # labeled IV infusion clearance as CL/F (apparent clearance).
+                        if route not in ("iv", "infusion"):
                             result["clearance_note"] = (
                                 "clearance_CL is CL/F (apparent clearance) for non-IV "
                                 f"route='{route}'. True systemic CL = CL/F × F, where "
@@ -690,6 +693,24 @@ class NCATool(BaseTool):
             result["terminal_phase_warning"] = (
                 "Could not estimate terminal slope (λz). "
                 "Add more time points in the terminal elimination phase."
+            )
+
+        # BUG-2+3 fix (Round 18): when the first sample is at t > 0, AUC0-inf is
+        # underestimated (the pre-first-sample area is missing).  CL = Dose/AUC0-inf,
+        # Vd = CL/λz, and MRT = AUMC0-inf/AUC0-inf are all derived from AUC0-inf
+        # and therefore carry the same bias.  The existing auc_start_note documents
+        # the AUC issue; this note explicitly flags the downstream PK parameters so
+        # users who read only CL/Vd/MRT are not misled.
+        if float(t_auc[0]) > 0 and any(
+            k in result for k in ("clearance_CL", "volume_distribution_Vd", "MRT_iv")
+        ):
+            result["derived_pk_bias_note"] = (
+                f"clearance_CL, volume_distribution_Vd, and MRT_iv are derived from "
+                f"AUC0-inf, which is underestimated because the first observed sample "
+                f"is at t={float(t_auc[0]):.6g} (not t=0). The missing pre-first-sample "
+                "area causes CL and Vd to be overestimated and MRT to be biased. "
+                "Include a sample at or near t=0, or apply compartmental modelling, "
+                "to obtain accurate CL, Vd, and MRT."
             )
 
         if mid_profile_zero_times:
