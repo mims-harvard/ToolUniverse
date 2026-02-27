@@ -8,6 +8,7 @@ No external API calls. Uses numpy and scipy for computation.
 References: Kaplan & Meier (1958), Mantel (1966), Cox (1972).
 """
 
+import math
 from typing import Dict, Any, List
 from .base_tool import BaseTool
 from .tool_registry import register_tool
@@ -524,6 +525,12 @@ class SurvivalTool(BaseTool):
                 "error": "All durations must be non-negative. Negative survival times are not valid.",
             }
 
+        if not np.all(np.isin(evs, [0, 1])):
+            return {
+                "status": "error",
+                "error": "event_observed values must be 0 (censored) or 1 (event occurred)",
+            }
+
         n = len(dur)
         cov_names = list(covariates.keys())
         cov_matrix = []
@@ -535,12 +542,25 @@ class SurvivalTool(BaseTool):
                     "error": f"Covariate '{name}' has {len(vals)} values but expected {n}",
                 }
             try:
-                cov_matrix.append([float(v) for v in vals])
+                cov_vals = [float(v) for v in vals]
             except (ValueError, TypeError) as e:
                 return {
                     "status": "error",
                     "error": f"Invalid values in covariate '{name}': {e}",
                 }
+            # NaN in a covariate silently propagates through matrix operations, producing
+            # NaN gradient and Hessian entries, causing optimization failure with the
+            # misleading message "did not converge". Detect and reject upfront.
+            if any(not math.isfinite(v) for v in cov_vals):
+                return {
+                    "status": "error",
+                    "error": (
+                        f"Covariate '{name}' contains non-finite values (NaN or inf). "
+                        "All covariate values must be finite real numbers. "
+                        "Impute or remove the affected observations before fitting."
+                    ),
+                }
+            cov_matrix.append(cov_vals)
 
         X = np.array(cov_matrix).T  # shape (n, p)
 
@@ -704,7 +724,7 @@ class SurvivalTool(BaseTool):
             "data": {
                 "method": "Cox Proportional Hazards",
                 "n_subjects": n,
-                "n_events": int(np.sum(evs)),
+                "n_events": int(np.sum(evs == 1)),
                 "coefficients": coef_results,
                 "log_likelihood": round(float(-result.fun), 4),
                 "convergence": result.success,

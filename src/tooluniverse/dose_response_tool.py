@@ -94,6 +94,18 @@ class DoseResponseTool(BaseTool):
                 )
             }
 
+        # NaN comparison always returns False: NaN <= 0 = False, so NaN bypasses the
+        # positivity check and is passed to log(x) inside ec50_init, producing cryptic
+        # "domain error" or NaN results.  Check isfinite BEFORE the <= 0 guard.
+        if np.any(~np.isfinite(x)):
+            return {
+                "error": (
+                    "Concentration values contain non-finite values (NaN or inf). "
+                    "All concentrations must be finite positive numbers. "
+                    "Remove or correct the affected data points before fitting."
+                )
+            }
+
         if np.any(x <= 0):
             return {"error": "All concentrations must be positive (> 0)"}
 
@@ -146,6 +158,14 @@ class DoseResponseTool(BaseTool):
                     "a very shallow curve, or data that do not span the sigmoidal "
                     "range. Verify that responses decrease with increasing "
                     "concentration. The 4PL model may not be appropriate."
+                )
+            elif float(n_hill) >= 20.0 - 1e-4:
+                hill_bound_warning = (
+                    "Hill slope converged at the upper bound (20.0). "
+                    "This indicates an extremely steep dose-response (near-threshold "
+                    "or switch-like response). The true Hill slope may be even steeper "
+                    "than the model allows. Treat EC50 and Hill slope with caution; "
+                    "consider whether the sigmoidal model is appropriate for this data."
                 )
 
             # Coefficient of determination: R² = 1 - SSE/SST

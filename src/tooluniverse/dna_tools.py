@@ -930,6 +930,14 @@ class DNATool(BaseTool):
             return {"status": "error", "error": "sequence is required"}
 
         sequence = sequence.upper().strip()
+        # Re-check after stripping: a whitespace-only sequence passes the initial
+        # `if not sequence:` guard (non-empty string is truthy) but becomes empty
+        # after strip(), producing a success response with an empty DNA sequence.
+        if not sequence:
+            return {
+                "status": "error",
+                "error": "sequence is empty or contains only whitespace. Provide a valid amino acid sequence.",
+            }
         species = (arguments.get("species") or "human").lower()
 
         if species not in CODON_FREQ_TABLES:
@@ -1366,6 +1374,24 @@ class DNATool(BaseTool):
             }
 
         product_size = best_rev["end"] - best_fwd["start"]
+
+        # Reject primers that overlap on the template: the forward primer ends at
+        # fwd.start + fwd.length, and the reverse primer starts at rev.end - rev.length.
+        # If fwd.end > rev.start, both primers anneal to the same (or overlapping)
+        # template region, making PCR amplification impossible (primer dimers).
+        fwd_end = best_fwd["start"] + best_fwd["length"]
+        rev_start = best_rev["end"] - best_rev["length"]
+        if fwd_end > rev_start:
+            return {
+                "status": "error",
+                "error": (
+                    f"Could not design a non-overlapping primer pair for the specified region. "
+                    f"The best forward primer ends at position {fwd_end} but the best reverse "
+                    f"primer starts at position {rev_start}, causing overlap. "
+                    "Try increasing product_size_min, widening the target region, or using a longer sequence."
+                ),
+            }
+
         if product_size < product_size_min or product_size > product_size_max:
             return {
                 "status": "error",
@@ -1580,15 +1606,33 @@ class DNATool(BaseTool):
             "ATTC",
             "ATTG",
         ]
-        non_palindromic = [oh for oh in candidate_overhangs if oh != rev_comp(oh)]
+        # Filter to non-palindromic, non-RC-complement overhangs.
+        # Two conditions must hold for safe Golden Gate assembly:
+        #   (1) oh != rev_comp(oh)  — palindromic overhangs self-ligate
+        #   (2) no two selected overhangs are RC complements of each other
+        #       — if oh_A == rev_comp(oh_B), junction A can mis-ligate to
+        #         junction B, producing incorrect assembly products
+        rc_free_overhangs: List[str] = []
+        used_set: set = set()
+        for oh in candidate_overhangs:
+            if oh in used_set:
+                # This overhang's reverse complement was already selected —
+                # adding it would introduce an RC-complement pair.
+                continue
+            rc_oh = rev_comp(oh)
+            if oh == rc_oh:
+                continue  # palindrome — self-ligates, skip
+            rc_free_overhangs.append(oh)
+            used_set.add(oh)
+            used_set.add(rc_oh)  # block the RC from being used
 
-        if len(non_palindromic) < n_parts + 1:
+        if len(rc_free_overhangs) < n_parts + 1:
             return {
                 "status": "error",
                 "error": f"Cannot generate enough unique overhangs for {n_parts} parts",
             }
 
-        overhangs = non_palindromic[: n_parts + 1]
+        overhangs = rc_free_overhangs[: n_parts + 1]
 
         if enzyme == "BSAI":
             # BsaI site: GGTCTCN where N is 1 bp spacer before the overhang

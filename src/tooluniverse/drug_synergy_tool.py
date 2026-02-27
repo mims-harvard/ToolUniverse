@@ -11,6 +11,7 @@ Implements standard drug synergy models from peer-reviewed literature:
 No external API calls. Uses numpy/scipy for computation.
 """
 
+import math
 from typing import Dict, Any
 from .base_tool import BaseTool
 from .tool_registry import register_tool
@@ -446,6 +447,11 @@ class DrugSynergyTool(BaseTool):
             d, e = doses[valid], effects[valid]
             if len(d) < 3:
                 return None
+            # Require at least 3 unique concentration levels: curve_fit on a single
+            # unique x-value is degenerate (produces meaningless parameters and scipy
+            # warns about covariance estimation failure).
+            if len(np.unique(d)) < 3:
+                return None
             # Flat dose-response: all effects are identical (or nearly so).
             # curve_fit converges to IC50 at the lower bound (1e-15), which rounds
             # to 0.0 — a scientifically invalid IC50 suggesting infinite potency.
@@ -529,6 +535,18 @@ class DrugSynergyTool(BaseTool):
         except (ValueError, TypeError) as e:
             return {"status": "error", "error": f"Invalid numeric values: {e}"}
 
+        # NaN comparison always returns False: NaN <= 0 = False, so NaN bypasses the
+        # positivity guard and enters Hill fitting, producing misleading "infinite potency"
+        # or "effect outside model range" errors. Check isfinite first.
+        if not math.isfinite(da_combo) or not math.isfinite(db_combo):
+            return {
+                "status": "error",
+                "error": (
+                    f"dose_a_combo ({da_combo}) and dose_b_combo ({db_combo}) must be "
+                    "finite positive numbers. NaN and inf are not valid dose values."
+                ),
+            }
+
         # Zero or negative combination doses are physically impossible (DS-1).
         if da_combo <= 0 or db_combo <= 0:
             return {
@@ -594,6 +612,19 @@ class DrugSynergyTool(BaseTool):
                     "error": (
                         f"{name} contains non-finite values (NaN or inf). "
                         "All dose values must be finite real numbers."
+                    ),
+                }
+
+        # Negative doses are physically invalid: _fit_hill_for_loewe silently drops
+        # them via `valid = doses > 0`, possibly leaving too few points for fitting
+        # and causing a misleading "too few data points" error.  Reject upfront.
+        for arr, name in [(da_arr, "doses_a_single"), (db_arr, "doses_b_single")]:
+            if np.any(arr < 0):
+                return {
+                    "status": "error",
+                    "error": (
+                        f"{name} contains negative values. All dose values must be "
+                        "non-negative (>= 0). Negative doses are not physically meaningful."
                     ),
                 }
 
@@ -760,6 +791,18 @@ class DrugSynergyTool(BaseTool):
         except (ValueError, TypeError) as e:
             return {"status": "error", "error": f"Invalid numeric values: {e}"}
 
+        # NaN comparison always returns False: NaN <= 0 = False, so NaN bypasses the
+        # positivity guard and produces a CI of 0 regardless of the combination effect,
+        # falsely suggesting very strong synergy. Check isfinite first.
+        if not math.isfinite(da_combo) or not math.isfinite(db_combo):
+            return {
+                "status": "error",
+                "error": (
+                    f"dose_a_combo ({da_combo}) and dose_b_combo ({db_combo}) must be "
+                    "finite positive numbers. NaN and inf are not valid dose values."
+                ),
+            }
+
         # Zero or negative combination doses are physically impossible (DS-1).
         if da_combo <= 0 or db_combo <= 0:
             return {
@@ -815,6 +858,18 @@ class DrugSynergyTool(BaseTool):
                     "error": (
                         f"{name} contains non-finite values (NaN or inf). "
                         "All dose values must be finite real numbers."
+                    ),
+                }
+
+        # Negative doses are physically invalid: _fit_hill_for_loewe silently drops
+        # them via `valid = doses > 0`, possibly leaving too few points for fitting.
+        for arr, name in [(da_arr_ci, "doses_a_single"), (db_arr_ci, "doses_b_single")]:
+            if np.any(arr < 0):
+                return {
+                    "status": "error",
+                    "error": (
+                        f"{name} contains negative values. All dose values must be "
+                        "non-negative (>= 0). Negative doses are not physically meaningful."
                     ),
                 }
 

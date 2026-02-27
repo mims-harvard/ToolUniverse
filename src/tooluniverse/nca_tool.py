@@ -16,6 +16,7 @@ References:
 - Rowland & Tozer, Clinical Pharmacokinetics and Pharmacodynamics (2011)
 """
 
+import math
 from typing import Dict, Any
 
 from .base_tool import BaseTool
@@ -388,6 +389,16 @@ class NCATool(BaseTool):
             if dose is not None:
                 try:
                     dose_val = float(dose)
+                    # NaN/inf bypass the <= 0 guard: NaN <= 0 is False, inf > 0.
+                    # Both produce invalid CL/Vd (NaN or inf) under status=success.
+                    if not math.isfinite(dose_val):
+                        return {
+                            "status": "error",
+                            "error": (
+                                f"dose ({dose_val}) must be a finite positive number. "
+                                "NaN and inf are not valid dose values."
+                            ),
+                        }
                     if dose_val <= 0:
                         return {
                             "status": "error",
@@ -612,8 +623,16 @@ class NCATool(BaseTool):
         if dose is not None:
             try:
                 dose_val = float(dose)
+                # NaN/inf bypass the <= 0 guard: NaN <= 0 is False, inf > 0.
+                if not math.isfinite(dose_val):
+                    return {
+                        "status": "error",
+                        "error": (
+                            f"dose ({dose_val}) must be a finite positive number. "
+                            "NaN and inf are not valid dose values."
+                        ),
+                    }
                 # Validate dose: zero or negative doses are not physically meaningful.
-                # (Consistent with _compute_parameters which also rejects dose ≤ 0.)
                 if dose_val <= 0:
                     return {
                         "status": "error",
