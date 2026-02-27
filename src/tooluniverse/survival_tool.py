@@ -77,11 +77,16 @@ class SurvivalTool(BaseTool):
             return {"status": "error", "error": f"Analysis failed: {str(e)}"}
 
     def _km_estimator(self, durations: np.ndarray, events: np.ndarray):
-        """Compute Kaplan-Meier product-limit survival estimate.
+        """Compute Kaplan-Meier product-limit survival estimate with Greenwood 95% CI.
 
-        Returns (times, survival, at_risk, events_at_t, n_censored).
+        Returns (times, survival, at_risk, events_at_t, n_censored, ci_lower, ci_upper).
         All returned lists have the same length (N+1), with index 0 representing
         the baseline (t=0, S=1, all subjects at risk, zero events/censored).
+
+        95% confidence intervals use Greenwood's formula (Greenwood 1926, JRSS):
+            Var[S(t)] = S(t)^2 * sum_j( d_j / (n_j * (n_j - d_j)) )
+            SE[S(t)]  = S(t) * sqrt( cumulative Greenwood sum )
+            CI        = S(t) ± 1.96 * SE[S(t)], clamped to [0, 1]
         """
         event_times = np.sort(np.unique(durations[events == 1]))
 
@@ -94,8 +99,11 @@ class SurvivalTool(BaseTool):
         km_at_risk: List[int] = [] if first_event_at_zero else [n_total]
         km_events: List[int] = [] if first_event_at_zero else [0]
         km_censored: List[int] = [] if first_event_at_zero else [0]
+        km_ci_lower: List[float] = [] if first_event_at_zero else [1.0]
+        km_ci_upper: List[float] = [] if first_event_at_zero else [1.0]
 
         s = 1.0
+        greenwood_sum = 0.0  # cumulative: Σ dⱼ / (nⱼ × (nⱼ − dⱼ))
         for t_i in event_times:
             n_risk = int(np.sum(durations >= t_i))
             d_i = int(np.sum((durations == t_i) & (events == 1)))
@@ -104,13 +112,34 @@ class SurvivalTool(BaseTool):
             # Product-limit update: S(t) *= (1 - d_i / n_risk)
             s *= 1.0 - d_i / n_risk
 
+            # Greenwood variance (Greenwood 1926): accumulate only when n_risk > d_i
+            # (if n_risk == d_i, S(t) = 0 and the CI collapses to [0, 0])
+            if n_risk > d_i and s > 0:
+                greenwood_sum += d_i / (n_risk * (n_risk - d_i))
+                se = s * np.sqrt(greenwood_sum)
+                ci_lower = float(max(0.0, s - 1.96 * se))
+                ci_upper = float(min(1.0, s + 1.96 * se))
+            else:
+                ci_lower = 0.0
+                ci_upper = 0.0
+
             km_times.append(float(t_i))
             km_survival.append(round(s, 4))
             km_at_risk.append(n_risk)
             km_events.append(d_i)
             km_censored.append(c_i)
+            km_ci_lower.append(round(ci_lower, 4))
+            km_ci_upper.append(round(ci_upper, 4))
 
-        return km_times, km_survival, km_at_risk, km_events, km_censored
+        return (
+            km_times,
+            km_survival,
+            km_at_risk,
+            km_events,
+            km_censored,
+            km_ci_lower,
+            km_ci_upper,
+        )
 
     def _kaplan_meier(self, arguments: Dict[str, Any]) -> Dict[str, Any]:
         """
@@ -154,9 +183,15 @@ class SurvivalTool(BaseTool):
 
         if group_labels is None:
             # Single group
-            km_times, km_survival, km_at_risk, km_events, km_censored = (
-                self._km_estimator(dur, evs)
-            )
+            (
+                km_times,
+                km_survival,
+                km_at_risk,
+                km_events,
+                km_censored,
+                km_ci_lower,
+                km_ci_upper,
+            ) = self._km_estimator(dur, evs)
 
             km_surv_arr = np.array(km_survival)
             below = np.where(km_surv_arr <= 0.5)[0]
@@ -173,10 +208,13 @@ class SurvivalTool(BaseTool):
                     "survival_table": {
                         "times": km_times,
                         "survival_probability": km_survival,
+                        "ci_lower_95": km_ci_lower,
+                        "ci_upper_95": km_ci_upper,
                         "at_risk": km_at_risk,
                         "events": km_events,
                         "censored": km_censored,
                     },
+                    "ci_method": "Greenwood (1926)",
                     "follow_up_time": float(np.max(dur)),
                 },
             }
@@ -194,9 +232,15 @@ class SurvivalTool(BaseTool):
                 mask = labels_arr == label
                 g_dur = dur[mask]
                 g_evs = evs[mask]
-                km_times, km_survival, km_at_risk, km_events, km_censored = (
-                    self._km_estimator(g_dur, g_evs)
-                )
+                (
+                    km_times,
+                    km_survival,
+                    km_at_risk,
+                    km_events,
+                    km_censored,
+                    km_ci_lower,
+                    km_ci_upper,
+                ) = self._km_estimator(g_dur, g_evs)
 
                 km_surv_arr = np.array(km_survival)
                 below = np.where(km_surv_arr <= 0.5)[0]
@@ -209,6 +253,8 @@ class SurvivalTool(BaseTool):
                     "survival_table": {
                         "times": km_times,
                         "survival_probability": km_survival,
+                        "ci_lower_95": km_ci_lower,
+                        "ci_upper_95": km_ci_upper,
                     },
                 }
 
@@ -216,6 +262,7 @@ class SurvivalTool(BaseTool):
                 "status": "success",
                 "data": {
                     "method": "Kaplan-Meier (stratified)",
+                    "ci_method": "Greenwood (1926)",
                     "n_groups": len(groups),
                     "groups": groups,
                 },

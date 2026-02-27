@@ -125,10 +125,19 @@ class NCATool(BaseTool):
         return auc
 
     def _estimate_terminal_slope(
-        self, times: "np.ndarray", concs: "np.ndarray", n_points: int = 3
+        self,
+        times: "np.ndarray",
+        concs: "np.ndarray",
+        n_points: int = 3,
+        tmax: float = None,
     ):
         """
         Estimate terminal elimination rate constant (λz) from log-linear regression.
+
+        Per FDA NCA guidance (2003) and Rowland & Tozer (2011), λz should be estimated
+        from all time points in the log-linear terminal phase, which begins after Tmax.
+        When tmax is provided, all post-Tmax positive-concentration points are used.
+        Falls back to the last n_points if fewer than 2 post-Tmax points are available.
 
         Returns: (lambda_z, r_squared, intercept) or (None, None, None) on failure.
         """
@@ -143,10 +152,22 @@ class NCATool(BaseTool):
         if len(t_valid) < 2:
             return None, None, None
 
-        n_points = min(n_points, len(t_valid))
-
-        t_term = t_valid[-n_points:]
-        c_term = c_valid[-n_points:]
+        # Select terminal phase points
+        if tmax is not None:
+            post_tmax = t_valid > tmax
+            if np.sum(post_tmax) >= 2:
+                # FDA NCA: use all post-Tmax points for λz estimation
+                t_term = t_valid[post_tmax]
+                c_term = c_valid[post_tmax]
+            else:
+                # Fallback: not enough post-Tmax points, use last n_points
+                n_use = min(n_points, len(t_valid))
+                t_term = t_valid[-n_use:]
+                c_term = c_valid[-n_use:]
+        else:
+            n_use = min(n_points, len(t_valid))
+            t_term = t_valid[-n_use:]
+            c_term = c_valid[-n_use:]
 
         # log-linear fit: ln(C) = intercept - λz * t
         slope, intercept, r_value, _, _ = linregress(t_term, np.log(c_term))
@@ -219,8 +240,8 @@ class NCATool(BaseTool):
         # AUC0-t (linear-log trapezoidal)
         auc0t = self._auc_trapezoid(t, c)
 
-        # Terminal phase parameters
-        lambda_z, r_sq_terminal, _ = self._estimate_terminal_slope(t, c)
+        # Terminal phase parameters — use all post-Tmax points per FDA NCA guidance
+        lambda_z, r_sq_terminal, _ = self._estimate_terminal_slope(t, c, tmax=tmax)
 
         result = {
             "Cmax": round(cmax, 4),
