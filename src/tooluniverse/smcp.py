@@ -570,6 +570,19 @@ class SMCP(FastMCP):
         except Exception as e:
             self.logger.error(f"Error registering custom MCP methods: {e}")
 
+    async def get_tools(self) -> dict:
+        """Return registered tools as {name: Tool} dict (fastmcp 2/3 compat).
+
+        fastmcp 2 had get_tools() returning a dict; fastmcp 3 replaced it with
+        list_tools() returning a list.  This shim unifies both APIs.
+        """
+        if hasattr(FastMCP, "list_tools"):
+            # fastmcp 3+: list_tools() is async and returns a list of Tool objects
+            tools = await FastMCP.list_tools(self)
+            return {t.name: t for t in tools}
+        # fastmcp 2: delegate to the inherited get_tools() coroutine
+        return await FastMCP.get_tools(self)  # type: ignore[attr-defined]
+
     def _get_valid_categories(self):
         """Get valid tool categories from ToolUniverse."""
         try:

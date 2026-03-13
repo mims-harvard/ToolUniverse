@@ -51,11 +51,22 @@ _MINIMAL_TOOL_CONFIG = {
 
 
 def _get_tool_fn(server: SMCP, tool_name: str):
-    """Return the underlying async callable registered for *tool_name* in *server*."""
-    tool_obj = server._tool_manager._tools.get(tool_name)
-    if tool_obj is None:
-        return None
-    return tool_obj.fn
+    """Return the underlying async callable registered for *tool_name* in *server*.
+
+    Works with fastmcp 2 (_tool_manager._tools) and fastmcp 3 (async get_tool).
+    """
+    # fastmcp 2: synchronous tool manager dict
+    if hasattr(server, "_tool_manager"):
+        tool_obj = server._tool_manager._tools.get(tool_name)
+        return tool_obj.fn if tool_obj is not None else None
+    # fastmcp 3: get_tool() is async
+    async def _fetch():
+        try:
+            tool = await server.get_tool(tool_name)
+            return tool.fn
+        except Exception:
+            return None
+    return asyncio.run(_fetch())
 
 
 @pytest.mark.unit
