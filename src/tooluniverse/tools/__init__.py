@@ -1,7 +1,7 @@
 """
 ToolUniverse Tools
 
-Type-safe Python interface to 2056 scientific tools.
+Type-safe Python interface to 2057 scientific tools.
 Each tool is in its own module for minimal import overhead.
 
 Usage:
@@ -2400,6 +2400,7 @@ from .get_taxonomy_by_pdb_id import get_taxonomy_by_pdb_id
 from .get_tiledb_info import get_tiledb_info
 from .get_tiledbsoma_info import get_tiledbsoma_info
 from .get_tool_info import get_tool_info
+from .get_tool_page_url import get_tool_page_url
 from .get_torch_geometric_info import get_torch_geometric_info
 from .get_tqdm_info import get_tqdm_info
 from .get_trackpy_info import get_trackpy_info
@@ -4468,6 +4469,7 @@ __all__ = [
     "get_tiledb_info",
     "get_tiledbsoma_info",
     "get_tool_info",
+    "get_tool_page_url",
     "get_torch_geometric_info",
     "get_tqdm_info",
     "get_trackpy_info",
