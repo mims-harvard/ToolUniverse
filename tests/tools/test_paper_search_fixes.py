@@ -1342,13 +1342,20 @@ class TestGTExGeneSymbolResolution(unittest.TestCase):
             self.assertEqual(result, "ENSG00000166147.13")
             mock_get.assert_called_once()
 
-    def test_versioned_id_passes_through(self):
+    def test_versioned_id_re_resolved(self):
+        """Versioned Ensembl IDs are re-resolved via GTEx reference API (not passed through)."""
         from tooluniverse.gtex_tool import _resolve_gene_id
 
-        result = _resolve_gene_id(
-            "ENSG00000141510.11", "https://gtexportal.org/api/v2", 30
-        )
-        self.assertEqual(result, "ENSG00000141510.11")
+        with patch("tooluniverse.gtex_tool._http_get") as mock_get:
+            mock_get.return_value = {
+                "data": [{"gencodeId": "ENSG00000141510.16"}]
+            }
+            result = _resolve_gene_id(
+                "ENSG00000141510.11", "https://gtexportal.org/api/v2", 30
+            )
+            # Version stripped and re-resolved against GTEx reference API
+            self.assertEqual(result, "ENSG00000141510.16")
+            mock_get.assert_called_once()
 
     def test_unversioned_ensembl_resolved(self):
         from tooluniverse.gtex_tool import _resolve_gene_id

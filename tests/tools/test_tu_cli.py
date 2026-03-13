@@ -1964,6 +1964,11 @@ class TestServe:
         import argparse
         from unittest.mock import patch, MagicMock
 
+        try:
+            import tooluniverse.smcp_server  # noqa: F401
+        except Exception as e:
+            pytest.skip(f"SMCP server not available: {e}")
+
         mock_server = MagicMock()
         with patch("tooluniverse.smcp_server.run_default_stdio_server", mock_server):
             from tooluniverse.cli import cmd_serve

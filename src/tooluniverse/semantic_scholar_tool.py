@@ -52,11 +52,7 @@ class SemanticScholarTool(BaseTool):
         sort = arguments.get("sort")
         include_abstract = bool(arguments.get("include_abstract", False))
         if not query:
-            return {
-                "status": "error",
-                "error": "`query` parameter is required.",
-                "retryable": False,
-            }
+            return [{"error": "`query` parameter is required.", "retryable": False}]
         if limit <= 0:
             return []
         return self._search(
@@ -144,21 +140,26 @@ class SemanticScholarTool(BaseTool):
             max_attempts=3,
         )
         if response.status_code != 200:
-            return {
-                "status": "error",
-                "error": f"Semantic Scholar API error {response.status_code}",
-                "reason": response.reason,
-                "retryable": response.status_code in (408, 429, 500, 502, 503, 504),
-                "suggestion": "Try again later or set SEMANTIC_SCHOLAR_API_KEY for higher limits.",
-            }
+            retryable = response.status_code in (408, 429, 500, 502, 503, 504)
+            return [
+                {
+                    "title": "Error",
+                    "error": f"Semantic Scholar API error {response.status_code}",
+                    "reason": response.reason,
+                    "retryable": retryable,
+                    "suggestion": "Try again later or set SEMANTIC_SCHOLAR_API_KEY for higher limits.",
+                }
+            ]
         try:
             payload = response.json()
         except ValueError:
-            return {
-                "status": "error",
-                "error": "Semantic Scholar returned invalid JSON",
-                "retryable": True,
-            }
+            return [
+                {
+                    "title": "Error",
+                    "error": "Semantic Scholar returned invalid JSON",
+                    "retryable": True,
+                }
+            ]
 
         results = payload.get("data", []) if isinstance(payload, dict) else []
         papers = []

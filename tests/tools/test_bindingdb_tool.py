@@ -34,8 +34,8 @@ class TestBindingDBToolDirect:
     def test_get_by_uniprot_success(self, mock_get, tool):
         mock_response = MagicMock()
         mock_response.json.return_value = {
-            "getLigandsByUniprotResponse": {
-                "affinities": [
+            "getLindsByUniprotResponse": {
+                "bdb.affinities": [
                     {"query": "P00533", "monomerid": "12345", "smile": "CCO", "affinity_type": "IC50", "affinity": "100", "pmid": None, "doi": None}
                 ]
             }

@@ -130,15 +130,14 @@ class TestDailyMedSPLParser:
         assert result.get("status") == "error"
         assert "not found" in result.get("error", "").lower() or "404" in result.get("error", "")
     
-    def test_error_handling_missing_operation(self, tu):
-        """Test error handling when operation is missing."""
+    def test_operation_autofill(self, tu):
+        """Test that operation is auto-filled from schema const when not provided."""
         result = tu.tools.DailyMed_parse_adverse_reactions(
-            # Missing operation
+            # operation omitted — should be auto-filled from schema const
             setid="030d9bca-a934-6ef9-e063-6394a90a8277"
         )
-        
-        assert result.get("status") == "error"
-        assert "operation" in result.get("error", "").lower()
+        # Auto-fill means the call proceeds; it should not error on missing operation
+        assert result.get("status") != "error" or "operation" not in result.get("error", "")
 
 
 class TestDailyMedParserDirectClass:

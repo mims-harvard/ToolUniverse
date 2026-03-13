@@ -47,15 +47,16 @@ class TestCOSMICToolDirect:
         """Test successful search."""
         # Mock NLM API response format: [total, codes, extra_data, display_strings]
         mock_response = MagicMock()
+        # NLM API: [total, codes, {field_name: [values_by_index]}, display_strings]
         mock_response.json.return_value = [
             5,
             ["COSM476", "COSM477"],
             {
-                "COSM476": {
-                    "GeneName": "BRAF",
-                    "MutationAA": "p.V600E",
-                    "MutationCDS": "c.1799T>A",
-                }
+                "GeneName": ["BRAF", "BRAF"],
+                "MutationAA": ["p.V600E", "p.V600K"],
+                "MutationCDS": ["c.1799T>A", "c.1798_1799GT>AA"],
+                "PrimarySite": ["skin", "skin"],
+                "PrimaryHistology": ["malignant_melanoma", "malignant_melanoma"],
             },
             ["BRAF V600E", "BRAF V600K"],
         ]

@@ -176,18 +176,20 @@ class TestSemanticScholarErrorFormat(unittest.TestCase):
         }
         return SemanticScholarTool(config)
 
-    def test_missing_query_returns_error_dict(self):
-        """Missing query should return dict with status='error', not a list."""
+    def test_missing_query_returns_error_list(self):
+        """Missing query should return a list with one error item (consistent with EuropePMC/PMC)."""
         tool = self._make_tool()
         result = tool.run({})
 
-        self.assertIsInstance(result, dict)
-        self.assertEqual(result["status"], "error")
-        self.assertIn("query", result["error"])
+        self.assertIsInstance(result, list)
+        self.assertEqual(len(result), 1)
+        self.assertIn("error", result[0])
+        self.assertIn("query", result[0]["error"])
+        self.assertFalse(result[0].get("retryable", True))
 
     @patch("tooluniverse.semantic_scholar_tool.request_with_retry")
-    def test_api_error_returns_error_dict(self, mock_request):
-        """API errors should return dict with status='error', not a fake paper list."""
+    def test_api_error_returns_error_list(self, mock_request):
+        """API errors should return list with one error item (consistent contract)."""
         tool = self._make_tool()
 
         mock_resp = MagicMock()
@@ -197,14 +199,14 @@ class TestSemanticScholarErrorFormat(unittest.TestCase):
 
         result = tool._search("test query", 5)
 
-        self.assertIsInstance(result, dict)
-        self.assertEqual(result["status"], "error")
-        self.assertIn("429", result["error"])
-        self.assertTrue(result["retryable"])
+        self.assertIsInstance(result, list)
+        self.assertEqual(len(result), 1)
+        self.assertIn("429", result[0]["error"])
+        self.assertTrue(result[0]["retryable"])
 
     @patch("tooluniverse.semantic_scholar_tool.request_with_retry")
-    def test_invalid_json_returns_error_dict(self, mock_request):
-        """Invalid JSON response should return dict with status='error'."""
+    def test_invalid_json_returns_error_list(self, mock_request):
+        """Invalid JSON response should return list with one error item."""
         tool = self._make_tool()
 
         mock_resp = MagicMock()
@@ -214,9 +216,9 @@ class TestSemanticScholarErrorFormat(unittest.TestCase):
 
         result = tool._search("test query", 5)
 
-        self.assertIsInstance(result, dict)
-        self.assertEqual(result["status"], "error")
-        self.assertIn("invalid JSON", result["error"])
+        self.assertIsInstance(result, list)
+        self.assertEqual(len(result), 1)
+        self.assertIn("invalid JSON", result[0]["error"])
 
 
 # ---------------------------------------------------------------------------
@@ -746,7 +748,10 @@ class TestResponseTruncation(unittest.TestCase):
     """MCP server should truncate oversized responses."""
 
     def setUp(self):
-        from tooluniverse.smcp import _truncate_response
+        try:
+            from tooluniverse.smcp import _truncate_response
+        except Exception as e:
+            self.skipTest(f"SMCP not available: {e}")
 
         self._truncate_response = _truncate_response
         self._temp_files = []

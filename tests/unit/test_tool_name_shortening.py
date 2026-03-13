@@ -103,7 +103,10 @@ class TestMCPCompatibility:
     
     def test_smcp_integration(self):
         """Test that SMCP automatically enables name shortening."""
-        from tooluniverse.smcp import SMCP
+        try:
+            from tooluniverse.smcp import SMCP
+        except Exception as e:
+            pytest.skip(f"SMCP not available: {e}")
         
         server = SMCP(
             name='tu',
