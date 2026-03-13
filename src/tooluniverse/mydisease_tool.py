@@ -95,9 +95,11 @@ class MyDiseaseTool(BaseTool):
         # Build result
         result = {"disease_id": data.get("_id", disease_id)}
 
-        # Extract MONDO data
+        # Extract MONDO data (API may return a list when multiple MONDO entries exist)
         if "mondo" in data:
             mondo = data["mondo"]
+            if isinstance(mondo, list):
+                mondo = mondo[0] if mondo else {}
             result["mondo"] = {
                 "label": mondo.get("label"),
                 "definition": mondo.get("definition"),
@@ -109,6 +111,8 @@ class MyDiseaseTool(BaseTool):
         # Extract Disease Ontology data
         if "disease_ontology" in data:
             do = data["disease_ontology"]
+            if isinstance(do, list):
+                do = do[0] if do else {}
             result["disease_ontology"] = {
                 "name": do.get("name"),
                 "doid": do.get("doid"),
@@ -121,6 +125,8 @@ class MyDiseaseTool(BaseTool):
         # Extract CTD data
         if "ctd" in data:
             ctd = data["ctd"]
+            if isinstance(ctd, list):
+                ctd = ctd[0] if ctd else {}
             chems = ctd.get("chemical_related_to_disease", [])
             paths = ctd.get("pathway_related_to_disease", [])
             result["ctd"] = {
@@ -130,18 +136,41 @@ class MyDiseaseTool(BaseTool):
                 "pathways": paths[:20] if isinstance(paths, list) else [paths],
             }
 
-        # Extract HPO data
+        # Extract HPO data (API returns a list for diseases with multiple OMIM entries)
         if "hpo" in data:
             hpo = data["hpo"]
-            phenos = hpo.get("phenotype_related_to_disease", [])
-            result["hpo"] = {
-                "disease_name": hpo.get("disease_name"),
-                "omim": hpo.get("omim"),
-                "inheritance": hpo.get("inheritance"),
-                "clinical_course": hpo.get("clinical_course"),
-                "phenotypes_count": len(phenos) if isinstance(phenos, list) else 1,
-                "phenotypes": phenos[:20] if isinstance(phenos, list) else [phenos],
-            }
+            if isinstance(hpo, list):
+                # Merge phenotypes across all HPO entries
+                all_phenos = []
+                hpo_names = []
+                omim_ids = []
+                for entry in hpo:
+                    if isinstance(entry, dict):
+                        phenos = entry.get("phenotype_related_to_disease", [])
+                        if isinstance(phenos, list):
+                            all_phenos.extend(phenos)
+                        elif phenos:
+                            all_phenos.append(phenos)
+                        if entry.get("disease_name"):
+                            hpo_names.append(entry["disease_name"])
+                        if entry.get("omim"):
+                            omim_ids.append(entry["omim"])
+                result["hpo"] = {
+                    "disease_name": hpo_names[0] if hpo_names else None,
+                    "omim": omim_ids,
+                    "phenotypes_count": len(all_phenos),
+                    "phenotypes": all_phenos[:20],
+                }
+            else:
+                phenos = hpo.get("phenotype_related_to_disease", [])
+                result["hpo"] = {
+                    "disease_name": hpo.get("disease_name"),
+                    "omim": hpo.get("omim"),
+                    "inheritance": hpo.get("inheritance"),
+                    "clinical_course": hpo.get("clinical_course"),
+                    "phenotypes_count": len(phenos) if isinstance(phenos, list) else 1,
+                    "phenotypes": phenos[:20] if isinstance(phenos, list) else [phenos],
+                }
 
         # Extract DisGeNET data
         if "disgenet" in data:

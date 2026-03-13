@@ -77,13 +77,16 @@ class EBIProteinsFeaturesTool(BaseTool):
                 "description": f.get("description"),
             }
 
-            # Include evidences (compact)
+            # Include evidences (compact) — API may return a dict for single evidence
+            raw_evidences = f.get("evidences", [])
+            if isinstance(raw_evidences, dict):
+                raw_evidences = [raw_evidences]
             evidences = []
-            for ev in f.get("evidences", [])[:3]:
-                src = ev.get("source", {})
+            for ev in raw_evidences[:3]:
+                src = ev.get("source", {}) if isinstance(ev, dict) else {}
                 evidences.append(
                     {
-                        "code": ev.get("code"),
+                        "code": ev.get("code") if isinstance(ev, dict) else None,
                         "source": src.get("name"),
                         "id": src.get("id"),
                     }

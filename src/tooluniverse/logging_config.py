@@ -218,8 +218,11 @@ def reconfigure_for_stdio() -> None:
     try:
         import warnings
 
-        warnings.showwarning = lambda *args, **kwargs: print(
-            warnings.formatwarning(*args, **kwargs), file=sys.stderr
+        warnings.showwarning = (
+            lambda message, category, filename, lineno, file=None, line=None: print(
+                warnings.formatwarning(message, category, filename, lineno, line),
+                file=sys.stderr,
+            )
         )
     except Exception:
         pass
