@@ -30,7 +30,7 @@ try:
     from rdkit.Chem.FilterCatalog import FilterCatalog, FilterCatalogParams
 
     HAS_RDKIT = True
-except ImportError:
+except Exception:
     HAS_RDKIT = False
 
 

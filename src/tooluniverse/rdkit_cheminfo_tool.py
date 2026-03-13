@@ -27,14 +27,14 @@ try:
     from rdkit.Chem import Descriptors, rdMolDescriptors, AllChem
 
     HAS_RDKIT = True
-except ImportError:
+except Exception:
     HAS_RDKIT = False
 
 try:
     from rdkit.Chem import rdMMPA
 
     HAS_MMPA = True
-except ImportError:
+except Exception:
     HAS_MMPA = False
 
 # SMARTS patterns for pharmacophore features.

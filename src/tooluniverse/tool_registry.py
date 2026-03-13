@@ -687,8 +687,8 @@ def auto_discover_tools(package_name=None, lazy=True):
                 importlib.import_module(f"{package_name}.{modname}")
                 logger.debug(f"Imported tool module: {modname}")
                 imported_count += 1
-            except ImportError as e:
-                logger.warning(f"Could not import {modname}: {e}")
+            except Exception as e:
+                logger.warning(f"Could not import {modname}: {type(e).__name__}: {e}")
 
     # Discover entry-point plugins (not in tooluniverse.* namespace, so pkgutil
     # won't find them above — must be discovered explicitly).
