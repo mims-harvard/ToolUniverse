@@ -831,3 +831,186 @@ class VLLMClient(BaseLLMClient):
 
         self.logger.error("Max retries exceeded for vLLM request")
         return None
+
+
+class OllamaClient(BaseLLMClient):
+    """Ollama native client — calls /api/chat directly, no OpenAI SDK needed."""
+
+    DEFAULT_SERVER_URL = "http://localhost:11434"
+
+    def __init__(self, model_name: str, server_url: str | None, logger):
+        import requests as _req
+
+        self._requests = _req
+        self.model_name = model_name
+        self.server_url = (
+            server_url or os.environ.get("OLLAMA_SERVER_URL", self.DEFAULT_SERVER_URL)
+        ).rstrip("/")
+        self.logger = logger
+
+    def test_api(self) -> None:
+        try:
+            resp = self._requests.get(f"{self.server_url}/api/tags", timeout=5)
+            resp.raise_for_status()
+            models = [m["name"] for m in resp.json().get("models", [])]
+            if not any(self.model_name in m for m in models):
+                raise ValueError(
+                    f"Model '{self.model_name}' not found in Ollama. "
+                    f"Available: {', '.join(models)}"
+                )
+        except self._requests.ConnectionError as e:
+            raise ValueError(f"Ollama not reachable at {self.server_url}: {e}")
+
+    def infer(
+        self,
+        messages: List[Dict[str, str]],
+        temperature: Optional[float],
+        max_tokens: Optional[int],
+        return_json: bool,
+        custom_format: Any = None,
+        max_retries: int = 3,
+        retry_delay: int = 3,
+    ) -> Optional[str]:
+        payload: Dict[str, Any] = {
+            "model": self.model_name,
+            "messages": messages,
+            "stream": False,
+        }
+        if temperature is not None:
+            payload.setdefault("options", {})["temperature"] = temperature
+        if max_tokens is not None:
+            payload.setdefault("options", {})["num_predict"] = max_tokens
+        if return_json:
+            payload["format"] = "json"
+
+        retries = 0
+        while retries < max_retries:
+            try:
+                resp = self._requests.post(
+                    f"{self.server_url}/api/chat",
+                    json=payload,
+                    timeout=120,
+                )
+                resp.raise_for_status()
+                return resp.json()["message"]["content"]
+            except Exception as e:
+                self.logger.error(f"Ollama error (attempt {retries + 1}): {e}")
+                retries += 1
+                if retries < max_retries:
+                    time.sleep(retry_delay * retries)
+
+        self.logger.error("Max retries exceeded for Ollama request")
+        return None
+
+
+class ClaudeCliClient(BaseLLMClient):
+    """Claude Code CLI client — uses `claude --print` for subscription-free LLM calls."""
+
+    def __init__(self, model_name: str, server_url: str | None, logger):
+        import subprocess as _sp
+        import shutil
+
+        self._subprocess = _sp
+        self.model_name = model_name or "sonnet"
+        self.logger = logger
+        self.timeout = int(os.environ.get("CLAUDE_CLI_TIMEOUT", "30"))
+        self.budget = os.environ.get("CLAUDE_CLI_BUDGET", "0.10")
+        self._claude_path = shutil.which("claude")
+        if not self._claude_path:
+            raise ValueError("claude CLI not found on PATH")
+
+    def test_api(self) -> None:
+        try:
+            result = self._subprocess.run(
+                [self._claude_path, "--version"],
+                capture_output=True,
+                text=True,
+                timeout=10,
+            )
+            if result.returncode != 0:
+                raise ValueError(f"claude --version failed: {result.stderr}")
+        except self._subprocess.TimeoutExpired:
+            raise ValueError("claude --version timed out")
+
+    def infer(
+        self,
+        messages: List[Dict[str, str]],
+        temperature: Optional[float],
+        max_tokens: Optional[int],
+        return_json: bool,
+        custom_format: Any = None,
+        max_retries: int = 2,
+        retry_delay: int = 3,
+    ) -> Optional[str]:
+        # Build the prompt from messages
+        system_parts = []
+        user_parts = []
+        for msg in messages:
+            if msg["role"] == "system":
+                system_parts.append(msg["content"])
+            else:
+                user_parts.append(msg["content"])
+
+        prompt = "\n\n".join(user_parts)
+        system_prompt = "\n\n".join(system_parts) if system_parts else None
+
+        cmd = [
+            self._claude_path,
+            "--print",
+            "--output-format",
+            "json",
+            "--model",
+            self.model_name,
+            "--max-budget-usd",
+            self.budget,
+            "--no-session-persistence",
+        ]
+        if system_prompt:
+            cmd.extend(["--system-prompt", system_prompt])
+
+        retries = 0
+        while retries < max_retries:
+            try:
+                result = self._subprocess.run(
+                    cmd,
+                    input=prompt,
+                    capture_output=True,
+                    text=True,
+                    timeout=self.timeout,
+                )
+                if result.returncode != 0:
+                    self.logger.error(f"claude CLI error: {result.stderr[:500]}")
+                    retries += 1
+                    if retries < max_retries:
+                        time.sleep(retry_delay)
+                    continue
+
+                # Parse JSON output — extract the result field
+                response = _json.loads(result.stdout)
+                content = response.get("result", "")
+                cost = response.get("cost_usd", 0)
+                self.logger.info(f"Claude CLI cost: ${cost:.4f}")
+                return self._strip_markdown_fences(content)
+
+            except self._subprocess.TimeoutExpired:
+                self.logger.error(f"claude CLI timed out after {self.timeout}s")
+                retries += 1
+                if retries < max_retries:
+                    time.sleep(retry_delay)
+            except (_json.JSONDecodeError, KeyError) as e:
+                self.logger.error(f"claude CLI parse error: {e}")
+                retries += 1
+                if retries < max_retries:
+                    time.sleep(retry_delay)
+
+        self.logger.error("Max retries exceeded for Claude CLI")
+        return None
+
+    @staticmethod
+    def _strip_markdown_fences(text: str) -> str:
+        """Strip ```json ... ``` fences that Claude often wraps around JSON output."""
+        import re
+
+        stripped = text.strip()
+        match = re.match(r"^```(?:json)?\s*\n(.*?)```\s*$", stripped, re.DOTALL)
+        return match.group(1).strip() if match else stripped

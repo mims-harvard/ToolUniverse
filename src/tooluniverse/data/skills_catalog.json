@@ -1,6 +1,18 @@
 [
   {
     "type": "ClaudeCodeSkill",
+    "name": "skill:company-research",
+    "description": "- FBI/SEC/recruiter-grade intelligence briefs on companies for job applications. Hybrid skill: Python collects structured data (SEC, FDA, trials, FAERS, publications), Claude Code layers MCP tools (Indeed ratings, jobs), WebSearch (leadership, org charts, financials, legal), and analytical reasoning (JD forensics, interview prep). Accepts company name + optional job description. Outputs company brief + JD forensic analysis. [SKILL — not executable via execute_tool. Invoke with: Skill(skill='company-research')]",
+    "category": "claude_code_skills",
+    "parameter": {
+      "type": "object",
+      "properties": {},
+      "required": []
+    },
+    "invocation": "Skill(skill='company-research')"
+  },
+  {
+    "type": "ClaudeCodeSkill",
     "name": "skill:create-tooluniverse-skill",
     "description": "Create high-quality ToolUniverse skills following test-driven, implementation-agnostic methodology. Integrates tools from ToolUniverse's 1,264+ tool library, creates missing tools when needed, tests thoroughly, and produces skills with Python SDK + MCP support. [SKILL — not executable via execute_tool. Invoke with: Skill(skill='create-tooluniverse-skill')]",
     "category": "claude_code_skills",
@@ -826,5 +838,17 @@
       "required": []
     },
     "invocation": "Skill(skill='tooluniverse-variant-interpretation')"
+  },
+  {
+    "type": "ClaudeCodeSkill",
+    "name": "skill:tu-llm",
+    "description": "LLM-powered tool discovery that reasons about which ToolUniverse tools to combine for complex, multi-step scientific queries. Uses Claude CLI (primary) with Ollama fallback. [SKILL — not executable via execute_tool. Invoke with: Skill(skill='tu-llm')]",
+    "category": "claude_code_skills",
+    "parameter": {
+      "type": "object",
+      "properties": {},
+      "required": []
+    },
+    "invocation": "Skill(skill='tu-llm')"
   }
 ]

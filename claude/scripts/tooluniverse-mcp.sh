@@ -18,12 +18,14 @@ export TOOLUNIVERSE_STRICT_VALIDATION=false
 export TOOLUNIVERSE_LOG_LEVEL=INFO
 export TOOLUNIVERSE_STDIO_MODE=1
 
+# Ollama: local LLM fallback for Tool_Finder_LLM
+export OLLAMA_SERVER_URL="${OLLAMA_SERVER_URL:-http://localhost:11434}"
+
 # Skills catalog: makes Claude Code skills discoverable via find_tools/grep_tools
 SKILLS_CATALOG="$HOME/code/ToolUniverse/src/tooluniverse/data/skills_catalog.json"
 
 exec uvx --from tooluniverse tooluniverse-smcp-stdio \
   --compact-mode \
-  --exclude-tool-types ToolFinderLLM \
   --hook-config-file "$HOME/.claude/tooluniverse-hooks.json" \
   ${SKILLS_CATALOG:+--tool-config-files "claude_code_skills:$SKILLS_CATALOG"} \
   --verbose \

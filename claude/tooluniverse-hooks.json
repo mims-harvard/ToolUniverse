@@ -2,7 +2,6 @@
   "exclude_tools": [
     "Tool_RAG",
     "ToolFinderEmbedding",
-    "ToolFinderLLM",
     "ToolOutputSummarizer",
     "OutputSummarizationComposer"
   ],

@@ -1,222 +1,231 @@
 [
-    {
-        "type": "ToolFinderEmbedding",
-        "name": "Tool_RAG",
-        "description": "Retrieve related tools from the toolbox based on the provided description",
-        "required_packages": ["sentence_transformers", "torch"],
-        "parameter": {
-            "type": "object",
-            "properties": {
-                "description": {
-                    "type": "string",
-                    "description": "The description of the tool capability required."
-                },
-                "limit": {
-                    "type": "integer",
-                    "description": "The number of tools to retrieve (default: 10)"
-                }
-            },
-            "required": ["description"]
+  {
+    "type": "ToolFinderEmbedding",
+    "name": "Tool_RAG",
+    "description": "Retrieve related tools from the toolbox based on the provided description",
+    "required_packages": ["sentence_transformers", "torch"],
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "description": {
+          "type": "string",
+          "description": "The description of the tool capability required."
         },
-        "required": ["description"],
-        "configs": {
-            "tool_finder_model": "mims-harvard/ToolRAG-T1-GTE-Qwen2-1.5B",
-            "exclude_tools": [
-                "Tool_RAG",
-                "Tool_Finder",
-                "Finish",
-                "CallAgent",
-                "Tool_Finder_LLM",
-                "Tool_Finder_Keyword"
-            ]
-        },
-        "test_examples": [
-            {
-                "description": "Find tools that can perform sequence alignment",
-                "limit": 5
-            }
-        ],
-        "return_schema": {
-            "type": "object",
-            "description": "Output of the tool execution.",
-            "properties": {}
+        "limit": {
+          "type": "integer",
+          "description": "The number of tools to retrieve (default: 10)"
         }
+      },
+      "required": ["description"]
     },
-    {
-        "type": "ToolFinderEmbedding",
-        "name": "Tool_Finder",
-        "description": "Retrieve related tools from the toolbox based on the provided description, advanced version with more functionality.",
-        "required_packages": ["sentence_transformers", "torch"],
-        "parameter": {
-            "type": "object",
-            "properties": {
-                "description": {
-                    "type": "string",
-                    "description": "The description of the tool capability required."
-                },
-                "limit": {
-                    "type": "integer",
-                    "description": "The number of tools to retrieve (default: 10)"
-                },
-                "picked_tool_names": {
-                    "type": "array",
-                    "items": {"type": "string"},
-                    "description": "Pre-selected tool names to process. If provided, tool selection will skip these tools."
-                },
-                "return_call_result": {
-                    "type": "boolean",
-                    "description": "Whether to return both prompts and tool names. If false, returns only tool prompts."
-                },
-                "categories": {
-                    "type": "array",
-                    "items": {"type": "string"},
-                    "description": "Optional list of tool categories to filter by"
-                }
-            },
-            "required": ["description"]
-        },
-        "required": ["description"],
-        "configs": {
-            "tool_finder_model": "mims-harvard/ToolRAG-T1-GTE-Qwen2-1.5B",
-            "exclude_tools": [
-                "Tool_RAG",
-                "Tool_Finder",
-                "Finish",
-                "CallAgent",
-                "Tool_Finder_LLM",
-                "Tool_Finder_Keyword"
-            ]
-        },
-        "test_examples": [
-            {
-                "description": "Find tools for analyzing gene expression data",
-                "limit": 1,
-                "picked_tool_names": [],
-                "return_call_result": true,
-                "categories": []
-            }
-        ],
-        "return_schema": {
-            "type": "object",
-            "description": "Output of the tool execution.",
-            "properties": {}
-        }
+    "required": ["description"],
+    "configs": {
+      "tool_finder_model": "mims-harvard/ToolRAG-T1-GTE-Qwen2-1.5B",
+      "exclude_tools": [
+        "Tool_RAG",
+        "Tool_Finder",
+        "Finish",
+        "CallAgent",
+        "Tool_Finder_LLM",
+        "Tool_Finder_Keyword"
+      ]
     },
-    {
-        "type": "ToolFinderLLM",
-        "name": "Tool_Finder_LLM",
-        "description": "LLM-based tool finder that uses natural language processing to intelligently select relevant tools based on user queries. This tool analyzes all available tool descriptions and uses an LLM to determine which tools would be most helpful for a given task or question.",
-        "parameter": {
-            "type": "object",
-            "properties": {
-                "description": {
-                    "type": "string",
-                    "description": "The description of the tool capability required."
-                },
-                "limit": {
-                    "type": "integer",
-                    "description": "The number of tools to retrieve (default: 10)"
-                },
-                "picked_tool_names": {
-                    "type": "array",
-                    "items": {"type": "string"},
-                    "description": "Pre-selected tool names to process. If provided, tool selection will skip these tools."
-                },
-                "return_call_result": {
-                    "type": "boolean",
-                    "description": "Whether to return both prompts and tool names. If false, returns only tool prompts."
-                },
-                "categories": {
-                    "type": "array",
-                    "items": {"type": "string"},
-                    "description": "Optional list of tool categories to filter by"
-                }
-            },
-            "required": ["description"]
-        },
-        "configs": {
-            "return_json": true,
-            "return_list_only": true,
-            "exclude_tools": [
-                "Tool_RAG",
-                "Tool_Finder",
-                "Finish",
-                "CallAgent",
-                "Tool_Finder_LLM",
-                "Tool_Finder_Keyword"
-            ]
-        },
-        "test_examples": [
-            {
-                "description": "Find tools for analyzing gene expression data",
-                "limit": 1,
-                "picked_tool_names": [],
-                "return_call_result": true,
-                "categories": []
-            }
-        ],
-        "return_schema": {
-            "type": "object",
-            "description": "Output of the tool execution.",
-            "properties": {}
-        }
-    },
-    {
-        "type": "ToolFinderKeyword",
-        "name": "Tool_Finder_Keyword",
-        "description": "Simple keyword-based tool finder for discovering relevant tools using text matching",
-        "parameter": {
-            "type": "object",
-            "properties": {
-                "description": {
-                    "type": "string",
-                    "description": "The description of the tool capability required."
-                },
-                "limit": {
-                    "type": "integer",
-                    "description": "The number of tools to retrieve (default: 10)"
-                },
-                "picked_tool_names": {
-                    "type": "array",
-                    "items": {"type": "string"},
-                    "description": "Pre-selected tool names to process. If provided, tool selection will skip these tools."
-                },
-                "return_call_result": {
-                    "type": "boolean",
-                    "description": "Whether to return both prompts and tool names. If false, returns only tool prompts."
-                },
-                "categories": {
-                    "type": "array",
-                    "items": {"type": "string"},
-                    "description": "Optional list of tool categories to filter by"
-                }
-            },
-            "required": ["description"]
-        },
-        "required": ["description"],
-        "configs": {
-            "exclude_tools": [
-                "Tool_RAG",
-                "Tool_Finder",
-                "Finish",
-                "CallAgent",
-                "Tool_Finder_LLM",
-                "Tool_Finder_Keyword"
-            ]
-        },
-        "test_examples": [
-            {
-                "description": "Find tools for analyzing gene expression data",
-                "limit": 1,
-                "picked_tool_names": [],
-                "return_call_result": true,
-                "categories": []
-            }
-        ],
-        "return_schema": {
-            "type": "object",
-            "description": "Output of the tool execution.",
-            "properties": {}
-        }
+    "test_examples": [
+      {
+        "description": "Find tools that can perform sequence alignment",
+        "limit": 5
+      }
+    ],
+    "return_schema": {
+      "type": "object",
+      "description": "Output of the tool execution.",
+      "properties": {}
     }
+  },
+  {
+    "type": "ToolFinderEmbedding",
+    "name": "Tool_Finder",
+    "description": "Retrieve related tools from the toolbox based on the provided description, advanced version with more functionality.",
+    "required_packages": ["sentence_transformers", "torch"],
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "description": {
+          "type": "string",
+          "description": "The description of the tool capability required."
+        },
+        "limit": {
+          "type": "integer",
+          "description": "The number of tools to retrieve (default: 10)"
+        },
+        "picked_tool_names": {
+          "type": "array",
+          "items": { "type": "string" },
+          "description": "Pre-selected tool names to process. If provided, tool selection will skip these tools."
+        },
+        "return_call_result": {
+          "type": "boolean",
+          "description": "Whether to return both prompts and tool names. If false, returns only tool prompts."
+        },
+        "categories": {
+          "type": "array",
+          "items": { "type": "string" },
+          "description": "Optional list of tool categories to filter by"
+        }
+      },
+      "required": ["description"]
+    },
+    "required": ["description"],
+    "configs": {
+      "tool_finder_model": "mims-harvard/ToolRAG-T1-GTE-Qwen2-1.5B",
+      "exclude_tools": [
+        "Tool_RAG",
+        "Tool_Finder",
+        "Finish",
+        "CallAgent",
+        "Tool_Finder_LLM",
+        "Tool_Finder_Keyword"
+      ]
+    },
+    "test_examples": [
+      {
+        "description": "Find tools for analyzing gene expression data",
+        "limit": 1,
+        "picked_tool_names": [],
+        "return_call_result": true,
+        "categories": []
+      }
+    ],
+    "return_schema": {
+      "type": "object",
+      "description": "Output of the tool execution.",
+      "properties": {}
+    }
+  },
+  {
+    "type": "ToolFinderLLM",
+    "name": "Tool_Finder_LLM",
+    "description": "LLM-based tool finder that uses natural language processing to intelligently select relevant tools based on user queries. This tool analyzes all available tool descriptions and uses an LLM to determine which tools would be most helpful for a given task or question.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "description": {
+          "type": "string",
+          "description": "The description of the tool capability required."
+        },
+        "limit": {
+          "type": "integer",
+          "description": "The number of tools to retrieve (default: 10)"
+        },
+        "picked_tool_names": {
+          "type": "array",
+          "items": { "type": "string" },
+          "description": "Pre-selected tool names to process. If provided, tool selection will skip these tools."
+        },
+        "return_call_result": {
+          "type": "boolean",
+          "description": "Whether to return both prompts and tool names. If false, returns only tool prompts."
+        },
+        "categories": {
+          "type": "array",
+          "items": { "type": "string" },
+          "description": "Optional list of tool categories to filter by"
+        }
+      },
+      "required": ["description"]
+    },
+    "configs": {
+      "api_type": "CLAUDE_CLI",
+      "model_id": "sonnet",
+      "temperature": 0.1,
+      "return_json": true,
+      "return_list_only": true,
+      "validate_api_key": false,
+      "max_retries": 2,
+      "retry_delay": 2,
+      "fallback_api_type": "OLLAMA",
+      "fallback_model_id": "deepseek-coder:6.7b",
+      "use_global_fallback": false,
+      "exclude_tools": [
+        "Tool_RAG",
+        "Tool_Finder",
+        "Finish",
+        "CallAgent",
+        "Tool_Finder_LLM",
+        "Tool_Finder_Keyword"
+      ]
+    },
+    "test_examples": [
+      {
+        "description": "Find tools for analyzing gene expression data",
+        "limit": 1,
+        "picked_tool_names": [],
+        "return_call_result": true,
+        "categories": []
+      }
+    ],
+    "return_schema": {
+      "type": "object",
+      "description": "Output of the tool execution.",
+      "properties": {}
+    }
+  },
+  {
+    "type": "ToolFinderKeyword",
+    "name": "Tool_Finder_Keyword",
+    "description": "Simple keyword-based tool finder for discovering relevant tools using text matching",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "description": {
+          "type": "string",
+          "description": "The description of the tool capability required."
+        },
+        "limit": {
+          "type": "integer",
+          "description": "The number of tools to retrieve (default: 10)"
+        },
+        "picked_tool_names": {
+          "type": "array",
+          "items": { "type": "string" },
+          "description": "Pre-selected tool names to process. If provided, tool selection will skip these tools."
+        },
+        "return_call_result": {
+          "type": "boolean",
+          "description": "Whether to return both prompts and tool names. If false, returns only tool prompts."
+        },
+        "categories": {
+          "type": "array",
+          "items": { "type": "string" },
+          "description": "Optional list of tool categories to filter by"
+        }
+      },
+      "required": ["description"]
+    },
+    "required": ["description"],
+    "configs": {
+      "exclude_tools": [
+        "Tool_RAG",
+        "Tool_Finder",
+        "Finish",
+        "CallAgent",
+        "Tool_Finder_LLM",
+        "Tool_Finder_Keyword"
+      ]
+    },
+    "test_examples": [
+      {
+        "description": "Find tools for analyzing gene expression data",
+        "limit": 1,
+        "picked_tool_names": [],
+        "return_call_result": true,
+        "categories": []
+      }
+    ],
+    "return_schema": {
+      "type": "object",
+      "description": "Output of the tool execution.",
+      "properties": {}
+    }
+  }
 ]

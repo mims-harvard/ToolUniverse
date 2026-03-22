@@ -82,6 +82,72 @@ class ToolFinderLLM(BaseTool):
         self._tool_cache = None
         self._cache_timestamp = None
 
+        # Store fallback config for query-time failover
+        self._fallback_api_type = configs.get("fallback_api_type")
+        self._fallback_model_id = configs.get("fallback_model_id")
+        self._fallback_agentic = None
+
+    @staticmethod
+    def _extract_llm_response(result):
+        """Extract text content from AgenticTool result."""
+        if result is None:
+            return None
+        if isinstance(result, dict) and "result" in result:
+            return result["result"]
+        return result
+
+    def _try_query_fallback(self, agentic_args):
+        """Try fallback LLM backend when primary fails at query time."""
+        if not self._fallback_api_type or not self._fallback_model_id:
+            return None
+
+        print(
+            f"⚠️  Primary LLM failed, trying fallback: "
+            f"{self._fallback_api_type}/{self._fallback_model_id}"
+        )
+
+        # Lazy-init fallback AgenticTool
+        if self._fallback_agentic is None:
+            fallback_config = {
+                "name": f"{self.name}_fallback",
+                "description": "Fallback agentic tool for LLM-based tool selection",
+                "type": "AgenticTool",
+                "prompt": self._get_tool_selection_prompt(),
+                "input_arguments": ["query", "tools_descriptions", "limit"],
+                "parameter": {
+                    "type": "object",
+                    "properties": {
+                        "query": {"type": "string", "required": True},
+                        "tools_descriptions": {"type": "string", "required": True},
+                        "limit": {"type": "integer", "required": True},
+                    },
+                    "required": ["query", "tools_descriptions", "limit"],
+                },
+                "configs": {
+                    "api_type": self._fallback_api_type,
+                    "model_id": self._fallback_model_id,
+                    "temperature": self.temperature,
+                    "return_json": self.return_json,
+                    "return_metadata": False,
+                    "validate_api_key": False,
+                    "use_global_fallback": False,
+                },
+            }
+            try:
+                from .agentic_tool import AgenticTool
+
+                self._fallback_agentic = AgenticTool(fallback_config)
+            except Exception as e:
+                print(f"❌ Fallback init failed: {e}")
+                return None
+
+        try:
+            result = self._fallback_agentic.run(agentic_args)
+            return self._extract_llm_response(result)
+        except Exception as e:
+            print(f"❌ Fallback query failed: {e}")
+            return None
+
     def _init_agentic_tool(self):
         """Initialize the underlying AgenticTool for LLM operations."""
 
@@ -362,14 +428,13 @@ Requirements:
 
             print(f"🤖 Querying LLM to select tools for: '{query[:100]}...'")
 
-            # Call the LLM through AgenticTool
+            # Call the LLM through AgenticTool (with query-time fallback)
             result = self.agentic_tool.run(agentic_args)
+            llm_response = self._extract_llm_response(result)
 
-            # Parse the LLM response
-            if isinstance(result, dict) and "result" in result:
-                llm_response = result["result"]
-            else:
-                llm_response = result
+            # Query-time fallback: if primary returned nothing, try fallback backend
+            if llm_response is None or llm_response == "":
+                llm_response = self._try_query_fallback(agentic_args)
 
             # Parse JSON response from LLM
             if isinstance(llm_response, str):
@@ -384,6 +449,12 @@ Requirements:
                         "raw_response": llm_response,
                         "selected_tools": [],
                     }
+            elif llm_response is None:
+                return {
+                    "success": False,
+                    "error": "All LLM backends failed",
+                    "selected_tools": [],
+                }
             else:
                 parsed_response = llm_response
 

@@ -129,6 +129,7 @@ Route user questions to specialized skills. If no skill matches, use general str
 
 | Keywords | Action |
 |----------|--------|
+| "**llm finder**", "**llm search**", "**smart search**", "**reason about tools**", "**tool combination**", "**which tools**", "**multi-step**" | `Skill(skill="tu-llm")` |
 | "**setup**", "install", "configure", "API keys", "upgrade", "**how to use**", "**get started**", "**CLI**", "**tu command**", "MCP vs CLI vs SDK", "**what is ToolUniverse**", "**what can this do**", "**what databases**", "**demo**", "**tutorial**", "**quickstart**", "**I'm new**" | `Skill(skill="setup-tooluniverse")` |
 | "**SDK**", "Python SDK", "build AI scientist", "programmatic access", "**import tooluniverse**", "**coding API**", "**tu build**", "**typed wrappers**" | `Skill(skill="tooluniverse-sdk")` |
 | "**install skills**", "missing skills", "skill not found", "add skills" | `Skill(skill="tooluniverse-install-skills")` |
@@ -157,6 +158,8 @@ Route user questions to specialized skills. If no skill matches, use general str
 ## When to Use General Strategies
 
 Only when no specialized skill matches:
+
+
 - Meta-questions about ToolUniverse itself (no domain entity)
 - Custom workflows combining multiple skills
 - User explicitly says "don't use specialized skills"
