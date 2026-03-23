@@ -115,16 +115,20 @@ class OncoKBTool(BaseTool):
             response.raise_for_status()
             data = response.json()
 
-            return {
-                "status": "success",
-                "data": data,
-                "metadata": {
-                    "source": "OncoKB",
-                    "api_mode": "demo" if self.use_demo else "authenticated",
-                    "gene": gene,
-                    "variant": variant,
-                },
+            metadata: Dict[str, Any] = {
+                "source": "OncoKB",
+                "api_mode": "demo" if self.use_demo else "authenticated",
+                "gene": gene,
+                "variant": variant,
             }
+            # Feature-81A-002: warn when demo mode returns empty data for unsupported gene.
+            # Demo API silently returns geneExist=False for genes outside its limited set.
+            if self.use_demo and not data.get("geneExist", True):
+                metadata["note"] = (
+                    f"Demo mode: {gene} is not in the demo dataset (limited to BRAF, TP53, ROS1). "
+                    "Set ONCOKB_API_TOKEN for full coverage. Get a token at https://www.oncokb.org/apiAccess"
+                )
+            return {"status": "success", "data": data, "metadata": metadata}
 
         except requests.exceptions.HTTPError as e:
             if e.response.status_code == 401:
@@ -344,16 +348,18 @@ class OncoKBTool(BaseTool):
             response.raise_for_status()
             data = response.json()
 
-            return {
-                "status": "success",
-                "data": data,
-                "metadata": {
-                    "source": "OncoKB",
-                    "api_mode": "demo" if self.use_demo else "authenticated",
-                    "gene": gene,
-                    "copy_number_type": cna_type,
-                },
+            metadata: Dict[str, Any] = {
+                "source": "OncoKB",
+                "api_mode": "demo" if self.use_demo else "authenticated",
+                "gene": gene,
+                "copy_number_type": cna_type,
             }
+            if self.use_demo and not data.get("geneExist", True):
+                metadata["note"] = (
+                    f"Demo mode: {gene} is not in the demo dataset (limited to BRAF, TP53, ROS1). "
+                    "Set ONCOKB_API_TOKEN for full coverage. Get a token at https://www.oncokb.org/apiAccess"
+                )
+            return {"status": "success", "data": data, "metadata": metadata}
 
         except requests.exceptions.RequestException as e:
             return {"status": "error", "error": f"Request failed: {str(e)}"}

@@ -138,6 +138,11 @@ class ClinVarSearchVariants(ClinVarRESTTool):
             # Use [uid] to look up by numeric variation ID.
             query_parts.append(f"{arguments['variant_id']}[uid]")
 
+        if "clinical_significance" in arguments:
+            # Feature-81A-005: filter by clinical significance via [clnsig] field tag.
+            # Accepted: Pathogenic, Likely_pathogenic, Uncertain_significance, Likely_benign, Benign
+            query_parts.append(f"{arguments['clinical_significance']}[clnsig]")
+
         if not query_parts:
             return {
                 "status": "error",

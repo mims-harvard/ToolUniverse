@@ -610,12 +610,14 @@ class GDCMutationFrequencyTool:
         except Exception:
             pass
 
-        # Step 2: Get SSM case count via /ssms with gene filter + project facet
+        # Step 2: Get SSM occurrence count via /ssm_occurrences with gene filter + project facet
+        # Feature-81A-003: /ssm_occurrences requires the nested "ssm." prefix;
+        # /ssms uses "consequence.transcript.gene.symbol" directly.
         ssm_filters = json.dumps(
             {
                 "op": "in",
                 "content": {
-                    "field": "consequence.transcript.gene.symbol",
+                    "field": "ssm.consequence.transcript.gene.symbol",
                     "value": [gene_symbol],
                 },
             }

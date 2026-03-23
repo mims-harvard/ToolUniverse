@@ -66,10 +66,10 @@ class FAERSAnalyticsTool(BaseTool):
         if "data" in result:
             return result
 
-        payload = dict(result)
-        wrapped_result = dict(result)
-        wrapped_result["data"] = payload
-        return wrapped_result
+        # Feature-81A-004: move non-status keys into data to avoid duplicating
+        # every field at both the top level and inside data.
+        data = {k: v for k, v in result.items() if k != "status"}
+        return {"status": "success", "data": data}
 
     def _calculate_disproportionality(
         self, arguments: Dict[str, Any]

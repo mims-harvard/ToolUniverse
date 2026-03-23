@@ -79,14 +79,12 @@ class ProteinsAPIRESTTool(BaseTool):
             # gene, protein, accession, organism, taxid, etc.
             if "query" in args:
                 query = args["query"]
-                # Try to intelligently map query to the right parameter
-                # If it looks like an accession (starts with letter and 5-6 chars)
+                # Feature-81B-007: always use gene param for short queries —
+                # gene names like CYP2D6 are 6 chars and were incorrectly
+                # classified as UniProt accessions. For accession lookup,
+                # use proteins_api_get_protein with an explicit accession.
                 if query and len(query) <= 10 and any(c.isalpha() for c in query):
-                    if query[0].isalpha() and len(query) == 6:
-                        params["accession"] = query
-                    else:
-                        # Default to gene parameter (works for gene names like BRCA1)
-                        params["gene"] = query
+                    params["gene"] = query
                 else:
                     # For longer queries, try protein parameter
                     params["protein"] = query

@@ -142,10 +142,21 @@ class GWASAssociationSearch(GWASRESTTool):
 
         # Feature-79C: /v2/associations ignores disease_trait param server-side.
         # Auto-resolve trait name to efo_id for reliable filtering.
+        # Feature-81B-008: if resolution fails, return error instead of silently
+        # running an unfiltered search that returns 1M+ unrelated associations.
         if disease_trait and not efo_id:
             resolved = self._resolve_trait_to_efo_id(disease_trait)
             if resolved:
                 efo_id = resolved
+            else:
+                return {
+                    "status": "error",
+                    "error": (
+                        f"Could not resolve trait '{disease_trait}' to an EFO ID. "
+                        "Try a more specific or standard disease name, "
+                        "or provide efo_id directly (e.g., 'EFO_0001645')."
+                    ),
+                }
 
         if efo_id:
             params["efo_id"] = efo_id
