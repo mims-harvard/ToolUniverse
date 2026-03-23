@@ -34,7 +34,15 @@ def _odata_request(url, timeout=30):
     except requests.exceptions.ConnectionError:
         return {"ok": False, "error": "Failed to connect to ProteomicsDB"}
     except ValueError:
-        return {"ok": False, "error": "Invalid JSON response from ProteomicsDB"}
+        ct = resp.headers.get("content-type", "")
+        return {
+            "ok": False,
+            "error": "Invalid JSON response from ProteomicsDB",
+            "content_type": ct,
+            "response_snippet": resp.text[:200],
+            "retryable": "text/html" in ct or resp.text.lstrip().startswith("<"),
+            "suggestion": "ProteomicsDB API may be under maintenance. Retry in a few minutes.",
+        }
     except Exception as e:
         return {"ok": False, "error": "Request failed: %s" % str(e)}
 
@@ -56,7 +64,15 @@ def _xsjs_request(endpoint, params=None, timeout=30):
     except requests.exceptions.ConnectionError:
         return {"ok": False, "error": "Failed to connect to ProteomicsDB"}
     except ValueError:
-        return {"ok": False, "error": "Invalid JSON response from ProteomicsDB"}
+        ct = resp.headers.get("content-type", "")
+        return {
+            "ok": False,
+            "error": "Invalid JSON response from ProteomicsDB",
+            "content_type": ct,
+            "response_snippet": resp.text[:200],
+            "retryable": "text/html" in ct or resp.text.lstrip().startswith("<"),
+            "suggestion": "ProteomicsDB API may be under maintenance. Retry in a few minutes.",
+        }
     except Exception as e:
         return {"ok": False, "error": "Request failed: %s" % str(e)}
 

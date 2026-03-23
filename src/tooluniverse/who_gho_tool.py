@@ -149,7 +149,7 @@ class WHOGHORESTTool(BaseTool):
         except requests.exceptions.RequestException as e:
             return {"error": f"Request failed: {str(e)}"}
         except ValueError as e:
-            return {"error": f"Failed to parse JSON: {str(e)}"}
+            return {"error": f"Failed to parse JSON: {str(e)}", "retryable": True}
 
     def run(self, arguments: Dict[str, Any]) -> Dict[str, Any]:
         """Execute the tool with given arguments."""
@@ -358,7 +358,7 @@ class WHOGHORESTTool(BaseTool):
         except requests.exceptions.RequestException as e:
             return {"error": f"Request failed: {str(e)}"}
         except ValueError as e:
-            return {"error": f"Failed to parse JSON: {str(e)}"}
+            return {"error": f"Failed to parse JSON: {str(e)}", "retryable": True}
 
 
 @register_tool("WHOGHOQueryTool")

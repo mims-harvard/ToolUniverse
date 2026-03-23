@@ -47,7 +47,14 @@ class WikidataSPARQLTool(BaseTool):
                 "reason": str(e),
             }
         except ValueError:
-            return {"error": "Failed to decode SPARQL response as JSON"}
+            ct = resp.headers.get("content-type", "")
+            return {
+                "error": "Failed to decode SPARQL response as JSON",
+                "content_type": ct,
+                "response_snippet": resp.text[:200],
+                "retryable": "text/html" in ct or resp.text.lstrip().startswith("<"),
+                "suggestion": "Wikidata SPARQL endpoint may be under maintenance. Retry in a few minutes.",
+            }
 
         bindings = data.get("results", {}).get("bindings", [])
         # Normalize by unwrapping "value" fields

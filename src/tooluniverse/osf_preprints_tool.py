@@ -41,7 +41,14 @@ class OSFPreprintsTool(BaseTool):
         except requests.RequestException as e:
             return {"error": "Network/API error calling OSF", "reason": str(e)}
         except ValueError:
-            return {"error": "Failed to decode OSF response as JSON"}
+            ct = resp.headers.get("content-type", "")
+            return {
+                "error": "Failed to decode OSF response as JSON",
+                "content_type": ct,
+                "response_snippet": resp.text[:200],
+                "retryable": "text/html" in ct or resp.text.lstrip().startswith("<"),
+                "suggestion": "OSF API may be under maintenance. Retry in a few minutes.",
+            }
 
         results = []
         for item in data.get("data", []):

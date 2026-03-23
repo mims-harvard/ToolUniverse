@@ -146,9 +146,13 @@ class PubChemRESTTool(BaseTool):
             try:
                 return resp.json()
             except ValueError:
+                ct = resp.headers.get("content-type", "")
                 return {
                     "error": "Response content cannot be parsed as JSON.",
-                    "content": resp.text,
+                    "content_type": ct,
+                    "content": resp.text[:200],
+                    "retryable": "text/html" in ct
+                    or resp.text.lstrip().startswith("<"),
                 }
         elif out_fmt in ["XML", "TXT", "CSV", "SDF"]:
             # These are all text formats

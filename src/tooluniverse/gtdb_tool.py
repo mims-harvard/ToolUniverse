@@ -92,13 +92,26 @@ class GTDBTool(BaseTool):
                 data = response.json()
                 return {"ok": True, "data": data}
             except ValueError:
-                return {"ok": False, "error": "Invalid JSON response from GTDB API"}
+                ct = response.headers.get("content-type", "")
+                return {
+                    "ok": False,
+                    "error": "Invalid JSON response from GTDB API",
+                    "content_type": ct,
+                    "response_snippet": response.text[:200],
+                    "retryable": "text/html" in ct
+                    or response.text.lstrip().startswith("<"),
+                    "suggestion": "GTDB API may be under maintenance. Retry in a few minutes.",
+                }
         elif response.status_code == 400:
             try:
                 err = response.json()
                 return {"ok": False, "error": err.get("detail", "Bad request")}
             except ValueError:
-                return {"ok": False, "error": "Bad request"}
+                return {
+                    "ok": False,
+                    "error": "Bad request",
+                    "response_snippet": response.text[:200],
+                }
         elif response.status_code == 404:
             return {"ok": False, "error": "Taxon or resource not found in GTDB"}
         else:

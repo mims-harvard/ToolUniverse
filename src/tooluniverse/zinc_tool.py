@@ -93,7 +93,16 @@ class ZincTool(BaseTool):
                 data = response.json()
                 return {"ok": True, "data": data}
             except ValueError:
-                return {"ok": False, "error": "Invalid JSON response from ZINC API"}
+                ct = response.headers.get("content-type", "")
+                return {
+                    "ok": False,
+                    "error": "Invalid JSON response from ZINC API",
+                    "content_type": ct,
+                    "response_snippet": response.text[:200],
+                    "retryable": "text/html" in ct
+                    or response.text.lstrip().startswith("<"),
+                    "suggestion": "ZINC API may be under maintenance. Retry in a few minutes.",
+                }
         elif response.status_code == 404:
             return {"ok": False, "error": "Resource not found"}
         elif response.status_code == 500:

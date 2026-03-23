@@ -254,7 +254,7 @@ class UniProtRESTTool(BaseTool):
         except requests.exceptions.RequestException as e:
             return {"error": f"Request to UniProt API failed: {e}"}
         except ValueError as e:
-            return {"error": f"Failed to parse JSON response: {e}"}
+            return {"error": f"Failed to parse JSON response: {e}", "retryable": True}
 
     def _handle_id_mapping(self, arguments: Dict[str, Any]) -> Any:
         """Handle ID mapping requests"""
@@ -429,7 +429,7 @@ class UniProtRESTTool(BaseTool):
         except requests.exceptions.RequestException as e:
             return {"error": f"Request to UniProt API failed: {e}"}
         except ValueError as e:
-            return {"error": f"Failed to parse JSON response: {e}"}
+            return {"error": f"Failed to parse JSON response: {e}", "retryable": True}
 
     def _handle_uniparc_search(self, arguments: Dict[str, Any]) -> Any:
         """Handle UniParc search queries"""
@@ -458,7 +458,7 @@ class UniProtRESTTool(BaseTool):
         except requests.exceptions.RequestException as e:
             return {"error": f"Request to UniProt API failed: {e}"}
         except ValueError as e:
-            return {"error": f"Failed to parse JSON response: {e}"}
+            return {"error": f"Failed to parse JSON response: {e}", "retryable": True}
 
     def run(self, arguments: Dict[str, Any]) -> Any:
         # Check if this is a search request
@@ -489,7 +489,7 @@ class UniProtRESTTool(BaseTool):
         except requests.exceptions.RequestException as e:
             return {"error": f"Request to UniProt API failed: {e}"}
         except ValueError as e:
-            return {"error": f"Failed to parse JSON response: {e}"}
+            return {"error": f"Failed to parse JSON response: {e}", "retryable": True}
 
         # If extract_path is configured, extract the corresponding subset
         if self.extract_path:

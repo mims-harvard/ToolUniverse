@@ -46,7 +46,14 @@ class HALTool(BaseTool):
         except requests.RequestException as e:
             return {"error": "Network/API error calling HAL", "reason": str(e)}
         except ValueError:
-            return {"error": "Failed to decode HAL response as JSON"}
+            ct = resp.headers.get("content-type", "")
+            return {
+                "error": "Failed to decode HAL response as JSON",
+                "content_type": ct,
+                "response_snippet": resp.text[:200],
+                "retryable": "text/html" in ct or resp.text.lstrip().startswith("<"),
+                "suggestion": "HAL API may be under maintenance. Retry in a few minutes.",
+            }
 
         docs = data.get("response", {}).get("docs", [])
         results = []
