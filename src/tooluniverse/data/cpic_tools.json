@@ -295,12 +295,12 @@
                 "type": "string",
                 "description": "CPIC evidence level (A, B, B/C, C, D)"
               },
-              "pgkbcalevel": {
+              "clinpgxlevel": {
                 "type": [
                   "string",
                   "null"
                 ],
-                "description": "PharmGKB clinical annotation level"
+                "description": "CPIC/PharmGKB clinical annotation level (e.g., '1A', '2A', '3')"
               },
               "pgxtesting": {
                 "type": [
@@ -578,7 +578,7 @@
       "required": []
     },
     "fields": {
-      "endpoint": "https://api.cpicpgx.org/v1/pair?select=genesymbol,drugid,cpiclevel,guidelineid,usedforrecommendation,pgkbcalevel"
+      "endpoint": "https://api.cpicpgx.org/v1/pair?select=genesymbol,drugid,cpiclevel,guidelineid,usedforrecommendation,clinpgxlevel,pgxtesting"
     },
     "type": "CPICSearchPairsTool",
     "test_examples": [
@@ -622,12 +622,12 @@
                 "type": "boolean",
                 "description": "Whether this pair is used for clinical recommendations"
               },
-              "pgkbcalevel": {
+              "clinpgxlevel": {
                 "type": [
                   "string",
                   "null"
                 ],
-                "description": "PharmGKB clinical annotation level (e.g., '1A', '2A', '3')"
+                "description": "CPIC/PharmGKB clinical annotation level (e.g., '1A', '2A', '3')"
               }
             }
           }

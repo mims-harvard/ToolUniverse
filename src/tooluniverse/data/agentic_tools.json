@@ -237,10 +237,7 @@
     },
     "test_examples": [
       {
-        "raw_terms": [
-          "hypertension",
-          "diabetes"
-        ]
+        "raw_terms": "hypertension, diabetes"
       }
     ],
     "return_schema": {
