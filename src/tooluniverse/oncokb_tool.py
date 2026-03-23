@@ -249,8 +249,16 @@ class OncoKBTool(BaseTool):
             response.raise_for_status()
             data = response.json()
 
-            # Filter to only include cancer genes (oncogene or TSG)
-            cancer_genes = [g for g in data if g.get("oncogene") or g.get("tsg")]
+            # Filter to only include cancer genes (oncogene or TSG).
+            # Feature-83A-002: demo API returns geneType:"ONCOGENE"/"TSG" instead of
+            # boolean oncogene/tsg fields — check both representations.
+            def _is_cancer_gene(g: dict) -> bool:
+                if g.get("oncogene") or g.get("tsg"):
+                    return True
+                gene_type = (g.get("geneType") or "").upper()
+                return "ONCOGENE" in gene_type or "TSG" in gene_type
+
+            cancer_genes = [g for g in data if _is_cancer_gene(g)]
 
             result = {
                 "status": "success",

@@ -622,11 +622,10 @@ class GDCMutationFrequencyTool:
                 },
             }
         )
-        ssm_query = {
-            "filters": ssm_filters,
-            "size": 0,
-            "facets": "cases.project.project_id",
-        }
+        # Feature-83A-004: /ssm_occurrences does not support facets on
+        # cases.project.project_id (returns warnings and empty aggregations).
+        # Use size=0 for a count-only query.
+        ssm_query = {"filters": ssm_filters, "size": 0}
         ssm_url = f"{base}/ssm_occurrences?{urlencode(ssm_query)}"
 
         try:
@@ -636,16 +635,6 @@ class GDCMutationFrequencyTool:
             pagination = ssm_data.get("data", {}).get("pagination", {})
             total_ssm_occurrences = pagination.get("total", 0)
 
-            # Extract per-project case counts from facets
-            aggregations = ssm_data.get("data", {}).get("aggregations", {})
-            project_facet = aggregations.get("cases.project.project_id", {})
-            project_buckets = project_facet.get("buckets", [])
-
-            project_counts = [
-                {"project_id": b.get("key", ""), "case_count": b.get("doc_count", 0)}
-                for b in project_buckets
-            ]
-
             return {
                 "status": "success",
                 "source": "GDC",
@@ -653,7 +642,6 @@ class GDCMutationFrequencyTool:
                 "data": {
                     "gene_info": gene_info,
                     "total_ssm_occurrences": total_ssm_occurrences,
-                    "project_mutation_counts": project_counts,
                     "is_cancer_gene_census": gene_info.get(
                         "is_cancer_gene_census", None
                     ),

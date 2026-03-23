@@ -232,9 +232,12 @@ class FAERSAnalyticsTool(BaseTool):
                 count = result.get("count", 0)
                 percentage = (count / total_count * 100) if total_count > 0 else 0
 
-                # Interpret codes
+                # Interpret codes (API returns integers; normalize to str for dict lookup)
+                term_key = str(term)
                 if stratify_by == "sex":
-                    term = {"0": "Unknown", "1": "Male", "2": "Female"}.get(term, term)
+                    term = {"0": "Unknown", "1": "Male", "2": "Female"}.get(
+                        term_key, term
+                    )
                 elif stratify_by == "age":
                     age_map = {
                         "1": "Neonate",
@@ -244,7 +247,7 @@ class FAERSAnalyticsTool(BaseTool):
                         "5": "Adult",
                         "6": "Elderly",
                     }
-                    term = age_map.get(term, term)
+                    term = age_map.get(term_key, term)
 
                 stratified_data.append(
                     {"group": term, "count": count, "percentage": round(percentage, 2)}
