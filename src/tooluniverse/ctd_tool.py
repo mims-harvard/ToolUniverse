@@ -92,10 +92,25 @@ class CTDTool(BaseTool):
                 },
             }
 
+        content_type = response.headers.get("content-type", "")
         try:
             data = response.json()
         except ValueError:
-            return {"error": "CTD API returned non-JSON response"}
+            snippet = raw_text[:200]
+            is_html = "text/html" in content_type or raw_text.lstrip().startswith("<")
+            return {
+                "error": "CTD API returned non-JSON response",
+                "content_type": content_type,
+                "response_snippet": snippet,
+                "retryable": is_html,
+                "suggestion": (
+                    "CTD may be under maintenance or rate-limiting. "
+                    "Check https://ctdbase.org for status. "
+                    "Retry in a few minutes."
+                    if is_html
+                    else "Response was truncated or malformed. Retry the request."
+                ),
+            }
 
         metadata = {
             "input_type": input_type,
