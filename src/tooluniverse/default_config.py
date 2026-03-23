@@ -327,8 +327,8 @@ default_tool_files = {
     "sabdab": os.path.join(current_dir, "data", "sabdab_tools.json"),
     # IMGT - International ImMunoGeneTics Information System
     "imgt": os.path.join(current_dir, "data", "imgt_tools.json"),
-    # HMDB - Human Metabolome Database
-    "hmdb": os.path.join(current_dir, "data", "hmdb_tools.json"),
+    # Metabolite tools - PubChem + CTD (replaces broken HMDB API)
+    "metabolite": os.path.join(current_dir, "data", "metabolite_tools.json"),
     # MetaCyc - Metabolic Pathway Database
     "metacyc": os.path.join(current_dir, "data", "metacyc_tools.json"),
     # ZINC - Virtual Screening Library

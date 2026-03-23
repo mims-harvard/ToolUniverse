@@ -1,0 +1,45 @@
+{
+  "api_name": "HMDB (Human Metabolome Database) REST API",
+  "base_url": "https://hmdb.ca/metabolites/<HMDB_ID>.json",
+  "failure_mode": "HTTP 403 Forbidden (Cloudflare bot protection)",
+  "root_cause": "HMDB (hmdb.ca) is protected by Cloudflare bot challenge pages. All programmatic requests — including .json/.xml metabolite endpoints, the /simple/api route, /downloads bulk files, and search — return HTTP 403 or a Cloudflare JS challenge page. The site requires JavaScript execution and cookie validation, which is not feasible in a server-side REST client. Access requires either a browser session or contacting the HMDB team (eponine@ualberta.ca) for an API key.",
+  "confirmed_broken_date": "2026-03-23",
+  "last_retry_date": "2026-03-23",
+  "retry_count": 3,
+  "github_issues": [],
+  "retry_after": "2026-09-01",
+  "retry_notes": "Check if HMDB has released a public API key program or relaxed Cloudflare rules. Contact samackay@ualberta.ca for institutional API access.",
+  "workaround": "HMDB_get_metabolite and HMDB_search use PubChem as a cross-reference (HMDB IDs are stored as RegistryID in PubChem). HMDB_get_diseases uses the CTD (Comparative Toxicogenomics Database) API to retrieve chemical-disease associations given the metabolite name resolved from PubChem.",
+  "workaround_tool_file": "src/tooluniverse/hmdb_tool.py",
+  "investigation_notes": [
+    "curl https://hmdb.ca/metabolites/HMDB0000122.json → HTTP 403",
+    "curl https://hmdb.ca/metabolites/HMDB0000122.xml → HTTP 403",
+    "curl https://hmdb.ca/downloads → HTTP 403",
+    "curl https://www.hmdb.ca/simple/api → Cloudflare JS challenge (200 HTML with cf-chl-opt)",
+    "PubChem cross-reference works: GET /compound/xref/RegistryID/HMDB0000122/JSON → HTTP 200",
+    "CTD batchQuery works: GET /tools/batchQuery.go?inputType=chem&inputTerms=glucose → HTTP 200 JSON"
+  ],
+  "attempted_config": [
+    {
+      "name": "HMDB_get_metabolite",
+      "description": "Get metabolite data directly from HMDB API by HMDB ID",
+      "type": "HMDBTool",
+      "endpoint": "https://hmdb.ca/metabolites/<hmdb_id>.json",
+      "failure": "HTTP 403 Cloudflare"
+    },
+    {
+      "name": "HMDB_search",
+      "description": "Search HMDB metabolites by name or formula",
+      "type": "HMDBTool",
+      "endpoint": "https://hmdb.ca/metabolites/search.json",
+      "failure": "HTTP 403 Cloudflare"
+    },
+    {
+      "name": "HMDB_get_diseases",
+      "description": "Get disease associations for a metabolite from HMDB",
+      "type": "HMDBTool",
+      "endpoint": "https://hmdb.ca/metabolites/<hmdb_id>/disease_references.json",
+      "failure": "HTTP 403 Cloudflare; also no documented open API endpoint for disease data"
+    }
+  ]
+}
