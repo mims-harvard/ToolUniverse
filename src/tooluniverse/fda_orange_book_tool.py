@@ -65,10 +65,8 @@ class FDAOrangeBookTool(BaseTool):
         if "data" in result:
             return result
 
-        payload = {key: value for key, value in result.items() if key != "status"}
-        wrapped_result = {"status": "success", "data": payload}
-        wrapped_result.update(payload)
-        return wrapped_result
+        data = {k: v for k, v in result.items() if k != "status"}
+        return {"status": "success", "data": data}
 
     def _search_drug(self, arguments: Dict[str, Any]) -> Dict[str, Any]:
         """Search for drugs by brand name, generic name, or application number."""

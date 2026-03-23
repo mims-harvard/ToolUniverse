@@ -182,7 +182,12 @@ class OncoKBTool(BaseTool):
                 if not gene_data:
                     return {
                         "status": "error",
-                        "error": f"Gene not found in demo data: {gene}. Demo limited to curated cancer genes.",
+                        "error": (
+                            f"Gene not found in demo data: {gene}. "
+                            "Demo mode only covers BRAF, TP53, ROS1. "
+                            "Set ONCOKB_API_TOKEN for full coverage. "
+                            "Get a token at https://www.oncokb.org/apiAccess"
+                        ),
                     }
 
                 return {

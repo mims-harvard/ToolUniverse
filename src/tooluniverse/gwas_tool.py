@@ -65,24 +65,47 @@ class GWASRESTTool(BaseTool):
         return s or None
 
     def _resolve_trait_to_efo_id(self, disease_trait: str) -> Optional[str]:
-        """Resolve a disease trait name to an EFO ID via the efoTraits search endpoint.
+        """Resolve a disease trait name to an EFO ID.
+
+        Tries the GWAS Catalog efoTraits endpoint first, then falls back to
+        a study-based resolution (the /v2/studies endpoint does support
+        disease_trait filtering and returns efo_traits in each study record).
 
         The /v2/associations endpoint ignores the disease_trait query parameter,
-        so we must first resolve the trait name to an EFO ID for reliable filtering.
+        so we must resolve the trait name to an EFO ID for reliable filtering.
         """
+        # Primary: GWAS Catalog efoTraits endpoint
         url = f"{self.base_url}/v2/efoTraits/search/findByTrait"
         try:
-            resp = requests.get(url, params={"trait": disease_trait}, timeout=30)
-            resp.raise_for_status()
-            data = resp.json()
-            traits = data.get("_embedded", {}).get("efoTraits", [])
-            if traits:
-                # Return the first matching EFO ID (best match)
-                short_name = traits[0].get("shortForm")
-                if short_name:
-                    return short_name
+            resp = requests.get(url, params={"trait": disease_trait}, timeout=15)
+            if resp.status_code == 200:
+                traits = resp.json().get("_embedded", {}).get("efoTraits", [])
+                if traits:
+                    short_name = traits[0].get("shortForm")
+                    if short_name:
+                        return short_name
         except Exception:
             pass
+
+        # Fallback: search studies by disease_trait, extract efo_id from first result.
+        # /v2/studies DOES support disease_trait filtering and returns efo_traits.
+        try:
+            resp = requests.get(
+                f"{self.base_url}/v2/studies",
+                params={"disease_trait": disease_trait, "size": 1},
+                timeout=15,
+            )
+            if resp.status_code == 200:
+                studies = resp.json().get("_embedded", {}).get("studies", [])
+                if studies:
+                    efo_traits = studies[0].get("efo_traits", [])
+                    if efo_traits:
+                        efo_id = efo_traits[0].get("efo_id")
+                        if efo_id:
+                            return efo_id
+        except Exception:
+            pass
+
         return None
 
     def _extract_embedded_data(
@@ -346,10 +369,21 @@ class GWASVariantsForTrait(GWASRESTTool):
 
         # Feature-79C: /v2/associations ignores disease_trait param server-side.
         # Auto-resolve trait name to efo_id for reliable filtering.
+        # Feature-82A-005: return error on resolution failure (same guard as
+        # GWASAssociationSearch) to prevent 1M+ unfiltered results.
         if disease_trait and not efo_id:
             resolved = self._resolve_trait_to_efo_id(disease_trait)
             if resolved:
                 efo_id = resolved
+            else:
+                return {
+                    "status": "error",
+                    "error": (
+                        f"Could not resolve trait '{disease_trait}' to an EFO ID. "
+                        "Try a more specific name, or provide efo_id directly "
+                        "(e.g., 'EFO_0000305' for breast carcinoma)."
+                    ),
+                }
 
         if not disease_trait and not efo_id and not efo_trait:
             return {
@@ -391,10 +425,20 @@ class GWASAssociationsForTrait(GWASRESTTool):
 
         # Feature-79C: /v2/associations ignores disease_trait param server-side.
         # Auto-resolve trait name to efo_id for reliable filtering.
+        # Feature-82A-005: return error on resolution failure.
         if disease_trait and not efo_id:
             resolved = self._resolve_trait_to_efo_id(disease_trait)
             if resolved:
                 efo_id = resolved
+            else:
+                return {
+                    "status": "error",
+                    "error": (
+                        f"Could not resolve trait '{disease_trait}' to an EFO ID. "
+                        "Try a more specific name, or provide efo_id directly "
+                        "(e.g., 'EFO_0000305' for breast carcinoma)."
+                    ),
+                }
 
         if not disease_trait and not efo_id and not efo_trait:
             return {

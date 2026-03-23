@@ -139,9 +139,11 @@ class ClinVarSearchVariants(ClinVarRESTTool):
             query_parts.append(f"{arguments['variant_id']}[uid]")
 
         if "clinical_significance" in arguments:
-            # Feature-81A-005: filter by clinical significance via [clnsig] field tag.
-            # Accepted: Pathogenic, Likely_pathogenic, Uncertain_significance, Likely_benign, Benign
-            query_parts.append(f"{arguments['clinical_significance']}[clnsig]")
+            # Feature-82A-002: NCBI silently translates [clnsig] to [All Fields],
+            # returning unrelated variants. The correct syntax is the [Filter] field:
+            # "clinsig pathogenic"[Filter] which properly restricts to the clinsig index.
+            clnsig = arguments["clinical_significance"].lower().replace("_", " ")
+            query_parts.append(f'"clinsig {clnsig}"[Filter]')
 
         if not query_parts:
             return {
