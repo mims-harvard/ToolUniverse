@@ -47,6 +47,15 @@ class BRENDATool(BaseTool):
                 timeout=self.timeout,
             )
             response.raise_for_status()
+            # Feature-84B-006: endpoint sometimes returns HTML instead of JSON
+            content_type = response.headers.get("Content-Type", "")
+            if "html" in content_type or response.text.strip().startswith("<!"):
+                raise Exception(
+                    "BRENDA SPARQL endpoint (sparql.dsmz.de/brenda) is currently "
+                    "returning HTML instead of JSON results. The endpoint may be "
+                    "temporarily unavailable. Try again later or use the BRENDA "
+                    "website directly: https://www.brenda-enzymes.org/"
+                )
             return response.json()
         except requests.exceptions.RequestException as e:
             raise Exception(f"SPARQL query failed: {str(e)}")

@@ -8,13 +8,16 @@ Website: https://metacyc.org/
 BioCyc: https://biocyc.org/
 """
 
+import re
 import requests
-from typing import Dict, Any, Optional, List
+from typing import Any, Dict, List, Optional
 from .base_tool import BaseTool
 from .tool_registry import register_tool
 
-# BioCyc API base URL (MetaCyc is part of BioCyc collection)
+# BioCyc website (for human-readable URLs)
 BIOCYC_BASE_URL = "https://biocyc.org"
+# BioCyc web services API (for programmatic access)
+BIOCYC_API_URL = "https://websvc.biocyc.org"
 
 
 @register_tool("MetaCycTool")
@@ -57,6 +60,33 @@ class MetaCycTool(BaseTool):
                 "status": "error",
                 "error": f"Unknown operation: {operation}. Supported: search_pathways, get_pathway, get_compound, get_reaction",
             }
+
+    def _fetch_biocyc_xml(self, object_id: str) -> Optional[str]:
+        """Fetch BioCyc XML for a MetaCyc object using the web services API.
+
+        Feature-84B-004/005: biocyc.org/getxml?META=ID returns HTML (wrong).
+        websvc.biocyc.org/getxml?id=META:ID returns XML (correct).
+        """
+        resp = requests.get(
+            f"{BIOCYC_API_URL}/getxml",
+            params={"id": f"META:{object_id}", "detail": "full"},
+            timeout=self.timeout,
+            headers={"User-Agent": "ToolUniverse/MetaCyc"},
+        )
+        if resp.status_code != 200:
+            return None
+        content = resp.text
+        # Verify it's actually XML (not an HTML error page)
+        return content if content.strip().startswith("<?xml") else None
+
+    def _parse_xml_field(self, xml: str, tag: str) -> Optional[str]:
+        """Extract the text content of the first matching XML tag."""
+        m = re.search(rf"<{tag}[^>]*>([^<]+)</{tag}>", xml)
+        return m.group(1).strip() if m else None
+
+    def _parse_xml_frameids(self, xml: str) -> List[str]:
+        """Extract all frameid attribute values from an XML document."""
+        return re.findall(r'frameid=["\']([^"\']+)["\']', xml)
 
     def _search_pathways(self, arguments: Dict[str, Any]) -> Dict[str, Any]:
         """
@@ -129,33 +159,28 @@ class MetaCycTool(BaseTool):
             }
 
         try:
-            # Try to get pathway data via getxml API
-            response = requests.get(
-                f"{BIOCYC_BASE_URL}/getxml",
-                params={"META": pathway_id},
-                timeout=self.timeout,
-                headers={"User-Agent": "ToolUniverse/MetaCyc"},
-            )
+            xml = self._fetch_biocyc_xml(pathway_id)
+            if xml is None:
+                return {"status": "error", "error": f"Pathway not found: {pathway_id}"}
 
-            if response.status_code == 200:
-                # Parse basic info from response
-                return {
-                    "status": "success",
-                    "data": {
-                        "pathway_id": pathway_id,
-                        "has_data": True,
-                        "url": f"{BIOCYC_BASE_URL}/META/NEW-IMAGE?type=PATHWAY&object={pathway_id}",
-                        "diagram_url": f"{BIOCYC_BASE_URL}/META/NEW-IMAGE?type=PATHWAY&object={pathway_id}&detail-level=2",
-                    },
-                    "metadata": {
-                        "source": "MetaCyc",
-                        "pathway_id": pathway_id,
-                    },
-                }
-
+            name = self._parse_xml_field(xml, "common-name")
+            reaction_ids = [
+                fid
+                for fid in self._parse_xml_frameids(xml)
+                if fid != pathway_id and not fid.endswith("-VARIANTS")
+            ]
+            synonyms = re.findall(r"<synonym[^>]*>([^<]+)</synonym>", xml)
             return {
-                "status": "error",
-                "error": f"Pathway not found: {pathway_id}",
+                "status": "success",
+                "data": {
+                    "pathway_id": pathway_id,
+                    "name": name,
+                    "synonyms": synonyms,
+                    "reaction_ids": list(dict.fromkeys(reaction_ids)),
+                    "url": f"{BIOCYC_BASE_URL}/META/NEW-IMAGE?type=PATHWAY&object={pathway_id}",
+                    "diagram_url": f"{BIOCYC_BASE_URL}/META/NEW-IMAGE?type=PATHWAY&object={pathway_id}&detail-level=2",
+                },
+                "metadata": {"source": "MetaCyc", "pathway_id": pathway_id},
             }
 
         except requests.exceptions.RequestException as e:
@@ -179,30 +204,26 @@ class MetaCycTool(BaseTool):
             }
 
         try:
-            response = requests.get(
-                f"{BIOCYC_BASE_URL}/getxml",
-                params={"META": compound_id},
-                timeout=self.timeout,
-                headers={"User-Agent": "ToolUniverse/MetaCyc"},
-            )
-
-            if response.status_code == 200:
+            xml = self._fetch_biocyc_xml(compound_id)
+            if xml is None:
                 return {
-                    "status": "success",
-                    "data": {
-                        "compound_id": compound_id,
-                        "has_data": True,
-                        "url": f"{BIOCYC_BASE_URL}/compound?orgid=META&id={compound_id}",
-                    },
-                    "metadata": {
-                        "source": "MetaCyc",
-                        "compound_id": compound_id,
-                    },
+                    "status": "error",
+                    "error": f"Compound not found: {compound_id}",
                 }
 
+            name = self._parse_xml_field(xml, "common-name")
+            formula = self._parse_xml_field(xml, "molecular-weight-exp")
+            synonyms = re.findall(r"<synonym[^>]*>([^<]+)</synonym>", xml)
             return {
-                "status": "error",
-                "error": f"Compound not found: {compound_id}",
+                "status": "success",
+                "data": {
+                    "compound_id": compound_id,
+                    "name": name,
+                    "synonyms": synonyms,
+                    "molecular_weight": formula,
+                    "url": f"{BIOCYC_BASE_URL}/compound?orgid=META&id={compound_id}",
+                },
+                "metadata": {"source": "MetaCyc", "compound_id": compound_id},
             }
 
         except requests.exceptions.RequestException as e:
@@ -226,30 +247,26 @@ class MetaCycTool(BaseTool):
             }
 
         try:
-            response = requests.get(
-                f"{BIOCYC_BASE_URL}/getxml",
-                params={"META": reaction_id},
-                timeout=self.timeout,
-                headers={"User-Agent": "ToolUniverse/MetaCyc"},
-            )
-
-            if response.status_code == 200:
+            xml = self._fetch_biocyc_xml(reaction_id)
+            if xml is None:
                 return {
-                    "status": "success",
-                    "data": {
-                        "reaction_id": reaction_id,
-                        "has_data": True,
-                        "url": f"{BIOCYC_BASE_URL}/META/NEW-IMAGE?type=REACTION&object={reaction_id}",
-                    },
-                    "metadata": {
-                        "source": "MetaCyc",
-                        "reaction_id": reaction_id,
-                    },
+                    "status": "error",
+                    "error": f"Reaction not found: {reaction_id}",
                 }
 
+            name = self._parse_xml_field(xml, "common-name")
+            ec_numbers = re.findall(r"<ec-number[^>]*>([^<]+)</ec-number>", xml)
+            synonyms = re.findall(r"<synonym[^>]*>([^<]+)</synonym>", xml)
             return {
-                "status": "error",
-                "error": f"Reaction not found: {reaction_id}",
+                "status": "success",
+                "data": {
+                    "reaction_id": reaction_id,
+                    "name": name,
+                    "ec_numbers": ec_numbers,
+                    "synonyms": synonyms,
+                    "url": f"{BIOCYC_BASE_URL}/META/NEW-IMAGE?type=REACTION&object={reaction_id}",
+                },
+                "metadata": {"source": "MetaCyc", "reaction_id": reaction_id},
             }
 
         except requests.exceptions.RequestException as e:
