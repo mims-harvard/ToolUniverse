@@ -8,6 +8,7 @@ This module provides a reusable base class for REST API tools that handles:
 - Standard error handling and response formatting
 """
 
+import os
 import requests
 import urllib.parse
 from typing import Any, Dict, Optional, Callable
@@ -215,7 +216,32 @@ class BaseRESTTool(BaseTool):
             params = self._build_params(arguments)
 
             # Get custom headers from config (e.g., Accept: application/json)
-            custom_headers = self.tool_config.get("fields", {}).get("headers")
+            custom_headers = dict(
+                self.tool_config.get("fields", {}).get("headers") or {}
+            )
+
+            # Inject API key from environment variable if auth_header is configured.
+            # Config format: {"env_var": "MY_API_KEY", "header": "x-api-key"}
+            auth_header_cfg = self.tool_config.get("fields", {}).get("auth_header")
+            if auth_header_cfg:
+                env_var = auth_header_cfg.get("env_var", "")
+                header_name = auth_header_cfg.get("header", "")
+                api_key = os.environ.get(env_var, "")
+                if not api_key:
+                    register_url = auth_header_cfg.get("register_url", "")
+                    register_hint = (
+                        f" Register at {register_url} to obtain a key."
+                        if register_url
+                        else ""
+                    )
+                    return {
+                        "status": "error",
+                        "error": (
+                            f"{self.api_name} requires an API key. "
+                            f"Set the {env_var} environment variable.{register_hint}"
+                        ),
+                    }
+                custom_headers[header_name] = api_key
 
             response = request_with_retry(
                 self.session,
