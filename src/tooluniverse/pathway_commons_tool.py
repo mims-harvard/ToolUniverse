@@ -45,7 +45,7 @@ class PathwayCommonsTool(BaseTool):
             params["datasource"] = datasource
 
         try:
-            response = requests.get(url, params=params, timeout=30)
+            response = requests.get(url, params=params, timeout=60)
             response.raise_for_status()
             data = response.json()
 
@@ -86,7 +86,7 @@ class PathwayCommonsTool(BaseTool):
         }
 
         try:
-            response = requests.get(url, params=params, timeout=30)
+            response = requests.get(url, params=params, timeout=60)
             response.raise_for_status()
 
             # SIF is tab separated lines

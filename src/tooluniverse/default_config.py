@@ -845,8 +845,9 @@ default_tool_files = {
     # FEC - US Federal Election Commission candidate and financial data
     # Smithsonian Open Access - 5M+ digitized museum objects from 19 Smithsonian institutions
     # Library of Congress - 21M+ digitized historical items (photos, maps, manuscripts)
-    # SoilGrids - global soil property predictions at any location (ISRIC)
-    "soilgrids": os.path.join(current_dir, "data", "soilgrids_tools.json"),
+    # SoilGrids REST API officially paused by ISRIC (no restoration timeline)
+    # Archived at: src/tooluniverse/data/broken_apis/soilgrids_tools.json
+    # "soilgrids": os.path.join(current_dir, "data", "soilgrids_tools.json"),
     # US Treasury Fiscal Data - national debt, exchange rates, interest rates, debt breakdown
     # Chronicling America - historic US newspaper search (LOC, 1777-1963)
     # GBIF Extended - species detail by key and species name autocomplete

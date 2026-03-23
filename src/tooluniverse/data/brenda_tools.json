@@ -115,8 +115,12 @@
   },
   {
     "name": "BRENDA_get_inhibitors",
-    "description": "Get enzyme inhibitor data from BRENDA via SPARQL endpoint. Returns Ki (inhibition constant) values in mM with inhibitor names and organisms. Lower Ki means more potent inhibition. No authentication required.",
+    "description": "Get enzyme inhibitor data from BRENDA. Returns inhibitor names and Ki (inhibition constant) values in mM with organism information. Lower Ki means more potent inhibition. Requires free BRENDA account (register at brenda-enzymes.org/register.php).",
     "type": "BRENDATool",
+    "required_api_keys": [
+      "BRENDA_EMAIL",
+      "BRENDA_PASSWORD"
+    ],
     "parameter": {
       "type": "object",
       "properties": {

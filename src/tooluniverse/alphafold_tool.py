@@ -99,6 +99,13 @@ class AlphaFoldRESTTool(BaseTool):
             except Exception:
                 pass  # Fall through to generic error
             return {"error": "Not found", "endpoint": url}
+        if resp.status_code == 500:
+            return {
+                "error": "AlphaFold EBI API is temporarily unavailable (HTTP 500). "
+                "Try again later or download structures directly from "
+                "https://alphafold.ebi.ac.uk/download or via PDB.",
+                "endpoint": url,
+            }
         if resp.status_code != 200:
             return {
                 "error": f"AlphaFold API returned {resp.status_code}",

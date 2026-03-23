@@ -134,6 +134,15 @@ class DeepGOTool(BaseTool):
         except requests.exceptions.Timeout:
             return {"status": "error", "error": "Request timed out after 120s"}
         except requests.exceptions.HTTPError as e:
+            body = e.response.text or ""
+            if e.response.status_code == 500 and (
+                "No space left on device" in body or "OperationalError" in body
+            ):
+                return {
+                    "status": "error",
+                    "error": "DeepGO server is temporarily unavailable (disk full). "
+                    "Try again later at https://deepgo.cbrc.kaust.edu.sa/deepgo/",
+                }
             return {"status": "error", "error": f"HTTP error: {e.response.status_code}"}
         except requests.exceptions.RequestException as e:
             return {"status": "error", "error": f"Request failed: {str(e)}"}
