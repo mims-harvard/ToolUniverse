@@ -545,23 +545,26 @@ class GWASSNPsForGene(GWASRESTTool):
 
     def __init__(self, tool_config):
         super().__init__(tool_config)
-        self.endpoint = "/v2/single-nucleotide-polymorphisms"
+        # Feature-83B-001: v2 /single-nucleotide-polymorphisms?mapped_gene= returns
+        # HTTP 500 for all gene queries. The v1 endpoint
+        # /singleNucleotidePolymorphisms/search/findByGene?geneName= works correctly.
+        self.endpoint = "/singleNucleotidePolymorphisms/search/findByGene"
 
     def run(self, arguments: Dict[str, Any]) -> Dict[str, Any]:
         """Get SNPs for a gene."""
-        if "mapped_gene" not in arguments:
+        gene = arguments.get("mapped_gene") or arguments.get("gene")
+        if not gene:
             return {"error": "mapped_gene is required"}
 
         params = {
-            "mapped_gene": arguments["mapped_gene"],
-            # Feature-83B-001: default was 10000 causing consistent timeouts;
-            # use 50 so the request completes within the 60s timeout.
+            "geneName": gene,
             "size": arguments.get("size", 50),
             "page": arguments.get("page", 0),
         }
 
         data = self._make_request(self.endpoint, params)
-        return self._extract_embedded_data(data, "snps")
+        # v1 endpoint returns key "singleNucleotidePolymorphisms", not "snps"
+        return self._extract_embedded_data(data, "singleNucleotidePolymorphisms")
 
 
 @register_tool("GWASAssociationsForStudy")
