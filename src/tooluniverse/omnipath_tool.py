@@ -331,14 +331,10 @@ class OmniPathTool(BaseTool):
             }
 
         databases = arguments.get("databases") or "CellPhoneDB,CellChatDB"
-        genesymbols = arguments.get("genesymbols")
-        if genesymbols is None:
-            genesymbols = True
 
         params = {
             "proteins": proteins,
             "databases": databases,
-            "genesymbols": "yes" if genesymbols else "no",
         }
 
         data = self._make_request("annotations/", params)

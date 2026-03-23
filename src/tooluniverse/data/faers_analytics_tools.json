@@ -2,7 +2,7 @@
   {
     "type": "FAERSAnalyticsTool",
     "name": "FAERS_calculate_disproportionality",
-    "description": "Calculate statistical disproportionality measures (ROR, PRR, IC) with 95% CI for drug-event pairs. Returns signal strength classification. Example: drug='ibuprofen', event='hepatotoxicity' → ROR=2.3 [1.8-2.9]. Use for pharmacovigilance signal detection.",
+    "description": "Calculate statistical disproportionality measures (ROR, PRR, IC) with 95% CI for drug-event pairs. Returns signal strength classification. Example: drug='ibuprofen', event='hepatotoxicity' \u2192 ROR=2.3 [1.8-2.9]. Use for pharmacovigilance signal detection.",
     "parameter": {
       "type": "object",
       "required": [
@@ -25,40 +25,7 @@
       }
     },
     "return_schema": {
-      "type": "object",
-      "properties": {
-        "status": {
-          "type": "string",
-          "enum": [
-            "success",
-            "error"
-          ]
-        },
-        "drug_name": {
-          "type": "string"
-        },
-        "adverse_event": {
-          "type": "string"
-        },
-        "contingency_table": {
-          "type": "object"
-        },
-        "metrics": {
-          "type": "object"
-        },
-        "signal_detection": {
-          "type": "object"
-        },
-        "note": {
-          "type": "string"
-        },
-        "error": {
-          "type": "string"
-        }
-      },
-      "required": [
-        "status"
-      ]
+      "type": "object"
     },
     "test_examples": [
       {
@@ -70,7 +37,7 @@
   {
     "type": "FAERSAnalyticsTool",
     "name": "FAERS_stratify_by_demographics",
-    "description": "Stratify adverse event reports by demographics (sex, age group, country). Returns counts and percentages by demographic group. Example: ibuprofen + GI bleeding stratified by sex → Female: 60%, Male: 40%. Use for subpopulation risk assessment.",
+    "description": "Stratify adverse event reports by demographics (sex, age group, country). Returns counts and percentages by demographic group. Example: ibuprofen + GI bleeding stratified by sex \u2192 Female: 60%, Male: 40%. Use for subpopulation risk assessment.",
     "parameter": {
       "type": "object",
       "required": [
@@ -103,37 +70,7 @@
       }
     },
     "return_schema": {
-      "type": "object",
-      "properties": {
-        "status": {
-          "type": "string",
-          "enum": [
-            "success",
-            "error"
-          ]
-        },
-        "drug_name": {
-          "type": "string"
-        },
-        "adverse_event": {
-          "type": "string"
-        },
-        "stratified_by": {
-          "type": "string"
-        },
-        "total_reports": {
-          "type": "integer"
-        },
-        "stratification": {
-          "type": "array"
-        },
-        "error": {
-          "type": "string"
-        }
-      },
-      "required": [
-        "status"
-      ]
+      "type": "object"
     },
     "test_examples": [
       {
@@ -146,7 +83,7 @@
   {
     "type": "FAERSAnalyticsTool",
     "name": "FAERS_filter_serious_events",
-    "description": "Filter for serious adverse events (death, hospitalization, disability, life-threatening). Returns top reactions meeting seriousness criteria. Example: fulvestrant serious events → Death: 150 cases, Hospitalization: 500 cases. Use for risk-benefit assessment.",
+    "description": "Filter for serious adverse events (death, hospitalization, disability, life-threatening). Returns top reactions meeting seriousness criteria. Example: fulvestrant serious events \u2192 Death: 150 cases, Hospitalization: 500 cases. Use for risk-benefit assessment.",
     "parameter": {
       "type": "object",
       "required": [
@@ -176,37 +113,7 @@
       }
     },
     "return_schema": {
-      "type": "object",
-      "properties": {
-        "status": {
-          "type": "string",
-          "enum": [
-            "success",
-            "error"
-          ]
-        },
-        "drug_name": {
-          "type": "string"
-        },
-        "seriousness_type": {
-          "type": "string"
-        },
-        "total_serious_events": {
-          "type": "integer"
-        },
-        "top_serious_reactions": {
-          "type": "array"
-        },
-        "note": {
-          "type": "string"
-        },
-        "error": {
-          "type": "string"
-        }
-      },
-      "required": [
-        "status"
-      ]
+      "type": "object"
     },
     "test_examples": [
       {
@@ -246,37 +153,7 @@
       }
     },
     "return_schema": {
-      "type": "object",
-      "properties": {
-        "status": {
-          "type": "string",
-          "enum": [
-            "success",
-            "error"
-          ]
-        },
-        "adverse_event": {
-          "type": "string"
-        },
-        "drug1": {
-          "type": "object"
-        },
-        "drug2": {
-          "type": "object"
-        },
-        "comparison": {
-          "type": "string"
-        },
-        "note": {
-          "type": "string"
-        },
-        "error": {
-          "type": "string"
-        }
-      },
-      "required": [
-        "status"
-      ]
+      "type": "object"
     },
     "test_examples": [
       {
@@ -289,7 +166,7 @@
   {
     "type": "FAERSAnalyticsTool",
     "name": "FAERS_analyze_temporal_trends",
-    "description": "Analyze temporal trends in adverse event reporting by year. Returns yearly counts and trend direction (increasing/decreasing/stable). Example: ibuprofen GI bleeding reports 2015-2025 → +25% increase. Use for signal evolution monitoring.",
+    "description": "Analyze temporal trends in adverse event reporting by year. Returns yearly counts and trend direction (increasing/decreasing/stable). Example: ibuprofen GI bleeding reports 2015-2025 \u2192 +25% increase. Use for signal evolution monitoring.",
     "parameter": {
       "type": "object",
       "required": [
@@ -311,37 +188,7 @@
       }
     },
     "return_schema": {
-      "type": "object",
-      "properties": {
-        "status": {
-          "type": "string",
-          "enum": [
-            "success",
-            "error"
-          ]
-        },
-        "drug_name": {
-          "type": "string"
-        },
-        "adverse_event": {
-          "type": "string"
-        },
-        "temporal_data": {
-          "type": "array"
-        },
-        "trend_analysis": {
-          "type": "object"
-        },
-        "note": {
-          "type": "string"
-        },
-        "error": {
-          "type": "string"
-        }
-      },
-      "required": [
-        "status"
-      ]
+      "type": "object"
     },
     "test_examples": [
       {
@@ -371,34 +218,7 @@
       }
     },
     "return_schema": {
-      "type": "object",
-      "properties": {
-        "status": {
-          "type": "string",
-          "enum": [
-            "success",
-            "error"
-          ]
-        },
-        "drug_name": {
-          "type": "string"
-        },
-        "meddra_hierarchy": {
-          "type": "object"
-        },
-        "note": {
-          "type": "string"
-        },
-        "recommendation": {
-          "type": "string"
-        },
-        "error": {
-          "type": "string"
-        }
-      },
-      "required": [
-        "status"
-      ]
+      "type": "object"
     },
     "test_examples": [
       {

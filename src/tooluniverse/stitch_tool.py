@@ -8,16 +8,14 @@ chemicals and proteins, combining data from various sources.
 API Documentation: http://stitch.embl.de/
 """
 
-import warnings
 import requests
-import urllib3
 from typing import Dict, Any
 from .base_tool import BaseTool
 from .tool_registry import register_tool
 
 # Base URL for STITCH REST API (chemical-protein interactions)
-# NOTE: stitch.embl.de may have SSL certificate issues on some systems; use verify=False
-STITCH_BASE_URL = "https://stitch.embl.de/api"
+# NOTE: stitch.embl.de API endpoints have moved to string-db.org (same API format)
+STITCH_BASE_URL = "https://string-db.org/api"
 
 
 @register_tool("STITCHTool")
@@ -78,16 +76,11 @@ class STITCHTool(BaseTool):
         }
 
         try:
-            with warnings.catch_warnings():
-                warnings.simplefilter(
-                    "ignore", urllib3.exceptions.InsecureRequestWarning
-                )
-                response = requests.get(
-                    f"{STITCH_BASE_URL}/json/interactions",
-                    params=params,
-                    timeout=self.timeout,
-                    verify=False,
-                )
+            response = requests.get(
+                f"{STITCH_BASE_URL}/json/interactions",
+                params=params,
+                timeout=self.timeout,
+            )
             if response.status_code == 404:
                 return {
                     "error": f"No interactions found for {identifiers} in STITCH. "
@@ -120,16 +113,11 @@ class STITCHTool(BaseTool):
         }
 
         try:
-            with warnings.catch_warnings():
-                warnings.simplefilter(
-                    "ignore", urllib3.exceptions.InsecureRequestWarning
-                )
-                response = requests.get(
-                    f"{STITCH_BASE_URL}/json/network",
-                    params=params,
-                    timeout=self.timeout,
-                    verify=False,
-                )
+            response = requests.get(
+                f"{STITCH_BASE_URL}/json/network",
+                params=params,
+                timeout=self.timeout,
+            )
             if response.status_code == 404:
                 return {
                     "error": f"No interactors found for {identifiers} in STITCH. "
@@ -154,16 +142,11 @@ class STITCHTool(BaseTool):
         params = {"identifier": identifier, "species": arguments.get("species", 9606)}
 
         try:
-            with warnings.catch_warnings():
-                warnings.simplefilter(
-                    "ignore", urllib3.exceptions.InsecureRequestWarning
-                )
-                response = requests.get(
-                    f"{STITCH_BASE_URL}/json/resolve",
-                    params=params,
-                    timeout=self.timeout,
-                    verify=False,
-                )
+            response = requests.get(
+                f"{STITCH_BASE_URL}/json/resolve",
+                params=params,
+                timeout=self.timeout,
+            )
             if response.status_code == 404:
                 return {
                     "error": f"Identifier '{identifier}' not found in STITCH. "

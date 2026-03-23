@@ -32,10 +32,30 @@ class ReMapRESTTool(BaseTool):
             )
 
             response = self.session.get(url, timeout=self.timeout)
+            # ENCODE returns HTTP 404 when the search yields zero results;
+            # treat that as an empty result set rather than a hard error.
+            if response.status_code == 404:
+                resp_data = {}
+                try:
+                    resp_data = response.json()
+                except Exception:
+                    pass
+                raw_experiments = resp_data.get("@graph", [])
+                return {
+                    "status": "success",
+                    "data": {
+                        "experiments": [],
+                        "count": 0,
+                        "gene_name": gene_name,
+                        "cell_type": cell_type,
+                        "url": url,
+                        "note": "No experiments found for this gene/cell-type combination.",
+                    },
+                }
             response.raise_for_status()
-            data = response.json()
+            resp_data = response.json()
 
-            raw_experiments = data.get("@graph", [])
+            raw_experiments = resp_data.get("@graph", [])
             experiments = [
                 {
                     "accession": e.get("accession"),
@@ -50,11 +70,13 @@ class ReMapRESTTool(BaseTool):
 
             return {
                 "status": "success",
-                "experiments": experiments,
-                "count": len(experiments),
-                "gene_name": gene_name,
-                "cell_type": cell_type,
-                "url": url,
+                "data": {
+                    "experiments": experiments,
+                    "count": len(experiments),
+                    "gene_name": gene_name,
+                    "cell_type": cell_type,
+                    "url": url,
+                },
             }
         except Exception as e:
             return {"status": "error", "error": f"ReMap API error: {str(e)}"}

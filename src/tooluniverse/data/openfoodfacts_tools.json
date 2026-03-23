@@ -35,6 +35,9 @@
         "action": "process",
         "json": "1",
         "fields": "product_name,brands,nutrition_grades,nutriments,categories,ingredients_text,image_url,countries_tags"
+      },
+      "headers": {
+        "User-Agent": "ToolUniverse/1.0 (research; https://github.com/mims-harvard/ToolUniverse)"
       }
     },
     "type": "BaseRESTTool",
@@ -59,7 +62,7 @@
           "description": "Food product search results",
           "properties": {
             "count": {
-              "type": "integer",
+              "type": ["integer", "string"],
               "description": "Total number of matching products"
             },
             "page": {
@@ -191,7 +194,10 @@
     },
     "fields": {
       "endpoint": "https://world.openfoodfacts.org/api/v0/product/{barcode}.json",
-      "params": {}
+      "params": {},
+      "headers": {
+        "User-Agent": "ToolUniverse/1.0 (research; https://github.com/mims-harvard/ToolUniverse)"
+      }
     },
     "type": "BaseRESTTool",
     "test_examples": [

@@ -232,71 +232,54 @@
       "required": []
     },
     "return_schema": {
-      "oneOf": [
-        {
-          "type": "object",
-          "properties": {
-            "status": {
-              "type": "string"
-            },
-            "data": {
-              "type": "array",
-              "items": {
-                "type": "object",
-                "properties": {
-                  "idDrug": {
-                    "type": "integer",
-                    "description": "SYNERGxDB drug ID"
-                  },
-                  "drug_name": {
-                    "type": "string",
-                    "description": "Drug name"
-                  },
-                  "idPubChem": {
-                    "type": [
-                      "string",
-                      "null"
-                    ],
-                    "description": "PubChem compound ID"
-                  },
-                  "idDrugBank": {
-                    "type": [
-                      "string",
-                      "null"
-                    ],
-                    "description": "DrugBank ID"
-                  },
-                  "dataset_names": {
-                    "type": "string",
-                    "description": "Comma-separated dataset names where this drug has been screened"
-                  }
-                }
-              }
-            },
-            "count": {
-              "type": "integer"
-            },
-            "note": {
-              "type": "string",
-              "description": "Coverage note when drug name search returns no results"
-            }
-          }
-        },
-        {
-          "type": "object",
-          "properties": {
-            "status": {
-              "type": "string"
-            },
-            "error": {
-              "type": "string"
-            }
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string"
           },
-          "required": [
-            "error"
-          ]
+          "atcCode": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "idDrugBank": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "idPubChem": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "idDrug": {
+            "type": "integer"
+          },
+          "smiles": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "inchikey": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "dataset_names": {
+            "type": [
+              "string",
+              "null"
+            ]
+          }
         }
-      ]
+      }
     },
     "test_examples": [
       {

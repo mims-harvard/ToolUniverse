@@ -66,7 +66,10 @@
     "output_description": "Returns a list containing all matching genes, each with official name, Ensembl ID, and known synonyms. Use the Ensembl ID for subsequent detailed queries.",
     "test_examples": [
       {
-        "search_query": "machine learning optimization"
+        "search_query": "TP53"
+      },
+      {
+        "search_query": "BRCA1"
       }
     ],
     "return_schema": {

@@ -28,36 +28,48 @@
       "required": ["operation", "smiles"]
     },
     "return_schema": {
-      "type": "object",
-      "properties": {
-        "targets": {
-          "type": "array",
-          "description": "Ranked list of predicted protein targets",
-          "items": {
-            "type": "object",
-            "properties": {
-              "target_name": {"type": "string", "description": "Full protein target name"},
-              "gene_symbol": {"type": "string", "description": "Gene symbol / common name"},
-              "uniprot_id": {"type": "string", "description": "UniProt accession ID"},
-              "chembl_id": {"type": "string", "description": "ChEMBL target ID"},
-              "target_class": {"type": "string", "description": "Target functional class (e.g., Oxidoreductase, Kinase, GPCR)"},
-              "probability": {"type": "number", "description": "Prediction probability score (0-1). Higher means more likely target."},
-              "known_actives_3d": {"type": "integer", "description": "Number of known active compounds found by 3D similarity"},
-              "known_actives_2d": {"type": "integer", "description": "Number of known active compounds found by 2D similarity"}
-            }
-          }
-        },
-        "query": {
+      "oneOf": [
+        {
           "type": "object",
+          "required": ["targets", "query", "total_targets"],
           "properties": {
-            "smiles": {"type": "string"},
-            "organism": {"type": "string"},
-            "job_id": {"type": ["string", "null"]}
+            "targets": {
+              "type": "array",
+              "description": "Ranked list of predicted protein targets",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "target_name": {"type": "string", "description": "Full protein target name"},
+                  "gene_symbol": {"type": "string", "description": "Gene symbol / common name"},
+                  "uniprot_id": {"type": "string", "description": "UniProt accession ID"},
+                  "chembl_id": {"type": "string", "description": "ChEMBL target ID"},
+                  "target_class": {"type": "string", "description": "Target functional class (e.g., Oxidoreductase, Kinase, GPCR)"},
+                  "probability": {"type": "number", "description": "Prediction probability score (0-1). Higher means more likely target."},
+                  "known_actives_3d": {"type": "integer", "description": "Number of known active compounds found by 3D similarity"},
+                  "known_actives_2d": {"type": "integer", "description": "Number of known active compounds found by 2D similarity"}
+                }
+              }
+            },
+            "query": {
+              "type": "object",
+              "properties": {
+                "smiles": {"type": "string"},
+                "organism": {"type": "string"},
+                "job_id": {"type": ["string", "null"]}
+              }
+            },
+            "total_targets": {"type": "integer", "description": "Total number of predicted targets returned"},
+            "result_url": {"type": "string", "description": "URL to view results in browser"}
           }
         },
-        "total_targets": {"type": "integer", "description": "Total number of predicted targets returned"},
-        "result_url": {"type": "string", "description": "URL to view results in browser"}
-      }
+        {
+          "type": "object",
+          "required": ["error"],
+          "properties": {
+            "error": {"type": "string"}
+          }
+        }
+      ]
     },
     "test_examples": [
       {
@@ -84,22 +96,34 @@
       "required": ["operation"]
     },
     "return_schema": {
-      "type": "object",
-      "properties": {
-        "organisms": {
-          "type": "array",
-          "items": {
-            "type": "object",
-            "properties": {
-              "value": {"type": "string", "description": "Parameter value to use in predict (e.g., Homo_sapiens)"},
-              "display_name": {"type": "string", "description": "Scientific name"},
-              "common_name": {"type": "string", "description": "Common name"},
-              "taxonomy_id": {"type": "integer", "description": "NCBI taxonomy ID"}
-            }
+      "oneOf": [
+        {
+          "type": "object",
+          "required": ["organisms", "total"],
+          "properties": {
+            "organisms": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "value": {"type": "string", "description": "Parameter value to use in predict (e.g., Homo_sapiens)"},
+                  "display_name": {"type": "string", "description": "Scientific name"},
+                  "common_name": {"type": "string", "description": "Common name"},
+                  "taxonomy_id": {"type": "integer", "description": "NCBI taxonomy ID"}
+                }
+              }
+            },
+            "total": {"type": "integer"}
           }
         },
-        "total": {"type": "integer"}
-      }
+        {
+          "type": "object",
+          "required": ["error"],
+          "properties": {
+            "error": {"type": "string"}
+          }
+        }
+      ]
     },
     "test_examples": [
       {

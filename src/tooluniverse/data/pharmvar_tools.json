@@ -7,8 +7,14 @@
       "properties": {}
     },
     "fields": {
-      "endpoint": "https://www.pharmvar.org/api-service/genes"
+      "endpoint": "https://www.pharmvar.org/api-service/genes",
+      "auth_header": {
+        "env_var": "PHARMVAR_API_KEY",
+        "header": "x-api-key",
+        "register_url": "https://www.pharmvar.org/"
+      }
     },
+    "required_api_keys": ["PHARMVAR_API_KEY"],
     "type": "BaseRESTTool",
     "test_examples": [
       {}
@@ -66,8 +72,14 @@
       ]
     },
     "fields": {
-      "endpoint": "https://www.pharmvar.org/api-service/alleles"
+      "endpoint": "https://www.pharmvar.org/api-service/alleles",
+      "auth_header": {
+        "env_var": "PHARMVAR_API_KEY",
+        "header": "x-api-key",
+        "register_url": "https://www.pharmvar.org/"
+      }
     },
+    "required_api_keys": ["PHARMVAR_API_KEY"],
     "type": "BaseRESTTool",
     "test_examples": [
       {

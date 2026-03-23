@@ -19,51 +19,68 @@
           "description": "Compound name (e.g., glucose, L-alanine, caffeine)"
         },
         "pubchem_cid": {
-          "type": ["integer", "string"],
+          "type": [
+            "integer",
+            "string"
+          ],
           "description": "PubChem CID (e.g., 5793)"
         }
       }
     },
     "return_schema": {
-      "oneOf": [
-        {
-          "type": "object",
-          "properties": {
-            "status": {"type": "string", "const": "success"},
-            "data": {
-              "type": "object",
-              "properties": {
-                "pubchem_cid": {"type": "integer"},
-                "name": {"type": ["string", "null"]},
-                "iupac_name": {"type": ["string", "null"]},
-                "formula": {"type": ["string", "null"]},
-                "molecular_weight": {"type": ["string", "null"]},
-                "smiles": {"type": ["string", "null"]},
-                "inchikey": {"type": ["string", "null"]}
-              }
-            },
-            "metadata": {
-              "type": "object",
-              "properties": {
-                "source": {"type": "string"},
-                "pubchem_url": {"type": "string"}
-              }
-            }
-          }
+      "type": "object",
+      "properties": {
+        "pubchem_cid": {
+          "type": "integer"
         },
-        {
-          "type": "object",
-          "properties": {
-            "status": {"type": "string", "const": "error"},
-            "error": {"type": "string"}
-          }
+        "name": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "iupac_name": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "formula": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "molecular_weight": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "smiles": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "inchikey": {
+          "type": [
+            "string",
+            "null"
+          ]
         }
-      ]
+      }
     },
     "test_examples": [
-      {"hmdb_id": "HMDB0000122"},
-      {"compound_name": "caffeine"},
-      {"pubchem_cid": 5793}
+      {
+        "hmdb_id": "HMDB0000122"
+      },
+      {
+        "compound_name": "caffeine"
+      },
+      {
+        "pubchem_cid": 5793
+      }
     ]
   },
   {
@@ -87,54 +104,32 @@
           "default": "name"
         }
       },
-      "required": ["query"]
-    },
-    "return_schema": {
-      "oneOf": [
-        {
-          "type": "object",
-          "properties": {
-            "status": {"type": "string", "const": "success"},
-            "data": {
-              "type": "object",
-              "properties": {
-                "query": {"type": "string"},
-                "results": {
-                  "type": "array",
-                  "items": {
-                    "type": "object",
-                    "properties": {
-                      "pubchem_cid": {"type": "integer"},
-                      "name": {"type": ["string", "null"]},
-                      "formula": {"type": ["string", "null"]},
-                      "molecular_weight": {"type": ["string", "null"]},
-                      "smiles": {"type": ["string", "null"]}
-                    }
-                  }
-                },
-                "count": {"type": "integer"}
-              }
-            },
-            "metadata": {
-              "type": "object",
-              "properties": {
-                "source": {"type": "string"}
-              }
-            }
-          }
-        },
-        {
-          "type": "object",
-          "properties": {
-            "status": {"type": "string", "const": "error"},
-            "error": {"type": "string"}
-          }
-        }
+      "required": [
+        "query"
       ]
     },
+    "return_schema": {
+      "type": "object",
+      "properties": {
+        "query": {
+          "type": "string"
+        },
+        "results": {
+          "type": "array"
+        },
+        "count": {
+          "type": "integer"
+        }
+      }
+    },
     "test_examples": [
-      {"query": "glucose"},
-      {"query": "C6H12O6", "search_type": "formula"}
+      {
+        "query": "glucose"
+      },
+      {
+        "query": "C6H12O6",
+        "search_type": "formula"
+      }
     ]
   },
   {
@@ -157,7 +152,10 @@
           "description": "Compound name (e.g., glucose, cholesterol)"
         },
         "pubchem_cid": {
-          "type": ["integer", "string"],
+          "type": [
+            "integer",
+            "string"
+          ],
           "description": "PubChem CID (e.g., 5793)"
         },
         "limit": {
@@ -168,55 +166,37 @@
       }
     },
     "return_schema": {
-      "oneOf": [
-        {
-          "type": "object",
-          "properties": {
-            "status": {"type": "string", "const": "success"},
-            "data": {
-              "type": "object",
-              "properties": {
-                "identifier": {"type": "string"},
-                "compound_name": {"type": "string"},
-                "pubchem_cid": {"type": "integer"},
-                "ctd_query_term": {"type": "string"},
-                "disease_count": {"type": "integer"},
-                "diseases": {
-                  "type": "array",
-                  "items": {
-                    "type": "object",
-                    "properties": {
-                      "disease_name": {"type": ["string", "null"]},
-                      "disease_id": {"type": ["string", "null"]},
-                      "disease_categories": {"type": ["string", "null"]},
-                      "direct_evidence": {"type": ["string", "null"]},
-                      "pubmed_ids": {"type": "array", "items": {"type": "string"}}
-                    }
-                  }
-                }
-              }
-            },
-            "metadata": {
-              "type": "object",
-              "properties": {
-                "source": {"type": "string"},
-                "pubchem_url": {"type": "string"}
-              }
-            }
-          }
+      "type": "object",
+      "properties": {
+        "identifier": {
+          "type": "string"
         },
-        {
-          "type": "object",
-          "properties": {
-            "status": {"type": "string", "const": "error"},
-            "error": {"type": "string"}
-          }
+        "compound_name": {
+          "type": "string"
+        },
+        "pubchem_cid": {
+          "type": "integer"
+        },
+        "ctd_query_term": {
+          "type": "string"
+        },
+        "disease_count": {
+          "type": "integer"
+        },
+        "diseases": {
+          "type": "array"
         }
-      ]
+      }
     },
     "test_examples": [
-      {"hmdb_id": "HMDB0000122", "limit": 5},
-      {"compound_name": "cholesterol", "limit": 10}
+      {
+        "hmdb_id": "HMDB0000122",
+        "limit": 5
+      },
+      {
+        "compound_name": "cholesterol",
+        "limit": 10
+      }
     ]
   }
 ]

@@ -32,41 +32,40 @@
       "return_format": "JSON"
     },
     "return_schema": {
-      "type": "object",
-      "properties": {
-        "experiments": {
-          "type": "array",
-          "items": {
-            "type": "object",
-            "properties": {
-              "accession": {
-                "type": "string"
-              },
-              "assay_title": {
-                "type": "string"
-              },
-              "target": {
-                "type": "object"
-              },
-              "biosample_ontology": {
-                "type": "object"
-              },
-              "description": {
-                "type": "string"
+      "oneOf": [
+        {
+          "type": "object",
+          "required": ["experiments", "count", "gene_name", "cell_type"],
+          "properties": {
+            "experiments": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "accession": {"type": "string"},
+                  "assay_title": {"type": "string"},
+                  "target": {"type": ["object", "null"]},
+                  "biosample_ontology": {"type": ["object", "null"]},
+                  "description": {"type": ["string", "null"]},
+                  "status": {"type": ["string", "null"]}
+                }
               }
-            }
+            },
+            "gene_name": {"type": "string"},
+            "cell_type": {"type": "string"},
+            "count": {"type": "integer"},
+            "url": {"type": "string"},
+            "note": {"type": "string"}
           }
         },
-        "gene_name": {
-          "type": "string"
-        },
-        "cell_type": {
-          "type": "string"
-        },
-        "count": {
-          "type": "integer"
+        {
+          "type": "object",
+          "required": ["error"],
+          "properties": {
+            "error": {"type": "string"}
+          }
         }
-      }
+      ]
     },
     "test_examples": [
       {
@@ -76,7 +75,7 @@
       },
       {
         "gene_name": "TP53",
-        "cell_type": "K562",
+        "cell_type": "HepG2",
         "limit": 3
       },
       {

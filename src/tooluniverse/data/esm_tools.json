@@ -2,8 +2,12 @@
   {
     "name": "ESM_get_protein_embedding",
     "type": "ESMTool",
-    "required_packages": ["esm"],
-    "required_api_keys": ["ESM_API_KEY"],
+    "required_packages": [
+      "esm"
+    ],
+    "required_api_keys": [
+      "ESM_API_KEY"
+    ],
     "description": "Get protein sequence embeddings from EvolutionaryScale ESMC (ESM Cambrian) models via the Forge API. Returns a mean-pooled embedding vector (320-dim for esmc-300m, 1152-dim for esmc-600m) representing the entire protein, and optionally per-residue embeddings. ESMC is a fast, high-quality protein language model suitable for downstream tasks: similarity search, clustering, property prediction. Prerequisites: pip install esm; set ESM_API_KEY environment variable (token from https://forge.evolutionaryscale.ai). Use for: encoding protein sequences for ML, computing protein-protein similarity, featurizing sequences.",
     "parameter": {
       "type": "object",
@@ -11,7 +15,9 @@
         "operation": {
           "type": "string",
           "description": "Operation type",
-          "enum": ["get_protein_embedding"],
+          "enum": [
+            "get_protein_embedding"
+          ],
           "default": "get_protein_embedding"
         },
         "sequence": {
@@ -21,7 +27,10 @@
         "model": {
           "type": "string",
           "description": "ESMC model to use. 'esmc-300m-2024-12' (faster, 300M params) or 'esmc-600m-2024-12' (more accurate, 600M params).",
-          "enum": ["esmc-300m-2024-12", "esmc-600m-2024-12"],
+          "enum": [
+            "esmc-300m-2024-12",
+            "esmc-600m-2024-12"
+          ],
           "default": "esmc-300m-2024-12"
         },
         "return_per_residue": {
@@ -30,35 +39,70 @@
           "default": false
         }
       },
-      "required": ["operation", "sequence"]
+      "required": [
+        "operation",
+        "sequence"
+      ]
     },
     "return_schema": {
       "oneOf": [
         {
           "type": "object",
           "properties": {
-            "status": {"type": "string", "enum": ["success"]},
-            "model": {"type": "string"},
-            "sequence_length": {"type": "integer"},
-            "embedding_dim": {"type": "integer"},
+            "status": {
+              "type": "string",
+              "enum": [
+                "success"
+              ]
+            },
+            "model": {
+              "type": "string"
+            },
+            "sequence_length": {
+              "type": "integer"
+            },
+            "embedding_dim": {
+              "type": "integer"
+            },
             "mean_embedding": {
               "type": "array",
-              "items": {"type": "number"},
+              "items": {
+                "type": "number"
+              },
               "description": "Mean-pooled embedding vector over all residue positions"
             },
             "per_residue_embeddings": {
               "type": "array",
-              "items": {"type": "array", "items": {"type": "number"}},
+              "items": {
+                "type": "array",
+                "items": {
+                  "type": "number"
+                }
+              },
               "description": "Per-residue embedding matrix (L x D), only present if return_per_residue=true"
             }
-          }
+          },
+          "required": [
+            "status"
+          ]
         },
         {
           "type": "object",
           "properties": {
-            "status": {"type": "string", "enum": ["error"]},
-            "error": {"type": "string"}
-          }
+            "status": {
+              "type": "string",
+              "enum": [
+                "error"
+              ]
+            },
+            "error": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "status",
+            "error"
+          ]
         }
       ]
     },
@@ -73,8 +117,12 @@
   {
     "name": "ESM_generate_protein_sequence",
     "type": "ESMTool",
-    "required_packages": ["esm"],
-    "required_api_keys": ["ESM_API_KEY"],
+    "required_packages": [
+      "esm"
+    ],
+    "required_api_keys": [
+      "ESM_API_KEY"
+    ],
     "description": "Generate or complete a protein sequence using ESM3, EvolutionaryScale's generative protein language model. Provide a prompt_sequence with '_' characters marking positions to generate (masked positions), and ESM3 will fill them in via iterative masked language modeling. Can generate entire sequences from scratch (all '_') or complete partial sequences. Use for: protein engineering, de novo protein design, completing truncated sequences, exploring sequence space around a template. Prerequisites: pip install esm; set ESM_API_KEY (from https://forge.evolutionaryscale.ai). Example: 'MKTAY_____QRQIS' generates 5 residues in the masked region.",
     "parameter": {
       "type": "object",
@@ -82,7 +130,9 @@
         "operation": {
           "type": "string",
           "description": "Operation type",
-          "enum": ["generate_protein_sequence"],
+          "enum": [
+            "generate_protein_sequence"
+          ],
           "default": "generate_protein_sequence"
         },
         "prompt_sequence": {
@@ -92,7 +142,9 @@
         "model": {
           "type": "string",
           "description": "ESM3 model to use for generation.",
-          "enum": ["esm3-open-2024-03"],
+          "enum": [
+            "esm3-open-2024-03"
+          ],
           "default": "esm3-open-2024-03"
         },
         "num_steps": {
@@ -106,28 +158,62 @@
           "default": 1.0
         }
       },
-      "required": ["operation", "prompt_sequence"]
+      "required": [
+        "operation",
+        "prompt_sequence"
+      ]
     },
     "return_schema": {
       "oneOf": [
         {
           "type": "object",
           "properties": {
-            "status": {"type": "string", "enum": ["success"]},
-            "model": {"type": "string"},
-            "prompt_sequence": {"type": "string"},
-            "generated_sequence": {"type": "string"},
-            "sequence_length": {"type": "integer"},
-            "num_steps": {"type": "integer"},
-            "temperature": {"type": "number"}
-          }
+            "status": {
+              "type": "string",
+              "enum": [
+                "success"
+              ]
+            },
+            "model": {
+              "type": "string"
+            },
+            "prompt_sequence": {
+              "type": "string"
+            },
+            "generated_sequence": {
+              "type": "string"
+            },
+            "sequence_length": {
+              "type": "integer"
+            },
+            "num_steps": {
+              "type": "integer"
+            },
+            "temperature": {
+              "type": "number"
+            }
+          },
+          "required": [
+            "status"
+          ]
         },
         {
           "type": "object",
           "properties": {
-            "status": {"type": "string", "enum": ["error"]},
-            "error": {"type": "string"}
-          }
+            "status": {
+              "type": "string",
+              "enum": [
+                "error"
+              ]
+            },
+            "error": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "status",
+            "error"
+          ]
         }
       ]
     },
@@ -144,8 +230,12 @@
   {
     "name": "ESM_fold_protein",
     "type": "ESMTool",
-    "required_packages": ["esm"],
-    "required_api_keys": ["ESM_API_KEY"],
+    "required_packages": [
+      "esm"
+    ],
+    "required_api_keys": [
+      "ESM_API_KEY"
+    ],
     "description": "Predict protein 3D structure from sequence using ESM3, returning pTM (predicted TM-score), per-residue pLDDT confidence scores, and backbone atom coordinates. ESM3 performs structure generation via iterative structure track decoding. pTM > 0.7 indicates confident prediction. Coordinates are (L, 37, 3) backbone atom positions in Angstroms (standard 37-atom representation). Use for: rapid structure prediction, confidence-based filtering, structure-guided design. Prerequisites: pip install esm; set ESM_API_KEY (from https://forge.evolutionaryscale.ai).",
     "parameter": {
       "type": "object",
@@ -153,7 +243,9 @@
         "operation": {
           "type": "string",
           "description": "Operation type",
-          "enum": ["fold_protein"],
+          "enum": [
+            "fold_protein"
+          ],
           "default": "fold_protein"
         },
         "sequence": {
@@ -163,7 +255,9 @@
         "model": {
           "type": "string",
           "description": "ESM3 model to use for structure prediction.",
-          "enum": ["esm3-open-2024-03"],
+          "enum": [
+            "esm3-open-2024-03"
+          ],
           "default": "esm3-open-2024-03"
         },
         "num_steps": {
@@ -172,37 +266,83 @@
           "default": 8
         }
       },
-      "required": ["operation", "sequence"]
+      "required": [
+        "operation",
+        "sequence"
+      ]
     },
     "return_schema": {
       "oneOf": [
         {
           "type": "object",
           "properties": {
-            "status": {"type": "string", "enum": ["success"]},
-            "model": {"type": "string"},
-            "sequence": {"type": "string"},
-            "sequence_length": {"type": "integer"},
-            "pTM_score": {"type": ["number", "null"], "description": "Predicted TM-score (0-1); >0.7 indicates confident prediction"},
+            "status": {
+              "type": "string",
+              "enum": [
+                "success"
+              ]
+            },
+            "model": {
+              "type": "string"
+            },
+            "sequence": {
+              "type": "string"
+            },
+            "sequence_length": {
+              "type": "integer"
+            },
+            "pTM_score": {
+              "type": [
+                "number",
+                "null"
+              ],
+              "description": "Predicted TM-score (0-1); >0.7 indicates confident prediction"
+            },
             "plddt_per_residue": {
-              "type": ["array", "null"],
-              "items": {"type": "number"},
+              "type": [
+                "array",
+                "null"
+              ],
+              "items": {
+                "type": "number"
+              },
               "description": "Per-residue pLDDT confidence scores (0-100)"
             },
             "coordinates_shape": {
-              "type": ["array", "null"],
+              "type": [
+                "array",
+                "null"
+              ],
               "description": "Shape of coordinates tensor [L, 37, 3]"
             },
-            "num_steps": {"type": "integer"},
-            "note": {"type": "string"}
-          }
+            "num_steps": {
+              "type": "integer"
+            },
+            "note": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "status"
+          ]
         },
         {
           "type": "object",
           "properties": {
-            "status": {"type": "string", "enum": ["error"]},
-            "error": {"type": "string"}
-          }
+            "status": {
+              "type": "string",
+              "enum": [
+                "error"
+              ]
+            },
+            "error": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "status",
+            "error"
+          ]
         }
       ]
     },
@@ -218,8 +358,12 @@
   {
     "name": "ESM_score_sequence",
     "type": "ESMTool",
-    "required_packages": ["esm"],
-    "required_api_keys": ["ESM_API_KEY"],
+    "required_packages": [
+      "esm"
+    ],
+    "required_api_keys": [
+      "ESM_API_KEY"
+    ],
     "description": "Score a protein sequence using ESMC logits to compute per-residue log-probabilities and mean pseudo-log-likelihood. Higher (less negative) mean log-probability indicates the sequence is more natural/likely according to the model's learned protein distribution. Use for: evaluating mutant fitness, comparing sequence variants, identifying low-confidence residues. Mean log-probability near 0 is highest confidence; values below -4 suggest unusual or low-quality residues. Prerequisites: pip install esm; set ESM_API_KEY (from https://forge.evolutionaryscale.ai).",
     "parameter": {
       "type": "object",
@@ -227,7 +371,9 @@
         "operation": {
           "type": "string",
           "description": "Operation type",
-          "enum": ["score_sequence"],
+          "enum": [
+            "score_sequence"
+          ],
           "default": "score_sequence"
         },
         "sequence": {
@@ -237,38 +383,74 @@
         "model": {
           "type": "string",
           "description": "ESMC model to use for scoring.",
-          "enum": ["esmc-300m-2024-12", "esmc-600m-2024-12"],
+          "enum": [
+            "esmc-300m-2024-12",
+            "esmc-600m-2024-12"
+          ],
           "default": "esmc-300m-2024-12"
         }
       },
-      "required": ["operation", "sequence"]
+      "required": [
+        "operation",
+        "sequence"
+      ]
     },
     "return_schema": {
       "oneOf": [
         {
           "type": "object",
           "properties": {
-            "status": {"type": "string", "enum": ["success"]},
-            "model": {"type": "string"},
-            "sequence": {"type": "string"},
-            "sequence_length": {"type": "integer"},
+            "status": {
+              "type": "string",
+              "enum": [
+                "success"
+              ]
+            },
+            "model": {
+              "type": "string"
+            },
+            "sequence": {
+              "type": "string"
+            },
+            "sequence_length": {
+              "type": "integer"
+            },
             "mean_log_probability": {
-              "type": ["number", "null"],
+              "type": [
+                "number",
+                "null"
+              ],
               "description": "Mean per-residue log-probability (pseudo-log-likelihood). Higher values indicate more natural sequences."
             },
             "per_residue_log_probabilities": {
               "type": "array",
-              "items": {"type": "number"},
+              "items": {
+                "type": "number"
+              },
               "description": "Per-residue log-probabilities for each amino acid position"
             }
-          }
+          },
+          "required": [
+            "status"
+          ]
         },
         {
           "type": "object",
           "properties": {
-            "status": {"type": "string", "enum": ["error"]},
-            "error": {"type": "string"}
-          }
+            "status": {
+              "type": "string",
+              "enum": [
+                "error"
+              ]
+            },
+            "error": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "status",
+            "error"
+          ]
         }
       ]
     },

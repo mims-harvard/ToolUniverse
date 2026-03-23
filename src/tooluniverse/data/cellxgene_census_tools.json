@@ -13,7 +13,9 @@
         "operation": {
           "type": "string",
           "description": "Operation type",
-          "enum": ["get_census_versions"],
+          "enum": [
+            "get_census_versions"
+          ],
           "default": "get_census_versions"
         }
       },
@@ -24,16 +26,26 @@
         {
           "type": "object",
           "properties": {
-            "status": {"type": "string"},
+            "status": {
+              "type": "string"
+            },
             "versions": {
               "type": "array",
               "description": "List of available Census versions with metadata"
             },
-            "error": {"type": "string"}
+            "error": {
+              "type": "string"
+            }
           },
-          "additionalProperties": true
+          "additionalProperties": true,
+          "required": [
+            "status",
+            "error"
+          ]
         },
-        {"type": "null"}
+        {
+          "type": "null"
+        }
       ]
     },
     "test_examples": [
@@ -56,13 +68,18 @@
         "operation": {
           "type": "string",
           "description": "Operation type",
-          "enum": ["get_obs_metadata"],
+          "enum": [
+            "get_obs_metadata"
+          ],
           "default": "get_obs_metadata"
         },
         "organism": {
           "type": "string",
           "description": "Organism name",
-          "enum": ["Homo sapiens", "Mus musculus"],
+          "enum": [
+            "Homo sapiens",
+            "Mus musculus"
+          ],
           "default": "Homo sapiens"
         },
         "obs_value_filter": {
@@ -71,7 +88,9 @@
         },
         "column_names": {
           "type": "array",
-          "items": {"type": "string"},
+          "items": {
+            "type": "string"
+          },
           "description": "Specific columns to return (default: all columns)"
         },
         "census_version": {
@@ -80,21 +99,43 @@
           "default": "stable"
         }
       },
-      "required": ["operation", "obs_value_filter"]
+      "required": [
+        "operation",
+        "obs_value_filter"
+      ]
     },
     "return_schema": {
-      "type": ["array", "null"],
+      "type": [
+        "array",
+        "null"
+      ],
       "items": {
         "type": "object",
         "properties": {
-          "cell_type": {"type": "string"},
-          "tissue_general": {"type": "string"},
-          "disease": {"type": "string"},
-          "assay": {"type": "string"},
-          "sex": {"type": "string"},
-          "donor_id": {"type": "string"},
-          "dataset_id": {"type": "string"},
-          "soma_joinid": {"type": "integer"}
+          "cell_type": {
+            "type": "string"
+          },
+          "tissue_general": {
+            "type": "string"
+          },
+          "disease": {
+            "type": "string"
+          },
+          "assay": {
+            "type": "string"
+          },
+          "sex": {
+            "type": "string"
+          },
+          "donor_id": {
+            "type": "string"
+          },
+          "dataset_id": {
+            "type": "string"
+          },
+          "soma_joinid": {
+            "type": "integer"
+          }
         },
         "additionalProperties": true
       }
@@ -122,13 +163,18 @@
         "operation": {
           "type": "string",
           "description": "Operation type",
-          "enum": ["get_var_metadata"],
+          "enum": [
+            "get_var_metadata"
+          ],
           "default": "get_var_metadata"
         },
         "organism": {
           "type": "string",
           "description": "Organism name",
-          "enum": ["Homo sapiens", "Mus musculus"],
+          "enum": [
+            "Homo sapiens",
+            "Mus musculus"
+          ],
           "default": "Homo sapiens"
         },
         "var_value_filter": {
@@ -137,7 +183,9 @@
         },
         "column_names": {
           "type": "array",
-          "items": {"type": "string"},
+          "items": {
+            "type": "string"
+          },
           "description": "Specific columns to return (default: all columns)"
         },
         "census_version": {
@@ -146,18 +194,35 @@
           "default": "stable"
         }
       },
-      "required": ["operation"]
+      "required": [
+        "operation"
+      ]
     },
     "return_schema": {
-      "type": ["array", "null"],
+      "type": [
+        "array",
+        "null"
+      ],
       "items": {
         "type": "object",
         "properties": {
-          "feature_id": {"type": "string", "description": "Ensembl gene ID"},
-          "feature_name": {"type": "string", "description": "Gene symbol"},
-          "feature_length": {"type": "integer"},
-          "feature_biotype": {"type": "string"},
-          "soma_joinid": {"type": "integer"}
+          "feature_id": {
+            "type": "string",
+            "description": "Ensembl gene ID"
+          },
+          "feature_name": {
+            "type": "string",
+            "description": "Gene symbol"
+          },
+          "feature_length": {
+            "type": "integer"
+          },
+          "feature_biotype": {
+            "type": "string"
+          },
+          "soma_joinid": {
+            "type": "integer"
+          }
         },
         "additionalProperties": true
       }
@@ -185,13 +250,18 @@
         "operation": {
           "type": "string",
           "description": "Operation type",
-          "enum": ["get_anndata"],
+          "enum": [
+            "get_anndata"
+          ],
           "default": "get_anndata"
         },
         "organism": {
           "type": "string",
           "description": "Organism name",
-          "enum": ["Homo sapiens", "Mus musculus"],
+          "enum": [
+            "Homo sapiens",
+            "Mus musculus"
+          ],
           "default": "Homo sapiens"
         },
         "obs_value_filter": {
@@ -204,12 +274,16 @@
         },
         "obs_column_names": {
           "type": "array",
-          "items": {"type": "string"},
+          "items": {
+            "type": "string"
+          },
           "description": "Cell metadata columns to include"
         },
         "var_column_names": {
           "type": "array",
-          "items": {"type": "string"},
+          "items": {
+            "type": "string"
+          },
           "description": "Gene metadata columns to include"
         },
         "census_version": {
@@ -218,16 +292,31 @@
           "default": "stable"
         }
       },
-      "required": ["operation"]
+      "required": [
+        "operation"
+      ]
     },
     "return_schema": {
-      "type": ["object", "null"],
+      "type": [
+        "object",
+        "null"
+      ],
       "properties": {
-        "n_obs": {"type": "integer"},
-        "n_vars": {"type": "integer"},
-        "obs_columns": {"type": "array"},
-        "var_columns": {"type": "array"},
-        "message": {"type": "string"}
+        "n_obs": {
+          "type": "integer"
+        },
+        "n_vars": {
+          "type": "integer"
+        },
+        "obs_columns": {
+          "type": "array"
+        },
+        "var_columns": {
+          "type": "array"
+        },
+        "message": {
+          "type": "string"
+        }
       },
       "additionalProperties": true
     },
@@ -255,13 +344,18 @@
         "operation": {
           "type": "string",
           "description": "Operation type",
-          "enum": ["get_presence_matrix"],
+          "enum": [
+            "get_presence_matrix"
+          ],
           "default": "get_presence_matrix"
         },
         "organism": {
           "type": "string",
           "description": "Organism name",
-          "enum": ["Homo sapiens", "Mus musculus"],
+          "enum": [
+            "Homo sapiens",
+            "Mus musculus"
+          ],
           "default": "Homo sapiens"
         },
         "census_version": {
@@ -270,24 +364,50 @@
           "default": "stable"
         }
       },
-      "required": ["operation"]
+      "required": [
+        "operation"
+      ]
     },
     "return_schema": {
       "oneOf": [
         {
           "type": "object",
           "properties": {
-            "status": {"type": "string"},
-            "organism": {"type": "string"},
-            "shape": {"type": "array", "items": {"type": "integer"}},
-            "nnz": {"type": "integer", "description": "Number of non-zero entries"},
-            "density": {"type": "number"},
-            "message": {"type": "string"},
-            "error": {"type": "string"}
+            "status": {
+              "type": "string"
+            },
+            "organism": {
+              "type": "string"
+            },
+            "shape": {
+              "type": "array",
+              "items": {
+                "type": "integer"
+              }
+            },
+            "nnz": {
+              "type": "integer",
+              "description": "Number of non-zero entries"
+            },
+            "density": {
+              "type": "number"
+            },
+            "message": {
+              "type": "string"
+            },
+            "error": {
+              "type": "string"
+            }
           },
-          "additionalProperties": true
+          "additionalProperties": true,
+          "required": [
+            "status",
+            "error"
+          ]
         },
-        {"type": "null"}
+        {
+          "type": "null"
+        }
       ]
     },
     "test_examples": [
@@ -312,13 +432,18 @@
         "operation": {
           "type": "string",
           "description": "Operation type",
-          "enum": ["get_embeddings"],
+          "enum": [
+            "get_embeddings"
+          ],
           "default": "get_embeddings"
         },
         "organism": {
           "type": "string",
           "description": "Organism name",
-          "enum": ["Homo sapiens", "Mus musculus"],
+          "enum": [
+            "Homo sapiens",
+            "Mus musculus"
+          ],
           "default": "Homo sapiens"
         },
         "embedding_name": {
@@ -331,17 +456,46 @@
           "default": "stable"
         }
       },
-      "required": ["operation"]
+      "required": [
+        "operation"
+      ]
     },
     "return_schema": {
       "type": "object",
       "properties": {
-        "message": {"type": "string"},
-        "organism": {"type": ["string", "null"]},
-        "embedding_name": {"type": ["string", "null"]},
-        "available": {"type": ["boolean", "null"]},
-        "shape": {"type": ["array", "null"]},
-        "available_embeddings": {"type": ["object", "null"]}
+        "message": {
+          "type": "string"
+        },
+        "organism": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "embedding_name": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "available": {
+          "type": [
+            "boolean",
+            "null"
+          ]
+        },
+        "shape": {
+          "type": [
+            "array",
+            "null"
+          ]
+        },
+        "available_embeddings": {
+          "type": [
+            "object",
+            "null"
+          ]
+        }
       },
       "additionalProperties": true
     },
@@ -367,7 +521,9 @@
         "operation": {
           "type": "string",
           "description": "Operation type",
-          "enum": ["download_h5ad"],
+          "enum": [
+            "download_h5ad"
+          ],
           "default": "download_h5ad"
         },
         "dataset_id": {
@@ -384,15 +540,35 @@
           "default": "stable"
         }
       },
-      "required": ["operation", "dataset_id"]
+      "required": [
+        "operation",
+        "dataset_id"
+      ]
     },
     "return_schema": {
-      "type": ["object", "null"],
+      "type": [
+        "object",
+        "null"
+      ],
       "properties": {
-        "dataset_id": {"type": "string"},
-        "output_path": {"type": ["string", "null"]},
-        "uri": {"type": ["string", "null"]},
-        "message": {"type": "string"}
+        "dataset_id": {
+          "type": "string"
+        },
+        "output_path": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "uri": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "message": {
+          "type": "string"
+        }
       },
       "additionalProperties": true
     },

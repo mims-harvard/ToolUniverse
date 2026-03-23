@@ -22,7 +22,11 @@
         "interaction_type": {
           "type": "string",
           "description": "Type of interaction: 'physical' (protein-protein), 'genetic' (epistasis, synthetic lethality), 'both' (all interactions)",
-          "enum": ["physical", "genetic", "both"],
+          "enum": [
+            "physical",
+            "genetic",
+            "both"
+          ],
           "default": "both"
         },
         "evidence_types": {
@@ -42,12 +46,20 @@
         "throughput": {
           "type": "string",
           "description": "Filter by throughput: 'low' (low-throughput studies), 'high' (high-throughput screens), or leave empty for all",
-          "enum": ["low", "high", ""]
+          "enum": [
+            "low",
+            "high",
+            ""
+          ]
         }
       },
-      "required": ["gene_names"]
+      "required": [
+        "gene_names"
+      ]
     },
-    "required_api_keys": ["BIOGRID_ACCESS_KEY"],
+    "required_api_keys": [
+      "BIOGRID_ACCESS_KEY"
+    ],
     "return_schema": {
       "oneOf": [
         {
@@ -56,19 +68,45 @@
           "additionalProperties": {
             "type": "object",
             "properties": {
-              "BIOGRID_INTERACTION_ID": {"type": "integer"},
-              "ENTREZ_GENE_A": {"type": "string"},
-              "ENTREZ_GENE_B": {"type": "string"},
-              "OFFICIAL_SYMBOL_A": {"type": "string"},
-              "OFFICIAL_SYMBOL_B": {"type": "string"},
-              "SYNONYMS_A": {"type": "string"},
-              "SYNONYMS_B": {"type": "string"},
-              "EXPERIMENTAL_SYSTEM": {"type": "string"},
-              "EXPERIMENTAL_SYSTEM_TYPE": {"type": "string"},
-              "PUBMED_ID": {"type": "integer"},
-              "THROUGHPUT": {"type": "string"},
-              "ORGANISM_A_ID": {"type": "integer"},
-              "ORGANISM_B_ID": {"type": "integer"}
+              "BIOGRID_INTERACTION_ID": {
+                "type": "integer"
+              },
+              "ENTREZ_GENE_A": {
+                "type": "string"
+              },
+              "ENTREZ_GENE_B": {
+                "type": "string"
+              },
+              "OFFICIAL_SYMBOL_A": {
+                "type": "string"
+              },
+              "OFFICIAL_SYMBOL_B": {
+                "type": "string"
+              },
+              "SYNONYMS_A": {
+                "type": "string"
+              },
+              "SYNONYMS_B": {
+                "type": "string"
+              },
+              "EXPERIMENTAL_SYSTEM": {
+                "type": "string"
+              },
+              "EXPERIMENTAL_SYSTEM_TYPE": {
+                "type": "string"
+              },
+              "PUBMED_ID": {
+                "type": "integer"
+              },
+              "THROUGHPUT": {
+                "type": "string"
+              },
+              "ORGANISM_A_ID": {
+                "type": "integer"
+              },
+              "ORGANISM_B_ID": {
+                "type": "integer"
+              }
             }
           }
         },
@@ -76,8 +114,13 @@
           "type": "object",
           "description": "Error response",
           "properties": {
-            "error": {"type": "string"}
-          }
+            "error": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "error"
+          ]
         }
       ]
     },
@@ -87,19 +130,26 @@
     },
     "implementation": {
       "language": "python",
-      "dependencies": ["requests"],
+      "dependencies": [
+        "requests"
+      ],
       "source_file": "biogrid_tool.py",
       "class_name": "BioGRIDRESTTool"
     },
     "test_examples": [
       {
-        "gene_names": ["TP53"],
+        "gene_names": [
+          "TP53"
+        ],
         "organism": "9606",
         "interaction_type": "physical",
         "limit": 10
       },
       {
-        "gene_names": ["BRCA1", "BRCA2"],
+        "gene_names": [
+          "BRCA1",
+          "BRCA2"
+        ],
         "organism": "9606",
         "interaction_type": "both",
         "limit": 50
@@ -109,7 +159,7 @@
   {
     "type": "BioGRIDRESTTool",
     "name": "BioGRID_get_chemical_interactions",
-    "description": "Query experimentally validated interactions for specific genes/proteins from BioGRID, filtered for potential chemical relevance. **Important limitation**: The BioGRID REST API does not support chemical-only queries — you MUST provide gene_names. The chemicalList parameter is unreliable. For drug-protein interaction queries, prefer ChEMBL_search_mechanisms or DGIdb_search_interactions instead. **Prerequisites**: Requires BIOGRID_API_KEY environment variable (free academic API key at https://webservice.thebiogrid.org/).",
+    "description": "Query experimentally validated interactions for specific genes/proteins from BioGRID, filtered for potential chemical relevance. **Important limitation**: The BioGRID REST API does not support chemical-only queries \u2014 you MUST provide gene_names. The chemicalList parameter is unreliable. For drug-protein interaction queries, prefer ChEMBL_search_mechanisms or DGIdb_search_interactions instead. **Prerequisites**: Requires BIOGRID_API_KEY environment variable (free academic API key at https://webservice.thebiogrid.org/).",
     "parameter": {
       "type": "object",
       "properties": {
@@ -151,7 +201,9 @@
       },
       "required": []
     },
-    "required_api_keys": ["BIOGRID_ACCESS_KEY"],
+    "required_api_keys": [
+      "BIOGRID_ACCESS_KEY"
+    ],
     "return_schema": {
       "oneOf": [
         {
@@ -160,13 +212,27 @@
           "additionalProperties": {
             "type": "object",
             "properties": {
-              "BIOGRID_INTERACTION_ID": {"type": "integer"},
-              "OFFICIAL_SYMBOL_A": {"type": "string"},
-              "OFFICIAL_SYMBOL_B": {"type": "string"},
-              "EXPERIMENTAL_SYSTEM": {"type": "string"},
-              "EXPERIMENTAL_SYSTEM_TYPE": {"type": "string"},
-              "PUBMED_ID": {"type": "integer"},
-              "THROUGHPUT": {"type": "string"}
+              "BIOGRID_INTERACTION_ID": {
+                "type": "integer"
+              },
+              "OFFICIAL_SYMBOL_A": {
+                "type": "string"
+              },
+              "OFFICIAL_SYMBOL_B": {
+                "type": "string"
+              },
+              "EXPERIMENTAL_SYSTEM": {
+                "type": "string"
+              },
+              "EXPERIMENTAL_SYSTEM_TYPE": {
+                "type": "string"
+              },
+              "PUBMED_ID": {
+                "type": "integer"
+              },
+              "THROUGHPUT": {
+                "type": "string"
+              }
             }
           }
         },
@@ -174,8 +240,13 @@
           "type": "object",
           "description": "Error response",
           "properties": {
-            "error": {"type": "string"}
-          }
+            "error": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "error"
+          ]
         }
       ]
     },
@@ -185,19 +256,25 @@
     },
     "implementation": {
       "language": "python",
-      "dependencies": ["requests"],
+      "dependencies": [
+        "requests"
+      ],
       "source_file": "biogrid_tool.py",
       "class_name": "BioGRIDRESTTool"
     },
     "test_examples": [
       {
-        "gene_names": ["EGFR"],
+        "gene_names": [
+          "EGFR"
+        ],
         "organism": "9606",
         "limit": 20,
         "include_evidence": true
       },
       {
-        "gene_names": ["ABL1"],
+        "gene_names": [
+          "ABL1"
+        ],
         "organism": "9606",
         "limit": 20
       }
@@ -225,7 +302,11 @@
         "interaction_type": {
           "type": "string",
           "description": "Type of interaction: 'physical', 'genetic', 'both'. Default: 'both'",
-          "enum": ["physical", "genetic", "both"],
+          "enum": [
+            "physical",
+            "genetic",
+            "both"
+          ],
           "default": "both"
         },
         "include_evidence": {
@@ -241,13 +322,23 @@
           "default": 1000
         }
       },
-      "required": ["pubmed_ids"]
+      "required": [
+        "pubmed_ids"
+      ]
     },
-    "required_api_keys": ["BIOGRID_ACCESS_KEY"],
+    "required_api_keys": [
+      "BIOGRID_ACCESS_KEY"
+    ],
     "return_schema": {
       "oneOf": [
-        {"type": "object", "description": "Interaction data from specified publications including genes, interaction types, experimental methods, and evidence details"},
-        {"type": "array", "description": "Empty array when no interactions found for the given PubMed IDs"}
+        {
+          "type": "object",
+          "description": "Interaction data from specified publications including genes, interaction types, experimental methods, and evidence details"
+        },
+        {
+          "type": "array",
+          "description": "Empty array when no interactions found for the given PubMed IDs"
+        }
       ]
     },
     "fields": {
@@ -257,20 +348,27 @@
     },
     "implementation": {
       "language": "python",
-      "dependencies": ["requests"],
+      "dependencies": [
+        "requests"
+      ],
       "source_file": "biogrid_tool.py",
       "class_name": "BioGRIDRESTTool"
     },
     "test_examples": [
       {
-        "pubmed_ids": ["28514442"],
+        "pubmed_ids": [
+          "28514442"
+        ],
         "organism": "9606",
         "interaction_type": "both",
         "include_evidence": true,
         "limit": 100
       },
       {
-        "pubmed_ids": ["23974867", "24870543"],
+        "pubmed_ids": [
+          "23974867",
+          "24870543"
+        ],
         "limit": 200
       }
     ]
@@ -324,9 +422,13 @@
           "default": 500
         }
       },
-      "required": ["gene_names"]
+      "required": [
+        "gene_names"
+      ]
     },
-    "required_api_keys": ["BIOGRID_ACCESS_KEY"],
+    "required_api_keys": [
+      "BIOGRID_ACCESS_KEY"
+    ],
     "return_schema": {
       "oneOf": [
         {
@@ -335,13 +437,27 @@
           "additionalProperties": {
             "type": "object",
             "properties": {
-              "BIOGRID_INTERACTION_ID": {"type": "integer"},
-              "OFFICIAL_SYMBOL_A": {"type": "string"},
-              "OFFICIAL_SYMBOL_B": {"type": "string"},
-              "EXPERIMENTAL_SYSTEM": {"type": "string"},
-              "EXPERIMENTAL_SYSTEM_TYPE": {"type": "string"},
-              "PUBMED_ID": {"type": "integer"},
-              "THROUGHPUT": {"type": "string"}
+              "BIOGRID_INTERACTION_ID": {
+                "type": "integer"
+              },
+              "OFFICIAL_SYMBOL_A": {
+                "type": "string"
+              },
+              "OFFICIAL_SYMBOL_B": {
+                "type": "string"
+              },
+              "EXPERIMENTAL_SYSTEM": {
+                "type": "string"
+              },
+              "EXPERIMENTAL_SYSTEM_TYPE": {
+                "type": "string"
+              },
+              "PUBMED_ID": {
+                "type": "integer"
+              },
+              "THROUGHPUT": {
+                "type": "string"
+              }
             }
           }
         },
@@ -349,8 +465,13 @@
           "type": "object",
           "description": "Error response",
           "properties": {
-            "error": {"type": "string"}
-          }
+            "error": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "error"
+          ]
         }
       ]
     },
@@ -360,23 +481,35 @@
     },
     "implementation": {
       "language": "python",
-      "dependencies": ["requests"],
+      "dependencies": [
+        "requests"
+      ],
       "source_file": "biogrid_tool.py",
       "class_name": "BioGRIDRESTTool"
     },
     "test_examples": [
       {
-        "gene_names": ["TP53"],
+        "gene_names": [
+          "TP53"
+        ],
         "organism": "9606",
-        "ptm_type": ["Phosphorylation"],
+        "ptm_type": [
+          "Phosphorylation"
+        ],
         "include_enzymes": true,
         "include_evidence": true,
         "limit": 50
       },
       {
-        "gene_names": ["AKT1", "ERK1"],
+        "gene_names": [
+          "AKT1",
+          "ERK1"
+        ],
         "organism": "9606",
-        "ptm_type": ["Phosphorylation", "Ubiquitination"],
+        "ptm_type": [
+          "Phosphorylation",
+          "Ubiquitination"
+        ],
         "residue": "S",
         "limit": 100
       }
