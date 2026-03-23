@@ -136,12 +136,33 @@ class IMGTTool(BaseTool):
         gene_type = arguments.get("gene_type", "")
         species = arguments.get("species", "Homo sapiens")
 
-        # Build search guidance
+        # Feature-84A-003: include query in search URL; warn when query is
+        # not an IG/TR gene family (e.g. HLA) — IMGT GENE-DB only covers IG/TR genes.
+        ig_tr_prefixes = ("IG", "TR")
+        query_upper = query.upper()
+        is_ig_tr = not query_upper or any(
+            query_upper.startswith(p) for p in ig_tr_prefixes
+        )
+
+        # Build gene-type URL (query=2 prefix is the IMGT GENE-DB gene-type search)
+        gt_suffix = gene_type if gene_type else ""
+        search_url = (
+            f"{IMGT_BASE_URL}/IMGT_GENE-DB/GENElect"
+            f"?query=2+{gt_suffix}&species={species.replace(' ', '+')}"
+        )
+        # If a keyword query is given, also provide a keyword search URL (query=8)
+        keyword_url = None
+        if query:
+            keyword_url = (
+                f"{IMGT_BASE_URL}/IMGT_GENE-DB/GENElect"
+                f"?query=8+{query.replace(' ', '+')}&species={species.replace(' ', '+')}"
+            )
+
         search_info = {
             "query": query,
             "gene_type": gene_type if gene_type else "all",
             "species": species,
-            "search_url": f"{IMGT_BASE_URL}/IMGT_GENE-DB/GENElect?query=2+{gene_type}&species={species.replace(' ', '+')}",
+            "search_url": keyword_url or search_url,
             "reference_url": f"{IMGT_BASE_URL}/IMGTrepertoire/",
             "gene_types": {
                 "IGHV": "Immunoglobulin heavy chain variable",
@@ -154,12 +175,20 @@ class IMGTTool(BaseTool):
             },
         }
 
+        note = "Use the provided search_url in a browser; IMGT GENE-DB does not expose a public REST API."
+        if not is_ig_tr:
+            note += (
+                f" Note: IMGT GENE-DB covers immunoglobulin and T-cell receptor genes only."
+                f" '{query}' may be an HLA/MHC gene — use IMGT/HLA ({IMGT_BASE_URL}/IMGThla/)"
+                f" or EBI IPD-IMGT/HLA (https://www.ebi.ac.uk/ipd/imgt/hla/) for HLA genes."
+            )
+
         return {
             "status": "success",
             "data": search_info,
             "metadata": {
                 "source": "IMGT",
-                "note": "Use the provided URLs for detailed gene search. IMGT web interface required for full search.",
+                "note": note,
             },
         }
 
