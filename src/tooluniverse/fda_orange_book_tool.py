@@ -79,10 +79,10 @@ class FDAOrangeBookTool(BaseTool):
             if arguments.get("brand_name"):
                 search_terms.append(f'products.brand_name:"{arguments["brand_name"]}"')
 
-            if arguments.get("generic_name"):
-                search_terms.append(
-                    f'products.active_ingredients.name:"{arguments["generic_name"]}"'
-                )
+            # Feature-81B-004: accept drug_name as alias for generic_name
+            generic = arguments.get("generic_name") or arguments.get("drug_name")
+            if generic:
+                search_terms.append(f'products.active_ingredients.name:"{generic}"')
 
             if arguments.get("application_number"):
                 search_terms.append(

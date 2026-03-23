@@ -189,6 +189,17 @@ class GWASAssociationSearch(GWASRESTTool):
         if page is not None:
             params["page"] = page
 
+        # Feature-81B-008: require at least one filter to prevent returning 1M+ results
+        filter_keys = {"efo_id", "efo_trait", "rs_id", "accession_id"}
+        if not filter_keys.intersection(params):
+            return {
+                "status": "error",
+                "error": (
+                    "At least one filter is required: disease_trait, efo_id, "
+                    "efo_trait, rs_id, or accession_id."
+                ),
+            }
+
         data = self._make_request(self.endpoint, params)
         return self._extract_embedded_data(data, "associations")
 
