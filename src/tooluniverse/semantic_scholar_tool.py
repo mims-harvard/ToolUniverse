@@ -147,7 +147,7 @@ class SemanticScholarTool(BaseTool):
                     "error": f"Semantic Scholar API error {response.status_code}",
                     "reason": response.reason,
                     "retryable": retryable,
-                    "suggestion": "Try again later or set SEMANTIC_SCHOLAR_API_KEY for higher limits.",
+                    "suggestion": "Try again later or set SEMANTIC_SCHOLAR_API_KEY for higher limits. Alternatives: ArXiv_search_papers, EuropePMC_search_articles, openalex_literature_search, PubMed_search_articles.",
                 }
             ]
         try:
