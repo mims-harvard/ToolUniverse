@@ -159,6 +159,7 @@ STATIC_LAZY_REGISTRY = {
     "FDADrugAdverseEventTool": "openfda_adv_tool",
     "FDADrugInteractionDetailTool": "openfda_adv_tool",
     "FDADrugLabel": "openfda_tool",
+    "OpenFDADrugEventsTool": "openfda_tool",
     "FDADrugLabelAggregated": "openfda_tool",
     "FDADrugLabelFieldValueTool": "openfda_tool",
     "FDADrugLabelGetDrugGenericNameTool": "openfda_tool",

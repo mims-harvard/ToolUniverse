@@ -202,7 +202,7 @@
   },
   {
     "name": "OpenFDA_search_drug_events",
-    "description": "Search the FDA Adverse Event Reporting System (FAERS) database via openFDA for drug safety reports. Contains 20+ million adverse event reports submitted to the FDA. Use Lucene syntax: 'patient.drug.medicinalproduct:aspirin', 'patient.reaction.reactionmeddrapt:headache'. Returns serious adverse events with outcomes (hospitalization, death), suspect drugs, and reported reactions using MedDRA terminology.",
+    "description": "Search the FDA Adverse Event Reporting System (FAERS) database via openFDA for drug safety reports. Accepts convenience parameters drug_name and reaction (e.g., drug_name='warfarin', reaction='haemorrhage'), or a raw Lucene 'search' string for advanced queries. Contains 20+ million adverse event reports. IMPORTANT: MedDRA reaction terms use British English spelling (e.g., 'haemorrhage' not 'hemorrhage', 'haematoma' not 'hematoma'). Returns serious adverse events with outcomes (hospitalization, death), suspect drugs, and MedDRA reactions.",
     "parameter": {
       "type": "object",
       "properties": {
@@ -223,16 +223,28 @@
             "null"
           ],
           "description": "Field to count by for frequency analysis (e.g., 'patient.reaction.reactionmeddrapt.exact' to get most common reactions)"
+        },
+        "drug_name": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Drug name to search for adverse events (e.g., 'warfarin', 'metformin'). Alternative to writing a full Lucene 'search' query."
+        },
+        "reaction": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "MedDRA adverse reaction term (British spelling: 'haemorrhage' not 'hemorrhage', 'haematoma' not 'hematoma'). Used with drug_name to filter by reaction."
         }
       },
-      "required": [
-        "search"
-      ]
+      "required": []
     },
     "fields": {
       "endpoint": "https://api.fda.gov/drug/event.json"
     },
-    "type": "BaseRESTTool",
+    "type": "OpenFDADrugEventsTool",
     "test_examples": [
       {
         "search": "patient.drug.medicinalproduct:aspirin",

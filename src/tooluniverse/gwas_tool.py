@@ -554,7 +554,9 @@ class GWASSNPsForGene(GWASRESTTool):
 
         params = {
             "mapped_gene": arguments["mapped_gene"],
-            "size": arguments.get("size", 10000),
+            # Feature-83B-001: default was 10000 causing consistent timeouts;
+            # use 50 so the request completes within the 60s timeout.
+            "size": arguments.get("size", 50),
             "page": arguments.get("page", 0),
         }
 

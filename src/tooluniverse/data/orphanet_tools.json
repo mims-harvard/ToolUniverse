@@ -546,12 +546,17 @@
         },
         "gene_name": {
           "type": "string",
-          "description": "Gene symbol (e.g., 'FBN1', 'BRCA1', 'HTT') or gene name keyword (e.g., 'fibrillin', 'huntingtin'). Symbols are auto-resolved."
+          "description": "Gene symbol or name keyword (e.g., 'FBN1', 'BRCA1', 'huntingtin'). Use gene_symbol for standard HGNC symbols. Note: Orphanet uses current HGNC symbols (e.g., 'GBA1' not 'GBA')."
+        },
+        "gene_symbol": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Alternative to gene_name: standard HGNC gene symbol (e.g., 'GBA1', 'FBN1'). Note: Orphanet uses current HGNC symbols (e.g., 'GBA1' not 'GBA')."
         }
       },
-      "required": [
-        "gene_name"
-      ]
+      "required": []
     },
     "return_schema": {
       "type": "object",

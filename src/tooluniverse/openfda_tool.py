@@ -1,8 +1,12 @@
-import requests
-from .base_tool import BaseTool
-from .tool_registry import register_tool
 import copy
 import re
+from typing import Any, Dict
+
+import requests
+
+from .base_rest_tool import BaseRESTTool
+from .base_tool import BaseTool
+from .tool_registry import register_tool
 import os
 import urllib.parse
 
@@ -1774,3 +1778,39 @@ class FDADrugLabelGetDrugNamesByIndicationStats(FDADrugLabelTool):
                 "brand_names": brand_names_list,
             },
         }
+
+
+@register_tool("OpenFDADrugEventsTool")
+class OpenFDADrugEventsTool(BaseRESTTool):
+    """OpenFDA drug adverse event search with convenience parameters.
+
+    Accepts either a raw Lucene 'search' string or the convenience parameters
+    'drug_name' and 'reaction' (which are assembled into a Lucene query).
+
+    Note: MedDRA terms in FAERS use British English spelling (e.g.
+    'haemorrhage' not 'hemorrhage', 'haematoma' not 'hematoma').
+    """
+
+    def run(self, arguments: Dict[str, Any]) -> Dict[str, Any]:
+        args = dict(arguments)
+        drug_name = args.pop("drug_name", None)
+        reaction = args.pop("reaction", None)
+
+        # Feature-83B-003: build Lucene query from convenience params when
+        # 'search' is not provided directly.
+        if not args.get("search"):
+            if not drug_name:
+                return {
+                    "status": "error",
+                    "error": (
+                        "Provide either 'search' (Lucene query) or 'drug_name'. "
+                        "Example: drug_name='warfarin', reaction='haemorrhage'. "
+                        "Note: MedDRA terms use British spelling (haemorrhage, haematoma, etc.)."
+                    ),
+                }
+            parts = [f'patient.drug.medicinalproduct:"{drug_name}"']
+            if reaction:
+                parts.append(f'patient.reaction.reactionmeddrapt:"{reaction}"')
+            args["search"] = " AND ".join(parts)
+
+        return super().run(args)

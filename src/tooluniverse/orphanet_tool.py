@@ -829,7 +829,8 @@ class OrphanetTool(BaseTool):
             arguments: Dict containing:
                 - gene_name: Gene symbol or name keyword (e.g., 'FBN1', 'fibrillin')
         """
-        gene_name = arguments.get("gene_name", "")
+        # Feature-83B-006: accept gene_symbol as alias for gene_name
+        gene_name = arguments.get("gene_name") or arguments.get("gene_symbol", "")
         if not gene_name:
             return {"status": "error", "error": "Missing required parameter: gene_name"}
 
