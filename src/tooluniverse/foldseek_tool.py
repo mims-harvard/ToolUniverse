@@ -246,6 +246,7 @@ class FoldseekTool(BaseRESTTool):
 
         # Sort by e-value (lower is better)
         alignments.sort(key=lambda x: (x.get("e_value") or float("inf")))
+        total_hits = len(alignments)
         alignments = alignments[:max_results]
 
         return {
@@ -253,7 +254,7 @@ class FoldseekTool(BaseRESTTool):
             "data": {
                 "query": query_id,
                 "alignments": alignments,
-                "total_hits": len(alignments),
+                "total_hits": total_hits,
             },
             "metadata": {
                 "database": database,

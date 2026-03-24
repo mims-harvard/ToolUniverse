@@ -68,7 +68,7 @@ class TheraSAbDabTool(BaseTool):
         therapeutics = []
 
         # Simple regex-based parsing for table rows
-        # The page uses a table with columns: INN, Target, Format, Phase, PDB
+        # Actual columns: Therapeutic, Format, Clinical Trial, Est. Status, Target, Year, ...
         table_pattern = r"<tr[^>]*>.*?</tr>"
         row_matches = re.findall(table_pattern, html, re.DOTALL)
 
@@ -92,17 +92,12 @@ class TheraSAbDabTool(BaseTool):
 
                 therapeutic = {
                     "inn_name": clean_html(cells[0]) if len(cells) > 0 else None,
-                    "target": clean_html(cells[1]) if len(cells) > 1 else None,
-                    "format": clean_html(cells[2]) if len(cells) > 2 else None,
-                    "phase": clean_html(cells[3]) if len(cells) > 3 else None,
-                    "pdb_ids": [],
+                    "format": clean_html(cells[1]) if len(cells) > 1 else None,
+                    "clinical_trial": clean_html(cells[2]) if len(cells) > 2 else None,
+                    "status": clean_html(cells[3]) if len(cells) > 3 else None,
+                    "target": clean_html(cells[4]) if len(cells) > 4 else None,
+                    "year_proposed": clean_html(cells[5]) if len(cells) > 5 else None,
                 }
-
-                # Extract PDB IDs from last column if present
-                if len(cells) > 4:
-                    pdb_text = cells[4]
-                    pdb_matches = re.findall(r"[0-9][A-Za-z0-9]{3}", pdb_text)
-                    therapeutic["pdb_ids"] = list(set(pdb_matches))
 
                 # Only add if we have a name
                 if therapeutic["inn_name"]:

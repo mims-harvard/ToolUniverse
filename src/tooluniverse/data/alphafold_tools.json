@@ -282,12 +282,18 @@
       "properties": {
         "qualifier": {
           "type": "string",
-          "description": "Protein identifier: UniProt ACCESSION (e.g., 'Q5SWX9'). Do NOT use entry names like 'MEIOB_HUMAN'. To find accession from gene name: use `UniProt_search` or `UniProt_id_mapping`."
+          "description": "Protein identifier: UniProt ACCESSION (e.g., 'Q5SWX9'). Aliases: uniprot_id, uniprot_accession."
+        },
+        "uniprot_id": {
+          "type": "string",
+          "description": "Alias for qualifier. UniProt accession (e.g., 'P04637')."
+        },
+        "uniprot_accession": {
+          "type": "string",
+          "description": "Alias for qualifier. UniProt accession (e.g., 'P04637')."
         }
       },
-      "required": [
-        "qualifier"
-      ]
+      "required": []
     },
     "fields": {
       "endpoint": "/uniprot/summary/{qualifier}.json",
@@ -444,12 +450,18 @@
       "properties": {
         "qualifier": {
           "type": "string",
-          "description": "UniProt ACCESSION (e.g., 'P69905'). Must be an accession number, not an entry name."
+          "description": "UniProt ACCESSION (e.g., 'P69905'). Aliases: uniprot_id, uniprot_accession."
+        },
+        "uniprot_id": {
+          "type": "string",
+          "description": "Alias for qualifier. UniProt accession (e.g., 'P69905')."
+        },
+        "uniprot_accession": {
+          "type": "string",
+          "description": "Alias for qualifier. UniProt accession (e.g., 'P69905')."
         }
       },
-      "required": [
-        "qualifier"
-      ]
+      "required": []
     },
     "fields": {
       "endpoint": "/annotations/{qualifier}.json",
