@@ -286,7 +286,6 @@ default_tool_files = {
     ),
     # PharmGKB - Pharmacogenomics
     "pharmgkb": os.path.join(current_dir, "data", "pharmgkb_tools.json"),
-    "phenoscanner": os.path.join(current_dir, "data", "phenoscanner_tools.json"),
     # DisGeNET - Gene-Disease Associations
     # DGIdb - Drug Gene Interactions
     "dgidb": os.path.join(current_dir, "data", "dgidb_tools.json"),

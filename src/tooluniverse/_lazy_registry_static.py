@@ -419,7 +419,6 @@ STATIC_LAZY_REGISTRY = {
     "PathwayCommonsTool": "pathway_commons_tool",
     "PfamTool": "pfam_tool",
     "PharmGKBTool": "pharmgkb_tool",
-    "PhenoScannerTool": "phenoscanner_tool",
     "PharmacoDBTool": "pharmacodb_tool",
     "PharosTool": "pharos_tool",
     "PlantReactomeTool": "plant_reactome_tool",
