@@ -1,0 +1,144 @@
+[
+    {
+        "name": "pc_search_pathways",
+        "type": "PathwayCommonsTool",
+        "description": "Searches for biological pathways in Pathway Commons (PC2). Use this tool to find pathways related to specific keywords, such as 'p53' or 'apoptosis'.",
+        "parameter": {
+            "type": "object",
+            "properties": {
+                "action": {
+                    "type": "string",
+                    "enum": [
+                        "search_pathways"
+                    ],
+                    "default": "search_pathways",
+                    "description": "The specific action to perform. Must be set to 'search_pathways'."
+                },
+                "keyword": {
+                    "type": "string",
+                    "description": "The search keyword to identify pathways. Examples include specific genes ('p53'), processes ('apoptosis'), or diseases."
+                },
+                "datasource": {
+                    "type": "string",
+                    "description": "Filter results by the original data source (e.g., 'reactome', 'kegg', 'panther'). This helps narrow down results to specific databases."
+                },
+                "limit": {
+                    "type": "integer",
+                    "description": "The maximum number of pathway results to return. The default is 10.",
+                    "default": 10
+                }
+            },
+            "required": [
+                "action",
+                "keyword"
+            ]
+        },
+        "return_schema": {
+            "type": "object",
+            "description": "A dictionary containing the search results, including the total count and a list of matching pathways.",
+            "properties": {
+                "total_hits": {
+                    "type": "integer",
+                    "description": "The total number of pathways matching the keyword."
+                },
+                "pathways": {
+                    "type": "array",
+                    "description": "A list of pathway objects containing the name, URI, and data source.",
+                    "items": {
+                        "type": "object",
+                        "properties": {
+                            "name": {
+                                "type": "string",
+                                "description": "The name of the pathway."
+                            },
+                            "uri": {
+                                "type": "string",
+                                "description": "The unique URI identifier for the pathway in Pathway Commons."
+                            },
+                            "source": {
+                                "type": "array",
+                                "description": "The list of data sources providing this pathway information."
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "test_examples": [
+            {
+                "action": "search_pathways",
+                "keyword": "glycolysis",
+                "limit": 2
+            }
+        ]
+    },
+    {
+        "name": "pc_get_interactions",
+        "type": "PathwayCommonsTool",
+        "description": "Retrieves the interaction network (neighborhood) for a specified list of genes. Returns interactions in Simple Interaction Format (SIF).",
+        "parameter": {
+            "type": "object",
+            "properties": {
+                "action": {
+                    "type": "string",
+                    "enum": [
+                        "get_interaction_graph"
+                    ],
+                    "default": "get_interaction_graph",
+                    "description": "The specific action to perform. Must be set to 'get_interaction_graph'."
+                },
+                "gene_list": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    },
+                    "description": "A list of gene symbols (e.g., ['TP53', 'MDM2']) to query interactions for."
+                }
+            },
+            "required": [
+                "action",
+                "gene_list"
+            ]
+        },
+        "return_schema": {
+            "type": "object",
+            "description": "A dictionary containing the interaction graph in SIF format.",
+            "properties": {
+                "format": {
+                    "type": "string",
+                    "description": "The format of the returned data, typically 'SIF'."
+                },
+                "interactions": {
+                    "type": "array",
+                    "description": "A list of interaction objects, where each object represents a relationship between two entities (source and target).",
+                    "items": {
+                        "type": "object",
+                        "properties": {
+                            "source": {
+                                "type": "string",
+                                "description": "The source gene or entity in the interaction."
+                            },
+                            "relation": {
+                                "type": "string",
+                                "description": "The type of interaction or relationship (e.g., 'controls-state-change-of', 'in-complex-with')."
+                            },
+                            "target": {
+                                "type": "string",
+                                "description": "The target gene or entity in the interaction."
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "test_examples": [
+            {
+                "action": "get_interaction_graph",
+                "gene_list": [
+                    "TP53",
+                    "MDM2"
+                ]
+            }
+        ]
+    }
+]

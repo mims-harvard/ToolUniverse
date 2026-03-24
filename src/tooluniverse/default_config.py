@@ -260,9 +260,9 @@ default_tool_files = {
     # New Life Science Tools
     "hca_tools": os.path.join(current_dir, "data", "hca_tools.json"),
     "iedb_tools": os.path.join(current_dir, "data", "iedb_tools.json"),
-    "pathway_commons_tools": os.path.join(
-        current_dir, "data", "pathway_commons_tools.json"
-    ),
+    # PathwayCommons server is unresponsive (connection refused as of 2026-03)
+    # Archived at: src/tooluniverse/data/broken_apis/pathway_commons_tools.json
+    # "pathway_commons_tools": os.path.join(current_dir, "data", "pathway_commons_tools.json"),
     "biomodels_tools": os.path.join(current_dir, "data", "biomodels_tools.json"),
     # BioThings APIs (MyGene, MyVariant, MyChem)
     "biothings": os.path.join(current_dir, "data", "biothings_tools.json"),

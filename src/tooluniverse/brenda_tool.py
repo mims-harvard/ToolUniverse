@@ -21,7 +21,7 @@ BRENDA_WSDL = "https://www.brenda-enzymes.org/soap/brenda_zeep.wsdl"
 
 
 def _get_client():
-    """Return a cached zeep SOAP client for BRENDA."""
+    """Return a zeep SOAP client for BRENDA."""
     try:
         from zeep import Client, Settings
 
@@ -37,14 +37,19 @@ def _hash_password(password: str) -> str:
 
 
 def _parse_rows(raw) -> List[Dict[str, Any]]:
-    """Parse SOAP response into a list of dicts."""
-    if not raw:
+    """Parse a zeep response object into a list of plain dicts."""
+    if raw is None:
         return []
-    if isinstance(raw, list):
-        return [dict(r) if hasattr(r, "__iter__") else {"value": r} for r in raw]
-    if hasattr(raw, "__dict__"):
-        return [dict(raw.__dict__)]
-    return []
+    items = raw if isinstance(raw, list) else [raw]
+    result = []
+    for item in items:
+        if hasattr(item, "__dict__"):
+            result.append(
+                {k: v for k, v in item.__dict__.items() if not k.startswith("_")}
+            )
+        elif isinstance(item, dict):
+            result.append(item)
+    return result
 
 
 @register_tool("BRENDATool")
@@ -59,7 +64,6 @@ class BRENDATool(BaseTool):
 
     def __init__(self, tool_config: Dict[str, Any]):
         super().__init__(tool_config)
-        self.parameter = tool_config.get("parameter", {})
 
     def _credentials(self) -> Optional[tuple]:
         email = os.environ.get("BRENDA_EMAIL", "")
@@ -106,9 +110,21 @@ class BRENDATool(BaseTool):
         organism = arguments.get("organism", "")
 
         try:
+            from zeep.exceptions import Fault
+
             client = _get_client()
-            params = f"ecNumber*{ec_number}#kmValue*#kmValueMaximum*#substrate*#commentary*#organism*{organism}#ligandStructureId*#literature*"
-            raw = client.service.getKmValue(email, pw_hash, params)
+            raw = client.service.getKmValue(
+                email=email,
+                password=pw_hash,
+                ecNumber=ec_number,
+                organism=organism,
+                kmValue="",
+                kmValueMaximum="",
+                substrate="",
+                commentary="",
+                ligandStructureId="",
+                literature="",
+            )
             rows = _parse_rows(raw)
             km_values = [
                 {
@@ -118,6 +134,7 @@ class BRENDATool(BaseTool):
                     "comment": str(r.get("commentary", "")),
                 }
                 for r in rows
+                if r.get("kmValue")
             ]
             return {
                 "status": "success",
@@ -129,6 +146,14 @@ class BRENDATool(BaseTool):
                 },
                 "metadata": {"source": "BRENDA SOAP", "parameter": "Km", "unit": "mM"},
             }
+        except Fault as f:
+            msg = str(f)
+            if "wrong" in msg.lower() or "password" in msg.lower():
+                return {
+                    "status": "error",
+                    "error": "Invalid BRENDA credentials. Check BRENDA_EMAIL and BRENDA_PASSWORD.",
+                }
+            return {"status": "error", "error": f"BRENDA SOAP fault: {msg}"}
         except Exception as e:
             return {"status": "error", "error": f"BRENDA query failed: {str(e)}"}
 
@@ -143,9 +168,21 @@ class BRENDATool(BaseTool):
         organism = arguments.get("organism", "")
 
         try:
+            from zeep.exceptions import Fault
+
             client = _get_client()
-            params = f"ecNumber*{ec_number}#turnoverNumber*#turnoverNumberMaximum*#substrate*#commentary*#organism*{organism}#ligandStructureId*#literature*"
-            raw = client.service.getTurnoverNumber(email, pw_hash, params)
+            raw = client.service.getTurnoverNumber(
+                email=email,
+                password=pw_hash,
+                ecNumber=ec_number,
+                organism=organism,
+                turnoverNumber="",
+                turnoverNumberMaximum="",
+                substrate="",
+                commentary="",
+                ligandStructureId="",
+                literature="",
+            )
             rows = _parse_rows(raw)
             kcat_values = [
                 {
@@ -155,6 +192,7 @@ class BRENDATool(BaseTool):
                     "comment": str(r.get("commentary", "")),
                 }
                 for r in rows
+                if r.get("turnoverNumber")
             ]
             return {
                 "status": "success",
@@ -170,6 +208,14 @@ class BRENDATool(BaseTool):
                     "unit": "1/s",
                 },
             }
+        except Fault as f:
+            msg = str(f)
+            if "wrong" in msg.lower() or "password" in msg.lower():
+                return {
+                    "status": "error",
+                    "error": "Invalid BRENDA credentials. Check BRENDA_EMAIL and BRENDA_PASSWORD.",
+                }
+            return {"status": "error", "error": f"BRENDA SOAP fault: {msg}"}
         except Exception as e:
             return {"status": "error", "error": f"BRENDA query failed: {str(e)}"}
 
@@ -184,18 +230,28 @@ class BRENDATool(BaseTool):
         organism = arguments.get("organism", "")
 
         try:
+            from zeep.exceptions import Fault
+
             client = _get_client()
-            params = f"ecNumber*{ec_number}#inhibitor*#commentary*#organism*{organism}#ligandStructureId*#literature*"
-            raw = client.service.getInhibitors(email, pw_hash, params)
+            raw = client.service.getInhibitors(
+                email=email,
+                password=pw_hash,
+                ecNumber=ec_number,
+                organism=organism,
+                inhibitor="",
+                commentary="",
+                ligandStructureId="",
+                literature="",
+            )
             rows = _parse_rows(raw)
             inhibitors = [
                 {
                     "inhibitor": str(r.get("inhibitor", "")),
-                    "ki_value": str(r.get("kiValue", "")),
                     "organism": str(r.get("organism", "")),
                     "comment": str(r.get("commentary", "")),
                 }
                 for r in rows
+                if r.get("inhibitor")
             ]
             return {
                 "status": "success",
@@ -205,12 +261,16 @@ class BRENDATool(BaseTool):
                     "inhibitors": inhibitors,
                     "count": len(inhibitors),
                 },
-                "metadata": {
-                    "source": "BRENDA SOAP",
-                    "parameter": "Inhibitors",
-                    "unit": "mM",
-                },
+                "metadata": {"source": "BRENDA SOAP"},
             }
+        except Fault as f:
+            msg = str(f)
+            if "wrong" in msg.lower() or "password" in msg.lower():
+                return {
+                    "status": "error",
+                    "error": "Invalid BRENDA credentials. Check BRENDA_EMAIL and BRENDA_PASSWORD.",
+                }
+            return {"status": "error", "error": f"BRENDA SOAP fault: {msg}"}
         except Exception as e:
             return {"status": "error", "error": f"BRENDA query failed: {str(e)}"}
 
@@ -224,9 +284,16 @@ class BRENDATool(BaseTool):
         email, pw_hash = creds
 
         try:
+            from zeep.exceptions import Fault
+
             client = _get_client()
-            params = f"ecNumber*{ec_number}#organism*#recommendedName*#systematicName*"
-            raw = client.service.getSystematicName(email, pw_hash, params)
+            raw = client.service.getSystematicName(
+                email=email,
+                password=pw_hash,
+                ecNumber=ec_number,
+                organism="",
+                systematicName="",
+            )
             rows = _parse_rows(raw)
             info = [
                 {
@@ -234,6 +301,7 @@ class BRENDATool(BaseTool):
                     "organism": str(r.get("organism", "")),
                 }
                 for r in rows
+                if r.get("systematicName")
             ]
             return {
                 "status": "success",
@@ -244,5 +312,13 @@ class BRENDATool(BaseTool):
                 },
                 "metadata": {"source": "BRENDA SOAP"},
             }
+        except Fault as f:
+            msg = str(f)
+            if "wrong" in msg.lower() or "password" in msg.lower():
+                return {
+                    "status": "error",
+                    "error": "Invalid BRENDA credentials. Check BRENDA_EMAIL and BRENDA_PASSWORD.",
+                }
+            return {"status": "error", "error": f"BRENDA SOAP fault: {msg}"}
         except Exception as e:
             return {"status": "error", "error": f"BRENDA query failed: {str(e)}"}
