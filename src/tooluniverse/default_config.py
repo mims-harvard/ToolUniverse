@@ -345,6 +345,10 @@ default_tool_files = {
     "alphamissense": os.path.join(current_dir, "data", "alphamissense_tools.json"),
     # CADD - Combined Annotation Dependent Depletion
     "cadd": os.path.join(current_dir, "data", "cadd_tools.json"),
+    # OpenCRAVAT - Multi-source variant annotation (182+ annotators)
+    "opencravat": os.path.join(current_dir, "data", "opencravat_tools.json"),
+    # MassIVE - Proteomics data repository (ProXI API)
+    "massive": os.path.join(current_dir, "data", "massive_tools.json"),
     # DepMap - Cancer Dependency Map (Sanger Cell Model Passports)
     "depmap": os.path.join(current_dir, "data", "depmap_tools.json"),
     # InterProScan - Protein Domain/Family Prediction
@@ -979,6 +983,8 @@ default_tool_files = {
     "dynamut2": os.path.join(current_dir, "data", "dynamut2_tools.json"),
     # iPTMnet - Post-translational modification network database
     "iptmnet": os.path.join(current_dir, "data", "iptmnet_tools.json"),
+    # ELM - Eukaryotic Linear Motif database (short linear motifs in proteins)
+    "elm": os.path.join(current_dir, "data", "elm_tools.json"),
     # ESMFold - Protein structure prediction from sequence (Meta ESM-2)
     "esmfold": os.path.join(current_dir, "data", "esmfold_tools.json"),
     # SIDER - Drug side effects from drug labels (MedDRA-coded, with frequencies)

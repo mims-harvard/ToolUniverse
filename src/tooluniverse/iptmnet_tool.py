@@ -73,6 +73,24 @@ class iPTMnetTool(BaseTool):
         except Exception as e:
             return {"status": "error", "error": "iPTMnet API error: {}".format(str(e))}
 
+    def _fetch_protein_data(self, uniprot_id: str, endpoint: str) -> Dict[str, Any]:
+        """Fetch data for a protein from iPTMnet. Returns parsed JSON or error dict."""
+        resp = self.session.get(
+            "{}/{}/{}".format(IPTMNET_BASE_URL, uniprot_id, endpoint),
+            timeout=self.timeout,
+        )
+        if resp.status_code == 404:
+            return {
+                "status": "error",
+                "error": "Protein {} not found in iPTMnet".format(uniprot_id),
+            }
+        if resp.status_code != 200:
+            return {
+                "status": "error",
+                "error": "iPTMnet returned HTTP {}".format(resp.status_code),
+            }
+        return {"status": "ok", "data": resp.json()}
+
     def _search(self, arguments: Dict[str, Any]) -> Dict[str, Any]:
         """Search proteins by name/keyword with optional role and PTM type filters."""
         search_term = arguments.get("search_term")
@@ -156,22 +174,10 @@ class iPTMnetTool(BaseTool):
 
         ptm_type_filter = arguments.get("ptm_type")
 
-        resp = self.session.get(
-            "{}/{}/substrate".format(IPTMNET_BASE_URL, uniprot_id),
-            timeout=self.timeout,
-        )
-        if resp.status_code == 404:
-            return {
-                "status": "error",
-                "error": "Protein {} not found in iPTMnet".format(uniprot_id),
-            }
-        if resp.status_code != 200:
-            return {
-                "status": "error",
-                "error": "iPTMnet returned HTTP {}".format(resp.status_code),
-            }
-
-        data = resp.json()
+        result = self._fetch_protein_data(uniprot_id, "substrate")
+        if result["status"] == "error":
+            return result
+        data = result["data"]
         if not isinstance(data, dict):
             return {"status": "error", "error": "Unexpected response format"}
 
@@ -224,22 +230,10 @@ class iPTMnetTool(BaseTool):
                 "error": "Missing required parameter: uniprot_id",
             }
 
-        resp = self.session.get(
-            "{}/{}/proteoforms".format(IPTMNET_BASE_URL, uniprot_id),
-            timeout=self.timeout,
-        )
-        if resp.status_code == 404:
-            return {
-                "status": "error",
-                "error": "Protein {} not found in iPTMnet".format(uniprot_id),
-            }
-        if resp.status_code != 200:
-            return {
-                "status": "error",
-                "error": "iPTMnet returned HTTP {}".format(resp.status_code),
-            }
-
-        data = resp.json()
+        result = self._fetch_protein_data(uniprot_id, "proteoforms")
+        if result["status"] == "error":
+            return result
+        data = result["data"]
         if not isinstance(data, list):
             return {"status": "error", "error": "Unexpected response format"}
 
@@ -278,22 +272,10 @@ class iPTMnetTool(BaseTool):
 
         ptm_type_filter = arguments.get("ptm_type")
 
-        resp = self.session.get(
-            "{}/{}/ptmppi".format(IPTMNET_BASE_URL, uniprot_id),
-            timeout=self.timeout,
-        )
-        if resp.status_code == 404:
-            return {
-                "status": "error",
-                "error": "Protein {} not found in iPTMnet".format(uniprot_id),
-            }
-        if resp.status_code != 200:
-            return {
-                "status": "error",
-                "error": "iPTMnet returned HTTP {}".format(resp.status_code),
-            }
-
-        data = resp.json()
+        result = self._fetch_protein_data(uniprot_id, "ptmppi")
+        if result["status"] == "error":
+            return result
+        data = result["data"]
         if not isinstance(data, list):
             return {"status": "error", "error": "Unexpected response format"}
 

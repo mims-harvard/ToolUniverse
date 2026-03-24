@@ -1,7 +1,7 @@
 """
 ToolUniverse Tools
 
-Type-safe Python interface to 2080 scientific tools.
+Type-safe Python interface to 2083 scientific tools.
 Each tool is in its own module for minimal import overhead.
 
 Usage:
@@ -375,6 +375,8 @@ from .EBITaxonomy_search_by_name import EBITaxonomy_search_by_name
 from .EBITaxonomy_suggest import EBITaxonomy_suggest
 from .ELIXIRTeSS_search_events import ELIXIRTeSS_search_events
 from .ELIXIRTeSS_search_materials import ELIXIRTeSS_search_materials
+from .ELM_get_instances import ELM_get_instances
+from .ELM_list_classes import ELM_list_classes
 from .EMDB_get_imaging_info import EMDB_get_imaging_info
 from .EMDB_get_map_info import EMDB_get_map_info
 from .EMDB_get_publications import EMDB_get_publications
@@ -404,6 +406,7 @@ from .EPMC_get_citations import EPMC_get_citations
 from .EPMC_get_references import EPMC_get_references
 from .ERDDAP_get_dataset_info import ERDDAP_get_dataset_info
 from .ERDDAP_search_datasets import ERDDAP_search_datasets
+from .ESMFold_predict_structure import ESMFold_predict_structure
 from .EVA_get_variants_by_gene import EVA_get_variants_by_gene
 from .EVA_get_variants_by_region import EVA_get_variants_by_region
 from .EVA_list_studies import EVA_list_studies
@@ -2931,6 +2934,8 @@ __all__ = [
     "EBITaxonomy_suggest",
     "ELIXIRTeSS_search_events",
     "ELIXIRTeSS_search_materials",
+    "ELM_get_instances",
+    "ELM_list_classes",
     "EMDB_get_imaging_info",
     "EMDB_get_map_info",
     "EMDB_get_publications",
@@ -2960,6 +2965,7 @@ __all__ = [
     "EPMC_get_references",
     "ERDDAP_get_dataset_info",
     "ERDDAP_search_datasets",
+    "ESMFold_predict_structure",
     "EVA_get_variants_by_gene",
     "EVA_get_variants_by_region",
     "EVA_list_studies",
