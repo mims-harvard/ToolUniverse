@@ -460,5 +460,112 @@
       ],
       "estimated_execution_time": "< 3 seconds"
     }
+  },
+  {
+    "name": "GDC_get_clinical_data",
+    "type": "GDCClinicalDataTool",
+    "description": "Get detailed clinical data for cancer cases from NCI GDC/TCGA. Returns demographics (gender, race, vital_status, age_at_index), diagnoses (primary_diagnosis, tumor_stage, age_at_diagnosis, days_to_last_follow_up), and treatments (therapeutic_agents, treatment_type). Filter by project, primary_site, disease_type, or vital_status.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "project_id": {
+          "type": "string",
+          "description": "GDC project identifier (e.g., 'TCGA-BRCA', 'TCGA-LUAD', 'TARGET-AML')"
+        },
+        "primary_site": {
+          "type": "string",
+          "description": "Primary anatomical site (e.g., 'Breast', 'Lung', 'Brain')"
+        },
+        "disease_type": {
+          "type": "string",
+          "description": "Disease type filter (e.g., 'Ductal and Lobular Neoplasms')"
+        },
+        "vital_status": {
+          "type": "string",
+          "description": "Vital status filter: 'Alive' or 'Dead'",
+          "enum": ["Alive", "Dead"]
+        },
+        "gender": {
+          "type": "string",
+          "description": "Gender filter: 'female' or 'male'",
+          "enum": ["female", "male"]
+        },
+        "size": {
+          "type": "integer",
+          "default": 10,
+          "minimum": 1,
+          "maximum": 100,
+          "description": "Number of cases to return (1-100)"
+        },
+        "offset": {
+          "type": "integer",
+          "default": 0,
+          "minimum": 0,
+          "description": "Pagination offset (0-based)"
+        }
+      }
+    },
+    "return_schema": {
+      "type": "object",
+      "properties": {
+        "cases": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "case_id": {"type": "string"},
+              "submitter_id": {"type": "string"},
+              "project_id": {"type": "string"},
+              "vital_status": {"type": ["string", "null"]},
+              "gender": {"type": ["string", "null"]},
+              "age_at_index": {"type": ["integer", "null"]},
+              "days_to_death": {"type": ["integer", "null"]},
+              "diagnoses": {"type": "array"},
+              "treatments": {"type": "array"}
+            }
+          }
+        },
+        "pagination": {
+          "type": "object",
+          "properties": {
+            "total": {"type": "integer"},
+            "count": {"type": "integer"}
+          }
+        }
+      }
+    },
+    "test_examples": [
+      {
+        "project_id": "TCGA-BRCA",
+        "size": 2
+      },
+      {
+        "project_id": "TCGA-LUAD",
+        "vital_status": "Dead",
+        "size": 2
+      },
+      {
+        "primary_site": "Brain",
+        "size": 2
+      }
+    ],
+    "label": [
+      "GDC",
+      "Clinical",
+      "TCGA",
+      "Demographics",
+      "Survival"
+    ],
+    "metadata": {
+      "tags": [
+        "clinical_data",
+        "demographics",
+        "survival",
+        "diagnoses",
+        "treatments",
+        "oncogenomics"
+      ],
+      "estimated_execution_time": "< 5 seconds"
+    }
   }
 ]
