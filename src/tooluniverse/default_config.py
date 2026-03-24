@@ -1015,6 +1015,8 @@ default_tool_files = {
     "signor": os.path.join(current_dir, "data", "signor_tools.json"),
     # ProtParam - Local protein physicochemical property calculations
     "protparam": os.path.join(current_dir, "data", "protparam_tools.json"),
+    # Monarch Initiative V3 - Extended entity/association/search tools
+    "monarch_new": os.path.join(current_dir, "data", "monarch_new_tools.json"),
 }
 
 # Auto-load any user-provided tools from ~/.tooluniverse/user_tools/

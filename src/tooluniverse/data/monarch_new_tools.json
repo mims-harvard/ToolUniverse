@@ -1,0 +1,136 @@
+[
+  {
+    "name": "Monarch_get_entity",
+    "description": "Get detailed information about any biomedical entity in the Monarch Initiative knowledge graph by its CURIE identifier. Supports genes (HGNC), diseases (MONDO, OMIM), phenotypes (HP), variants, and more. Returns the entity name, category, description, synonyms, cross-references, and species. Example: HGNC:11998 returns TP53 gene; MONDO:0007739 returns Huntington disease with cross-refs to OMIM, DOID, ICD10.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "Entity CURIE identifier. Examples: 'HGNC:11998' (TP53), 'MONDO:0007739' (Huntington disease), 'MONDO:0005148' (type 2 diabetes), 'HP:0001250' (seizure)."
+        }
+      },
+      "required": ["id"]
+    },
+    "fields": {
+      "endpoint": "entity"
+    },
+    "type": "MonarchV3Tool",
+    "test_examples": [
+      {"id": "HGNC:11998"},
+      {"id": "MONDO:0007739"}
+    ],
+    "return_schema": {
+      "type": "object",
+      "properties": {
+        "id": {"type": ["string", "null"]},
+        "name": {"type": ["string", "null"]},
+        "full_name": {"type": ["string", "null"]},
+        "category": {"type": ["string", "null"]},
+        "description": {"type": ["string", "null"]},
+        "symbol": {"type": ["string", "null"]},
+        "synonyms": {"type": "array", "items": {"type": "string"}},
+        "xrefs": {"type": "array", "items": {"type": "string"}},
+        "taxon": {"type": ["string", "null"]},
+        "taxon_label": {"type": ["string", "null"]},
+        "provided_by": {"type": ["string", "null"]}
+      }
+    }
+  },
+  {
+    "name": "Monarch_get_associations",
+    "description": "Query disease-gene-phenotype associations in the Monarch Initiative knowledge graph. Find gene-phenotype, disease-phenotype, gene-disease, or gene-pathway associations. Provide a subject CURIE (entity of interest) or object CURIE, with optional category filter. Uses the /association/all endpoint. Example: subject=HGNC:11998 returns all TP53 associations including phenotypes and diseases.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "subject": {
+          "type": "string",
+          "description": "Subject entity CURIE. Examples: 'HGNC:11998' (TP53), 'MONDO:0005148' (type 2 diabetes)."
+        },
+        "object": {
+          "type": "string",
+          "description": "Object entity CURIE. Use instead of subject to find entities associated TO this object."
+        },
+        "category": {
+          "type": "string",
+          "description": "Optional Biolink association category filter. Options: 'biolink:GeneToPhenotypicFeatureAssociation', 'biolink:DiseaseToPhenotypicFeatureAssociation', 'biolink:CorrelatedGeneToDiseaseAssociation', 'biolink:CausalGeneToDiseaseAssociation', 'biolink:GeneToPathwayAssociation'."
+        },
+        "limit": {
+          "type": "integer",
+          "description": "Maximum associations to return (default: 20, max: 200)."
+        }
+      },
+      "required": []
+    },
+    "fields": {
+      "endpoint": "associations"
+    },
+    "type": "MonarchV3Tool",
+    "test_examples": [
+      {"subject": "HGNC:11998", "limit": 5},
+      {"subject": "MONDO:0005148", "category": "biolink:DiseaseToPhenotypicFeatureAssociation", "limit": 5}
+    ],
+    "return_schema": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "subject": {"type": ["string", "null"]},
+          "subject_label": {"type": ["string", "null"]},
+          "object": {"type": ["string", "null"]},
+          "object_label": {"type": ["string", "null"]},
+          "category": {"type": ["string", "null"]},
+          "predicate": {"type": ["string", "null"]},
+          "negated": {"type": ["boolean", "null"]},
+          "provided_by": {"type": ["string", "null"]},
+          "primary_knowledge_source": {"type": ["string", "null"]}
+        }
+      }
+    }
+  },
+  {
+    "name": "Monarch_search",
+    "description": "Search the Monarch Initiative knowledge graph for biomedical entities by name or keyword. Returns genes, diseases, phenotypes, and other entities matching the query, with CURIE identifiers and categories. Filter by category (biolink:Gene, biolink:Disease, biolink:PhenotypicFeature) to narrow results. Use returned CURIEs with Monarch_get_entity and Monarch_get_associations for detailed lookups.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "query": {
+          "type": "string",
+          "description": "Search query: gene names, disease names, phenotype terms. Examples: 'BRCA1', 'Alzheimer', 'seizure', 'insulin resistance'."
+        },
+        "category": {
+          "type": "string",
+          "description": "Filter by entity category. Options: 'biolink:Gene', 'biolink:Disease', 'biolink:PhenotypicFeature'. Default: all categories."
+        },
+        "limit": {
+          "type": "integer",
+          "description": "Maximum results (default: 10, max: 50)."
+        }
+      },
+      "required": ["query"]
+    },
+    "fields": {
+      "endpoint": "search"
+    },
+    "type": "MonarchV3Tool",
+    "test_examples": [
+      {"query": "Alzheimer", "category": "biolink:Disease", "limit": 5},
+      {"query": "BRCA1", "limit": 5}
+    ],
+    "return_schema": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "id": {"type": ["string", "null"]},
+          "name": {"type": ["string", "null"]},
+          "category": {"type": ["string", "null"]},
+          "symbol": {"type": ["string", "null"]},
+          "description": {"type": ["string", "null"]},
+          "taxon": {"type": ["string", "null"]},
+          "taxon_label": {"type": ["string", "null"]}
+        }
+      }
+    }
+  }
+]
