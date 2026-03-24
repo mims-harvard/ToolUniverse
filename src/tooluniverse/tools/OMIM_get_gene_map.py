@@ -9,7 +9,7 @@ from ._shared_client import get_shared_client
 
 
 def OMIM_get_gene_map(
-    operation: str,
+    operation: Optional[str] = None,
     mim_number: Optional[str] = None,
     chromosome: Optional[str] = None,
     limit: Optional[int] = 50,
@@ -44,15 +44,21 @@ def OMIM_get_gene_map(
     """
     # Handle mutable defaults to avoid B006 linting error
 
+    # Strip None values so optional parameters don't trigger schema validation errors
+    _args = {
+        k: v
+        for k, v in {
+            "operation": operation,
+            "mim_number": mim_number,
+            "chromosome": chromosome,
+            "limit": limit,
+        }.items()
+        if v is not None
+    }
     return get_shared_client().run_one_function(
         {
             "name": "OMIM_get_gene_map",
-            "arguments": {
-                "operation": operation,
-                "mim_number": mim_number,
-                "chromosome": chromosome,
-                "limit": limit,
-            },
+            "arguments": _args,
         },
         stream_callback=stream_callback,
         use_cache=use_cache,

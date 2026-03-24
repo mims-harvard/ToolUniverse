@@ -9,7 +9,7 @@ from ._shared_client import get_shared_client
 
 
 def DisGeNET_get_vda(
-    operation: str,
+    operation: Optional[str] = None,
     variant: Optional[str] = None,
     gene: Optional[str] = None,
     limit: Optional[int] = 25,
@@ -44,15 +44,21 @@ def DisGeNET_get_vda(
     """
     # Handle mutable defaults to avoid B006 linting error
 
+    # Strip None values so optional parameters don't trigger schema validation errors
+    _args = {
+        k: v
+        for k, v in {
+            "operation": operation,
+            "variant": variant,
+            "gene": gene,
+            "limit": limit,
+        }.items()
+        if v is not None
+    }
     return get_shared_client().run_one_function(
         {
             "name": "DisGeNET_get_vda",
-            "arguments": {
-                "operation": operation,
-                "variant": variant,
-                "gene": gene,
-                "limit": limit,
-            },
+            "arguments": _args,
         },
         stream_callback=stream_callback,
         use_cache=use_cache,

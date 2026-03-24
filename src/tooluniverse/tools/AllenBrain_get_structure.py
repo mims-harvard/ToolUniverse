@@ -14,7 +14,7 @@ def AllenBrain_get_structure(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> dict[str, Any]:
     """
     Get detailed information about a brain structure by its Allen Brain Atlas structure ID. Returns f...
 
@@ -31,7 +31,7 @@ def AllenBrain_get_structure(
 
     Returns
     -------
-    Any
+    dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

@@ -9,11 +9,12 @@ from ._shared_client import get_shared_client
 
 
 def humanbase_ppi_analysis(
-    gene_list: list[str],
+    gene_list: Optional[list[str]] = None,
     tissue: Optional[str] = "brain",
     max_node: Optional[int] = 10,
     interaction: Optional[str] = None,
     string_mode: Optional[bool] = True,
+    genes: Optional[list[str]] = None,
     *,
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
@@ -34,6 +35,8 @@ def humanbase_ppi_analysis(
         Specific interaction type to filter by. Available types: 'co-expression', 'in...
     string_mode : bool
         Whether to return the result in string mode. If True, the result will be a st...
+    genes : list[str]
+        Alias for gene_list. List of gene symbols to analyze.
     stream_callback : Callable, optional
         Callback for streaming output
     use_cache : bool, default False
@@ -56,6 +59,7 @@ def humanbase_ppi_analysis(
             "max_node": max_node,
             "interaction": interaction,
             "string_mode": string_mode,
+            "genes": genes,
         }.items()
         if v is not None
     }

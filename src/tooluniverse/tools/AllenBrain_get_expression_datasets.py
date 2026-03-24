@@ -16,7 +16,7 @@ def AllenBrain_get_expression_datasets(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> list[Any]:
     """
     Get gene expression experiment datasets from the Allen Mouse Brain Atlas for a given gene. Return...
 
@@ -37,7 +37,7 @@ def AllenBrain_get_expression_datasets(
 
     Returns
     -------
-    Any
+    list[Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

@@ -9,8 +9,8 @@ from ._shared_client import get_shared_client
 
 
 def OMIM_get_clinical_synopsis(
-    operation: str,
     mim_number: str,
+    operation: Optional[str] = None,
     *,
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
@@ -38,10 +38,16 @@ def OMIM_get_clinical_synopsis(
     """
     # Handle mutable defaults to avoid B006 linting error
 
+    # Strip None values so optional parameters don't trigger schema validation errors
+    _args = {
+        k: v
+        for k, v in {"operation": operation, "mim_number": mim_number}.items()
+        if v is not None
+    }
     return get_shared_client().run_one_function(
         {
             "name": "OMIM_get_clinical_synopsis",
-            "arguments": {"operation": operation, "mim_number": mim_number},
+            "arguments": _args,
         },
         stream_callback=stream_callback,
         use_cache=use_cache,

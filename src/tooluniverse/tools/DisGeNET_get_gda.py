@@ -9,7 +9,7 @@ from ._shared_client import get_shared_client
 
 
 def DisGeNET_get_gda(
-    operation: str,
+    operation: Optional[str] = None,
     gene: Optional[str] = None,
     disease: Optional[str] = None,
     source: Optional[str] = None,
@@ -50,17 +50,23 @@ def DisGeNET_get_gda(
     """
     # Handle mutable defaults to avoid B006 linting error
 
+    # Strip None values so optional parameters don't trigger schema validation errors
+    _args = {
+        k: v
+        for k, v in {
+            "operation": operation,
+            "gene": gene,
+            "disease": disease,
+            "source": source,
+            "min_score": min_score,
+            "limit": limit,
+        }.items()
+        if v is not None
+    }
     return get_shared_client().run_one_function(
         {
             "name": "DisGeNET_get_gda",
-            "arguments": {
-                "operation": operation,
-                "gene": gene,
-                "disease": disease,
-                "source": source,
-                "min_score": min_score,
-                "limit": limit,
-            },
+            "arguments": _args,
         },
         stream_callback=stream_callback,
         use_cache=use_cache,

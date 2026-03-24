@@ -16,7 +16,7 @@ def MonarchV3_get_associations(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> list[Any]:
     """
     Query cross-species associations between biomedical entities in the Monarch Initiative knowledge ...
 
@@ -37,7 +37,7 @@ def MonarchV3_get_associations(
 
     Returns
     -------
-    Any
+    list[Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

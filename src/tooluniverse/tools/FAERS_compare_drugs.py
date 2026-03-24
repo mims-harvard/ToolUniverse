@@ -11,8 +11,9 @@ from ._shared_client import get_shared_client
 def FAERS_compare_drugs(
     drug1: str,
     drug2: str,
-    adverse_event: str,
     operation: Optional[str] = None,
+    adverse_event: Optional[str] = None,
+    reaction: Optional[str] = None,
     *,
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
@@ -30,7 +31,9 @@ def FAERS_compare_drugs(
     drug2 : str
         Second drug name (generic)
     adverse_event : str
-        MedDRA Preferred Term to compare
+        MedDRA Preferred Term to compare. Use exact MedDRA Preferred Term capitalizat...
+    reaction : str
+        Alias for adverse_event. MedDRA Preferred Term for the adverse drug reaction.
     stream_callback : Callable, optional
         Callback for streaming output
     use_cache : bool, default False
@@ -52,6 +55,7 @@ def FAERS_compare_drugs(
             "drug1": drug1,
             "drug2": drug2,
             "adverse_event": adverse_event,
+            "reaction": reaction,
         }.items()
         if v is not None
     }

@@ -9,21 +9,33 @@ from ._shared_client import get_shared_client
 
 
 def intact_get_interaction_network(
-    identifier: str,
+    identifier: Optional[str] = None,
+    uniprot_id: Optional[str] = None,
+    protein_id: Optional[str] = None,
+    gene_symbol: Optional[str] = None,
+    gene_name: Optional[str] = None,
     depth: Optional[int] = 1,
     format: Optional[str] = "json",
     *,
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> list[Any]:
+) -> Any:
     """
     Get interaction network centered on a specific interactor. Uses EBI Search API (IntAct domain) fo...
 
     Parameters
     ----------
     identifier : str
-        IntAct identifier, UniProt ID, or gene name
+        IntAct identifier, UniProt ID, or gene name. Aliases: uniprot_id, protein_id,...
+    uniprot_id : str
+        Alias for identifier: UniProt accession (e.g., 'P04637').
+    protein_id : str
+        Alias for identifier: protein identifier.
+    gene_symbol : str
+        Alias for identifier: gene symbol (e.g., 'BRCA1').
+    gene_name : str
+        Alias for identifier: gene name.
     depth : int
         Network depth: 1 for direct interactions only, 2 for 2-hop network, etc. (def...
     format : str
@@ -37,14 +49,22 @@ def intact_get_interaction_network(
 
     Returns
     -------
-    list[Any]
+    Any
     """
     # Handle mutable defaults to avoid B006 linting error
 
     # Strip None values so optional parameters don't trigger schema validation errors
     _args = {
         k: v
-        for k, v in {"identifier": identifier, "depth": depth, "format": format}.items()
+        for k, v in {
+            "identifier": identifier,
+            "uniprot_id": uniprot_id,
+            "protein_id": protein_id,
+            "gene_symbol": gene_symbol,
+            "gene_name": gene_name,
+            "depth": depth,
+            "format": format,
+        }.items()
         if v is not None
     }
     return get_shared_client().run_one_function(

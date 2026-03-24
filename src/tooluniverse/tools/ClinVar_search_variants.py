@@ -13,6 +13,8 @@ def clinvar_search_variants(
     condition: Optional[str] = None,
     variant_id: Optional[str] = None,
     max_results: Optional[int] = 20,
+    limit: Optional[int] = None,
+    clinical_significance: Optional[str] = None,
     *,
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
@@ -30,7 +32,11 @@ def clinvar_search_variants(
     variant_id : str
         ClinVar variant ID (e.g., '12345') At least one of gene, condition, or varian...
     max_results : int
-        Maximum number of results to return
+        Maximum number of results to return (default: 20). Alias: limit.
+    limit : int
+        Alias for max_results: maximum number of results to return.
+    clinical_significance : str
+        Filter by clinical significance (e.g., 'Pathogenic', 'Likely pathogenic', 'Be...
     stream_callback : Callable, optional
         Callback for streaming output
     use_cache : bool, default False
@@ -52,6 +58,8 @@ def clinvar_search_variants(
             "condition": condition,
             "variant_id": variant_id,
             "max_results": max_results,
+            "limit": limit,
+            "clinical_significance": clinical_significance,
         }.items()
         if v is not None
     }

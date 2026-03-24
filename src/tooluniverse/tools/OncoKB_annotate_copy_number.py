@@ -28,7 +28,7 @@ def OncoKB_annotate_copy_number(
     gene : str
         Gene symbol (e.g., ERBB2, MYC, CDKN2A)
     copy_number_type : str
-        Type of copy number alteration
+        Type of copy number alteration (case-insensitive: AMPLIFICATION or DELETION)
     tumor_type : str
         Optional OncoTree tumor type code
     stream_callback : Callable, optional

@@ -9,7 +9,8 @@ from ._shared_client import get_shared_client
 
 
 def BioGRID_get_interactions(
-    gene_names: list[str],
+    gene_names: Optional[list[str]] = None,
+    gene_name: Optional[str] = None,
     organism: Optional[str] = "9606",
     interaction_type: Optional[str] = "both",
     evidence_types: Optional[list[str]] = None,
@@ -27,6 +28,8 @@ def BioGRID_get_interactions(
     ----------
     gene_names : list[str]
         List of gene names or protein identifiers (e.g., ['TP53', 'BRCA1', 'MYC']). A...
+    gene_name : str
+        Alias for gene_names: single gene symbol (e.g., 'TP53'). Converted to gene_na...
     organism : str
         Organism name (e.g., 'Homo sapiens', 'Mus musculus') or NCBI taxonomy ID (e.g...
     interaction_type : str
@@ -55,6 +58,7 @@ def BioGRID_get_interactions(
         k: v
         for k, v in {
             "gene_names": gene_names,
+            "gene_name": gene_name,
             "organism": organism,
             "interaction_type": interaction_type,
             "evidence_types": evidence_types,

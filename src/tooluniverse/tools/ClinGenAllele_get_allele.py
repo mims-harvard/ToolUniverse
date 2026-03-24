@@ -9,7 +9,8 @@ from ._shared_client import get_shared_client
 
 
 def ClinGenAllele_get_allele(
-    ca_id: str,
+    ca_id: Optional[str | Any] = None,
+    allele_id: Optional[str | Any] = None,
     *,
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
@@ -20,8 +21,10 @@ def ClinGenAllele_get_allele(
 
     Parameters
     ----------
-    ca_id : str
+    ca_id : str | Any
         ClinGen canonical allele identifier (e.g., 'CA000387'). Obtain from ClinGenAl...
+    allele_id : str | Any
+        Alias for ca_id. ClinGen canonical allele identifier (e.g., 'CA000387').
     stream_callback : Callable, optional
         Callback for streaming output
     use_cache : bool, default False
@@ -36,7 +39,11 @@ def ClinGenAllele_get_allele(
     # Handle mutable defaults to avoid B006 linting error
 
     # Strip None values so optional parameters don't trigger schema validation errors
-    _args = {k: v for k, v in {"ca_id": ca_id}.items() if v is not None}
+    _args = {
+        k: v
+        for k, v in {"ca_id": ca_id, "allele_id": allele_id}.items()
+        if v is not None
+    }
     return get_shared_client().run_one_function(
         {
             "name": "ClinGenAllele_get_allele",

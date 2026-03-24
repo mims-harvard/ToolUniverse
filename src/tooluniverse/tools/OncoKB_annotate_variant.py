@@ -10,9 +10,10 @@ from ._shared_client import get_shared_client
 
 def OncoKB_annotate_variant(
     gene: str,
-    variant: str,
     operation: Optional[str] = None,
+    variant: Optional[str] = None,
     tumor_type: Optional[str] = None,
+    alteration: Optional[str] = None,
     *,
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
@@ -31,6 +32,8 @@ def OncoKB_annotate_variant(
         Variant notation - protein change (e.g., V600E, T790M, G12D)
     tumor_type : str
         Optional OncoTree tumor type code (e.g., MEL for melanoma, LUAD for lung aden...
+    alteration : str
+        Alias for variant. Protein change notation (e.g., "V600E", "T790M", "G12D").
     stream_callback : Callable, optional
         Callback for streaming output
     use_cache : bool, default False
@@ -52,6 +55,7 @@ def OncoKB_annotate_variant(
             "gene": gene,
             "variant": variant,
             "tumor_type": tumor_type,
+            "alteration": alteration,
         }.items()
         if v is not None
     }

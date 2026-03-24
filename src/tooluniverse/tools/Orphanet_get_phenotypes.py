@@ -12,6 +12,7 @@ def Orphanet_get_phenotypes(
     operation: Optional[str] = None,
     orpha_code: Optional[str | int] = None,
     orpha_id: Optional[str | int] = None,
+    orphacode: Optional[int | str] = None,
     *,
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
@@ -28,6 +29,8 @@ def Orphanet_get_phenotypes(
         Orphanet ORPHA code (e.g., 558 for Marfan, 586 for Cystic Fibrosis)
     orpha_id : str | int
         Alias for orpha_code. Orphanet ORPHA code (e.g., 558 for Marfan)
+    orphacode : int | str
+        Alias for orpha_code (the Orphanet disease code).
     stream_callback : Callable, optional
         Callback for streaming output
     use_cache : bool, default False
@@ -48,6 +51,7 @@ def Orphanet_get_phenotypes(
             "operation": operation,
             "orpha_code": orpha_code,
             "orpha_id": orpha_id,
+            "orphacode": orphacode,
         }.items()
         if v is not None
     }

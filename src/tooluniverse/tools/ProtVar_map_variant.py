@@ -21,7 +21,7 @@ def ProtVar_map_variant(
     Parameters
     ----------
     variant : str
-        Protein variant in 'UniProtAccession Change' format. Example: 'P22304 S149T' ...
+        Variant identifier in one of three formats: (1) 'UniProtAccession SingleLette...
     stream_callback : Callable, optional
         Callback for streaming output
     use_cache : bool, default False

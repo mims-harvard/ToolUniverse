@@ -9,11 +9,12 @@ from ._shared_client import get_shared_client
 
 
 def ols_get_term_ancestors(
-    term_iri: str,
     ontology: str,
     operation: Optional[str] = None,
+    term_iri: Optional[str] = None,
     include_obsolete: Optional[bool] = False,
     size: Optional[int] = 20,
+    term_id: Optional[str] = None,
     *,
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
@@ -34,6 +35,8 @@ def ols_get_term_ancestors(
         Include obsolete terms (default: false)
     size : int
         Number of results to return (default: 20)
+    term_id : str
+        Alias for term_iri. Short-form ontology ID (e.g., GO:0008150) or full IRI.
     stream_callback : Callable, optional
         Callback for streaming output
     use_cache : bool, default False
@@ -56,6 +59,7 @@ def ols_get_term_ancestors(
             "ontology": ontology,
             "include_obsolete": include_obsolete,
             "size": size,
+            "term_id": term_id,
         }.items()
         if v is not None
     }

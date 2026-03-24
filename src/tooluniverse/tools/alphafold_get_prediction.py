@@ -9,7 +9,9 @@ from ._shared_client import get_shared_client
 
 
 def alphafold_get_prediction(
-    qualifier: str,
+    qualifier: Optional[str] = None,
+    uniprot_id: Optional[str] = None,
+    uniprot_accession: Optional[str] = None,
     sequence_checksum: Optional[str] = None,
     *,
     stream_callback: Optional[Callable[[str], None]] = None,
@@ -22,7 +24,11 @@ def alphafold_get_prediction(
     Parameters
     ----------
     qualifier : str
-        Protein identifier: UniProt ACCESSION (e.g., 'P69905'). Do NOT use entry name...
+        UniProt ACCESSION (e.g., 'P69905'). Do NOT use entry names like 'HBA_HUMAN'. ...
+    uniprot_id : str
+        Alias for qualifier: UniProt accession (e.g., 'P69905').
+    uniprot_accession : str
+        Alias for qualifier: UniProt accession (e.g., 'P69905').
     sequence_checksum : str
         Optional CRC64 checksum of the UniProt sequence.
     stream_callback : Callable, optional
@@ -43,6 +49,8 @@ def alphafold_get_prediction(
         k: v
         for k, v in {
             "qualifier": qualifier,
+            "uniprot_id": uniprot_id,
+            "uniprot_accession": uniprot_accession,
             "sequence_checksum": sequence_checksum,
         }.items()
         if v is not None

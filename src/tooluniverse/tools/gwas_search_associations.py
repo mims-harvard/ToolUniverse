@@ -15,6 +15,8 @@ def gwas_search_associations(
     efo_trait: Optional[str] = None,
     rs_id: Optional[str] = None,
     accession_id: Optional[str] = None,
+    p_value: Optional[float] = None,
+    p_value_threshold: Optional[float] = None,
     sort: Optional[str] = None,
     direction: Optional[str] = None,
     size: Optional[int] = None,
@@ -41,6 +43,10 @@ def gwas_search_associations(
         dbSNP rs identifier
     accession_id : str
         Study accession identifier
+    p_value : float
+        Maximum p-value threshold for filtering (e.g., 5e-8 for genome-wide significa...
+    p_value_threshold : float
+        Alias for p_value: maximum p-value threshold.
     sort : str
         Sort field (e.g., 'p_value', 'or_value')
     direction : str
@@ -72,6 +78,8 @@ def gwas_search_associations(
             "efo_trait": efo_trait,
             "rs_id": rs_id,
             "accession_id": accession_id,
+            "p_value": p_value,
+            "p_value_threshold": p_value_threshold,
             "sort": sort,
             "direction": direction,
             "size": size,

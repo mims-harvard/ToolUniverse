@@ -9,8 +9,10 @@ from ._shared_client import get_shared_client
 
 
 def Orphanet_get_genes(
-    orpha_code: str | int,
     operation: Optional[str] = None,
+    orpha_code: Optional[str | int] = None,
+    orphacode: Optional[int | str] = None,
+    orpha_id: Optional[int | str] = None,
     *,
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
@@ -25,6 +27,10 @@ def Orphanet_get_genes(
         Operation type (fixed: get_genes)
     orpha_code : str | int
         Orphanet ORPHA code for the disease
+    orphacode : int | str
+        Alias for orpha_code (the Orphanet disease code).
+    orpha_id : int | str
+        Alias for orpha_code (the Orphanet disease code).
     stream_callback : Callable, optional
         Callback for streaming output
     use_cache : bool, default False
@@ -41,7 +47,12 @@ def Orphanet_get_genes(
     # Strip None values so optional parameters don't trigger schema validation errors
     _args = {
         k: v
-        for k, v in {"operation": operation, "orpha_code": orpha_code}.items()
+        for k, v in {
+            "operation": operation,
+            "orpha_code": orpha_code,
+            "orphacode": orphacode,
+            "orpha_id": orpha_id,
+        }.items()
         if v is not None
     }
     return get_shared_client().run_one_function(

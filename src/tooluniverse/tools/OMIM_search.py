@@ -9,8 +9,8 @@ from ._shared_client import get_shared_client
 
 
 def OMIM_search(
-    operation: str,
     query: str,
+    operation: Optional[str] = None,
     limit: Optional[int] = 10,
     start: Optional[int] = 0,
     *,
@@ -44,15 +44,21 @@ def OMIM_search(
     """
     # Handle mutable defaults to avoid B006 linting error
 
+    # Strip None values so optional parameters don't trigger schema validation errors
+    _args = {
+        k: v
+        for k, v in {
+            "operation": operation,
+            "query": query,
+            "limit": limit,
+            "start": start,
+        }.items()
+        if v is not None
+    }
     return get_shared_client().run_one_function(
         {
             "name": "OMIM_search",
-            "arguments": {
-                "operation": operation,
-                "query": query,
-                "limit": limit,
-                "start": start,
-            },
+            "arguments": _args,
         },
         stream_callback=stream_callback,
         use_cache=use_cache,

@@ -9,8 +9,8 @@ from ._shared_client import get_shared_client
 
 
 def DisGeNET_get_disease_genes(
-    operation: str,
     disease: str,
+    operation: Optional[str] = None,
     min_score: Optional[float] = None,
     limit: Optional[int] = 50,
     *,
@@ -44,15 +44,21 @@ def DisGeNET_get_disease_genes(
     """
     # Handle mutable defaults to avoid B006 linting error
 
+    # Strip None values so optional parameters don't trigger schema validation errors
+    _args = {
+        k: v
+        for k, v in {
+            "operation": operation,
+            "disease": disease,
+            "min_score": min_score,
+            "limit": limit,
+        }.items()
+        if v is not None
+    }
     return get_shared_client().run_one_function(
         {
             "name": "DisGeNET_get_disease_genes",
-            "arguments": {
-                "operation": operation,
-                "disease": disease,
-                "min_score": min_score,
-                "limit": limit,
-            },
+            "arguments": _args,
         },
         stream_callback=stream_callback,
         use_cache=use_cache,

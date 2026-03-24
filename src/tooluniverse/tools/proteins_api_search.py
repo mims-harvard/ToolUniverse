@@ -9,10 +9,12 @@ from ._shared_client import get_shared_client
 
 
 def proteins_api_search(
-    query: str,
+    query: Optional[str] = None,
     size: Optional[int] = 25,
     offset: Optional[int] = 0,
     format: Optional[str] = "json",
+    gene_symbol: Optional[str] = None,
+    gene: Optional[str] = None,
     *,
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
@@ -31,6 +33,10 @@ def proteins_api_search(
         Offset for pagination (default: 0)
     format : str
         Response format. JSON is recommended for most use cases.
+    gene_symbol : str
+        Alias for query. Gene symbol to search (e.g., TP53, BRCA1).
+    gene : str
+        Alias for query. Gene name to search.
     stream_callback : Callable, optional
         Callback for streaming output
     use_cache : bool, default False
@@ -52,6 +58,8 @@ def proteins_api_search(
             "size": size,
             "offset": offset,
             "format": format,
+            "gene_symbol": gene_symbol,
+            "gene": gene,
         }.items()
         if v is not None
     }

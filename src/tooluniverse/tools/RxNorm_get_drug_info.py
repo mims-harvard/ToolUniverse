@@ -1,8 +1,7 @@
 """
 RxNorm_get_drug_info
 
-Fetch comprehensive drug properties from NLM RxNorm by RXCUI or drug name.
-Returns name, term type (IN/BN/SCD/SBD), synonym. No API key required.
+Fetch comprehensive drug properties from NLM RxNorm by RXCUI or drug name. Returns the canonical ...
 """
 
 from typing import Any, Optional, Callable
@@ -18,32 +17,38 @@ def RxNorm_get_drug_info(
     validate: bool = True,
 ) -> dict[str, Any]:
     """
-    Fetch comprehensive drug properties from NLM RxNorm.
+    Fetch comprehensive drug properties from NLM RxNorm by RXCUI or drug name. Returns the canonical ...
 
     Parameters
     ----------
-    rxcui : str, optional
-        RxNorm Concept Unique Identifier.
-    drug_name : str, optional
-        Drug name to auto-resolve to RXCUI.
+    rxcui : str
+        RxNorm Concept Unique Identifier (e.g., '6809' for metformin, '11289' for war...
+    drug_name : str
+        Drug name to look up if RXCUI is not known. Will auto-resolve to RXCUI first.
     stream_callback : Callable, optional
-        Callback for streaming output.
+        Callback for streaming output
     use_cache : bool, default False
-        Enable caching.
+        Enable caching
     validate : bool, default True
-        Validate parameters.
+        Validate parameters
 
     Returns
     -------
     dict[str, Any]
     """
+    # Handle mutable defaults to avoid B006 linting error
+
+    # Strip None values so optional parameters don't trigger schema validation errors
     _args = {
         k: v
         for k, v in {"rxcui": rxcui, "drug_name": drug_name}.items()
         if v is not None
     }
     return get_shared_client().run_one_function(
-        {"name": "RxNorm_get_drug_info", "arguments": _args},
+        {
+            "name": "RxNorm_get_drug_info",
+            "arguments": _args,
+        },
         stream_callback=stream_callback,
         use_cache=use_cache,
         validate=validate,

@@ -16,7 +16,7 @@ def AllenBrain_search_structures(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> list[Any]:
     """
     Search for brain structures/regions in the Allen Brain Atlas ontology by acronym or name. Returns...
 
@@ -37,7 +37,7 @@ def AllenBrain_search_structures(
 
     Returns
     -------
-    Any
+    list[Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

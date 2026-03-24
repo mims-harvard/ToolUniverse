@@ -9,9 +9,11 @@ from ._shared_client import get_shared_client
 
 
 def gwas_get_snps_for_gene(
-    gene_symbol: str,
     size: Optional[int] = None,
     page: Optional[int] = None,
+    gene_symbol: Optional[str] = None,
+    gene: Optional[str] = None,
+    mapped_gene: Optional[str] = None,
     *,
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
@@ -28,6 +30,10 @@ def gwas_get_snps_for_gene(
         Page number for pagination
     gene_symbol : str
         Gene name or symbol (e.g., 'BRCA1', 'TP53', 'GBA')
+    gene : str
+        Alias for gene_symbol
+    mapped_gene : str
+        Alias for gene_symbol
     stream_callback : Callable, optional
         Callback for streaming output
     use_cache : bool, default False
@@ -44,7 +50,13 @@ def gwas_get_snps_for_gene(
     # Strip None values so optional parameters don't trigger schema validation errors
     _args = {
         k: v
-        for k, v in {"size": size, "page": page, "gene_symbol": gene_symbol}.items()
+        for k, v in {
+            "size": size,
+            "page": page,
+            "gene_symbol": gene_symbol,
+            "gene": gene,
+            "mapped_gene": mapped_gene,
+        }.items()
         if v is not None
     }
     return get_shared_client().run_one_function(

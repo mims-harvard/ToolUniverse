@@ -9,8 +9,8 @@ from ._shared_client import get_shared_client
 
 
 def DisGeNET_search_disease(
-    operation: str,
     disease: str,
+    operation: Optional[str] = None,
     limit: Optional[int] = 10,
     *,
     stream_callback: Optional[Callable[[str], None]] = None,
@@ -41,10 +41,16 @@ def DisGeNET_search_disease(
     """
     # Handle mutable defaults to avoid B006 linting error
 
+    # Strip None values so optional parameters don't trigger schema validation errors
+    _args = {
+        k: v
+        for k, v in {"operation": operation, "disease": disease, "limit": limit}.items()
+        if v is not None
+    }
     return get_shared_client().run_one_function(
         {
             "name": "DisGeNET_search_disease",
-            "arguments": {"operation": operation, "disease": disease, "limit": limit},
+            "arguments": _args,
         },
         stream_callback=stream_callback,
         use_cache=use_cache,

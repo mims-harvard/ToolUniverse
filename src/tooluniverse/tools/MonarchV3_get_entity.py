@@ -14,7 +14,7 @@ def MonarchV3_get_entity(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> dict[str, Any]:
     """
     Look up detailed information about any biomedical entity in the Monarch Initiative knowledge grap...
 
@@ -31,7 +31,7 @@ def MonarchV3_get_entity(
 
     Returns
     -------
-    Any
+    dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 
