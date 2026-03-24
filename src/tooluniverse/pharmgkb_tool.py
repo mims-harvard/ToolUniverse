@@ -59,7 +59,7 @@ class PharmGKBTool(BaseTool):
             return self._error(f"Unknown operation: {operation}")
 
     def _error(self, message: str) -> Dict[str, Any]:
-        return {"status": "error", "error": message, "data": {"error": message}}
+        return {"status": "error", "error": message}
 
     def _request_json(
         self, url: str, params: Dict[str, Any]
