@@ -7,12 +7,22 @@
       "properties": {
         "query": {
           "type": "string",
-          "description": "Drug name or PharmGKB Chemical ID (e.g., 'warfarin', 'PA452637')."
+          "description": "Drug name or PharmGKB Chemical ID (e.g., 'warfarin', 'PA452637'). Aliases: drug_name, name, drug."
+        },
+        "drug_name": {
+          "type": "string",
+          "description": "Alias for query. Drug name to search (e.g., 'warfarin', 'metformin')."
+        },
+        "name": {
+          "type": "string",
+          "description": "Alias for query. Drug name to search."
+        },
+        "drug": {
+          "type": "string",
+          "description": "Alias for query. Drug name to search."
         }
       },
-      "required": [
-        "query"
-      ]
+      "required": []
     },
     "fields": {
       "operation": "search_drugs"

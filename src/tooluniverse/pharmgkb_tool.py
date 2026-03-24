@@ -107,7 +107,13 @@ class PharmGKBTool(BaseTool):
         self, entity_type: str, arguments: Dict[str, Any]
     ) -> Dict[str, Any]:
         """Search for drugs, genes, or variants."""
-        query = arguments.get("query", "")
+        query = (
+            arguments.get("query")
+            or arguments.get("drug_name")
+            or arguments.get("name")
+            or arguments.get("drug")
+            or ""
+        )
         if not query:
             return self._error("query parameter is required")
 

@@ -61,6 +61,12 @@ class BaseRESTTool(BaseTool):
         """
         url = self.tool_config["fields"]["endpoint"]
 
+        # Apply path_aliases: map alias → canonical name before substitution
+        path_aliases = self.tool_config.get("fields", {}).get("path_aliases", {})
+        for alias, canonical in path_aliases.items():
+            if alias in args and canonical not in args:
+                args[canonical] = args[alias]
+
         # Replace all path parameters from user args
         for key, value in args.items():
             placeholder = f"{{{key}}}"

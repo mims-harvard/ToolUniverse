@@ -54,7 +54,12 @@ class DGIdbTool(BaseTool):
         """
         Get drug-gene interactions for genes using GraphQL.
         """
-        genes = arguments.get("genes", [])
+        genes = (
+            arguments.get("genes")
+            or arguments.get("gene_name")
+            or arguments.get("gene")
+            or []
+        )
 
         if not genes:
             return {
@@ -141,7 +146,12 @@ class DGIdbTool(BaseTool):
         """
         Get gene information including druggability using GraphQL.
         """
-        genes = arguments.get("genes", [])
+        genes = (
+            arguments.get("genes")
+            or arguments.get("gene_name")
+            or arguments.get("gene")
+            or []
+        )
 
         if not genes:
             return {"status": "error", "error": "genes parameter is required"}
@@ -217,7 +227,12 @@ class DGIdbTool(BaseTool):
         """
         Get gene categories (druggability annotations) using GraphQL.
         """
-        genes = arguments.get("genes", [])
+        genes = (
+            arguments.get("genes")
+            or arguments.get("gene_name")
+            or arguments.get("gene")
+            or []
+        )
 
         if not genes:
             return {"status": "error", "error": "genes parameter is required"}

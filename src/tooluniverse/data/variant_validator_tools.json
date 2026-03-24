@@ -98,7 +98,15 @@
       "properties": {
         "gene_symbol": {
           "type": "string",
-          "description": "HGNC gene symbol (e.g., 'TP53', 'BRCA1', 'EGFR')"
+          "description": "HGNC gene symbol (e.g., 'TP53', 'BRCA1', 'EGFR'). Aliases: gene, gene_name."
+        },
+        "gene": {
+          "type": "string",
+          "description": "Alias for gene_symbol."
+        },
+        "gene_name": {
+          "type": "string",
+          "description": "Alias for gene_symbol."
         },
         "transcript_set": {
           "type": "string",
@@ -111,10 +119,11 @@
           "default": "GRCh38"
         }
       },
-      "required": ["gene_symbol"]
+      "required": []
     },
     "fields": {
       "endpoint": "https://rest.variantvalidator.org/VariantValidator/tools/gene2transcripts_v2/{gene_symbol}/{transcript_set}/all/{genome_build}",
+      "path_aliases": {"gene": "gene_symbol", "gene_name": "gene_symbol"},
       "params": {
         "content-type": "application/json"
       }

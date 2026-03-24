@@ -10,7 +10,15 @@
           "items": {
             "type": "string"
           },
-          "description": "List of gene symbols (e.g., ['EGFR', 'BRAF', 'KRAS'])."
+          "description": "List of gene symbols (e.g., ['EGFR', 'BRAF']). Also accepts a single gene as string. Aliases: gene_name, gene."
+        },
+        "gene_name": {
+          "type": "string",
+          "description": "Alias for genes. Single gene symbol (e.g., 'EGFR')."
+        },
+        "gene": {
+          "type": "string",
+          "description": "Alias for genes. Single gene symbol (e.g., 'EGFR')."
         },
         "interaction_sources": {
           "type": "array",
@@ -27,9 +35,7 @@
           "description": "Optional filter by interaction types (e.g., ['inhibitor', 'antagonist'])."
         }
       },
-      "required": [
-        "genes"
-      ]
+      "required": []
     },
     "fields": {
       "operation": "interactions"
@@ -109,12 +115,18 @@
           "items": {
             "type": "string"
           },
-          "description": "List of gene symbols to check druggability."
+          "description": "List of gene symbols to check druggability. Aliases: gene_name, gene."
+        },
+        "gene_name": {
+          "type": "string",
+          "description": "Alias for genes. Single gene symbol (e.g., 'EGFR')."
+        },
+        "gene": {
+          "type": "string",
+          "description": "Alias for genes. Single gene symbol (e.g., 'EGFR')."
         }
       },
-      "required": [
-        "genes"
-      ]
+      "required": []
     },
     "fields": {
       "operation": "categories"
@@ -170,12 +182,18 @@
           "items": {
             "type": "string"
           },
-          "description": "List of gene symbols."
+          "description": "List of gene symbols. Aliases: gene_name, gene."
+        },
+        "gene_name": {
+          "type": "string",
+          "description": "Alias for genes. Single gene symbol (e.g., 'EGFR')."
+        },
+        "gene": {
+          "type": "string",
+          "description": "Alias for genes. Single gene symbol (e.g., 'EGFR')."
         }
       },
-      "required": [
-        "genes"
-      ]
+      "required": []
     },
     "fields": {
       "operation": "genes"
