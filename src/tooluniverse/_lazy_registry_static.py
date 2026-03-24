@@ -11,6 +11,7 @@ STATIC_LAZY_REGISTRY = {
     "AHAACCGuidelineTool": "clinical_society_tools",
     "AddgeneTool": "addgene_tool",
     "AgenticTool": "agentic_tool",
+    "APPRISTool": "appris_tool",
     "AOPWikiDetailTool": "aopwiki_tool",
     "AOPWikiListTool": "aopwiki_tool",
     "AllenBrainTool": "allen_brain_tool",

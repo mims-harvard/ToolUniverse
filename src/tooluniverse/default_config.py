@@ -1049,6 +1049,10 @@ default_tool_files = {
     "protparam": os.path.join(current_dir, "data", "protparam_tools.json"),
     # Monarch Initiative V3 - Extended entity/association/search tools
     "monarch_new": os.path.join(current_dir, "data", "monarch_new_tools.json"),
+    # APPRIS - Principal isoform annotation for vertebrate genomes
+    "appris": os.path.join(current_dir, "data", "appris_tools.json"),
+    # IEDB Extended - T-cell assays, TCR/BCR sequences, epitope-to-tcell linking
+    "iedb_ext": os.path.join(current_dir, "data", "iedb_ext_tools.json"),
 }
 
 # Auto-load any user-provided tools from ~/.tooluniverse/user_tools/

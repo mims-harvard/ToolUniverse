@@ -1,0 +1,158 @@
+[
+    {
+        "name": "APPRIS_get_isoforms",
+        "type": "APPRISTool",
+        "description": "Get all transcript isoforms and their APPRIS annotations for a gene. APPRIS classifies isoforms as PRINCIPAL (most functionally important) or ALTERNATIVE based on structural, functional, and evolutionary evidence.\n\nRequires an Ensembl gene ID (ENSG...). Use HGNC_fetch_gene_by_symbol or Ensembl tools to convert gene symbols to Ensembl IDs first.\n\nReliability levels: PRINCIPAL:1 (highest) through PRINCIPAL:5, MINOR (alternative), or 'No Principal Isoform'.",
+        "parameter": {
+            "type": "object",
+            "properties": {
+                "gene_id": {
+                    "type": "string",
+                    "description": "Ensembl gene ID (e.g., ENSG00000141510 for TP53, ENSG00000012048 for BRCA1)."
+                },
+                "species": {
+                    "type": "string",
+                    "description": "Species name in lowercase with underscore (e.g., homo_sapiens, mus_musculus, danio_rerio).",
+                    "default": "homo_sapiens"
+                }
+            },
+            "required": ["gene_id"]
+        },
+        "return_schema": {
+            "type": "array",
+            "description": "List of isoform annotations with principal/alternative classification.",
+            "items": {
+                "type": "object",
+                "properties": {
+                    "transcript_id": {"type": ["string", "null"]},
+                    "transcript_name": {"type": ["string", "null"]},
+                    "gene_id": {"type": ["string", "null"]},
+                    "annotation": {"type": ["string", "null"]},
+                    "reliability": {"type": ["string", "null"]},
+                    "biotype": {"type": ["string", "null"]},
+                    "length_aa": {"type": ["string", "null"]},
+                    "length_na": {"type": ["string", "null"]},
+                    "ccds_id": {"type": ["string", "null"]},
+                    "tsl": {"type": ["string", "null"]}
+                },
+                "additionalProperties": true
+            }
+        },
+        "test_examples": [
+            {
+                "gene_id": "ENSG00000141510"
+            },
+            {
+                "gene_id": "ENSG00000012048",
+                "species": "homo_sapiens"
+            }
+        ],
+        "fields": {
+            "operation": "get_isoforms"
+        }
+    },
+    {
+        "name": "APPRIS_get_principal_isoform",
+        "type": "APPRISTool",
+        "description": "Get the principal (most functionally important) transcript isoform for a gene as determined by the APPRIS database.\n\nAPPRIS selects the principal isoform based on protein structure (matador3d, spade), functional residues (firestar), cross-species conservation (corsair), transmembrane topology (thump, crash), and proteomics evidence (proteo).\n\nRequires an Ensembl gene ID (ENSG...). Use HGNC_fetch_gene_by_symbol to convert gene symbols first.",
+        "parameter": {
+            "type": "object",
+            "properties": {
+                "gene_id": {
+                    "type": "string",
+                    "description": "Ensembl gene ID (e.g., ENSG00000141510 for TP53)."
+                },
+                "species": {
+                    "type": "string",
+                    "description": "Species name (e.g., homo_sapiens, mus_musculus).",
+                    "default": "homo_sapiens"
+                }
+            },
+            "required": ["gene_id"]
+        },
+        "return_schema": {
+            "type": "object",
+            "description": "The principal isoform with its APPRIS annotation.",
+            "properties": {
+                "transcript_id": {"type": ["string", "null"]},
+                "transcript_name": {"type": ["string", "null"]},
+                "gene_id": {"type": ["string", "null"]},
+                "annotation": {"type": ["string", "null"]},
+                "reliability": {"type": ["string", "null"]},
+                "biotype": {"type": ["string", "null"]},
+                "length_aa": {"type": ["string", "null"]},
+                "ccds_id": {"type": ["string", "null"]}
+            },
+            "additionalProperties": true
+        },
+        "test_examples": [
+            {
+                "gene_id": "ENSG00000141510"
+            },
+            {
+                "gene_id": "ENSG00000012048"
+            }
+        ],
+        "fields": {
+            "operation": "get_principal"
+        }
+    },
+    {
+        "name": "APPRIS_get_functional_annotations",
+        "type": "APPRISTool",
+        "description": "Get detailed functional annotations for gene isoforms from APPRIS, including structural domains (spade), functional residues (firestar), 3D structure coverage (matador3d), cross-species conservation (corsair), transmembrane helices (thump), signal peptides (crash), and proteomics evidence (proteo).\n\nAnnotations are grouped by type. Optionally filter by transcript_id to focus on a specific isoform.\n\nAvailable methods: appris, firestar, matador3d, spade, corsair, thump, crash, proteo, tsl",
+        "parameter": {
+            "type": "object",
+            "properties": {
+                "gene_id": {
+                    "type": "string",
+                    "description": "Ensembl gene ID (e.g., ENSG00000141510 for TP53)."
+                },
+                "species": {
+                    "type": "string",
+                    "description": "Species name (e.g., homo_sapiens).",
+                    "default": "homo_sapiens"
+                },
+                "methods": {
+                    "type": "string",
+                    "description": "Comma-separated analysis methods to retrieve (e.g., 'firestar,spade,corsair'). Leave empty for all."
+                },
+                "transcript_id": {
+                    "type": "string",
+                    "description": "Optional Ensembl transcript ID to filter results for a specific isoform (e.g., ENST00000269305)."
+                }
+            },
+            "required": ["gene_id"]
+        },
+        "return_schema": {
+            "type": "object",
+            "description": "Annotations grouped by type (e.g., functional_residue, homologous_structure, etc.).",
+            "additionalProperties": {
+                "type": "array",
+                "items": {
+                    "type": "object",
+                    "properties": {
+                        "transcript_id": {"type": ["string", "null"]},
+                        "type": {"type": ["string", "null"]},
+                        "annotation": {"type": ["string", "null"]},
+                        "score": {"type": ["string", "null"]}
+                    },
+                    "additionalProperties": true
+                }
+            }
+        },
+        "test_examples": [
+            {
+                "gene_id": "ENSG00000141510",
+                "methods": "firestar,spade"
+            },
+            {
+                "gene_id": "ENSG00000012048",
+                "transcript_id": "ENST00000357654"
+            }
+        ],
+        "fields": {
+            "operation": "get_functional_annotations"
+        }
+    }
+]
