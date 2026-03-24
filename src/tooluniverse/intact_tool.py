@@ -109,6 +109,7 @@ class IntActRESTTool(BaseTool):
                 "uniprot_id",
                 "protein_id",
                 "gene_symbol",
+                "gene",
                 "gene_name",
                 "protein_name",
             ):

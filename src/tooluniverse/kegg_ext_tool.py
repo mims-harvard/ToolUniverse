@@ -88,6 +88,10 @@ class KEGGExtTool(BaseTool):
             return self._search_variant(arguments)
         elif self.endpoint == "get_variant":
             return self._get_variant(arguments)
+        elif self.endpoint == "conv_ids":
+            return self._conv_ids(arguments)
+        elif self.endpoint == "link_entries":
+            return self._link_entries(arguments)
         else:
             return {"status": "error", "error": f"Unknown endpoint: {self.endpoint}"}
 
@@ -1016,4 +1020,102 @@ class KEGGExtTool(BaseTool):
             "status": "success",
             "data": result,
             "metadata": {"source": "KEGG Variant", "variant_id": variant_id},
+        }
+
+    def _conv_ids(self, arguments: Dict[str, Any]) -> Dict[str, Any]:
+        """Convert between KEGG identifiers and external database IDs.
+
+        The KEGG /conv endpoint maps KEGG gene IDs to/from external databases:
+        ncbi-geneid, ncbi-proteinid, uniprot, chebi, pubchem.
+        """
+        kegg_id = arguments.get("kegg_id", "")
+        target_db = arguments.get("target_db", "")
+        if not kegg_id:
+            return {
+                "status": "error",
+                "error": "kegg_id is required (e.g., 'hsa:7157' for TP53)",
+            }
+        if not target_db:
+            return {
+                "status": "error",
+                "error": "target_db is required: uniprot, ncbi-geneid, ncbi-proteinid, chebi, or pubchem",
+            }
+
+        valid_dbs = {"uniprot", "ncbi-geneid", "ncbi-proteinid", "chebi", "pubchem"}
+        if target_db not in valid_dbs:
+            return {
+                "status": "error",
+                "error": f"target_db must be one of: {', '.join(sorted(valid_dbs))}",
+            }
+
+        url = f"{KEGG_BASE_URL}/conv/{target_db}/{kegg_id}"
+        response = requests.get(url, timeout=self.timeout)
+        response.raise_for_status()
+
+        text = response.text.strip()
+        if not text:
+            return {
+                "status": "error",
+                "error": f"No {target_db} mapping found for {kegg_id}",
+            }
+
+        mappings = []
+        for line in text.split("\n"):
+            parts = line.strip().split("\t")
+            if len(parts) == 2:
+                mappings.append({"kegg_id": parts[0], "external_id": parts[1]})
+
+        return {
+            "status": "success",
+            "data": mappings,
+            "metadata": {
+                "source": "KEGG conv",
+                "query_kegg_id": kegg_id,
+                "target_db": target_db,
+                "total": len(mappings),
+            },
+        }
+
+    def _link_entries(self, arguments: Dict[str, Any]) -> Dict[str, Any]:
+        """Find cross-references between KEGG databases.
+
+        The KEGG /link endpoint finds entries linked between databases,
+        e.g., all pathways linked to a given gene, or all drugs for a disease.
+        """
+        source = arguments.get("source", "")
+        target = arguments.get("target", "")
+        if not source or not target:
+            return {
+                "status": "error",
+                "error": "Both source and target are required. "
+                "source: KEGG entry ID (e.g., 'hsa:7157'). "
+                "target: KEGG database name (e.g., 'pathway', 'disease', 'drug').",
+            }
+
+        url = f"{KEGG_BASE_URL}/link/{target}/{source}"
+        response = requests.get(url, timeout=self.timeout)
+        response.raise_for_status()
+
+        text = response.text.strip()
+        if not text:
+            return {
+                "status": "error",
+                "error": f"No {target} entries linked to {source}",
+            }
+
+        links = []
+        for line in text.split("\n"):
+            parts = line.strip().split("\t")
+            if len(parts) == 2:
+                links.append({"source_id": parts[0], "target_id": parts[1]})
+
+        return {
+            "status": "success",
+            "data": links,
+            "metadata": {
+                "source_query": source,
+                "target_db": target,
+                "total": len(links),
+                "source": "KEGG link",
+            },
         }

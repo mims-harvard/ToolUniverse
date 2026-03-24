@@ -125,6 +125,18 @@ class OpentargetTool(GraphQLTool):
     def run(self, arguments):
         arguments = copy.deepcopy(arguments)
 
+        # Normalize common aliases before resolution
+        if "ensemblId" not in arguments and "gene_symbol" not in arguments:
+            for alias in ("target", "gene", "gene_name"):
+                if arguments.get(alias):
+                    arguments["gene_symbol"] = arguments.pop(alias)
+                    break
+        if "efoId" not in arguments and "disease_name" not in arguments:
+            for alias in ("disease", "disease_id", "trait"):
+                if arguments.get(alias):
+                    arguments["disease_name"] = arguments.pop(alias)
+                    break
+
         # Resolve gene_symbol → ensemblId if ensemblId not provided
         if "ensemblId" not in arguments and "gene_symbol" in arguments:
             resolved = _ot_resolve_id(
