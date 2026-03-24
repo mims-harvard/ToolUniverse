@@ -13,12 +13,26 @@
           ],
           "description": "Histone modification mark to filter by (e.g., 'H3K4me3', 'H3K27ac', 'H3K27me3', 'H3K4me1', 'H3K36me3', 'H3K9me3'). Leave empty to search all histone marks."
         },
+        "target": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Alias for histone_mark. Histone modification mark (e.g., 'H3K27ac', 'H3K4me3')."
+        },
         "biosample_term_name": {
           "type": [
             "string",
             "null"
           ],
           "description": "Biosample name from ENCODE ontology (cell lines or tissues, NOT disease names). Examples: 'K562', 'HepG2', 'GM12878', 'liver', 'brain'. For disease-specific data, search by relevant cell lines (e.g., K562/MOLM-13 for AML). Leave empty to search all."
+        },
+        "biosample": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Alias for biosample_term_name. Biosample (tissue or cell line, e.g., 'liver', 'K562')."
         },
         "organism": {
           "type": "string",

@@ -9,7 +9,7 @@ from ._shared_client import get_shared_client
 
 
 def GTEx_get_single_tissue_eqtls(
-    operation: str,
+    operation: Optional[str] = None,
     gencode_id: Optional[list[str]] = None,
     variant_id: Optional[list[str]] = None,
     tissue_site_detail_id: Optional[list[str]] = None,

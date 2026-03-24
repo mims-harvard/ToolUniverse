@@ -22,27 +22,43 @@
       "format": "json"
     },
     "return_schema": {
-      "type": "object",
-      "description": "GTEx expression summary response",
-      "properties": {
-        "status": {"type": "string"},
-        "data": {
+      "oneOf": [
+        {
           "type": "object",
           "properties": {
-            "geneExpression": {
-              "type": "array",
-              "items": {
-                "type": "object",
-                "properties": {
-                  "tissueSiteDetailId": {"type": "string"},
-                  "median": {"type": "number"}
+            "status": {"type": "string", "enum": ["success"]},
+            "data": {
+              "type": "object",
+              "properties": {
+                "geneExpression": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "tissueSiteDetailId": {"type": "string"},
+                      "median": {"type": "number"},
+                      "geneSymbol": {"type": "string"},
+                      "gencodeId": {"type": "string"},
+                      "unit": {"type": "string"}
+                    }
+                  }
                 }
               }
-            }
-          }
+            },
+            "url": {"type": "string"}
+          },
+          "required": ["status", "data"]
         },
-        "url": {"type": "string"}
-      }
+        {
+          "type": "object",
+          "properties": {
+            "status": {"type": "string", "enum": ["error"]},
+            "error": {"type": "string"},
+            "retryable": {"type": "boolean"}
+          },
+          "required": ["status", "error"]
+        }
+      ]
     },
     "test_examples": [
       {"gene_symbol": "TP53"},
@@ -90,28 +106,43 @@
       "format": "json"
     },
     "return_schema": {
-      "type": "object",
-      "description": "GTEx eQTL query response",
-      "properties": {
-        "status": {"type": "string"},
-        "data": {
+      "oneOf": [
+        {
           "type": "object",
           "properties": {
-            "singleTissueEqtl": {
-              "type": "array",
-              "items": {
-                "type": "object",
-                "properties": {
-                  "variantId": {"type": "string"},
-                  "pValue": {"type": "number"},
-                  "slope": {"type": "number"}
+            "status": {"type": "string", "enum": ["success"]},
+            "data": {
+              "type": "object",
+              "properties": {
+                "singleTissueEqtl": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "variantId": {"type": "string"},
+                      "pValue": {"type": "number"},
+                      "slope": {"type": "number"},
+                      "tissueSiteDetailId": {"type": "string"},
+                      "geneSymbol": {"type": "string"}
+                    }
+                  }
                 }
               }
-            }
-          }
+            },
+            "url": {"type": "string"}
+          },
+          "required": ["status", "data"]
         },
-        "url": {"type": "string"}
-      }
+        {
+          "type": "object",
+          "properties": {
+            "status": {"type": "string", "enum": ["error"]},
+            "error": {"type": "string"},
+            "retryable": {"type": "boolean"}
+          },
+          "required": ["status", "error"]
+        }
+      ]
     },
     "test_examples": [
       {"gene_symbol": "TP53", "page": 1, "size": 5},

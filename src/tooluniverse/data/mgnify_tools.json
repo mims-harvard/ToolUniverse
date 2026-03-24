@@ -2,7 +2,7 @@
   {
     "name": "MGnify_search_studies",
     "type": "MGnifyStudiesTool",
-    "description": "Search MGnify metagenomics/microbiome studies by biome/keyword. Use to discover study accessions and attributes for downstream analyses and downloads.",
+    "description": "Search MGnify metagenomics/microbiome studies by biome or keyword. Returns study accessions (MGYS...), names, bioproject IDs, biome names, and analysis counts. Use to find datasets from specific environments (e.g., gut microbiome, soil, ocean) before retrieving analyses or taxonomy. Example: biome='root:Host-associated' returns gut, skin, and oral studies.",
     "parameter": {
       "type": "object",
       "properties": {

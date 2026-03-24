@@ -9,7 +9,7 @@ from ._shared_client import get_shared_client
 
 
 def Orphanet_get_genes(
-    orpha_code: str,
+    orpha_code: str | int,
     operation: Optional[str] = None,
     *,
     stream_callback: Optional[Callable[[str], None]] = None,
@@ -23,7 +23,7 @@ def Orphanet_get_genes(
     ----------
     operation : str
         Operation type (fixed: get_genes)
-    orpha_code : str
+    orpha_code : str | int
         Orphanet ORPHA code for the disease
     stream_callback : Callable, optional
         Callback for streaming output

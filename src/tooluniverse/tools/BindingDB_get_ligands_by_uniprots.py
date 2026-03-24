@@ -9,7 +9,7 @@ from ._shared_client import get_shared_client
 
 
 def BindingDB_get_ligands_by_uniprots(
-    uniprots: str,
+    uniprot_ids: str,
     affinity_cutoff: Optional[int] = 10000,
     *,
     stream_callback: Optional[Callable[[str], None]] = None,
@@ -21,10 +21,10 @@ def BindingDB_get_ligands_by_uniprots(
 
     Parameters
     ----------
-    uniprots : str
-        Comma-separated UniProt IDs (e.g., P00176,P00183)
     affinity_cutoff : int
         Maximum affinity in nM (default: 10000)
+    uniprot_ids : str
+        Comma-separated UniProt IDs (e.g., P00176,P00183)
     stream_callback : Callable, optional
         Callback for streaming output
     use_cache : bool, default False
@@ -41,7 +41,10 @@ def BindingDB_get_ligands_by_uniprots(
     # Strip None values so optional parameters don't trigger schema validation errors
     _args = {
         k: v
-        for k, v in {"uniprots": uniprots, "affinity_cutoff": affinity_cutoff}.items()
+        for k, v in {
+            "affinity_cutoff": affinity_cutoff,
+            "uniprot_ids": uniprot_ids,
+        }.items()
         if v is not None
     }
     return get_shared_client().run_one_function(

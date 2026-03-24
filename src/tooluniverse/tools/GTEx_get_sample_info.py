@@ -9,7 +9,7 @@ from ._shared_client import get_shared_client
 
 
 def GTEx_get_sample_info(
-    operation: str,
+    operation: Optional[str] = None,
     sample_id: Optional[list[str]] = None,
     subject_id: Optional[list[str]] = None,
     tissue_site_detail_id: Optional[list[str]] = None,

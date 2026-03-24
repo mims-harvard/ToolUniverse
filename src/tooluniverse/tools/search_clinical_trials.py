@@ -14,6 +14,8 @@ def search_clinical_trials(
     query_term: Optional[str] = None,
     pageSize: Optional[int] = None,
     pageToken: Optional[str] = None,
+    overall_status: Optional[list[str]] = None,
+    max_results: Optional[int] = None,
     *,
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
@@ -34,6 +36,10 @@ def search_clinical_trials(
         Maximum number of studies to return per page (default 10, max 1000).
     pageToken : str
         Token to retrieve the next page of results, obtained from the 'nextPageToken'...
+    overall_status : list[str]
+        Filter by overall study status (e.g., ['RECRUITING'], ['COMPLETED'], ['RECRUI...
+    max_results : int
+        Maximum number of studies to return (alias for pageSize, default 10, max 1000).
     stream_callback : Callable, optional
         Callback for streaming output
     use_cache : bool, default False
@@ -56,6 +62,8 @@ def search_clinical_trials(
             "query_term": query_term,
             "pageSize": pageSize,
             "pageToken": pageToken,
+            "overall_status": overall_status,
+            "max_results": max_results,
         }.items()
         if v is not None
     }

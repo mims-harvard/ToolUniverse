@@ -9,7 +9,8 @@ from ._shared_client import get_shared_client
 
 
 def PubChem_get_CID_by_compound_name(
-    name: str,
+    name: Optional[str] = None,
+    compound_name: Optional[str] = None,
     *,
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
@@ -22,6 +23,8 @@ def PubChem_get_CID_by_compound_name(
     ----------
     name : str
         Chemical compound name (e.g., "Aspirin", "Acetaminophen") or IUPAC name. Do n...
+    compound_name : str
+        Alias for name. The compound name to look up.
     stream_callback : Callable, optional
         Callback for streaming output
     use_cache : bool, default False
@@ -36,7 +39,11 @@ def PubChem_get_CID_by_compound_name(
     # Handle mutable defaults to avoid B006 linting error
 
     # Strip None values so optional parameters don't trigger schema validation errors
-    _args = {k: v for k, v in {"name": name}.items() if v is not None}
+    _args = {
+        k: v
+        for k, v in {"name": name, "compound_name": compound_name}.items()
+        if v is not None
+    }
     return get_shared_client().run_one_function(
         {
             "name": "PubChem_get_CID_by_compound_name",

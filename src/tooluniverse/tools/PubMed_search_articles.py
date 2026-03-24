@@ -16,6 +16,7 @@ def PubMed_search_articles(
     datetype: Optional[str] = "pdat",
     include_abstract: Optional[bool] = False,
     sort: Optional[str] = None,
+    max_results: Optional[int] = None,
     *,
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
@@ -40,6 +41,8 @@ def PubMed_search_articles(
         If true, best-effort fetches abstracts via efetch (adds abstract/abstract_sou...
     sort : str
         Sort order for results. Valid values: 'pub_date' (newest first), 'Author' (al...
+    max_results : int
+        Alias for limit — maximum number of results to return
     stream_callback : Callable, optional
         Callback for streaming output
     use_cache : bool, default False
@@ -64,6 +67,7 @@ def PubMed_search_articles(
             "datetype": datetype,
             "include_abstract": include_abstract,
             "sort": sort,
+            "max_results": max_results,
         }.items()
         if v is not None
     }

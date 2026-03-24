@@ -9,8 +9,9 @@ from ._shared_client import get_shared_client
 
 
 def ols_get_term_info(
-    id: str,
     operation: Optional[str] = None,
+    id: Optional[str] = None,
+    term_id: Optional[str] = None,
     *,
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
@@ -24,7 +25,9 @@ def ols_get_term_info(
     operation : str
         The operation to perform (get_term_info)
     id : str
-        The ID or IRI of the term to retrieve
+        Ontology term ID or IRI (e.g. HP:0001903, http://purl.obolibrary.org/obo/HP_0...
+    term_id : str
+        Alias for id — ontology term ID (e.g. HP:0001903)
     stream_callback : Callable, optional
         Callback for streaming output
     use_cache : bool, default False
@@ -40,7 +43,9 @@ def ols_get_term_info(
 
     # Strip None values so optional parameters don't trigger schema validation errors
     _args = {
-        k: v for k, v in {"operation": operation, "id": id}.items() if v is not None
+        k: v
+        for k, v in {"operation": operation, "id": id, "term_id": term_id}.items()
+        if v is not None
     }
     return get_shared_client().run_one_function(
         {

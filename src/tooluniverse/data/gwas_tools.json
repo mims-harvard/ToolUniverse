@@ -936,6 +936,10 @@
           "type": "string",
           "description": "Disease or trait name for text-based search (e.g., 'diabetes', 'breast cancer')"
         },
+        "trait": {
+          "type": "string",
+          "description": "Alias for disease_trait. Disease or trait name (e.g., 'type 2 diabetes', 'breast cancer')"
+        },
         "efo_uri": {
           "type": "string",
           "description": "Full EFO ontology URI (e.g., 'http://www.ebi.ac.uk/efo/EFO_0001645')"
@@ -952,6 +956,10 @@
           "type": "integer",
           "description": "Number of results to return per page"
         },
+        "limit": {
+          "type": "integer",
+          "description": "Alias for size. Number of results to return per page"
+        },
         "page": {
           "type": "integer",
           "description": "Page number for pagination"
@@ -961,6 +969,11 @@
         {
           "required": [
             "disease_trait"
+          ]
+        },
+        {
+          "required": [
+            "trait"
           ]
         },
         {

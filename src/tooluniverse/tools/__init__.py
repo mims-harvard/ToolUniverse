@@ -1,7 +1,7 @@
 """
 ToolUniverse Tools
 
-Type-safe Python interface to 2056 scientific tools.
+Type-safe Python interface to 2066 scientific tools.
 Each tool is in its own module for minimal import overhead.
 
 Usage:
@@ -50,6 +50,8 @@ from .ADMETAnalyzerAgent import ADMETAnalyzerAgent
 from .AHA_ACC_get_guideline import AHA_ACC_get_guideline
 from .AHA_ACC_search_guidelines import AHA_ACC_search_guidelines
 from .AHA_list_guidelines import AHA_list_guidelines
+from .AOPWiki_get_aop import AOPWiki_get_aop
+from .AOPWiki_list_aops import AOPWiki_list_aops
 from .AdvancedCodeQualityAnalyzer import AdvancedCodeQualityAnalyzer
 from .AdverseEventICDMapper import AdverseEventICDMapper
 from .AdverseEventPredictionQuestionGenerator import (
@@ -1104,7 +1106,10 @@ from .MEME_fimo_scan import MEME_fimo_scan
 from .MEME_list_databases import MEME_list_databases
 from .MEME_tomtom_compare import MEME_tomtom_compare
 from .MGnify_get_genome import MGnify_get_genome
+from .MGnify_get_go_terms import MGnify_get_go_terms
+from .MGnify_get_interpro import MGnify_get_interpro
 from .MGnify_get_study_detail import MGnify_get_study_detail
+from .MGnify_get_taxonomy import MGnify_get_taxonomy
 from .MGnify_list_analyses import MGnify_list_analyses
 from .MGnify_list_biomes import MGnify_list_biomes
 from .MGnify_search_genomes import MGnify_search_genomes
@@ -1595,6 +1600,9 @@ from .PlantReactome_search_pathways import PlantReactome_search_pathways
 from .PomBase_get_gene import PomBase_get_gene
 from .PomBase_get_gene_phenotypes import PomBase_get_gene_phenotypes
 from .PomBase_search_genes import PomBase_search_genes
+from .ProtVar_get_function import ProtVar_get_function
+from .ProtVar_get_population import ProtVar_get_population
+from .ProtVar_map_variant import ProtVar_map_variant
 from .ProtacDB_get_protac import ProtacDB_get_protac
 from .ProtacDB_search_protacs import ProtacDB_search_protacs
 from .ProtacDB_search_targets import ProtacDB_search_targets
@@ -1749,6 +1757,8 @@ from .SAbDab_get_structure import SAbDab_get_structure
 from .SAbDab_get_summary import SAbDab_get_summary
 from .SAbDab_search_structures import SAbDab_search_structures
 from .SCREEN_get_regulatory_elements import SCREEN_get_regulatory_elements
+from .SCXA_list_experiments import SCXA_list_experiments
+from .SCXA_search_gene import SCXA_search_gene
 from .SDSS_sql_search import SDSS_sql_search
 from .SGD_get_gene import SGD_get_gene
 from .SGD_get_go_annotations import SGD_get_go_annotations
@@ -2588,6 +2598,8 @@ __all__ = [
     "AHA_ACC_get_guideline",
     "AHA_ACC_search_guidelines",
     "AHA_list_guidelines",
+    "AOPWiki_get_aop",
+    "AOPWiki_list_aops",
     "AdvancedCodeQualityAnalyzer",
     "AdverseEventICDMapper",
     "AdverseEventPredictionQuestionGenerator",
@@ -3406,7 +3418,10 @@ __all__ = [
     "MEME_list_databases",
     "MEME_tomtom_compare",
     "MGnify_get_genome",
+    "MGnify_get_go_terms",
+    "MGnify_get_interpro",
     "MGnify_get_study_detail",
+    "MGnify_get_taxonomy",
     "MGnify_list_analyses",
     "MGnify_list_biomes",
     "MGnify_search_genomes",
@@ -3771,6 +3786,9 @@ __all__ = [
     "PomBase_get_gene",
     "PomBase_get_gene_phenotypes",
     "PomBase_search_genes",
+    "ProtVar_get_function",
+    "ProtVar_get_population",
+    "ProtVar_map_variant",
     "ProtacDB_get_protac",
     "ProtacDB_search_protacs",
     "ProtacDB_search_targets",
@@ -3901,6 +3919,8 @@ __all__ = [
     "SAbDab_get_summary",
     "SAbDab_search_structures",
     "SCREEN_get_regulatory_elements",
+    "SCXA_list_experiments",
+    "SCXA_search_gene",
     "SDSS_sql_search",
     "SGD_get_gene",
     "SGD_get_go_annotations",

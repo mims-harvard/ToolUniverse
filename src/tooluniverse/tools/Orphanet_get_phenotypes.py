@@ -9,8 +9,9 @@ from ._shared_client import get_shared_client
 
 
 def Orphanet_get_phenotypes(
-    orpha_code: str,
     operation: Optional[str] = None,
+    orpha_code: Optional[str | int] = None,
+    orpha_id: Optional[str | int] = None,
     *,
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
@@ -23,8 +24,10 @@ def Orphanet_get_phenotypes(
     ----------
     operation : str
         Operation type (fixed: get_phenotypes)
-    orpha_code : str
+    orpha_code : str | int
         Orphanet ORPHA code (e.g., 558 for Marfan, 586 for Cystic Fibrosis)
+    orpha_id : str | int
+        Alias for orpha_code. Orphanet ORPHA code (e.g., 558 for Marfan)
     stream_callback : Callable, optional
         Callback for streaming output
     use_cache : bool, default False
@@ -41,7 +44,11 @@ def Orphanet_get_phenotypes(
     # Strip None values so optional parameters don't trigger schema validation errors
     _args = {
         k: v
-        for k, v in {"operation": operation, "orpha_code": orpha_code}.items()
+        for k, v in {
+            "operation": operation,
+            "orpha_code": orpha_code,
+            "orpha_id": orpha_id,
+        }.items()
         if v is not None
     }
     return get_shared_client().run_one_function(

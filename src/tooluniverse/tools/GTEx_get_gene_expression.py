@@ -9,8 +9,8 @@ from ._shared_client import get_shared_client
 
 
 def GTEx_get_gene_expression(
-    operation: str,
     gencode_id: str | list[str],
+    operation: Optional[str] = None,
     tissue_site_detail_id: Optional[list[str]] = None,
     attribute_subset: Optional[str] = None,
     dataset_id: Optional[str] = "gtex_v8",

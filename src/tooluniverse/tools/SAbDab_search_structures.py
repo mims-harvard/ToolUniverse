@@ -1,7 +1,7 @@
 """
 SAbDab_search_structures
 
-Search SAbDab structural antibody database. SAbDab contains all antibody structures from PDB with...
+Search SAbDab structural antibody database. Returns a direct browse URL to matching antibody stru...
 """
 
 from typing import Any, Optional, Callable
@@ -18,7 +18,7 @@ def SAbDab_search_structures(
     validate: bool = True,
 ) -> dict[str, Any]:
     """
-    Search SAbDab structural antibody database. SAbDab contains all antibody structures from PDB with...
+    Search SAbDab structural antibody database. Returns a direct browse URL to matching antibody stru...
 
     Parameters
     ----------

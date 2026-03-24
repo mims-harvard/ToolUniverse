@@ -116,11 +116,12 @@ class EpigenomicsTool(BaseTool):
             "status": "released",
         }
 
-        histone_mark = arguments.get("histone_mark")
+        # Accept 'target' as alias for 'histone_mark', 'biosample' for 'biosample_term_name'
+        histone_mark = arguments.get("histone_mark") or arguments.get("target")
         if histone_mark:
             params["target.label"] = histone_mark
 
-        biosample = arguments.get("biosample_term_name")
+        biosample = arguments.get("biosample_term_name") or arguments.get("biosample")
         if biosample:
             params["biosample_ontology.term_name"] = biosample
 

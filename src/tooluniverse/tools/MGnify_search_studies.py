@@ -1,7 +1,7 @@
 """
 MGnify_search_studies
 
-Search MGnify metagenomics/microbiome studies by biome/keyword. Use to discover study accessions ...
+Search MGnify metagenomics/microbiome studies by biome or keyword. Returns study accessions (MGYS...
 """
 
 from typing import Any, Optional, Callable
@@ -18,7 +18,7 @@ def MGnify_search_studies(
     validate: bool = True,
 ) -> list[Any]:
     """
-    Search MGnify metagenomics/microbiome studies by biome/keyword. Use to discover study accessions ...
+    Search MGnify metagenomics/microbiome studies by biome or keyword. Returns study accessions (MGYS...
 
     Parameters
     ----------

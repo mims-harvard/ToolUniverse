@@ -9,10 +9,10 @@ from ._shared_client import get_shared_client
 
 
 def GTEx_calculate_eqtl(
-    operation: str,
     gencode_id: str,
     variant_id: str,
     tissue_site_detail_id: str,
+    operation: Optional[str] = None,
     dataset_id: Optional[str] = "gtex_v8",
     *,
     stream_callback: Optional[Callable[[str], None]] = None,

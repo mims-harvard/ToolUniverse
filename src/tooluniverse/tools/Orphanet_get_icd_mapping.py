@@ -9,7 +9,7 @@ from ._shared_client import get_shared_client
 
 
 def Orphanet_get_icd_mapping(
-    orpha_code: str,
+    orpha_code: str | int,
     operation: Optional[str] = None,
     coding_system: Optional[str] = "all",
     lang: Optional[str] = "en",
@@ -25,7 +25,7 @@ def Orphanet_get_icd_mapping(
     ----------
     operation : str
         Operation type (fixed: get_icd_mapping)
-    orpha_code : str
+    orpha_code : str | int
         Orphanet ORPHA code (e.g., 558 for Marfan, 586 for Cystic Fibrosis)
     coding_system : str
         Which coding system to retrieve: all, icd10, icd11, omim, snomed. Default: all

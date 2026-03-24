@@ -9,8 +9,8 @@ from ._shared_client import get_shared_client
 
 
 def GTEx_get_top_expressed_genes(
-    operation: str,
     tissue_site_detail_id: str,
+    operation: Optional[str] = None,
     filter_mt_genes: Optional[bool] = True,
     dataset_id: Optional[str] = "gtex_v8",
     page: Optional[int] = 0,

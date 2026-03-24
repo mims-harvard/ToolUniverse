@@ -9,8 +9,9 @@ from ._shared_client import get_shared_client
 
 
 def OncoKB_get_gene_info(
-    gene: str,
     operation: Optional[str] = None,
+    gene: Optional[str] = None,
+    gene_symbol: Optional[str] = None,
     *,
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
@@ -24,7 +25,9 @@ def OncoKB_get_gene_info(
     operation : str
         Operation type (fixed: get_gene_info)
     gene : str
-        Gene symbol (e.g., BRAF, TP53, EGFR, KRAS)
+        Gene symbol (e.g., BRAF, TP53, ROS1). Without ONCOKB_API_TOKEN only BRAF, TP5...
+    gene_symbol : str
+        Gene symbol alias — alternative to gene parameter
     stream_callback : Callable, optional
         Callback for streaming output
     use_cache : bool, default False
@@ -40,7 +43,13 @@ def OncoKB_get_gene_info(
 
     # Strip None values so optional parameters don't trigger schema validation errors
     _args = {
-        k: v for k, v in {"operation": operation, "gene": gene}.items() if v is not None
+        k: v
+        for k, v in {
+            "operation": operation,
+            "gene": gene,
+            "gene_symbol": gene_symbol,
+        }.items()
+        if v is not None
     }
     return get_shared_client().run_one_function(
         {

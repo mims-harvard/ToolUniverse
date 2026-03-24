@@ -9,8 +9,9 @@ from ._shared_client import get_shared_client
 
 
 def DailyMed_parse_clinical_pharmacology(
-    setid: str,
     operation: Optional[str] = None,
+    setid: Optional[str] = None,
+    drug_name: Optional[str] = None,
     *,
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
@@ -25,6 +26,8 @@ def DailyMed_parse_clinical_pharmacology(
         Operation type (fixed)
     setid : str
         SPL Set ID to parse
+    drug_name : str
+        Drug name for automatic Set ID lookup (alternative to setid)
     stream_callback : Callable, optional
         Callback for streaming output
     use_cache : bool, default False
@@ -41,7 +44,11 @@ def DailyMed_parse_clinical_pharmacology(
     # Strip None values so optional parameters don't trigger schema validation errors
     _args = {
         k: v
-        for k, v in {"operation": operation, "setid": setid}.items()
+        for k, v in {
+            "operation": operation,
+            "setid": setid,
+            "drug_name": drug_name,
+        }.items()
         if v is not None
     }
     return get_shared_client().run_one_function(

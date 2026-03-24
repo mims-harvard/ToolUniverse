@@ -1,39 +1,36 @@
 """
-GTEx_get_eqtl_genes
+Metabolite_get_info
 
-Get eQTL genes (eGenes) with significant cis-eQTLs. Returns genes with at least one significant e...
+Get compound information for a metabolite by HMDB ID, compound name, or PubChem CID. Returns comm...
 """
 
 from typing import Any, Optional, Callable
 from ._shared_client import get_shared_client
 
 
-def GTEx_get_eqtl_genes(
+def Metabolite_get_info(
     operation: Optional[str] = None,
-    tissue_site_detail_id: Optional[list[str]] = None,
-    dataset_id: Optional[str] = "gtex_v8",
-    page: Optional[int] = 0,
-    items_per_page: Optional[int] = 250,
+    hmdb_id: Optional[str] = None,
+    compound_name: Optional[str] = None,
+    pubchem_cid: Optional[int | str] = None,
     *,
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> list[Any]:
+) -> dict[str, Any]:
     """
-    Get eQTL genes (eGenes) with significant cis-eQTLs. Returns genes with at least one significant e...
+    Get compound information for a metabolite by HMDB ID, compound name, or PubChem CID. Returns comm...
 
     Parameters
     ----------
     operation : str
-        Operation type
-    tissue_site_detail_id : list[str]
-        Optional: Filter by tissue IDs. Omit for all tissues
-    dataset_id : str
-        GTEx dataset version
-    page : int
 
-    items_per_page : int
-
+    hmdb_id : str
+        HMDB ID (e.g., HMDB0000122 or HMDB0000001)
+    compound_name : str
+        Compound name (e.g., glucose, L-alanine, caffeine)
+    pubchem_cid : int | str
+        PubChem CID (e.g., 5793)
     stream_callback : Callable, optional
         Callback for streaming output
     use_cache : bool, default False
@@ -43,7 +40,7 @@ def GTEx_get_eqtl_genes(
 
     Returns
     -------
-    list[Any]
+    dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 
@@ -52,16 +49,15 @@ def GTEx_get_eqtl_genes(
         k: v
         for k, v in {
             "operation": operation,
-            "tissue_site_detail_id": tissue_site_detail_id,
-            "dataset_id": dataset_id,
-            "page": page,
-            "items_per_page": items_per_page,
+            "hmdb_id": hmdb_id,
+            "compound_name": compound_name,
+            "pubchem_cid": pubchem_cid,
         }.items()
         if v is not None
     }
     return get_shared_client().run_one_function(
         {
-            "name": "GTEx_get_eqtl_genes",
+            "name": "Metabolite_get_info",
             "arguments": _args,
         },
         stream_callback=stream_callback,
@@ -70,4 +66,4 @@ def GTEx_get_eqtl_genes(
     )
 
 
-__all__ = ["GTEx_get_eqtl_genes"]
+__all__ = ["Metabolite_get_info"]

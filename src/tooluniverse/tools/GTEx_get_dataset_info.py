@@ -9,7 +9,7 @@ from ._shared_client import get_shared_client
 
 
 def GTEx_get_dataset_info(
-    operation: str,
+    operation: Optional[str] = None,
     dataset_id: Optional[str] = None,
     *,
     stream_callback: Optional[Callable[[str], None]] = None,

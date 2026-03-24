@@ -1150,12 +1150,18 @@ class EuropePMCRESTTool(BaseTool):
         self.timeout = 30
 
     def _build_url(self, arguments):
-        """Build URL from endpoint template and arguments."""
+        """Build URL from endpoint template and arguments, applying schema defaults for missing path params."""
         endpoint = self.tool_config["fields"]["endpoint"]
         url = endpoint
-        for key, value in arguments.items():
+
+        # Merge schema defaults so optional path params (e.g. {source}) are always substituted
+        props = self.tool_config.get("parameter", {}).get("properties", {})
+        merged = {k: v.get("default") for k, v in props.items() if "default" in v}
+        merged.update(arguments)
+
+        for key, value in merged.items():
             placeholder = f"{{{key}}}"
-            if placeholder in url:
+            if placeholder in url and value is not None:
                 url = url.replace(placeholder, str(value))
         return url
 
@@ -1172,8 +1178,8 @@ class EuropePMCRESTTool(BaseTool):
             for key, value in arguments.items():
                 placeholder = f"{{{key}}}"
                 if placeholder not in endpoint_template and value is not None:
-                    # Europe PMC expects pageSize, not page_size.
-                    if key == "page_size":
+                    # Europe PMC expects pageSize, not page_size; limit maps to pageSize too
+                    if key in ("page_size", "limit"):
                         params["pageSize"] = value
                     else:
                         params[key] = value

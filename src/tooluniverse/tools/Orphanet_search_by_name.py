@@ -13,6 +13,7 @@ def Orphanet_search_by_name(
     operation: Optional[str] = None,
     exact: Optional[bool] = False,
     lang: Optional[str] = "en",
+    limit: Optional[int] = None,
     *,
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
@@ -31,6 +32,8 @@ def Orphanet_search_by_name(
         If true, match exact name only. Default: false
     lang : str
         Language code (default: en)
+    limit : int
+        Maximum number of results to return (default: 20, max: 200)
     stream_callback : Callable, optional
         Callback for streaming output
     use_cache : bool, default False
@@ -52,6 +55,7 @@ def Orphanet_search_by_name(
             "name": name,
             "exact": exact,
             "lang": lang,
+            "limit": limit,
         }.items()
         if v is not None
     }

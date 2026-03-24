@@ -10,6 +10,7 @@ from ._shared_client import get_shared_client
 
 def GDC_get_mutation_frequency(
     gene_symbol: str,
+    gene: Optional[str] = None,
     *,
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
@@ -22,6 +23,8 @@ def GDC_get_mutation_frequency(
     ----------
     gene_symbol : str
         Gene symbol (e.g., 'TP53', 'KRAS', 'EGFR')
+    gene : str
+        Gene symbol alias — alternative to gene_symbol
     stream_callback : Callable, optional
         Callback for streaming output
     use_cache : bool, default False
@@ -36,7 +39,11 @@ def GDC_get_mutation_frequency(
     # Handle mutable defaults to avoid B006 linting error
 
     # Strip None values so optional parameters don't trigger schema validation errors
-    _args = {k: v for k, v in {"gene_symbol": gene_symbol}.items() if v is not None}
+    _args = {
+        k: v
+        for k, v in {"gene_symbol": gene_symbol, "gene": gene}.items()
+        if v is not None
+    }
     return get_shared_client().run_one_function(
         {
             "name": "GDC_get_mutation_frequency",
