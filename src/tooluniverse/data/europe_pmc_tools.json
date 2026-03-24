@@ -38,6 +38,10 @@
           "items": {
             "type": "string"
           }
+        },
+        "page_size": {
+          "type": "integer",
+          "description": "Alias for limit \u2014 number of results to return"
         }
       },
       "required": [

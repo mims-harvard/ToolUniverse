@@ -346,20 +346,20 @@ class EuropePMCTool(BaseTool):
 
     def run(self, arguments):
         query = arguments.get("query")
-        limit = arguments.get("limit", 5)
+        limit = arguments.get("limit") or arguments.get("page_size") or 5
         enrich_missing_abstract = bool(arguments.get("enrich_missing_abstract", False))
         extract_terms_from_fulltext = arguments.get("extract_terms_from_fulltext")
         require_has_ft = bool(arguments.get("require_has_ft", False))
         fulltext_terms = arguments.get("fulltext_terms")
         if not query:
             return {"status": "error", "error": "`query` parameter is required."}
-        if isinstance(fulltext_terms, list) and [
-            t for t in fulltext_terms if isinstance(t, str) and t.strip()
-        ]:
+        terms = (
+            [t.strip() for t in fulltext_terms if isinstance(t, str) and t.strip()]
+            if isinstance(fulltext_terms, list)
+            else []
+        )
+        if terms:
             require_has_ft = True
-            terms = [
-                t.strip() for t in fulltext_terms if isinstance(t, str) and t.strip()
-            ]
 
             def _escape_phrase(s: str) -> str:
                 # Europe PMC uses a Lucene-like syntax; keep this conservative.

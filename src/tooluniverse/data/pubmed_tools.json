@@ -39,6 +39,10 @@
         "sort": {
           "type": "string",
           "description": "Sort order for results. Valid values: 'pub_date' (newest first), 'Author' (alphabetical by first author), 'JournalName' (alphabetical by journal), 'relevance' (default PubMed ranking)."
+        },
+        "max_results": {
+          "type": "integer",
+          "description": "Alias for limit \u2014 maximum number of results to return"
         }
       },
       "required": [

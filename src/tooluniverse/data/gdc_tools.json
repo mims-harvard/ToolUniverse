@@ -15,7 +15,7 @@
           "default": 10,
           "minimum": 1,
           "maximum": 100,
-          "description": "Number of results (1–100)."
+          "description": "Number of results (1\u2013100)."
         },
         "offset": {
           "type": "integer",
@@ -33,26 +33,45 @@
       "type": "object",
       "description": "GDC cases response",
       "properties": {
-        "status": {"type": "string"},
+        "status": {
+          "type": "string"
+        },
         "data": {
           "type": "object",
           "properties": {
             "hits": {
               "type": "array",
-              "items": {"type": "object"}
+              "items": {
+                "type": "object"
+              }
             },
-            "pagination": {"type": "object"}
+            "pagination": {
+              "type": "object"
+            }
           }
         },
-        "url": {"type": "string"}
+        "url": {
+          "type": "string"
+        }
       }
     },
     "test_examples": [
-      {"project_id": "TCGA-BRCA", "size": 1}
+      {
+        "project_id": "TCGA-BRCA",
+        "size": 1
+      }
     ],
-    "label": ["GDC", "Cases", "Oncogenomics"],
+    "label": [
+      "GDC",
+      "Cases",
+      "Oncogenomics"
+    ],
     "metadata": {
-      "tags": ["oncogenomics", "cohort", "cases"],
+      "tags": [
+        "oncogenomics",
+        "cohort",
+        "cases"
+      ],
       "estimated_execution_time": "< 3 seconds"
     }
   },
@@ -72,7 +91,7 @@
           "default": 10,
           "minimum": 1,
           "maximum": 100,
-          "description": "Number of results (1–100)."
+          "description": "Number of results (1\u2013100)."
         },
         "offset": {
           "type": "integer",
@@ -90,26 +109,45 @@
       "type": "object",
       "description": "GDC files response",
       "properties": {
-        "status": {"type": "string"},
+        "status": {
+          "type": "string"
+        },
         "data": {
           "type": "object",
           "properties": {
             "hits": {
               "type": "array",
-              "items": {"type": "object"}
+              "items": {
+                "type": "object"
+              }
             },
-            "pagination": {"type": "object"}
+            "pagination": {
+              "type": "object"
+            }
           }
         },
-        "url": {"type": "string"}
+        "url": {
+          "type": "string"
+        }
       }
     },
     "test_examples": [
-      {"data_type": "Gene Expression Quantification", "size": 1}
+      {
+        "data_type": "Gene Expression Quantification",
+        "size": 1
+      }
     ],
-    "label": ["GDC", "Files", "Oncogenomics"],
+    "label": [
+      "GDC",
+      "Files",
+      "Oncogenomics"
+    ],
     "metadata": {
-      "tags": ["downloads", "files", "expression"],
+      "tags": [
+        "downloads",
+        "files",
+        "expression"
+      ],
       "estimated_execution_time": "< 3 seconds"
     }
   },
@@ -129,24 +167,42 @@
           "default": 20,
           "minimum": 1,
           "maximum": 100,
-          "description": "Number of results (1–100)"
+          "description": "Number of results (1\u2013100)"
         }
       }
     },
     "return_schema": {
       "type": "object",
       "properties": {
-        "status": {"type": "string"},
-        "data": {"type": "object"}
+        "status": {
+          "type": "string"
+        },
+        "data": {
+          "type": "object"
+        }
       }
     },
     "test_examples": [
-      {"program": "TCGA", "size": 5},
-      {"size": 10}
+      {
+        "program": "TCGA",
+        "size": 5
+      },
+      {
+        "size": 10
+      }
     ],
-    "label": ["GDC", "Projects", "TCGA"],
+    "label": [
+      "GDC",
+      "Projects",
+      "TCGA"
+    ],
     "metadata": {
-      "tags": ["projects", "cohorts", "tcga", "target"],
+      "tags": [
+        "projects",
+        "cohorts",
+        "tcga",
+        "target"
+      ],
       "estimated_execution_time": "< 3 seconds"
     }
   },
@@ -170,26 +226,50 @@
           "default": 20,
           "minimum": 1,
           "maximum": 100,
-          "description": "Number of results (1–100)"
+          "description": "Number of results (1\u2013100)"
         }
       },
-      "required": ["gene_symbol"]
+      "required": [
+        "gene_symbol"
+      ]
     },
     "return_schema": {
       "type": "object",
       "properties": {
-        "status": {"type": "string"},
-        "gene": {"type": "string"},
-        "data": {"type": "object"}
+        "status": {
+          "type": "string"
+        },
+        "gene": {
+          "type": "string"
+        },
+        "data": {
+          "type": "object"
+        }
       }
     },
     "test_examples": [
-      {"gene_symbol": "TP53", "size": 5},
-      {"gene_symbol": "BRAF", "project_id": "TCGA-SKCM", "size": 10}
+      {
+        "gene_symbol": "TP53",
+        "size": 5
+      },
+      {
+        "gene_symbol": "BRAF",
+        "project_id": "TCGA-SKCM",
+        "size": 10
+      }
     ],
-    "label": ["GDC", "SSM", "Mutations"],
+    "label": [
+      "GDC",
+      "SSM",
+      "Mutations"
+    ],
     "metadata": {
-      "tags": ["mutations", "somatic", "variants", "cancer"],
+      "tags": [
+        "mutations",
+        "somatic",
+        "variants",
+        "cancer"
+      ],
       "estimated_execution_time": "< 5 seconds"
     }
   },
@@ -216,23 +296,45 @@
           "description": "Number of results"
         }
       },
-      "required": ["project_id"]
+      "required": [
+        "project_id"
+      ]
     },
     "return_schema": {
       "type": "object",
       "properties": {
-        "status": {"type": "string"},
-        "project": {"type": "string"},
-        "data": {"type": "object"}
+        "status": {
+          "type": "string"
+        },
+        "project": {
+          "type": "string"
+        },
+        "data": {
+          "type": "object"
+        }
       }
     },
     "test_examples": [
-      {"project_id": "TCGA-BRCA", "size": 5},
-      {"project_id": "TCGA-LUAD", "size": 3}
+      {
+        "project_id": "TCGA-BRCA",
+        "size": 5
+      },
+      {
+        "project_id": "TCGA-LUAD",
+        "size": 3
+      }
     ],
-    "label": ["GDC", "Expression", "RNA-Seq"],
+    "label": [
+      "GDC",
+      "Expression",
+      "RNA-Seq"
+    ],
     "metadata": {
-      "tags": ["expression", "rnaseq", "transcriptomics"],
+      "tags": [
+        "expression",
+        "rnaseq",
+        "transcriptomics"
+      ],
       "estimated_execution_time": "< 5 seconds"
     }
   },
@@ -259,23 +361,46 @@
           "description": "Number of results"
         }
       },
-      "required": ["project_id"]
+      "required": [
+        "project_id"
+      ]
     },
     "return_schema": {
       "type": "object",
       "properties": {
-        "status": {"type": "string"},
-        "project": {"type": "string"},
-        "data": {"type": "object"}
+        "status": {
+          "type": "string"
+        },
+        "project": {
+          "type": "string"
+        },
+        "data": {
+          "type": "object"
+        }
       }
     },
     "test_examples": [
-      {"project_id": "TCGA-BRCA", "size": 5},
-      {"project_id": "TCGA-GBM", "size": 3}
+      {
+        "project_id": "TCGA-BRCA",
+        "size": 5
+      },
+      {
+        "project_id": "TCGA-GBM",
+        "size": 3
+      }
     ],
-    "label": ["GDC", "CNV", "Copy Number"],
+    "label": [
+      "GDC",
+      "CNV",
+      "Copy Number"
+    ],
     "metadata": {
-      "tags": ["cnv", "copy_number", "amplification", "deletion"],
+      "tags": [
+        "cnv",
+        "copy_number",
+        "amplification",
+        "deletion"
+      ],
       "estimated_execution_time": "< 5 seconds"
     }
   },
@@ -289,25 +414,50 @@
         "gene_symbol": {
           "type": "string",
           "description": "Gene symbol (e.g., 'TP53', 'KRAS', 'EGFR')"
+        },
+        "gene": {
+          "type": "string",
+          "description": "Gene symbol alias \u2014 alternative to gene_symbol"
         }
       },
-      "required": ["gene_symbol"]
+      "required": [
+        "gene_symbol"
+      ],
+      "additionalProperties": false
     },
     "return_schema": {
       "type": "object",
       "properties": {
-        "status": {"type": "string"},
-        "gene": {"type": "string"},
-        "data": {"type": "object"}
+        "status": {
+          "type": "string"
+        },
+        "gene": {
+          "type": "string"
+        },
+        "data": {
+          "type": "object"
+        }
       }
     },
     "test_examples": [
-      {"gene_symbol": "TP53"},
-      {"gene_symbol": "KRAS"}
+      {
+        "gene_symbol": "TP53"
+      },
+      {
+        "gene_symbol": "KRAS"
+      }
     ],
-    "label": ["GDC", "Frequency", "Statistics"],
+    "label": [
+      "GDC",
+      "Frequency",
+      "Statistics"
+    ],
     "metadata": {
-      "tags": ["mutation_frequency", "statistics", "pan_cancer"],
+      "tags": [
+        "mutation_frequency",
+        "statistics",
+        "pan_cancer"
+      ],
       "estimated_execution_time": "< 3 seconds"
     }
   }

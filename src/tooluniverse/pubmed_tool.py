@@ -87,10 +87,15 @@ class PubMedRESTTool(BaseRESTTool):
         if self.default_api_key:
             params["api_key"] = self.default_api_key
 
-        # Handle limit — use `is not None` instead of truthiness so that limit=0
-        # is honoured (0 is falsy but is a valid, explicit user choice).
-        if "limit" in args and args["limit"] is not None:
-            params["retmax"] = max(0, int(args["limit"]))
+        # Handle limit/max_results — accept max_results as alias for limit.
+        # Use `is not None` so limit=0 is honoured (0 is falsy but valid).
+        limit_val = (
+            args.get("limit")
+            if args.get("limit") is not None
+            else args.get("max_results")
+        )
+        if limit_val is not None:
+            params["retmax"] = max(0, int(limit_val))
 
         # Forward date-range parameters for esearch
         for date_key in ("mindate", "maxdate", "datetype"):
@@ -546,7 +551,6 @@ class PubMedRESTTool(BaseRESTTool):
                             ]
                             return stub_items[:limit] if limit else stub_items
 
-                        # Return article list directly (not wrapped in dict)
                         articles = summary_result["data"]
                         warning = summary_result.get("warning")
                         if warning:
@@ -579,7 +583,18 @@ class PubMedRESTTool(BaseRESTTool):
                                         a["abstract"] = None
                                         a["abstract_source"] = None
 
-                        return articles
+                        return {
+                            "status": "success",
+                            "data": articles,
+                            "metadata": {
+                                "count": len(articles),
+                                "total": int(
+                                    esearch_result.get("count", len(articles))
+                                ),
+                                "query": arguments.get("query"),
+                                "source": "PubMed",
+                            },
+                        }
 
                     # Return just IDs for non-search requests (as list)
                     return id_list

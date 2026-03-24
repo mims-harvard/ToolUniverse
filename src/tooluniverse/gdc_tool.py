@@ -567,7 +567,11 @@ class GDCCNVTool:
     config={
         "name": "GDC_get_mutation_frequency",
         "type": "GDCMutationFrequencyTool",
-        "description": "Get mutation frequency statistics for a gene across TCGA projects",
+        "description": (
+            "Get pan-cancer mutation frequency statistics for a gene across all TCGA projects. "
+            "Returns overall and per-project mutation rates. Note: this tool is pan-cancer only "
+            "and does not support filtering by cancer type."
+        ),
         "parameter": {
             "type": "object",
             "properties": {
@@ -575,8 +579,12 @@ class GDCCNVTool:
                     "type": "string",
                     "description": "Gene symbol (e.g., 'TP53', 'KRAS')",
                 },
+                "gene": {
+                    "type": "string",
+                    "description": "Gene symbol alias — alternative to gene_symbol",
+                },
             },
-            "required": ["gene_symbol"],
+            "required": [],
         },
         "settings": {"base_url": "https://api.gdc.cancer.gov", "timeout": 30},
     },
@@ -593,7 +601,7 @@ class GDCMutationFrequencyTool:
         )
         timeout = int(self.tool_config.get("settings", {}).get("timeout", 30))
 
-        gene_symbol = arguments.get("gene_symbol")
+        gene_symbol = arguments.get("gene_symbol") or arguments.get("gene")
         if not gene_symbol:
             return {"status": "error", "error": "gene_symbol parameter is required"}
 
