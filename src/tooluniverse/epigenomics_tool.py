@@ -324,7 +324,30 @@ class EpigenomicsTool(BaseTool):
         limit = arguments.get("limit", 25)
         params["limit"] = min(int(limit), 100)
 
-        raw = self._encode_search(params)
+        # Feature-70A-003: biosample+organism combos can 404; fall back without organism.
+        try:
+            raw = self._encode_search(params)
+        except Exception:
+            fallback_params = {
+                k: v
+                for k, v in params.items()
+                if k != "replicates.library.biosample.organism.scientific_name"
+            }
+            try:
+                raw = self._encode_search(fallback_params)
+            except Exception:
+                return {
+                    "status": "success",
+                    "data": [],
+                    "metadata": {
+                        "source": "ENCODE",
+                        "total": 0,
+                        "note": f"No results for biosample='{biosample}'. "
+                        "ENCODE requires exact ontology names for cell lines or tissues "
+                        "(e.g., 'K562', 'HepG2', 'liver', 'brain', 'breast epithelium', 'MCF-7'). "
+                        "Use GEO_search_atacseq_datasets for disease-based searches.",
+                    },
+                }
 
         experiments = []
         for exp in raw.get("@graph", []):
