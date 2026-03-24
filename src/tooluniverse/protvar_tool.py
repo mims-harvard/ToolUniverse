@@ -6,6 +6,7 @@ functional annotations, population frequencies, pathogenicity predictions
 """
 
 import json
+import re
 from typing import Any, Dict
 from urllib.request import Request, urlopen
 
@@ -74,7 +75,6 @@ class ProtVarMapTool:
     @staticmethod
     def _normalize_variant(variant: str) -> str:
         """Convert colon-separated genomic 'chr:pos:ref:alt' to VCF 'chr pos . ref alt'."""
-        import re
 
         if re.match(r"^chr\w+:\d+:[ACGT]+:[ACGT]+$", variant, re.IGNORECASE):
             parts = variant.split(":")

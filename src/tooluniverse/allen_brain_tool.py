@@ -1,4 +1,3 @@
-# allen_brain_tool.py
 """
 Allen Brain Atlas REST API tool for ToolUniverse.
 
@@ -11,7 +10,6 @@ No authentication required.
 """
 
 import requests
-from urllib.parse import quote
 from typing import Dict, Any
 from .base_tool import BaseTool
 from .tool_registry import register_tool
@@ -21,18 +19,7 @@ ALLEN_BRAIN_BASE_URL = "https://api.brain-map.org/api/v2"
 
 @register_tool("AllenBrainTool")
 class AllenBrainTool(BaseTool):
-    """
-    Tool for querying the Allen Brain Atlas REST API.
-
-    Provides access to:
-    - Gene information and expression datasets
-    - Brain structure ontology (mouse and human)
-    - Section data sets for gene expression images
-    - Spatial expression quantification
-
-    The API uses RMA (RESTful Model Access) query syntax.
-    No authentication required.
-    """
+    """Tool for querying the Allen Brain Atlas REST API."""
 
     def __init__(self, tool_config: Dict[str, Any]):
         super().__init__(tool_config)
@@ -82,14 +69,9 @@ class AllenBrainTool(BaseTool):
     ) -> Dict[str, Any]:
         """Execute an RMA query against the Allen Brain Atlas API."""
         url = f"{ALLEN_BRAIN_BASE_URL}/data/query.json"
-        params = {
-            "criteria": criteria,
-            "num_rows": num_rows,
-            "start_row": start_row,
-        }
+        params = {"criteria": criteria, "num_rows": num_rows, "start_row": start_row}
         if include:
             params["include"] = include
-
         response = requests.get(url, params=params, timeout=self.timeout)
         response.raise_for_status()
         return response.json()
@@ -98,7 +80,6 @@ class AllenBrainTool(BaseTool):
         """Search for genes by acronym or name."""
         gene_acronym = arguments.get("gene_acronym", "")
         gene_name = arguments.get("gene_name", "")
-        arguments.get("organism_id", 2)  # 2=mouse, 1=human
         num_rows = arguments.get("num_rows", 50)
 
         if gene_acronym:
@@ -112,7 +93,6 @@ class AllenBrainTool(BaseTool):
             }
 
         result = self._make_rma_query(criteria, num_rows=num_rows)
-
         if not result.get("success"):
             return {"status": "error", "error": "Allen Brain Atlas query failed"}
 
@@ -141,7 +121,6 @@ class AllenBrainTool(BaseTool):
             return {"status": "error", "error": "Either acronym or name is required"}
 
         result = self._make_rma_query(criteria, num_rows=num_rows)
-
         if not result.get("success"):
             return {"status": "error", "error": "Allen Brain Atlas query failed"}
 
@@ -172,7 +151,6 @@ class AllenBrainTool(BaseTool):
         )
 
         result = self._make_rma_query(criteria, num_rows=num_rows, include="genes")
-
         if not result.get("success"):
             return {"status": "error", "error": "Allen Brain Atlas query failed"}
 
@@ -198,7 +176,6 @@ class AllenBrainTool(BaseTool):
 
         criteria = f"model::Structure,rma::criteria,[id$eq{structure_id}]"
         result = self._make_rma_query(criteria, num_rows=1)
-
         if not result.get("success"):
             return {"status": "error", "error": "Allen Brain Atlas query failed"}
 
