@@ -40,11 +40,12 @@ execute_tool(tool_name: str, arguments: dict)
 // Semantic Scholar
 {"name": "SemanticScholar_search_papers", "arguments": {"query": "deep learning", "limit": 5}}
 
-// BioRxiv
-{"name": "BioRxiv_search_preprints", "arguments": {"query": "CRISPR", "max_results": 5}}
+// BioRxiv (no keyword search — use DOI or date-range)
+{"name": "BioRxiv_get_preprint", "arguments": {"doi": "10.1101/2024.01.01.000000"}}
+{"name": "BioRxiv_list_recent_preprints", "arguments": {"interval": "2024-01-01/2024-01-31", "server": "biorxiv", "format": "json"}}
 
-// MedRxiv
-{"name": "MedRxiv_search_preprints", "arguments": {"query": "COVID-19", "max_results": 5}}
+// MedRxiv (no keyword search — use DOI or EuropePMC with SRC:PPR filter)
+{"name": "MedRxiv_get_preprint", "arguments": {"doi": "10.1101/2024.01.01.24300000"}}
 
 // DOAJ (Open Access)
 {"name": "DOAJ_search_articles", "arguments": {"query": "renewable energy", "max_results": 5, "type": "articles"}}
@@ -87,13 +88,13 @@ execute_tool(tool_name: str, arguments: dict)
 {"name": "STRING_get_interaction_partners", "arguments": {"identifiers": "TP53", "species": 9606}}
 
 // KEGG pathway
-{"name": "KEGG_get_pathway", "arguments": {"pathway_id": "hsa04110"}}
+{"name": "kegg_get_pathway_info", "arguments": {"pathway_id": "hsa04110"}}
 
 // Gene Ontology
-{"name": "GeneOntology_search", "arguments": {"query": "apoptosis"}}
+{"name": "GO_search_terms", "arguments": {"query": "apoptosis"}}
 
 // ClinVar
-{"name": "ClinVar_search_variants", "arguments": {"gene": "BRCA1"}}
+{"name": "clinvar_search_variants", "arguments": {"gene": "BRCA1"}}
 ```
 
 ## Field → Tool Routing
@@ -101,13 +102,13 @@ execute_tool(tool_name: str, arguments: dict)
 | Question About | Start With |
 |----------------|------------|
 | Published papers | `PubMed_search_articles` → `Crossref_search_works` |
-| Preprints | `BioRxiv_search_preprints` → `MedRxiv_search_preprints` |
+| Preprints | `EuropePMC_search_articles` (SRC:PPR) → `MedRxiv_get_preprint` → `BioRxiv_list_recent_preprints` |
 | Drug safety | `FAERS_count_reactions_by_drug_event` → `DailyMed` |
 | Protein info | `UniProt_get_entry_by_accession` → `STRING` |
 | Drug/compound | `PubChem_get_CID_by_compound_name` → `ChEMBL_get_molecule` |
 | Clinical trials | `ClinicalTrials_search_studies` |
-| Gene function | `OpenTargets` → `GeneOntology_search` |
-| Variants | `ClinVar_search_variants` → `GWAS` |
+| Gene function | `OpenTargets` → `GO_search_terms` |
+| Variants | `clinvar_search_variants` → `GWAS` |
 | Open access | `DOAJ_search_articles` → `Unpaywall` → `CORE` |
 | Datasets | `Zenodo_search_records` → `GEO` |
 

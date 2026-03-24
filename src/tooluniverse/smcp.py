@@ -945,31 +945,36 @@ class SMCP(FastMCP):
         Select the appropriate search tool based on method and availability.
 
         Returns:
-            str: Tool name to use for search
+            str: Tool name to use for search (always non-None).
         """
-        # Get available tools
         all_tools = self.tooluniverse.return_all_loaded_tools()
-        available_tool_names = [tool.get("name", "") for tool in all_tools]
+        available_tool_names = {tool.get("name", "") for tool in all_tools}
 
-        # Handle specific method requests
         if search_method == "keyword":
             return "Tool_Finder_Keyword"
-        elif search_method == "llm" and "Tool_Finder_LLM" in available_tool_names:
-            return "Tool_Finder_LLM"
-        elif search_method == "embedding" and "Tool_Finder" in available_tool_names:
-            return "Tool_Finder"
-        elif search_method == "auto":
-            # Auto-selection priority: Keyword > RAG > LLM
+
+        if search_method == "llm":
+            if "Tool_Finder_LLM" in available_tool_names:
+                return "Tool_Finder_LLM"
+            return "Tool_Finder_Keyword"
+
+        if search_method == "embedding":
+            if "Tool_Finder" in available_tool_names:
+                return "Tool_Finder"
+            return "Tool_Finder_Keyword"
+
+        if search_method == "auto":
             if use_advanced_search:
                 if "Tool_Finder_Keyword" in available_tool_names:
                     return "Tool_Finder_Keyword"
                 if "Tool_Finder" in available_tool_names:
                     return "Tool_Finder"
-                elif "Tool_Finder_LLM" in available_tool_names:
+                if "Tool_Finder_LLM" in available_tool_names:
                     return "Tool_Finder_LLM"
-        else:
-            # Invalid method or method not available, fallback to keyword
             return "Tool_Finder_Keyword"
+
+        # Unknown method — fallback to keyword
+        return "Tool_Finder_Keyword"
 
     def _setup_smcp_tools(self):
         """Initialize ToolUniverse tools, expose them as MCP tools, and set up search.

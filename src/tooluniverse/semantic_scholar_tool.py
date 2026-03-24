@@ -161,7 +161,39 @@ class SemanticScholarTool(BaseTool):
                 }
             ]
 
-        results = payload.get("data", []) if isinstance(payload, dict) else []
+        # Standard /paper/search nests papers under "data".
+        # /paper/search/bulk may return papers under "data", as a top-level list,
+        # or only {"total": N} with no papers when token-based pagination is needed.
+        if isinstance(payload, list):
+            results = payload
+        elif isinstance(payload, dict):
+            results = payload.get("data", [])
+            if not results and payload.get("total", 0) > 0 and sort:
+                # Bulk endpoint returned count-only; retry with standard endpoint.
+                std_url = self.base_url  # original non-bulk URL
+                params.pop("sort", None)
+                self._enforce_rate_limit(bool(self.default_api_key))
+                retry_resp = request_with_retry(
+                    self.session,
+                    "GET",
+                    std_url,
+                    params=params,
+                    headers=headers,
+                    timeout=20,
+                    max_attempts=2,
+                )
+                if retry_resp.status_code == 200:
+                    try:
+                        retry_payload = retry_resp.json()
+                    except ValueError:
+                        retry_payload = {}
+                    results = (
+                        retry_payload.get("data", [])
+                        if isinstance(retry_payload, dict)
+                        else []
+                    )
+        else:
+            results = []
         papers = []
         for p in results:
             # Extract basic information

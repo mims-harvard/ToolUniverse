@@ -31,8 +31,9 @@ ToolUniverse exposes 5 proxy tools in compact mode. All 1,200+ tools are accesse
 | `SemanticScholar_search_papers` | `query`, `limit` | Optional API key |
 | `openalex_literature_search` | `search_keywords`, `max_results`, `year_from`, `open_access` | **search_keywords NOT query** |
 | `EuropePMC_search_articles` | `query`, `limit` | Returns data_quality |
-| `BioRxiv_search_preprints` | `query`, `max_results` | Biology preprints |
-| `MedRxiv_search_preprints` | `query`, `max_results` | Medical preprints |
+| `BioRxiv_get_preprint` | `doi` | Fetch by DOI (no keyword search) |
+| `BioRxiv_list_recent_preprints` | `interval`, `server`, `format` | Date-range browsing |
+| `MedRxiv_get_preprint` | `doi` | Fetch by DOI (no keyword search) |
 | `DOAJ_search_articles` | `query`, `max_results`, `type` | Open access |
 | `CORE_search_papers` | `query`, `limit`, `year_from`, `year_to`, `language` | Largest OA |
 | `PMC_search_papers` | `query`, `limit`, `date_from`, `date_to`, `article_type` | Full-text |

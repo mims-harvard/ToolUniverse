@@ -318,22 +318,31 @@ class PubMedGuidelinesTool(BaseTool):
             )
             abstract_response.raise_for_status()
 
-            # Parse abstracts from XML
+            # Parse abstracts from XML — split by article to avoid cross-match
             import re
 
             abstracts = {}
             xml_text = abstract_response.text
-            # Extract abstracts for each PMID
-            for pmid in pmids:
-                # Find abstract text for this PMID
-                pmid_pattern = rf"<PMID[^>]*>{pmid}</PMID>.*?<AbstractText[^>]*>(.*?)</AbstractText>"
-                abstract_match = re.search(pmid_pattern, xml_text, re.DOTALL)
-                if abstract_match:
-                    # Clean HTML tags from abstract
-                    abstract = re.sub(r"<[^>]+>", "", abstract_match.group(1))
-                    abstracts[pmid] = abstract.strip()
+            articles = re.findall(
+                r"<PubmedArticle>(.*?)</PubmedArticle>", xml_text, re.DOTALL
+            )
+            for article_xml in articles:
+                pmid_match = re.search(r"<PMID[^>]*>(\d+)</PMID>", article_xml)
+                if not pmid_match:
+                    continue
+                art_pmid = pmid_match.group(1)
+                abstract_parts = re.findall(
+                    r"<AbstractText[^>]*>(.*?)</AbstractText>",
+                    article_xml,
+                    re.DOTALL,
+                )
+                if abstract_parts:
+                    full_abstract = " ".join(
+                        re.sub(r"<[^>]+>", "", part).strip() for part in abstract_parts
+                    )
+                    abstracts[art_pmid] = full_abstract
                 else:
-                    abstracts[pmid] = ""
+                    abstracts[art_pmid] = ""
 
             # Process results
             results = []
@@ -364,21 +373,23 @@ class PubMedGuidelinesTool(BaseTool):
                         ]
                     ).lower()
 
-                    if query_terms and not any(
-                        term in searchable_text for term in query_terms
-                    ):
-                        continue
+                    # Score relevance but never drop results — PubMed already
+                    # filtered by guideline type; dropping here causes silent empty returns
+                    # when abstracts are missing or use different terminology.
+                    matched = sum(1 for t in query_terms if t in searchable_text)
+                    relevance = matched / len(query_terms) if query_terms else 1.0
 
                     result = {
                         "pmid": pmid,
                         "title": article.get("title", ""),
                         "abstract": abstract_text,
-                        "content": abstract_text,  # Copy abstract to content field
+                        "content": abstract_text,
                         "authors": author_str,
                         "journal": article.get("source", ""),
                         "publication_date": article.get("pubdate", ""),
                         "publication_types": pub_types,
                         "is_guideline": is_guideline,
+                        "relevance_score": round(relevance, 2),
                         "url": f"https://pubmed.ncbi.nlm.nih.gov/{pmid}/",
                         "doi": (
                             article.get("elocationid", "").replace("doi: ", "")

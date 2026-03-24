@@ -372,7 +372,13 @@ class AgenticTool(BaseTool):
                     },
                 }
             else:
-                return f"error: {error_msg} error_type: ToolUnavailable"
+                from .base_tool import tool_error
+
+                return tool_error(
+                    error_msg,
+                    error_type="ToolUnavailable",
+                    suggestion="Check that the required LLM backend (Claude CLI or Ollama) is running.",
+                )
 
         try:
             # Validate required args
@@ -468,6 +474,14 @@ class AgenticTool(BaseTool):
                     },
                 }
             else:
+                if response is None:
+                    from .base_tool import tool_error
+
+                    return tool_error(
+                        f"All LLM backends returned empty for '{self.name}'",
+                        error_type="LLMBackendFailure",
+                        suggestion="Check Claude CLI / Ollama availability and timeout settings.",
+                    )
                 return response
 
         except Exception as e:  # noqa: BLE001
