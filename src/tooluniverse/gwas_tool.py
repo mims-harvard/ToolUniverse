@@ -408,7 +408,6 @@ class GWASVariantsForTrait(GWASRESTTool):
 
     def run(self, arguments: Dict[str, Any]) -> Dict[str, Any]:
         """Get variants for a trait with pagination support."""
-        # Accept 'trait' as alias for 'disease_trait', 'limit' as alias for 'size'
         disease_trait = self._coerce_str(
             arguments.get("disease_trait") or arguments.get("trait")
         )
@@ -429,10 +428,12 @@ class GWASVariantsForTrait(GWASRESTTool):
                 "error": "Provide at least one of: disease_trait, efo_id (or efo_uri), efo_trait.",
             }
 
-        page_size = arguments.get("size") or arguments.get("limit", 200)
+        page_size = (
+            self._coerce_int(arguments.get("size") or arguments.get("limit")) or 200
+        )
         params: Dict[str, Any] = {
             "size": page_size,
-            "page": arguments.get("page", 0),
+            "page": self._coerce_int(arguments.get("page")) or 0,
         }
         if efo_id:
             params["efo_id"] = efo_id

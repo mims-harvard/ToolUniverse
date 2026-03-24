@@ -116,7 +116,6 @@ class EpigenomicsTool(BaseTool):
             "status": "released",
         }
 
-        # Accept 'target' as alias for 'histone_mark', 'biosample' for 'biosample_term_name'
         histone_mark = arguments.get("histone_mark") or arguments.get("target")
         if histone_mark:
             params["target.label"] = histone_mark
