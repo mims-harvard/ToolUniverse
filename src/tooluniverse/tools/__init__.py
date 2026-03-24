@@ -410,6 +410,7 @@ from .ENCODE_search_chromatin_accessibility import ENCODE_search_chromatin_acces
 from .ENCODE_search_experiments import ENCODE_search_experiments
 from .ENCODE_search_histone_experiments import ENCODE_search_histone_experiments
 from .ENCODE_search_methylation_experiments import ENCODE_search_methylation_experiments
+from .ENCODE_search_rnaseq_experiments import ENCODE_search_rnaseq_experiments
 from .EOL_get_collection import EOL_get_collection
 from .EOL_get_hierarchy_entry import EOL_get_hierarchy_entry
 from .EOL_get_page import EOL_get_page
@@ -940,8 +941,10 @@ from .GDC_list_files import GDC_list_files
 from .GDC_list_projects import GDC_list_projects
 from .GDC_search_cases import GDC_search_cases
 from .GEO_get_dataset_details import GEO_get_dataset_details
+from .GEO_search_atacseq_datasets import GEO_search_atacseq_datasets
 from .GEO_search_chipseq_datasets import GEO_search_chipseq_datasets
 from .GEO_search_methylation_datasets import GEO_search_methylation_datasets
+from .GEO_search_rnaseq_datasets import GEO_search_rnaseq_datasets
 from .GIN_Guidelines_Search import GIN_Guidelines_Search
 from .GNPS_compare_spectra import GNPS_compare_spectra
 from .GNPS_get_spectrum import GNPS_get_spectrum
@@ -3042,6 +3045,7 @@ __all__ = [
     "ENCODE_search_experiments",
     "ENCODE_search_histone_experiments",
     "ENCODE_search_methylation_experiments",
+    "ENCODE_search_rnaseq_experiments",
     "EOL_get_collection",
     "EOL_get_hierarchy_entry",
     "EOL_get_page",
@@ -3354,8 +3358,10 @@ __all__ = [
     "GDC_list_projects",
     "GDC_search_cases",
     "GEO_get_dataset_details",
+    "GEO_search_atacseq_datasets",
     "GEO_search_chipseq_datasets",
     "GEO_search_methylation_datasets",
+    "GEO_search_rnaseq_datasets",
     "GIN_Guidelines_Search",
     "GNPS_compare_spectra",
     "GNPS_get_spectrum",
