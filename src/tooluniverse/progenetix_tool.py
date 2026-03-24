@@ -210,16 +210,23 @@ class ProgenetixTool(BaseTool):
         resp_data = response.json()
 
         filtering_terms = resp_data.get("response", {}).get("filteringTerms", [])
-        terms = []
-        for ft in filtering_terms[:limit]:
-            terms.append(
-                {
-                    "id": ft.get("id"),
-                    "label": ft.get("label"),
-                    "count": ft.get("count"),
-                    "type": ft.get("type"),
-                }
-            )
+        # Filter client-side by prefix (API does not reliably honor this param)
+        if prefixes:
+            prefix_upper = prefixes.upper()
+            filtering_terms = [
+                ft
+                for ft in filtering_terms
+                if str(ft.get("id", "")).upper().startswith(prefix_upper + ":")
+            ]
+        terms = [
+            {
+                "id": ft.get("id"),
+                "label": ft.get("label"),
+                "count": ft.get("count"),
+                "type": ft.get("type"),
+            }
+            for ft in filtering_terms[:limit]
+        ]
 
         return {
             "status": "success",
