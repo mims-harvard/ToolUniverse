@@ -30,6 +30,14 @@
           "type": "string",
           "description": "Study accession identifier"
         },
+        "p_value": {
+          "type": "number",
+          "description": "Maximum p-value threshold for filtering (e.g., 5e-8 for genome-wide significance). Applied client-side after retrieval."
+        },
+        "p_value_threshold": {
+          "type": "number",
+          "description": "Alias for p_value: maximum p-value threshold."
+        },
         "sort": {
           "type": "string",
           "description": "Sort field (e.g., 'p_value', 'or_value')"

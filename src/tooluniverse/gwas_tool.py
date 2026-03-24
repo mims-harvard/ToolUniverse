@@ -272,6 +272,27 @@ class GWASAssociationSearch(GWASRESTTool):
 
         data = self._make_request(self.endpoint, params)
         result = self._extract_embedded_data(data, "associations")
+
+        # Client-side p_value filter (GWAS Catalog API does not support server-side p-value filtering)
+        p_threshold = arguments.get("p_value") or arguments.get("p_value_threshold")
+        if p_threshold is not None and result.get("status") == "success":
+            try:
+                p_threshold = float(p_threshold)
+                assocs = result.get("data", [])
+                if isinstance(assocs, list):
+                    filtered = [
+                        a
+                        for a in assocs
+                        if a.get("p_value") is not None
+                        and float(a["p_value"]) <= p_threshold
+                    ]
+                    result["data"] = filtered
+                    result.setdefault("metadata", {})["p_value_filter"] = p_threshold
+                    result["metadata"]["filtered_count"] = len(filtered)
+                    result["metadata"]["total_before_filter"] = len(assocs)
+            except (ValueError, TypeError):
+                pass
+
         self._add_empty_result_note(result, efo_id)
         return result
 

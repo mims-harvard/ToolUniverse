@@ -20,10 +20,20 @@
         },
         "max_results": {
           "type": "integer",
-          "description": "Maximum number of results to return",
+          "description": "Maximum number of results to return (default: 20). Alias: limit.",
           "default": 20,
           "minimum": 1,
           "maximum": 100
+        },
+        "limit": {
+          "type": "integer",
+          "description": "Alias for max_results: maximum number of results to return.",
+          "minimum": 1,
+          "maximum": 100
+        },
+        "clinical_significance": {
+          "type": "string",
+          "description": "Filter by clinical significance (e.g., 'Pathogenic', 'Likely pathogenic', 'Benign', 'Uncertain significance', 'VUS'). Applied client-side after retrieval."
         }
       },
       "required": []
