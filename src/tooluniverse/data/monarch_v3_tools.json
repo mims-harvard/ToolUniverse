@@ -42,7 +42,7 @@
         },
         "category": {
           "type": "string",
-          "description": "Biolink association category. Options: 'biolink:GeneToPhenotypicFeatureAssociation' (gene->phenotypes), 'biolink:DiseaseToPhenotypicFeatureAssociation' (disease->phenotypes), 'biolink:CorrelatedGeneToDiseaseAssociation' (gene->diseases, correlated), 'biolink:CausalGeneToDiseaseAssociation' (gene->diseases, causal), 'biolink:GeneToPathwayAssociation' (gene->pathways), 'biolink:VariantToDiseaseAssociation' (variant->diseases)."
+          "description": "Biolink association category. Options: 'biolink:GeneToPhenotypicFeatureAssociation' (gene->phenotypes), 'biolink:DiseaseToPhenotypicFeatureAssociation' (disease->phenotypes), 'biolink:CorrelatedGeneToDiseaseAssociation' (gene->diseases, correlated), 'biolink:CausalGeneToDiseaseAssociation' (gene->diseases, causal), 'biolink:GeneToPathwayAssociation' (gene->pathways), 'biolink:VariantToDiseaseAssociation' (variant->diseases), 'biolink:GeneToExpressionSiteAssociation' (gene->expression sites/tissues)."
         },
         "limit": {
           "type": "integer",

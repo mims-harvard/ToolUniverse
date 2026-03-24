@@ -1,7 +1,7 @@
 [
   {
     "name": "DisGeNET_search_gene",
-    "description": "Search DisGeNET for diseases associated with a gene. DisGeNET is the largest public database of gene-disease associations. Returns diseases, association scores, and evidence counts. Requires DISGENET_API_KEY env var (register free at disgenet.org).",
+    "description": "Search DisGeNET for diseases associated with a gene. DisGeNET is the largest public database of gene-disease associations. Returns diseases, association scores, and evidence counts. Use the 'gene' parameter (e.g., 'BRCA1', 'TP53') — note: parameter name is 'gene', not 'gene_symbol'. Requires DISGENET_API_KEY env var (register free at disgenet.org).",
     "type": "DisGeNETTool",
     "optional_api_keys": [
       "DISGENET_API_KEY"
