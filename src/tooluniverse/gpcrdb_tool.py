@@ -133,6 +133,35 @@ class GPCRdbTool(BaseTool):
                     }
                 except Exception:
                     pass
+                # Fallback: try {lowercase_symbol}_human (e.g. CCR5 → ccr5_human)
+                if "_" not in protein:
+                    human_entry = f"{protein.lower()}_human"
+                    try:
+                        fb_response = requests.get(
+                            f"{GPCRDB_API_URL}/protein/{human_entry}/",
+                            timeout=self.timeout,
+                            headers={
+                                "Accept": "application/json",
+                                "User-Agent": "ToolUniverse/GPCRdb",
+                            },
+                        )
+                        fb_response.raise_for_status()
+                        data = fb_response.json()
+                        if isinstance(data, dict) and "name" in data:
+                            data["name"] = _HTML_TAG_RE.sub(
+                                "", html.unescape(data["name"])
+                            )
+                        return {
+                            "status": "success",
+                            "data": data,
+                            "metadata": {
+                                "source": "GPCRdb",
+                                "protein": human_entry,
+                                "resolved_from": protein,
+                            },
+                        }
+                    except Exception:
+                        pass
                 return {
                     "status": "error",
                     "error": f"Protein not found: {protein}. Use GPCRdb entry name (e.g. adrb2_human) or UniProt accession (e.g. P07550).",

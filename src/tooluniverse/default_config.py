@@ -1053,6 +1053,14 @@ default_tool_files = {
     "appris": os.path.join(current_dir, "data", "appris_tools.json"),
     # IEDB Extended - T-cell assays, TCR/BCR sequences, epitope-to-tcell linking
     "iedb_ext": os.path.join(current_dir, "data", "iedb_ext_tools.json"),
+    # KEGG Disease & Drug - disease/drug search, details, gene/target links
+    "kegg_disease_drug": os.path.join(
+        current_dir, "data", "kegg_disease_drug_tools.json"
+    ),
+    # KEGG Network & Variant - signaling networks and disease-associated variants
+    "kegg_network_variant": os.path.join(
+        current_dir, "data", "kegg_network_variant_tools.json"
+    ),
 }
 
 # Auto-load any user-provided tools from ~/.tooluniverse/user_tools/

@@ -68,6 +68,10 @@ class CATHTool(BaseTool):
             return self._get_superfamily(arguments)
         elif self.endpoint == "domain_summary":
             return self._get_domain_summary(arguments)
+        elif self.endpoint == "list_funfams":
+            return self._list_funfams(arguments)
+        elif self.endpoint == "get_funfam":
+            return self._get_funfam(arguments)
         else:
             return {"status": "error", "error": f"Unknown endpoint: {self.endpoint}"}
 
@@ -164,5 +168,89 @@ class CATHTool(BaseTool):
             "metadata": {
                 "source": "CATH v4.3.0",
                 "query": domain_id,
+            },
+        }
+
+    def _list_funfams(self, arguments: Dict[str, Any]) -> Dict[str, Any]:
+        """List functional families (FunFams) within a CATH superfamily."""
+        superfamily_id = arguments.get("superfamily_id", "")
+        if not superfamily_id:
+            return {
+                "status": "error",
+                "error": "superfamily_id is required (e.g., '1.10.510.10' for Globin-like)",
+            }
+
+        url = f"{CATH_BASE_URL}/superfamily/{superfamily_id}/funfam"
+        response = requests.get(
+            url, headers={"Accept": "application/json"}, timeout=self.timeout
+        )
+        response.raise_for_status()
+        resp_data = response.json()
+
+        funfams_raw = resp_data.get("data", [])
+        max_results = arguments.get("max_results", 25)
+
+        funfams = []
+        for ff in funfams_raw[:max_results]:
+            funfams.append(
+                {
+                    "funfam_number": ff.get("funfam_number"),
+                    "name": ff.get("name"),
+                    "num_members": ff.get("num_members_in_funfam"),
+                    "rep_id": ff.get("rep_id"),
+                    "superfamily_id": ff.get("superfamily_id"),
+                }
+            )
+
+        return {
+            "status": "success",
+            "data": {
+                "superfamily_id": superfamily_id,
+                "total_funfams": len(funfams_raw),
+                "funfams": funfams,
+            },
+            "metadata": {
+                "source": "CATH v4.3.0",
+                "query": superfamily_id,
+            },
+        }
+
+    def _get_funfam(self, arguments: Dict[str, Any]) -> Dict[str, Any]:
+        """Get details for a specific FunFam within a CATH superfamily."""
+        superfamily_id = arguments.get("superfamily_id", "")
+        funfam_number = arguments.get("funfam_number", "")
+        if not superfamily_id or not funfam_number:
+            return {
+                "status": "error",
+                "error": "Both superfamily_id and funfam_number are required",
+            }
+
+        url = f"{CATH_BASE_URL}/superfamily/{superfamily_id}/funfam/{funfam_number}"
+        response = requests.get(
+            url, headers={"Accept": "application/json"}, timeout=self.timeout
+        )
+        response.raise_for_status()
+        resp_data = response.json()
+
+        data = resp_data.get("data", {})
+        result = {
+            "funfam_number": data.get("funfam_number"),
+            "superfamily_id": data.get("superfamily_id"),
+            "name": data.get("name"),
+            "description": data.get("description"),
+            "num_members": data.get("num_members_in_funfam"),
+            "num_seed_members": data.get("num_members_in_seed_aln"),
+            "dops_score": data.get("seed_dops_score"),
+            "rep_id": data.get("rep_id"),
+            "ec_terms": data.get("ec_terms", []),
+            "go_terms": data.get("go_terms", []),
+        }
+
+        return {
+            "status": "success",
+            "data": result,
+            "metadata": {
+                "source": "CATH v4.3.0",
+                "query": f"{superfamily_id}/funfam/{funfam_number}",
             },
         }

@@ -265,5 +265,95 @@
         }
       ]
     }
+  },
+  {
+    "name": "CATH_list_funfams",
+    "description": "List functional families (FunFams) within a CATH superfamily. FunFams group protein domains that share the same function, identified by conserved specificity-determining residues. Returns FunFam numbers, names, member counts, and representative domain IDs. Example: superfamily 1.10.510.10 (Globin-like) has 4,524 FunFams including CaM kinase (2,698 members) and Myosin light chain kinase (1,234 members). Use CATH_get_superfamily to find superfamily IDs first.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "superfamily_id": {
+          "type": "string",
+          "description": "CATH superfamily ID in C.A.T.H format. Examples: '1.10.510.10' (Globin-like), '2.40.50.140' (Nucleic acid-binding), '3.40.50.300' (P-loop NTPases), '2.60.40.10' (Immunoglobulin-like)."
+        },
+        "max_results": {
+          "type": "integer",
+          "default": 25,
+          "minimum": 1,
+          "maximum": 100,
+          "description": "Maximum number of FunFams to return (default: 25)."
+        }
+      },
+      "required": ["superfamily_id"]
+    },
+    "fields": {
+      "endpoint": "list_funfams"
+    },
+    "type": "CATHTool",
+    "test_examples": [
+      {"superfamily_id": "1.10.510.10", "max_results": 5},
+      {"superfamily_id": "3.40.50.300", "max_results": 5}
+    ],
+    "return_schema": {
+      "type": "object",
+      "properties": {
+        "superfamily_id": {"type": "string"},
+        "total_funfams": {"type": "integer"},
+        "funfams": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "funfam_number": {"type": ["string", "null"]},
+              "name": {"type": ["string", "null"]},
+              "num_members": {"type": ["string", "null"]},
+              "rep_id": {"type": ["string", "null"]},
+              "superfamily_id": {"type": ["string", "null"]}
+            }
+          }
+        }
+      }
+    }
+  },
+  {
+    "name": "CATH_get_funfam",
+    "description": "Get details for a specific functional family (FunFam) within a CATH superfamily. Returns FunFam name, description, member count, seed alignment size, DOPS quality score, and representative domain ID. FunFams represent groups of domains predicted to share the same biological function. Use CATH_list_funfams to browse FunFams within a superfamily, or CATH_get_domain_summary to find which FunFam a specific domain belongs to.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "superfamily_id": {
+          "type": "string",
+          "description": "CATH superfamily ID (e.g., '1.10.510.10')."
+        },
+        "funfam_number": {
+          "type": "string",
+          "description": "FunFam number within the superfamily (e.g., '1', '83'). Get from CATH_list_funfams or CATH_get_domain_summary."
+        }
+      },
+      "required": ["superfamily_id", "funfam_number"]
+    },
+    "fields": {
+      "endpoint": "get_funfam"
+    },
+    "type": "CATHTool",
+    "test_examples": [
+      {"superfamily_id": "1.10.510.10", "funfam_number": "1"},
+      {"superfamily_id": "2.40.50.140", "funfam_number": "83"}
+    ],
+    "return_schema": {
+      "type": "object",
+      "properties": {
+        "funfam_number": {"type": ["string", "null"]},
+        "superfamily_id": {"type": ["string", "null"]},
+        "name": {"type": ["string", "null"]},
+        "description": {"type": ["string", "null"]},
+        "num_members": {"type": ["string", "integer", "null"]},
+        "num_seed_members": {"type": ["string", "integer", "null"]},
+        "dops_score": {"type": ["string", "number", "null"]},
+        "rep_id": {"type": ["string", "null"]},
+        "ec_terms": {"type": "array", "items": {"type": "object"}},
+        "go_terms": {"type": "array", "items": {"type": "object"}}
+      }
+    }
   }
 ]
