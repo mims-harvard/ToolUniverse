@@ -576,12 +576,13 @@ class OrphanetTool(BaseTool):
         Args:
             arguments: Dict containing:
                 - orpha_code: Orphanet disease code (e.g., 558 for Marfan)
+                - orpha_id: Alias for orpha_code
         """
-        orpha_code = arguments.get("orpha_code", "")
+        orpha_code = arguments.get("orpha_code") or arguments.get("orpha_id")
         if not orpha_code:
             return {
                 "status": "error",
-                "error": "Missing required parameter: orpha_code",
+                "error": "Missing required parameter: orpha_code (or orpha_id)",
             }
 
         orpha_code = (

@@ -70,8 +70,12 @@ class GTExV2Tool(BaseTool):
                     "error": f"Missing required parameter: {param}",
                 }
 
-        if "gene_symbol" in arguments and "gencode_id" not in arguments:
-            arguments["gencode_id"] = arguments["gene_symbol"]
+        if "gencode_id" not in arguments:
+            arguments["gencode_id"] = arguments.get("gene_symbol") or arguments.get(
+                "geneSymbol"
+            )
+        if "dataset_id" not in arguments and "datasetId" in arguments:
+            arguments["dataset_id"] = arguments["datasetId"]
 
         operation = arguments.get("operation") or self.get_schema_const_operation()
         if not operation:
@@ -113,6 +117,11 @@ class GTExV2Tool(BaseTool):
     def _get_median_gene_expression(self, arguments: Dict[str, Any]) -> Dict[str, Any]:
         """Get median gene expression across tissues."""
         gencode_ids = arguments.get("gencode_id")
+        if not gencode_ids:
+            return {
+                "status": "error",
+                "error": "gencode_id (or gene_symbol) is required. Provide a gene symbol (e.g., 'TP53') or Ensembl ID (e.g., 'ENSG00000141510').",
+            }
         if isinstance(gencode_ids, str):
             gencode_ids = [gencode_ids]
         # Resolve gene symbols/unversioned IDs to versioned GENCODE IDs

@@ -52,11 +52,13 @@
           "maximum": 100000,
           "default": 250,
           "description": "Results per page"
+        },
+        "gene_symbol": {
+          "type": "string",
+          "description": "Gene symbol alias for gencode_id (e.g., \"TP53\", \"COL5A1\")"
         }
       },
-      "required": [
-        "gencode_id"
-      ]
+      "required": []
     },
     "return_schema": {
       "type": "array",

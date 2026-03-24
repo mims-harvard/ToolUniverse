@@ -343,11 +343,16 @@
             "integer"
           ],
           "description": "Orphanet ORPHA code (e.g., 558 for Marfan, 586 for Cystic Fibrosis)"
+        },
+        "orpha_id": {
+          "type": [
+            "string",
+            "integer"
+          ],
+          "description": "Alias for orpha_code. Orphanet ORPHA code (e.g., 558 for Marfan)"
         }
       },
-      "required": [
-        "orpha_code"
-      ]
+      "required": []
     },
     "return_schema": {
       "type": "object",
