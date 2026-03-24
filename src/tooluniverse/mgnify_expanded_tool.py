@@ -64,19 +64,23 @@ class MGnifyExpandedTool(BaseTool):
 
     def _dispatch(self, arguments: Dict[str, Any]) -> Dict[str, Any]:
         """Route to appropriate endpoint based on config."""
-        if self.endpoint_type == "genome" and self.query_mode == "detail":
-            return self._genome_detail(arguments)
-        elif self.endpoint_type == "genome" and self.query_mode == "search":
-            return self._genome_search(arguments)
-        elif self.endpoint_type == "biome" and self.query_mode == "list":
-            return self._biome_list(arguments)
-        elif self.endpoint_type == "study" and self.query_mode == "detail":
-            return self._study_detail(arguments)
-        else:
+        key = f"{self.endpoint_type}/{self.query_mode}"
+        dispatch_map = {
+            "genome/detail": self._genome_detail,
+            "genome/search": self._genome_search,
+            "biome/list": self._biome_list,
+            "study/detail": self._study_detail,
+            "analysis/taxonomy": self._analysis_taxonomy,
+            "analysis/go_terms": self._analysis_go_terms,
+            "analysis/interpro": self._analysis_interpro,
+        }
+        handler = dispatch_map.get(key)
+        if handler is None:
             return {
                 "status": "error",
-                "error": f"Unknown endpoint_type/query_mode: {self.endpoint_type}/{self.query_mode}",
+                "error": f"Unknown endpoint_type/query_mode: {key}",
             }
+        return handler(arguments)
 
     def _genome_detail(self, arguments: Dict[str, Any]) -> Dict[str, Any]:
         """Get detailed information about a MGnify genome."""
@@ -261,5 +265,136 @@ class MGnifyExpandedTool(BaseTool):
                 "source": "MGnify",
                 "query": study_accession,
                 "endpoint": "studies/detail",
+            },
+        }
+
+    def _fetch_analysis_annotations(
+        self, analysis_id: str, annotation_type: str, page_size: int = 25
+    ) -> Dict[str, Any]:
+        """Shared helper to fetch paginated annotations from an analysis."""
+        url = f"{MGNIFY_BASE_URL}/analyses/{analysis_id}/{annotation_type}"
+        params = {"format": "json", "page_size": min(page_size, 100)}
+        response = requests.get(url, params=params, timeout=self.timeout)
+        response.raise_for_status()
+        return response.json()
+
+    def _analysis_taxonomy(self, arguments: Dict[str, Any]) -> Dict[str, Any]:
+        """Get taxonomic composition from a MGnify analysis (SSU or LSU)."""
+        analysis_id = arguments.get("analysis_id", "")
+        if not analysis_id:
+            return {
+                "status": "error",
+                "error": "analysis_id is required (e.g., MGYA00585482)",
+            }
+
+        rna_type = arguments.get("rna_type", "ssu")
+        if rna_type not in ("ssu", "lsu"):
+            rna_type = "ssu"
+
+        page_size = arguments.get("page_size", 25)
+        raw = self._fetch_analysis_annotations(
+            analysis_id, f"taxonomy/{rna_type}", page_size
+        )
+
+        results = []
+        for item in raw.get("data", []):
+            attrs = item.get("attributes", {})
+            results.append(
+                {
+                    "organism_id": item.get("id"),
+                    "name": attrs.get("name"),
+                    "rank": attrs.get("rank"),
+                    "domain": attrs.get("domain"),
+                    "count": attrs.get("count"),
+                    "lineage": attrs.get("lineage"),
+                }
+            )
+
+        pagination = raw.get("meta", {}).get("pagination", {})
+        return {
+            "status": "success",
+            "data": results,
+            "metadata": {
+                "analysis_id": analysis_id,
+                "rna_type": rna_type,
+                "total_results": pagination.get("count", len(results)),
+                "page": pagination.get("page", 1),
+                "pages": pagination.get("pages"),
+                "source": "MGnify",
+            },
+        }
+
+    def _analysis_go_terms(self, arguments: Dict[str, Any]) -> Dict[str, Any]:
+        """Get GO term functional annotations from a MGnify analysis."""
+        analysis_id = arguments.get("analysis_id", "")
+        if not analysis_id:
+            return {
+                "status": "error",
+                "error": "analysis_id is required (e.g., MGYA00585482)",
+            }
+
+        page_size = arguments.get("page_size", 25)
+        raw = self._fetch_analysis_annotations(analysis_id, "go-terms", page_size)
+
+        results = []
+        for item in raw.get("data", []):
+            attrs = item.get("attributes", {})
+            results.append(
+                {
+                    "go_id": attrs.get("accession"),
+                    "description": attrs.get("description"),
+                    "count": attrs.get("count"),
+                    "category": attrs.get("lineage"),
+                }
+            )
+
+        pagination = raw.get("meta", {}).get("pagination", {})
+        return {
+            "status": "success",
+            "data": results,
+            "metadata": {
+                "analysis_id": analysis_id,
+                "total_results": pagination.get("count", len(results)),
+                "page": pagination.get("page", 1),
+                "pages": pagination.get("pages"),
+                "source": "MGnify",
+            },
+        }
+
+    def _analysis_interpro(self, arguments: Dict[str, Any]) -> Dict[str, Any]:
+        """Get InterPro protein domain annotations from a MGnify analysis."""
+        analysis_id = arguments.get("analysis_id", "")
+        if not analysis_id:
+            return {
+                "status": "error",
+                "error": "analysis_id is required (e.g., MGYA00585482)",
+            }
+
+        page_size = arguments.get("page_size", 25)
+        raw = self._fetch_analysis_annotations(
+            analysis_id, "interpro-identifiers", page_size
+        )
+
+        results = []
+        for item in raw.get("data", []):
+            attrs = item.get("attributes", {})
+            results.append(
+                {
+                    "interpro_id": attrs.get("accession"),
+                    "description": attrs.get("description"),
+                    "count": attrs.get("count"),
+                }
+            )
+
+        pagination = raw.get("meta", {}).get("pagination", {})
+        return {
+            "status": "success",
+            "data": results,
+            "metadata": {
+                "analysis_id": analysis_id,
+                "total_results": pagination.get("count", len(results)),
+                "page": pagination.get("page", 1),
+                "pages": pagination.get("pages"),
+                "source": "MGnify",
             },
         }

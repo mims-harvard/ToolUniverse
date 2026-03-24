@@ -394,5 +394,165 @@
         }
       ]
     }
+  },
+  {
+    "name": "MGnify_get_taxonomy",
+    "description": "Get taxonomic composition from a MGnify metagenomics analysis. Returns organisms detected with their abundance counts, taxonomic lineage (domain/phylum/class/order/family/genus/species), and rank. Supports SSU (16S/18S) and LSU (23S/28S) rRNA marker genes. Use MGnify_list_analyses to find analysis IDs for a study. Example: MGYA00585482 returns Bacteria, Proteobacteria, Firmicutes lineages with counts.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "analysis_id": {
+          "type": "string",
+          "description": "MGnify analysis accession (e.g., 'MGYA00585482'). Find IDs via MGnify_list_analyses."
+        },
+        "rna_type": {
+          "type": "string",
+          "description": "rRNA marker type: 'ssu' for 16S/18S (default) or 'lsu' for 23S/28S.",
+          "default": "ssu"
+        },
+        "page_size": {
+          "type": "integer",
+          "description": "Number of taxa to return per page (default 25, max 100).",
+          "default": 25
+        }
+      },
+      "required": ["analysis_id"]
+    },
+    "fields": {
+      "endpoint_type": "analysis",
+      "query_mode": "taxonomy"
+    },
+    "type": "MGnifyExpandedTool",
+    "test_examples": [
+      {
+        "analysis_id": "MGYA00585482",
+        "page_size": 10
+      },
+      {
+        "analysis_id": "MGYA00585482",
+        "rna_type": "lsu",
+        "page_size": 5
+      }
+    ],
+    "return_schema": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "organism_id": {"type": "string"},
+          "name": {"type": "string"},
+          "rank": {"type": "string"},
+          "domain": {"type": ["string", "null"]},
+          "count": {"type": "integer"},
+          "lineage": {"type": "string"}
+        }
+      }
+    },
+    "label": ["MGnify", "Microbiome", "Taxonomy", "Metagenomics"],
+    "metadata": {
+      "tags": ["taxonomy", "microbiome", "16S", "metagenomics", "community_composition"],
+      "estimated_execution_time": "< 5 seconds"
+    }
+  },
+  {
+    "name": "MGnify_get_go_terms",
+    "description": "Get Gene Ontology (GO) functional annotations from a MGnify metagenomics analysis. Returns GO terms with their accession, description, gene count, and category (biological_process, molecular_function, or cellular_component). Use to understand the functional capacity of a microbial community. Example: MGYA00585482 returns GO:0055114 oxidation-reduction process (count=1507).",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "analysis_id": {
+          "type": "string",
+          "description": "MGnify analysis accession (e.g., 'MGYA00585482'). Find IDs via MGnify_list_analyses."
+        },
+        "page_size": {
+          "type": "integer",
+          "description": "Number of GO terms to return per page (default 25, max 100).",
+          "default": 25
+        }
+      },
+      "required": ["analysis_id"]
+    },
+    "fields": {
+      "endpoint_type": "analysis",
+      "query_mode": "go_terms"
+    },
+    "type": "MGnifyExpandedTool",
+    "test_examples": [
+      {
+        "analysis_id": "MGYA00585482",
+        "page_size": 10
+      },
+      {
+        "analysis_id": "MGYA00585482",
+        "page_size": 5
+      }
+    ],
+    "return_schema": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "go_id": {"type": "string"},
+          "description": {"type": "string"},
+          "count": {"type": "integer"},
+          "category": {"type": "string"}
+        }
+      }
+    },
+    "label": ["MGnify", "Microbiome", "GO Terms", "Functional Annotation"],
+    "metadata": {
+      "tags": ["go_terms", "functional_annotation", "microbiome", "metagenomics"],
+      "estimated_execution_time": "< 5 seconds"
+    }
+  },
+  {
+    "name": "MGnify_get_interpro",
+    "description": "Get InterPro protein domain annotations from a MGnify metagenomics analysis. Returns InterPro identifiers with description and gene counts, ranked by abundance. Useful for understanding the protein family composition of a microbial community. Example: MGYA00585482 returns IPR036388 Winged helix-like DNA-binding domain (count=360).",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "analysis_id": {
+          "type": "string",
+          "description": "MGnify analysis accession (e.g., 'MGYA00585482'). Find IDs via MGnify_list_analyses."
+        },
+        "page_size": {
+          "type": "integer",
+          "description": "Number of InterPro entries to return per page (default 25, max 100).",
+          "default": 25
+        }
+      },
+      "required": ["analysis_id"]
+    },
+    "fields": {
+      "endpoint_type": "analysis",
+      "query_mode": "interpro"
+    },
+    "type": "MGnifyExpandedTool",
+    "test_examples": [
+      {
+        "analysis_id": "MGYA00585482",
+        "page_size": 10
+      },
+      {
+        "analysis_id": "MGYA00585482",
+        "page_size": 5
+      }
+    ],
+    "return_schema": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "interpro_id": {"type": "string"},
+          "description": {"type": "string"},
+          "count": {"type": "integer"}
+        }
+      }
+    },
+    "label": ["MGnify", "Microbiome", "InterPro", "Protein Domains"],
+    "metadata": {
+      "tags": ["interpro", "protein_domains", "functional_annotation", "microbiome", "metagenomics"],
+      "estimated_execution_time": "< 5 seconds"
+    }
   }
 ]

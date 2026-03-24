@@ -426,6 +426,7 @@ STATIC_LAZY_REGISTRY = {
     "SASBDBRESTTool": "sasbdb_tool",
     "SASBDBSearchTool": "sasbdb_tool",
     "SAbDabTool": "sabdab_tool",
+    "SCExpressionAtlasTool": "scxa_tool",
     "SCREENRESTTool": "screen_tool",
     "SGDTool": "sgd_tool",
     "SIGNListGuidelinesTool": "unified_guideline_tools",

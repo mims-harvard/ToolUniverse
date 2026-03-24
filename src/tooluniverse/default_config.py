@@ -387,6 +387,8 @@ default_tool_files = {
     "glygen": os.path.join(current_dir, "data", "glygen_tools.json"),
     # MGnify Expanded - Metagenomics genome catalog, biomes, study details
     "mgnify_expanded": os.path.join(current_dir, "data", "mgnify_expanded_tools.json"),
+    # SCXA - EBI Single Cell Expression Atlas (scRNA-seq experiments, gene expression)
+    "scxa": os.path.join(current_dir, "data", "scxa_tools.json"),
     # SGD - Saccharomyces Genome Database (yeast genes, phenotypes, interactions)
     "sgd": os.path.join(current_dir, "data", "sgd_tools.json"),
     # NCBI Datasets API v2 - Gene info, orthologs, taxonomy, genome metadata
