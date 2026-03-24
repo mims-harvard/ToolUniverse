@@ -193,6 +193,7 @@ class GTExEQTLTool:
         gene_input = (
             arguments.get("gene_symbol")
             or arguments.get("ensembl_gene_id")
+            or arguments.get("gene_id")  # alias: agents pass 'gene_id'
             or arguments.get("gene")
         )
         if not gene_input:
@@ -209,6 +210,10 @@ class GTExEQTLTool:
             "gencodeId": gencode_id,
             "datasetId": arguments.get("dataset_id", "gtex_v8"),
         }
+        # Pass tissue filter if provided (tissueSiteDetailId is case-sensitive, e.g. 'Brain_Cortex')
+        tissue = arguments.get("tissue_id") or arguments.get("tissue")
+        if tissue:
+            query["tissueSiteDetailId"] = tissue
         if "page" in arguments:
             query["page"] = int(arguments["page"])
         if "size" in arguments:

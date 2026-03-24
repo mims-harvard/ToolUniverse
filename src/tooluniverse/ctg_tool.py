@@ -44,6 +44,7 @@ class ClinicalTrialsTool(RESTfulTool):
             "query": "query.term",  # alias: agents naturally pass 'query'
             "status": "filter.overallStatus",  # alias: agents naturally pass 'status'
             "max_results": "pageSize",  # alias: agents naturally pass 'max_results'
+            "limit": "pageSize",  # alias: agents naturally pass 'limit'
         }
 
     def _map_param_names(self, arguments):

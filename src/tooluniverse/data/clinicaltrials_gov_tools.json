@@ -35,6 +35,26 @@
         "max_results": {
           "type": "integer",
           "description": "Maximum number of studies to return (alias for pageSize, default 10, max 1000)."
+        },
+        "limit": {
+          "type": "integer",
+          "description": "Alias for max_results: maximum number of studies to return (default 10, max 1000).",
+          "minimum": 1,
+          "maximum": 1000
+        },
+        "status": {
+          "oneOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            }
+          ],
+          "description": "Alias for overall_status. Filter by trial status, e.g. \"RECRUITING\", \"COMPLETED\"."
         }
       },
       "required": []
