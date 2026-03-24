@@ -8,6 +8,8 @@ API Documentation: https://docs.gpcrdb.org/web_services.html
 No authentication required.
 """
 
+import html
+import re
 import requests
 from typing import Dict, Any
 from .base_tool import BaseTool
@@ -15,6 +17,7 @@ from .tool_registry import register_tool
 
 # Base URL for GPCRdb API
 GPCRDB_API_URL = "https://gpcrdb.org/services"
+_HTML_TAG_RE = re.compile(r"<[^>]+>")
 
 
 @register_tool("GPCRdbTool")
@@ -83,6 +86,10 @@ class GPCRdbTool(BaseTool):
             )
             response.raise_for_status()
             data = response.json()
+
+            # Strip HTML tags/entities from name field (GPCRdb returns e.g. "&beta;<sub>2</sub>-adrenoceptor")
+            if isinstance(data, dict) and "name" in data:
+                data["name"] = _HTML_TAG_RE.sub("", html.unescape(data["name"]))
 
             return {
                 "status": "success",
