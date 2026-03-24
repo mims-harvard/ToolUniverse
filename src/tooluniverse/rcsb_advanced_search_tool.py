@@ -74,7 +74,7 @@ class RCSBAdvancedSearchTool(BaseTool):
         experimental_method = arguments.get("experimental_method")
         polymer_description = arguments.get("polymer_description")
         min_deposition_date = arguments.get("min_deposition_date")
-        rows = min(arguments.get("rows") or 10, 50)
+        rows = min(arguments.get("rows") or arguments.get("limit") or 10, 50)
         sort_by = arguments.get("sort_by") or "resolution"
 
         nodes = []
@@ -230,7 +230,7 @@ class RCSBAdvancedSearchTool(BaseTool):
 
         pattern_type = arguments.get("pattern_type") or "prosite"
         sequence_type = arguments.get("sequence_type") or "protein"
-        rows = min(arguments.get("rows") or 10, 50)
+        rows = min(arguments.get("rows") or arguments.get("limit") or 10, 50)
 
         request_body = {
             "query": {

@@ -57,8 +57,10 @@ def execute_query(endpoint_url, query, variables=None):
         if "errors" in result:
             print("Invalid Query: ", result["errors"])
             return None
-        # Check if the data field is empty
-        elif not result.get("data") or all(not v for v in result["data"].values()):
+        # Feature-94A-002: always return result when data key is present,
+        # even if all values are empty/null (e.g. disease not found = {"data": {}}).
+        # Callers distinguish empty results from errors via status envelope.
+        elif "data" not in result:
             print("No data returned")
             return None
         else:

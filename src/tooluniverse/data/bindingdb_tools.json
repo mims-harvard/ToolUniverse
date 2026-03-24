@@ -60,12 +60,12 @@
     },
     "test_examples": [
       {
-        "uniprot": "P35354",
-        "affinity_cutoff": 100
+        "affinity_cutoff": 100,
+        "uniprot_id": "P35354"
       },
       {
-        "uniprot": "P00742",
-        "affinity_cutoff": 1000
+        "affinity_cutoff": 1000,
+        "uniprot_id": "P00742"
       }
     ]
   },
@@ -130,8 +130,8 @@
     },
     "test_examples": [
       {
-        "uniprots": "P00176,P00183",
-        "affinity_cutoff": 10000
+        "affinity_cutoff": 10000,
+        "uniprot_ids": "P00176,P00183"
       }
     ]
   },
