@@ -40,84 +40,92 @@
       }
     ],
     "return_schema": {
-      "oneOf": [
-        {
-          "type": "object",
-          "properties": {
-            "data": {
-              "type": "array",
-              "items": {
-                "type": "object",
-                "properties": {
-                  "id": {
-                    "type": "integer",
-                    "description": "Allen Brain Atlas gene ID"
-                  },
-                  "acronym": {
-                    "type": "string",
-                    "description": "Gene symbol"
-                  },
-                  "name": {
-                    "type": "string",
-                    "description": "Full gene name"
-                  },
-                  "entrez_id": {
-                    "type": [
-                      "integer",
-                      "null"
-                    ],
-                    "description": "NCBI Entrez Gene ID"
-                  },
-                  "homologene_id": {
-                    "type": [
-                      "integer",
-                      "null"
-                    ]
-                  },
-                  "chromosome_id": {
-                    "type": [
-                      "integer",
-                      "null"
-                    ]
-                  },
-                  "organism_id": {
-                    "type": "integer",
-                    "description": "2=mouse, 1=human, 3=rat"
-                  }
-                }
-              }
-            },
-            "metadata": {
-              "type": "object",
-              "properties": {
-                "total_results": {
-                  "type": "integer"
-                },
-                "num_rows": {
-                  "type": "integer"
-                },
-                "start_row": {
-                  "type": "integer"
-                }
-              }
-            }
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "description": "Allen Brain Atlas gene ID"
           },
-          "required": [
-            "data"
-          ]
-        },
-        {
-          "type": "object",
-          "properties": {
-            "error": {
-              "type": "string"
-            }
+          "acronym": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "description": "Gene symbol"
           },
-          "required": [
-            "error"
-          ]
+          "name": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "description": "Full gene name"
+          },
+          "entrez_id": {
+            "type": [
+              "integer",
+              "null"
+            ],
+            "description": "NCBI Entrez Gene ID"
+          },
+          "homologene_id": {
+            "type": [
+              "integer",
+              "null"
+            ]
+          },
+          "chromosome_id": {
+            "type": [
+              "integer",
+              "null"
+            ]
+          },
+          "organism_id": {
+            "type": [
+              "integer",
+              "null"
+            ],
+            "description": "2=mouse, 1=human, 3=rat"
+          },
+          "ensembl_id": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "alias_tags": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "original_name": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "original_symbol": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "sphinx_id": {
+            "type": [
+              "integer",
+              "null"
+            ]
+          },
+          "version_status": {
+            "type": [
+              "string",
+              "null"
+            ]
+          }
         }
-      ]
+      }
     }
   },
   {
@@ -161,86 +169,115 @@
       }
     ],
     "return_schema": {
-      "oneOf": [
-        {
-          "type": "object",
-          "properties": {
-            "data": {
-              "type": "array",
-              "items": {
-                "type": "object",
-                "properties": {
-                  "id": {
-                    "type": "integer",
-                    "description": "Structure ID"
-                  },
-                  "acronym": {
-                    "type": "string"
-                  },
-                  "name": {
-                    "type": "string"
-                  },
-                  "safe_name": {
-                    "type": "string"
-                  },
-                  "color_hex_triplet": {
-                    "type": "string",
-                    "description": "Hex color for visualization"
-                  },
-                  "graph_id": {
-                    "type": "integer"
-                  },
-                  "graph_order": {
-                    "type": "integer"
-                  },
-                  "parent_structure_id": {
-                    "type": [
-                      "integer",
-                      "null"
-                    ]
-                  },
-                  "structure_id_path": {
-                    "type": "string",
-                    "description": "Hierarchical path of structure IDs"
-                  },
-                  "depth": {
-                    "type": "integer",
-                    "description": "Depth in the ontology hierarchy"
-                  },
-                  "ontology_id": {
-                    "type": "integer"
-                  }
-                }
-              }
-            },
-            "metadata": {
-              "type": "object",
-              "properties": {
-                "total_results": {
-                  "type": "integer"
-                },
-                "num_rows": {
-                  "type": "integer"
-                }
-              }
-            }
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "description": "Structure ID"
           },
-          "required": [
-            "data"
-          ]
-        },
-        {
-          "type": "object",
-          "properties": {
-            "error": {
-              "type": "string"
-            }
+          "acronym": {
+            "type": [
+              "string",
+              "null"
+            ]
           },
-          "required": [
-            "error"
-          ]
+          "name": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "safe_name": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "color_hex_triplet": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "description": "Hex color for visualization"
+          },
+          "graph_id": {
+            "type": [
+              "integer",
+              "null"
+            ]
+          },
+          "graph_order": {
+            "type": [
+              "integer",
+              "null"
+            ]
+          },
+          "parent_structure_id": {
+            "type": [
+              "integer",
+              "null"
+            ]
+          },
+          "structure_id_path": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "description": "Hierarchical path of structure IDs"
+          },
+          "depth": {
+            "type": [
+              "integer",
+              "null"
+            ],
+            "description": "Depth in the ontology hierarchy"
+          },
+          "ontology_id": {
+            "type": [
+              "integer",
+              "null"
+            ]
+          },
+          "atlas_id": {
+            "type": [
+              "integer",
+              "null"
+            ]
+          },
+          "hemisphere_id": {
+            "type": [
+              "integer",
+              "null"
+            ]
+          },
+          "failed": {
+            "type": [
+              "boolean",
+              "null"
+            ]
+          },
+          "failed_facet": {
+            "type": [
+              "integer",
+              "null"
+            ]
+          },
+          "st_level": {
+            "type": [
+              "integer",
+              "null"
+            ]
+          },
+          "weight": {
+            "type": [
+              "integer",
+              "null"
+            ]
+          }
         }
-      ]
+      }
     }
   },
   {
@@ -282,94 +319,96 @@
       }
     ],
     "return_schema": {
-      "oneOf": [
-        {
-          "type": "object",
-          "properties": {
-            "data": {
-              "type": "array",
-              "items": {
-                "type": "object",
-                "properties": {
-                  "id": {
-                    "type": "integer",
-                    "description": "Section data set ID"
-                  },
-                  "plane_of_section_id": {
-                    "type": [
-                      "integer",
-                      "null"
-                    ]
-                  },
-                  "section_thickness": {
-                    "type": [
-                      "number",
-                      "null"
-                    ]
-                  },
-                  "expression": {
-                    "type": "boolean"
-                  },
-                  "failed": {
-                    "type": "boolean"
-                  },
-                  "storage_directory": {
-                    "type": ["string", "null"]
-                  },
-                  "genes": {
-                    "type": "array",
-                    "items": {
-                      "type": "object",
-                      "properties": {
-                        "acronym": {
-                          "type": "string"
-                        },
-                        "name": {
-                          "type": "string"
-                        },
-                        "entrez_id": {
-                          "type": [
-                            "integer",
-                            "null"
-                          ]
-                        }
-                      }
-                    }
-                  }
-                }
-              }
-            },
-            "metadata": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "description": "Section data set ID"
+          },
+          "plane_of_section_id": {
+            "type": [
+              "integer",
+              "null"
+            ]
+          },
+          "section_thickness": {
+            "type": [
+              "number",
+              "null"
+            ]
+          },
+          "expression": {
+            "type": [
+              "boolean",
+              "null"
+            ]
+          },
+          "failed": {
+            "type": [
+              "boolean",
+              "null"
+            ]
+          },
+          "delegate": {
+            "type": [
+              "boolean",
+              "null"
+            ]
+          },
+          "storage_directory": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "specimen_id": {
+            "type": [
+              "integer",
+              "null"
+            ]
+          },
+          "reference_space_id": {
+            "type": [
+              "integer",
+              "null"
+            ]
+          },
+          "qc_date": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "genes": {
+            "type": "array",
+            "items": {
               "type": "object",
               "properties": {
-                "total_results": {
-                  "type": "integer"
+                "acronym": {
+                  "type": [
+                    "string",
+                    "null"
+                  ]
                 },
-                "gene_acronym": {
-                  "type": "string"
+                "name": {
+                  "type": [
+                    "string",
+                    "null"
+                  ]
                 },
-                "product_id": {
-                  "type": "integer"
+                "entrez_id": {
+                  "type": [
+                    "integer",
+                    "null"
+                  ]
                 }
               }
             }
-          },
-          "required": [
-            "data"
-          ]
-        },
-        {
-          "type": "object",
-          "properties": {
-            "error": {
-              "type": "string"
-            }
-          },
-          "required": [
-            "error"
-          ]
+          }
         }
-      ]
+      }
     }
   },
   {
@@ -400,79 +439,108 @@
       }
     ],
     "return_schema": {
-      "oneOf": [
-        {
-          "type": "object",
-          "properties": {
-            "data": {
-              "type": "object",
-              "properties": {
-                "id": {
-                  "type": "integer"
-                },
-                "acronym": {
-                  "type": "string"
-                },
-                "name": {
-                  "type": "string"
-                },
-                "safe_name": {
-                  "type": "string"
-                },
-                "color_hex_triplet": {
-                  "type": "string"
-                },
-                "graph_id": {
-                  "type": "integer"
-                },
-                "parent_structure_id": {
-                  "type": [
-                    "integer",
-                    "null"
-                  ]
-                },
-                "structure_id_path": {
-                  "type": "string"
-                },
-                "depth": {
-                  "type": "integer"
-                },
-                "ontology_id": {
-                  "type": "integer"
-                },
-                "atlas_id": {
-                  "type": [
-                    "integer",
-                    "null"
-                  ]
-                }
-              }
-            },
-            "metadata": {
-              "type": "object",
-              "properties": {
-                "total_results": {
-                  "type": "integer"
-                }
-              }
-            }
-          },
-          "required": [
-            "data"
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "integer"
+        },
+        "acronym": {
+          "type": [
+            "string",
+            "null"
           ]
         },
-        {
-          "type": "object",
-          "properties": {
-            "error": {
-              "type": "string"
-            }
-          },
-          "required": [
-            "error"
+        "name": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "safe_name": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "color_hex_triplet": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "graph_id": {
+          "type": [
+            "integer",
+            "null"
+          ]
+        },
+        "graph_order": {
+          "type": [
+            "integer",
+            "null"
+          ]
+        },
+        "parent_structure_id": {
+          "type": [
+            "integer",
+            "null"
+          ]
+        },
+        "structure_id_path": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "depth": {
+          "type": [
+            "integer",
+            "null"
+          ]
+        },
+        "ontology_id": {
+          "type": [
+            "integer",
+            "null"
+          ]
+        },
+        "atlas_id": {
+          "type": [
+            "integer",
+            "null"
+          ]
+        },
+        "hemisphere_id": {
+          "type": [
+            "integer",
+            "null"
+          ]
+        },
+        "failed": {
+          "type": [
+            "boolean",
+            "null"
+          ]
+        },
+        "failed_facet": {
+          "type": [
+            "integer",
+            "null"
+          ]
+        },
+        "st_level": {
+          "type": [
+            "integer",
+            "null"
+          ]
+        },
+        "weight": {
+          "type": [
+            "integer",
+            "null"
           ]
         }
-      ]
+      }
     }
   }
 ]
