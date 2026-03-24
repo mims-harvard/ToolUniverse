@@ -81,7 +81,7 @@ For SV type definitions, scoring tables, and ACMG code details, see `CLASSIFICAT
 **Tools**:
 | Tool | Purpose |
 |------|---------|
-| `Ensembl_lookup_gene` | Gene structure, coordinates, exons |
+| `ensembl_lookup_gene` | Gene structure, coordinates, exons |
 | `NCBIGene_search` | Official symbol, aliases, description |
 | `Gene_Ontology_get_term_info` | Biological process, molecular function |
 | `OMIM_search`, `OMIM_get_entry` | Disease associations, inheritance |
@@ -195,7 +195,7 @@ SV_analysis_[TYPE]_chr[CHR]_[START]_[END]_[GENES].md
 | `ClinGen_search_gene_validity` | Gene-disease validity | **Required** |
 | `ClinVar_search_variants` | Known pathogenic/benign SVs | **Required** |
 | `DECIPHER_search` | Patient cases, phenotypes | Highly recommended |
-| `Ensembl_lookup_gene` | Gene coordinates, structure | **Required** |
+| `ensembl_lookup_gene` | Gene coordinates, structure | **Required** |
 | `OMIM_search`, `OMIM_get_entry` | Gene-disease associations | **Required** |
 | `DisGeNET_search_gene` | Additional disease associations | Recommended |
 | `PubMed_search_articles` | Literature evidence | Recommended |

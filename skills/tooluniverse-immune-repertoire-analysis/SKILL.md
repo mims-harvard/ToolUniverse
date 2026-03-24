@@ -92,7 +92,7 @@ Link TCR/BCR clonotypes to cell phenotypes from paired single-cell RNA-seq:
 - `IEDB_search_tcells` - Known T-cell epitopes
 - `IEDB_search_bcells` - Known B-cell epitopes
 - `PubMed_search_articles` - Literature on TCR/BCR specificity
-- `UniProt_get_protein` - Antigen protein information
+- `UniProt_get_entry_by_accession` - Antigen protein information
 
 **Integration with Other Skills**:
 - `tooluniverse-single-cell` - Single-cell transcriptomics
