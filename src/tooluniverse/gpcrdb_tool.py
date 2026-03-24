@@ -172,19 +172,62 @@ class GPCRdbTool(BaseTool):
         except Exception as e:
             return {"status": "error", "error": f"Unexpected error: {str(e)}"}
 
+    # Map human-readable class/family names to GPCRdb numeric slugs (Feature-122A-001)
+    _FAMILY_NAME_TO_SLUG = {
+        "class a": "001",
+        "class a (rhodopsin)": "001",
+        "rhodopsin": "001",
+        "class b": "002",
+        "class b1": "002",
+        "secretin": "002",
+        "class b2": "003",
+        "adhesion": "003",
+        "class c": "004",
+        "glutamate": "004",
+        "class f": "005",
+        "frizzled": "005",
+        "class t": "006",
+        "taste2": "006",
+        "aminergic": "001_001",
+        "aminergic receptors": "001_001",
+        "peptide receptors": "001_003",
+        "chemokine receptors": "001_003_002",
+        "chemokine": "001_003_002",
+        "purine receptors": "001_004",
+        "lipid receptors": "001_007",
+        "serotonin": "001_001_001",
+        "5-hydroxytryptamine": "001_001_001",
+        "dopamine": "001_001_002",
+        "adrenoceptor": "001_001_003",
+        "adrenergic": "001_001_003",
+        "muscarinic": "001_001_004",
+        "histamine": "001_001_005",
+        "beta-adrenergic": "001_001_003_008",
+        "opioid": "001_003_015",
+        "endothelin": "001_003_006",
+    }
+
     def _list_proteins(self, arguments: Dict[str, Any]) -> Dict[str, Any]:
         """
         List GPCR protein families from GPCRdb.
 
         Args:
             arguments: Dict containing:
-                - family: GPCR family (e.g., "001" for Class A). If provided, returns proteins in that family.
-                - species: Species (ignored if no family specified)
+                - family: GPCR family slug (e.g., '001') or human-readable name
+                  (e.g., 'Chemokine receptors'). If provided, returns proteins in
+                  that family.
+                - protein_class: Alias for family; accepts human-readable names.
 
         Note: GPCRdb API does not support listing all proteins by species alone.
         Without family, returns list of protein families.
         """
-        family = arguments.get("family", "")
+        family = arguments.get("family") or arguments.get("protein_class", "")
+
+        # Resolve human-readable class names to numeric slugs (Feature-122A-001)
+        if family and not family.replace("_", "").isdigit():
+            resolved = self._FAMILY_NAME_TO_SLUG.get(family.lower())
+            if resolved:
+                family = resolved
 
         try:
             if family:
@@ -209,9 +252,18 @@ class GPCRdbTool(BaseTool):
 
             note = None
             if family and len(proteins) == 0:
-                note = f"No proteins found for family slug '{family}'. The 'family' parameter requires a numeric GPCRdb slug (e.g., '001_001_003_008' for beta-adrenergic). Call without 'family' first to see available family slugs."
+                note = (
+                    f"No proteins found for family slug '{family}'. "
+                    "The 'family' parameter requires a numeric GPCRdb slug (e.g., '001_003_002' "
+                    "for Chemokine receptors). Use protein_class with a human-readable name "
+                    "(e.g., 'Chemokine receptors') or call without 'family' to discover slugs."
+                )
             elif not family:
-                note = "To list proteins in a specific family, pass its numeric slug as 'family' (e.g., '001_001_003_008'). Call without 'family' to discover available slugs."
+                note = (
+                    "To list proteins in a specific family, pass its numeric slug as 'family' "
+                    "(e.g., '001_003_002') or use protein_class with a human-readable name "
+                    "(e.g., 'Chemokine receptors'). Call without arguments to discover all slugs."
+                )
 
             return {
                 "status": "success",
@@ -347,6 +399,16 @@ class GPCRdbTool(BaseTool):
                     in (lig.get("Ligand type") or lig.get("type") or "").lower()
                 ]
 
+            total_count = len(ligands)
+
+            # Apply limit/max_results client-side (Feature-122A-003)
+            limit = arguments.get("limit") or arguments.get("max_results")
+            if limit is not None:
+                try:
+                    ligands = ligands[: int(limit)]
+                except (TypeError, ValueError):
+                    pass
+
             # Sanitize HTML entities and fix nan DOIs in each ligand record
             for lig in ligands:
                 for field in ("Ligand name", "Protein name"):
@@ -356,13 +418,20 @@ class GPCRdbTool(BaseTool):
                 if isinstance(doi, str) and doi.lower().endswith("/nan"):
                     lig["DOI"] = None
 
+            result: Dict[str, Any] = {
+                "protein": protein,
+                "ligands": ligands,
+                "count": len(ligands),
+                "total_count": total_count,
+            }
+            if limit is not None and total_count > len(ligands):
+                result["note"] = (
+                    f"Showing {len(ligands)} of {total_count} ligands. Increase limit to retrieve more."
+                )
+
             return {
                 "status": "success",
-                "data": {
-                    "protein": protein,
-                    "ligands": ligands,
-                    "count": len(ligands),
-                },
+                "data": result,
                 "metadata": {
                     "source": "GPCRdb",
                     "protein": protein,

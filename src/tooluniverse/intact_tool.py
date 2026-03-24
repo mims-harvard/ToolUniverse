@@ -205,7 +205,8 @@ class IntActRESTTool(BaseTool):
         """Use EBI Search API as fallback for IntAct queries"""
         try:
             ebi_search_url = "https://www.ebi.ac.uk/ebisearch/ws/rest/intact"
-            params = {"format": "json"}
+            # Request name+description fields so entries carry interactor info (Feature-122A-002)
+            params = {"format": "json", "fields": "name,description"}
 
             # Map tool names to their query parameter key and default size
             tool_query_config = {
@@ -236,12 +237,26 @@ class IntActRESTTool(BaseTool):
             data = response.json()
 
             # Transform EBI Search response to match expected format
-            entries = data.get("entries", [])
+            raw_entries = data.get("entries", [])
+
+            # Flatten fields into each entry for easier consumption (Feature-122A-002)
+            entries = []
+            for entry in raw_entries:
+                flat: Dict[str, Any] = {
+                    "id": entry.get("id", ""),
+                    "source": entry.get("source", ""),
+                }
+                fields = entry.get("fields", {})
+                names = fields.get("name", [])
+                descs = fields.get("description", [])
+                if names:
+                    flat["interaction_name"] = names[0]
+                if descs:
+                    flat["interactor_descriptions"] = descs
+                entries.append(flat)
 
             # Extract interaction IDs for easy access
-            interaction_ids = [
-                entry.get("id", "") for entry in entries if entry.get("id")
-            ]
+            interaction_ids = [e["id"] for e in entries if e.get("id")]
 
             # For interactor lookup, try to get more details if possible
             if tool_name == "intact_get_interactor" and entries:

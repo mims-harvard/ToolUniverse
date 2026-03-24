@@ -12,6 +12,8 @@ def GPCRdb_get_ligands(
     operation: Optional[str] = None,
     protein: Optional[str] = None,
     protein_id: Optional[str] = None,
+    limit: Optional[int] = None,
+    max_results: Optional[int] = None,
     *,
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
@@ -28,6 +30,10 @@ def GPCRdb_get_ligands(
         Protein entry name (e.g., adrb2_human)
     protein_id : str
         Alias for protein parameter
+    limit : int
+        Maximum number of ligands to return (default: all).
+    max_results : int
+        Alias for limit.
     stream_callback : Callable, optional
         Callback for streaming output
     use_cache : bool, default False
@@ -48,6 +54,8 @@ def GPCRdb_get_ligands(
             "operation": operation,
             "protein": protein,
             "protein_id": protein_id,
+            "limit": limit,
+            "max_results": max_results,
         }.items()
         if v is not None
     }

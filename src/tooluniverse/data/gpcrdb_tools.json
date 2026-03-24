@@ -66,7 +66,7 @@
   },
   {
     "name": "GPCRdb_list_proteins",
-    "description": "List GPCR protein families or proteins in a specific family from GPCRdb. Without family parameter, returns list of protein families (Class A, Class B, etc.). With family parameter (e.g., '001'), returns proteins in that family. No authentication required.",
+    "description": "List GPCR protein families or proteins in a specific family from GPCRdb. Without family parameter, returns list of protein families (Class A, Class B, etc.). With family parameter (e.g., '001') or protein_class (e.g., 'Chemokine receptors'), returns proteins in that family. No authentication required.",
     "type": "GPCRdbTool",
     "parameter": {
       "type": "object",
@@ -75,6 +75,10 @@
           "type": "string",
           "const": "list_proteins",
           "description": "Operation type (fixed: list_proteins)"
+        },
+        "protein_class": {
+          "type": "string",
+          "description": "Human-readable GPCR class or family name (e.g., 'Chemokine receptors', 'Class A', 'Adrenergic'). Alias for family that accepts plain English names."
         },
         "family": {
           "type": "string",
@@ -213,6 +217,14 @@
         "ligand_type": {
           "type": "string",
           "description": "Alias for type. Ligand class filter (e.g., small molecule, peptide)."
+        },
+        "limit": {
+          "type": "integer",
+          "description": "Maximum number of ligands to return (default: all). Use to cap large result sets."
+        },
+        "max_results": {
+          "type": "integer",
+          "description": "Alias for limit. Maximum number of ligands to return."
         }
       },
       "required": []
@@ -234,6 +246,9 @@
             },
             "count": {
               "type": "integer"
+            },
+            "total_count": {
+              "type": "integer"
             }
           }
         }
@@ -241,7 +256,8 @@
     },
     "test_examples": [
       {
-        "protein": "adrb2_human"
+        "protein": "adrb2_human",
+        "limit": 10
       }
     ]
   },
