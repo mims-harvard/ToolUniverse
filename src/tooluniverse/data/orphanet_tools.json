@@ -286,6 +286,10 @@
           "type": "string",
           "description": "Language code (default: en)",
           "default": "en"
+        },
+        "limit": {
+          "type": "integer",
+          "description": "Maximum number of results to return (default: 20, max: 200)"
         }
       },
       "required": [

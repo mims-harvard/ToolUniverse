@@ -355,7 +355,11 @@
         },
         "id": {
           "type": "string",
-          "description": "The ID or IRI of the term to retrieve"
+          "description": "Ontology term ID or IRI (e.g. HP:0001903, http://purl.obolibrary.org/obo/HP_0001903)"
+        },
+        "term_id": {
+          "type": "string",
+          "description": "Alias for id \u2014 ontology term ID (e.g. HP:0001903)"
         }
       },
       "required": [
@@ -382,7 +386,7 @@
     "version": "1.0.0",
     "test_examples": [
       {
-        "id": "1"
+        "id": "HP:0001903"
       }
     ],
     "return_schema": {

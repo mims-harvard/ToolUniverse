@@ -6234,7 +6234,7 @@ wheels = [
 
 [[package]]
 name = "tooluniverse"
-version = "1.0.17.9"
+version = "1.1.5"
 source = { editable = "." }
 dependencies = [
     { name = "aiohttp" },
@@ -6418,7 +6418,7 @@ requires-dist = [
     { name = "faiss-cpu", marker = "extra == 'embedding'", specifier = "==1.12.0" },
     { name = "faiss-cpu", marker = "extra == 'ml'", specifier = "==1.12.0" },
     { name = "fastapi", specifier = ">=0.116.0" },
-    { name = "fastmcp", specifier = ">=2.12.3" },
+    { name = "fastmcp", specifier = ">=2.12.3,<4.0.0" },
     { name = "fitz", specifier = ">=0.0.1.dev2" },
     { name = "flask", specifier = ">=2.0.0" },
     { name = "flask", marker = "extra == 'graph'", specifier = ">=2.0.0" },

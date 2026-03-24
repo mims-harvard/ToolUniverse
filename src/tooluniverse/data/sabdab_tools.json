@@ -1,7 +1,7 @@
 [
   {
     "name": "SAbDab_search_structures",
-    "description": "Search SAbDab structural antibody database. SAbDab contains all antibody structures from PDB with CDR annotations, chain pairings, and antigen information. Search by antigen, species, or keywords. No authentication required.",
+    "description": "Search SAbDab structural antibody database. Returns a direct browse URL to matching antibody structures \u2014 SAbDab's search endpoint does not expose a JSON API, so use SAbDab_get_structure with a known PDB ID for structured data. Tip: retrieve the full SAbDab summary TSV from https://opig.stats.ox.ac.uk/webapps/sabdab-sabpred/sabdab/summary/?all=true for bulk filtering.",
     "type": "SAbDabTool",
     "parameter": {
       "type": "object",

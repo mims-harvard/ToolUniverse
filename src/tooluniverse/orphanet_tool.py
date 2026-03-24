@@ -497,6 +497,11 @@ class OrphanetTool(BaseTool):
 
         exact = arguments.get("exact", False)
         lang = normalize_lang(arguments.get("lang", "en"))
+        try:
+            limit = int(arguments.get("limit", 20))
+        except (TypeError, ValueError):
+            limit = 20
+        limit = max(1, min(limit, 200))
 
         try:
             # URL encode the search name
@@ -528,13 +533,17 @@ class OrphanetTool(BaseTool):
             else:
                 results = [data] if data else []
 
+            total_count = len(results)
+            results = results[:limit]
             return {
                 "status": "success",
                 "data": {
                     "results": results,
                     "count": len(results),
+                    "total": total_count,
                     "search_name": name,
                     "exact_match": exact,
+                    "truncated": total_count > limit,
                 },
                 "metadata": {
                     "source": "Orphanet RDcode API",
@@ -915,7 +924,14 @@ class OrphanetTool(BaseTool):
                         "diseases": [],
                         "disease_count": 0,
                     },
-                    "metadata": {"note": "No diseases found for this gene name"},
+                    "metadata": {
+                        "note": (
+                            f"No diseases found for gene '{gene_name}' in Orphanet. "
+                            "Orphanet uses full gene names, not symbols. If the gene "
+                            "symbol was recently renamed (e.g. GBA→GBA1), try the "
+                            "current HGNC-approved symbol."
+                        )
+                    },
                 }
             return {"status": "error", "error": f"HTTP error: {e.response.status_code}"}
         except requests.exceptions.RequestException as e:

@@ -151,6 +151,7 @@ class OLSTool(BaseTool):
             operation = self.get_schema_const_operation()
         if not operation:
             return {
+                "status": "error",
                 "error": "`operation` argument is required.",
                 "available_operations": sorted(self._OPERATIONS.keys()),
             }
@@ -158,17 +159,22 @@ class OLSTool(BaseTool):
         handler_name = self._OPERATIONS.get(operation)
         if not handler_name:
             return {
+                "status": "error",
                 "error": f"Unsupported operation '{operation}'.",
                 "available_operations": sorted(self._OPERATIONS.keys()),
             }
 
         handler = getattr(self, handler_name)
         try:
-            return handler(arguments)
+            result = handler(arguments)
+            if isinstance(result, dict) and "status" not in result:
+                return {"status": "success", **result}
+            return result
         except requests.RequestException as exc:
-            return {"error": str(exc)}
+            return {"status": "error", "error": str(exc)}
         except ValidationError as exc:
             return {
+                "status": "error",
                 "error": "Failed to validate OLS response.",
                 "details": exc.errors(),
             }
@@ -176,7 +182,10 @@ class OLSTool(BaseTool):
     def _handle_search_terms(self, arguments: Dict[str, Any]) -> Dict[str, Any]:
         query = arguments.get("query")
         if not query:
-            return {"error": "`query` parameter is required for `search_terms`."}
+            return {
+                "status": "error",
+                "error": "`query` parameter is required for `search_terms`.",
+            }
 
         rows = int(arguments.get("rows", 10))
         ontology = arguments.get("ontology")
@@ -207,7 +216,8 @@ class OLSTool(BaseTool):
         ontology_id = arguments.get("ontology_id")
         if not ontology_id:
             return {
-                "error": "`ontology_id` parameter is required for `get_ontology_info`."
+                "status": "error",
+                "error": "`ontology_id` parameter is required for `get_ontology_info`.",
             }
 
         data = self._get_json(f"/api/v2/ontologies/{ontology_id}")
@@ -257,15 +267,21 @@ class OLSTool(BaseTool):
         }
 
     def _handle_get_term_info(self, arguments: Dict[str, Any]) -> Dict[str, Any]:
-        identifier = arguments.get("id")
+        identifier = arguments.get("id") or arguments.get("term_id")
         if not identifier:
-            return {"error": "`id` parameter is required for `get_term_info`."}
+            return {
+                "status": "error",
+                "error": "`id` parameter is required for `get_term_info`. Use HP:0001903 style IDs.",
+            }
 
         data = self._get_json("/api/terms", params={"id": identifier})
         embedded = data.get("_embedded", {})
         terms = embedded.get("terms") if isinstance(embedded, dict) else None
         if not terms:
-            return {"error": f"Term with ID '{identifier}' was not found in OLS."}
+            return {
+                "status": "error",
+                "error": f"Term with ID '{identifier}' was not found in OLS.",
+            }
 
         # Normalize the term data before validation
         term_data = terms[0]
@@ -281,7 +297,8 @@ class OLSTool(BaseTool):
         ontology = arguments.get("ontology")
         if not term_iri or not ontology:
             return {
-                "error": "`term_iri` and `ontology` parameters are required for `get_term_children`."
+                "status": "error",
+                "error": "`term_iri` and `ontology` parameters are required for `get_term_children`.",
             }
 
         include_obsolete = bool(arguments.get("include_obsolete", False))
@@ -308,7 +325,8 @@ class OLSTool(BaseTool):
         ontology = arguments.get("ontology")
         if not term_iri or not ontology:
             return {
-                "error": "`term_iri` and `ontology` parameters are required for `get_term_ancestors`."
+                "status": "error",
+                "error": "`term_iri` and `ontology` parameters are required for `get_term_ancestors`.",
             }
 
         include_obsolete = bool(arguments.get("include_obsolete", False))
@@ -335,7 +353,8 @@ class OLSTool(BaseTool):
         ontology = arguments.get("ontology")
         if not term_iri or not ontology:
             return {
-                "error": "`term_iri` and `ontology` parameters are required for `find_similar_terms`."
+                "status": "error",
+                "error": "`term_iri` and `ontology` parameters are required for `find_similar_terms`.",
             }
 
         size = int(arguments.get("size", 10))
