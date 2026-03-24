@@ -398,6 +398,10 @@ default_tool_files = {
     "sgd": os.path.join(current_dir, "data", "sgd_tools.json"),
     # NCBI Datasets API v2 - Gene info, orthologs, taxonomy, genome metadata
     "ncbi_datasets": os.path.join(current_dir, "data", "ncbi_datasets_tools.json"),
+    # Mutalyzer - HGVS variant nomenclature validation, normalization, protein prediction
+    "mutalyzer": os.path.join(current_dir, "data", "mutalyzer_tools.json"),
+    # LINCS SigCom - Drug perturbation gene expression signatures
+    "lincs": os.path.join(current_dir, "data", "lincs_tools.json"),
     # EBI Taxonomy - Taxonomic classification, lineage, name resolution
     "ebi_taxonomy": os.path.join(current_dir, "data", "ebi_taxonomy_tools.json"),
     # Alliance of Genome Resources - Cross-species gene data from 7 model organisms

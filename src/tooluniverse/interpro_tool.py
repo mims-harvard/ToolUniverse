@@ -16,9 +16,18 @@ class InterProRESTTool(BaseTool):
         self.timeout = 30
 
     def _build_url(self, args: Dict[str, Any]) -> str:
-        """Build URL from endpoint template and arguments"""
+        """Build URL from endpoint template and arguments.
+
+        Applies schema defaults for any template placeholders not in args.
+        """
         url = self.tool_config["fields"]["endpoint"]
-        for k, v in args.items():
+        # Merge schema defaults for any missing template parameters
+        merged = dict(args)
+        props = self.tool_config.get("parameter", {}).get("properties", {})
+        for k, schema in props.items():
+            if k not in merged and "default" in schema:
+                merged[k] = schema["default"]
+        for k, v in merged.items():
             url = url.replace(f"{{{k}}}", str(v))
         return url
 
@@ -68,5 +77,5 @@ class InterProRESTTool(BaseTool):
             return {
                 "status": "error",
                 "error": f"InterPro API error: {str(e)}",
-                "url": url,
+                "url": url if "url" in dir() else "",
             }
