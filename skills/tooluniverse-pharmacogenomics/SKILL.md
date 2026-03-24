@@ -89,14 +89,14 @@ Resolve user input to canonical identifiers before querying PGx databases.
 |---|---|---|---|
 | 100409 | CFTR | Ivacaftor | PA166251449 |
 | 100411 | CYP2C19 | Clopidogrel | PA166251443 |
-| 100412 | HLA-B, CYP2C9 | Phenytoin/Fosphenytoin | PA166251454 |
+| 100412 | HLA-B, CYP2C9 | Phenytoin/Fosphenytoin | PA166251461 |
 | 100414 | CYP2D6, CYP2C19 | Tricyclic Antidepressants | PA166251445 |
-| 100415 | CYP2D6 | Tamoxifen | PA166251447 |
-| 100416 | CYP2D6 | Codeine, Tramadol | PA166251459 |
-| 100421 | HLA-B | Abacavir | PA166251461 |
-| 100422 | HLA-B | Allopurinol | PA166251457 |
-| 100425 | CYP2C9, VKORC1, CYP4F2, RS12777823 | Warfarin | PA166251453 |
-| 104243 | CYP2D6 | Atomoxetine, SSRIs | PA166251447 |
+| 100415 | CYP2D6 | Tamoxifen | PA166251458 |
+| 100416 | CYP2D6 | Codeine, Tramadol | PA166251454 |
+| 100421 | HLA-B | Abacavir | PA166251444 |
+| 100422 | HLA-B | Allopurinol | PA166251446 |
+| 100425 | CYP2C9, VKORC1, CYP4F2, RS12777823 | Warfarin | PA166251465 |
+| 104243 | CYP2D6 | Atomoxetine, SSRIs | PA166251459 |
 
 ---
 
@@ -145,11 +145,10 @@ Step 2: CPIC_get_recommendations(guideline_id=100416, limit=50)
 **PharmGKB_get_dosing_guidelines**: `guideline_id` (string REQUIRED -- use `clinpgxid` from CPIC_list_guidelines, e.g., "PA166251445"). Returns `{status, data: {id, name, level, literature: [{title, crossReferences}], link}}`.
 - Provides CPIC guideline metadata, literature citations, and link to full guideline.
 
-**CPIC_list_guidelines**: No params. Returns `{status, data: [{id, name, url, genes, clinpgxid}]}`. Returns all ~29 guidelines; filter client-side.
+**CPIC_list_guidelines**: `gene` (string, optional), `drug` (string, optional). Returns `{status, data: [{id, name, url, genes, clinpgxid}]}`. Returns all ~29 guidelines; supports built-in filtering by gene/drug.
 - Use this to discover `clinpgxid` values for PharmGKB_get_dosing_guidelines.
 
-**PharmGKB_search_clinical_annotations**: `query` (string REQUIRED). Returns `{status, data: [{id, name, guideline, ...}]}`.
-- Search for clinical annotations by gene or drug name. Useful when PharmGKB annotation IDs are unknown.
+> **Note**: `PharmGKB_search_clinical_annotations` is **not available** in this ToolUniverse instance. To discover PharmGKB annotation IDs, use `PharmGKB_search_variants(query=rsID)` to get the variant's PharmGKB page, or use `PharmGKB_get_clinical_annotations(annotation_id=...)` with a known ID from the PharmGKB website.
 
 ### Gotchas
 
@@ -170,15 +169,15 @@ Step 2: CPIC_get_recommendations(guideline_id=100416, limit=50)
 **PharmGKB_search_variants**: `query` (string REQUIRED, rsID). Returns variant classification and clinical significance.
 
 **PharmGKB_get_clinical_annotations**: `annotation_id` (string REQUIRED, e.g., "1447954390"). Returns `{status, data: {accessionId, allelePhenotypes: [{allele, phenotype, limitedEvidence}], levelOfEvidence: {term}}}`.
-- REQUIRES annotation_id -- cannot query by gene/drug directly. Discover IDs via PharmGKB_search_variants or PharmGKB_search_clinical_annotations.
+- REQUIRES annotation_id -- cannot query by gene/drug directly. Discover IDs via `PharmGKB_search_variants(query=rsID)` or from the PharmGKB website.
 - `levelOfEvidence.term`: "1A", "1B", "2A", "2B", "3", "4" (PharmGKB evidence levels).
 
 **PharmGKB_get_gene_details**: `gene_id` (string REQUIRED, PharmGKB accession e.g., "PA128"). Returns detailed gene info including allele definition files, VIP citations.
 
 **PharmGKB_get_drug_details**: `drug_id` (string REQUIRED, PharmGKB chemical ID e.g., "PA449088"). Returns drug metadata including SMILES, InChI, type (Drug/Prodrug).
 
-**OpenTargets_get_pharmacogenomics_by_gene_ensemblID**: `ensemblId` (string REQUIRED), `size` (int). Returns PGx variant data from OpenTargets including variant consequences and drug associations.
-- Use when you have an Ensembl ID (from CPIC_get_gene_info) and want additional PGx variant data.
+**OpenTargets_drug_pharmacogenomics_data**: `chemblId` (string REQUIRED, e.g., "CHEMBL1201560"), `size` (int). Returns PGx variant data from OpenTargets including variant consequences and drug associations.
+- Queries by drug (ChEMBL ID), not by gene. Use when you have a ChEMBL ID and want PGx variant annotations from OpenTargets.
 
 ### Activity Score Interpretation (CYP2D6)
 
@@ -215,7 +214,7 @@ Step 2: CPIC_get_recommendations(guideline_id=100416, limit=50)
 
 ## Phase 5: Cross-Database Enrichment
 
-**DGIdb_get_drug_gene_interactions**: `genes` (array of strings REQUIRED, e.g., `["CYP2D6"]`), `interaction_types` (array, optional), `sources` (array, optional). Returns drug-gene interactions with sources.
+**DGIdb_get_drug_gene_interactions**: `genes` (array of strings REQUIRED, e.g., `["CYP2D6"]`), `interaction_types` (array, optional), `interaction_sources` (array, optional). Returns drug-gene interactions with sources.
 - Broader coverage than CPIC; includes non-PGx interactions.
 - Client-side filtering applied for `interaction_types` and `sources` parameters.
 
@@ -224,7 +223,7 @@ Step 2: CPIC_get_recommendations(guideline_id=100416, limit=50)
 
 **PharmGKB_get_dosing_guidelines**: (also in Phase 2) Provides DPWG (Dutch Pharmacogenetics Working Group) guidelines alongside CPIC.
 
-**OpenTargets_get_pharmacogenomics_by_gene_ensemblID**: `ensemblId` (string REQUIRED), `size` (int). Returns PGx variant annotations from the OpenTargets platform.
+**OpenTargets_drug_pharmacogenomics_data**: `chemblId` (string REQUIRED), `size` (int). Returns PGx variant annotations from the OpenTargets platform.
 - Complements CPIC data with additional variant-level PGx evidence.
 
 ### Adverse Event Signal Detection for PGx-Relevant Drugs
@@ -295,7 +294,7 @@ result = tu.tools.FAERS_filter_serious_events(
 | PharmGKB_search_genes | `query` | `{status, data: [{id, symbol, name}]}` |
 | PharmGKB_search_drugs | `query` | `{status, data: [{id, name, types}]}` |
 | PharmGKB_search_variants | `query` (rsID) | `{status, data: [{id, symbol, clinicalSignificance}]}` |
-| PharmGKB_search_clinical_annotations | `query` | `{status, data: [{id, name, guideline}]}` |
+| ~~PharmGKB_search_clinical_annotations~~ | NOT AVAILABLE | Use PharmGKB_search_variants(query=rsID) instead |
 | PharmGKB_get_clinical_annotations | `annotation_id` | `{status, data: {allelePhenotypes, levelOfEvidence}}` |
 | PharmGKB_get_dosing_guidelines | `guideline_id` (clinpgxid string) | `{status, data: {name, level, literature}}` |
 | PharmGKB_get_gene_details | `gene_id` (accession) | `{status, data: {symbol, name, alleleType}}` |
@@ -305,7 +304,7 @@ result = tu.tools.FAERS_filter_serious_events(
 | EpiGraphDB_get_gene_drug_associations | `gene_name` | `{status, data: {gene_drug_associations: [...]}}` |
 | DGIdb_get_drug_gene_interactions | `genes` (array) | Drug-gene interactions with sources |
 | DGIdb_get_gene_druggability | `genes` (array) | Gene categories |
-| OpenTargets_get_pharmacogenomics_by_gene_ensemblID | `ensemblId`, `size` | PGx variant data |
+| OpenTargets_drug_pharmacogenomics_data | `chemblId`, `size` | PGx variant data by drug |
 | FAERS_filter_serious_events | `drug_name`, `seriousness_type`, `adverse_event` (optional) | `{status, data: {total_serious_events, top_serious_reactions}}` |
 
 ---
@@ -314,11 +313,11 @@ result = tu.tools.FAERS_filter_serious_events(
 
 | Mistake | Correction |
 |---|---|
-| Passing gene to `CPIC_list_guidelines` | Takes NO parameters; filter results client-side |
+| Using wrong params with `CPIC_list_guidelines` | Supports `gene`, `gene_symbol`, `drug`, `drug_name` filters; use them to filter server-side |
 | Using `CPIC_search_pairs` | Tool does not exist; use `CPIC_search_gene_drug_pairs` |
 | Passing string to `guideline_id` in CPIC_get_recommendations | Must be integer (e.g., 100416 not "100416") -- OR use `drug="codeine"` for auto-resolution |
 | Using `pharmgkbid` in PharmGKB_get_dosing_guidelines | Use `clinpgxid` (e.g., "PA166251445") |
-| Passing gene/drug to PharmGKB_get_clinical_annotations | Requires `annotation_id`; discover via PharmGKB_search_variants or PharmGKB_search_clinical_annotations |
+| Passing gene/drug to PharmGKB_get_clinical_annotations | Requires `annotation_id`; discover IDs via `PharmGKB_search_variants(query=rsID)` |
 | Omitting `limit` for fda_pharmacogenomic_biomarkers | Default is 10; always pass `limit=1000` |
 | Using `gene_name` for DGIdb | Param is `genes` (array), e.g., `["CYP2D6"]` |
 | Using uppercase drug name in CPIC_get_drug_info | Must be lowercase (e.g., "codeine" not "Codeine") |
@@ -330,14 +329,14 @@ result = tu.tools.FAERS_filter_serious_events(
 
 ## Fallback Strategies
 
-- **No CPIC guideline** -> Check PharmGKB clinical annotations via PharmGKB_search_clinical_annotations; check EpiGraphDB for evidence level
+- **No CPIC guideline** -> Use `PharmGKB_search_variants(query=rsID)` for variant-level annotations; check EpiGraphDB for gene-drug evidence
 - **CPIC_get_recommendations returns 0 rows** -> Check if algorithm-based (warfarin); use PharmGKB_get_dosing_guidelines
 - **CPIC_get_recommendations drug auto-resolve fails** -> Fall back to CPIC_get_drug_info(name=drug) + manual guideline_id extraction
 - **No FDA biomarker entry** -> Check DGIdb for known interactions; check EpiGraphDB `pgx_on_fda_label` field
 - **Unknown variant** -> PharmGKB_search_variants by rsID; note as uncharacterized if absent
 - **Need drug name from RxNorm ID** -> Use CPIC_get_gene_drug_pairs (returns `drug: {name}`) instead of CPIC_search_gene_drug_pairs (returns only RxNorm IDs)
-- **PharmGKB annotation_id unknown** -> Use PharmGKB_search_clinical_annotations(query="gene_or_drug") to discover annotation IDs
-- **Need additional PGx variant data** -> Use OpenTargets_get_pharmacogenomics_by_gene_ensemblID with Ensembl ID from CPIC_get_gene_info
+- **PharmGKB annotation_id unknown** -> Get annotation IDs from PharmGKB website or via `PharmGKB_search_variants(query=rsID)`
+- **Need additional PGx variant data** -> Use `OpenTargets_drug_pharmacogenomics_data(chemblId=...)` with ChEMBL ID
 
 ---
 
@@ -404,7 +403,7 @@ Step 1: CPIC_get_recommendations(drug="tamoxifen", limit=50)
   -> Auto-resolves tamoxifen -> guideline_id=100415
   -> Returns all CYP2D6 phenotype recommendations
 
-Step 2: PharmGKB_search_clinical_annotations(query="tamoxifen")
+Step 2: PharmGKB_search_variants(query="rs16947")  # Use known variant rsID for CYP2D6*2
   -> Discover PharmGKB clinical annotation IDs
 
 Step 3: fda_pharmacogenomic_biomarkers(drug_name="tamoxifen", limit=1000)
@@ -444,7 +443,7 @@ Example: confirm regulatory identity of a PGx-relevant drug (e.g., verify that "
 ## Limitations
 
 - CPIC covers ~29 guidelines (~130 genes); many drug-gene pairs lack formal guidelines.
-- PharmGKB clinical annotation IDs must be discovered (not derivable from gene/drug names alone -- use PharmGKB_search_clinical_annotations).
+- PharmGKB clinical annotation IDs must be discovered (not derivable from gene/drug names alone -- use PharmGKB website or PharmGKB_search_variants for rsID-based lookup).
 - Warfarin dosing requires algorithmic calculation (CPIC website), not simple table lookup.
 - FDA biomarker table may lag behind current labeling changes.
 - DisGeNET requires API key (DISGENET_API_KEY).

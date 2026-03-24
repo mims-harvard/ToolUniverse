@@ -217,6 +217,21 @@ class SRATool(BaseTool):
                 wrapped = f"<root>{exp_xml}</root>"
                 root = ET.fromstring(wrapped)
 
+                # Feature-SRA-001: detect HUP (held-under-private) experiments
+                experiment_el = root.find("Experiment")
+                if (
+                    experiment_el is not None
+                    and experiment_el.attrib.get("status") == "hup"
+                ):
+                    acc = experiment_el.attrib.get("acc", uid)
+                    return {
+                        "uid": uid,
+                        "experiment_accession": acc,
+                        "status": "hup",
+                        "note": f"Experiment {acc} is held under private embargo (HUP). "
+                        "Data will become available after the embargo period ends.",
+                    }
+
                 summary = root.find("Summary")
                 if summary is not None:
                     title_el = summary.find("Title")

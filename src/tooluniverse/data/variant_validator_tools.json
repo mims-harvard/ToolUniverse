@@ -119,7 +119,7 @@
           "default": "GRCh38"
         }
       },
-      "required": []
+      "required": ["gene_symbol"]
     },
     "fields": {
       "endpoint": "https://rest.variantvalidator.org/VariantValidator/tools/gene2transcripts_v2/{gene_symbol}/{transcript_set}/all/{genome_build}",
