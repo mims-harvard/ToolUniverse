@@ -188,4 +188,21 @@ class BioGRIDRESTTool(BaseTool):
                 "error": api_response.get("error"),
             }
 
-        return {"status": "success", "data": api_response}
+        gene_names = arguments.get("gene_names", [])
+        return {
+            "status": "success",
+            "data": api_response,
+            "metadata": {
+                "source": "BioGRID",
+                "gene_names": gene_names,
+                "interaction_count": len(api_response)
+                if isinstance(api_response, dict)
+                else 0,
+                "note": (
+                    "BioGRID chemicalList filter is not supported by the REST API; "
+                    "results reflect all interactions for the queried gene(s)."
+                )
+                if arguments.get("chemical_names")
+                else None,
+            },
+        }

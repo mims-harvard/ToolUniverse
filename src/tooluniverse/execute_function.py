@@ -940,6 +940,7 @@ class ToolUniverse:
             self.all_tools = []
             self.all_tool_dict = {}
             self.tool_category_dicts = {}
+            self._excluded_api_key_tools = {}
 
         # Handle tools_file parameter (alternative to include_tools)
         if tools_file:
