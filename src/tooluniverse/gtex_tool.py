@@ -92,7 +92,6 @@ class GTExExpressionTool:
             return {
                 "status": "error",
                 "error": "Provide gene_symbol (e.g., 'TP53') or ensembl_gene_id (e.g., 'ENSG00000141510').",
-                "success": False,
             }
         gencode_id = _resolve_gene_id(gene_input, base, timeout)
 
@@ -114,11 +113,11 @@ class GTExExpressionTool:
                 expression_data = _extract_data_list(api_response)
 
             result = {
+                "status": "success",
                 "source": "GTEx",
                 "endpoint": "expression/clusteredMedianGeneExpression",
                 "query": query,
                 "data": {"geneExpression": expression_data},
-                "success": True,
             }
             # Provide hint when results are empty due to GENCODE version mismatch
             if not expression_data and gencode_id == gene_input:
@@ -141,7 +140,6 @@ class GTExExpressionTool:
                 "error": str(e),
                 "source": "GTEx",
                 "endpoint": "expression/clusteredMedianGeneExpression",
-                "success": False,
             }
 
 
