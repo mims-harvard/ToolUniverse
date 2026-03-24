@@ -605,16 +605,15 @@ class EuropePMCTool(BaseTool):
             else:
                 open_access = bool(open_access_raw)
 
-            # Extract keywords
+            # Extract keywords from keywordList (author-supplied keywords)
             keywords = []
-            text_mined_terms = rec.get("hasTextMinedTerms", {})
-            if text_mined_terms and isinstance(text_mined_terms, dict):
-                # Try to extract keywords
-                for _key, value in text_mined_terms.items():
-                    if isinstance(value, list):
-                        keywords.extend(value)
-                    elif isinstance(value, str):
-                        keywords.append(value)
+            kw_list = rec.get("keywordList", {})
+            if isinstance(kw_list, dict):
+                kw_data = kw_list.get("keyword", [])
+                if isinstance(kw_data, list):
+                    keywords.extend(kw_data)
+                elif isinstance(kw_data, str):
+                    keywords.append(kw_data)
 
             # Build URL
             url = (

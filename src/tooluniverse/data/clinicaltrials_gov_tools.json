@@ -55,6 +55,10 @@
             }
           ],
           "description": "Alias for overall_status. Filter by trial status, e.g. \"RECRUITING\", \"COMPLETED\"."
+        },
+        "keyword": {
+          "type": "string",
+          "description": "Alias for query_term. Free-text keyword search across all trial fields (e.g., drug name, condition, investigator)."
         }
       },
       "required": []

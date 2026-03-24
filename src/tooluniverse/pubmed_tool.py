@@ -559,9 +559,7 @@ class PubMedRESTTool(BaseRESTTool):
                                     a["partial"] = True
                                     a["warning"] = warning
 
-                        include_abstract = bool(
-                            arguments.get("include_abstract", False)
-                        )
+                        include_abstract = bool(arguments.get("include_abstract", True))
                         if include_abstract and articles:
                             pmids = [
                                 str(a.get("pmid")).strip()

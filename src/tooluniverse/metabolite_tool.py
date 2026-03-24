@@ -253,6 +253,7 @@ class MetaboliteTool(BaseTool):
             return {"status": "error", "error": "Missing required parameter: query"}
 
         search_type = arguments.get("search_type", "name")
+        limit = max(1, min(int(arguments.get("limit", 10)), 50))
         try:
             if search_type == "formula":
                 url = f"{PUBCHEM_API}/compound/fastformula/{requests.utils.quote(query)}/property/Title,MolecularFormula,MolecularWeight,CanonicalSMILES/JSON"
@@ -260,7 +261,9 @@ class MetaboliteTool(BaseTool):
                 cids_to_fetch: list[int] = []
                 if resp.status_code == 200:
                     for p in (
-                        resp.json().get("PropertyTable", {}).get("Properties", [])[:10]
+                        resp.json()
+                        .get("PropertyTable", {})
+                        .get("Properties", [])[:limit]
                     ):
                         cids_to_fetch.append(p.get("CID"))
             else:
@@ -269,12 +272,12 @@ class MetaboliteTool(BaseTool):
                 resp = requests.get(exact_url, timeout=self.timeout)
                 if resp.status_code == 200:
                     cids_to_fetch = (
-                        resp.json().get("IdentifierList", {}).get("CID", [])[:10]
+                        resp.json().get("IdentifierList", {}).get("CID", [])[:limit]
                     )
                 else:
                     # Keyword fallback via PubChem autocomplete → fastsimilarity is not
                     # available without a structure; use the compound keyword search instead
-                    kw_url = f"https://pubchem.ncbi.nlm.nih.gov/rest/autocomplete/compound/{requests.utils.quote(query)}/json?limit=10"
+                    kw_url = f"https://pubchem.ncbi.nlm.nih.gov/rest/autocomplete/compound/{requests.utils.quote(query)}/json?limit={limit}"
                     kw_resp = requests.get(kw_url, timeout=self.timeout)
                     cids_to_fetch = []
                     if kw_resp.status_code == 200:
@@ -295,7 +298,7 @@ class MetaboliteTool(BaseTool):
                                     .get("CID", [])
                                 )
                                 cids_to_fetch.extend(cids[:2])
-                        cids_to_fetch = list(dict.fromkeys(cids_to_fetch))[:10]
+                        cids_to_fetch = list(dict.fromkeys(cids_to_fetch))[:limit]
 
             results = []
             if cids_to_fetch:
