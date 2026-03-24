@@ -16,8 +16,33 @@ import hashlib
 import inspect
 
 
+def tool_error(
+    error: str,
+    *,
+    error_type: str = "ToolError",
+    suggestion: Optional[str] = None,
+) -> Dict[str, Any]:
+    """Build a structured error response.
+
+    Every tool failure path should return this shape instead of bare ``[]``,
+    ``""``, or ``None``.  Callers can distinguish errors from legitimate
+    empty results by checking ``result.get("status") == "error"``.
+    """
+    resp: Dict[str, Any] = {
+        "status": "error",
+        "error": error,
+        "error_type": error_type,
+    }
+    if suggestion:
+        resp["suggestion"] = suggestion
+    return resp
+
+
 class BaseTool:
     STATIC_CACHE_VERSION = "1"
+
+    # Expose as a static method so subclasses can call self.tool_error(...)
+    tool_error = staticmethod(tool_error)
 
     def __init__(self, tool_config):
         self.tool_config = self._apply_defaults(tool_config)

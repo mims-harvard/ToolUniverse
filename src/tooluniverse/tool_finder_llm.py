@@ -246,8 +246,14 @@ Requirements:
             return self._tool_cache
 
         if not self.tooluniverse:
+            from .base_tool import tool_error
+
             print("⚠️ ToolUniverse reference not available")
-            return []
+            return tool_error(
+                "ToolUniverse reference not set — tool discovery unavailable",
+                error_type="ToolConfigError",
+                suggestion="Ensure ToolFinderLLM.tooluniverse is set before calling.",
+            )
 
         try:
             # Get tool names and descriptions
@@ -273,8 +279,13 @@ Requirements:
             return available_tools
 
         except Exception as e:
+            from .base_tool import tool_error
+
             print(f"❌ Error getting available tools: {str(e)}")
-            return []
+            return tool_error(
+                f"Failed to load available tools: {e}",
+                error_type="ToolLoadError",
+            )
 
     def _prefilter_tools_by_keywords(self, available_tools, query, max_tools=100):
         """

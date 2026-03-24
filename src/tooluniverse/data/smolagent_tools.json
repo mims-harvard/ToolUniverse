@@ -79,14 +79,13 @@
         },
         {
           "name": "medical_literature_searcher",
-          "description": "Specialized medical and life sciences literature search agent. For EACH search query, you MUST parallel call ALL 5 medical databases using ThreadPoolExecutor. REQUIRED CODE PATTERN: from concurrent.futures import ThreadPoolExecutor; import json; query = 'your_query'; medical_tools = [PubMed_search_articles, EuropePMC_search_articles, PMC_search_papers, MedRxiv_search_preprints, BioRxiv_search_preprints]; results = {}; def safe_call(tool, q): try: return tool(query=q, limit=10); except: return []; with ThreadPoolExecutor(max_workers=5) as executor: futures = {executor.submit(safe_call, tool, query): tool.__name__ for tool in medical_tools}; for future in futures: tool_name = futures[future]; results[tool_name] = future.result(); VALIDATION: missing = [t.__name__ for t in medical_tools if t.__name__ not in results or results.get(t.__name__) in (None, [], '')]; if missing: with ThreadPoolExecutor(max_workers=len(missing)) as ex2: fut2 = {ex2.submit(safe_call, globals()[name], query): name for name in missing}; for f in fut2: results[fut2[f]] = f.result(); if [t.__name__ for t in medical_tools if t.__name__ not in results or results.get(t.__name__) in (None, [], '')]: raise RuntimeError('MANDATORY TOOL(S) MISSING: ' + ','.join(missing)); return json.dumps(results, indent=2). MUST use all 5 tools in parallel for every query. Do NOT use web_search/visit_webpage here. If any listed tool is not called or returns nothing twice, raise an error.",
+          "description": "Specialized medical and life sciences literature search agent. For EACH search query, you MUST parallel call ALL 4 medical databases using ThreadPoolExecutor. REQUIRED CODE PATTERN: from concurrent.futures import ThreadPoolExecutor; import json; query = 'your_query'; medical_tools = [PubMed_search_articles, EuropePMC_search_articles, PMC_search_papers, MedRxiv_search_preprints]; results = {}; def safe_call(tool, q): try: return tool(query=q, limit=10); except: return []; with ThreadPoolExecutor(max_workers=4) as executor: futures = {executor.submit(safe_call, tool, query): tool.__name__ for tool in medical_tools}; for future in futures: tool_name = futures[future]; results[tool_name] = future.result(); return json.dumps(results, indent=2). MUST use all 4 tools in parallel for every query. Do NOT use web_search/visit_webpage here. Note: bioRxiv API does not support keyword search; use BioRxiv_get_preprint with a DOI or BioRxiv_list_recent_preprints for date-range browsing.",
           "agent_type": "CodeAgent",
           "available_tools": [
             "PubMed_search_articles",
             "EuropePMC_search_articles",
             "PMC_search_papers",
-            "MedRxiv_search_preprints",
-            "BioRxiv_search_preprints"
+            "MedRxiv_search_preprints"
           ],
           "model": {
             "provider": "AzureOpenAIModel",

@@ -460,24 +460,35 @@ class ToolFinderEmbedding(BaseTool):
         """
         import copy
 
-        arguments = copy.deepcopy(arguments)
+        from .base_tool import tool_error
 
-        # Refresh embeddings if tool list has changed
-        # This ensures Tool_RAG works correctly when tools are loaded after initialization
-        self._maybe_refresh_embeddings()
+        try:
+            arguments = copy.deepcopy(arguments)
 
-        # Extract parameters from arguments with defaults
-        message = arguments.get("description", None)
-        rag_num = arguments.get("limit", 5)
-        picked_tool_names = arguments.get("picked_tool_names", None)
-        return_call_result = arguments.get("return_call_result", False)
-        categories = arguments.get("categories", None)
+            # Refresh embeddings if tool list has changed
+            self._maybe_refresh_embeddings()
 
-        # Call the existing find_tools method
-        return self.find_tools(
-            message=message,
-            picked_tool_names=picked_tool_names,
-            rag_num=rag_num,
-            return_call_result=return_call_result,
-            categories=categories,
-        )
+            message = arguments.get("description", None)
+            rag_num = arguments.get("limit", 5)
+            picked_tool_names = arguments.get("picked_tool_names", None)
+            return_call_result = arguments.get("return_call_result", False)
+            categories = arguments.get("categories", None)
+
+            return self.find_tools(
+                message=message,
+                picked_tool_names=picked_tool_names,
+                rag_num=rag_num,
+                return_call_result=return_call_result,
+                categories=categories,
+            )
+        except ImportError as e:
+            return tool_error(
+                str(e),
+                error_type="DependencyError",
+                suggestion="Install with: pip install tooluniverse[embedding]",
+            )
+        except Exception as e:
+            return tool_error(
+                f"Embedding search failed: {e}",
+                error_type=type(e).__name__,
+            )

@@ -64,11 +64,23 @@ class GWASRESTTool(BaseTool):
         s = s.strip()
         return s or None
 
+    @staticmethod
+    def _label_overlaps(query: str, label: str) -> float:
+        """Return token overlap ratio between query and trait label."""
+        q_tokens = set(query.lower().split())
+        l_tokens = set(label.lower().split())
+        if not q_tokens:
+            return 0.0
+        return len(q_tokens & l_tokens) / len(q_tokens)
+
     def _resolve_trait_to_efo_id(self, disease_trait: str) -> Optional[str]:
         """Resolve a disease trait name to an EFO ID via the efoTraits search endpoint.
 
         The /v2/associations endpoint ignores the disease_trait query parameter,
         so we must first resolve the trait name to an EFO ID for reliable filtering.
+
+        Only accepts an EFO trait whose label shares at least 40% of query tokens,
+        preventing spurious mappings (e.g. "emotion regulation" → ulcerative colitis).
         """
         url = f"{self.base_url}/v2/efoTraits/search/findByTrait"
         try:
@@ -76,11 +88,12 @@ class GWASRESTTool(BaseTool):
             resp.raise_for_status()
             data = resp.json()
             traits = data.get("_embedded", {}).get("efoTraits", [])
-            if traits:
-                # Return the first matching EFO ID (best match)
-                short_name = traits[0].get("shortForm")
-                if short_name:
-                    return short_name
+            for trait in traits:
+                label = trait.get("trait", "")
+                if self._label_overlaps(disease_trait, label) >= 0.4:
+                    short_name = trait.get("shortForm")
+                    if short_name:
+                        return short_name
         except Exception:
             pass
         return None
@@ -195,12 +208,20 @@ class GWASStudySearch(GWASRESTTool):
         params = {}
 
         disease_trait = self._coerce_str(arguments.get("disease_trait"))
-        if disease_trait:
-            params["disease_trait"] = disease_trait
 
         efo_id = self._efo_id_from_uri_or_id(arguments.get("efo_id"))
         if not efo_id:
             efo_id = self._efo_id_from_uri_or_id(arguments.get("efo_uri"))
+
+        # /v2/studies disease_trait is a literal match against stored labels.
+        # Auto-resolve to efo_id for broader matching when no efo_id given.
+        if disease_trait and not efo_id:
+            resolved = self._resolve_trait_to_efo_id(disease_trait)
+            if resolved:
+                efo_id = resolved
+
+        if disease_trait:
+            params["disease_trait"] = disease_trait
         if efo_id:
             params["efo_id"] = efo_id
 

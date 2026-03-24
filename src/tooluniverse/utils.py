@@ -52,6 +52,7 @@ def download_from_hf(tool_config):
             download_args["token"] = False
 
         from huggingface_hub import hf_hub_download
+
         downloaded_path = hf_hub_download(**download_args)
 
         # The downloaded file path is returned by hf_hub_download
@@ -139,6 +140,7 @@ def read_json_list(file_path):
 def evaluate_function_call(tool_definition, function_call):
     # Map for type conversion
     from pydantic._internal._model_construction import ModelMetaclass
+
     type_map = {
         "string": str,
         "integer": int,
@@ -420,6 +422,7 @@ def format_error_response(
     # If it's already a ToolError, use its structured format
     if isinstance(error, ToolError):
         return {
+            "status": "error",
             "error": str(error),
             "error_type": error.error_type,
             "retriable": error.retriable,
@@ -431,6 +434,7 @@ def format_error_response(
 
     # For regular exceptions, create a basic structure
     return {
+        "status": "error",
         "error": str(error),
         "error_type": type(error).__name__,
         "retriable": False,
