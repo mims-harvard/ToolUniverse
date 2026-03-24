@@ -105,6 +105,9 @@ class OncoKBTool(BaseTool):
         # Auto-fill operation from tool config const if not provided by user
         if not operation:
             operation = self.get_schema_const_operation()
+        # Accept gene_symbol as alias for gene (consistent with other tools)
+        if not arguments.get("gene") and arguments.get("gene_symbol"):
+            arguments = dict(arguments, gene=arguments["gene_symbol"])
 
         if operation == "annotate_variant":
             return self._annotate_variant(arguments)
@@ -159,7 +162,10 @@ class OncoKBTool(BaseTool):
         """Get gene-level oncogenic information."""
         gene = arguments.get("gene", "")
         if not gene:
-            return {"status": "error", "error": "Missing required parameter: gene"}
+            return {
+                "status": "error",
+                "error": "Missing required parameter: gene (or gene_symbol)",
+            }
 
         # Demo API doesn't support /genes/{gene}, use /utils/allCuratedGenes instead
         if self.use_demo:

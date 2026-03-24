@@ -465,9 +465,14 @@ class ClinicalTrialsSearchTool(ClinicalTrialsTool):
             if k in arguments and arguments[k] is not None:
                 query_params[k] = arguments[k]
 
-        # Add default parameters that are not shown in the schema
+        # Add default parameters that are not shown in the schema.
+        # Skip filter.advanced when a status filter is set, because filter.advanced
+        # requires HasResults=true which excludes most RECRUITING/active trials.
+        has_status_filter = "filter.overallStatus" in query_params
         for k, v in self.default_params_not_shown.items():
             if k not in query_params:
+                if k == "filter.advanced" and has_status_filter:
+                    continue
                 query_params[k] = v
 
         # Process list parameters that need to be joined

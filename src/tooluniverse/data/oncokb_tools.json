@@ -95,11 +95,13 @@
         "gene": {
           "type": "string",
           "description": "Gene symbol (e.g., BRAF, TP53, ROS1). Without ONCOKB_API_TOKEN only BRAF, TP53, and ROS1 are available (demo mode)."
+        },
+        "gene_symbol": {
+          "type": "string",
+          "description": "Gene symbol alias — alternative to gene parameter"
         }
       },
-      "required": [
-        "gene"
-      ]
+      "required": []
     },
     "return_schema": {
       "type": "object",

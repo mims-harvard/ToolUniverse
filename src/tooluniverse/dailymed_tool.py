@@ -27,9 +27,7 @@ class SearchSPLTool(BaseTool):
         self.endpoint = f"{DAILYMED_BASE}/spls.json"
 
     def run(self, arguments):
-        # Extract possible filter conditions from arguments
         params = {}
-        # Four common filter fields
         if arguments.get("drug_name"):
             params["drug_name"] = arguments["drug_name"]
         if arguments.get("ndc"):
@@ -39,17 +37,14 @@ class SearchSPLTool(BaseTool):
         if arguments.get("setid"):
             params["setid"] = arguments["setid"]
 
-        # Published date range filter
         if arguments.get("published_date_gte"):
             params["published_date[gte]"] = arguments["published_date_gte"]
         if arguments.get("published_date_eq"):
             params["published_date[eq]"] = arguments["published_date_eq"]
 
-        # Pagination parameters
         params["pagesize"] = arguments.get("pagesize", 100)
         params["page"] = arguments.get("page", 1)
 
-        # Allow query all if no filter conditions and only pagination provided (be careful with return data volume)
         try:
             resp = requests.get(self.endpoint, params=params, timeout=10)
         except Exception as e:
@@ -74,8 +69,12 @@ class SearchSPLTool(BaseTool):
                 "content": resp.text,
             }
 
-        # Return original JSON, including metadata + data
-        return result
+        # Return with standard status envelope
+        return {
+            "status": "success",
+            "data": result.get("data", []),
+            "metadata": result.get("metadata", {}),
+        }
 
 
 @register_tool("GetSPLBySetIDTool")
@@ -93,8 +92,7 @@ class GetSPLBySetIDTool(BaseTool):
         setid = arguments.get("setid")
         fmt = arguments.get("format", "xml")
 
-        # DailyMed single SPL API only supports XML format
-        if fmt not in ("xml",):
+        if fmt != "xml":
             return {
                 "status": "error",
                 "error": "DailyMed single SPL API only supports 'xml' format, JSON is not supported.",
@@ -127,7 +125,7 @@ class GetSPLBySetIDTool(BaseTool):
             }
 
         # Return XML content
-        return {"xml": resp.text}
+        return {"status": "success", "xml": resp.text}
 
 
 @register_tool("DailyMedSPLParserTool")

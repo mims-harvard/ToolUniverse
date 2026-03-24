@@ -24,6 +24,17 @@
         "pageToken": {
           "type": "string",
           "description": "Token to retrieve the next page of results, obtained from the 'nextPageToken' field of the previous response. Do not specify it for first page. When you make an initial request to the API which supports pagination, the response will include a nextPageToken. This token can then be used as a parameter in the subsequent API request to retrieve the next set of data."
+        },
+        "overall_status": {
+          "type": "array",
+          "description": "Filter by overall study status (e.g., ['RECRUITING'], ['COMPLETED'], ['RECRUITING', 'NOT_YET_RECRUITING']). Valid values: RECRUITING, NOT_YET_RECRUITING, ACTIVE_NOT_RECRUITING, COMPLETED, ENROLLING_BY_INVITATION, SUSPENDED, TERMINATED, WITHDRAWN.",
+          "items": {
+            "type": "string"
+          }
+        },
+        "max_results": {
+          "type": "integer",
+          "description": "Maximum number of studies to return (alias for pageSize, default 10, max 1000)."
         }
       },
       "required": []
