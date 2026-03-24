@@ -114,7 +114,8 @@ class PubTatorTool(BaseTool):
         )
         if not response.ok:
             return {
-                "error": f"Request failed with status code {response.status_code}: {response.text}"
+                "status": "error",
+                "error": f"Request failed with status code {response.status_code}: {response.text}",
             }
 
         # ---------- auto-detect & return ----------
@@ -132,6 +133,8 @@ class PubTatorTool(BaseTool):
                     and isinstance(result["results"], list)
                 ):
                     result["results"] = result["results"][:_limit]
+            if isinstance(result, dict) and "status" not in result:
+                return {"status": "success", **result}
             return result
         if "text" in ctype or "xml" in ctype:
             return response.text
