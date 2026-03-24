@@ -1,0 +1,299 @@
+[
+  {
+    "name": "Progenetix_search_biosamples",
+    "description": "Search cancer tumor biosamples in the Progenetix database by NCIt disease ontology code. Progenetix contains genome-wide copy number variation (CNV) profiles from over 100,000 tumor samples. Returns biosample IDs, histological diagnosis, pathological stage, and external references. Uses the GA4GH Beacon v2 protocol. Example: NCIT:C3058 returns 28 glioblastoma biosamples with histological classification and study references.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "filters": {
+          "type": "string",
+          "description": "NCIt ontology code to filter biosamples by cancer type. Examples: 'NCIT:C3058' (Glioblastoma), 'NCIT:C4017' (Breast Carcinoma), 'NCIT:C9145' (Acute Myeloid Leukemia), 'NCIT:C3224' (Melanoma), 'NCIT:C4872' (Lung Adenocarcinoma), 'NCIT:C3167' (Neuroblastoma)."
+        },
+        "limit": {
+          "type": "integer",
+          "default": 10,
+          "minimum": 1,
+          "maximum": 100,
+          "description": "Maximum number of biosamples to return (default: 10)."
+        },
+        "skip": {
+          "type": "integer",
+          "default": 0,
+          "description": "Number of results to skip for pagination (default: 0)."
+        }
+      },
+      "required": ["filters"]
+    },
+    "fields": {
+      "endpoint": "biosamples"
+    },
+    "type": "ProgenetixTool",
+    "test_examples": [
+      {"filters": "NCIT:C3058", "limit": 3},
+      {"filters": "NCIT:C4017", "limit": 3}
+    ],
+    "return_schema": {
+      "type": "object",
+      "properties": {
+        "filters": {"type": "string"},
+        "total_count": {"type": "integer"},
+        "returned_count": {"type": "integer"},
+        "biosamples": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "id": {"type": ["string", "null"]},
+              "biosample_status": {"type": ["string", "null"]},
+              "histological_diagnosis": {"type": ["string", "null"]},
+              "histological_diagnosis_id": {"type": ["string", "null"]},
+              "pathological_stage": {"type": ["string", "null"]},
+              "pathological_tnm": {"type": ["string", "null"]},
+              "sample_origin_type": {"type": ["string", "null"]},
+              "external_references": {
+                "type": "array",
+                "items": {"type": "object"}
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  {
+    "name": "Progenetix_search_individuals",
+    "description": "Search individuals (patients) in the Progenetix cancer CNV database by NCIt disease ontology code. Returns patient IDs, sex, disease diagnosis, age at onset, and study references. Useful for cohort characterization in cancer genomics studies. Example: NCIT:C9145 returns 27 AML patients with sex and age data.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "filters": {
+          "type": "string",
+          "description": "NCIt ontology code to filter individuals by cancer type. Examples: 'NCIT:C9145' (AML), 'NCIT:C3058' (Glioblastoma), 'NCIT:C4017' (Breast Carcinoma), 'NCIT:C3224' (Melanoma)."
+        },
+        "limit": {
+          "type": "integer",
+          "default": 10,
+          "minimum": 1,
+          "maximum": 100,
+          "description": "Maximum number of individuals to return (default: 10)."
+        }
+      },
+      "required": ["filters"]
+    },
+    "fields": {
+      "endpoint": "individuals"
+    },
+    "type": "ProgenetixTool",
+    "test_examples": [
+      {"filters": "NCIT:C3058", "limit": 3},
+      {"filters": "NCIT:C9145", "limit": 3}
+    ],
+    "return_schema": {
+      "type": "object",
+      "properties": {
+        "filters": {"type": "string"},
+        "total_count": {"type": "integer"},
+        "returned_count": {"type": "integer"},
+        "individuals": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "id": {"type": ["string", "null"]},
+              "sex": {"type": ["string", "null"]},
+              "index_disease": {"type": ["string", "null"]},
+              "index_disease_id": {"type": ["string", "null"]},
+              "onset_age": {"type": ["string", "null"]},
+              "external_references": {
+                "type": "array",
+                "items": {"type": "object"}
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  {
+    "name": "Progenetix_list_filtering_terms",
+    "description": "List available filtering terms (ontology codes) in the Progenetix cancer CNV database. Returns NCIt cancer type codes, EDAM operation codes, or other ontology terms with the number of matching samples. Useful for discovering which cancer types are available before querying biosamples or individuals. Example: prefixes='NCIT' returns 890 NCIt terms across all cancer types.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "prefixes": {
+          "type": "string",
+          "default": "NCIT",
+          "description": "Ontology prefix to filter terms by. Use 'NCIT' for NCI Thesaurus cancer types (default), 'EDAM' for operation types, 'HP' for HPO phenotypes."
+        },
+        "limit": {
+          "type": "integer",
+          "default": 25,
+          "minimum": 1,
+          "maximum": 200,
+          "description": "Maximum number of terms to return (default: 25)."
+        }
+      },
+      "required": []
+    },
+    "fields": {
+      "endpoint": "filtering_terms"
+    },
+    "type": "ProgenetixTool",
+    "test_examples": [
+      {"prefixes": "NCIT", "limit": 10},
+      {"limit": 5}
+    ],
+    "return_schema": {
+      "type": "object",
+      "properties": {
+        "prefixes": {"type": "string"},
+        "total_terms": {"type": "integer"},
+        "terms": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "id": {"type": ["string", "null"]},
+              "label": {"type": ["string", "null"]},
+              "count": {"type": ["integer", "null"]},
+              "type": {"type": ["string", "null"]}
+            }
+          }
+        }
+      }
+    }
+  },
+  {
+    "name": "Progenetix_list_cohorts",
+    "description": "List available cohorts in the Progenetix cancer CNV database. Returns cohort IDs, names, sizes, and data types. Progenetix organizes samples into cohorts like TCGA, DIPG studies, and curated cancer sets. Example: returns 6 cohorts including TCGA (517 samples) and DIPG (16 samples).",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "limit": {
+          "type": "integer",
+          "default": 10,
+          "minimum": 1,
+          "maximum": 50,
+          "description": "Maximum number of cohorts to return (default: 10)."
+        }
+      },
+      "required": []
+    },
+    "fields": {
+      "endpoint": "cohorts"
+    },
+    "type": "ProgenetixTool",
+    "test_examples": [
+      {"limit": 5},
+      {}
+    ],
+    "return_schema": {
+      "type": "object",
+      "properties": {
+        "total_cohorts": {"type": "integer"},
+        "cohorts": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "id": {"type": ["string", "null"]},
+              "name": {"type": ["string", "null"]},
+              "cohort_size": {"type": ["integer", "null"]},
+              "cohort_type": {"type": ["string", "null"]},
+              "data_types": {
+                "type": "array",
+                "items": {"type": "string"}
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  {
+    "name": "Progenetix_cnv_search",
+    "description": "Search for cancer biosamples with copy number variations (CNVs) in a specific genomic region. Combines disease filter with genomic coordinates to find samples with amplifications or deletions in genes of interest. Uses RefSeq chromosome accessions for coordinates. Example: searching for EGFR amplifications (refseq:NC_000007.14:55019017-55211628, DUP) in breast cancer (NCIT:C4017) returns 9 matching biosamples.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "reference_name": {
+          "type": "string",
+          "description": "RefSeq chromosome accession. Examples: 'refseq:NC_000007.14' (chr7/GRCh38), 'refseq:NC_000017.11' (chr17/GRCh38), 'refseq:NC_000001.11' (chr1/GRCh38)."
+        },
+        "start": {
+          "type": "integer",
+          "description": "Start position (1-based, GRCh38). Example: 55019017 for EGFR start."
+        },
+        "end": {
+          "type": "integer",
+          "description": "End position (1-based, GRCh38). Example: 55211628 for EGFR end."
+        },
+        "variant_type": {
+          "type": "string",
+          "description": "CNV type: 'DUP' for amplification/duplication, 'DEL' for deletion. Leave empty for any CNV type.",
+          "default": ""
+        },
+        "filters": {
+          "type": "string",
+          "description": "Optional NCIt ontology code to filter by cancer type. Example: 'NCIT:C4017' for breast cancer.",
+          "default": ""
+        },
+        "limit": {
+          "type": "integer",
+          "default": 10,
+          "minimum": 1,
+          "maximum": 100,
+          "description": "Maximum number of biosamples to return (default: 10)."
+        }
+      },
+      "required": ["reference_name", "start", "end"]
+    },
+    "fields": {
+      "endpoint": "cnv_search"
+    },
+    "type": "ProgenetixTool",
+    "test_examples": [
+      {
+        "reference_name": "refseq:NC_000007.14",
+        "start": 55019017,
+        "end": 55211628,
+        "variant_type": "DUP",
+        "filters": "NCIT:C4017",
+        "limit": 3
+      },
+      {
+        "reference_name": "refseq:NC_000017.11",
+        "start": 7669000,
+        "end": 7690000,
+        "variant_type": "DEL",
+        "limit": 3
+      }
+    ],
+    "return_schema": {
+      "type": "object",
+      "properties": {
+        "region": {"type": "string"},
+        "variant_type": {"type": "string"},
+        "filters": {"type": "string"},
+        "total_count": {"type": "integer"},
+        "returned_count": {"type": "integer"},
+        "biosamples": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "id": {"type": ["string", "null"]},
+              "biosample_status": {"type": ["string", "null"]},
+              "histological_diagnosis": {"type": ["string", "null"]},
+              "histological_diagnosis_id": {"type": ["string", "null"]},
+              "external_references": {
+                "type": "array",
+                "items": {"type": "object"}
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+]

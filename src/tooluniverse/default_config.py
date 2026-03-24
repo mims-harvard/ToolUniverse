@@ -92,6 +92,8 @@ default_tool_files = {
     "adverse_event": os.path.join(current_dir, "data", "adverse_event_tools.json"),
     "dailymed": os.path.join(current_dir, "data", "dailymed_tools.json"),
     "fda_orange_book": os.path.join(current_dir, "data", "fda_orange_book_tools.json"),
+    # FDA GSRS - Substance Registration System (UNII lookup, drug ingredient IDs)
+    "fda_gsrs": os.path.join(current_dir, "data", "fda_gsrs_tools.json"),
     "faers_analytics": os.path.join(current_dir, "data", "faers_analytics_tools.json"),
     "cdc": os.path.join(current_dir, "data", "cdc_tools.json"),
     "nhanes": os.path.join(current_dir, "data", "nhanes_tools.json"),
@@ -102,6 +104,8 @@ default_tool_files = {
     "reactome": os.path.join(current_dir, "data", "reactome_tools.json"),
     "pubchem": os.path.join(current_dir, "data", "pubchem_tools.json"),
     "medlineplus": os.path.join(current_dir, "data", "medlineplus_tools.json"),
+    # RxClass - NLM drug classification (ATC, MoA, EPC, VA classes)
+    "rxclass": os.path.join(current_dir, "data", "rxclass_tools.json"),
     "rxnorm": os.path.join(current_dir, "data", "rxnorm_tools.json"),
     "rxnorm_extended": os.path.join(current_dir, "data", "rxnorm_extended_tools.json"),
     "loinc": os.path.join(current_dir, "data", "loinc_tools.json"),
@@ -465,6 +469,8 @@ default_tool_files = {
     "ena_portal": os.path.join(current_dir, "data", "ena_portal_tools.json"),
     # PomBase - Fission yeast (S. pombe) genome database (gene info, phenotypes, domains)
     "pombase": os.path.join(current_dir, "data", "pombase_tools.json"),
+    # Progenetix - Cancer CNV database via GA4GH Beacon v2 (100K+ tumor samples)
+    "progenetix": os.path.join(current_dir, "data", "progenetix_tools.json"),
     # EBI BioSamples - Biological sample metadata hub (60M+ samples, cross-archive)
     "biosamples": os.path.join(current_dir, "data", "biosamples_tools.json"),
     # GNPS - Mass spectrometry spectral library (metabolomics, natural products)
@@ -1061,6 +1067,8 @@ default_tool_files = {
     "kegg_network_variant": os.path.join(
         current_dir, "data", "kegg_network_variant_tools.json"
     ),
+    # KEGG ID Conversion & Cross-database Links
+    "kegg_conv_link": os.path.join(current_dir, "data", "kegg_conv_link_tools.json"),
 }
 
 # Auto-load any user-provided tools from ~/.tooluniverse/user_tools/

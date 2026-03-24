@@ -1,0 +1,200 @@
+[
+  {
+    "name": "RxClass_get_drug_classes",
+    "type": "RxClassTool",
+    "description": "Get drug classification from NLM RxClass for a drug name or RXCUI. Returns ATC codes, EPC (Established Pharmacologic Class), MoA, VA drug classes, and more. No API key required. Example: 'metformin' -> ATC A10BA02 (biguanides); 'aspirin' -> ATC N02BA01, EPC 'Platelet Aggregation Inhibitor'.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "drug_name": {
+          "type": ["string", "null"],
+          "description": "Drug name to classify. Examples: 'metformin', 'aspirin', 'ibuprofen', 'metoprolol'."
+        },
+        "rxcui": {
+          "type": ["string", "null"],
+          "description": "RxNorm RXCUI identifier (alternative to drug_name). Examples: '6809' (metformin), '1191' (aspirin)."
+        },
+        "rela_source": {
+          "type": ["string", "null"],
+          "description": "Classification source. Options: 'ATC' (WHO Anatomical Therapeutic Chemical, default), 'FDASPL' (FDA pharmacologic classes including EPC/MoA/PE), 'MESH', 'VA', 'DAILYMED', 'ALL'. Default: 'ATC'."
+        },
+        "limit": {
+          "type": ["integer", "null"],
+          "description": "Maximum results to return (default 20)."
+        }
+      },
+      "required": []
+    },
+    "fields": {
+      "operation": "get_drug_classes"
+    },
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "object",
+          "properties": {
+            "status": {"type": "string", "const": "success"},
+            "data": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "classId": {"type": "string"},
+                  "className": {"type": "string"},
+                  "classType": {"type": "string"},
+                  "rxcui": {"type": "string"},
+                  "drugName": {"type": "string"},
+                  "tty": {"type": "string"},
+                  "rela": {"type": "string"},
+                  "relaSource": {"type": "string"}
+                }
+              }
+            },
+            "metadata": {"type": "object"}
+          },
+          "required": ["status", "data"]
+        },
+        {
+          "type": "object",
+          "properties": {
+            "status": {"type": "string", "const": "error"},
+            "error": {"type": "string"}
+          },
+          "required": ["status", "error"]
+        }
+      ]
+    },
+    "test_examples": [
+      {"drug_name": "metformin", "rela_source": "ATC"},
+      {"drug_name": "ibuprofen", "rela_source": "FDASPL"},
+      {"rxcui": "1191", "rela_source": "ATC"}
+    ]
+  },
+  {
+    "name": "RxClass_get_class_members",
+    "type": "RxClassTool",
+    "description": "List all drugs belonging to a specific drug class by class ID in NLM RxClass. Returns RXCUIs and drug names for all member ingredients. No API key required. Example: classId='M01AE' (propionic acid derivatives) returns ibuprofen, naproxen, ketoprofen, etc.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "class_id": {
+          "type": "string",
+          "description": "Drug class identifier. ATC class codes: 'M01AE' (propionic acid derivatives), 'N02BA' (salicylic acid derivatives), 'A10BA' (biguanides). FDA EPC IDs are long numeric strings."
+        },
+        "rela_source": {
+          "type": ["string", "null"],
+          "description": "Classification source system. Options: 'ATC' (default), 'FDASPL', 'MESH', 'VA', 'DAILYMED'."
+        },
+        "ttys": {
+          "type": ["string", "null"],
+          "description": "RxNorm term types to include. Options: 'IN' (ingredients, default), 'PIN' (precise ingredients), 'MIN' (multi-ingredients), 'SCD' (semantic clinical drugs). Default: 'IN'."
+        },
+        "limit": {
+          "type": ["integer", "null"],
+          "description": "Maximum number of drugs to return (default 50)."
+        }
+      },
+      "required": ["class_id"]
+    },
+    "fields": {
+      "operation": "get_class_members"
+    },
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "object",
+          "properties": {
+            "status": {"type": "string", "const": "success"},
+            "data": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "rxcui": {"type": "string"},
+                  "name": {"type": "string"},
+                  "tty": {"type": "string"}
+                }
+              }
+            },
+            "metadata": {"type": "object"}
+          },
+          "required": ["status", "data"]
+        },
+        {
+          "type": "object",
+          "properties": {
+            "status": {"type": "string", "const": "error"},
+            "error": {"type": "string"}
+          },
+          "required": ["status", "error"]
+        }
+      ]
+    },
+    "test_examples": [
+      {"class_id": "M01AE", "rela_source": "ATC", "ttys": "IN"},
+      {"class_id": "N02BA", "rela_source": "ATC", "ttys": "IN"}
+    ]
+  },
+  {
+    "name": "RxClass_find_classes",
+    "type": "RxClassTool",
+    "description": "Search NLM RxClass drug classification database by keyword. Returns matching class IDs, names, and types (ATC, EPC, MoA, etc.). No API key required. Example: query='analgesic' returns pain-related drug classes; query='beta blocker' returns adrenergic receptor blocker classes.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "query": {
+          "type": "string",
+          "description": "Keyword to search in class names. Examples: 'analgesic', 'beta blocker', 'antidiabetic', 'statin', 'NSAID', 'ACE inhibitor'."
+        },
+        "class_type": {
+          "type": ["string", "null"],
+          "description": "Filter by class type. Options: 'ATC1-4' (ATC codes), 'EPC' (Established Pharmacologic Class), 'MOA' (Mechanism of Action), 'PE' (Physiologic Effect), 'DISEASE', 'VA', 'SCHEDULE'."
+        },
+        "limit": {
+          "type": ["integer", "null"],
+          "description": "Maximum results to return (default 20)."
+        }
+      },
+      "required": ["query"]
+    },
+    "fields": {
+      "operation": "find_classes"
+    },
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "object",
+          "properties": {
+            "status": {"type": "string", "const": "success"},
+            "data": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "classId": {"type": "string"},
+                  "className": {"type": "string"},
+                  "classType": {"type": "string"}
+                }
+              }
+            },
+            "metadata": {"type": "object"}
+          },
+          "required": ["status", "data"]
+        },
+        {
+          "type": "object",
+          "properties": {
+            "status": {"type": "string", "const": "error"},
+            "error": {"type": "string"}
+          },
+          "required": ["status", "error"]
+        }
+      ]
+    },
+    "test_examples": [
+      {"query": "beta blocker"},
+      {"query": "statin", "class_type": "EPC"},
+      {"query": "propionic acid"}
+    ]
+  }
+]

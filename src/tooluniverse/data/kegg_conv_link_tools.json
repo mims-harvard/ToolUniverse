@@ -1,0 +1,98 @@
+[
+  {
+    "name": "KEGG_convert_ids",
+    "description": "Convert KEGG gene/compound identifiers to external database IDs using the KEGG /conv API. Maps KEGG gene IDs (e.g., hsa:7157 for TP53) to UniProt, NCBI Gene, NCBI Protein, ChEBI, or PubChem IDs. Essential for cross-database integration in bioinformatics workflows. Example: converting hsa:7157 to UniProt returns P04637 (TP53_HUMAN).",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "kegg_id": {
+          "type": "string",
+          "description": "KEGG entry ID. For genes use format 'organism:gene_id' (e.g., 'hsa:7157' for human TP53, 'mmu:22059' for mouse Trp53). For compounds use 'cpd:C00002' (ATP). Multiple IDs separated by '+' (e.g., 'hsa:7157+hsa:672')."
+        },
+        "target_db": {
+          "type": "string",
+          "description": "External database to convert to. Options: 'uniprot' (UniProt accessions), 'ncbi-geneid' (NCBI Gene/Entrez IDs), 'ncbi-proteinid' (NCBI protein accessions), 'chebi' (ChEBI compound IDs), 'pubchem' (PubChem substance IDs)."
+        }
+      },
+      "required": ["kegg_id", "target_db"]
+    },
+    "fields": {
+      "endpoint": "conv_ids"
+    },
+    "type": "KEGGExtTool",
+    "test_examples": [
+      {
+        "kegg_id": "hsa:7157",
+        "target_db": "uniprot"
+      },
+      {
+        "kegg_id": "hsa:672",
+        "target_db": "ncbi-geneid"
+      }
+    ],
+    "return_schema": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "kegg_id": {
+            "type": "string",
+            "description": "KEGG identifier"
+          },
+          "external_id": {
+            "type": "string",
+            "description": "External database identifier (prefixed, e.g., up:P04637)"
+          }
+        }
+      }
+    }
+  },
+  {
+    "name": "KEGG_link_entries",
+    "description": "Find cross-references between KEGG databases using the KEGG /link API. Given a KEGG entry (gene, pathway, disease, drug, compound), find all linked entries in another KEGG database. Examples: find all diseases for gene hsa:7157 (TP53), all genes in a pathway, or all pathways for a compound. Complements KEGG_get_gene_pathways with more flexible cross-database queries.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "source": {
+          "type": "string",
+          "description": "KEGG entry ID to query. Examples: 'hsa:7157' (gene), 'hsa05200' (pathway), 'H00004' (disease), 'D00279' (drug), 'C00002' (compound)."
+        },
+        "target": {
+          "type": "string",
+          "description": "Target KEGG database to search for links. Options: 'pathway', 'disease', 'drug', 'compound', 'ko' (orthology), 'enzyme', 'reaction', 'module'. Can also use organism prefix for genes (e.g., 'hsa')."
+        }
+      },
+      "required": ["source", "target"]
+    },
+    "fields": {
+      "endpoint": "link_entries"
+    },
+    "type": "KEGGExtTool",
+    "test_examples": [
+      {
+        "source": "hsa:7157",
+        "target": "disease"
+      },
+      {
+        "source": "hsa05200",
+        "target": "hsa"
+      }
+    ],
+    "return_schema": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "source_id": {
+            "type": "string",
+            "description": "Source KEGG entry ID"
+          },
+          "target_id": {
+            "type": "string",
+            "description": "Linked target KEGG entry ID"
+          }
+        }
+      }
+    }
+  }
+]
