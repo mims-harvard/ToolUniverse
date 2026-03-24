@@ -109,6 +109,8 @@ Assess whether the target is amenable to therapeutic intervention.
 - `ProteinsPlus_predict_binding_sites` - Pocket detection
 - `OpenTargets_get_chemical_probes_by_target_ensemblID` - Chemical probes
 - `OpenTargets_get_target_enabling_packages_by_ensemblID` - TEPs
+- `TCDB_get_transporter` - For SLC/ABC transporter targets: TC classification, family, PDB structures (param: `uniprot_accession`)
+- `TCDB_search_by_substrate` - Find transporters by substrate (param: `substrate_name`)
 
 ### Phase 3: Chemical Matter (feeds Phase 2 scoring)
 

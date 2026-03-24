@@ -3603,36 +3603,18 @@
       "properties": {
         "chemblId": {
           "type": "string",
-          "description": "The ChEMBL ID of the drug."
-        },
-        "page": {
-          "type": "object",
-          "description": "Pagination options.",
-          "properties": {
-            "index": {
-              "type": "integer",
-              "description": "Pagination index."
-            },
-            "size": {
-              "type": "integer",
-              "description": "Number of records to fetch per page."
-            }
-          }
+          "description": "The ChEMBL ID of the drug (e.g., 'CHEMBL25' for aspirin, 'CHEMBL1201583' for pembrolizumab)."
         }
       },
       "required": [
         "chemblId"
       ]
     },
-    "query_schema": "\n      query drugPharmacogenomicsData($chemblId: String!, $page: Pagination) {\n        drug(chemblId: $chemblId) {\n          id\n          name\n          pharmacogenomics(page: $page) {\n            datasourceId\n            datatypeId\n            genotype\n            evidenceLevel\n            genotypeAnnotationText\n            genotypeId\n            haplotypeFromSourceId\n            haplotypeId\n            literature\n            pgxCategory\n            phenotypeFromSourceId\n            phenotypeText\n            studyId\n            targetFromSourceId\n            variantFunctionalConsequenceId\n            variantRsId\n            isDirectTarget\n            variantFunctionalConsequence {\n              id\n              label\n            }\n            drugs {\n              drugId\n              drug {\n        name\n      }\n            }\n            target {\n              id\n              approvedSymbol\n            }\n          }\n        }\n      }\n    ",
+    "query_schema": "\n      query drugPharmacogenomicsData($chemblId: String!) {\n        drug(chemblId: $chemblId) {\n          id\n          name\n          pharmacogenomics {\n            datasourceId\n            datatypeId\n            genotype\n            evidenceLevel\n            genotypeAnnotationText\n            genotypeId\n            haplotypeFromSourceId\n            haplotypeId\n            literature\n            pgxCategory\n            phenotypeFromSourceId\n            phenotypeText\n            studyId\n            targetFromSourceId\n            variantFunctionalConsequenceId\n            variantRsId\n            isDirectTarget\n            variantFunctionalConsequence {\n              id\n              label\n            }\n            drugs {\n              drugId\n              drug {\n        name\n      }\n            }\n            target {\n              id\n              approvedSymbol\n            }\n          }\n        }\n      }\n    ",
     "type": "OpenTarget",
     "test_examples": [
       {
-        "chemblId": "CHEMBL25",
-        "page": {
-          "index": 0,
-          "size": 10
-        }
+        "chemblId": "CHEMBL25"
       }
     ],
     "return_schema": {

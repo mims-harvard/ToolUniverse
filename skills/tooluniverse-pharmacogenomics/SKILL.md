@@ -92,7 +92,7 @@ Resolve user input to canonical identifiers before querying PGx databases.
 | 100412 | HLA-B, CYP2C9 | Phenytoin/Fosphenytoin | PA166251461 |
 | 100414 | CYP2D6, CYP2C19 | Tricyclic Antidepressants | PA166251445 |
 | 100415 | CYP2D6 | Tamoxifen | PA166251458 |
-| 100416 | CYP2D6 | Codeine, Tramadol | PA166251454 |
+| 100416 | CYP2D6, OPRM1, COMT | Opioids (Codeine, Tramadol, Hydrocodone) | PA166251454 |
 | 100421 | HLA-B | Abacavir | PA166251444 |
 | 100422 | HLA-B | Allopurinol | PA166251446 |
 | 100425 | CYP2C9, VKORC1, CYP4F2, RS12777823 | Warfarin | PA166251465 |
