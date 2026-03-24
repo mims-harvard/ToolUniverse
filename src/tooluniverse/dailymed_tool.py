@@ -340,6 +340,14 @@ class DailyMedSPLParserTool(BaseTool):
                                 {"type": "dosing_text", "content": text_content}
                             )
 
+                    # Extract list items (some drugs encode dosing as <list><item> elements)
+                    for item in text_el.xpath(".//hl7:item", namespaces=self.ns):
+                        text_content = "".join(item.itertext()).strip()
+                        if text_content and len(text_content) > 5:
+                            dosing_info.append(
+                                {"type": "dosing_text", "content": text_content}
+                            )
+
             return {
                 "status": "success",
                 "dosing_info": dosing_info,

@@ -1756,11 +1756,17 @@
         "gene_symbol": {
           "type": "string",
           "description": "Gene name or symbol (e.g., 'BRCA1', 'TP53', 'GBA')"
+        },
+        "gene": {
+          "type": "string",
+          "description": "Alias for gene_symbol"
+        },
+        "mapped_gene": {
+          "type": "string",
+          "description": "Alias for gene_symbol"
         }
       },
-      "required": [
-        "gene_symbol"
-      ]
+      "required": []
     },
     "label": [
       "GWAS",
