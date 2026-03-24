@@ -92,15 +92,36 @@ class EuroPMCAnnotationsTool(BaseTool):
         response.raise_for_status()
         return response.json()
 
+    @staticmethod
+    def _normalize_article_id(article_id: str) -> str:
+        """Normalize bare PMC/PMID to API format: PMC:PMC4353746 or MED:25780448."""
+        aid = article_id.strip()
+        if aid.startswith("PMC:") or aid.startswith("MED:"):
+            return aid
+        if aid.upper().startswith("PMC"):
+            num = aid[3:]
+            return f"PMC:PMC{num}"
+        if aid.isdigit():
+            return f"MED:{aid}"
+        return aid
+
     def _by_article(self, arguments: Dict[str, Any]) -> Dict[str, Any]:
         """Get annotations from a single article."""
-        article_id = arguments.get("article_id", "")
-        annotation_type = arguments.get("annotation_type")
+        raw_id = (
+            arguments.get("article_id")
+            or arguments.get("pmcid")
+            or arguments.get("pmid")
+            or ""
+        )
+        article_id = self._normalize_article_id(str(raw_id).strip()) if raw_id else ""
+        annotation_type = arguments.get("annotation_type") or arguments.get(
+            "entity_type"
+        )
 
         if not article_id:
             return {
                 "status": "error",
-                "error": "article_id is required (e.g., 'PMC:PMC4353746')",
+                "error": "article_id is required. Accepts: 'PMC:PMC4353746', bare 'PMC4353746', or PMID '25780448'.",
             }
 
         raw = self._fetch_annotations(article_id, annotation_type)
@@ -224,12 +245,18 @@ class EuroPMCAnnotationsTool(BaseTool):
 
     def _chemicals_shortcut(self, arguments: Dict[str, Any]) -> Dict[str, Any]:
         """Extract chemical mentions from an article."""
-        article_id = arguments.get("article_id", "")
+        raw_id = (
+            arguments.get("article_id")
+            or arguments.get("pmcid")
+            or arguments.get("pmid")
+            or ""
+        )
+        article_id = self._normalize_article_id(str(raw_id).strip()) if raw_id else ""
 
         if not article_id:
             return {
                 "status": "error",
-                "error": "article_id is required (e.g., 'PMC:PMC4353746')",
+                "error": "article_id is required. Accepts: 'PMC:PMC4353746', bare 'PMC4353746', or PMID '25780448'.",
             }
 
         raw = self._fetch_annotations(article_id, "Chemicals")

@@ -188,7 +188,13 @@ class MedGenTool(BaseRESTTool):
         }
 
     def _get_condition(self, arguments: dict) -> dict:
-        """Get detailed information about a specific MedGen condition by UID or CUI."""
+        # Accept concept_id as alias for cui (UMLS CUI format like C0010674)
+        if (
+            not arguments.get("uid")
+            and not arguments.get("cui")
+            and arguments.get("concept_id")
+        ):
+            arguments = dict(arguments, cui=arguments["concept_id"])
         uid = arguments.get("uid", "").strip()
         cui = arguments.get("cui", "").strip()
 
@@ -279,6 +285,12 @@ class MedGenTool(BaseRESTTool):
 
     def _get_clinical_features(self, arguments: dict) -> dict:
         """Get HPO clinical features associated with a MedGen condition."""
+        if (
+            not arguments.get("uid")
+            and not arguments.get("cui")
+            and arguments.get("concept_id")
+        ):
+            arguments = dict(arguments, cui=arguments["concept_id"])
         uid = arguments.get("uid", "").strip()
         cui = arguments.get("cui", "").strip()
 

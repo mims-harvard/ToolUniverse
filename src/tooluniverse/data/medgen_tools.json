@@ -15,7 +15,9 @@
           "default": 10
         }
       },
-      "required": ["query"]
+      "required": [
+        "query"
+      ]
     },
     "fields": {
       "operation": "search"
@@ -37,35 +39,75 @@
               "items": {
                 "type": "object",
                 "properties": {
-                  "uid": {"type": "string"},
-                  "concept_id": {"type": ["string", "null"]},
-                  "title": {"type": ["string", "null"]},
-                  "definition": {"type": ["string", "null"]},
-                  "semantic_type": {"type": ["string", "null"]},
-                  "omim_ids": {"type": "array", "items": {"type": "string"}},
+                  "uid": {
+                    "type": "string"
+                  },
+                  "concept_id": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "title": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "definition": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "semantic_type": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "omim_ids": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    }
+                  },
                   "associated_genes": {
                     "type": "array",
                     "items": {
                       "type": "object",
                       "properties": {
-                        "gene_id": {"type": "string"},
-                        "symbol": {"type": "string"}
+                        "gene_id": {
+                          "type": "string"
+                        },
+                        "symbol": {
+                          "type": "string"
+                        }
                       }
                     }
                   }
                 }
               }
             },
-            "total_count": {"type": "integer"}
+            "total_count": {
+              "type": "integer"
+            }
           },
-          "required": ["conditions", "total_count"]
+          "required": [
+            "conditions",
+            "total_count"
+          ]
         },
         {
           "type": "object",
           "properties": {
-            "error": {"type": "string"}
+            "error": {
+              "type": "string"
+            }
           },
-          "required": ["error"]
+          "required": [
+            "error"
+          ]
         }
       ]
     }
@@ -83,6 +125,13 @@
         "cui": {
           "type": "string",
           "description": "UMLS Concept Unique Identifier (e.g., 'C0010674' for cystic fibrosis). Alternative to uid."
+        },
+        "concept_id": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Alias for cui. UMLS CUI identifier (e.g., \"C0017205\" for Gaucher disease)."
         }
       },
       "required": []
@@ -101,25 +150,73 @@
         {
           "type": "object",
           "properties": {
-            "uid": {"type": "string"},
-            "concept_id": {"type": ["string", "null"]},
-            "title": {"type": ["string", "null"]},
-            "definition": {"type": ["string", "null"]},
-            "semantic_type": {"type": ["string", "null"]},
-            "omim_ids": {"type": "array", "items": {"type": "string"}},
-            "associated_genes": {"type": "array"},
-            "synonyms": {"type": "array", "items": {"type": "string"}},
-            "modes_of_inheritance": {"type": "array", "items": {"type": "string"}},
-            "clinical_features": {"type": "array"}
+            "uid": {
+              "type": "string"
+            },
+            "concept_id": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "title": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "definition": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "semantic_type": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "omim_ids": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
+            "associated_genes": {
+              "type": "array"
+            },
+            "synonyms": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
+            "modes_of_inheritance": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
+            "clinical_features": {
+              "type": "array"
+            }
           },
-          "required": ["uid", "title"]
+          "required": [
+            "uid",
+            "title"
+          ]
         },
         {
           "type": "object",
           "properties": {
-            "error": {"type": "string"}
+            "error": {
+              "type": "string"
+            }
           },
-          "required": ["error"]
+          "required": [
+            "error"
+          ]
         }
       ]
     }
@@ -137,6 +234,13 @@
         "cui": {
           "type": "string",
           "description": "UMLS CUI (e.g., 'C0010674' for cystic fibrosis). Alternative to uid."
+        },
+        "concept_id": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Alias for cui. UMLS CUI identifier (e.g., \"C0017205\" for Gaucher disease)."
         }
       },
       "required": []
@@ -155,30 +259,63 @@
         {
           "type": "object",
           "properties": {
-            "condition_title": {"type": ["string", "null"]},
-            "condition_uid": {"type": "string"},
+            "condition_title": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "condition_uid": {
+              "type": "string"
+            },
             "clinical_features": {
               "type": "array",
               "items": {
                 "type": "object",
                 "properties": {
-                  "name": {"type": "string"},
-                  "cui": {"type": ["string", "null"]},
-                  "hpo_id": {"type": ["string", "null"]},
-                  "definition": {"type": ["string", "null"]}
+                  "name": {
+                    "type": "string"
+                  },
+                  "cui": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "hpo_id": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "definition": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  }
                 }
               }
             },
-            "total_features": {"type": "integer"}
+            "total_features": {
+              "type": "integer"
+            }
           },
-          "required": ["condition_uid", "clinical_features"]
+          "required": [
+            "condition_uid",
+            "clinical_features"
+          ]
         },
         {
           "type": "object",
           "properties": {
-            "error": {"type": "string"}
+            "error": {
+              "type": "string"
+            }
           },
-          "required": ["error"]
+          "required": [
+            "error"
+          ]
         }
       ]
     }
