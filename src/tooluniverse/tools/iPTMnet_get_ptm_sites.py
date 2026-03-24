@@ -1,36 +1,33 @@
 """
-GTEx_query_eqtl
+iPTMnet_get_ptm_sites
 
-Query GTEx single-tissue eQTL associations for a gene. Accepts gene symbols (TP53, BRCA1) or Ense...
+Get all post-translational modification (PTM) sites for a protein from iPTMnet. Returns residue, ...
 """
 
 from typing import Any, Optional, Callable
 from ._shared_client import get_shared_client
 
 
-def GTEx_query_eqtl(
-    gene_symbol: Optional[str] = None,
-    ensembl_gene_id: Optional[str] = None,
-    page: Optional[int] = 1,
-    size: Optional[int] = 10,
+def iPTMnet_get_ptm_sites(
+    operation: str,
+    uniprot_id: str,
+    ptm_type: Optional[str | Any] = None,
     *,
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> list[Any]:
     """
-    Query GTEx single-tissue eQTL associations for a gene. Accepts gene symbols (TP53, BRCA1) or Ense...
+    Get all post-translational modification (PTM) sites for a protein from iPTMnet. Returns residue, ...
 
     Parameters
     ----------
-    gene_symbol : str
-        Gene symbol (e.g., 'TP53', 'BRCA1'). Auto-resolved to versioned GENCODE ID.
-    ensembl_gene_id : str
-        Ensembl gene identifier (e.g., 'ENSG00000141510'). Use gene_symbol instead if...
-    page : int
-        Page number (1-based).
-    size : int
-        Number of records per page (1–100).
+    operation : str
+        Operation type
+    uniprot_id : str
+        UniProt accession, e.g., P04637 (TP53), P00533 (EGFR), P31749 (AKT1), Q16539 ...
+    ptm_type : str | Any
+        Filter by PTM type: Phosphorylation, Acetylation, Ubiquitination, Methylation...
     stream_callback : Callable, optional
         Callback for streaming output
     use_cache : bool, default False
@@ -40,7 +37,7 @@ def GTEx_query_eqtl(
 
     Returns
     -------
-    Any
+    list[Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 
@@ -48,16 +45,15 @@ def GTEx_query_eqtl(
     _args = {
         k: v
         for k, v in {
-            "gene_symbol": gene_symbol,
-            "ensembl_gene_id": ensembl_gene_id,
-            "page": page,
-            "size": size,
+            "operation": operation,
+            "uniprot_id": uniprot_id,
+            "ptm_type": ptm_type,
         }.items()
         if v is not None
     }
     return get_shared_client().run_one_function(
         {
-            "name": "GTEx_query_eqtl",
+            "name": "iPTMnet_get_ptm_sites",
             "arguments": _args,
         },
         stream_callback=stream_callback,
@@ -66,4 +62,4 @@ def GTEx_query_eqtl(
     )
 
 
-__all__ = ["GTEx_query_eqtl"]
+__all__ = ["iPTMnet_get_ptm_sites"]

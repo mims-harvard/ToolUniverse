@@ -9,7 +9,9 @@ from ._shared_client import get_shared_client
 
 
 def CPIC_get_gene_drug_pairs(
-    genesymbol: str,
+    genesymbol: Optional[str | Any] = None,
+    gene_symbol: Optional[str | Any] = None,
+    gene: Optional[str | Any] = None,
     *,
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
@@ -20,8 +22,12 @@ def CPIC_get_gene_drug_pairs(
 
     Parameters
     ----------
-    genesymbol : str
+    genesymbol : str | Any
         Gene symbol (e.g., 'CYP2D6', 'CYP2C19', 'SLCO1B1', 'TPMT', 'DPYD', 'VKORC1')
+    gene_symbol : str | Any
+        Alias for genesymbol (e.g., 'CYP2D6')
+    gene : str | Any
+        Alias for genesymbol (e.g., 'CYP2D6')
     stream_callback : Callable, optional
         Callback for streaming output
     use_cache : bool, default False
@@ -36,7 +42,15 @@ def CPIC_get_gene_drug_pairs(
     # Handle mutable defaults to avoid B006 linting error
 
     # Strip None values so optional parameters don't trigger schema validation errors
-    _args = {k: v for k, v in {"genesymbol": genesymbol}.items() if v is not None}
+    _args = {
+        k: v
+        for k, v in {
+            "genesymbol": genesymbol,
+            "gene_symbol": gene_symbol,
+            "gene": gene,
+        }.items()
+        if v is not None
+    }
     return get_shared_client().run_one_function(
         {
             "name": "CPIC_get_gene_drug_pairs",

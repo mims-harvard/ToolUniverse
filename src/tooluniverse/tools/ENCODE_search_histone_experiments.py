@@ -10,7 +10,9 @@ from ._shared_client import get_shared_client
 
 def ENCODE_search_histone_experiments(
     histone_mark: Optional[str | Any] = None,
+    target: Optional[str | Any] = None,
     biosample_term_name: Optional[str | Any] = None,
+    biosample: Optional[str | Any] = None,
     organism: Optional[str] = "Homo sapiens",
     limit: Optional[int] = 25,
     *,
@@ -25,8 +27,12 @@ def ENCODE_search_histone_experiments(
     ----------
     histone_mark : str | Any
         Histone modification mark to filter by (e.g., 'H3K4me3', 'H3K27ac', 'H3K27me3...
+    target : str | Any
+        Alias for histone_mark. Histone modification mark (e.g., 'H3K27ac', 'H3K4me3').
     biosample_term_name : str | Any
         Biosample name from ENCODE ontology (cell lines or tissues, NOT disease names...
+    biosample : str | Any
+        Alias for biosample_term_name. Biosample (tissue or cell line, e.g., 'liver',...
     organism : str
         Organism scientific name (e.g., 'Homo sapiens', 'Mus musculus').
     limit : int
@@ -49,7 +55,9 @@ def ENCODE_search_histone_experiments(
         k: v
         for k, v in {
             "histone_mark": histone_mark,
+            "target": target,
             "biosample_term_name": biosample_term_name,
+            "biosample": biosample,
             "organism": organism,
             "limit": limit,
         }.items()

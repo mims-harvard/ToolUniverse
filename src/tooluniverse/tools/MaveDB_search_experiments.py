@@ -1,0 +1,51 @@
+"""
+MaveDB_search_experiments
+
+Search MaveDB for experiments (groups of related score sets from the same study). Each experiment...
+"""
+
+from typing import Any, Optional, Callable
+from ._shared_client import get_shared_client
+
+
+def MaveDB_search_experiments(
+    query: str,
+    *,
+    stream_callback: Optional[Callable[[str], None]] = None,
+    use_cache: bool = False,
+    validate: bool = True,
+) -> dict[str, Any]:
+    """
+    Search MaveDB for experiments (groups of related score sets from the same study). Each experiment...
+
+    Parameters
+    ----------
+    query : str
+        Search query: gene symbol (e.g., 'TP53', 'BRCA1'), protein name, or keywords ...
+    stream_callback : Callable, optional
+        Callback for streaming output
+    use_cache : bool, default False
+        Enable caching
+    validate : bool, default True
+        Validate parameters
+
+    Returns
+    -------
+    dict[str, Any]
+    """
+    # Handle mutable defaults to avoid B006 linting error
+
+    # Strip None values so optional parameters don't trigger schema validation errors
+    _args = {k: v for k, v in {"query": query}.items() if v is not None}
+    return get_shared_client().run_one_function(
+        {
+            "name": "MaveDB_search_experiments",
+            "arguments": _args,
+        },
+        stream_callback=stream_callback,
+        use_cache=use_cache,
+        validate=validate,
+    )
+
+
+__all__ = ["MaveDB_search_experiments"]

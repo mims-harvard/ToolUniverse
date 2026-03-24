@@ -12,7 +12,8 @@ def CPIC_search_gene_drug_pairs(
     genesymbol: Optional[str | Any] = None,
     cpiclevel: Optional[str | Any] = None,
     limit: Optional[int | Any] = None,
-    gene_symbol: Optional[str] = None,
+    gene_symbol: Optional[str | Any] = None,
+    gene: Optional[str | Any] = None,
     *,
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
@@ -29,8 +30,10 @@ def CPIC_search_gene_drug_pairs(
         CPIC evidence level to filter by (e.g., 'A', 'B', 'B/C', 'C', 'D'). Omit to i...
     limit : int | Any
         Maximum number of results to return (default 50)
-    gene_symbol : str
+    gene_symbol : str | Any
         Gene symbol alias (e.g., 'CYP2D6', 'VKORC1') — alternative to genesymbol
+    gene : str | Any
+        Gene symbol alias (e.g., 'CYP2D6') — alternative to genesymbol
     stream_callback : Callable, optional
         Callback for streaming output
     use_cache : bool, default False
@@ -52,6 +55,7 @@ def CPIC_search_gene_drug_pairs(
             "cpiclevel": cpiclevel,
             "limit": limit,
             "gene_symbol": gene_symbol,
+            "gene": gene,
         }.items()
         if v is not None
     }

@@ -1,7 +1,7 @@
 """
 ToolUniverse Tools
 
-Type-safe Python interface to 2066 scientific tools.
+Type-safe Python interface to 2080 scientific tools.
 Each tool is in its own module for minimal import overhead.
 
 Usage:
@@ -242,6 +242,8 @@ from .ChannelsDB_get_channels_pdb import ChannelsDB_get_channels_pdb
 from .Chem_sa_score import Chem_sa_score
 from .ClinGenAR_get_external_records import ClinGenAR_get_external_records
 from .ClinGenAR_lookup_allele import ClinGenAR_lookup_allele
+from .ClinGenAllele_get_allele import ClinGenAllele_get_allele
+from .ClinGenAllele_lookup_hgvs import ClinGenAllele_lookup_hgvs
 from .ClinGen_dosage_by_gene import ClinGen_dosage_by_gene
 from .ClinGen_dosage_region_search import ClinGen_dosage_region_search
 from .ClinGen_get_actionability_adult import ClinGen_get_actionability_adult
@@ -1123,6 +1125,10 @@ from .MarineRegions_get_record import MarineRegions_get_record
 from .MarineRegions_search_by_name import MarineRegions_search_by_name
 from .MassBank_search_by_compound import MassBank_search_by_compound
 from .MassBank_search_by_formula import MassBank_search_by_formula
+from .MaveDB_get_score_set import MaveDB_get_score_set
+from .MaveDB_get_variant_scores import MaveDB_get_variant_scores
+from .MaveDB_search_experiments import MaveDB_search_experiments
+from .MaveDB_search_score_sets import MaveDB_search_score_sets
 from .Mcule_get_compound import Mcule_get_compound
 from .Mcule_get_database import Mcule_get_database
 from .Mcule_list_databases import Mcule_list_databases
@@ -1600,6 +1606,7 @@ from .PlantReactome_search_pathways import PlantReactome_search_pathways
 from .PomBase_get_gene import PomBase_get_gene
 from .PomBase_get_gene_phenotypes import PomBase_get_gene_phenotypes
 from .PomBase_search_genes import PomBase_search_genes
+from .ProtParam_calculate import ProtParam_calculate
 from .ProtVar_get_function import ProtVar_get_function
 from .ProtVar_get_population import ProtVar_get_population
 from .ProtVar_map_variant import ProtVar_map_variant
@@ -1770,6 +1777,9 @@ from .SIDER_get_drug_side_effects import SIDER_get_drug_side_effects
 from .SIDER_get_drugs_for_side_effect import SIDER_get_drugs_for_side_effect
 from .SIDER_search_drug import SIDER_search_drug
 from .SIDER_search_side_effect import SIDER_search_side_effect
+from .SIGNOR_get_interactions import SIGNOR_get_interactions
+from .SIGNOR_get_pathway import SIGNOR_get_pathway
+from .SIGNOR_list_pathways import SIGNOR_list_pathways
 from .SIGN_list_guidelines import SIGN_list_guidelines
 from .SIGN_search_guidelines import SIGN_search_guidelines
 from .SIMBAD_advanced_query import SIMBAD_advanced_query
@@ -2463,6 +2473,10 @@ from .iNaturalist_get_species_counts import iNaturalist_get_species_counts
 from .iNaturalist_get_taxon import iNaturalist_get_taxon
 from .iNaturalist_search_observations import iNaturalist_search_observations
 from .iNaturalist_search_taxa import iNaturalist_search_taxa
+from .iPTMnet_get_proteoforms import iPTMnet_get_proteoforms
+from .iPTMnet_get_ptm_ppi import iPTMnet_get_ptm_ppi
+from .iPTMnet_get_ptm_sites import iPTMnet_get_ptm_sites
+from .iPTMnet_search import iPTMnet_search
 from .icd_search_codes import icd_search_codes
 from .iedb_get_epitope_antigens import iedb_get_epitope_antigens
 from .iedb_get_epitope_mhc import iedb_get_epitope_mhc
@@ -2784,6 +2798,8 @@ __all__ = [
     "Chem_sa_score",
     "ClinGenAR_get_external_records",
     "ClinGenAR_lookup_allele",
+    "ClinGenAllele_get_allele",
+    "ClinGenAllele_lookup_hgvs",
     "ClinGen_dosage_by_gene",
     "ClinGen_dosage_region_search",
     "ClinGen_get_actionability_adult",
@@ -3435,6 +3451,10 @@ __all__ = [
     "MarineRegions_search_by_name",
     "MassBank_search_by_compound",
     "MassBank_search_by_formula",
+    "MaveDB_get_score_set",
+    "MaveDB_get_variant_scores",
+    "MaveDB_search_experiments",
+    "MaveDB_search_score_sets",
     "Mcule_get_compound",
     "Mcule_get_database",
     "Mcule_list_databases",
@@ -3786,6 +3806,7 @@ __all__ = [
     "PomBase_get_gene",
     "PomBase_get_gene_phenotypes",
     "PomBase_search_genes",
+    "ProtParam_calculate",
     "ProtVar_get_function",
     "ProtVar_get_population",
     "ProtVar_map_variant",
@@ -3932,6 +3953,9 @@ __all__ = [
     "SIDER_get_drugs_for_side_effect",
     "SIDER_search_drug",
     "SIDER_search_side_effect",
+    "SIGNOR_get_interactions",
+    "SIGNOR_get_pathway",
+    "SIGNOR_list_pathways",
     "SIGN_list_guidelines",
     "SIGN_search_guidelines",
     "SIMBAD_advanced_query",
@@ -4539,6 +4563,10 @@ __all__ = [
     "iNaturalist_get_taxon",
     "iNaturalist_search_observations",
     "iNaturalist_search_taxa",
+    "iPTMnet_get_proteoforms",
+    "iPTMnet_get_ptm_ppi",
+    "iPTMnet_get_ptm_sites",
+    "iPTMnet_search",
     "icd_search_codes",
     "iedb_get_epitope_antigens",
     "iedb_get_epitope_mhc",

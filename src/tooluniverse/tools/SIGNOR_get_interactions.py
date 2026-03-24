@@ -1,36 +1,33 @@
 """
-GTEx_query_eqtl
+SIGNOR_get_interactions
 
-Query GTEx single-tissue eQTL associations for a gene. Accepts gene symbols (TP53, BRCA1) or Ense...
+Get causal signaling interactions for a protein or entity from the SIGNOR database. Returns upstr...
 """
 
 from typing import Any, Optional, Callable
 from ._shared_client import get_shared_client
 
 
-def GTEx_query_eqtl(
-    gene_symbol: Optional[str] = None,
-    ensembl_gene_id: Optional[str] = None,
-    page: Optional[int] = 1,
-    size: Optional[int] = 10,
+def SIGNOR_get_interactions(
+    entity_id: str,
+    organism: Optional[int] = 9606,
+    limit: Optional[int] = 50,
     *,
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> list[Any]:
     """
-    Query GTEx single-tissue eQTL associations for a gene. Accepts gene symbols (TP53, BRCA1) or Ense...
+    Get causal signaling interactions for a protein or entity from the SIGNOR database. Returns upstr...
 
     Parameters
     ----------
-    gene_symbol : str
-        Gene symbol (e.g., 'TP53', 'BRCA1'). Auto-resolved to versioned GENCODE ID.
-    ensembl_gene_id : str
-        Ensembl gene identifier (e.g., 'ENSG00000141510'). Use gene_symbol instead if...
-    page : int
-        Page number (1-based).
-    size : int
-        Number of records per page (1–100).
+    entity_id : str
+        Entity identifier - typically a UniProt accession (e.g., 'P04637' for TP53, '...
+    organism : int
+        NCBI taxonomy ID. 9606 for human, 10090 for mouse.
+    limit : int
+        Maximum number of interactions to return.
     stream_callback : Callable, optional
         Callback for streaming output
     use_cache : bool, default False
@@ -40,7 +37,7 @@ def GTEx_query_eqtl(
 
     Returns
     -------
-    Any
+    list[Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 
@@ -48,16 +45,15 @@ def GTEx_query_eqtl(
     _args = {
         k: v
         for k, v in {
-            "gene_symbol": gene_symbol,
-            "ensembl_gene_id": ensembl_gene_id,
-            "page": page,
-            "size": size,
+            "entity_id": entity_id,
+            "organism": organism,
+            "limit": limit,
         }.items()
         if v is not None
     }
     return get_shared_client().run_one_function(
         {
-            "name": "GTEx_query_eqtl",
+            "name": "SIGNOR_get_interactions",
             "arguments": _args,
         },
         stream_callback=stream_callback,
@@ -66,4 +62,4 @@ def GTEx_query_eqtl(
     )
 
 
-__all__ = ["GTEx_query_eqtl"]
+__all__ = ["SIGNOR_get_interactions"]
