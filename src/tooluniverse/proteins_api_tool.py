@@ -467,6 +467,24 @@ class ProteinsAPIRESTTool(BaseTool):
                             entry["features_truncated"] = True
                             entry["total_features"] = len(features)
 
+            # For gene-name searches, sort exact gene matches to the top
+            if (
+                tool_name == "proteins_api_search"
+                and isinstance(data, list)
+                and "query" in arguments
+            ):
+                query_upper = arguments["query"].strip().upper()
+
+                def _gene_sort_key(entry):
+                    primary = (
+                        entry.get("gene", [{}])[0].get("name", {}).get("value", "")
+                        if entry.get("gene")
+                        else ""
+                    )
+                    return 0 if primary.upper() == query_upper else 1
+
+                data = sorted(data, key=_gene_sort_key)
+
             response_data = {
                 "status": "success",
                 "data": data,
