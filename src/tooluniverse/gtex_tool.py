@@ -219,15 +219,15 @@ class GTExEQTLTool:
 
             return {
                 "status": "success",
-                "source": "GTEx",
-                "endpoint": "association/singleTissueEqtl",
-                "query": query,
                 "data": {"singleTissueEqtl": eqtl_data},
+                "metadata": {
+                    "source": "GTEx",
+                    "endpoint": "association/singleTissueEqtl",
+                    "query": query,
+                },
             }
         except Exception as e:
             return {
                 "status": "error",
                 "error": str(e),
-                "source": "GTEx",
-                "endpoint": "association/singleTissueEqtl",
             }

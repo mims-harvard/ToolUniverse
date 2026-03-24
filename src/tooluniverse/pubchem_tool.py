@@ -90,6 +90,10 @@ class PubChemRESTTool(BaseTool):
         return full_url
 
     def run(self, arguments: dict):
+        # compound_name alias for name (more intuitive param name)
+        if "name" not in arguments and "compound_name" in arguments:
+            arguments["name"] = arguments["compound_name"]
+
         # 1. Validate required parameters
         for key, prop in self.param_schema.items():
             if prop.get("required", False) and key not in arguments:
