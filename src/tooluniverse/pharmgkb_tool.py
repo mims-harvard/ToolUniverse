@@ -175,28 +175,36 @@ class PharmGKBTool(BaseTool):
             result = api_response.get("data", api_response)
             return {"status": "success", "data": result}
 
-        # Gene symbol (e.g., "CYP2C19") is not a supported parameter — redirect user.
+        # Feature-121A-001: auto-resolve gene symbol to PharmGKB PA ID for a targeted URL.
+        # The API rejects relatedGenes.id filter (HTTP 400); provide a direct page URL instead.
         gene_symbol = arguments.get("gene") or arguments.get("gene_symbol")
-        if gene_symbol:
-            return self._error(
-                f"PharmGKB API does not support gene symbol lookup ('{gene_symbol}'). "
-                f"To find clinical annotations, browse "
-                f"https://www.pharmgkb.org/gene?symbol={gene_symbol} "
-                f"and copy the numeric annotation_id from the annotation URL. "
-                f"For drug-gene dosing guidelines, use CPIC_list_guidelines instead."
-            )
-
-        # Feature-68A-003: relatedGenes.id filter returns HTTP 400 from PharmGKB API.
-        # Return a clear error rather than false success.
         gene_id = arguments.get("gene_id")
-        if gene_id:
+
+        if gene_symbol and not gene_id:
+            _, gene_resp, err = self._request_json(
+                f"{PHARMGKB_BASE_URL}/data/gene",
+                {"symbol": gene_symbol, "view": "min"},
+            )
+            if not err:
+                genes = (
+                    gene_resp.get("data", [])
+                    if isinstance(gene_resp.get("data"), list)
+                    else []
+                )
+                if genes:
+                    gene_id = genes[0].get("id", "")
+
+        if gene_symbol or gene_id:
+            target_id = gene_id or gene_symbol
+            url = (
+                f"https://www.pharmgkb.org/gene/{target_id}/clinicalAnnotation"
+                if gene_id
+                else f"https://www.pharmgkb.org/gene?symbol={gene_symbol}"
+            )
             return self._error(
-                f"PharmGKB does not expose a gene-to-annotation-ID index via its API. "
-                f"To find clinical annotations for '{gene_id}', browse "
-                f"https://www.pharmgkb.org/gene/{gene_id}/clinicalAnnotation "
-                f"and copy the numeric annotation_id from the URL, then call this tool "
-                f"with annotation_id=<id>. For drug-gene guidelines, use "
-                f"CPIC_get_guidelines or CPIC_search_gene_drug_pairs instead."
+                f"PharmGKB API does not support listing annotations by gene symbol. "
+                f"Browse {url} to find annotation IDs, then call with annotation_id=<id>. "
+                f"For drug-gene dosing guidelines, use CPIC_list_guidelines instead."
             )
 
         return self._error(
