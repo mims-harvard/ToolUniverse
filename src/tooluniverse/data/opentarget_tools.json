@@ -176,7 +176,7 @@
   },
   {
     "name": "OpenTargets_target_disease_evidence",
-    "description": "Explore IntOGen somatic driver evidence for a target-disease association (cancer mutation data only). For broader evidence across all data sources (genetics, literature, pathways, etc.), use OpenTargets_get_evidence_by_datasource instead. Input is disease efoId and target ensemblID.",
+    "description": "Explore IntOGen somatic driver evidence for a target-disease association. IMPORTANT: IntOGen only covers somatic tumor driver mutations — this tool returns empty data ({}) for non-cancer diseases (e.g., type 2 diabetes, hypertension). Empty results are expected and normal when querying non-oncology phenotypes. For non-cancer diseases or to query other data sources, use OpenTargets_get_evidence_by_datasource instead. Input is disease efoId (e.g., EFO_0000384 for Crohn's disease) and target ensemblId (e.g., ENSG00000141510 for TP53).",
     "label": [
       "Target",
       "Disease",
