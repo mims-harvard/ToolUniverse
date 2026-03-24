@@ -210,6 +210,8 @@ default_tool_files = {
     ),
     "embedding": os.path.join(current_dir, "data", "embedding_tools.json"),
     "gwas": os.path.join(current_dir, "data", "gwas_tools.json"),
+    # GWAS Summary Statistics - full variant-level summary stats from deposited studies
+    "gwas_sumstats": os.path.join(current_dir, "data", "gwas_sumstats_tools.json"),
     "admetai": os.path.join(current_dir, "data", "admetai_tools.json"),
     # duplicate key removed
     "alphafold": os.path.join(current_dir, "data", "alphafold_tools.json"),

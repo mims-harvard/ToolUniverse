@@ -104,12 +104,7 @@
       "operation": "get_result"
     },
     "type": "FoldseekTool",
-    "test_examples": [
-      {
-        "ticket_id": "test_nonexistent_id",
-        "max_results": 5
-      }
-    ],
+    "test_examples": [],
     "return_schema": {
       "oneOf": [
         {
