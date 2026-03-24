@@ -133,7 +133,9 @@ class GTExV2Tool(BaseTool):
         # Feature-69A-002: gtex_v10 returns empty results for medianGeneExpression.
         # Default to gtex_v8 which is stable and returns correct tissue expression.
         dataset_id = arguments.get("dataset_id", "gtex_v8")
-        tissue_ids = arguments.get("tissue_site_detail_id", [])
+        tissue_ids = arguments.get("tissue_site_detail_id")
+        if tissue_ids is None:
+            tissue_ids = arguments.get("tissue_id") or []
 
         if isinstance(tissue_ids, str):
             tissue_ids = [tissue_ids]

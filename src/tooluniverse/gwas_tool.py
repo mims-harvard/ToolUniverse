@@ -4,6 +4,8 @@ from typing import Dict, Any, Optional
 from .base_tool import BaseTool
 from .tool_registry import register_tool
 
+_EFO_ID_RE = re.compile(r"^[A-Z]+[_:]\d+")
+
 
 class GWASRESTTool(BaseTool):
     """Base class for GWAS Catalog REST API tools."""
@@ -212,7 +214,7 @@ class GWASAssociationSearch(GWASRESTTool):
             efo_id = self._efo_id_from_uri_or_id(arguments.get("efo_uri"))
 
         # Feature-111A-004: if disease_trait looks like an EFO/OBA/HP ID, treat as efo_id
-        if disease_trait and not efo_id and re.match(r"^[A-Z]+[_:]\d+", disease_trait):
+        if disease_trait and not efo_id and _EFO_ID_RE.match(disease_trait):
             efo_id = self._efo_id_from_uri_or_id(disease_trait)
             disease_trait = None
 
@@ -445,6 +447,10 @@ class GWASVariantsForTrait(GWASRESTTool):
         ) or self._efo_id_from_uri_or_id(arguments.get("efo_uri"))
         efo_trait = self._coerce_str(arguments.get("efo_trait"))
 
+        if disease_trait and not efo_id and _EFO_ID_RE.match(disease_trait):
+            efo_id = self._efo_id_from_uri_or_id(disease_trait)
+            disease_trait = None
+
         # /v2/associations ignores disease_trait — resolve to efo_id
         resolution = self._resolve_trait_or_error(disease_trait, efo_id)
         if "error" in resolution:
@@ -487,11 +493,17 @@ class GWASAssociationsForTrait(GWASRESTTool):
 
     def run(self, arguments: Dict[str, Any]) -> Dict[str, Any]:
         """Get associations for a trait, sorted by significance."""
-        disease_trait = self._coerce_str(arguments.get("disease_trait"))
+        disease_trait = self._coerce_str(
+            arguments.get("disease_trait") or arguments.get("trait")
+        )
         efo_id = self._efo_id_from_uri_or_id(
             arguments.get("efo_id")
         ) or self._efo_id_from_uri_or_id(arguments.get("efo_uri"))
         efo_trait = self._coerce_str(arguments.get("efo_trait"))
+
+        if disease_trait and not efo_id and _EFO_ID_RE.match(disease_trait):
+            efo_id = self._efo_id_from_uri_or_id(disease_trait)
+            disease_trait = None
 
         # /v2/associations ignores disease_trait — resolve to efo_id
         resolution = self._resolve_trait_or_error(disease_trait, efo_id)

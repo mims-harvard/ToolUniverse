@@ -222,7 +222,9 @@ class GenCCTool(BaseTool):
                 - disease: Disease name or MONDO/OMIM ID to search
                 - classification: Optional filter by classification level
         """
-        disease = arguments.get("disease", "").strip()
+        disease = (
+            arguments.get("disease") or arguments.get("disease_name", "")
+        ).strip()
         if not disease:
             return {"status": "error", "error": "Missing required parameter: disease"}
 

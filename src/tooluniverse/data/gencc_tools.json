@@ -105,15 +105,17 @@
           "type": "string",
           "description": "Disease name or ID to search (e.g., 'Marfan syndrome', 'MONDO:0007947', 'breast cancer')"
         },
+        "disease_name": {
+          "type": "string",
+          "description": "Alias for disease. Disease name or ID to search."
+        },
         "classification": {
           "type": "string",
           "description": "Optional filter by classification level (e.g., Definitive, Strong)",
           "default": ""
         }
       },
-      "required": [
-        "disease"
-      ]
+      "required": []
     },
     "return_schema": {
       "type": "object",

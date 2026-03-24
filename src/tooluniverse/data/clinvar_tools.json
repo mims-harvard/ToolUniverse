@@ -1,7 +1,7 @@
 [
   {
     "type": "ClinVarSearchVariants",
-    "name": "clinvar_search_variants",
+    "name": "ClinVar_search_variants",
     "description": "Search for variants in ClinVar database by gene name, condition, or variant ID. Returns variant identifiers and basic information. At least one of gene, condition, or variant_id must be provided.",
     "parameter": {
       "type": "object",
@@ -124,8 +124,8 @@
   },
   {
     "type": "ClinVarGetVariantDetails",
-    "name": "clinvar_get_variant_details",
-    "description": "Get variant summary information from ClinVar by variant ID. Returns accession, title, genes, clinical significance, review status, chromosome location, and variation name. For the same variant, this provides a different field view than clinvar_get_clinical_significance.",
+    "name": "ClinVar_get_variant_details",
+    "description": "Get variant summary information from ClinVar by variant ID. Returns accession, title, genes, clinical significance, review status, chromosome location, and variation name. For the same variant, this provides a different field view than ClinVar_get_clinical_significance.",
     "parameter": {
       "type": "object",
       "properties": {
@@ -195,7 +195,7 @@
   },
   {
     "type": "ClinVarGetClinicalSignificance",
-    "name": "clinvar_get_clinical_significance",
+    "name": "ClinVar_get_clinical_significance",
     "description": "Get clinical significance information for a variant from ClinVar. Returns pathogenicity classification and clinical interpretations.",
     "parameter": {
       "type": "object",
