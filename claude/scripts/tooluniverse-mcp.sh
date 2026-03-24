@@ -18,6 +18,10 @@ export TOOLUNIVERSE_STRICT_VALIDATION=false
 export TOOLUNIVERSE_LOG_LEVEL=INFO
 export TOOLUNIVERSE_STDIO_MODE=1
 
+# Claude CLI: deep reasoning for Tool_Finder_LLM (Max plan, no API cost)
+export CLAUDE_CLI_TIMEOUT=120
+export CLAUDE_CLI_BUDGET=1.00
+
 # Ollama: local LLM fallback for Tool_Finder_LLM
 export OLLAMA_SERVER_URL="${OLLAMA_SERVER_URL:-http://localhost:11434}"
 
