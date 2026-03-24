@@ -17,7 +17,12 @@
         },
         "rows": {
           "type": "integer",
-          "description": "Number of results to return (default: 10)",
+          "description": "Number of results to return (default: 10). Alias: size.",
+          "default": 10
+        },
+        "size": {
+          "type": "integer",
+          "description": "Alias for rows. Number of results to return (default: 10).",
           "default": 10
         },
         "ontology": {
