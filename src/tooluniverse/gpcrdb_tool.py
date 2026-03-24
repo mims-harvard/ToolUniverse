@@ -73,6 +73,12 @@ class GPCRdbTool(BaseTool):
                 "error": f"Unknown operation: {operation}. Supported: get_protein, list_proteins, get_structures, get_ligands, get_mutations",
             }
 
+    def _normalize_protein(self, protein: str) -> str:
+        """Resolve gene symbol (e.g. ADRB2) to GPCRdb entry name (e.g. adrb2_human)."""
+        if protein and "_" not in protein:
+            return f"{protein.lower()}_human"
+        return protein
+
     def _get_protein(self, arguments: Dict[str, Any]) -> Dict[str, Any]:
         """
         Get detailed protein information for a GPCR.
@@ -289,10 +295,10 @@ class GPCRdbTool(BaseTool):
 
         Args:
             arguments: Dict containing:
-                - protein: Protein entry name (optional - if not provided, returns all structures)
+                - protein: Protein entry name (e.g., adrb2_human) or gene symbol (e.g., ADRB2) — optional
                 - state: Receptor state filter (active, inactive, intermediate)
         """
-        protein = arguments.get("protein", "")
+        protein = self._normalize_protein(arguments.get("protein", ""))
         state = arguments.get("state", "")
         resolution = arguments.get("resolution")
 
@@ -366,9 +372,9 @@ class GPCRdbTool(BaseTool):
 
         Args:
             arguments: Dict containing:
-                - protein: Protein entry name (e.g., adrb2_human)
+                - protein: Protein entry name (e.g., adrb2_human) or gene symbol (e.g., ADRB2)
         """
-        protein = arguments.get("protein", "")
+        protein = self._normalize_protein(arguments.get("protein", ""))
         if not protein:
             return {"status": "error", "error": "Missing required parameter: protein"}
 
@@ -457,9 +463,9 @@ class GPCRdbTool(BaseTool):
 
         Args:
             arguments: Dict containing:
-                - protein: Protein entry name (e.g., adrb2_human)
+                - protein: Protein entry name (e.g., adrb2_human) or gene symbol (e.g., ADRB2)
         """
-        protein = arguments.get("protein", "")
+        protein = self._normalize_protein(arguments.get("protein", ""))
         if not protein:
             return {"status": "error", "error": "Missing required parameter: protein"}
 
