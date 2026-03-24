@@ -1,0 +1,147 @@
+[
+  {
+    "name": "GWASSumStats_list_studies",
+    "description": "List GWAS studies that have deposited full summary statistics with the EBI GWAS Catalog. Unlike the main GWAS Catalog (which stores curated top hits), studies listed here have complete variant-level summary statistics available for download and query. Returns study accession IDs that can be used as filters in GWASSumStats_get_region_associations.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "size": {
+          "type": ["integer", "null"],
+          "description": "Number of studies to return (default 20, max 100)."
+        }
+      },
+      "required": []
+    },
+    "fields": {
+      "endpoint_type": "list_studies"
+    },
+    "type": "GWASSumStatsTool",
+    "test_examples": [
+      {
+        "size": 5
+      }
+    ],
+    "return_schema": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "study_accession": {"type": "string"}
+        }
+      }
+    }
+  },
+  {
+    "name": "GWASSumStats_get_trait_studies",
+    "description": "Get GWAS studies with deposited summary statistics for a specific EFO trait. Returns study accession IDs for studies that have full variant-level summary statistics. Use EFO trait IDs like 'EFO_0000249' (Alzheimer disease), 'EFO_0001645' (coronary heart disease), 'EFO_0000253' (asthma), 'EFO_0001359' (type 2 diabetes). Get EFO IDs from ols_search_efo_terms or gwas_search_studies.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "trait_id": {
+          "type": "string",
+          "description": "EFO trait ontology ID (e.g., 'EFO_0000249' for Alzheimer disease, 'EFO_0001645' for coronary heart disease, 'EFO_0001359' for type 2 diabetes)."
+        }
+      },
+      "required": ["trait_id"]
+    },
+    "fields": {
+      "endpoint_type": "get_trait_studies"
+    },
+    "type": "GWASSumStatsTool",
+    "test_examples": [
+      {
+        "trait_id": "EFO_0000249"
+      },
+      {
+        "trait_id": "EFO_0001645"
+      }
+    ],
+    "return_schema": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "study_accession": {"type": "string"}
+        }
+      }
+    }
+  },
+  {
+    "name": "GWASSumStats_get_region_associations",
+    "description": "Query full GWAS summary statistics for variants in a chromosomal region. Returns variant-level association data including p-values, effect sizes (beta/OR), allele frequencies, and study/trait information. Unlike gwas_search_associations (which returns curated top hits), this endpoint provides complete summary statistics from deposited studies. Filter by chromosome region, p-value threshold, and optionally by specific study.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "chromosome": {
+          "type": "integer",
+          "description": "Chromosome number (1-22, or 23 for X)."
+        },
+        "bp_lower": {
+          "type": "integer",
+          "description": "Start position of the region (GRCh38 coordinates)."
+        },
+        "bp_upper": {
+          "type": "integer",
+          "description": "End position of the region (GRCh38 coordinates)."
+        },
+        "p_upper": {
+          "type": ["number", "null"],
+          "description": "Maximum p-value threshold (default 5e-8 for genome-wide significance). Use larger values like 0.001 to include suggestive hits."
+        },
+        "study_accession": {
+          "type": ["string", "null"],
+          "description": "Filter by specific GWAS study accession (e.g., 'GCST002245'). Get study IDs from GWASSumStats_list_studies or GWASSumStats_get_trait_studies."
+        },
+        "size": {
+          "type": ["integer", "null"],
+          "description": "Maximum number of variants to return (default 50, max 1000)."
+        }
+      },
+      "required": ["chromosome", "bp_lower", "bp_upper"]
+    },
+    "fields": {
+      "endpoint_type": "get_region_associations"
+    },
+    "type": "GWASSumStatsTool",
+    "test_examples": [
+      {
+        "chromosome": 9,
+        "bp_lower": 22000000,
+        "bp_upper": 22200000,
+        "p_upper": 5e-8,
+        "size": 10
+      },
+      {
+        "chromosome": 19,
+        "bp_lower": 44900000,
+        "bp_upper": 44920000,
+        "p_upper": 5e-8,
+        "size": 10
+      }
+    ],
+    "return_schema": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "variant_id": {"type": ["string", "null"]},
+          "chromosome": {"type": ["integer", "null"]},
+          "position": {"type": ["integer", "null"]},
+          "p_value": {"type": ["number", "null"]},
+          "beta": {"type": ["number", "null"]},
+          "odds_ratio": {"type": ["number", "null"]},
+          "effect_allele": {"type": ["string", "null"]},
+          "other_allele": {"type": ["string", "null"]},
+          "effect_allele_frequency": {"type": ["number", "null"]},
+          "study_accession": {"type": ["string", "null"]},
+          "trait": {
+            "type": ["array", "null"],
+            "items": {"type": "string"}
+          },
+          "ci_lower": {"type": ["number", "null"]},
+          "ci_upper": {"type": ["number", "null"]}
+        }
+      }
+    }
+  }
+]
