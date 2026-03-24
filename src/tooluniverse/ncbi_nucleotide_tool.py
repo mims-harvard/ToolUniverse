@@ -108,13 +108,11 @@ class NCBINucleotideSearchTool(NCBIEUtilsTool):
                 "sort": arguments.get("sort", "relevance"),
             }
 
-            # Make request
             result = self._make_request("/esearch.fcgi", params)
 
             if result["status"] == "error":
                 return result
 
-            # Extract UIDs from esearch response
             data = result.get("data", {})
             if isinstance(data, dict):
                 esearch_result = data.get("esearchresult", {})

@@ -124,7 +124,6 @@ class GetSPLBySetIDTool(BaseTool):
                 "detail": resp.text,
             }
 
-        # Return XML content
         return {"status": "success", "xml": resp.text}
 
 
