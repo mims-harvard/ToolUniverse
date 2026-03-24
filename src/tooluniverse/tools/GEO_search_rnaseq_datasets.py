@@ -1,0 +1,58 @@
+"""
+GEO_search_rnaseq_datasets
+
+Search NCBI GEO for RNA-seq gene expression datasets by query keyword, disease, tissue, or gene of interest.
+"""
+
+from typing import Any, Optional, Callable
+from ._shared_client import get_shared_client
+
+
+def GEO_search_rnaseq_datasets(
+    query: Optional[str] = None,
+    organism: Optional[str] = "Homo sapiens",
+    limit: Optional[int] = 20,
+    *,
+    stream_callback: Optional[Callable[[str], None]] = None,
+    use_cache: bool = False,
+    validate: bool = True,
+) -> Any:
+    """
+    Search NCBI GEO for RNA-seq gene expression datasets by query keyword, disease, tissue, or gene of interest.
+
+    Parameters
+    ----------
+    query : str, optional
+        Search terms (e.g., 'BRCA1 breast cancer', 'T cell activation', 'Alzheimer disease').
+    organism : str
+        Organism scientific name (e.g., 'Homo sapiens', 'Mus musculus').
+    limit : int
+        Maximum number of results to return (1-100).
+    stream_callback : Callable, optional
+        Callback for streaming output
+    use_cache : bool, default False
+        Enable caching
+    validate : bool, default True
+        Validate parameters
+
+    Returns
+    -------
+    Any
+    """
+    _args = {
+        k: v
+        for k, v in {"query": query, "organism": organism, "limit": limit}.items()
+        if v is not None
+    }
+    return get_shared_client().run_one_function(
+        {
+            "name": "GEO_search_rnaseq_datasets",
+            "arguments": _args,
+        },
+        stream_callback=stream_callback,
+        use_cache=use_cache,
+        validate=validate,
+    )
+
+
+__all__ = ["GEO_search_rnaseq_datasets"]
