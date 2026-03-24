@@ -17,6 +17,7 @@ def gwas_get_variants_for_trait(
     size: Optional[int] = None,
     limit: Optional[int] = None,
     page: Optional[int] = None,
+    p_value_threshold: Optional[float] = None,
     *,
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
@@ -68,6 +69,7 @@ def gwas_get_variants_for_trait(
             "size": size,
             "limit": limit,
             "page": page,
+            "p_value_threshold": p_value_threshold,
         }.items()
         if v is not None
     }

@@ -309,7 +309,7 @@ class FAERSAnalyticsTool(BaseTool):
             # Add specific reaction filter if provided
             if adverse_event:
                 base_query += (
-                    f'+AND+patient.reaction.reactionmeddrapt:"{adverse_event.upper()}"'
+                    f'+AND+patient.reaction.reactionmeddrapt:"{adverse_event}"'
                 )
 
             # Add seriousness filter

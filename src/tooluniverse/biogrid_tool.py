@@ -208,9 +208,9 @@ class BioGRIDRESTTool(BaseTool):
                 else 0,
                 "note": (
                     "BioGRID chemicalList filter is not supported by the REST API; "
-                    "results reflect all interactions for the queried gene(s)."
-                )
-                if arguments.get("chemical_names")
-                else None,
+                    "results reflect all protein interactions for the queried gene(s), "
+                    "not filtered by chemical. Use ChEMBL_search_mechanisms or "
+                    "DGIdb_search_interactions for drug-protein interaction data."
+                ),
             },
         }

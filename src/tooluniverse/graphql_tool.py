@@ -167,6 +167,17 @@ class OpentargetTool(GraphQLTool):
 
         result = super().run(arguments)
 
+        # Add note when IntOGen evidence count is 0 (Feature-122B-002)
+        if result.get("status") == "success":
+            evidences = result.get("data", {}).get("disease", {}).get("evidences", {})
+            if isinstance(evidences, dict) and evidences.get("count") == 0:
+                result.setdefault("metadata", {})["note"] = (
+                    "IntOGen returns 0 evidence rows for this query. "
+                    "IntOGen only covers somatic tumor driver mutations — "
+                    "it has no data for non-cancer diseases or non-driver genes. "
+                    "For non-oncology phenotypes, use OpenTargets_get_evidence_by_datasource instead."
+                )
+
         # If no results, retry with '-' replaced by ' '
         if result.get("status") != "success":
             if "drugName" in arguments and isinstance(arguments["drugName"], str):

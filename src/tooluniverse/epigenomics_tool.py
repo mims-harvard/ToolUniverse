@@ -104,6 +104,12 @@ class EpigenomicsTool(BaseTool):
             return self._geo_dataset_details(arguments)
         elif self.endpoint == "ensembl_regulatory":
             return self._ensembl_regulatory_features(arguments)
+        elif self.endpoint == "geo_rnaseq_search":
+            return self._geo_rnaseq_search(arguments)
+        elif self.endpoint == "geo_atacseq_search":
+            return self._geo_atacseq_search(arguments)
+        elif self.endpoint == "encode_rnaseq":
+            return self._encode_rnaseq_search(arguments)
         else:
             return {"status": "error", "error": f"Unknown endpoint: {self.endpoint}"}
 
@@ -643,6 +649,198 @@ class EpigenomicsTool(BaseTool):
             "metadata": {
                 "source": "NCBI GEO (ncbi.nlm.nih.gov/geo)",
                 "geo_id": geo_id,
+            },
+        }
+
+    def _geo_rnaseq_search(self, arguments: Dict[str, Any]) -> Dict[str, Any]:
+        """Search GEO for RNA-seq datasets."""
+        query = arguments.get("query", "")
+        organism = arguments.get("organism", "Homo sapiens")
+        limit = arguments.get("limit", 20)
+
+        term_parts = [query, "RNA-seq"]
+        if organism:
+            term_parts.append(f"{organism}[Organism]")
+        term = " AND ".join(t for t in term_parts if t)
+
+        search_result = self._geo_esearch(term, limit)
+        esearch = search_result.get("esearchresult", {})
+        total = int(esearch.get("count", 0))
+        ids = esearch.get("idlist", [])
+
+        datasets = []
+        if ids:
+            summary_result = self._geo_esummary(ids)
+            result = summary_result.get("result", {})
+            for uid in ids:
+                uid_data = result.get(str(uid), {})
+                if not isinstance(uid_data, dict) or "accession" not in uid_data:
+                    continue
+                acc = uid_data.get("accession", "")
+                if acc.startswith("GPL"):
+                    continue
+                datasets.append(
+                    {
+                        "accession": acc,
+                        "title": uid_data.get("title", ""),
+                        "summary": uid_data.get("summary", "")[:500],
+                        "organism": uid_data.get("taxon", ""),
+                        "n_samples": uid_data.get("n_samples", 0),
+                        "date_published": uid_data.get("pdat"),
+                    }
+                )
+
+        return {
+            "status": "success",
+            "data": {
+                "total": total,
+                "datasets": datasets,
+            },
+            "metadata": {
+                "source": "NCBI GEO (ncbi.nlm.nih.gov/geo)",
+                "query": query,
+                "search_term": term,
+                "organism": organism,
+            },
+        }
+
+    def _geo_atacseq_search(self, arguments: Dict[str, Any]) -> Dict[str, Any]:
+        """Search GEO for ATAC-seq datasets (chromatin accessibility)."""
+        query = arguments.get("query", "")
+        organism = arguments.get("organism", "Homo sapiens")
+        limit = arguments.get("limit", 20)
+
+        term_parts = [query, "ATAC-seq"]
+        if organism:
+            term_parts.append(f"{organism}[Organism]")
+        term = " AND ".join(t for t in term_parts if t)
+
+        search_result = self._geo_esearch(term, limit)
+        esearch = search_result.get("esearchresult", {})
+        total = int(esearch.get("count", 0))
+        ids = esearch.get("idlist", [])
+
+        datasets = []
+        if ids:
+            summary_result = self._geo_esummary(ids)
+            result = summary_result.get("result", {})
+            for uid in ids:
+                uid_data = result.get(str(uid), {})
+                if not isinstance(uid_data, dict) or "accession" not in uid_data:
+                    continue
+                acc = uid_data.get("accession", "")
+                if acc.startswith("GPL"):
+                    continue
+                datasets.append(
+                    {
+                        "accession": acc,
+                        "title": uid_data.get("title", ""),
+                        "summary": uid_data.get("summary", "")[:500],
+                        "organism": uid_data.get("taxon", ""),
+                        "n_samples": uid_data.get("n_samples", 0),
+                        "date_published": uid_data.get("pdat"),
+                    }
+                )
+
+        return {
+            "status": "success",
+            "data": {
+                "total": total,
+                "datasets": datasets,
+            },
+            "metadata": {
+                "source": "NCBI GEO (ncbi.nlm.nih.gov/geo)",
+                "query": query,
+                "search_term": term,
+                "organism": organism,
+            },
+        }
+
+    def _encode_rnaseq_search(self, arguments: Dict[str, Any]) -> Dict[str, Any]:
+        """Search ENCODE RNA-seq experiments by biosample, organism, or assay type."""
+        biosample = (
+            arguments.get("biosample_term_name")
+            or arguments.get("biosample")
+            or arguments.get("cell_type")
+            or arguments.get("tissue")
+        )
+        organism = arguments.get("organism", "Homo sapiens")
+        assay_type = arguments.get("assay_type", "total RNA-seq")
+        limit = arguments.get("limit", 25)
+
+        # Normalize common aliases for ENCODE RNA-seq assay titles
+        _assay_map = {
+            "total": "total RNA-seq",
+            "polya": "polyA plus RNA-seq",
+            "poly-a": "polyA plus RNA-seq",
+            "polyA": "polyA plus RNA-seq",
+            "mirna": "microRNA-seq",
+            "microrna": "microRNA-seq",
+            "small": "small RNA-seq",
+        }
+        assay_type = _assay_map.get(assay_type.lower(), assay_type)
+
+        params = {
+            "type": "Experiment",
+            "assay_title": assay_type,
+            "status": "released",
+        }
+        if biosample:
+            params["biosample_ontology.term_name"] = biosample
+        if organism:
+            params["replicates.library.biosample.organism.scientific_name"] = organism
+        params["limit"] = min(int(limit), 100)
+
+        try:
+            raw = self._encode_search(params)
+        except Exception:
+            # Fall back without organism filter (mirrors histone search fix)
+            fallback = {
+                k: v
+                for k, v in params.items()
+                if k != "replicates.library.biosample.organism.scientific_name"
+            }
+            try:
+                raw = self._encode_search(fallback)
+            except Exception:
+                return {
+                    "status": "success",
+                    "data": {"total": 0, "experiments": []},
+                    "metadata": {
+                        "source": "ENCODE",
+                        "note": (
+                            f"No results for biosample='{biosample}'. "
+                            "ENCODE requires exact ontology names (e.g., 'K562', 'HepG2', 'liver')."
+                        ),
+                    },
+                }
+
+        experiments = []
+        for exp in raw.get("@graph", []):
+            experiments.append(
+                {
+                    "accession": exp.get("accession", ""),
+                    "assay_title": exp.get("assay_title", ""),
+                    "biosample_summary": exp.get("biosample_summary", ""),
+                    "status": exp.get("status", ""),
+                    "lab": exp.get("lab", {}).get("title", "")
+                    if isinstance(exp.get("lab"), dict)
+                    else "",
+                    "date_released": exp.get("date_released"),
+                }
+            )
+
+        return {
+            "status": "success",
+            "data": {
+                "total": raw.get("total", 0),
+                "experiments": experiments,
+            },
+            "metadata": {
+                "source": "ENCODE Project (encodeproject.org)",
+                "assay_type": assay_type,
+                "organism": organism,
+                "note": "Available assay types: 'total RNA-seq', 'polyA plus RNA-seq', 'small RNA-seq', 'microRNA-seq'.",
             },
         }
 

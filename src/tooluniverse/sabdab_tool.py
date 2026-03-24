@@ -194,6 +194,16 @@ class SAbDabTool(BaseTool):
         Args:
             arguments: Dict (no required parameters)
         """
+        # Redirect hint if user passed a PDB ID (Feature-125B-003)
+        pdb = arguments.get("pdb") or arguments.get("pdb_id")
+        if pdb:
+            return {
+                "status": "error",
+                "error": (
+                    f"SAbDab_get_summary returns database-wide statistics, not per-structure data. "
+                    f"To retrieve structure '{pdb}', use SAbDab_get_structure instead."
+                ),
+            }
         try:
             response = requests.get(
                 f"{SABDAB_BASE_URL}/stats/",

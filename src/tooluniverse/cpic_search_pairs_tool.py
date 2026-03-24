@@ -124,6 +124,7 @@ class CPICListGuidelinesTool(BaseTool):
 
     def run(self, arguments: Dict[str, Any]) -> Dict[str, Any]:
         gene = (arguments.get("gene") or arguments.get("gene_symbol") or "").upper()
+        drug = (arguments.get("drug") or arguments.get("drug_name") or "").lower()
 
         try:
             r = requests.get(
@@ -143,12 +144,21 @@ class CPICListGuidelinesTool(BaseTool):
                 if any(s.upper() == gene for s in (g.get("genes") or []))
             ]
 
+        # Client-side drug name filtering (Feature-123A-003)
+        if drug:
+            data = [
+                g
+                for g in data
+                if any(drug in str(d).lower() for d in (g.get("drugs") or []))
+            ]
+
         return {
             "status": "success",
             "data": data,
             "metadata": {
                 "total": len(data),
                 "gene_filter": gene or None,
+                "drug_filter": drug or None,
             },
         }
 

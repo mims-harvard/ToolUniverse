@@ -203,10 +203,10 @@ class GPCRdbTool(BaseTool):
         "lipid receptors": "001_007",
         "serotonin": "001_001_001",
         "5-hydroxytryptamine": "001_001_001",
-        "dopamine": "001_001_002",
+        "dopamine": "001_001_004",
         "adrenoceptor": "001_001_003",
         "adrenergic": "001_001_003",
-        "muscarinic": "001_001_004",
+        "muscarinic": "001_001_002",
         "histamine": "001_001_005",
         "beta-adrenergic": "001_001_003_008",
         "opioid": "001_003_015",
@@ -255,6 +255,11 @@ class GPCRdbTool(BaseTool):
             data = response.json()
 
             proteins = data if isinstance(data, list) else [data]
+
+            # Strip HTML entities and tags from name fields (Feature-123B-002)
+            for item in proteins:
+                if isinstance(item, dict) and isinstance(item.get("name"), str):
+                    item["name"] = html.unescape(_HTML_TAG_RE.sub("", item["name"]))
 
             note = None
             if family and len(proteins) == 0:

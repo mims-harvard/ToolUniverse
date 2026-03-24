@@ -622,8 +622,13 @@ class EuropePMCTool(BaseTool):
                 if source_db and article_id
                 else None
             )
-            fulltext_xml_url = self._build_fulltext_xml_url(
-                source_db=source_db, article_id=article_id, pmcid=pmcid
+            # Only generate fulltext XML URL for open-access articles (Feature-125A-004)
+            fulltext_xml_url = (
+                self._build_fulltext_xml_url(
+                    source_db=source_db, article_id=article_id, pmcid=pmcid
+                )
+                if open_access
+                else None
             )
 
             articles.append(

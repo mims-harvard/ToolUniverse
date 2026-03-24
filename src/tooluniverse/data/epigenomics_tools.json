@@ -1567,5 +1567,259 @@
       ],
       "estimated_execution_time": "< 5 seconds"
     }
+  },
+  {
+    "name": "GEO_search_rnaseq_datasets",
+    "type": "EpigenomicsTool",
+    "description": "Search NCBI GEO for RNA-seq gene expression datasets by query keyword, disease, tissue, or gene of interest. Returns dataset accessions (GSE IDs), titles, summaries, organism, and sample counts. Use this to find transcriptomics experiments relevant to a biological question. Covers bulk RNA-seq and total RNA-seq studies across all tissues and diseases.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "query": {
+          "type": ["string", "null"],
+          "description": "Search query (e.g., 'BRCA1 breast cancer', 'T cell activation', 'Alzheimer disease'). Leave empty to search broadly."
+        },
+        "organism": {
+          "type": "string",
+          "default": "Homo sapiens",
+          "description": "Organism scientific name (e.g., 'Homo sapiens', 'Mus musculus')."
+        },
+        "limit": {
+          "type": "integer",
+          "default": 20,
+          "minimum": 1,
+          "maximum": 100,
+          "description": "Maximum number of results to return (1-100)."
+        }
+      },
+      "additionalProperties": false
+    },
+    "fields": {
+      "endpoint": "geo_rnaseq_search"
+    },
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "object",
+          "properties": {
+            "status": {"type": "string"},
+            "data": {
+              "type": "object",
+              "properties": {
+                "total": {"type": "integer"},
+                "datasets": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "accession": {"type": "string"},
+                      "title": {"type": "string"},
+                      "summary": {"type": "string"},
+                      "organism": {"type": "string"},
+                      "n_samples": {"type": "integer"},
+                      "date_published": {"type": ["string", "null"]}
+                    }
+                  }
+                }
+              }
+            },
+            "metadata": {"type": "object"}
+          },
+          "required": ["status", "data"]
+        },
+        {
+          "type": "object",
+          "properties": {
+            "status": {"type": "string"},
+            "error": {"type": "string"}
+          },
+          "required": ["status", "error"]
+        }
+      ]
+    },
+    "test_examples": [
+      {"query": "breast cancer BRCA1", "organism": "Homo sapiens", "limit": 5},
+      {"query": "T cell activation", "limit": 5}
+    ],
+    "label": ["GEO", "RNA-seq", "Transcriptomics", "Gene Expression"],
+    "metadata": {
+      "tags": ["rna-seq", "transcriptomics", "gene-expression", "geo"],
+      "estimated_execution_time": "< 5 seconds"
+    }
+  },
+  {
+    "name": "GEO_search_atacseq_datasets",
+    "type": "EpigenomicsTool",
+    "description": "Search NCBI GEO for ATAC-seq chromatin accessibility datasets by query keyword, tissue, or cell type. Returns dataset accessions (GSE IDs), titles, summaries, organism, and sample counts. ATAC-seq measures open chromatin regions and is used to map regulatory elements, enhancers, and TF binding sites genome-wide.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "query": {
+          "type": ["string", "null"],
+          "description": "Search query (e.g., 'T cell differentiation', 'liver hepatocyte', 'hematopoiesis'). Leave empty to search broadly."
+        },
+        "organism": {
+          "type": "string",
+          "default": "Homo sapiens",
+          "description": "Organism scientific name (e.g., 'Homo sapiens', 'Mus musculus')."
+        },
+        "limit": {
+          "type": "integer",
+          "default": 20,
+          "minimum": 1,
+          "maximum": 100,
+          "description": "Maximum number of results to return (1-100)."
+        }
+      },
+      "additionalProperties": false
+    },
+    "fields": {
+      "endpoint": "geo_atacseq_search"
+    },
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "object",
+          "properties": {
+            "status": {"type": "string"},
+            "data": {
+              "type": "object",
+              "properties": {
+                "total": {"type": "integer"},
+                "datasets": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "accession": {"type": "string"},
+                      "title": {"type": "string"},
+                      "summary": {"type": "string"},
+                      "organism": {"type": "string"},
+                      "n_samples": {"type": "integer"},
+                      "date_published": {"type": ["string", "null"]}
+                    }
+                  }
+                }
+              }
+            },
+            "metadata": {"type": "object"}
+          },
+          "required": ["status", "data"]
+        },
+        {
+          "type": "object",
+          "properties": {
+            "status": {"type": "string"},
+            "error": {"type": "string"}
+          },
+          "required": ["status", "error"]
+        }
+      ]
+    },
+    "test_examples": [
+      {"query": "T cell differentiation", "organism": "Homo sapiens", "limit": 5},
+      {"query": "liver", "organism": "Mus musculus", "limit": 5}
+    ],
+    "label": ["GEO", "ATAC-seq", "Chromatin Accessibility", "Epigenomics"],
+    "metadata": {
+      "tags": ["atac-seq", "chromatin-accessibility", "open-chromatin", "epigenomics"],
+      "estimated_execution_time": "< 5 seconds"
+    }
+  },
+  {
+    "name": "ENCODE_search_rnaseq_experiments",
+    "type": "EpigenomicsTool",
+    "description": "Search ENCODE RNA-seq experiments by biosample (cell type or tissue), organism, and assay type (total RNA-seq, polyA plus RNA-seq, small RNA-seq, microRNA-seq). Returns experiment accessions, biosample summaries, lab names, and metadata from the ENCODE project. Use this to find ENCODE-curated RNA-seq data for specific cell lines or tissues.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "biosample_term_name": {
+          "type": ["string", "null"],
+          "description": "Biosample name from ENCODE ontology (e.g., 'K562', 'HepG2', 'GM12878', 'liver', 'brain'). Leave empty to search all biosamples."
+        },
+        "biosample": {
+          "type": ["string", "null"],
+          "description": "Alias for biosample_term_name. Cell type or tissue (e.g., 'K562', 'liver')."
+        },
+        "cell_type": {
+          "type": ["string", "null"],
+          "description": "Alias for biosample_term_name. Cell type (e.g., 'K562', 'HepG2', 'GM12878')."
+        },
+        "tissue": {
+          "type": ["string", "null"],
+          "description": "Alias for biosample_term_name. Tissue type (e.g., 'liver', 'brain', 'heart')."
+        },
+        "organism": {
+          "type": "string",
+          "default": "Homo sapiens",
+          "description": "Organism scientific name (e.g., 'Homo sapiens', 'Mus musculus')."
+        },
+        "assay_type": {
+          "type": "string",
+          "default": "total RNA-seq",
+          "description": "RNA-seq assay type: 'total RNA-seq' (default, all RNA), 'polyA plus RNA-seq' (mRNA), 'small RNA-seq', 'microRNA-seq'. Aliases: 'total', 'polya', 'mirna', 'small'."
+        },
+        "limit": {
+          "type": "integer",
+          "default": 25,
+          "minimum": 1,
+          "maximum": 100,
+          "description": "Maximum number of results to return (1-100)."
+        }
+      },
+      "additionalProperties": false
+    },
+    "fields": {
+      "endpoint": "encode_rnaseq"
+    },
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "object",
+          "properties": {
+            "status": {"type": "string"},
+            "data": {
+              "type": "object",
+              "properties": {
+                "total": {"type": "integer"},
+                "experiments": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "accession": {"type": "string"},
+                      "assay_title": {"type": "string"},
+                      "biosample_summary": {"type": "string"},
+                      "status": {"type": "string"},
+                      "lab": {"type": "string"},
+                      "date_released": {"type": ["string", "null"]}
+                    }
+                  }
+                }
+              }
+            },
+            "metadata": {"type": "object"}
+          },
+          "required": ["status", "data"]
+        },
+        {
+          "type": "object",
+          "properties": {
+            "status": {"type": "string"},
+            "error": {"type": "string"}
+          },
+          "required": ["status", "error"]
+        }
+      ]
+    },
+    "test_examples": [
+      {"biosample_term_name": "K562", "assay_type": "total RNA-seq", "limit": 3},
+      {"assay_type": "microRNA-seq", "organism": "Homo sapiens", "limit": 5}
+    ],
+    "label": ["ENCODE", "RNA-seq", "Transcriptomics", "Gene Expression"],
+    "metadata": {
+      "tags": ["rna-seq", "transcriptomics", "encode", "gene-expression"],
+      "estimated_execution_time": "< 5 seconds"
+    }
   }
 ]

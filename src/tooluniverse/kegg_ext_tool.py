@@ -1082,14 +1082,30 @@ class KEGGExtTool(BaseTool):
         The KEGG /link endpoint finds entries linked between databases,
         e.g., all pathways linked to a given gene, or all drugs for a disease.
         """
-        source = arguments.get("source", "")
-        target = arguments.get("target", "")
+        # Normalize parameter aliases
+        source = (
+            arguments.get("source")
+            or arguments.get("entry_id")
+            or arguments.get("source_db")
+            or ""
+        )
+        target = arguments.get("target") or arguments.get("target_db") or ""
         if not source or not target:
             return {
                 "status": "error",
                 "error": "Both source and target are required. "
                 "source: KEGG entry ID (e.g., 'hsa:7157'). "
-                "target: KEGG database name (e.g., 'pathway', 'disease', 'drug').",
+                "target: KEGG database name (e.g., 'pathway', 'disease', 'drug'). "
+                "Note: 'gene' is not a valid target — use organism codes like 'hsa' for human genes.",
+            }
+
+        # 'gene' is not a valid KEGG database for /link endpoint
+        if target.lower() == "gene":
+            return {
+                "status": "error",
+                "error": "target='gene' is not valid for KEGG /link. "
+                "Use an organism-specific database code instead, e.g., 'hsa' for human, 'mmu' for mouse. "
+                "Valid targets include: pathway, disease, drug, compound, hsa, mmu.",
             }
 
         url = f"{KEGG_BASE_URL}/link/{target}/{source}"
