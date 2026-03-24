@@ -22,7 +22,7 @@ class WikidataSPARQLTool(BaseTool):
         sparql = arguments.get("sparql")
         max_results = arguments.get("max_results")
         if not sparql:
-            return {"error": "`sparql` parameter is required."}
+            return {"status": "error", "error": "`sparql` parameter is required."}
         if max_results:
             # naive limit appending if not present
             if "limit" not in sparql.lower():

@@ -43,14 +43,20 @@ class WikiPathwaysExtTool(BaseTool):
         try:
             return self._query(arguments)
         except requests.exceptions.Timeout:
-            return {"error": f"WikiPathways API timed out after {self.timeout}s"}
+            return {
+                "status": "error",
+                "error": f"WikiPathways API timed out after {self.timeout}s",
+            }
         except requests.exceptions.ConnectionError:
-            return {"error": "Failed to connect to WikiPathways API"}
+            return {"status": "error", "error": "Failed to connect to WikiPathways API"}
         except requests.exceptions.HTTPError as e:
             code = e.response.status_code if e.response is not None else "unknown"
-            return {"error": f"WikiPathways API HTTP error: {code}"}
+            return {"status": "error", "error": f"WikiPathways API HTTP error: {code}"}
         except Exception as e:
-            return {"error": f"Unexpected error querying WikiPathways: {str(e)}"}
+            return {
+                "status": "error",
+                "error": f"Unexpected error querying WikiPathways: {str(e)}",
+            }
 
     def _query(self, arguments: Dict[str, Any]) -> Dict[str, Any]:
         """Route to appropriate endpoint."""
@@ -59,13 +65,16 @@ class WikiPathwaysExtTool(BaseTool):
         elif self.endpoint == "find_pathways_by_gene":
             return self._find_pathways_by_gene(arguments)
         else:
-            return {"error": f"Unknown endpoint: {self.endpoint}"}
+            return {"status": "error", "error": f"Unknown endpoint: {self.endpoint}"}
 
     def _get_pathway_genes(self, arguments: Dict[str, Any]) -> Dict[str, Any]:
         """Get all genes in a WikiPathways pathway."""
         pathway_id = arguments.get("pathway_id", "")
         if not pathway_id:
-            return {"error": "pathway_id parameter is required (e.g., 'WP254')"}
+            return {
+                "status": "error",
+                "error": "pathway_id parameter is required (e.g., 'WP254')",
+            }
 
         code = arguments.get("code", "H")
         id_type_name = CODE_TO_NAME.get(code, code)
@@ -102,7 +111,10 @@ class WikiPathwaysExtTool(BaseTool):
         """Find pathways containing a specific gene."""
         gene = arguments.get("gene", "")
         if not gene:
-            return {"error": "gene parameter is required (e.g., 'TP53', 'BRCA1')"}
+            return {
+                "status": "error",
+                "error": "gene parameter is required (e.g., 'TP53', 'BRCA1')",
+            }
 
         species = arguments.get("species", "Homo sapiens")
 

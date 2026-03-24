@@ -127,9 +127,9 @@ class BioGRIDRESTTool(BaseTool):
                 return {"data": response.text}
 
         except requests.exceptions.RequestException as e:
-            return {"error": f"Request failed: {str(e)}"}
+            return {"status": "error", "error": f"Request failed: {str(e)}"}
         except Exception as e:
-            return {"error": f"Unexpected error: {str(e)}"}
+            return {"status": "error", "error": f"Unexpected error: {str(e)}"}
 
     def run(self, arguments: Dict[str, Any]) -> Dict[str, Any]:
         """Execute the tool with given arguments."""

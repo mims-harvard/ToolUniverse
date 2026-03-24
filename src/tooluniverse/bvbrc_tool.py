@@ -51,9 +51,15 @@ class BVBRCTool(BaseTool):
                 "error": "Failed to connect to BV-BRC API. Check network connectivity."
             }
         except requests.exceptions.HTTPError as e:
-            return {"error": f"BV-BRC API HTTP error: {e.response.status_code}"}
+            return {
+                "status": "error",
+                "error": f"BV-BRC API HTTP error: {e.response.status_code}",
+            }
         except Exception as e:
-            return {"error": f"Unexpected error querying BV-BRC: {str(e)}"}
+            return {
+                "status": "error",
+                "error": f"Unexpected error querying BV-BRC: {str(e)}",
+            }
 
     def _query(self, arguments: Dict[str, Any]) -> Dict[str, Any]:
         """Route to appropriate query method."""
@@ -120,7 +126,7 @@ class BVBRCTool(BaseTool):
         """Get a specific genome by ID."""
         genome_id = arguments.get("genome_id", "")
         if not genome_id:
-            return {"error": "genome_id parameter is required"}
+            return {"status": "error", "error": "genome_id parameter is required"}
 
         select_fields = [
             "genome_id",
@@ -164,7 +170,7 @@ class BVBRCTool(BaseTool):
         """Search for genomes by keyword."""
         keyword = arguments.get("keyword", "")
         if not keyword:
-            return {"error": "keyword parameter is required"}
+            return {"status": "error", "error": "keyword parameter is required"}
 
         limit = min(arguments.get("limit") or 10, 100)
 
@@ -270,7 +276,10 @@ class BVBRCTool(BaseTool):
             conditions.append(f"eq(genome_id,{genome_id})")
 
         if not gene and not product and not genome_id:
-            return {"error": "At least one of gene, product, or genome_id is required"}
+            return {
+                "status": "error",
+                "error": "At least one of gene, product, or genome_id is required",
+            }
 
         limit = min(arguments.get("limit") or 10, 100)
 
@@ -471,7 +480,7 @@ class BVBRCTool(BaseTool):
         """Get a specific protein structure by PDB ID."""
         pdb_id = arguments.get("pdb_id", "")
         if not pdb_id:
-            return {"error": "pdb_id parameter is required"}
+            return {"status": "error", "error": "pdb_id parameter is required"}
 
         url = f"{BVBRC_BASE_URL}/protein_structure/{pdb_id}"
         headers = {"Accept": "application/json"}
@@ -506,7 +515,10 @@ class BVBRCTool(BaseTool):
             conditions.append(f"eq(method,{method})")
 
         if not conditions:
-            return {"error": "At least one of taxon_id, gene, or method is required"}
+            return {
+                "status": "error",
+                "error": "At least one of taxon_id, gene, or method is required",
+            }
 
         limit = min(arguments.get("limit") or 10, 100)
 
@@ -542,7 +554,7 @@ class BVBRCTool(BaseTool):
         """Get taxonomy details by taxon ID."""
         taxon_id = arguments.get("taxon_id", "")
         if not taxon_id:
-            return {"error": "taxon_id parameter is required"}
+            return {"status": "error", "error": "taxon_id parameter is required"}
 
         url = f"{BVBRC_BASE_URL}/taxonomy/{taxon_id}"
         headers = {"Accept": "application/json"}
@@ -565,7 +577,7 @@ class BVBRCTool(BaseTool):
         """Search pathogen taxonomy."""
         keyword = arguments.get("keyword", "")
         if not keyword:
-            return {"error": "keyword parameter is required"}
+            return {"status": "error", "error": "keyword parameter is required"}
 
         limit = min(arguments.get("limit") or 10, 100)
 

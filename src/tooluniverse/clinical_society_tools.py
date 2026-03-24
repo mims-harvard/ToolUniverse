@@ -212,11 +212,11 @@ class ADAStandardsTool(BaseTool):
                 return self._search(arguments)
             elif op == "get_section":
                 return self._get_section(arguments)
-            return {"error": f"Unknown operation: {op}"}
+            return {"status": "error", "error": f"Unknown operation: {op}"}
         except requests.exceptions.RequestException as e:
-            return {"error": f"Request failed: {e}"}
+            return {"status": "error", "error": f"Request failed: {e}"}
         except Exception as e:
-            return {"error": f"Error: {e}"}
+            return {"status": "error", "error": f"Error: {e}"}
 
     def _list_sections(self, arguments):
         """List all sections of the current ADA Standards of Care via PubMed."""
@@ -273,7 +273,7 @@ class ADAStandardsTool(BaseTool):
         query_text = arguments.get("query", "")
         limit = arguments.get("limit", 5)
         if not query_text:
-            return {"error": "query parameter is required"}
+            return {"status": "error", "error": "query parameter is required"}
 
         pubmed_query = (
             f'("American Diabetes Association"[Corporate Author]) AND ({query_text})'
@@ -284,14 +284,14 @@ class ADAStandardsTool(BaseTool):
         """Fetch content of a specific ADA Standards section via PMC."""
         pmid = arguments.get("pmid", "")
         if not pmid:
-            return {"error": "pmid parameter is required"}
+            return {"status": "error", "error": "pmid parameter is required"}
 
         pmid = str(pmid)
 
         # First get summary to find PMC ID
         summaries = _pubmed_summaries([pmid])
         if pmid not in summaries:
-            return {"error": f"PMID {pmid} not found"}
+            return {"status": "error", "error": f"PMID {pmid} not found"}
 
         summary = summaries[pmid]
         articleids = summary.get("articleids", [])
@@ -377,11 +377,11 @@ class AHAACCGuidelineTool(BaseTool):
                 return self._list_org(arguments, "American College of Cardiology")
             elif op == "get_guideline":
                 return self._get_guideline(arguments)
-            return {"error": f"Unknown operation: {op}"}
+            return {"status": "error", "error": f"Unknown operation: {op}"}
         except requests.exceptions.RequestException as e:
-            return {"error": f"Request failed: {e}"}
+            return {"status": "error", "error": f"Request failed: {e}"}
         except Exception as e:
-            return {"error": f"Error: {e}"}
+            return {"status": "error", "error": f"Error: {e}"}
 
     def _search(self, arguments):
         """Search AHA/ACC guidelines by topic."""
@@ -390,7 +390,7 @@ class AHAACCGuidelineTool(BaseTool):
         year_from = arguments.get("year_from")
 
         if not query_text:
-            return {"error": "query parameter is required"}
+            return {"status": "error", "error": "query parameter is required"}
 
         date_filter = ""
         if year_from:
@@ -410,11 +410,11 @@ class AHAACCGuidelineTool(BaseTool):
         """Fetch full text of an AHA/ACC guideline from PMC by PMID."""
         pmid = str(arguments.get("pmid", ""))
         if not pmid:
-            return {"error": "pmid parameter is required"}
+            return {"status": "error", "error": "pmid parameter is required"}
 
         summaries = _pubmed_summaries([pmid])
         if pmid not in summaries:
-            return {"error": f"PMID {pmid} not found in PubMed"}
+            return {"status": "error", "error": f"PMID {pmid} not found in PubMed"}
 
         summary = summaries[pmid]
         articleids = summary.get("articleids", [])
@@ -520,11 +520,11 @@ class NCCNGuidelineTool(BaseTool):
                 return self._search(arguments)
             elif op == "get_patient":
                 return self._get_patient_guideline(arguments)
-            return {"error": f"Unknown operation: {op}"}
+            return {"status": "error", "error": f"Unknown operation: {op}"}
         except requests.exceptions.RequestException as e:
-            return {"error": f"Request failed: {e}"}
+            return {"status": "error", "error": f"Request failed: {e}"}
         except Exception as e:
-            return {"error": f"Error: {e}"}
+            return {"status": "error", "error": f"Error: {e}"}
 
     def _list_patient_guidelines(self, arguments):
         """List all NCCN Guidelines for Patients from nccn.org."""
@@ -596,7 +596,7 @@ class NCCNGuidelineTool(BaseTool):
         query_text = arguments.get("query", "")
         limit = arguments.get("limit", 5)
         if not query_text:
-            return {"error": "query parameter is required"}
+            return {"status": "error", "error": "query parameter is required"}
 
         pubmed_query = (
             f'("National Comprehensive Cancer Network"[Corporate Author] '
@@ -609,13 +609,16 @@ class NCCNGuidelineTool(BaseTool):
         and extracts text directly from the PDF using pdfplumber."""
         url = arguments.get("url", "")
         if not url:
-            return {"error": "url parameter is required"}
+            return {"status": "error", "error": "url parameter is required"}
         if "nccn.org" not in url:
-            return {"error": "URL must be an nccn.org URL"}
+            return {"status": "error", "error": "URL must be an nccn.org URL"}
 
         # Rewrite old-style content/english URLs to the current patientresources path
         if "patientGuidelineId" not in url and "patientresources" not in url:
-            return {"error": "URL should come from NCCN_list_patient_guidelines"}
+            return {
+                "status": "error",
+                "error": "URL should come from NCCN_list_patient_guidelines",
+            }
 
         time.sleep(1)
         resp = self.session.get(url, timeout=30)

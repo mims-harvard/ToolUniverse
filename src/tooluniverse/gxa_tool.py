@@ -37,18 +37,30 @@ class GxATool(BaseTool):
         try:
             return self._query(arguments)
         except requests.exceptions.Timeout:
-            return {"error": f"Expression Atlas API timed out after {self.timeout}s"}
+            return {
+                "status": "error",
+                "error": f"Expression Atlas API timed out after {self.timeout}s",
+            }
         except requests.exceptions.ConnectionError:
-            return {"error": "Failed to connect to Expression Atlas API"}
+            return {
+                "status": "error",
+                "error": "Failed to connect to Expression Atlas API",
+            }
         except requests.exceptions.HTTPError as e:
             code = e.response.status_code if e.response is not None else "unknown"
             if code == 404:
                 return {
                     "error": f"Experiment not found: {arguments.get('experiment_accession', '')}"
                 }
-            return {"error": f"Expression Atlas API HTTP error: {code}"}
+            return {
+                "status": "error",
+                "error": f"Expression Atlas API HTTP error: {code}",
+            }
         except Exception as e:
-            return {"error": f"Unexpected error querying Expression Atlas: {str(e)}"}
+            return {
+                "status": "error",
+                "error": f"Unexpected error querying Expression Atlas: {str(e)}",
+            }
 
     def _query(self, arguments: Dict[str, Any]) -> Dict[str, Any]:
         """Route to appropriate endpoint."""
@@ -59,7 +71,7 @@ class GxATool(BaseTool):
         elif self.endpoint == "get_experiment_info":
             return self._get_experiment_info(arguments)
         else:
-            return {"error": f"Unknown endpoint: {self.endpoint}"}
+            return {"status": "error", "error": f"Unknown endpoint: {self.endpoint}"}
 
     def _list_experiments(self, arguments: Dict[str, Any]) -> Dict[str, Any]:
         """List/search gene expression experiments."""
@@ -133,7 +145,10 @@ class GxATool(BaseTool):
         """Get gene expression data for a specific experiment."""
         accession = arguments.get("experiment_accession", "")
         if not accession:
-            return {"error": "experiment_accession is required (e.g., 'E-MTAB-2836')"}
+            return {
+                "status": "error",
+                "error": "experiment_accession is required (e.g., 'E-MTAB-2836')",
+            }
 
         gene_id = arguments.get("gene_id", "")
 
@@ -219,7 +234,10 @@ class GxATool(BaseTool):
         """Get experiment metadata and factor information."""
         accession = arguments.get("experiment_accession", "")
         if not accession:
-            return {"error": "experiment_accession is required (e.g., 'E-MTAB-2836')"}
+            return {
+                "status": "error",
+                "error": "experiment_accession is required (e.g., 'E-MTAB-2836')",
+            }
 
         url = f"{GXA_BASE_URL}/experiments/{accession}"
         response = requests.get(url, timeout=self.timeout)

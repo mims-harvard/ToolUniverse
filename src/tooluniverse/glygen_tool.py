@@ -51,9 +51,15 @@ class GlyGenTool(BaseTool):
                 "error": "Failed to connect to GlyGen API. Check network connectivity."
             }
         except requests.exceptions.HTTPError as e:
-            return {"error": f"GlyGen API HTTP error: {e.response.status_code}"}
+            return {
+                "status": "error",
+                "error": f"GlyGen API HTTP error: {e.response.status_code}",
+            }
         except Exception as e:
-            return {"error": f"Unexpected error querying GlyGen: {str(e)}"}
+            return {
+                "status": "error",
+                "error": f"Unexpected error querying GlyGen: {str(e)}",
+            }
 
     def _dispatch(self, arguments: Dict[str, Any]) -> Dict[str, Any]:
         """Route to appropriate endpoint based on config."""
@@ -76,7 +82,7 @@ class GlyGenTool(BaseTool):
         """Get detailed information about a specific glycan by GlyTouCan accession."""
         glytoucan_ac = arguments.get("glytoucan_ac", "")
         if not glytoucan_ac:
-            return {"error": "glytoucan_ac parameter is required"}
+            return {"status": "error", "error": "glytoucan_ac parameter is required"}
 
         url = f"{GLYGEN_BASE_URL}/glycan/detail/{glytoucan_ac}/"
         response = requests.post(
@@ -221,7 +227,7 @@ class GlyGenTool(BaseTool):
         """Get glycoprotein details including glycosylation sites."""
         uniprot_ac = arguments.get("uniprot_ac", "")
         if not uniprot_ac:
-            return {"error": "uniprot_ac parameter is required"}
+            return {"status": "error", "error": "uniprot_ac parameter is required"}
 
         url = f"{GLYGEN_BASE_URL}/protein/detail/{uniprot_ac}/"
         response = requests.post(

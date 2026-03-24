@@ -360,4 +360,4 @@ class ProteinsPlusRESTTool(AsyncPollingTool):
                 "detail": "Request timed out after 60 seconds",
             }
         except Exception as e:
-            return {"error": "Request failed", "detail": str(e)}
+            return {"status": "error", "error": "Request failed", "detail": str(e)}

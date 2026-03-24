@@ -48,7 +48,7 @@ class ArXivTool(BaseTool):
         date_to = arguments.get("date_to")
 
         if not query:
-            return {"error": "`query` parameter is required."}
+            return {"status": "error", "error": "`query` parameter is required."}
 
         if limit <= 0:
             return []

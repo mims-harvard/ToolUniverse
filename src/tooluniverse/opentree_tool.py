@@ -45,13 +45,25 @@ class OpenTreeTool(BaseTool):
         try:
             return self._query(arguments)
         except requests.exceptions.Timeout:
-            return {"error": f"Open Tree API request timed out after {self.timeout}s"}
+            return {
+                "status": "error",
+                "error": f"Open Tree API request timed out after {self.timeout}s",
+            }
         except requests.exceptions.ConnectionError:
-            return {"error": "Failed to connect to Open Tree of Life API"}
+            return {
+                "status": "error",
+                "error": "Failed to connect to Open Tree of Life API",
+            }
         except requests.exceptions.HTTPError as e:
-            return {"error": f"Open Tree API HTTP error: {e.response.status_code}"}
+            return {
+                "status": "error",
+                "error": f"Open Tree API HTTP error: {e.response.status_code}",
+            }
         except Exception as e:
-            return {"error": f"Unexpected error querying Open Tree: {str(e)}"}
+            return {
+                "status": "error",
+                "error": f"Unexpected error querying Open Tree: {str(e)}",
+            }
 
     def _query(self, arguments: Dict[str, Any]) -> Dict[str, Any]:
         """Route to appropriate Open Tree endpoint."""
@@ -64,13 +76,13 @@ class OpenTreeTool(BaseTool):
         elif self.endpoint == "induced_subtree":
             return self._get_induced_subtree(arguments)
         else:
-            return {"error": f"Unknown endpoint: {self.endpoint}"}
+            return {"status": "error", "error": f"Unknown endpoint: {self.endpoint}"}
 
     def _match_names(self, arguments: Dict[str, Any]) -> Dict[str, Any]:
         """Resolve species names to OTT IDs via TNRS."""
         names_str = arguments.get("names", "")
         if not names_str:
-            return {"error": "names parameter is required"}
+            return {"status": "error", "error": "names parameter is required"}
 
         names = [n.strip() for n in names_str.split(",") if n.strip()]
 
@@ -123,7 +135,7 @@ class OpenTreeTool(BaseTool):
         """Get taxonomy info for an OTT ID."""
         ott_id = arguments.get("ott_id")
         if ott_id is None:
-            return {"error": "ott_id parameter is required"}
+            return {"status": "error", "error": "ott_id parameter is required"}
 
         url = f"{OPENTREE_BASE_URL}/taxonomy/taxon_info"
         payload = {"ott_id": int(ott_id)}
@@ -152,11 +164,14 @@ class OpenTreeTool(BaseTool):
         """Find Most Recent Common Ancestor of given OTT IDs."""
         ott_ids_str = arguments.get("ott_ids", "")
         if not ott_ids_str:
-            return {"error": "ott_ids parameter is required (comma-separated)"}
+            return {
+                "status": "error",
+                "error": "ott_ids parameter is required (comma-separated)",
+            }
 
         ott_ids = [int(x.strip()) for x in ott_ids_str.split(",") if x.strip()]
         if len(ott_ids) < 2:
-            return {"error": "At least 2 OTT IDs are required"}
+            return {"status": "error", "error": "At least 2 OTT IDs are required"}
 
         url = f"{OPENTREE_BASE_URL}/tree_of_life/mrca"
         payload = {"ott_ids": ott_ids}
@@ -185,11 +200,14 @@ class OpenTreeTool(BaseTool):
         """Get Newick subtree for a set of OTT IDs."""
         ott_ids_str = arguments.get("ott_ids", "")
         if not ott_ids_str:
-            return {"error": "ott_ids parameter is required (comma-separated)"}
+            return {
+                "status": "error",
+                "error": "ott_ids parameter is required (comma-separated)",
+            }
 
         ott_ids = [int(x.strip()) for x in ott_ids_str.split(",") if x.strip()]
         if len(ott_ids) < 2:
-            return {"error": "At least 2 OTT IDs are required"}
+            return {"status": "error", "error": "At least 2 OTT IDs are required"}
 
         url = f"{OPENTREE_BASE_URL}/tree_of_life/induced_subtree"
         payload = {"ott_ids": ott_ids}

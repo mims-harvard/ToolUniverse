@@ -55,7 +55,10 @@ class ProteomeXchangeTool(BaseTool):
                 "error": f"ProteomeXchange API HTTP error: {e.response.status_code}"
             }
         except Exception as e:
-            return {"error": f"Unexpected error querying ProteomeXchange: {str(e)}"}
+            return {
+                "status": "error",
+                "error": f"Unexpected error querying ProteomeXchange: {str(e)}",
+            }
 
     def _dispatch(self, arguments: Dict[str, Any]) -> Dict[str, Any]:
         """Route to appropriate endpoint based on config."""
@@ -64,7 +67,10 @@ class ProteomeXchangeTool(BaseTool):
         elif self.endpoint_type == "search_datasets":
             return self._search_datasets(arguments)
         else:
-            return {"error": f"Unknown endpoint_type: {self.endpoint_type}"}
+            return {
+                "status": "error",
+                "error": f"Unknown endpoint_type: {self.endpoint_type}",
+            }
 
     def _extract_cv_value(self, terms, accession_prefix=None, name_match=None):
         """Extract a value from CV terms list."""
@@ -85,7 +91,10 @@ class ProteomeXchangeTool(BaseTool):
         """Get a ProteomeXchange dataset by PX identifier."""
         px_id = arguments.get("px_id", "")
         if not px_id:
-            return {"error": "px_id parameter is required (e.g., 'PXD000001')"}
+            return {
+                "status": "error",
+                "error": "px_id parameter is required (e.g., 'PXD000001')",
+            }
 
         url = f"{PX_BASE_URL}/GetDataset"
         params = {"ID": px_id, "outputMode": "JSON"}

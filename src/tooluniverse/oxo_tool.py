@@ -37,14 +37,20 @@ class OxOTool(BaseTool):
         try:
             return self._query(arguments)
         except requests.exceptions.Timeout:
-            return {"error": f"OxO API timed out after {self.timeout}s"}
+            return {
+                "status": "error",
+                "error": f"OxO API timed out after {self.timeout}s",
+            }
         except requests.exceptions.ConnectionError:
-            return {"error": "Failed to connect to EBI OxO API"}
+            return {"status": "error", "error": "Failed to connect to EBI OxO API"}
         except requests.exceptions.HTTPError as e:
             code = e.response.status_code if e.response is not None else "unknown"
-            return {"error": f"OxO API HTTP error: {code}"}
+            return {"status": "error", "error": f"OxO API HTTP error: {code}"}
         except Exception as e:
-            return {"error": f"Unexpected error querying OxO API: {str(e)}"}
+            return {
+                "status": "error",
+                "error": f"Unexpected error querying OxO API: {str(e)}",
+            }
 
     def _query(self, arguments: Dict[str, Any]) -> Dict[str, Any]:
         """Route to appropriate endpoint."""
@@ -53,13 +59,16 @@ class OxOTool(BaseTool):
         elif self.endpoint == "search_mappings":
             return self._search_mappings(arguments)
         else:
-            return {"error": f"Unknown endpoint: {self.endpoint}"}
+            return {"status": "error", "error": f"Unknown endpoint: {self.endpoint}"}
 
     def _get_mappings(self, arguments: Dict[str, Any]) -> Dict[str, Any]:
         """Get cross-reference mappings for a single ontology term."""
         term_id = arguments.get("term_id", "")
         if not term_id:
-            return {"error": "term_id parameter is required (e.g., 'HP:0001250')"}
+            return {
+                "status": "error",
+                "error": "term_id parameter is required (e.g., 'HP:0001250')",
+            }
 
         distance = min(arguments.get("distance", 1), 3)
         size = min(arguments.get("size", 20), 100)
@@ -128,7 +137,10 @@ class OxOTool(BaseTool):
         """Search mappings for multiple terms at once."""
         term_ids_str = arguments.get("term_ids", "")
         if not term_ids_str:
-            return {"error": "term_ids parameter is required (comma-separated list)"}
+            return {
+                "status": "error",
+                "error": "term_ids parameter is required (comma-separated list)",
+            }
 
         term_ids = [t.strip() for t in term_ids_str.split(",") if t.strip()]
         distance = min(arguments.get("distance", 1), 3)

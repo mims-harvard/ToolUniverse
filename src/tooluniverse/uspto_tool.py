@@ -137,7 +137,10 @@ class USPTOOpenDataPortalTool(BaseTool):
         """
         endpoint = self.tool_config.get("api_endpoint")
         if not endpoint:
-            return {"error": "API endpoint not found in tool configuration."}
+            return {
+                "status": "error",
+                "error": "API endpoint not found in tool configuration.",
+            }
 
         path_params = re.findall(r"\{(\w+)\}", endpoint)
         query_params = {}

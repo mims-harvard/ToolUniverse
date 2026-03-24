@@ -40,13 +40,22 @@ class OrthoDBTool(BaseTool):
         try:
             return self._query(arguments)
         except requests.exceptions.Timeout:
-            return {"error": f"OrthoDB API timed out after {self.timeout}s"}
+            return {
+                "status": "error",
+                "error": f"OrthoDB API timed out after {self.timeout}s",
+            }
         except requests.exceptions.ConnectionError:
-            return {"error": "Failed to connect to OrthoDB API"}
+            return {"status": "error", "error": "Failed to connect to OrthoDB API"}
         except requests.exceptions.HTTPError as e:
-            return {"error": f"OrthoDB API HTTP error: {e.response.status_code}"}
+            return {
+                "status": "error",
+                "error": f"OrthoDB API HTTP error: {e.response.status_code}",
+            }
         except Exception as e:
-            return {"error": f"Unexpected error querying OrthoDB API: {str(e)}"}
+            return {
+                "status": "error",
+                "error": f"Unexpected error querying OrthoDB API: {str(e)}",
+            }
 
     def _query(self, arguments: Dict[str, Any]) -> Dict[str, Any]:
         """Route to appropriate endpoint."""
@@ -57,13 +66,16 @@ class OrthoDBTool(BaseTool):
         elif self.endpoint == "orthologs":
             return self._get_orthologs(arguments)
         else:
-            return {"error": f"Unknown endpoint: {self.endpoint}"}
+            return {"status": "error", "error": f"Unknown endpoint: {self.endpoint}"}
 
     def _search(self, arguments: Dict[str, Any]) -> Dict[str, Any]:
         """Search for orthologous groups by gene/protein name."""
         query = arguments.get("query", "")
         if not query:
-            return {"error": "query parameter is required (gene name, e.g., 'BRCA1')"}
+            return {
+                "status": "error",
+                "error": "query parameter is required (gene name, e.g., 'BRCA1')",
+            }
         species = arguments.get("species")
         level = arguments.get("level")
         limit = arguments.get("limit", 10)
@@ -122,7 +134,10 @@ class OrthoDBTool(BaseTool):
         """Get detailed information about an orthologous group."""
         group_id = arguments.get("group_id", "")
         if not group_id:
-            return {"error": "group_id parameter is required (e.g., '727649at7742')"}
+            return {
+                "status": "error",
+                "error": "group_id parameter is required (e.g., '727649at7742')",
+            }
 
         url = f"{ORTHODB_BASE_URL}/group"
         params = {"id": group_id}
@@ -132,7 +147,7 @@ class OrthoDBTool(BaseTool):
 
         group_data = data.get("data", {})
         if not group_data:
-            return {"error": f"No data found for group {group_id}"}
+            return {"status": "error", "error": f"No data found for group {group_id}"}
 
         # Extract GO terms
         go_terms = []
@@ -188,7 +203,10 @@ class OrthoDBTool(BaseTool):
         """Get orthologous genes in specific species from a group."""
         group_id = arguments.get("group_id", "")
         if not group_id:
-            return {"error": "group_id parameter is required (e.g., '727649at7742')"}
+            return {
+                "status": "error",
+                "error": "group_id parameter is required (e.g., '727649at7742')",
+            }
         species = arguments.get("species")
 
         # Use tab endpoint which gives structured gene list
@@ -202,7 +220,10 @@ class OrthoDBTool(BaseTool):
 
         lines = response.text.strip().split("\n")
         if len(lines) < 2:
-            return {"error": f"No ortholog data found for group {group_id}"}
+            return {
+                "status": "error",
+                "error": f"No ortholog data found for group {group_id}",
+            }
 
         # Parse header
         lines[0].split("\t")

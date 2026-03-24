@@ -144,14 +144,17 @@ class miRNASearchTool(BaseTool):
             }
 
         except requests.exceptions.Timeout:
-            return {"error": f"EBI Search API timed out after {self.timeout}s"}
+            return {
+                "status": "error",
+                "error": f"EBI Search API timed out after {self.timeout}s",
+            }
         except requests.exceptions.ConnectionError:
-            return {"error": "Failed to connect to EBI Search API"}
+            return {"status": "error", "error": "Failed to connect to EBI Search API"}
         except requests.exceptions.HTTPError as e:
             code = e.response.status_code if e.response is not None else "unknown"
-            return {"error": f"EBI Search API HTTP error: {code}"}
+            return {"status": "error", "error": f"EBI Search API HTTP error: {code}"}
         except Exception as e:
-            return {"error": f"miRNA search failed: {str(e)}"}
+            return {"status": "error", "error": f"miRNA search failed: {str(e)}"}
 
 
 class miRNAGetTool(BaseTool):
@@ -177,21 +180,24 @@ class miRNAGetTool(BaseTool):
             elif endpoint == "get_xrefs":
                 return self._get_xrefs(arguments)
             else:
-                return {"error": f"Unknown endpoint: {endpoint}"}
+                return {"status": "error", "error": f"Unknown endpoint: {endpoint}"}
 
         except requests.exceptions.Timeout:
-            return {"error": f"RNAcentral API timed out after {self.timeout}s"}
+            return {
+                "status": "error",
+                "error": f"RNAcentral API timed out after {self.timeout}s",
+            }
         except requests.exceptions.ConnectionError:
-            return {"error": "Failed to connect to RNAcentral API"}
+            return {"status": "error", "error": "Failed to connect to RNAcentral API"}
         except requests.exceptions.HTTPError as e:
             code = e.response.status_code if e.response is not None else "unknown"
             if code == 404:
                 return {
                     "error": f"RNA entry not found: {arguments.get('rnacentral_id', '')}"
                 }
-            return {"error": f"RNAcentral API HTTP error: {code}"}
+            return {"status": "error", "error": f"RNAcentral API HTTP error: {code}"}
         except Exception as e:
-            return {"error": f"RNAcentral query failed: {str(e)}"}
+            return {"status": "error", "error": f"RNAcentral query failed: {str(e)}"}
 
     def _get_rna(self, arguments: Dict[str, Any]) -> Dict[str, Any]:
         """Get RNA entry details including sequence."""

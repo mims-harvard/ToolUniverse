@@ -509,7 +509,7 @@ class ChEMBLTool(BaseTool):
         max_results = arguments.get("max_results", 20)
 
         if not query:
-            return {"error": "`query` parameter is required."}
+            return {"status": "error", "error": "`query` parameter is required."}
         return self._search_similar_molecules(query, similarity_threshold, max_results)
 
     def get_chembl_id_by_name(self, compound_name):
@@ -523,9 +523,15 @@ class ChEMBLTool(BaseTool):
         response.raise_for_status()
         results = response.json().get("molecules", [])
         if not results or not isinstance(results, list):
-            return {"error": "No valid results found for the compound name."}
+            return {
+                "status": "error",
+                "error": "No valid results found for the compound name.",
+            }
         if not results:
-            return {"error": "No results found for the compound name."}
+            return {
+                "status": "error",
+                "error": "No results found for the compound name.",
+            }
         top_molecules = results[:3]  # Get the top 3 results
         chembl_ids = [
             molecule.get("molecule_chembl_id")
@@ -533,7 +539,10 @@ class ChEMBLTool(BaseTool):
             if molecule.get("molecule_chembl_id")
         ]
         if not chembl_ids:
-            return {"error": "No ChEMBL IDs found for the compound name."}
+            return {
+                "status": "error",
+                "error": "No ChEMBL IDs found for the compound name.",
+            }
         return {"chembl_ids": chembl_ids}
 
     def get_smiles_pref_name_by_chembl_id(self, query):
@@ -547,7 +556,10 @@ class ChEMBLTool(BaseTool):
             response.raise_for_status()
             molecule = response.json()
             if not molecule or not isinstance(molecule, dict):
-                return {"error": "No valid molecule found for the given ChEMBL ID."}
+                return {
+                    "status": "error",
+                    "error": "No valid molecule found for the given ChEMBL ID.",
+                }
             molecule_structures = molecule.get("molecule_structures")
             if not molecule_structures or not isinstance(molecule_structures, dict):
                 return {
@@ -556,7 +568,10 @@ class ChEMBLTool(BaseTool):
             smiles = molecule_structures.get("canonical_smiles")
             pref_name = molecule.get("pref_name")
             if not smiles:
-                return {"error": "SMILES not found for the given ChEMBL ID."}
+                return {
+                    "status": "error",
+                    "error": "SMILES not found for the given ChEMBL ID.",
+                }
             return {"smiles": smiles, "pref_name": pref_name}
         else:
             return None
@@ -571,7 +586,10 @@ class ChEMBLTool(BaseTool):
         response.raise_for_status()
         results = response.json().get("molecules", [])
         if not results or not isinstance(results, list):
-            return {"error": "No valid results found for the compound name."}
+            return {
+                "status": "error",
+                "error": "No valid results found for the compound name.",
+            }
         top_molecules = results[:5]
         output = []
         molecules_without_smiles = []
@@ -645,7 +663,7 @@ class ChEMBLTool(BaseTool):
                         f"For searching similar small molecules, consider using: "
                         f"PubChem_search_compounds_by_similarity (requires SMILES input)."
                     )
-            return {"error": error_msg}
+            return {"status": "error", "error": error_msg}
         return output
 
     def _search_similar_molecules(self, query, similarity_threshold, max_results):
@@ -738,7 +756,10 @@ class ChEMBLTool(BaseTool):
             chembl_id = info.get("chembl_id")
             mol = self.indigo.loadMolecule(smiles)
             if mol is None:
-                return {"error": "Failed to load molecule with Indigo."}
+                return {
+                    "status": "error",
+                    "error": "Failed to load molecule with Indigo.",
+                }
 
             encoded_smiles = quote(smiles)
             similarity_url = f"{self.base_url}/similarity/{encoded_smiles}/{similarity_threshold}.json?limit={max_results}"

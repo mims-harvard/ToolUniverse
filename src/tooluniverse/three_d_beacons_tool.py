@@ -41,18 +41,24 @@ class ThreeDBeaconsTool(BaseTool):
         try:
             return self._query(arguments)
         except requests.exceptions.Timeout:
-            return {"error": f"3D Beacons API timed out after {self.timeout}s"}
+            return {
+                "status": "error",
+                "error": f"3D Beacons API timed out after {self.timeout}s",
+            }
         except requests.exceptions.ConnectionError:
-            return {"error": "Failed to connect to 3D Beacons API"}
+            return {"status": "error", "error": "Failed to connect to 3D Beacons API"}
         except requests.exceptions.HTTPError as e:
             code = e.response.status_code if e.response is not None else "unknown"
             if code == 404:
                 return {
                     "error": f"No structures found for protein: {arguments.get('accession', '')}"
                 }
-            return {"error": f"3D Beacons API HTTP error: {code}"}
+            return {"status": "error", "error": f"3D Beacons API HTTP error: {code}"}
         except Exception as e:
-            return {"error": f"Unexpected error querying 3D Beacons API: {str(e)}"}
+            return {
+                "status": "error",
+                "error": f"Unexpected error querying 3D Beacons API: {str(e)}",
+            }
 
     def _query(self, arguments: Dict[str, Any]) -> Dict[str, Any]:
         """Route to appropriate endpoint."""
@@ -61,7 +67,7 @@ class ThreeDBeaconsTool(BaseTool):
         elif self.endpoint == "structures":
             return self._get_structures(arguments)
         else:
-            return {"error": f"Unknown endpoint: {self.endpoint}"}
+            return {"status": "error", "error": f"Unknown endpoint: {self.endpoint}"}
 
     def _get_structure_summary(self, arguments: Dict[str, Any]) -> Dict[str, Any]:
         """Get summary of all 3D structures/models for a UniProt protein."""

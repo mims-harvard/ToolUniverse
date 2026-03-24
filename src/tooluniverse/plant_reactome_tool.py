@@ -51,9 +51,15 @@ class PlantReactomeTool(BaseTool):
                 "error": "Failed to connect to Plant Reactome API. Check network connectivity."
             }
         except requests.exceptions.HTTPError as e:
-            return {"error": f"Plant Reactome API HTTP error: {e.response.status_code}"}
+            return {
+                "status": "error",
+                "error": f"Plant Reactome API HTTP error: {e.response.status_code}",
+            }
         except Exception as e:
-            return {"error": f"Unexpected error querying Plant Reactome: {str(e)}"}
+            return {
+                "status": "error",
+                "error": f"Unexpected error querying Plant Reactome: {str(e)}",
+            }
 
     def _query(self, arguments: Dict[str, Any]) -> Dict[str, Any]:
         """Route to appropriate query method."""
@@ -64,13 +70,13 @@ class PlantReactomeTool(BaseTool):
         elif self.action == "list_species":
             return self._list_species(arguments)
         else:
-            return {"error": f"Unknown action: {self.action}"}
+            return {"status": "error", "error": f"Unknown action: {self.action}"}
 
     def _search(self, arguments: Dict[str, Any]) -> Dict[str, Any]:
         """Search for plant pathways."""
         query = arguments.get("query", "")
         if not query:
-            return {"error": "query parameter is required"}
+            return {"status": "error", "error": "query parameter is required"}
 
         species = arguments.get("species")
 
@@ -116,7 +122,7 @@ class PlantReactomeTool(BaseTool):
         """Get detailed pathway information."""
         pathway_id = arguments.get("pathway_id", "")
         if not pathway_id:
-            return {"error": "pathway_id parameter is required"}
+            return {"status": "error", "error": "pathway_id parameter is required"}
 
         url = f"{PLANT_REACTOME_BASE_URL}/data/query/{pathway_id}"
         response = requests.get(url, timeout=self.timeout)

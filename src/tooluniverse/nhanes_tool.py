@@ -141,4 +141,4 @@ class NHANESTool(BaseTool):
         elif self.endpoint == "search":
             return self._search_datasets(arguments)
         else:
-            return {"error": f"Unknown endpoint: {self.endpoint}"}
+            return {"status": "error", "error": f"Unknown endpoint: {self.endpoint}"}

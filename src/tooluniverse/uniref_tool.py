@@ -41,13 +41,19 @@ class UniRefTool(BaseTool):
         try:
             return self._query(arguments)
         except requests.exceptions.Timeout:
-            return {"error": f"UniRef API timed out after {self.timeout}s"}
+            return {
+                "status": "error",
+                "error": f"UniRef API timed out after {self.timeout}s",
+            }
         except requests.exceptions.ConnectionError:
-            return {"error": "Failed to connect to UniRef API"}
+            return {"status": "error", "error": "Failed to connect to UniRef API"}
         except requests.exceptions.HTTPError as e:
-            return {"error": f"UniRef API HTTP error: {e.response.status_code}"}
+            return {
+                "status": "error",
+                "error": f"UniRef API HTTP error: {e.response.status_code}",
+            }
         except Exception as e:
-            return {"error": f"Unexpected error: {str(e)}"}
+            return {"status": "error", "error": f"Unexpected error: {str(e)}"}
 
     def _query(self, arguments: Dict[str, Any]) -> Dict[str, Any]:
         """Route to appropriate endpoint."""
@@ -56,7 +62,7 @@ class UniRefTool(BaseTool):
         elif self.endpoint == "search_clusters":
             return self._search_clusters(arguments)
         else:
-            return {"error": f"Unknown endpoint: {self.endpoint}"}
+            return {"status": "error", "error": f"Unknown endpoint: {self.endpoint}"}
 
     def _get_cluster(self, arguments: Dict[str, Any]) -> Dict[str, Any]:
         """Get UniRef cluster details by cluster ID."""

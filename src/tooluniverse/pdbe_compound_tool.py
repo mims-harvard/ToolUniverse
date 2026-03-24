@@ -42,18 +42,24 @@ class PDBECompoundTool(BaseTool):
         try:
             return self._query(arguments)
         except requests.exceptions.Timeout:
-            return {"error": f"PDBe Compound API timed out after {self.timeout}s"}
+            return {
+                "status": "error",
+                "error": f"PDBe Compound API timed out after {self.timeout}s",
+            }
         except requests.exceptions.ConnectionError:
-            return {"error": "Failed to connect to PDBe Compound API"}
+            return {
+                "status": "error",
+                "error": "Failed to connect to PDBe Compound API",
+            }
         except requests.exceptions.HTTPError as e:
             status = e.response.status_code if e.response is not None else "unknown"
             if status == 404:
                 return {
                     "error": "Compound not found in PDBe. Check the 3-letter compound code (e.g., ATP, HEM, NAG)."
                 }
-            return {"error": f"PDBe Compound API HTTP {status}"}
+            return {"status": "error", "error": f"PDBe Compound API HTTP {status}"}
         except Exception as e:
-            return {"error": f"Unexpected error: {str(e)}"}
+            return {"status": "error", "error": f"Unexpected error: {str(e)}"}
 
     def _query(self, arguments: Dict[str, Any]) -> Dict[str, Any]:
         """Route to appropriate endpoint."""
@@ -62,7 +68,7 @@ class PDBECompoundTool(BaseTool):
         elif self.endpoint == "get_structures":
             return self._get_structures(arguments)
         else:
-            return {"error": f"Unknown endpoint: {self.endpoint}"}
+            return {"status": "error", "error": f"Unknown endpoint: {self.endpoint}"}
 
     def _get_summary(self, arguments: Dict[str, Any]) -> Dict[str, Any]:
         """Get detailed compound summary from PDBe."""
@@ -79,11 +85,14 @@ class PDBECompoundTool(BaseTool):
         data = response.json()
 
         if comp_id not in data:
-            return {"error": f"Compound '{comp_id}' not found in PDBe."}
+            return {
+                "status": "error",
+                "error": f"Compound '{comp_id}' not found in PDBe.",
+            }
 
         compound_list = data[comp_id]
         if not compound_list:
-            return {"error": f"No data for compound '{comp_id}'."}
+            return {"status": "error", "error": f"No data for compound '{comp_id}'."}
 
         compound = compound_list[0]
 
@@ -155,11 +164,14 @@ class PDBECompoundTool(BaseTool):
         data = response.json()
 
         if comp_id not in data:
-            return {"error": f"Compound '{comp_id}' not found in PDBe."}
+            return {
+                "status": "error",
+                "error": f"Compound '{comp_id}' not found in PDBe.",
+            }
 
         compound_list = data[comp_id]
         if not compound_list:
-            return {"error": f"No data for compound '{comp_id}'."}
+            return {"status": "error", "error": f"No data for compound '{comp_id}'."}
 
         compound = compound_list[0]
         first_seen = compound.get("first_observed_in", [])

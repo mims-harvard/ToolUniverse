@@ -50,9 +50,15 @@ class MGnifyExpandedTool(BaseTool):
                 "error": "Failed to connect to MGnify API. Check network connectivity."
             }
         except requests.exceptions.HTTPError as e:
-            return {"error": f"MGnify API HTTP error: {e.response.status_code}"}
+            return {
+                "status": "error",
+                "error": f"MGnify API HTTP error: {e.response.status_code}",
+            }
         except Exception as e:
-            return {"error": f"Unexpected error querying MGnify: {str(e)}"}
+            return {
+                "status": "error",
+                "error": f"Unexpected error querying MGnify: {str(e)}",
+            }
 
     def _dispatch(self, arguments: Dict[str, Any]) -> Dict[str, Any]:
         """Route to appropriate endpoint based on config."""
@@ -73,7 +79,10 @@ class MGnifyExpandedTool(BaseTool):
         """Get detailed information about a MGnify genome."""
         genome_id = arguments.get("genome_id", "")
         if not genome_id:
-            return {"error": "genome_id parameter is required (e.g., MGYG000000001)"}
+            return {
+                "status": "error",
+                "error": "genome_id parameter is required (e.g., MGYG000000001)",
+            }
 
         url = f"{MGNIFY_BASE_URL}/genomes/{genome_id}"
         response = requests.get(url, params={"format": "json"}, timeout=self.timeout)

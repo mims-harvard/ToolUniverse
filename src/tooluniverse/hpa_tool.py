@@ -40,7 +40,10 @@ class HPASearchApiTool(BaseTool):
         try:
             resp = requests.get(self.base_url, params=params, timeout=self.timeout)
             if resp.status_code == 404:
-                return {"error": f"No data found for gene '{search_term}'"}
+                return {
+                    "status": "error",
+                    "error": f"No data found for gene '{search_term}'",
+                }
             if resp.status_code != 200:
                 return {
                     "error": f"HPA API request failed, HTTP {resp.status_code}",
@@ -51,13 +54,16 @@ class HPASearchApiTool(BaseTool):
                 data = resp.json()
                 # Ensure we always return a list for consistency
                 if not isinstance(data, list):
-                    return {"error": "API did not return expected list format"}
+                    return {
+                        "status": "error",
+                        "error": "API did not return expected list format",
+                    }
                 return data
             else:
                 return {"tsv_data": resp.text}
 
         except requests.RequestException as e:
-            return {"error": f"HPA API request failed: {str(e)}"}
+            return {"status": "error", "error": f"HPA API request failed: {str(e)}"}
         except ValueError as e:
             return {
                 "error": f"Failed to parse HPA response data: {str(e)}",
@@ -83,7 +89,10 @@ class HPAJsonApiTool(BaseTool):
         try:
             resp = requests.get(url, timeout=self.timeout)
             if resp.status_code == 404:
-                return {"error": f"No data found for Ensembl ID '{ensembl_id}'"}
+                return {
+                    "status": "error",
+                    "error": f"No data found for Ensembl ID '{ensembl_id}'",
+                }
             if resp.status_code != 200:
                 return {
                     "error": f"HPA JSON API request failed, HTTP {resp.status_code}",
@@ -93,7 +102,10 @@ class HPAJsonApiTool(BaseTool):
             return resp.json()
 
         except requests.RequestException as e:
-            return {"error": f"HPA JSON API request failed: {str(e)}"}
+            return {
+                "status": "error",
+                "error": f"HPA JSON API request failed: {str(e)}",
+            }
         except ValueError as e:
             return {
                 "error": f"Failed to parse HPA JSON response: {str(e)}",
@@ -205,7 +217,7 @@ class HPASearchTool(HPASearchApiTool):
         format_type = arguments.get("format", "json")
 
         if not search_query:
-            return {"error": "Parameter 'search_query' is required"}
+            return {"status": "error", "error": "Parameter 'search_query' is required"}
 
         return self._make_api_request(search_query, columns, format_type)
 
@@ -529,7 +541,7 @@ class HPAGetSubcellularLocationTool(HPASearchApiTool):
     def run(self, arguments: Dict[str, Any]) -> Dict[str, Any]:
         gene_name = arguments.get("gene_name")
         if not gene_name:
-            return {"error": "Parameter 'gene_name' is required"}
+            return {"status": "error", "error": "Parameter 'gene_name' is required"}
 
         # Use specific columns for subcellular location data
         result = self._make_api_request(gene_name, "g,gs,scml,scal")
@@ -538,7 +550,7 @@ class HPAGetSubcellularLocationTool(HPASearchApiTool):
             return result
 
         if not result:
-            return {"error": "No subcellular location data found"}
+            return {"status": "error", "error": "No subcellular location data found"}
 
         gene_data = result[0]
 
@@ -609,7 +621,7 @@ class HPASearchGenesTool(HPASearchApiTool):
     def run(self, arguments: Dict[str, Any]) -> Dict[str, Any]:
         search_query = arguments.get("search_query")
         if not search_query:
-            return {"error": "Parameter 'search_query' is required"}
+            return {"status": "error", "error": "Parameter 'search_query' is required"}
 
         # 'g' for Gene name, 'gs' for Gene synonym, 'eg' for Ensembl ID
         columns = "g,gs,eg"
@@ -619,7 +631,10 @@ class HPASearchGenesTool(HPASearchApiTool):
             return result
 
         if not result or not isinstance(result, list):
-            return {"error": f"No matching genes found for query '{search_query}'"}
+            return {
+                "status": "error",
+                "error": f"No matching genes found for query '{search_query}'",
+            }
 
         formatted_results = []
         for gene in result:
@@ -674,9 +689,9 @@ class HPAGetComparativeExpressionTool(HPASearchApiTool):
         cell_line = arguments.get("cell_line", "").lower()
 
         if not gene_name:
-            return {"error": "Parameter 'gene_name' is required"}
+            return {"status": "error", "error": "Parameter 'gene_name' is required"}
         if not cell_line:
-            return {"error": "Parameter 'cell_line' is required"}
+            return {"status": "error", "error": "Parameter 'cell_line' is required"}
 
         # Enhanced validation with intelligent recommendations
         cell_column = self.cell_line_columns.get(cell_line)
@@ -693,7 +708,7 @@ class HPAGetComparativeExpressionTool(HPASearchApiTool):
             if similar_lines:
                 error_msg += f"Similar options: {similar_lines}. "
             error_msg += f"All supported cell lines: {available_lines}"
-            return {"error": error_msg}
+            return {"status": "error", "error": error_msg}
 
         # Request expression data for the cell line
         cell_columns = f"g,gs,{cell_column}"
@@ -709,7 +724,7 @@ class HPAGetComparativeExpressionTool(HPASearchApiTool):
 
         # Format the result
         if not cell_result or not tissue_result:
-            return {"error": "No expression data found"}
+            return {"status": "error", "error": "No expression data found"}
 
         # Extract the first matching gene data
         cell_data = (
@@ -786,9 +801,9 @@ class HPAGetDiseaseExpressionTool(HPASearchApiTool):
         disease_name = arguments.get("disease_name", "").lower()
 
         if not gene_name:
-            return {"error": "Parameter 'gene_name' is required"}
+            return {"status": "error", "error": "Parameter 'gene_name' is required"}
         if not disease_name:
-            return {"error": "Parameter 'disease_name' is required"}
+            return {"status": "error", "error": "Parameter 'disease_name' is required"}
 
         # Enhanced validation with intelligent recommendations
         disease_key = f"{tissue_type}_{disease_name}" if tissue_type else disease_name
@@ -822,7 +837,7 @@ class HPAGetDiseaseExpressionTool(HPASearchApiTool):
             if similar_diseases:
                 error_msg += f"Similar options: {similar_diseases[:3]}. "
             error_msg += f"All supported diseases: {available_diseases}"
-            return {"error": error_msg}
+            return {"status": "error", "error": error_msg}
 
         # Build request columns
         columns = f"g,gs,{cancer_column},rnatsm"
@@ -832,7 +847,7 @@ class HPAGetDiseaseExpressionTool(HPASearchApiTool):
             return result
 
         if not result:
-            return {"error": "No expression data found"}
+            return {"status": "error", "error": "No expression data found"}
 
         # Extract the first matching gene data
         gene_data = result[0] if isinstance(result, list) and result else {}
@@ -903,7 +918,7 @@ class HPAGetBiologicalProcessTool(HPASearchApiTool):
         filter_processes = arguments.get("filter_processes", True)
 
         if not gene_name:
-            return {"error": "Parameter 'gene_name' is required"}
+            return {"status": "error", "error": "Parameter 'gene_name' is required"}
 
         # Request biological process data for the gene
         columns = "g,gs,upbp"
@@ -913,7 +928,7 @@ class HPAGetBiologicalProcessTool(HPASearchApiTool):
             return result
 
         if not result:
-            return {"error": "No gene data found"}
+            return {"status": "error", "error": "No gene data found"}
 
         # Extract the first matching gene data
         gene_data = result[0] if isinstance(result, list) and result else {}
@@ -976,7 +991,7 @@ class HPAGetCancerPrognosticsTool(HPAJsonApiTool):
     def run(self, arguments: Dict[str, Any]) -> Dict[str, Any]:
         ensembl_id = arguments.get("ensembl_id")
         if not ensembl_id:
-            return {"error": "Parameter 'ensembl_id' is required"}
+            return {"status": "error", "error": "Parameter 'ensembl_id' is required"}
 
         data = self._make_api_request(ensembl_id)
         if "error" in data:
@@ -1020,7 +1035,7 @@ class HPAGetProteinInteractionsTool(HPASearchApiTool):
     def run(self, arguments: Dict[str, Any]) -> Dict[str, Any]:
         gene_name = arguments.get("gene_name")
         if not gene_name:
-            return {"error": "Parameter 'gene_name' is required"}
+            return {"status": "error", "error": "Parameter 'gene_name' is required"}
 
         # Feature-68B-002: HPA 'ppi' column has been deprecated and returns no data.
         # Direct users to EBIProteinsInteractionsTool or STRING tools instead.
@@ -1046,7 +1061,7 @@ class HPAGetRnaExpressionByTissueTool(HPAJsonApiTool):
         tissue_names = arguments.get("tissue_names", [])
 
         if not ensembl_id:
-            return {"error": "Parameter 'ensembl_id' is required"}
+            return {"status": "error", "error": "Parameter 'ensembl_id' is required"}
         if not tissue_names or not isinstance(tissue_names, list):
             # Provide helpful tissue name examples
             example_tissues = [
@@ -1070,7 +1085,10 @@ class HPAGetRnaExpressionByTissueTool(HPAJsonApiTool):
         # Get RNA tissue expression data
         rna_data = data.get("RNA tissue specific nTPM", {})
         if not isinstance(rna_data, dict):
-            return {"error": "No RNA tissue expression data available for this gene"}
+            return {
+                "status": "error",
+                "error": "No RNA tissue expression data available for this gene",
+            }
 
         expression_results = {}
         available_tissues = list(rna_data.keys())
@@ -1246,9 +1264,9 @@ class HPAGetContextualBiologicalProcessTool(BaseTool):
         context_name = arguments.get("context_name")
 
         if not gene_name:
-            return {"error": "Parameter 'gene_name' is required"}
+            return {"status": "error", "error": "Parameter 'gene_name' is required"}
         if not context_name:
-            return {"error": "Parameter 'context_name' is required"}
+            return {"status": "error", "error": "Parameter 'context_name' is required"}
 
         # Validate context_name and provide recommendations if invalid
         validation = self._validate_context(context_name)
@@ -1259,7 +1277,7 @@ class HPAGetContextualBiologicalProcessTool(BaseTool):
             error_msg += f"Available tissues: {validation['all_tissues']}... "
             error_msg += f"Available cell lines: {validation['all_cell_lines']}. "
             error_msg += f"Total {validation['total_available']} contexts available."
-            return {"error": error_msg}
+            return {"status": "error", "error": error_msg}
 
         try:
             # Step 1: Get gene basic info and Ensembl ID
@@ -1267,7 +1285,10 @@ class HPAGetContextualBiologicalProcessTool(BaseTool):
             search_result = search_api._make_api_request(gene_name, "g,gs,eg,upbp")
 
             if "error" in search_result or not search_result:
-                return {"error": f"Could not find gene information for '{gene_name}'"}
+                return {
+                    "status": "error",
+                    "error": f"Could not find gene information for '{gene_name}'",
+                }
 
             gene_data = (
                 search_result[0] if isinstance(search_result, list) else search_result
@@ -1275,7 +1296,10 @@ class HPAGetContextualBiologicalProcessTool(BaseTool):
             ensembl_id = gene_data.get("Ensembl", "")
 
             if not ensembl_id:
-                return {"error": f"Could not find Ensembl ID for gene '{gene_name}'"}
+                return {
+                    "status": "error",
+                    "error": f"Could not find Ensembl ID for gene '{gene_name}'",
+                }
 
             # Step 2: Get biological processes
             biological_processes = gene_data.get("Biological process", "")
@@ -1372,7 +1396,10 @@ class HPAGetContextualBiologicalProcessTool(BaseTool):
             }
 
         except Exception as e:
-            return {"error": f"Failed to perform contextual analysis: {str(e)}"}
+            return {
+                "status": "error",
+                "error": f"Failed to perform contextual analysis: {str(e)}",
+            }
 
 
 # --- Keep existing comprehensive gene details tool for images ---
@@ -1396,7 +1423,7 @@ class HPAGetGenePageDetailsTool(HPAXmlApiTool):
         include_expression = arguments.get("include_expression", True)
 
         if not ensembl_id:
-            return {"error": "Parameter 'ensembl_id' is required"}
+            return {"status": "error", "error": "Parameter 'ensembl_id' is required"}
 
         try:
             root = self._make_api_request(ensembl_id)
@@ -1405,7 +1432,7 @@ class HPAGetGenePageDetailsTool(HPAXmlApiTool):
             )
 
         except Exception as e:
-            return {"error": str(e)}
+            return {"status": "error", "error": str(e)}
 
     def _parse_gene_xml(
         self,
@@ -1676,7 +1703,7 @@ class HPAGetGeneJSONTool(HPAJsonApiTool):
     def run(self, arguments: Dict[str, Any]) -> Dict[str, Any]:
         ensembl_id = arguments.get("ensembl_id")
         if not ensembl_id:
-            return {"error": "Parameter 'ensembl_id' is required"}
+            return {"status": "error", "error": "Parameter 'ensembl_id' is required"}
 
         # Use JSON API to get comprehensive information
         data = self._make_api_request(ensembl_id)
@@ -1704,7 +1731,7 @@ class HPAGetGeneXMLTool(HPASearchApiTool):
     def run(self, arguments: Dict[str, Any]) -> Dict[str, Any]:
         ensembl_id = arguments.get("ensembl_id")
         if not ensembl_id:
-            return {"error": "Parameter 'ensembl_id' is required"}
+            return {"status": "error", "error": "Parameter 'ensembl_id' is required"}
 
         # Use TSV format to get detailed data
         columns = "g,gs,up,upbp,rnatsm,cell_RNA_a549,cell_RNA_hela"

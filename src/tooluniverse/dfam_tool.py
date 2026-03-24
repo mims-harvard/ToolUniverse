@@ -42,18 +42,21 @@ class DfamTool(BaseTool):
         try:
             return self._query(arguments)
         except requests.exceptions.Timeout:
-            return {"error": f"Dfam API timed out after {self.timeout}s"}
+            return {
+                "status": "error",
+                "error": f"Dfam API timed out after {self.timeout}s",
+            }
         except requests.exceptions.ConnectionError:
-            return {"error": "Failed to connect to Dfam API"}
+            return {"status": "error", "error": "Failed to connect to Dfam API"}
         except requests.exceptions.HTTPError as e:
             status = e.response.status_code if e.response is not None else "unknown"
             if status == 404:
                 return {
                     "error": "Resource not found in Dfam. Check the accession or query."
                 }
-            return {"error": f"Dfam API HTTP {status}"}
+            return {"status": "error", "error": f"Dfam API HTTP {status}"}
         except Exception as e:
-            return {"error": f"Unexpected error: {str(e)}"}
+            return {"status": "error", "error": f"Unexpected error: {str(e)}"}
 
     def _query(self, arguments: Dict[str, Any]) -> Dict[str, Any]:
         """Route to appropriate endpoint."""
@@ -64,7 +67,7 @@ class DfamTool(BaseTool):
         elif self.endpoint == "get_annotations":
             return self._get_annotations(arguments)
         else:
-            return {"error": f"Unknown endpoint: {self.endpoint}"}
+            return {"status": "error", "error": f"Unknown endpoint: {self.endpoint}"}
 
     def _search_families(self, arguments: Dict[str, Any]) -> Dict[str, Any]:
         """Search Dfam TE families by name prefix, clade, or repeat type."""
@@ -119,7 +122,10 @@ class DfamTool(BaseTool):
         """Get detailed info for a specific Dfam TE family."""
         accession = arguments.get("accession", "")
         if not accession:
-            return {"error": "accession is required (e.g., 'DF000000003' for AluSc)."}
+            return {
+                "status": "error",
+                "error": "accession is required (e.g., 'DF000000003' for AluSc).",
+            }
 
         url = f"{DFAM_BASE_URL}/families/{accession}"
         response = requests.get(url, timeout=self.timeout)

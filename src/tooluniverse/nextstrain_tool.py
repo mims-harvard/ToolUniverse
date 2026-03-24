@@ -50,9 +50,15 @@ class NextstrainTool(BaseTool):
                 "error": "Failed to connect to Nextstrain API. Check network connectivity."
             }
         except requests.exceptions.HTTPError as e:
-            return {"error": f"Nextstrain API HTTP error: {e.response.status_code}"}
+            return {
+                "status": "error",
+                "error": f"Nextstrain API HTTP error: {e.response.status_code}",
+            }
         except Exception as e:
-            return {"error": f"Unexpected error querying Nextstrain: {str(e)}"}
+            return {
+                "status": "error",
+                "error": f"Unexpected error querying Nextstrain: {str(e)}",
+            }
 
     def _dispatch(self, arguments: Dict[str, Any]) -> Dict[str, Any]:
         """Route to appropriate endpoint based on config."""
@@ -61,7 +67,10 @@ class NextstrainTool(BaseTool):
         elif self.endpoint_type == "get_dataset":
             return self._get_dataset(arguments)
         else:
-            return {"error": f"Unknown endpoint_type: {self.endpoint_type}"}
+            return {
+                "status": "error",
+                "error": f"Unknown endpoint_type: {self.endpoint_type}",
+            }
 
     def _list_datasets(self, arguments: Dict[str, Any]) -> Dict[str, Any]:
         """List available Nextstrain pathogen datasets."""

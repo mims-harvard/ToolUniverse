@@ -50,9 +50,15 @@ class CTGovAPITool(BaseRESTTool):
                 "error": "Failed to connect to ClinicalTrials.gov. Check network connectivity."
             }
         except requests.exceptions.HTTPError as e:
-            return {"error": f"ClinicalTrials.gov HTTP error: {e.response.status_code}"}
+            return {
+                "status": "error",
+                "error": f"ClinicalTrials.gov HTTP error: {e.response.status_code}",
+            }
         except Exception as e:
-            return {"error": f"Unexpected error querying ClinicalTrials.gov: {str(e)}"}
+            return {
+                "status": "error",
+                "error": f"Unexpected error querying ClinicalTrials.gov: {str(e)}",
+            }
 
     def _query(self, arguments: dict) -> dict:
         """Route to the appropriate endpoint."""
@@ -66,7 +72,7 @@ class CTGovAPITool(BaseRESTTool):
         elif op == "field_values":
             return self._get_field_values(arguments)
         else:
-            return {"error": f"Unknown operation: {op}"}
+            return {"status": "error", "error": f"Unknown operation: {op}"}
 
     def _search_studies(self, arguments: dict) -> dict:
         """Search for clinical trials with various filters."""
@@ -174,7 +180,10 @@ class CTGovAPITool(BaseRESTTool):
         """Get full details for a single study by NCT ID."""
         nct_id = arguments.get("nct_id", "").strip()
         if not nct_id:
-            return {"error": "nct_id parameter is required (e.g., 'NCT04280705')"}
+            return {
+                "status": "error",
+                "error": "nct_id parameter is required (e.g., 'NCT04280705')",
+            }
 
         url = f"{CLINICALTRIALS_BASE}/studies/{nct_id}"
         resp = requests.get(url, params={"format": "json"}, timeout=self.timeout)

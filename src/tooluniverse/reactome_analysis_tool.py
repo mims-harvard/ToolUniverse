@@ -45,11 +45,17 @@ class ReactomeAnalysisTool(BaseTool):
                 "error": f"Reactome Analysis request timed out after {self.timeout} seconds"
             }
         except requests.exceptions.ConnectionError:
-            return {"error": "Failed to connect to Reactome Analysis Service."}
+            return {
+                "status": "error",
+                "error": "Failed to connect to Reactome Analysis Service.",
+            }
         except requests.exceptions.HTTPError as e:
-            return {"error": f"Reactome Analysis HTTP error: {e.response.status_code}"}
+            return {
+                "status": "error",
+                "error": f"Reactome Analysis HTTP error: {e.response.status_code}",
+            }
         except Exception as e:
-            return {"error": f"Unexpected error: {str(e)}"}
+            return {"status": "error", "error": f"Unexpected error: {str(e)}"}
 
     def _query(self, arguments: Dict[str, Any]) -> Dict[str, Any]:
         """Route to appropriate analysis endpoint."""
@@ -60,7 +66,7 @@ class ReactomeAnalysisTool(BaseTool):
         elif self.endpoint == "token_result":
             return self._token_result(arguments)
         else:
-            return {"error": f"Unknown endpoint: {self.endpoint}"}
+            return {"status": "error", "error": f"Unknown endpoint: {self.endpoint}"}
 
     def _pathway_enrichment(self, arguments: Dict[str, Any]) -> Dict[str, Any]:
         """Perform pathway overrepresentation analysis."""
@@ -137,7 +143,7 @@ class ReactomeAnalysisTool(BaseTool):
         """Retrieve analysis results by token."""
         token = arguments.get("token", "")
         if not token:
-            return {"error": "token parameter is required"}
+            return {"status": "error", "error": "token parameter is required"}
 
         page_size = arguments.get("page_size", 20)
 

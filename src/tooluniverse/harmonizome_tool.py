@@ -41,18 +41,21 @@ class HarmonizomeTool(BaseTool):
         try:
             return self._query(arguments)
         except requests.exceptions.Timeout:
-            return {"error": f"Harmonizome API timed out after {self.timeout}s"}
+            return {
+                "status": "error",
+                "error": f"Harmonizome API timed out after {self.timeout}s",
+            }
         except requests.exceptions.ConnectionError:
-            return {"error": "Failed to connect to Harmonizome API"}
+            return {"status": "error", "error": "Failed to connect to Harmonizome API"}
         except requests.exceptions.HTTPError as e:
             status = e.response.status_code if e.response is not None else "unknown"
             if status == 404:
                 return {
                     "error": "Gene not found in Harmonizome. Check the gene symbol."
                 }
-            return {"error": f"Harmonizome API HTTP {status}"}
+            return {"status": "error", "error": f"Harmonizome API HTTP {status}"}
         except Exception as e:
-            return {"error": f"Unexpected error: {str(e)}"}
+            return {"status": "error", "error": f"Unexpected error: {str(e)}"}
 
     def _query(self, arguments: Dict[str, Any]) -> Dict[str, Any]:
         """Route to appropriate endpoint."""
@@ -61,13 +64,16 @@ class HarmonizomeTool(BaseTool):
         elif self.endpoint == "list_datasets":
             return self._list_datasets(arguments)
         else:
-            return {"error": f"Unknown endpoint: {self.endpoint}"}
+            return {"status": "error", "error": f"Unknown endpoint: {self.endpoint}"}
 
     def _get_gene(self, arguments: Dict[str, Any]) -> Dict[str, Any]:
         """Get gene details from Harmonizome."""
         gene_symbol = arguments.get("gene_symbol", "")
         if not gene_symbol:
-            return {"error": "gene_symbol is required (e.g., 'TP53')."}
+            return {
+                "status": "error",
+                "error": "gene_symbol is required (e.g., 'TP53').",
+            }
 
         url = f"{HARMONIZOME_BASE_URL}/gene/{gene_symbol}"
         response = requests.get(url, timeout=self.timeout)

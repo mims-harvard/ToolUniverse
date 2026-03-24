@@ -221,7 +221,11 @@ class RxNormTool(BaseTool):
             pass
 
         if not names:
-            return {"error": f"No names found for RXCUI: {rxcui}", "rxcui": rxcui}
+            return {
+                "status": "error",
+                "error": f"No names found for RXCUI: {rxcui}",
+                "rxcui": rxcui,
+            }
 
         # Remove duplicates while preserving order
         unique_names = []
@@ -254,11 +258,14 @@ class RxNormTool(BaseTool):
 
         # Validate input
         if not drug_name:
-            return {"error": "drug_name parameter is required"}
+            return {"status": "error", "error": "drug_name parameter is required"}
 
         # Check for whitespace-only input
         if not drug_name.strip():
-            return {"error": "drug_name cannot be empty or whitespace only"}
+            return {
+                "status": "error",
+                "error": "drug_name cannot be empty or whitespace only",
+            }
 
         # Try original name first
         rxcui_result = self._get_rxcui_by_name(drug_name)

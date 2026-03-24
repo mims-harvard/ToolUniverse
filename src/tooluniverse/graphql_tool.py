@@ -180,9 +180,9 @@ class DiseaseTargetScoreTool(GraphQLTool):
         page_size = arguments.get("pageSize", 100)
 
         if not efo_id:
-            return {"error": "efoId is required"}
+            return {"status": "error", "error": "efoId is required"}
         if not datasource_id:
-            return {"error": "datasourceId is required"}
+            return {"status": "error", "error": "datasourceId is required"}
 
         results = []
         page_index = 0

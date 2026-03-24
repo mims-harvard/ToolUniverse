@@ -47,16 +47,25 @@ class PDBe_KB_Tool(BaseTool):
         try:
             return self._query(arguments)
         except requests.exceptions.Timeout:
-            return {"error": f"PDBe-KB API timed out after {self.timeout}s"}
+            return {
+                "status": "error",
+                "error": f"PDBe-KB API timed out after {self.timeout}s",
+            }
         except requests.exceptions.ConnectionError:
-            return {"error": "Failed to connect to PDBe-KB API"}
+            return {"status": "error", "error": "Failed to connect to PDBe-KB API"}
         except requests.exceptions.HTTPError as e:
             if e.response.status_code == 404:
                 acc = arguments.get("uniprot_accession", "unknown")
-                return {"error": f"No PDBe-KB data found for {acc}"}
-            return {"error": f"PDBe-KB API HTTP error: {e.response.status_code}"}
+                return {"status": "error", "error": f"No PDBe-KB data found for {acc}"}
+            return {
+                "status": "error",
+                "error": f"PDBe-KB API HTTP error: {e.response.status_code}",
+            }
         except Exception as e:
-            return {"error": f"Unexpected error querying PDBe-KB: {str(e)}"}
+            return {
+                "status": "error",
+                "error": f"Unexpected error querying PDBe-KB: {str(e)}",
+            }
 
     def _query(self, arguments: Dict[str, Any]) -> Dict[str, Any]:
         """Route to appropriate PDBe-KB endpoint."""
@@ -69,13 +78,16 @@ class PDBe_KB_Tool(BaseTool):
         elif self.endpoint == "superposition":
             return self._get_superposition(arguments)
         else:
-            return {"error": f"Unknown endpoint: {self.endpoint}"}
+            return {"status": "error", "error": f"Unknown endpoint: {self.endpoint}"}
 
     def _get_summary_stats(self, arguments: Dict[str, Any]) -> Dict[str, Any]:
         """Get aggregated structural summary statistics for a protein."""
         acc = arguments.get("uniprot_accession", "")
         if not acc:
-            return {"error": "uniprot_accession parameter is required"}
+            return {
+                "status": "error",
+                "error": "uniprot_accession parameter is required",
+            }
 
         url = f"{PDBE_KB_BASE_URL}/uniprot/summary_stats/{acc}"
         response = requests.get(url, timeout=self.timeout)
@@ -83,7 +95,7 @@ class PDBe_KB_Tool(BaseTool):
         data = response.json()
 
         if acc not in data:
-            return {"error": f"No summary data for {acc}"}
+            return {"status": "error", "error": f"No summary data for {acc}"}
 
         stats = data[acc]
         return {
@@ -104,7 +116,10 @@ class PDBe_KB_Tool(BaseTool):
         """Get ligand binding site residues for a protein."""
         acc = arguments.get("uniprot_accession", "")
         if not acc:
-            return {"error": "uniprot_accession parameter is required"}
+            return {
+                "status": "error",
+                "error": "uniprot_accession parameter is required",
+            }
 
         url = f"{PDBE_KB_BASE_URL}/uniprot/ligand_sites/{acc}"
         response = requests.get(url, timeout=self.timeout)
@@ -112,7 +127,7 @@ class PDBe_KB_Tool(BaseTool):
         data = response.json()
 
         if acc not in data:
-            return {"error": f"No ligand binding data for {acc}"}
+            return {"status": "error", "error": f"No ligand binding data for {acc}"}
 
         protein_data = data[acc]
         ligands = []
@@ -158,7 +173,10 @@ class PDBe_KB_Tool(BaseTool):
         """Get protein-protein interaction interface residues."""
         acc = arguments.get("uniprot_accession", "")
         if not acc:
-            return {"error": "uniprot_accession parameter is required"}
+            return {
+                "status": "error",
+                "error": "uniprot_accession parameter is required",
+            }
 
         url = f"{PDBE_KB_BASE_URL}/uniprot/interface_residues/{acc}"
         response = requests.get(url, timeout=self.timeout)
@@ -166,7 +184,7 @@ class PDBe_KB_Tool(BaseTool):
         data = response.json()
 
         if acc not in data:
-            return {"error": f"No interface data for {acc}"}
+            return {"status": "error", "error": f"No interface data for {acc}"}
 
         protein_data = data[acc]
         partners = []
@@ -222,7 +240,7 @@ class PDBe_KB_Tool(BaseTool):
         data = response.json()
 
         if acc not in data:
-            return {"error": f"No superposition data for {acc}"}
+            return {"status": "error", "error": f"No superposition data for {acc}"}
 
         segments_data = data[acc]
         segments = []

@@ -455,7 +455,7 @@ class RCSBSearchTool(BaseTool):
                     "structure similarity search. "
                     "Please verify the PDB ID is correct."
                 )
-                return {"error": error_msg}
+                return {"status": "error", "error": error_msg}
             else:
                 return {
                     "error": (

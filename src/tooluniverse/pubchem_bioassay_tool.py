@@ -44,11 +44,17 @@ class PubChemBioAssayTool(BaseTool):
                 "error": f"PubChem BioAssay request timed out after {self.timeout} seconds"
             }
         except requests.exceptions.ConnectionError:
-            return {"error": "Failed to connect to PubChem API."}
+            return {"status": "error", "error": "Failed to connect to PubChem API."}
         except requests.exceptions.HTTPError as e:
-            return {"error": f"PubChem API HTTP error: {e.response.status_code}"}
+            return {
+                "status": "error",
+                "error": f"PubChem API HTTP error: {e.response.status_code}",
+            }
         except Exception as e:
-            return {"error": f"Unexpected error querying PubChem BioAssay: {str(e)}"}
+            return {
+                "status": "error",
+                "error": f"Unexpected error querying PubChem BioAssay: {str(e)}",
+            }
 
     def _query(self, arguments: Dict[str, Any]) -> Dict[str, Any]:
         """Route to appropriate endpoint."""
@@ -59,13 +65,13 @@ class PubChemBioAssayTool(BaseTool):
         elif self.endpoint == "get_assay_summary":
             return self._get_assay_summary(arguments)
         else:
-            return {"error": f"Unknown endpoint: {self.endpoint}"}
+            return {"status": "error", "error": f"Unknown endpoint: {self.endpoint}"}
 
     def _get_assay(self, arguments: Dict[str, Any]) -> Dict[str, Any]:
         """Get detailed description of a bioassay by its AID."""
         aid = arguments.get("aid")
         if not aid:
-            return {"error": "aid (Assay ID) parameter is required"}
+            return {"status": "error", "error": "aid (Assay ID) parameter is required"}
 
         url = f"{PUBCHEM_BASE_URL}/assay/aid/{aid}/description/JSON"
         response = requests.get(url, timeout=self.timeout)
@@ -74,7 +80,7 @@ class PubChemBioAssayTool(BaseTool):
 
         containers = data.get("PC_AssayContainer", [])
         if not containers:
-            return {"error": f"No assay found with AID {aid}"}
+            return {"status": "error", "error": f"No assay found with AID {aid}"}
 
         assay = containers[0].get("assay", {}).get("descr", {})
         aid_info = assay.get("aid", {})
@@ -123,7 +129,10 @@ class PubChemBioAssayTool(BaseTool):
         """Search for bioassays targeting a specific gene."""
         gene_symbol = arguments.get("gene_symbol", "")
         if not gene_symbol:
-            return {"error": "gene_symbol parameter is required (e.g., 'TP53', 'EGFR')"}
+            return {
+                "status": "error",
+                "error": "gene_symbol parameter is required (e.g., 'TP53', 'EGFR')",
+            }
 
         url = f"{PUBCHEM_BASE_URL}/assay/target/genesymbol/{gene_symbol}/aids/JSON"
         response = requests.get(url, timeout=self.timeout)
@@ -183,7 +192,7 @@ class PubChemBioAssayTool(BaseTool):
         """Get summary and target information for a bioassay."""
         aid = arguments.get("aid")
         if not aid:
-            return {"error": "aid (Assay ID) parameter is required"}
+            return {"status": "error", "error": "aid (Assay ID) parameter is required"}
 
         url = f"{PUBCHEM_BASE_URL}/assay/aid/{aid}/summary/JSON"
         response = requests.get(url, timeout=self.timeout)
@@ -192,7 +201,7 @@ class PubChemBioAssayTool(BaseTool):
 
         summaries = data.get("AssaySummaries", {}).get("AssaySummary", [])
         if not summaries:
-            return {"error": f"No summary found for AID {aid}"}
+            return {"status": "error", "error": f"No summary found for AID {aid}"}
 
         summary = summaries[0]
         targets = summary.get("Target", [])

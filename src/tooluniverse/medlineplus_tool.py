@@ -30,7 +30,10 @@ class MedlinePlusRESTTool(BaseTool):
 
         for ph in placeholders:
             if ph not in arguments:
-                return {"error": f"Missing required parameter '{ph}'"}
+                return {
+                    "status": "error",
+                    "error": f"Missing required parameter '{ph}'",
+                }
             url_path = url_path.replace(f"{{{ph}}}", str(arguments[ph]))
 
         return url_path
@@ -104,12 +107,12 @@ class MedlinePlusRESTTool(BaseTool):
             # Extract topic information from XML structure
             nlm_result = response.get("nlmSearchResult", {})
             if not nlm_result:
-                return {"error": "nlmSearchResult node not found"}
+                return {"status": "error", "error": "nlmSearchResult node not found"}
 
             # Get document list
             document_list = nlm_result.get("list", {}).get("document", [])
             if not document_list:
-                return {"error": "document list not found"}
+                return {"status": "error", "error": "document list not found"}
 
             # Ensure document_list is a list
             if isinstance(document_list, dict):
@@ -215,7 +218,10 @@ class MedlinePlusRESTTool(BaseTool):
                 entries = [entries]
 
             if not entries:
-                return {"error": "No matching code information found"}
+                return {
+                    "status": "error",
+                    "error": "No matching code information found",
+                }
 
             formatted_responses = []
             for entry in entries:
@@ -348,7 +354,10 @@ class MedlinePlusRESTTool(BaseTool):
             return self._format_response(response, tool_name)
 
         except requests.RequestException as e:
-            return {"error": f"Failed to request MedlinePlus: {str(e)}"}
+            return {
+                "status": "error",
+                "error": f"Failed to request MedlinePlus: {str(e)}",
+            }
 
     # Tool methods
     def search_topics_by_keyword(

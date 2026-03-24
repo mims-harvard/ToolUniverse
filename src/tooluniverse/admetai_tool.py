@@ -110,7 +110,7 @@ class ADMETAITool(BaseTool):
         """
         smiles = arguments.get("smiles", [])
         if not smiles:
-            return {"error": "SMILES string cannot be empty."}
+            return {"status": "error", "error": "SMILES string cannot be empty."}
 
         # Get the columns to select from the tool definition
         columns = getattr(self, "columns", None)
@@ -122,7 +122,10 @@ class ADMETAITool(BaseTool):
             if (hasattr(predictions, "empty") and predictions.empty) or (
                 not hasattr(predictions, "empty") and not predictions
             ):
-                return {"error": "No predictions could be extracted."}
+                return {
+                    "status": "error",
+                    "error": "No predictions could be extracted.",
+                }
 
             # Expand columns to include _drugbank_approved_percentile columns
             # if present
@@ -141,4 +144,4 @@ class ADMETAITool(BaseTool):
                 result[idx] = {col: row[col] for col in predictions.columns}
             return result
         except Exception as e:
-            return {"error": f"An unexpected error occurred: {e}"}
+            return {"status": "error", "error": f"An unexpected error occurred: {e}"}

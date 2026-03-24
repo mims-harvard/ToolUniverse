@@ -40,16 +40,25 @@ class RCSBDataTool(BaseTool):
         try:
             return self._query(arguments)
         except requests.exceptions.Timeout:
-            return {"error": f"RCSB Data API timed out after {self.timeout}s"}
+            return {
+                "status": "error",
+                "error": f"RCSB Data API timed out after {self.timeout}s",
+            }
         except requests.exceptions.ConnectionError:
-            return {"error": "Failed to connect to RCSB Data API"}
+            return {"status": "error", "error": "Failed to connect to RCSB Data API"}
         except requests.exceptions.HTTPError as e:
             code = e.response.status_code if e.response is not None else "unknown"
             if code == 404:
-                return {"error": f"Entry not found in RCSB PDB: {arguments}"}
-            return {"error": f"RCSB Data API HTTP error: {code}"}
+                return {
+                    "status": "error",
+                    "error": f"Entry not found in RCSB PDB: {arguments}",
+                }
+            return {"status": "error", "error": f"RCSB Data API HTTP error: {code}"}
         except Exception as e:
-            return {"error": f"Unexpected error querying RCSB Data API: {str(e)}"}
+            return {
+                "status": "error",
+                "error": f"Unexpected error querying RCSB Data API: {str(e)}",
+            }
 
     def _query(self, arguments: Dict[str, Any]) -> Dict[str, Any]:
         """Route to appropriate endpoint."""
@@ -60,13 +69,16 @@ class RCSBDataTool(BaseTool):
         elif self.endpoint == "nonpolymer_entity":
             return self._get_nonpolymer_entity(arguments)
         else:
-            return {"error": f"Unknown endpoint: {self.endpoint}"}
+            return {"status": "error", "error": f"Unknown endpoint: {self.endpoint}"}
 
     def _get_entry(self, arguments: Dict[str, Any]) -> Dict[str, Any]:
         """Get comprehensive entry details for a PDB structure."""
         pdb_id = arguments.get("pdb_id", "").upper()
         if not pdb_id:
-            return {"error": "pdb_id parameter is required (e.g., '4HHB', '1TUP')"}
+            return {
+                "status": "error",
+                "error": "pdb_id parameter is required (e.g., '4HHB', '1TUP')",
+            }
 
         url = f"{RCSB_DATA_BASE_URL}/entry/{pdb_id}"
         response = requests.get(url, timeout=self.timeout)
@@ -133,7 +145,10 @@ class RCSBDataTool(BaseTool):
         pdb_id = arguments.get("pdb_id", "").upper()
         assembly_id = arguments.get("assembly_id", "1")
         if not pdb_id:
-            return {"error": "pdb_id parameter is required (e.g., '4HHB', '1TUP')"}
+            return {
+                "status": "error",
+                "error": "pdb_id parameter is required (e.g., '4HHB', '1TUP')",
+            }
 
         url = f"{RCSB_DATA_BASE_URL}/assembly/{pdb_id}/{assembly_id}"
         response = requests.get(url, timeout=self.timeout)

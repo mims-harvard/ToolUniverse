@@ -52,9 +52,15 @@ class ChEBITool(BaseTool):
                 "error": "Failed to connect to ChEBI API. Check network connectivity."
             }
         except requests.exceptions.HTTPError as e:
-            return {"error": f"ChEBI API HTTP error: {e.response.status_code}"}
+            return {
+                "status": "error",
+                "error": f"ChEBI API HTTP error: {e.response.status_code}",
+            }
         except Exception as e:
-            return {"error": f"Unexpected error querying ChEBI: {str(e)}"}
+            return {
+                "status": "error",
+                "error": f"Unexpected error querying ChEBI: {str(e)}",
+            }
 
     def _dispatch(self, arguments: Dict[str, Any]) -> Dict[str, Any]:
         """Route to appropriate endpoint based on config."""
@@ -65,13 +71,19 @@ class ChEBITool(BaseTool):
         elif self.endpoint_type == "ontology_children":
             return self._ontology_children(arguments)
         else:
-            return {"error": f"Unknown endpoint_type: {self.endpoint_type}"}
+            return {
+                "status": "error",
+                "error": f"Unknown endpoint_type: {self.endpoint_type}",
+            }
 
     def _get_compound(self, arguments: Dict[str, Any]) -> Dict[str, Any]:
         """Get detailed compound information by ChEBI ID."""
         chebi_id = arguments.get("chebi_id", None)
         if chebi_id is None:
-            return {"error": "chebi_id parameter is required (e.g., 15365 for aspirin)"}
+            return {
+                "status": "error",
+                "error": "chebi_id parameter is required (e.g., 15365 for aspirin)",
+            }
 
         url = f"{CHEBI_BASE_URL}/compound/{chebi_id}/"
         response = requests.get(
@@ -208,7 +220,10 @@ class ChEBITool(BaseTool):
         """Get ontology children of a ChEBI compound."""
         chebi_id = arguments.get("chebi_id", None)
         if chebi_id is None:
-            return {"error": "chebi_id parameter is required (e.g., 15365 for aspirin)"}
+            return {
+                "status": "error",
+                "error": "chebi_id parameter is required (e.g., 15365 for aspirin)",
+            }
 
         url = f"{CHEBI_BASE_URL}/ontology/children/{chebi_id}/"
         response = requests.get(

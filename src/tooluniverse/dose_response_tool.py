@@ -83,7 +83,10 @@ class DoseResponseTool(BaseTool):
         y = np.array(responses, dtype=float)
 
         if len(x) < 4:
-            return {"error": "At least 4 data points required for 4PL fitting"}
+            return {
+                "status": "error",
+                "error": "At least 4 data points required for 4PL fitting",
+            }
 
         if np.any(~np.isfinite(y)):
             return {
@@ -107,7 +110,10 @@ class DoseResponseTool(BaseTool):
             }
 
         if np.any(x <= 0):
-            return {"error": "All concentrations must be positive (> 0)"}
+            return {
+                "status": "error",
+                "error": "All concentrations must be positive (> 0)",
+            }
 
         # Detect all-identical concentrations: if every x value is the same, the
         # dose-response curve is unidentifiable regardless of the response values.
@@ -289,9 +295,12 @@ class DoseResponseTool(BaseTool):
                 main_result["stimulatory_curve_warning"] = stimulatory_warning
             return main_result
         except RuntimeError:
-            return {"error": "4PL curve fitting did not converge. Check data quality."}
+            return {
+                "status": "error",
+                "error": "4PL curve fitting did not converge. Check data quality.",
+            }
         except Exception as e:
-            return {"error": f"Curve fitting failed: {str(e)}"}
+            return {"status": "error", "error": f"Curve fitting failed: {str(e)}"}
 
     def _fit_curve(self, arguments: Dict[str, Any]) -> Dict[str, Any]:
         """Fit 4PL dose-response curve and return all parameters."""

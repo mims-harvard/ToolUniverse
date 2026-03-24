@@ -518,7 +518,10 @@ def search_openfda(
         try:
             return resp.json()
         except Exception:
-            return {"error": {"code": "BAD_JSON", "message": "Non-JSON response"}}
+            return {
+                "status": "error",
+                "error": {"code": "BAD_JSON", "message": "Non-JSON response"},
+            }
 
     # Only run fallbacks on NOT_FOUND
     if (
@@ -959,7 +962,7 @@ class FDADrugLabelTool(FDATool):
                         f"compound is actually approved as a pharmaceutical "
                         f"drug."
                     )
-                    return {"error": error_msg}
+                    return {"status": "error", "error": error_msg}
             else:
                 # Not a ChEMBL ID, use original value (strip whitespace)
                 arguments["drug_name"] = drug_name
@@ -1303,7 +1306,10 @@ class FDADrugLabelFieldValueTool(BaseTool):
         field = arguments.pop("field", None)
         field_value = arguments.pop("field_value", None)
         if not field or not field_value:
-            return {"error": "`field` and `field_value` are required."}
+            return {
+                "status": "error",
+                "error": "`field` and `field_value` are required.",
+            }
 
         # Runtime enforcement: keep the JSON config small by not inlining
         # huge enums, but still validate inputs against a known allow-list.
@@ -1422,7 +1428,10 @@ class FDADrugLabelFieldValueTool(BaseTool):
             ]
         if return_fields != "ALL":
             if not isinstance(return_fields, list) or not return_fields:
-                return {"error": ('`return_fields` must be "ALL" or a non-empty list.')}
+                return {
+                    "status": "error",
+                    "error": ('`return_fields` must be "ALL" or a non-empty list.'),
+                }
             invalid = [rf for rf in return_fields if rf not in allowed_fields]
             if invalid:
                 return {
@@ -1539,7 +1548,7 @@ class FDADrugLabelGetDrugNamesByIndicationAggregated(FDADrugLabelTool):
         indication = arguments.get("indication")
 
         if not indication:
-            return {"error": "indication parameter is required"}
+            return {"status": "error", "error": "indication parameter is required"}
 
         # Dictionary to aggregate results by generic name
         # Key: generic_name (normalized), Value: set of brand names
@@ -1670,7 +1679,7 @@ class FDADrugLabelGetDrugNamesByIndicationStats(FDADrugLabelTool):
         indication = arguments.get("indication")
 
         if not indication:
-            return {"error": "indication parameter is required"}
+            return {"status": "error", "error": "indication parameter is required"}
 
         # Step 1: Get all unique generic names using count API
         # Build search query for indication

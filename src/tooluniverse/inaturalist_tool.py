@@ -44,13 +44,22 @@ class INaturalistTool(BaseTool):
         try:
             return self._query(arguments)
         except requests.exceptions.Timeout:
-            return {"error": f"iNaturalist API request timed out after {self.timeout}s"}
+            return {
+                "status": "error",
+                "error": f"iNaturalist API request timed out after {self.timeout}s",
+            }
         except requests.exceptions.ConnectionError:
-            return {"error": "Failed to connect to iNaturalist API"}
+            return {"status": "error", "error": "Failed to connect to iNaturalist API"}
         except requests.exceptions.HTTPError as e:
-            return {"error": f"iNaturalist API HTTP error: {e.response.status_code}"}
+            return {
+                "status": "error",
+                "error": f"iNaturalist API HTTP error: {e.response.status_code}",
+            }
         except Exception as e:
-            return {"error": f"Unexpected error querying iNaturalist: {str(e)}"}
+            return {
+                "status": "error",
+                "error": f"Unexpected error querying iNaturalist: {str(e)}",
+            }
 
     def _query(self, arguments: Dict[str, Any]) -> Dict[str, Any]:
         """Route to appropriate iNaturalist endpoint."""
@@ -63,13 +72,13 @@ class INaturalistTool(BaseTool):
         elif self.endpoint == "species_counts":
             return self._get_species_counts(arguments)
         else:
-            return {"error": f"Unknown endpoint: {self.endpoint}"}
+            return {"status": "error", "error": f"Unknown endpoint: {self.endpoint}"}
 
     def _search_taxa(self, arguments: Dict[str, Any]) -> Dict[str, Any]:
         """Search for taxa by name."""
         query = arguments.get("query", "")
         if not query:
-            return {"error": "query parameter is required"}
+            return {"status": "error", "error": "query parameter is required"}
 
         per_page = arguments.get("per_page") or 10
         url = f"{INAT_BASE_URL}/taxa"
@@ -107,7 +116,7 @@ class INaturalistTool(BaseTool):
         """Get detailed taxon information by ID."""
         taxon_id = arguments.get("taxon_id")
         if taxon_id is None:
-            return {"error": "taxon_id parameter is required"}
+            return {"status": "error", "error": "taxon_id parameter is required"}
 
         url = f"{INAT_BASE_URL}/taxa/{taxon_id}"
         response = requests.get(url, timeout=self.timeout)
@@ -116,7 +125,7 @@ class INaturalistTool(BaseTool):
         data = response.json()
         results = data.get("results", [])
         if not results:
-            return {"error": f"Taxon ID {taxon_id} not found"}
+            return {"status": "error", "error": f"Taxon ID {taxon_id} not found"}
 
         r = results[0]
         cs = r.get("conservation_status")
@@ -164,7 +173,7 @@ class INaturalistTool(BaseTool):
         params["order_by"] = "created_at"
 
         if not params.get("taxon_id") and not params.get("taxon_name"):
-            return {"error": "Either taxon_id or query is required"}
+            return {"status": "error", "error": "Either taxon_id or query is required"}
 
         url = f"{INAT_BASE_URL}/observations"
         response = requests.get(url, params=params, timeout=self.timeout)
@@ -213,7 +222,10 @@ class INaturalistTool(BaseTool):
         params["per_page"] = min(arguments.get("per_page") or 20, 500)
 
         if not params.get("taxon_id") and not params.get("place_id"):
-            return {"error": "Either taxon_id or place_id is required"}
+            return {
+                "status": "error",
+                "error": "Either taxon_id or place_id is required",
+            }
 
         url = f"{INAT_BASE_URL}/observations/species_counts"
         response = requests.get(url, params=params, timeout=self.timeout)

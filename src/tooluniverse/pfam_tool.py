@@ -41,9 +41,15 @@ class PfamTool(BaseTool):
         try:
             return self._query(arguments)
         except requests.exceptions.Timeout:
-            return {"error": f"InterPro/Pfam API timed out after {self.timeout}s"}
+            return {
+                "status": "error",
+                "error": f"InterPro/Pfam API timed out after {self.timeout}s",
+            }
         except requests.exceptions.ConnectionError:
-            return {"error": "Failed to connect to InterPro/Pfam API"}
+            return {
+                "status": "error",
+                "error": "Failed to connect to InterPro/Pfam API",
+            }
         except requests.exceptions.HTTPError as e:
             code = e.response.status_code if e.response is not None else "unknown"
             if code == 404:
@@ -51,12 +57,18 @@ class PfamTool(BaseTool):
                     "accession",
                     arguments.get("pfam_accession", arguments.get("query", "")),
                 )
-                return {"error": f"Not found in Pfam/InterPro: {param}"}
+                return {
+                    "status": "error",
+                    "error": f"Not found in Pfam/InterPro: {param}",
+                }
             if code == 204:
-                return {"error": "No results found"}
-            return {"error": f"InterPro/Pfam API HTTP error: {code}"}
+                return {"status": "error", "error": "No results found"}
+            return {"status": "error", "error": f"InterPro/Pfam API HTTP error: {code}"}
         except Exception as e:
-            return {"error": f"Unexpected error querying Pfam API: {str(e)}"}
+            return {
+                "status": "error",
+                "error": f"Unexpected error querying Pfam API: {str(e)}",
+            }
 
     def _query(self, arguments: Dict[str, Any]) -> Dict[str, Any]:
         """Route to appropriate endpoint."""
@@ -73,7 +85,7 @@ class PfamTool(BaseTool):
         elif self.endpoint == "get_family_proteomes":
             return self._get_family_proteomes(arguments)
         else:
-            return {"error": f"Unknown endpoint: {self.endpoint}"}
+            return {"status": "error", "error": f"Unknown endpoint: {self.endpoint}"}
 
     def _strip_html(self, text: str) -> str:
         """Remove HTML tags from text."""
@@ -129,7 +141,10 @@ class PfamTool(BaseTool):
         """Get detailed information about a specific Pfam family."""
         pfam_acc = arguments.get("pfam_accession", "")
         if not pfam_acc:
-            return {"error": "pfam_accession parameter is required (e.g., 'PF00001')"}
+            return {
+                "status": "error",
+                "error": "pfam_accession parameter is required (e.g., 'PF00001')",
+            }
 
         url = f"{INTERPRO_BASE_URL}/entry/pfam/{pfam_acc}"
         response = requests.get(url, timeout=self.timeout)
@@ -212,7 +227,10 @@ class PfamTool(BaseTool):
         """Get proteins containing a specific Pfam domain, optionally filtered by species."""
         pfam_acc = arguments.get("pfam_accession", "")
         if not pfam_acc:
-            return {"error": "pfam_accession parameter is required (e.g., 'PF00001')"}
+            return {
+                "status": "error",
+                "error": "pfam_accession parameter is required (e.g., 'PF00001')",
+            }
 
         max_results = min(arguments.get("max_results", 20), 100)
         reviewed_only = arguments.get("reviewed_only", True)
@@ -389,7 +407,10 @@ class PfamTool(BaseTool):
         """Get proteome distribution for a Pfam family."""
         pfam_acc = arguments.get("pfam_accession", "")
         if not pfam_acc:
-            return {"error": "pfam_accession parameter is required (e.g., 'PF00001')"}
+            return {
+                "status": "error",
+                "error": "pfam_accession parameter is required (e.g., 'PF00001')",
+            }
 
         max_results = min(arguments.get("max_results", 20), 100)
 

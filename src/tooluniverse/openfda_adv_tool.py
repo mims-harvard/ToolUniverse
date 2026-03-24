@@ -104,7 +104,7 @@ class FDADrugAdverseEventTool(BaseTool):
         # Validate enum parameters
         validation_error = self.validate_enum_arguments(arguments)
         if validation_error:
-            return {"error": validation_error}
+            return {"status": "error", "error": validation_error}
 
         # Store reactionmeddraverse for filtering results
         reaction_filter = arguments.get("reactionmeddraverse")
@@ -280,14 +280,17 @@ class FDACountAdditiveReactionsTool(FDADrugAdverseEventTool):
         # Validate medicinalproducts list first
         drugs = arguments.pop("medicinalproducts", [])
         if not drugs:
-            return {"error": "`medicinalproducts` list is required."}
+            return {"status": "error", "error": "`medicinalproducts` list is required."}
         if not isinstance(drugs, list):
-            return {"error": "`medicinalproducts` must be a list of drug names."}
+            return {
+                "status": "error",
+                "error": "`medicinalproducts` must be a list of drug names.",
+            }
 
         # Validate the remaining enum parameters
         validation_error = self.validate_enum_arguments(arguments)
         if validation_error:
-            return {"error": validation_error}
+            return {"status": "error", "error": validation_error}
 
         # Build OR clause for multiple drugs
         escaped = []
@@ -307,7 +310,7 @@ class FDACountAdditiveReactionsTool(FDADrugAdverseEventTool):
             # Map value using FDA field name (for proper enum mapping)
             mapping_error, mapped = self._map_value(fda_field, v)
             if mapping_error:
-                return {"error": mapping_error}
+                return {"status": "error", "error": mapping_error}
             if mapped is None:
                 continue  # Skip this field if instructed
 
@@ -351,7 +354,7 @@ class FDACountAdditiveReactionsTool(FDADrugAdverseEventTool):
             results = self._post_process(results)
             return results
         except requests.exceptions.RequestException as e:
-            return {"error": f"API request failed: {str(e)}"}
+            return {"status": "error", "error": f"API request failed: {str(e)}"}
 
 
 @register_tool("FDADrugAdverseEventDetailTool")

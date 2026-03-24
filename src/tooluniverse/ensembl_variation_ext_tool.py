@@ -41,9 +41,12 @@ class EnsemblVariationExtTool(BaseTool):
         try:
             return self._query(arguments)
         except requests.exceptions.Timeout:
-            return {"error": f"Ensembl API timed out after {self.timeout}s"}
+            return {
+                "status": "error",
+                "error": f"Ensembl API timed out after {self.timeout}s",
+            }
         except requests.exceptions.ConnectionError:
-            return {"error": "Failed to connect to Ensembl REST API"}
+            return {"status": "error", "error": "Failed to connect to Ensembl REST API"}
         except requests.exceptions.HTTPError as e:
             status = e.response.status_code if e.response is not None else "unknown"
             text = ""
@@ -52,9 +55,9 @@ class EnsemblVariationExtTool(BaseTool):
                     text = e.response.json().get("error", "")
                 except Exception:
                     text = e.response.text[:200]
-            return {"error": f"Ensembl API HTTP {status}: {text}"}
+            return {"status": "error", "error": f"Ensembl API HTTP {status}: {text}"}
         except Exception as e:
-            return {"error": f"Unexpected error: {str(e)}"}
+            return {"status": "error", "error": f"Unexpected error: {str(e)}"}
 
     def _query(self, arguments: Dict[str, Any]) -> Dict[str, Any]:
         """Route to appropriate endpoint."""
@@ -63,7 +66,7 @@ class EnsemblVariationExtTool(BaseTool):
         elif self.endpoint == "variant_detail":
             return self._get_variant_detail(arguments)
         else:
-            return {"error": f"Unknown endpoint: {self.endpoint}"}
+            return {"status": "error", "error": f"Unknown endpoint: {self.endpoint}"}
 
     def _get_population_frequencies(self, arguments: Dict[str, Any]) -> Dict[str, Any]:
         """Get allele frequencies across global populations."""
@@ -71,7 +74,10 @@ class EnsemblVariationExtTool(BaseTool):
         species = arguments.get("species", "human")
 
         if not variant_id:
-            return {"error": "variant_id is required (e.g., 'rs429358')."}
+            return {
+                "status": "error",
+                "error": "variant_id is required (e.g., 'rs429358').",
+            }
 
         url = f"{ENSEMBL_BASE_URL}/variation/{species}/{variant_id}"
         response = requests.get(
@@ -132,7 +138,10 @@ class EnsemblVariationExtTool(BaseTool):
         species = arguments.get("species", "human")
 
         if not variant_id:
-            return {"error": "variant_id is required (e.g., 'rs429358')."}
+            return {
+                "status": "error",
+                "error": "variant_id is required (e.g., 'rs429358').",
+            }
 
         url = f"{ENSEMBL_BASE_URL}/variation/{species}/{variant_id}"
         response = requests.get(

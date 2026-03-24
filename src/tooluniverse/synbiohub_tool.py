@@ -47,13 +47,22 @@ class SynBioHubTool(BaseTool):
         try:
             return self._query(arguments)
         except requests.exceptions.Timeout:
-            return {"error": f"SynBioHub API timed out after {self.timeout}s"}
+            return {
+                "status": "error",
+                "error": f"SynBioHub API timed out after {self.timeout}s",
+            }
         except requests.exceptions.ConnectionError:
-            return {"error": "Failed to connect to SynBioHub API"}
+            return {"status": "error", "error": "Failed to connect to SynBioHub API"}
         except requests.exceptions.HTTPError as e:
-            return {"error": f"SynBioHub API HTTP error: {e.response.status_code}"}
+            return {
+                "status": "error",
+                "error": f"SynBioHub API HTTP error: {e.response.status_code}",
+            }
         except Exception as e:
-            return {"error": f"Unexpected error querying SynBioHub: {str(e)}"}
+            return {
+                "status": "error",
+                "error": f"Unexpected error querying SynBioHub: {str(e)}",
+            }
 
     def _query(self, arguments: Dict[str, Any]) -> Dict[str, Any]:
         """Route to appropriate SynBioHub endpoint."""
@@ -64,13 +73,13 @@ class SynBioHubTool(BaseTool):
         elif self.endpoint == "get_part":
             return self._get_part(arguments)
         else:
-            return {"error": f"Unknown endpoint: {self.endpoint}"}
+            return {"status": "error", "error": f"Unknown endpoint: {self.endpoint}"}
 
     def _search(self, arguments: Dict[str, Any]) -> Dict[str, Any]:
         """Search SynBioHub for genetic parts by keyword."""
         query = arguments.get("query", "")
         if not query:
-            return {"error": "query parameter is required"}
+            return {"status": "error", "error": "query parameter is required"}
 
         offset = arguments.get("offset") or 0
         limit = arguments.get("limit") or 10
@@ -161,7 +170,10 @@ class SynBioHubTool(BaseTool):
         display_id = arguments.get("display_id", "")
 
         if not part_uri and not display_id:
-            return {"error": "Either part_uri or display_id is required"}
+            return {
+                "status": "error",
+                "error": "Either part_uri or display_id is required",
+            }
 
         if not part_uri and display_id:
             # Construct URI from display_id (assume iGEM collection)

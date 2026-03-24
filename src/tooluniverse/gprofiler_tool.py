@@ -43,14 +43,17 @@ class GProfilerTool(BaseTool):
         try:
             return self._query(arguments)
         except requests.exceptions.Timeout:
-            return {"error": f"g:Profiler API timed out after {self.timeout}s"}
+            return {
+                "status": "error",
+                "error": f"g:Profiler API timed out after {self.timeout}s",
+            }
         except requests.exceptions.ConnectionError:
-            return {"error": "Failed to connect to g:Profiler API"}
+            return {"status": "error", "error": "Failed to connect to g:Profiler API"}
         except requests.exceptions.HTTPError as e:
             status = e.response.status_code if e.response is not None else "unknown"
-            return {"error": f"g:Profiler API HTTP {status}"}
+            return {"status": "error", "error": f"g:Profiler API HTTP {status}"}
         except Exception as e:
-            return {"error": f"Unexpected error: {str(e)}"}
+            return {"status": "error", "error": f"Unexpected error: {str(e)}"}
 
     def _query(self, arguments: Dict[str, Any]) -> Dict[str, Any]:
         """Route to appropriate endpoint."""
@@ -63,7 +66,7 @@ class GProfilerTool(BaseTool):
         elif self.endpoint == "snpense":
             return self._snpense(arguments)
         else:
-            return {"error": f"Unknown endpoint: {self.endpoint}"}
+            return {"status": "error", "error": f"Unknown endpoint: {self.endpoint}"}
 
     def _parse_gene_list(self, gene_list_str: str):
         """Parse comma-separated gene list into a list."""

@@ -55,7 +55,7 @@ class LipidMapsTool(BaseTool):
             elif context == "moverz":
                 return self._search_moverz(arguments)
             else:
-                return {"error": f"Unknown context: {context}"}
+                return {"status": "error", "error": f"Unknown context: {context}"}
         except requests.exceptions.Timeout:
             return {
                 "error": f"LIPID MAPS API request timed out after {self.timeout} seconds"
@@ -65,9 +65,15 @@ class LipidMapsTool(BaseTool):
                 "error": "Failed to connect to LIPID MAPS API. Check network connectivity."
             }
         except requests.exceptions.HTTPError as e:
-            return {"error": f"LIPID MAPS API HTTP error: {e.response.status_code}"}
+            return {
+                "status": "error",
+                "error": f"LIPID MAPS API HTTP error: {e.response.status_code}",
+            }
         except Exception as e:
-            return {"error": f"Unexpected error querying LIPID MAPS: {str(e)}"}
+            return {
+                "status": "error",
+                "error": f"Unexpected error querying LIPID MAPS: {str(e)}",
+            }
 
     def _make_request(self, sub_path: str) -> Dict[str, Any]:
         """Central method to handle API requests and response parsing."""
@@ -130,7 +136,7 @@ class LipidMapsTool(BaseTool):
         input_value = arguments.get("input_value", "")
         output_item = arguments.get("output_item", "all")
         if not input_value:
-            return {"error": "input_value parameter is required"}
+            return {"status": "error", "error": "input_value parameter is required"}
         return self._make_request(
             f"compound/{self.input_item}/{input_value}/{output_item}/json"
         )
@@ -140,7 +146,7 @@ class LipidMapsTool(BaseTool):
         input_value = arguments.get("input_value", "")
         output_item = arguments.get("output_item", "all")
         if not input_value:
-            return {"error": "input_value parameter is required"}
+            return {"status": "error", "error": "input_value parameter is required"}
         return self._make_request(
             f"gene/{self.input_item}/{input_value}/{output_item}/json"
         )
@@ -150,7 +156,7 @@ class LipidMapsTool(BaseTool):
         input_value = arguments.get("input_value", "")
         output_item = arguments.get("output_item", "all")
         if not input_value:
-            return {"error": "input_value parameter is required"}
+            return {"status": "error", "error": "input_value parameter is required"}
         return self._make_request(
             f"protein/{self.input_item}/{input_value}/{output_item}/json"
         )
@@ -161,7 +167,7 @@ class LipidMapsTool(BaseTool):
         ion_type = arguments.get("ion_type", "M-H")
         tolerance = arguments.get("tolerance", 0.01)
         if mz_value is None:
-            return {"error": "mz_value parameter is required"}
+            return {"status": "error", "error": "mz_value parameter is required"}
 
         # LIPID MAPS m/z endpoint returns TSV, not JSON
         url = f"{LIPIDMAPS_BASE_URL}/moverz/LIPIDS/{mz_value}/{ion_type}/-/{tolerance}/txt"

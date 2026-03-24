@@ -89,7 +89,7 @@ class EpigenomicsTool(BaseTool):
         elif self.endpoint == "ensembl_regulatory":
             return self._ensembl_regulatory_features(arguments)
         else:
-            return {"error": f"Unknown endpoint: {self.endpoint}"}
+            return {"status": "error", "error": f"Unknown endpoint: {self.endpoint}"}
 
     # =========================================================================
     # ENCODE Search Tools
@@ -534,14 +534,20 @@ class EpigenomicsTool(BaseTool):
         """Get detailed metadata for a GEO dataset."""
         geo_id = arguments.get("geo_id", "")
         if not geo_id:
-            return {"error": "geo_id parameter is required (e.g., '200291249')"}
+            return {
+                "status": "error",
+                "error": "geo_id parameter is required (e.g., '200291249')",
+            }
 
         summary_result = self._geo_esummary([geo_id])
         result = summary_result.get("result", {})
         uid_data = result.get(str(geo_id), {})
 
         if not isinstance(uid_data, dict) or "accession" not in uid_data:
-            return {"error": f"Dataset with ID '{geo_id}' not found in GEO"}
+            return {
+                "status": "error",
+                "error": f"Dataset with ID '{geo_id}' not found in GEO",
+            }
 
         ftplink = uid_data.get("ftplink", "")
         suppfile = uid_data.get("suppfile", "")
@@ -581,11 +587,17 @@ class EpigenomicsTool(BaseTool):
         end = arguments.get("end")
 
         if not chrom or start is None or end is None:
-            return {"error": "chrom, start, and end parameters are required"}
+            return {
+                "status": "error",
+                "error": "chrom, start, and end parameters are required",
+            }
 
         # Ensure region is not too large (max 5Mb)
         if end - start > 5000000:
-            return {"error": "Region too large. Maximum region size is 5 Mb."}
+            return {
+                "status": "error",
+                "error": "Region too large. Maximum region size is 5 Mb.",
+            }
 
         url = (
             f"{ENSEMBL_REST_URL}/overlap/region/{species}/{chrom}:{start}-{end}"
@@ -649,14 +661,17 @@ class UCSCEpigenomicsTool(BaseTool):
         try:
             return self._dispatch(arguments)
         except requests.exceptions.Timeout:
-            return {"error": f"UCSC API request timed out after {self.timeout}s"}
+            return {
+                "status": "error",
+                "error": f"UCSC API request timed out after {self.timeout}s",
+            }
         except requests.exceptions.ConnectionError:
-            return {"error": "Failed to connect to UCSC API."}
+            return {"status": "error", "error": "Failed to connect to UCSC API."}
         except requests.exceptions.HTTPError as e:
             status = e.response.status_code if e.response is not None else "unknown"
-            return {"error": f"UCSC API HTTP error: {status}"}
+            return {"status": "error", "error": f"UCSC API HTTP error: {status}"}
         except Exception as e:
-            return {"error": f"Unexpected error: {str(e)}"}
+            return {"status": "error", "error": f"Unexpected error: {str(e)}"}
 
     def _dispatch(self, arguments: Dict[str, Any]) -> Dict[str, Any]:
         """Route to appropriate endpoint."""
@@ -667,7 +682,7 @@ class UCSCEpigenomicsTool(BaseTool):
         elif self.endpoint == "tf_binding":
             return self._get_tf_binding_clusters(arguments)
         else:
-            return {"error": f"Unknown endpoint: {self.endpoint}"}
+            return {"status": "error", "error": f"Unknown endpoint: {self.endpoint}"}
 
     def _ucsc_get_track(
         self, genome: str, track: str, chrom: str, start: int, end: int
@@ -689,7 +704,10 @@ class UCSCEpigenomicsTool(BaseTool):
         end = arguments.get("end")
 
         if not chrom or start is None or end is None:
-            return {"error": "chrom, start, and end parameters are required"}
+            return {
+                "status": "error",
+                "error": "chrom, start, and end parameters are required",
+            }
 
         raw = self._ucsc_get_track(genome, "cpgIslandExt", chrom, start, end)
         items = raw.get("cpgIslandExt", [])
@@ -735,7 +753,10 @@ class UCSCEpigenomicsTool(BaseTool):
         end = arguments.get("end")
 
         if not chrom or start is None or end is None:
-            return {"error": "chrom, start, and end parameters are required"}
+            return {
+                "status": "error",
+                "error": "chrom, start, and end parameters are required",
+            }
 
         raw = self._ucsc_get_track(genome, "cCREregistry", chrom, start, end)
         items = raw.get("cCREregistry", [])
@@ -780,7 +801,10 @@ class UCSCEpigenomicsTool(BaseTool):
         end = arguments.get("end")
 
         if not chrom or start is None or end is None:
-            return {"error": "chrom, start, and end parameters are required"}
+            return {
+                "status": "error",
+                "error": "chrom, start, and end parameters are required",
+            }
 
         raw = self._ucsc_get_track(genome, "encRegTfbsClustered", chrom, start, end)
         items = raw.get("encRegTfbsClustered", [])

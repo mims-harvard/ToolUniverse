@@ -21,7 +21,7 @@ class GWASGeneSearch(BaseTool):
     def run(self, arguments):
         gene_name = arguments.get("gene_name")
         if not gene_name:
-            return {"error": "Missing required parameter: gene_name"}
+            return {"status": "error", "error": "Missing required parameter: gene_name"}
 
         # Search for associations by gene name
         size = int(arguments.get("size", 5))
@@ -50,6 +50,6 @@ class GWASGeneSearch(BaseTool):
             }
 
         except requests.exceptions.RequestException as e:
-            return {"error": f"Request failed: {str(e)}"}
+            return {"status": "error", "error": f"Request failed: {str(e)}"}
         except Exception as e:
-            return {"error": f"Unexpected error: {str(e)}"}
+            return {"status": "error", "error": f"Unexpected error: {str(e)}"}

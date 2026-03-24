@@ -43,18 +43,21 @@ class EnsemblXrefsTool(BaseTool):
         try:
             return self._query(arguments)
         except requests.exceptions.Timeout:
-            return {"error": f"Ensembl API timed out after {self.timeout}s"}
+            return {
+                "status": "error",
+                "error": f"Ensembl API timed out after {self.timeout}s",
+            }
         except requests.exceptions.ConnectionError:
-            return {"error": "Failed to connect to Ensembl REST API"}
+            return {"status": "error", "error": "Failed to connect to Ensembl REST API"}
         except requests.exceptions.HTTPError as e:
             status = e.response.status_code if e.response is not None else "unknown"
             if status == 404:
                 return {
                     "error": "Ensembl ID not found. Provide a valid Ensembl stable ID."
                 }
-            return {"error": f"Ensembl REST API HTTP {status}"}
+            return {"status": "error", "error": f"Ensembl REST API HTTP {status}"}
         except Exception as e:
-            return {"error": f"Unexpected error: {str(e)}"}
+            return {"status": "error", "error": f"Unexpected error: {str(e)}"}
 
     def _query(self, arguments: Dict[str, Any]) -> Dict[str, Any]:
         """Route to appropriate endpoint."""
@@ -63,7 +66,7 @@ class EnsemblXrefsTool(BaseTool):
         elif self.endpoint == "xrefs_by_symbol":
             return self._get_xrefs_by_symbol(arguments)
         else:
-            return {"error": f"Unknown endpoint: {self.endpoint}"}
+            return {"status": "error", "error": f"Unknown endpoint: {self.endpoint}"}
 
     def _get_xrefs(self, arguments: Dict[str, Any]) -> Dict[str, Any]:
         """Get external cross-references for an Ensembl ID."""
@@ -86,7 +89,7 @@ class EnsemblXrefsTool(BaseTool):
         data = response.json()
 
         if not isinstance(data, list):
-            return {"error": "Unexpected response format."}
+            return {"status": "error", "error": "Unexpected response format."}
 
         # Group by database
         by_db = {}
@@ -129,7 +132,10 @@ class EnsemblXrefsTool(BaseTool):
         external_db = arguments.get("external_db", None)
 
         if not symbol:
-            return {"error": "symbol is required (gene symbol, e.g., 'TP53', 'BRCA1')."}
+            return {
+                "status": "error",
+                "error": "symbol is required (gene symbol, e.g., 'TP53', 'BRCA1').",
+            }
 
         url = f"{ENSEMBL_REST_BASE}/xrefs/symbol/{species}/{symbol}"
         params_parts = ["content-type=application/json"]
@@ -142,7 +148,7 @@ class EnsemblXrefsTool(BaseTool):
         data = response.json()
 
         if not isinstance(data, list):
-            return {"error": "Unexpected response format."}
+            return {"status": "error", "error": "Unexpected response format."}
 
         results = []
         for item in data[:50]:

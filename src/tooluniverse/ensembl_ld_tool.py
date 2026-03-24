@@ -54,9 +54,15 @@ class EnsemblLDTool(BaseTool):
             }
         except requests.exceptions.HTTPError as e:
             status = e.response.status_code if e.response else "unknown"
-            return {"error": f"Ensembl REST API HTTP error: {status}"}
+            return {
+                "status": "error",
+                "error": f"Ensembl REST API HTTP error: {status}",
+            }
         except Exception as e:
-            return {"error": f"Unexpected error querying Ensembl LD: {str(e)}"}
+            return {
+                "status": "error",
+                "error": f"Unexpected error querying Ensembl LD: {str(e)}",
+            }
 
     def _dispatch(self, arguments: Dict[str, Any]) -> Dict[str, Any]:
         """Route to appropriate endpoint based on config."""
@@ -65,7 +71,10 @@ class EnsemblLDTool(BaseTool):
         elif self.endpoint_type == "ld_pairwise":
             return self._ld_pairwise(arguments)
         else:
-            return {"error": f"Unknown endpoint_type: {self.endpoint_type}"}
+            return {
+                "status": "error",
+                "error": f"Unknown endpoint_type: {self.endpoint_type}",
+            }
 
     def _ld_variants(self, arguments: Dict[str, Any]) -> Dict[str, Any]:
         """Get all variants in LD with a query variant in a population."""
@@ -75,7 +84,10 @@ class EnsemblLDTool(BaseTool):
         d_prime_threshold = arguments.get("d_prime_threshold", None)
 
         if not variant_id:
-            return {"error": "variant_id parameter is required (e.g., 'rs1042779')"}
+            return {
+                "status": "error",
+                "error": "variant_id parameter is required (e.g., 'rs1042779')",
+            }
         if not population:
             return {
                 "error": "population parameter is required (e.g., '1000GENOMES:phase_3:CEU')"
@@ -145,9 +157,15 @@ class EnsemblLDTool(BaseTool):
         variant2 = arguments.get("variant2", "")
 
         if not variant1:
-            return {"error": "variant1 parameter is required (e.g., 'rs6792369')"}
+            return {
+                "status": "error",
+                "error": "variant1 parameter is required (e.g., 'rs6792369')",
+            }
         if not variant2:
-            return {"error": "variant2 parameter is required (e.g., 'rs1042779')"}
+            return {
+                "status": "error",
+                "error": "variant2 parameter is required (e.g., 'rs1042779')",
+            }
 
         url = f"{ENSEMBL_BASE_URL}/ld/human/pairwise/{variant1}/{variant2}"
         params = {"content-type": "application/json"}

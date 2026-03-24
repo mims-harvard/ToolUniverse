@@ -26,7 +26,7 @@ class HALTool(BaseTool):
         query = arguments.get("query")
         max_results = int(arguments.get("max_results", 10))
         if not query:
-            return {"error": "`query` parameter is required."}
+            return {"status": "error", "error": "`query` parameter is required."}
         return self._search(query, max_results)
 
     def _search(self, query, max_results):
@@ -44,7 +44,11 @@ class HALTool(BaseTool):
             resp.raise_for_status()
             data = resp.json()
         except requests.RequestException as e:
-            return {"error": "Network/API error calling HAL", "reason": str(e)}
+            return {
+                "status": "error",
+                "error": "Network/API error calling HAL",
+                "reason": str(e),
+            }
         except ValueError:
             ct = resp.headers.get("content-type", "")
             return {

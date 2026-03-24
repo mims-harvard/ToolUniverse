@@ -101,4 +101,4 @@ class HealthDisparitiesTool(BaseTool):
         elif self.endpoint == "county_rankings":
             return self._get_county_rankings_info(arguments)
         else:
-            return {"error": f"Unknown endpoint: {self.endpoint}"}
+            return {"status": "error", "error": f"Unknown endpoint: {self.endpoint}"}

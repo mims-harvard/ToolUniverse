@@ -41,16 +41,25 @@ class EnsemblInfoTool(BaseTool):
         try:
             return self._query(arguments)
         except requests.exceptions.Timeout:
-            return {"error": f"Ensembl API timed out after {self.timeout}s"}
+            return {
+                "status": "error",
+                "error": f"Ensembl API timed out after {self.timeout}s",
+            }
         except requests.exceptions.ConnectionError:
-            return {"error": "Failed to connect to Ensembl REST API"}
+            return {"status": "error", "error": "Failed to connect to Ensembl REST API"}
         except requests.exceptions.HTTPError as e:
             code = e.response.status_code if e.response is not None else "unknown"
             if code == 404:
-                return {"error": f"Species not found: {arguments.get('species', '')}"}
-            return {"error": f"Ensembl API HTTP error: {code}"}
+                return {
+                    "status": "error",
+                    "error": f"Species not found: {arguments.get('species', '')}",
+                }
+            return {"status": "error", "error": f"Ensembl API HTTP error: {code}"}
         except Exception as e:
-            return {"error": f"Unexpected error querying Ensembl API: {str(e)}"}
+            return {
+                "status": "error",
+                "error": f"Unexpected error querying Ensembl API: {str(e)}",
+            }
 
     def _query(self, arguments: Dict[str, Any]) -> Dict[str, Any]:
         """Route to appropriate endpoint."""
@@ -59,7 +68,7 @@ class EnsemblInfoTool(BaseTool):
         elif self.endpoint == "species":
             return self._get_species_info(arguments)
         else:
-            return {"error": f"Unknown endpoint: {self.endpoint}"}
+            return {"status": "error", "error": f"Unknown endpoint: {self.endpoint}"}
 
     def _get_assembly_info(self, arguments: Dict[str, Any]) -> Dict[str, Any]:
         """Get genome assembly metadata for a species."""

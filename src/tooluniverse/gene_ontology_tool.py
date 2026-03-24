@@ -41,7 +41,7 @@ class GeneOntologyTool(BaseTool):
             if docs:
                 return docs[0]
             else:
-                return {"error": "No GO term found"}
+                return {"status": "error", "error": "No GO term found"}
 
         elif extract_path == "response.docs":
             # Extract all documents from GOlr response
@@ -81,16 +81,25 @@ class GeneOntologyTool(BaseTool):
                             if index < len(result):
                                 result = result[index]
                             else:
-                                return {"error": f"Index {index} out of range"}
+                                return {
+                                    "status": "error",
+                                    "error": f"Index {index} out of range",
+                                }
                         else:
-                            return {"error": f"Invalid array index: {index_str}"}
+                            return {
+                                "status": "error",
+                                "error": f"Invalid array index: {index_str}",
+                            }
                     else:
                         result = result.get(key, {})
                 return result
             else:
                 return data.get(extract_path)
         except Exception as e:
-            return {"error": f"Failed to extract data using path '{extract_path}': {e}"}
+            return {
+                "status": "error",
+                "error": f"Failed to extract data using path '{extract_path}': {e}",
+            }
 
     def run(self, arguments: Any = None) -> Any:
         """
@@ -106,7 +115,10 @@ class GeneOntologyTool(BaseTool):
         if arguments is None:
             arguments = {}
         if not isinstance(arguments, dict):
-            return {"error": "Invalid arguments type; expected a mapping/dict."}
+            return {
+                "status": "error",
+                "error": "Invalid arguments type; expected a mapping/dict.",
+            }
 
         # Handle different endpoint formats
         if "?" in self.endpoint:
@@ -165,7 +177,10 @@ class GeneOntologyTool(BaseTool):
 
             # Handle empty results
             if isinstance(result, list) and len(result) == 0:
-                return {"error": f"No data found for path: {self.extract_path}"}
+                return {
+                    "status": "error",
+                    "error": f"No data found for path: {self.extract_path}",
+                }
             elif isinstance(result, dict) and "error" in result:
                 return result
 

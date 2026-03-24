@@ -84,7 +84,7 @@ class ClinicalTrialsGovTool(BaseTool):
 
             return {"total_count": data.get("totalCount"), "studies": studies}
         except Exception as e:
-            return {"error": str(e)}
+            return {"status": "error", "error": str(e)}
 
     def get_study_details(self, nct_id: str) -> Dict[str, Any]:
         """
@@ -107,4 +107,4 @@ class ClinicalTrialsGovTool(BaseTool):
                 "full_data_link": url,
             }
         except Exception as e:
-            return {"error": str(e)}
+            return {"status": "error", "error": str(e)}

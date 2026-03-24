@@ -72,7 +72,10 @@ class FDAPharmacogenomicBiomarkersTool(BaseTool):
             }
 
         except Exception as e:
-            return {"error": f"Failed to retrieve or parse FDA data: {str(e)}"}
+            return {
+                "status": "error",
+                "error": f"Failed to retrieve or parse FDA data: {str(e)}",
+            }
 
     def _parse_html_table(self, html_content: str) -> List[Dict[str, str]]:
         """

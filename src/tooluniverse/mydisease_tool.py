@@ -38,18 +38,30 @@ class MyDiseaseTool(BaseTool):
         try:
             return self._query(arguments)
         except requests.exceptions.Timeout:
-            return {"error": f"MyDisease.info API timed out after {self.timeout}s"}
+            return {
+                "status": "error",
+                "error": f"MyDisease.info API timed out after {self.timeout}s",
+            }
         except requests.exceptions.ConnectionError:
-            return {"error": "Failed to connect to MyDisease.info API"}
+            return {
+                "status": "error",
+                "error": "Failed to connect to MyDisease.info API",
+            }
         except requests.exceptions.HTTPError as e:
             code = e.response.status_code if e.response is not None else "unknown"
             if code == 404:
                 return {
                     "error": f"Disease not found: {arguments.get('disease_id', arguments.get('query', ''))}"
                 }
-            return {"error": f"MyDisease.info API HTTP error: {code}"}
+            return {
+                "status": "error",
+                "error": f"MyDisease.info API HTTP error: {code}",
+            }
         except Exception as e:
-            return {"error": f"Unexpected error querying MyDisease.info: {str(e)}"}
+            return {
+                "status": "error",
+                "error": f"Unexpected error querying MyDisease.info: {str(e)}",
+            }
 
     def _query(self, arguments: Dict[str, Any]) -> Dict[str, Any]:
         """Route to appropriate endpoint."""
@@ -58,13 +70,16 @@ class MyDiseaseTool(BaseTool):
         elif self.endpoint == "search_diseases":
             return self._search_diseases(arguments)
         else:
-            return {"error": f"Unknown endpoint: {self.endpoint}"}
+            return {"status": "error", "error": f"Unknown endpoint: {self.endpoint}"}
 
     def _get_disease(self, arguments: Dict[str, Any]) -> Dict[str, Any]:
         """Get comprehensive disease annotations by disease ID."""
         disease_id = arguments.get("disease_id", "")
         if not disease_id:
-            return {"error": "disease_id parameter is required (e.g., 'MONDO:0005148')"}
+            return {
+                "status": "error",
+                "error": "disease_id parameter is required (e.g., 'MONDO:0005148')",
+            }
 
         fields_param = arguments.get("fields", "mondo,disease_ontology,ctd,hpo")
 

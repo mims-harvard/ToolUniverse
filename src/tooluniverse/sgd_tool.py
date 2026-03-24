@@ -41,15 +41,24 @@ class SGDTool(BaseTool):
         try:
             return self._dispatch(arguments)
         except requests.exceptions.Timeout:
-            return {"error": f"SGD API request timed out after {self.timeout} seconds"}
+            return {
+                "status": "error",
+                "error": f"SGD API request timed out after {self.timeout} seconds",
+            }
         except requests.exceptions.ConnectionError:
             return {
                 "error": "Failed to connect to SGD API. Check network connectivity."
             }
         except requests.exceptions.HTTPError as e:
-            return {"error": f"SGD API HTTP error: {e.response.status_code}"}
+            return {
+                "status": "error",
+                "error": f"SGD API HTTP error: {e.response.status_code}",
+            }
         except Exception as e:
-            return {"error": f"Unexpected error querying SGD: {str(e)}"}
+            return {
+                "status": "error",
+                "error": f"Unexpected error querying SGD: {str(e)}",
+            }
 
     def _dispatch(self, arguments: Dict[str, Any]) -> Dict[str, Any]:
         """Route to appropriate endpoint based on config."""
@@ -110,7 +119,7 @@ class SGDTool(BaseTool):
         """Get phenotype annotations for a yeast gene."""
         sgd_id = arguments.get("sgd_id", "")
         if not sgd_id:
-            return {"error": "sgd_id parameter is required"}
+            return {"status": "error", "error": "sgd_id parameter is required"}
 
         url = f"{SGD_BASE_URL}/locus/{sgd_id}/phenotype_details"
         response = requests.get(
@@ -160,7 +169,7 @@ class SGDTool(BaseTool):
         """Get Gene Ontology annotations for a yeast gene."""
         sgd_id = arguments.get("sgd_id", "")
         if not sgd_id:
-            return {"error": "sgd_id parameter is required"}
+            return {"status": "error", "error": "sgd_id parameter is required"}
 
         url = f"{SGD_BASE_URL}/locus/{sgd_id}/go_details"
         response = requests.get(
@@ -204,7 +213,7 @@ class SGDTool(BaseTool):
         """Get genetic and physical interactions for a yeast gene."""
         sgd_id = arguments.get("sgd_id", "")
         if not sgd_id:
-            return {"error": "sgd_id parameter is required"}
+            return {"status": "error", "error": "sgd_id parameter is required"}
 
         url = f"{SGD_BASE_URL}/locus/{sgd_id}/interaction_details"
         response = requests.get(
@@ -254,7 +263,7 @@ class SGDTool(BaseTool):
         """Search SGD for genes, GO terms, phenotypes, etc."""
         query = arguments.get("query", "")
         if not query:
-            return {"error": "query parameter is required"}
+            return {"status": "error", "error": "query parameter is required"}
 
         limit = min(arguments.get("limit", 10), 50)
         offset = arguments.get("offset", 0)

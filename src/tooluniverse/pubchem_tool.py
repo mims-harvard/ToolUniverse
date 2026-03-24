@@ -93,13 +93,13 @@ class PubChemRESTTool(BaseTool):
         # 1. Validate required parameters
         for key, prop in self.param_schema.items():
             if prop.get("required", False) and key not in arguments:
-                return {"error": f"Parameter '{key}' is required."}
+                return {"status": "error", "error": f"Parameter '{key}' is required."}
 
         # 2. Build URL
         try:
             url = self._build_url(arguments)
         except ValueError as e:
-            return {"error": str(e)}
+            return {"status": "error", "error": str(e)}
 
         # 3. Send HTTP GET request
         try:
@@ -117,7 +117,10 @@ class PubChemRESTTool(BaseTool):
                 "error": "Request to PubChem PUG-REST timed out, try reducing query scope or retry later."
             }
         except Exception as e:
-            return {"error": f"Failed to request PubChem PUG-REST: {str(e)}"}
+            return {
+                "status": "error",
+                "error": f"Failed to request PubChem PUG-REST: {str(e)}",
+            }
 
         # 4. Check HTTP status code
         if resp.status_code != 200:

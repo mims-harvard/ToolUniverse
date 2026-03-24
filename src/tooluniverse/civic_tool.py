@@ -235,7 +235,10 @@ class CIViCTool(BaseTool):
                     }
                 gene_id = self._lookup_gene_id(gene_name)
                 if gene_id is None:
-                    return {"error": f"Gene '{gene_name}' not found in CIViC database"}
+                    return {
+                        "status": "error",
+                        "error": f"Gene '{gene_name}' not found in CIViC database",
+                    }
                 arguments = dict(arguments)
                 arguments["gene_id"] = gene_id
             return self._get_variants_for_gene_id(
@@ -347,7 +350,10 @@ class CIViCTool(BaseTool):
             if gene_name:
                 gene_id = self._lookup_gene_id(gene_name)
                 if gene_id is None:
-                    return {"error": f"Gene '{gene_name}' not found in CIViC database"}
+                    return {
+                        "status": "error",
+                        "error": f"Gene '{gene_name}' not found in CIViC database",
+                    }
                 # Feature-43B-01: when gene+query combined, always fetch up to 200 variants
                 # before client-side filtering; the user's limit applies to the OUTPUT,
                 # not the pre-filter fetch — otherwise alphabetically early variants may

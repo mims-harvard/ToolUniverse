@@ -41,18 +41,21 @@ class EBIProteinsInteractionsTool(BaseTool):
         try:
             return self._query(arguments)
         except requests.exceptions.Timeout:
-            return {"error": f"EBI Proteins API timed out after {self.timeout}s"}
+            return {
+                "status": "error",
+                "error": f"EBI Proteins API timed out after {self.timeout}s",
+            }
         except requests.exceptions.ConnectionError:
-            return {"error": "Failed to connect to EBI Proteins API"}
+            return {"status": "error", "error": "Failed to connect to EBI Proteins API"}
         except requests.exceptions.HTTPError as e:
             status = e.response.status_code if e.response is not None else "unknown"
             if status == 400:
                 return {
                     "error": f"Invalid accession. Use a UniProt accession (e.g., P04637)."
                 }
-            return {"error": f"EBI Proteins API HTTP {status}"}
+            return {"status": "error", "error": f"EBI Proteins API HTTP {status}"}
         except Exception as e:
-            return {"error": f"Unexpected error: {str(e)}"}
+            return {"status": "error", "error": f"Unexpected error: {str(e)}"}
 
     def _query(self, arguments: Dict[str, Any]) -> Dict[str, Any]:
         """Route to appropriate endpoint."""
@@ -61,13 +64,16 @@ class EBIProteinsInteractionsTool(BaseTool):
         elif self.endpoint == "interaction_details":
             return self._get_interaction_details(arguments)
         else:
-            return {"error": f"Unknown endpoint: {self.endpoint}"}
+            return {"status": "error", "error": f"Unknown endpoint: {self.endpoint}"}
 
     def _get_interactions(self, arguments: Dict[str, Any]) -> Dict[str, Any]:
         """Get protein-protein interaction partners."""
         accession = arguments.get("accession", "")
         if not accession:
-            return {"error": "accession is required (e.g., 'P04637')."}
+            return {
+                "status": "error",
+                "error": "accession is required (e.g., 'P04637').",
+            }
         limit = int(arguments.get("limit", 25))
 
         url = f"{EBI_PROTEINS_BASE_URL}/proteins/interaction/{accession}"
@@ -131,7 +137,10 @@ class EBIProteinsInteractionsTool(BaseTool):
         """Get protein info with interactions, diseases, and locations."""
         accession = arguments.get("accession", "")
         if not accession:
-            return {"error": "accession is required (e.g., 'P04637')."}
+            return {
+                "status": "error",
+                "error": "accession is required (e.g., 'P04637').",
+            }
 
         url = f"{EBI_PROTEINS_BASE_URL}/proteins/interaction/{accession}"
         response = requests.get(
@@ -143,7 +152,10 @@ class EBIProteinsInteractionsTool(BaseTool):
         data = response.json()
 
         if not isinstance(data, list) or not data:
-            return {"error": f"No interaction data found for {accession}"}
+            return {
+                "status": "error",
+                "error": f"No interaction data found for {accession}",
+            }
 
         # Extract protein metadata from first entry
         first_entry = data[0]

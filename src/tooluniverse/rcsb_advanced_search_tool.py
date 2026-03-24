@@ -41,18 +41,21 @@ class RCSBAdvancedSearchTool(BaseTool):
         try:
             return self._query(arguments)
         except requests.exceptions.Timeout:
-            return {"error": f"RCSB Search API timed out after {self.timeout}s"}
+            return {
+                "status": "error",
+                "error": f"RCSB Search API timed out after {self.timeout}s",
+            }
         except requests.exceptions.ConnectionError:
-            return {"error": "Failed to connect to RCSB Search API"}
+            return {"status": "error", "error": "Failed to connect to RCSB Search API"}
         except requests.exceptions.HTTPError as e:
             msg = ""
             try:
                 msg = e.response.json().get("message", "")[:200]
             except Exception:
                 msg = str(e.response.status_code)
-            return {"error": f"RCSB Search API error: {msg}"}
+            return {"status": "error", "error": f"RCSB Search API error: {msg}"}
         except Exception as e:
-            return {"error": f"Unexpected error: {str(e)}"}
+            return {"status": "error", "error": f"Unexpected error: {str(e)}"}
 
     def _query(self, arguments: Dict[str, Any]) -> Dict[str, Any]:
         """Route to appropriate endpoint."""
@@ -61,7 +64,7 @@ class RCSBAdvancedSearchTool(BaseTool):
         elif self.endpoint == "motif_search":
             return self._motif_search(arguments)
         else:
-            return {"error": f"Unknown endpoint: {self.endpoint}"}
+            return {"status": "error", "error": f"Unknown endpoint: {self.endpoint}"}
 
     def _advanced_search(self, arguments: Dict[str, Any]) -> Dict[str, Any]:
         """Search PDB by multiple attribute filters."""
@@ -220,7 +223,7 @@ class RCSBAdvancedSearchTool(BaseTool):
         """Search PDB by sequence motif pattern."""
         pattern = arguments.get("pattern", "")
         if not pattern:
-            return {"error": "pattern parameter is required"}
+            return {"status": "error", "error": "pattern parameter is required"}
 
         pattern_type = arguments.get("pattern_type") or "prosite"
         sequence_type = arguments.get("sequence_type") or "protein"

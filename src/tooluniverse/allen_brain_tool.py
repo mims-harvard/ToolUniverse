@@ -53,19 +53,28 @@ class AllenBrainTool(BaseTool):
             elif query_type == "structure_lookup":
                 return self._get_structure_by_id(arguments)
             else:
-                return {"error": f"Unknown query type: {query_type}"}
+                return {"status": "error", "error": f"Unknown query type: {query_type}"}
 
         except requests.exceptions.Timeout:
             return {
                 "error": f"Allen Brain Atlas API request timed out after {self.timeout} seconds"
             }
         except requests.exceptions.ConnectionError:
-            return {"error": "Failed to connect to Allen Brain Atlas API."}
+            return {
+                "status": "error",
+                "error": "Failed to connect to Allen Brain Atlas API.",
+            }
         except requests.exceptions.HTTPError as e:
             status = e.response.status_code if e.response else "unknown"
-            return {"error": f"Allen Brain Atlas API HTTP error: {status}"}
+            return {
+                "status": "error",
+                "error": f"Allen Brain Atlas API HTTP error: {status}",
+            }
         except Exception as e:
-            return {"error": f"Unexpected error querying Allen Brain Atlas: {str(e)}"}
+            return {
+                "status": "error",
+                "error": f"Unexpected error querying Allen Brain Atlas: {str(e)}",
+            }
 
     def _make_rma_query(
         self, criteria: str, num_rows: int = 50, start_row: int = 0, include: str = None
@@ -96,12 +105,15 @@ class AllenBrainTool(BaseTool):
         elif gene_name:
             criteria = f"model::Gene,rma::criteria,[name$li'*{gene_name}*']"
         else:
-            return {"error": "Either gene_acronym or gene_name is required"}
+            return {
+                "status": "error",
+                "error": "Either gene_acronym or gene_name is required",
+            }
 
         result = self._make_rma_query(criteria, num_rows=num_rows)
 
         if not result.get("success"):
-            return {"error": "Allen Brain Atlas query failed"}
+            return {"status": "error", "error": "Allen Brain Atlas query failed"}
 
         records = result.get("msg", [])
         return {
@@ -124,12 +136,12 @@ class AllenBrainTool(BaseTool):
         elif name:
             criteria = f"model::Structure,rma::criteria,[name$li'*{name}*']"
         else:
-            return {"error": "Either acronym or name is required"}
+            return {"status": "error", "error": "Either acronym or name is required"}
 
         result = self._make_rma_query(criteria, num_rows=num_rows)
 
         if not result.get("success"):
-            return {"error": "Allen Brain Atlas query failed"}
+            return {"status": "error", "error": "Allen Brain Atlas query failed"}
 
         records = result.get("msg", [])
         return {
@@ -147,7 +159,7 @@ class AllenBrainTool(BaseTool):
         num_rows = arguments.get("num_rows", 50)
 
         if not gene_acronym:
-            return {"error": "gene_acronym is required"}
+            return {"status": "error", "error": "gene_acronym is required"}
 
         criteria = (
             f"model::SectionDataSet,"
@@ -159,7 +171,7 @@ class AllenBrainTool(BaseTool):
         result = self._make_rma_query(criteria, num_rows=num_rows, include="genes")
 
         if not result.get("success"):
-            return {"error": "Allen Brain Atlas query failed"}
+            return {"status": "error", "error": "Allen Brain Atlas query failed"}
 
         records = result.get("msg", [])
         return {
@@ -175,17 +187,20 @@ class AllenBrainTool(BaseTool):
         """Get a brain structure by its numeric ID."""
         structure_id = arguments.get("structure_id")
         if structure_id is None:
-            return {"error": "structure_id is required"}
+            return {"status": "error", "error": "structure_id is required"}
 
         criteria = f"model::Structure,rma::criteria,[id$eq{structure_id}]"
         result = self._make_rma_query(criteria, num_rows=1)
 
         if not result.get("success"):
-            return {"error": "Allen Brain Atlas query failed"}
+            return {"status": "error", "error": "Allen Brain Atlas query failed"}
 
         records = result.get("msg", [])
         if not records:
-            return {"error": f"Structure not found with id: {structure_id}"}
+            return {
+                "status": "error",
+                "error": f"Structure not found with id: {structure_id}",
+            }
 
         return {
             "data": records[0],

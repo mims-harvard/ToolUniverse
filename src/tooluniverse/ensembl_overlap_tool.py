@@ -47,7 +47,7 @@ class EnsemblOverlapTool(BaseTool):
                 "error": f"Ensembl API timed out after {self.timeout}s. Try a smaller region."
             }
         except requests.exceptions.ConnectionError:
-            return {"error": "Failed to connect to Ensembl REST API"}
+            return {"status": "error", "error": "Failed to connect to Ensembl REST API"}
         except requests.exceptions.HTTPError as e:
             status = e.response.status_code if e.response is not None else "unknown"
             if status == 400:
@@ -58,9 +58,9 @@ class EnsemblOverlapTool(BaseTool):
                 return {
                     "error": "Region or gene not found. Verify species and coordinates."
                 }
-            return {"error": f"Ensembl REST API HTTP {status}"}
+            return {"status": "error", "error": f"Ensembl REST API HTTP {status}"}
         except Exception as e:
-            return {"error": f"Unexpected error: {str(e)}"}
+            return {"status": "error", "error": f"Unexpected error: {str(e)}"}
 
     def _query(self, arguments: Dict[str, Any]) -> Dict[str, Any]:
         """Route to appropriate endpoint."""
@@ -69,7 +69,7 @@ class EnsemblOverlapTool(BaseTool):
         elif self.endpoint == "gene_id":
             return self._overlap_gene(arguments)
         else:
-            return {"error": f"Unknown endpoint: {self.endpoint}"}
+            return {"status": "error", "error": f"Unknown endpoint: {self.endpoint}"}
 
     def _overlap_region(self, arguments: Dict[str, Any]) -> Dict[str, Any]:
         """Get features overlapping a genomic region."""
@@ -103,7 +103,10 @@ class EnsemblOverlapTool(BaseTool):
         data = response.json()
 
         if not isinstance(data, list):
-            return {"error": "Unexpected response format from Ensembl API."}
+            return {
+                "status": "error",
+                "error": "Unexpected response format from Ensembl API.",
+            }
 
         # Categorize results by feature type
         by_type = {}
@@ -166,7 +169,10 @@ class EnsemblOverlapTool(BaseTool):
         data = response.json()
 
         if not isinstance(data, list):
-            return {"error": "Unexpected response format from Ensembl API."}
+            return {
+                "status": "error",
+                "error": "Unexpected response format from Ensembl API.",
+            }
 
         # Categorize and format
         by_type = {}

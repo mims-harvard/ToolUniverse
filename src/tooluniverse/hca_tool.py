@@ -92,7 +92,7 @@ class HCATool(BaseTool):
                 "projects": projects,
             }
         except Exception as e:
-            return {"error": str(e)}
+            return {"status": "error", "error": str(e)}
 
     def get_file_manifest(self, project_id: str, limit: int = 10) -> Dict[str, Any]:
         """
@@ -127,4 +127,4 @@ class HCATool(BaseTool):
                 ],  # Pagination applies to hits (bundles), but we extract files, so slice again to be safe
             }
         except Exception as e:
-            return {"error": str(e)}
+            return {"status": "error", "error": str(e)}

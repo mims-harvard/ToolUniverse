@@ -41,15 +41,24 @@ class ITISTool(BaseTool):
         try:
             return self._query(arguments)
         except requests.exceptions.Timeout:
-            return {"error": f"ITIS API request timed out after {self.timeout} seconds"}
+            return {
+                "status": "error",
+                "error": f"ITIS API request timed out after {self.timeout} seconds",
+            }
         except requests.exceptions.ConnectionError:
             return {
                 "error": "Failed to connect to ITIS API. Check network connectivity."
             }
         except requests.exceptions.HTTPError as e:
-            return {"error": f"ITIS API HTTP error: {e.response.status_code}"}
+            return {
+                "status": "error",
+                "error": f"ITIS API HTTP error: {e.response.status_code}",
+            }
         except Exception as e:
-            return {"error": f"Unexpected error querying ITIS: {str(e)}"}
+            return {
+                "status": "error",
+                "error": f"Unexpected error querying ITIS: {str(e)}",
+            }
 
     def _query(self, arguments: Dict[str, Any]) -> Dict[str, Any]:
         """Route to appropriate ITIS endpoint."""
@@ -62,13 +71,13 @@ class ITISTool(BaseTool):
         elif self.endpoint == "full_record":
             return self._get_full_record(arguments)
         else:
-            return {"error": f"Unknown endpoint: {self.endpoint}"}
+            return {"status": "error", "error": f"Unknown endpoint: {self.endpoint}"}
 
     def _search_scientific(self, arguments: Dict[str, Any]) -> Dict[str, Any]:
         """Search for taxa by scientific name."""
         name = arguments.get("scientific_name", "")
         if not name:
-            return {"error": "scientific_name parameter is required"}
+            return {"status": "error", "error": "scientific_name parameter is required"}
 
         url = f"{ITIS_BASE_URL}/searchByScientificName"
         params = {"srchKey": name}
@@ -104,7 +113,7 @@ class ITISTool(BaseTool):
         """Search for taxa by common name."""
         name = arguments.get("common_name", "")
         if not name:
-            return {"error": "common_name parameter is required"}
+            return {"status": "error", "error": "common_name parameter is required"}
 
         url = f"{ITIS_BASE_URL}/searchByCommonName"
         params = {"srchKey": name}
@@ -138,7 +147,7 @@ class ITISTool(BaseTool):
         """Get full taxonomic hierarchy for a TSN."""
         tsn = arguments.get("tsn", "")
         if not tsn:
-            return {"error": "tsn parameter is required"}
+            return {"status": "error", "error": "tsn parameter is required"}
 
         url = f"{ITIS_BASE_URL}/getFullHierarchyFromTSN"
         params = {"tsn": tsn}
@@ -173,7 +182,7 @@ class ITISTool(BaseTool):
         """Get complete taxonomic record for a TSN."""
         tsn = arguments.get("tsn", "")
         if not tsn:
-            return {"error": "tsn parameter is required"}
+            return {"status": "error", "error": "tsn parameter is required"}
 
         url = f"{ITIS_BASE_URL}/getFullRecordFromTSN"
         params = {"tsn": tsn}

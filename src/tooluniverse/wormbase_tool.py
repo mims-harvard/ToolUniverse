@@ -50,9 +50,15 @@ class WormBaseTool(BaseTool):
                 "error": "Failed to connect to WormBase API. Check network connectivity."
             }
         except requests.exceptions.HTTPError as e:
-            return {"error": f"WormBase API HTTP error: {e.response.status_code}"}
+            return {
+                "status": "error",
+                "error": f"WormBase API HTTP error: {e.response.status_code}",
+            }
         except Exception as e:
-            return {"error": f"Unexpected error querying WormBase: {str(e)}"}
+            return {
+                "status": "error",
+                "error": f"Unexpected error querying WormBase: {str(e)}",
+            }
 
     def _dispatch(self, arguments: Dict[str, Any]) -> Dict[str, Any]:
         """Route to appropriate endpoint based on config."""
@@ -63,7 +69,10 @@ class WormBaseTool(BaseTool):
         elif self.endpoint_type == "gene_expression":
             return self._gene_expression(arguments)
         else:
-            return {"error": f"Unknown endpoint_type: {self.endpoint_type}"}
+            return {
+                "status": "error",
+                "error": f"Unknown endpoint_type: {self.endpoint_type}",
+            }
 
     def _gene_overview(self, arguments: Dict[str, Any]) -> Dict[str, Any]:
         """Get detailed gene overview from WormBase by WBGene ID."""

@@ -42,9 +42,12 @@ class PDBeLigandsTool(BaseTool):
         try:
             return self._query(arguments)
         except requests.exceptions.Timeout:
-            return {"error": f"PDBe API timed out after {self.timeout}s"}
+            return {
+                "status": "error",
+                "error": f"PDBe API timed out after {self.timeout}s",
+            }
         except requests.exceptions.ConnectionError:
-            return {"error": "Failed to connect to PDBe API"}
+            return {"status": "error", "error": "Failed to connect to PDBe API"}
         except requests.exceptions.HTTPError as e:
             status = e.response.status_code if e.response is not None else "unknown"
             if status == 404:
@@ -52,9 +55,9 @@ class PDBeLigandsTool(BaseTool):
                 return {
                     "error": f"PDB entry '{pdb_id}' not found. Provide a valid 4-character PDB ID (e.g., '4hhb', '3ert')."
                 }
-            return {"error": f"PDBe API HTTP {status}"}
+            return {"status": "error", "error": f"PDBe API HTTP {status}"}
         except Exception as e:
-            return {"error": f"Unexpected error: {str(e)}"}
+            return {"status": "error", "error": f"Unexpected error: {str(e)}"}
 
     def _query(self, arguments: Dict[str, Any]) -> Dict[str, Any]:
         """Route to appropriate endpoint."""
@@ -63,7 +66,7 @@ class PDBeLigandsTool(BaseTool):
         elif self.endpoint == "residue_listing":
             return self._get_residue_listing(arguments)
         else:
-            return {"error": f"Unknown endpoint: {self.endpoint}"}
+            return {"status": "error", "error": f"Unknown endpoint: {self.endpoint}"}
 
     def _get_ligand_monomers(self, arguments: Dict[str, Any]) -> Dict[str, Any]:
         """Get all ligand monomers bound in a PDB structure."""
@@ -80,7 +83,7 @@ class PDBeLigandsTool(BaseTool):
         data = response.json()
 
         if pdb_id not in data:
-            return {"error": f"No ligand data for PDB '{pdb_id}'."}
+            return {"status": "error", "error": f"No ligand data for PDB '{pdb_id}'."}
 
         ligands_raw = data[pdb_id]
         ligands = []
@@ -143,7 +146,7 @@ class PDBeLigandsTool(BaseTool):
         data = response.json()
 
         if pdb_id not in data:
-            return {"error": f"No residue data for PDB '{pdb_id}'."}
+            return {"status": "error", "error": f"No residue data for PDB '{pdb_id}'."}
 
         entry_data = data[pdb_id]
         molecules = entry_data.get("molecules", [])

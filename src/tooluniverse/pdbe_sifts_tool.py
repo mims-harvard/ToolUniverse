@@ -40,13 +40,22 @@ class PDBeSIFTSTool(BaseTool):
         try:
             return self._query(arguments)
         except requests.exceptions.Timeout:
-            return {"error": f"PDBe SIFTS API timed out after {self.timeout}s"}
+            return {
+                "status": "error",
+                "error": f"PDBe SIFTS API timed out after {self.timeout}s",
+            }
         except requests.exceptions.ConnectionError:
-            return {"error": "Failed to connect to PDBe SIFTS API"}
+            return {"status": "error", "error": "Failed to connect to PDBe SIFTS API"}
         except requests.exceptions.HTTPError as e:
-            return {"error": f"PDBe SIFTS API HTTP error: {e.response.status_code}"}
+            return {
+                "status": "error",
+                "error": f"PDBe SIFTS API HTTP error: {e.response.status_code}",
+            }
         except Exception as e:
-            return {"error": f"Unexpected error querying PDBe SIFTS API: {str(e)}"}
+            return {
+                "status": "error",
+                "error": f"Unexpected error querying PDBe SIFTS API: {str(e)}",
+            }
 
     def _query(self, arguments: Dict[str, Any]) -> Dict[str, Any]:
         """Route to appropriate endpoint."""
@@ -57,13 +66,16 @@ class PDBeSIFTSTool(BaseTool):
         elif self.endpoint == "uniprot_to_pdb":
             return self._get_uniprot_to_pdb(arguments)
         else:
-            return {"error": f"Unknown endpoint: {self.endpoint}"}
+            return {"status": "error", "error": f"Unknown endpoint: {self.endpoint}"}
 
     def _get_best_structures(self, arguments: Dict[str, Any]) -> Dict[str, Any]:
         """Get best PDB structures for a UniProt protein, ranked by coverage and resolution."""
         accession = arguments.get("uniprot_accession", "")
         if not accession:
-            return {"error": "uniprot_accession parameter is required (e.g., P04637)"}
+            return {
+                "status": "error",
+                "error": "uniprot_accession parameter is required (e.g., P04637)",
+            }
 
         url = f"{PDBE_API_BASE_URL}/mappings/best_structures/{accession}"
         response = requests.get(url, timeout=self.timeout)
@@ -103,7 +115,10 @@ class PDBeSIFTSTool(BaseTool):
         """Map PDB entry chains to UniProt accessions."""
         pdb_id = arguments.get("pdb_id", "")
         if not pdb_id:
-            return {"error": "pdb_id parameter is required (e.g., 1tup)"}
+            return {
+                "status": "error",
+                "error": "pdb_id parameter is required (e.g., 1tup)",
+            }
 
         pdb_id = pdb_id.lower()
         url = f"{PDBE_API_BASE_URL}/mappings/uniprot/{pdb_id}"
@@ -152,7 +167,10 @@ class PDBeSIFTSTool(BaseTool):
         """Get all PDB entries covering a UniProt protein."""
         accession = arguments.get("uniprot_accession", "")
         if not accession:
-            return {"error": "uniprot_accession parameter is required (e.g., P04637)"}
+            return {
+                "status": "error",
+                "error": "uniprot_accession parameter is required (e.g., P04637)",
+            }
 
         # Use best_structures endpoint which returns all PDB structures
         url = f"{PDBE_API_BASE_URL}/mappings/best_structures/{accession}"

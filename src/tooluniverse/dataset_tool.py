@@ -84,7 +84,7 @@ class DatasetTool(BaseTool):
     def run(self, arguments):
         """Main entry point for the tool."""
         if self.dataset is None or self.dataset.empty:
-            return {"error": "Dataset not loaded or is empty"}
+            return {"status": "error", "error": "Dataset not loaded or is empty"}
 
         query_params = deepcopy(self.query_schema)
         expected_param_names = self.parameters.keys()
@@ -133,7 +133,10 @@ class DatasetTool(BaseTool):
         limit = arguments.get("limit", 50)
 
         if not query:
-            return {"error": "Query parameter is required for search"}
+            return {
+                "status": "error",
+                "error": "Query parameter is required for search",
+            }
 
         # Prepare search query
         if not case_sensitive:
@@ -306,7 +309,7 @@ class DatasetTool(BaseTool):
             filtered_data = filtered_data[mask]
 
         except Exception as e:
-            return {"error": f"Error applying filter: {str(e)}"}
+            return {"status": "error", "error": f"Error applying filter: {str(e)}"}
 
         # Apply limit and convert to dict
         results = filtered_data.head(limit).to_dict("records")
@@ -375,7 +378,7 @@ class DatasetTool(BaseTool):
     def get_dataset_info(self):
         """Get information about the loaded dataset."""
         if self.dataset is None or self.dataset.empty:
-            return {"error": "Dataset not loaded or is empty"}
+            return {"status": "error", "error": "Dataset not loaded or is empty"}
 
         return {
             "total_records": len(self.dataset),

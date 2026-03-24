@@ -53,7 +53,10 @@ class SearchSPLTool(BaseTool):
         try:
             resp = requests.get(self.endpoint, params=params, timeout=10)
         except Exception as e:
-            return {"error": f"Failed to request DailyMed search_spls: {str(e)}"}
+            return {
+                "status": "error",
+                "error": f"Failed to request DailyMed search_spls: {str(e)}",
+            }
 
         if resp.status_code != 200:
             return {
@@ -98,10 +101,16 @@ class GetSPLBySetIDTool(BaseTool):
         try:
             resp = requests.get(url, timeout=10)
         except Exception as e:
-            return {"error": f"Failed to request DailyMed get_spl_by_setid: {str(e)}"}
+            return {
+                "status": "error",
+                "error": f"Failed to request DailyMed get_spl_by_setid: {str(e)}",
+            }
 
         if resp.status_code == 404:
-            return {"error": f"SPL label not found for Set ID={setid}."}
+            return {
+                "status": "error",
+                "error": f"SPL label not found for Set ID={setid}.",
+            }
         elif resp.status_code == 415:
             return {
                 "error": f"DailyMed API does not support requested format. Set ID={setid} only supports XML format."

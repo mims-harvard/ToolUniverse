@@ -42,15 +42,24 @@ class OMATool(BaseTool):
         try:
             return self._query(arguments)
         except requests.exceptions.Timeout:
-            return {"error": f"OMA API request timed out after {self.timeout} seconds"}
+            return {
+                "status": "error",
+                "error": f"OMA API request timed out after {self.timeout} seconds",
+            }
         except requests.exceptions.ConnectionError:
             return {
                 "error": "Failed to connect to OMA API. Check network connectivity."
             }
         except requests.exceptions.HTTPError as e:
-            return {"error": f"OMA API HTTP error: {e.response.status_code}"}
+            return {
+                "status": "error",
+                "error": f"OMA API HTTP error: {e.response.status_code}",
+            }
         except Exception as e:
-            return {"error": f"Unexpected error querying OMA: {str(e)}"}
+            return {
+                "status": "error",
+                "error": f"Unexpected error querying OMA: {str(e)}",
+            }
 
     def _query(self, arguments: Dict[str, Any]) -> Dict[str, Any]:
         """Route to appropriate OMA endpoint."""
@@ -63,7 +72,7 @@ class OMATool(BaseTool):
         elif self.endpoint == "group":
             return self._get_group(arguments)
         else:
-            return {"error": f"Unknown endpoint: {self.endpoint}"}
+            return {"status": "error", "error": f"Unknown endpoint: {self.endpoint}"}
 
     def _get_protein(self, arguments: Dict[str, Any]) -> Dict[str, Any]:
         """Get protein information by UniProt accession or OMA ID."""
@@ -158,7 +167,10 @@ class OMATool(BaseTool):
         """Get Hierarchical Orthologous Group (HOG) information."""
         hog_id = arguments.get("hog_id", "")
         if not hog_id:
-            return {"error": "hog_id parameter is required (e.g. HOG:E0739094)"}
+            return {
+                "status": "error",
+                "error": "hog_id parameter is required (e.g. HOG:E0739094)",
+            }
 
         url = f"{OMA_BASE_URL}/hog/{hog_id}/"
         response = requests.get(url, timeout=self.timeout)

@@ -48,15 +48,24 @@ class BioPortalTool(BaseTool):
         try:
             return self._query(arguments)
         except requests.exceptions.Timeout:
-            return {"error": f"BioPortal API timed out after {self.timeout}s"}
+            return {
+                "status": "error",
+                "error": f"BioPortal API timed out after {self.timeout}s",
+            }
         except requests.exceptions.ConnectionError:
             return {
                 "error": "Failed to connect to BioPortal API (data.bioontology.org). The server may be blocking connections from your network or IP address."
             }
         except requests.exceptions.HTTPError as e:
-            return {"error": f"BioPortal API HTTP error: {e.response.status_code}"}
+            return {
+                "status": "error",
+                "error": f"BioPortal API HTTP error: {e.response.status_code}",
+            }
         except Exception as e:
-            return {"error": f"Unexpected error querying BioPortal: {str(e)}"}
+            return {
+                "status": "error",
+                "error": f"Unexpected error querying BioPortal: {str(e)}",
+            }
 
     def _query(self, arguments: Dict[str, Any]) -> Dict[str, Any]:
         """Route to appropriate BioPortal endpoint."""
@@ -69,13 +78,13 @@ class BioPortalTool(BaseTool):
         elif self.endpoint == "get_hierarchy":
             return self._get_hierarchy(arguments)
         else:
-            return {"error": f"Unknown endpoint: {self.endpoint}"}
+            return {"status": "error", "error": f"Unknown endpoint: {self.endpoint}"}
 
     def _search(self, arguments: Dict[str, Any]) -> Dict[str, Any]:
         """Search across all (or specific) ontologies for terms."""
         query = arguments.get("query", "")
         if not query:
-            return {"error": "query parameter is required"}
+            return {"status": "error", "error": "query parameter is required"}
 
         ontologies = arguments.get("ontologies")
         page_size = arguments.get("page_size") or 10
@@ -133,7 +142,10 @@ class BioPortalTool(BaseTool):
         ontology = arguments.get("ontology", "")
         concept_id = arguments.get("concept_id", "")
         if not ontology or not concept_id:
-            return {"error": "Both ontology and concept_id are required"}
+            return {
+                "status": "error",
+                "error": "Both ontology and concept_id are required",
+            }
 
         # URL-encode the concept IRI (single encode only)
         import urllib.parse
@@ -171,7 +183,7 @@ class BioPortalTool(BaseTool):
         """Annotate biomedical text with ontology terms (named entity recognition)."""
         text = arguments.get("text", "")
         if not text:
-            return {"error": "text parameter is required"}
+            return {"status": "error", "error": "text parameter is required"}
 
         ontologies = arguments.get("ontologies")
         longest_only = arguments.get("longest_only")
@@ -227,7 +239,10 @@ class BioPortalTool(BaseTool):
         concept_id = arguments.get("concept_id", "")
         direction = arguments.get("direction", "children")
         if not ontology or not concept_id:
-            return {"error": "Both ontology and concept_id are required"}
+            return {
+                "status": "error",
+                "error": "Both ontology and concept_id are required",
+            }
 
         import urllib.parse
 

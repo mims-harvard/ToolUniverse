@@ -39,16 +39,22 @@ class KEGGExtTool(BaseTool):
         try:
             return self._query(arguments)
         except requests.exceptions.Timeout:
-            return {"error": f"KEGG API timed out after {self.timeout}s"}
+            return {
+                "status": "error",
+                "error": f"KEGG API timed out after {self.timeout}s",
+            }
         except requests.exceptions.ConnectionError:
-            return {"error": "Failed to connect to KEGG REST API"}
+            return {"status": "error", "error": "Failed to connect to KEGG REST API"}
         except requests.exceptions.HTTPError as e:
             code = e.response.status_code if e.response is not None else "unknown"
             if code == 404:
-                return {"error": f"KEGG entry not found"}
-            return {"error": f"KEGG API HTTP error: {code}"}
+                return {"status": "error", "error": f"KEGG entry not found"}
+            return {"status": "error", "error": f"KEGG API HTTP error: {code}"}
         except Exception as e:
-            return {"error": f"Unexpected error querying KEGG: {str(e)}"}
+            return {
+                "status": "error",
+                "error": f"Unexpected error querying KEGG: {str(e)}",
+            }
 
     def _query(self, arguments: Dict[str, Any]) -> Dict[str, Any]:
         """Route to appropriate endpoint."""
@@ -63,13 +69,16 @@ class KEGGExtTool(BaseTool):
         elif self.endpoint == "get_brite_hierarchy":
             return self._get_brite_hierarchy(arguments)
         else:
-            return {"error": f"Unknown endpoint: {self.endpoint}"}
+            return {"status": "error", "error": f"Unknown endpoint: {self.endpoint}"}
 
     def _get_gene_pathways(self, arguments: Dict[str, Any]) -> Dict[str, Any]:
         """Get all KEGG pathways that a gene participates in."""
         gene_id = arguments.get("gene_id", "")
         if not gene_id:
-            return {"error": "gene_id is required (e.g., 'hsa:7157' for human TP53)"}
+            return {
+                "status": "error",
+                "error": "gene_id is required (e.g., 'hsa:7157' for human TP53)",
+            }
 
         # Ensure proper KEGG format (org:id)
         if ":" not in gene_id:
@@ -202,7 +211,10 @@ class KEGGExtTool(BaseTool):
         """Get KEGG compound/metabolite details."""
         compound_id = arguments.get("compound_id", "")
         if not compound_id:
-            return {"error": "compound_id is required (e.g., 'C00002' for ATP)"}
+            return {
+                "status": "error",
+                "error": "compound_id is required (e.g., 'C00002' for ATP)",
+            }
 
         # Ensure proper KEGG compound format
         if not compound_id.startswith("C"):
@@ -214,7 +226,7 @@ class KEGGExtTool(BaseTool):
 
         text = response.text
         if not text.strip():
-            return {"error": f"Compound not found: {compound_id}"}
+            return {"status": "error", "error": f"Compound not found: {compound_id}"}
 
         # Parse KEGG flat file format
         result = {
@@ -338,7 +350,10 @@ class KEGGExtTool(BaseTool):
         """Get a specific KEGG BRITE hierarchy as a JSON tree."""
         hierarchy_id = arguments.get("hierarchy_id", "")
         if not hierarchy_id:
-            return {"error": "hierarchy_id is required (e.g., 'ko01000' for Enzymes)"}
+            return {
+                "status": "error",
+                "error": "hierarchy_id is required (e.g., 'ko01000' for Enzymes)",
+            }
 
         # KEGG BRITE JSON endpoint requires br: prefix
         url = f"{KEGG_BASE_URL}/get/br:{hierarchy_id}/json"
@@ -346,7 +361,10 @@ class KEGGExtTool(BaseTool):
         response.raise_for_status()
 
         if not response.text.strip():
-            return {"error": f"BRITE hierarchy not found: {hierarchy_id}"}
+            return {
+                "status": "error",
+                "error": f"BRITE hierarchy not found: {hierarchy_id}",
+            }
 
         tree = response.json()
 

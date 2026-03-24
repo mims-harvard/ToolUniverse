@@ -44,9 +44,15 @@ class UniProtIDMappingTool(BaseTool):
         try:
             return self._dispatch(arguments)
         except requests.exceptions.Timeout:
-            return {"error": f"UniProt ID Mapping API timed out after {self.timeout}s"}
+            return {
+                "status": "error",
+                "error": f"UniProt ID Mapping API timed out after {self.timeout}s",
+            }
         except requests.exceptions.ConnectionError:
-            return {"error": "Failed to connect to UniProt ID Mapping API"}
+            return {
+                "status": "error",
+                "error": "Failed to connect to UniProt ID Mapping API",
+            }
         except requests.exceptions.HTTPError as e:
             status = e.response.status_code if e.response else "unknown"
             body = ""
@@ -54,9 +60,12 @@ class UniProtIDMappingTool(BaseTool):
                 body = e.response.json().get("messages", [""])[0]
             except Exception:
                 pass
-            return {"error": f"UniProt ID Mapping HTTP error {status}: {body}"}
+            return {
+                "status": "error",
+                "error": f"UniProt ID Mapping HTTP error {status}: {body}",
+            }
         except Exception as e:
-            return {"error": f"Unexpected error: {str(e)}"}
+            return {"status": "error", "error": f"Unexpected error: {str(e)}"}
 
     def _dispatch(self, arguments: Dict[str, Any]) -> Dict[str, Any]:
         """Route to appropriate endpoint."""
@@ -68,7 +77,10 @@ class UniProtIDMappingTool(BaseTool):
             return self._gene_to_uniprot(arguments)
         elif self.endpoint_type == "list_databases":
             return self._list_databases(arguments)
-        return {"error": f"Unknown endpoint_type: {self.endpoint_type}"}
+        return {
+            "status": "error",
+            "error": f"Unknown endpoint_type: {self.endpoint_type}",
+        }
 
     def _submit_and_poll(
         self, from_db: str, to_db: str, ids: str, tax_id: int = None
@@ -92,7 +104,10 @@ class UniProtIDMappingTool(BaseTool):
         job_id = submit_resp.json().get("jobId")
 
         if not job_id:
-            return {"error": "Failed to get job ID from UniProt ID Mapping"}
+            return {
+                "status": "error",
+                "error": "Failed to get job ID from UniProt ID Mapping",
+            }
 
         # Poll for completion (max 60 seconds)
         max_polls = 20
@@ -110,11 +125,17 @@ class UniProtIDMappingTool(BaseTool):
                 return {"results": status_data["results"], "job_id": job_id}
             if status_data.get("jobStatus") == "ERROR":
                 msg = status_data.get("errorMessage", "Unknown error")
-                return {"error": f"UniProt mapping job failed: {msg}"}
+                return {
+                    "status": "error",
+                    "error": f"UniProt mapping job failed: {msg}",
+                }
 
             time.sleep(1.5)
         else:
-            return {"error": "UniProt ID mapping job did not complete within timeout"}
+            return {
+                "status": "error",
+                "error": "UniProt ID mapping job did not complete within timeout",
+            }
 
         # Get results
         results_resp = requests.get(
@@ -140,9 +161,15 @@ class UniProtIDMappingTool(BaseTool):
         tax_id = arguments.get("tax_id")
 
         if not ids:
-            return {"error": "ids parameter is required (e.g., 'TP53,BRCA1')"}
+            return {
+                "status": "error",
+                "error": "ids parameter is required (e.g., 'TP53,BRCA1')",
+            }
         if not from_db:
-            return {"error": "from_db parameter is required (e.g., 'Gene_Name')"}
+            return {
+                "status": "error",
+                "error": "from_db parameter is required (e.g., 'Gene_Name')",
+            }
 
         result = self._submit_and_poll(from_db, to_db, ids, tax_id)
         if "error" in result:
@@ -179,7 +206,10 @@ class UniProtIDMappingTool(BaseTool):
         uniprot_ids = arguments.get("uniprot_ids", "")
 
         if not uniprot_ids:
-            return {"error": "uniprot_ids is required (e.g., 'P04637')"}
+            return {
+                "status": "error",
+                "error": "uniprot_ids is required (e.g., 'P04637')",
+            }
 
         result = self._submit_and_poll("UniProtKB_AC-ID", "PDB", uniprot_ids)
         if "error" in result:
@@ -209,7 +239,10 @@ class UniProtIDMappingTool(BaseTool):
         reviewed_only = arguments.get("reviewed_only", False)
 
         if not gene_names:
-            return {"error": "gene_names is required (e.g., 'TP53,BRCA1')"}
+            return {
+                "status": "error",
+                "error": "gene_names is required (e.g., 'TP53,BRCA1')",
+            }
 
         to_db = "UniProtKB-Swiss-Prot" if reviewed_only else "UniProtKB"
 

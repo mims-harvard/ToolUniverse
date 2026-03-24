@@ -42,15 +42,21 @@ class UniProtLocationsTool(BaseTool):
         try:
             return self._query(arguments)
         except requests.exceptions.Timeout:
-            return {"error": f"UniProt Locations API timed out after {self.timeout}s"}
+            return {
+                "status": "error",
+                "error": f"UniProt Locations API timed out after {self.timeout}s",
+            }
         except requests.exceptions.ConnectionError:
-            return {"error": "Failed to connect to UniProt Locations API"}
+            return {
+                "status": "error",
+                "error": "Failed to connect to UniProt Locations API",
+            }
         except requests.exceptions.HTTPError as e:
             return {
                 "error": f"UniProt Locations API HTTP error: {e.response.status_code}"
             }
         except Exception as e:
-            return {"error": f"Unexpected error: {str(e)}"}
+            return {"status": "error", "error": f"Unexpected error: {str(e)}"}
 
     def _query(self, arguments: Dict[str, Any]) -> Dict[str, Any]:
         """Route to appropriate endpoint."""
@@ -59,7 +65,7 @@ class UniProtLocationsTool(BaseTool):
         elif self.endpoint == "search_locations":
             return self._search_locations(arguments)
         else:
-            return {"error": f"Unknown endpoint: {self.endpoint}"}
+            return {"status": "error", "error": f"Unknown endpoint: {self.endpoint}"}
 
     def _parse_location(self, data: Dict[str, Any]) -> Dict[str, Any]:
         """Parse a location entry into a clean structure."""

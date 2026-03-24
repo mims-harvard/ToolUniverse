@@ -50,9 +50,15 @@ class PomBaseTool(BaseTool):
                 "error": "Failed to connect to PomBase API. Check network connectivity."
             }
         except requests.exceptions.HTTPError as e:
-            return {"error": f"PomBase API HTTP error: {e.response.status_code}"}
+            return {
+                "status": "error",
+                "error": f"PomBase API HTTP error: {e.response.status_code}",
+            }
         except Exception as e:
-            return {"error": f"Unexpected error querying PomBase: {str(e)}"}
+            return {
+                "status": "error",
+                "error": f"Unexpected error querying PomBase: {str(e)}",
+            }
 
     def _dispatch(self, arguments: Dict[str, Any]) -> Dict[str, Any]:
         """Route to appropriate endpoint based on config."""
@@ -63,7 +69,10 @@ class PomBaseTool(BaseTool):
         elif self.endpoint_type == "gene_phenotypes":
             return self._gene_phenotypes(arguments)
         else:
-            return {"error": f"Unknown endpoint_type: {self.endpoint_type}"}
+            return {
+                "status": "error",
+                "error": f"Unknown endpoint_type: {self.endpoint_type}",
+            }
 
     def _gene_detail(self, arguments: Dict[str, Any]) -> Dict[str, Any]:
         """Get detailed gene information from PomBase by systematic ID."""

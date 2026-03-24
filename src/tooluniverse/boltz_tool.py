@@ -96,7 +96,10 @@ class Boltz2DockingTool(BaseTool):
         """
         arguments = arguments or {}
         if not arguments.get("protein_sequence"):
-            return {"error": "The 'protein_sequence' parameter is required."}
+            return {
+                "status": "error",
+                "error": "The 'protein_sequence' parameter is required.",
+            }
 
         # Create a temporary directory to store input and output files
         with tempfile.TemporaryDirectory() as temp_dir:
@@ -151,7 +154,10 @@ class Boltz2DockingTool(BaseTool):
                 if os.path.isdir(os.path.join(output_dir, d))
             ]
             if not root_dirs:
-                return {"error": "No Boltz run folder found under out_dir"}
+                return {
+                    "status": "error",
+                    "error": "No Boltz run folder found under out_dir",
+                }
             if len(root_dirs) > 1:
                 # you could pick the latest by timestamp instead of the first
                 run_dir_name = sorted(root_dirs)[-1]

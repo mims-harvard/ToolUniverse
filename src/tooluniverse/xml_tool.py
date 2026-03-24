@@ -159,7 +159,10 @@ class XMLDatasetTool(BaseTool):
     def run(self, arguments: Dict[str, Any]) -> Dict[str, Any]:
         """Main entry point for the tool."""
         if not self.records:
-            return {"error": "XML dataset not loaded or contains no records"}
+            return {
+                "status": "error",
+                "error": "XML dataset not loaded or contains no records",
+            }
 
         # Route to appropriate function based on arguments
         if "query" in arguments:
@@ -175,7 +178,7 @@ class XMLDatasetTool(BaseTool):
         """Search records by text content across multiple fields."""
         query = arguments.get("query", "").strip()
         if not query:
-            return {"error": "Query parameter is required"}
+            return {"status": "error", "error": "Query parameter is required"}
 
         # Parse search parameters with sensible defaults
         case_sensitive = arguments.get("case_sensitive", False)
@@ -267,11 +270,17 @@ class XMLDatasetTool(BaseTool):
         limit = min(arguments.get("limit", 100), 1000)  # Cap at 1000
 
         if not field or not condition:
-            return {"error": "Both 'field' and 'condition' are required"}
+            return {
+                "status": "error",
+                "error": "Both 'field' and 'condition' are required",
+            }
 
         # Validate condition requirements
         if condition not in ["not_empty", "has_attribute"] and not value:
-            return {"error": f"'value' parameter required for condition '{condition}'"}
+            return {
+                "status": "error",
+                "error": f"'value' parameter required for condition '{condition}'",
+            }
 
         all_records = self._get_all_records_data()
 
@@ -347,7 +356,10 @@ class XMLDatasetTool(BaseTool):
     def get_dataset_info(self) -> Dict[str, Any]:
         """Get comprehensive information about the loaded XML dataset."""
         if not self.records:
-            return {"error": "XML dataset not loaded or contains no records"}
+            return {
+                "status": "error",
+                "error": "XML dataset not loaded or contains no records",
+            }
 
         # Get field information from sample records
         sample_data = self._get_all_records_data()[:5]

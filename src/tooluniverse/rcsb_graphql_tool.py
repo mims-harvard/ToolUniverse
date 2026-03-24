@@ -42,11 +42,17 @@ class RCSBGraphQLTool(BaseTool):
         try:
             return self._query(arguments)
         except requests.exceptions.Timeout:
-            return {"error": f"RCSB Data API timed out after {self.timeout}s"}
+            return {
+                "status": "error",
+                "error": f"RCSB Data API timed out after {self.timeout}s",
+            }
         except requests.exceptions.ConnectionError:
-            return {"error": "Failed to connect to RCSB Data API"}
+            return {"status": "error", "error": "Failed to connect to RCSB Data API"}
         except Exception as e:
-            return {"error": f"Unexpected error querying RCSB Data API: {str(e)}"}
+            return {
+                "status": "error",
+                "error": f"Unexpected error querying RCSB Data API: {str(e)}",
+            }
 
     def _query(self, arguments: Dict[str, Any]) -> Dict[str, Any]:
         """Route to appropriate GraphQL query."""
@@ -57,7 +63,7 @@ class RCSBGraphQLTool(BaseTool):
         elif self.endpoint == "polymer_entity":
             return self._get_polymer_entity(arguments)
         else:
-            return {"error": f"Unknown endpoint: {self.endpoint}"}
+            return {"status": "error", "error": f"Unknown endpoint: {self.endpoint}"}
 
     def _execute_graphql(self, query_str: str) -> Dict[str, Any]:
         """Execute a GraphQL query against the RCSB Data API."""
@@ -72,7 +78,10 @@ class RCSBGraphQLTool(BaseTool):
 
         if "errors" in result:
             error_msgs = [e.get("message", "") for e in result["errors"]]
-            return {"error": f"GraphQL errors: {'; '.join(error_msgs)}"}
+            return {
+                "status": "error",
+                "error": f"GraphQL errors: {'; '.join(error_msgs)}",
+            }
 
         return result
 
@@ -234,7 +243,10 @@ class RCSBGraphQLTool(BaseTool):
 
         comp = result.get("data", {}).get("chem_comp")
         if not comp:
-            return {"error": f"Chemical component '{comp_id}' not found in PDB"}
+            return {
+                "status": "error",
+                "error": f"Chemical component '{comp_id}' not found in PDB",
+            }
 
         basic = comp.get("chem_comp") or {}
         descriptor = comp.get("rcsb_chem_comp_descriptor") or {}

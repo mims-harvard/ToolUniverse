@@ -43,17 +43,29 @@ class DiseaseOntologyTool(BaseTool):
         try:
             return self._query(arguments)
         except requests.exceptions.Timeout:
-            return {"error": f"Disease Ontology API timed out after {self.timeout}s"}
+            return {
+                "status": "error",
+                "error": f"Disease Ontology API timed out after {self.timeout}s",
+            }
         except requests.exceptions.ConnectionError:
-            return {"error": "Failed to connect to Disease Ontology API"}
+            return {
+                "status": "error",
+                "error": "Failed to connect to Disease Ontology API",
+            }
         except requests.exceptions.HTTPError as e:
             if e.response.status_code == 404:
-                return {"error": f"DOID not found in Disease Ontology"}
+                return {
+                    "status": "error",
+                    "error": f"DOID not found in Disease Ontology",
+                }
             return {
                 "error": f"Disease Ontology API HTTP error: {e.response.status_code}"
             }
         except Exception as e:
-            return {"error": f"Unexpected error querying Disease Ontology: {str(e)}"}
+            return {
+                "status": "error",
+                "error": f"Unexpected error querying Disease Ontology: {str(e)}",
+            }
 
     def _query(self, arguments: Dict[str, Any]) -> Dict[str, Any]:
         """Route to appropriate Disease Ontology endpoint."""
@@ -62,7 +74,7 @@ class DiseaseOntologyTool(BaseTool):
         elif self.endpoint == "get_parents":
             return self._get_parents(arguments)
         else:
-            return {"error": f"Unknown endpoint: {self.endpoint}"}
+            return {"status": "error", "error": f"Unknown endpoint: {self.endpoint}"}
 
     def _fetch_term(self, doid: str) -> Dict[str, Any]:
         """Fetch a single DO term by DOID."""
@@ -81,7 +93,7 @@ class DiseaseOntologyTool(BaseTool):
         """Get detailed information about a Disease Ontology term."""
         doid = arguments.get("doid", "")
         if not doid:
-            return {"error": "doid parameter is required"}
+            return {"status": "error", "error": "doid parameter is required"}
 
         data = self._fetch_term(doid)
 
@@ -121,7 +133,7 @@ class DiseaseOntologyTool(BaseTool):
         """Get parent terms for a Disease Ontology term with hierarchy navigation."""
         doid = arguments.get("doid", "")
         if not doid:
-            return {"error": "doid parameter is required"}
+            return {"status": "error", "error": "doid parameter is required"}
 
         data = self._fetch_term(doid)
 

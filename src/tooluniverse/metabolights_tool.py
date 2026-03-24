@@ -138,7 +138,10 @@ class MetaboLightsRESTTool(BaseTool):
             return samples_info
 
         except Exception as e:
-            return {"error": f"Failed to extract samples from study endpoint: {str(e)}"}
+            return {
+                "status": "error",
+                "error": f"Failed to extract samples from study endpoint: {str(e)}",
+            }
 
     def _extract_files_from_study(self, study_id: str) -> Dict[str, Any]:
         """Extract file information from study endpoint as fallback"""
@@ -198,7 +201,10 @@ class MetaboLightsRESTTool(BaseTool):
             return files_info
 
         except Exception as e:
-            return {"error": f"Failed to extract files from study endpoint: {str(e)}"}
+            return {
+                "status": "error",
+                "error": f"Failed to extract files from study endpoint: {str(e)}",
+            }
 
     def run(self, arguments: Dict[str, Any]) -> Dict[str, Any]:
         """Execute the MetaboLights API call"""

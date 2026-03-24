@@ -42,13 +42,22 @@ class EBIProteinsExtTool(BaseTool):
         try:
             return self._query(arguments)
         except requests.exceptions.Timeout:
-            return {"error": f"EBI Proteins API timed out after {self.timeout}s"}
+            return {
+                "status": "error",
+                "error": f"EBI Proteins API timed out after {self.timeout}s",
+            }
         except requests.exceptions.ConnectionError:
-            return {"error": "Failed to connect to EBI Proteins API"}
+            return {"status": "error", "error": "Failed to connect to EBI Proteins API"}
         except requests.exceptions.HTTPError as e:
-            return {"error": f"EBI Proteins API HTTP error: {e.response.status_code}"}
+            return {
+                "status": "error",
+                "error": f"EBI Proteins API HTTP error: {e.response.status_code}",
+            }
         except Exception as e:
-            return {"error": f"Unexpected error querying EBI Proteins API: {str(e)}"}
+            return {
+                "status": "error",
+                "error": f"Unexpected error querying EBI Proteins API: {str(e)}",
+            }
 
     def _query(self, arguments: Dict[str, Any]) -> Dict[str, Any]:
         """Route to appropriate endpoint."""
@@ -67,7 +76,7 @@ class EBIProteinsExtTool(BaseTool):
         elif self.endpoint == "proteomics":
             return self._get_proteomics(arguments)
         else:
-            return {"error": f"Unknown endpoint: {self.endpoint}"}
+            return {"status": "error", "error": f"Unknown endpoint: {self.endpoint}"}
 
     def _get_mutagenesis(self, arguments: Dict[str, Any]) -> Dict[str, Any]:
         """Get mutagenesis experiment data for a protein."""

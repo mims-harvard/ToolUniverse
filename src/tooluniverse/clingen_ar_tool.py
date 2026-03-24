@@ -43,13 +43,25 @@ class ClinGenARTool(BaseTool):
         try:
             return self._query(arguments)
         except requests.exceptions.Timeout:
-            return {"error": f"ClinGen AR API timed out after {self.timeout}s"}
+            return {
+                "status": "error",
+                "error": f"ClinGen AR API timed out after {self.timeout}s",
+            }
         except requests.exceptions.ConnectionError:
-            return {"error": "Failed to connect to ClinGen Allele Registry"}
+            return {
+                "status": "error",
+                "error": "Failed to connect to ClinGen Allele Registry",
+            }
         except requests.exceptions.HTTPError as e:
-            return {"error": f"ClinGen AR API HTTP error: {e.response.status_code}"}
+            return {
+                "status": "error",
+                "error": f"ClinGen AR API HTTP error: {e.response.status_code}",
+            }
         except Exception as e:
-            return {"error": f"Unexpected error querying ClinGen AR: {str(e)}"}
+            return {
+                "status": "error",
+                "error": f"Unexpected error querying ClinGen AR: {str(e)}",
+            }
 
     def _query(self, arguments: Dict[str, Any]) -> Dict[str, Any]:
         """Route to appropriate ClinGen AR endpoint."""
@@ -58,13 +70,13 @@ class ClinGenARTool(BaseTool):
         elif self.endpoint == "get_external_records":
             return self._get_external_records(arguments)
         else:
-            return {"error": f"Unknown endpoint: {self.endpoint}"}
+            return {"status": "error", "error": f"Unknown endpoint: {self.endpoint}"}
 
     def _lookup_allele(self, arguments: Dict[str, Any]) -> Dict[str, Any]:
         """Look up a variant by HGVS notation."""
         hgvs = arguments.get("hgvs", "")
         if not hgvs:
-            return {"error": "hgvs parameter is required"}
+            return {"status": "error", "error": "hgvs parameter is required"}
 
         url = f"{CLINGEN_AR_BASE_URL}/allele"
         params = {"hgvs": hgvs}
@@ -113,7 +125,7 @@ class ClinGenARTool(BaseTool):
         """Get external database records for a canonical allele ID."""
         allele_id = arguments.get("allele_id", "")
         if not allele_id:
-            return {"error": "allele_id parameter is required"}
+            return {"status": "error", "error": "allele_id parameter is required"}
 
         url = f"{CLINGEN_AR_BASE_URL}/allele/{allele_id}"
         response = requests.get(url, timeout=self.timeout)

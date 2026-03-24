@@ -446,7 +446,10 @@ class DynaMut2Tool(BaseTool):
                         return data
 
                     if status == "ERROR" or "error" in data:
-                        return {"error": data.get("error", "Job failed")}
+                        return {
+                            "status": "error",
+                            "error": data.get("error", "Job failed"),
+                        }
 
                     # Still running, continue polling
             except Exception:

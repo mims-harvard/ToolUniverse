@@ -18,9 +18,12 @@ class UnpaywallTool(BaseTool):
         doi = arguments.get("doi")
         email = arguments.get("email")  # required by Unpaywall
         if not doi:
-            return {"error": "`doi` parameter is required."}
+            return {"status": "error", "error": "`doi` parameter is required."}
         if not email:
-            return {"error": "`email` parameter is required for Unpaywall."}
+            return {
+                "status": "error",
+                "error": "`email` parameter is required for Unpaywall.",
+            }
         return self._lookup(doi, email)
 
     def _lookup(self, doi, email):

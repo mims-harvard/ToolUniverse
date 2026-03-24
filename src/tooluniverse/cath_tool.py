@@ -42,15 +42,24 @@ class CATHTool(BaseTool):
         try:
             return self._query(arguments)
         except requests.exceptions.Timeout:
-            return {"error": f"CATH API request timed out after {self.timeout} seconds"}
+            return {
+                "status": "error",
+                "error": f"CATH API request timed out after {self.timeout} seconds",
+            }
         except requests.exceptions.ConnectionError:
             return {
                 "error": "Failed to connect to CATH API. Check network connectivity."
             }
         except requests.exceptions.HTTPError as e:
-            return {"error": f"CATH API HTTP error: {e.response.status_code}"}
+            return {
+                "status": "error",
+                "error": f"CATH API HTTP error: {e.response.status_code}",
+            }
         except Exception as e:
-            return {"error": f"Unexpected error querying CATH: {str(e)}"}
+            return {
+                "status": "error",
+                "error": f"Unexpected error querying CATH: {str(e)}",
+            }
 
     def _query(self, arguments: Dict[str, Any]) -> Dict[str, Any]:
         """Route to appropriate CATH endpoint."""
@@ -59,7 +68,7 @@ class CATHTool(BaseTool):
         elif self.endpoint == "domain_summary":
             return self._get_domain_summary(arguments)
         else:
-            return {"error": f"Unknown endpoint: {self.endpoint}"}
+            return {"status": "error", "error": f"Unknown endpoint: {self.endpoint}"}
 
     def _get_superfamily(self, arguments: Dict[str, Any]) -> Dict[str, Any]:
         """Get CATH superfamily information by CATH ID."""
@@ -75,7 +84,10 @@ class CATHTool(BaseTool):
         resp_data = response.json()
 
         if not resp_data.get("success"):
-            return {"error": f"CATH API returned unsuccessful response for {cath_id}"}
+            return {
+                "status": "error",
+                "error": f"CATH API returned unsuccessful response for {cath_id}",
+            }
 
         data = resp_data.get("data", {})
 

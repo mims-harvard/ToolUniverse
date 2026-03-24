@@ -45,13 +45,22 @@ class NDExTool(BaseTool):
         try:
             return self._query(arguments)
         except requests.exceptions.Timeout:
-            return {"error": f"NDEx API timed out after {self.timeout}s"}
+            return {
+                "status": "error",
+                "error": f"NDEx API timed out after {self.timeout}s",
+            }
         except requests.exceptions.ConnectionError:
-            return {"error": "Failed to connect to NDEx API"}
+            return {"status": "error", "error": "Failed to connect to NDEx API"}
         except requests.exceptions.HTTPError as e:
-            return {"error": f"NDEx API HTTP error: {e.response.status_code}"}
+            return {
+                "status": "error",
+                "error": f"NDEx API HTTP error: {e.response.status_code}",
+            }
         except Exception as e:
-            return {"error": f"Unexpected error querying NDEx: {str(e)}"}
+            return {
+                "status": "error",
+                "error": f"Unexpected error querying NDEx: {str(e)}",
+            }
 
     def _query(self, arguments: Dict[str, Any]) -> Dict[str, Any]:
         """Route to appropriate NDEx endpoint."""
@@ -62,13 +71,13 @@ class NDExTool(BaseTool):
         elif self.endpoint == "get_network":
             return self._get_network(arguments)
         else:
-            return {"error": f"Unknown endpoint: {self.endpoint}"}
+            return {"status": "error", "error": f"Unknown endpoint: {self.endpoint}"}
 
     def _search_networks(self, arguments: Dict[str, Any]) -> Dict[str, Any]:
         """Search NDEx for biological networks by keyword."""
         query = arguments.get("query", "")
         if not query:
-            return {"error": "query parameter is required"}
+            return {"status": "error", "error": "query parameter is required"}
 
         size = arguments.get("size") or 10
         start = arguments.get("start") or 0
@@ -111,7 +120,7 @@ class NDExTool(BaseTool):
         """Get summary information for a specific network by UUID."""
         uuid = arguments.get("uuid", "")
         if not uuid:
-            return {"error": "uuid parameter is required"}
+            return {"status": "error", "error": "uuid parameter is required"}
 
         url = f"{NDEX_BASE_URL}/network/{uuid}/summary"
         response = requests.get(url, timeout=self.timeout)
@@ -147,7 +156,7 @@ class NDExTool(BaseTool):
         """Get network content (nodes and edges) in CX format."""
         uuid = arguments.get("uuid", "")
         if not uuid:
-            return {"error": "uuid parameter is required"}
+            return {"status": "error", "error": "uuid parameter is required"}
 
         url = f"{NDEX_BASE_URL}/network/{uuid}"
         response = requests.get(url, timeout=self.timeout)

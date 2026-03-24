@@ -48,14 +48,20 @@ class EnsemblRegulationTool(BaseTool):
                 "error": f"Ensembl REST API request timed out after {self.timeout}s"
             }
         except requests.exceptions.ConnectionError:
-            return {"error": "Failed to connect to Ensembl REST API"}
+            return {"status": "error", "error": "Failed to connect to Ensembl REST API"}
         except requests.exceptions.HTTPError as e:
             status = e.response.status_code if e.response else "unknown"
             if status == 400:
-                return {"error": f"Bad request: check region format (chr:start-end)"}
-            return {"error": f"Ensembl REST API HTTP error: {status}"}
+                return {
+                    "status": "error",
+                    "error": f"Bad request: check region format (chr:start-end)",
+                }
+            return {
+                "status": "error",
+                "error": f"Ensembl REST API HTTP error: {status}",
+            }
         except Exception as e:
-            return {"error": f"Unexpected error: {str(e)}"}
+            return {"status": "error", "error": f"Unexpected error: {str(e)}"}
 
     def _dispatch(self, arguments: Dict[str, Any]) -> Dict[str, Any]:
         """Route to appropriate endpoint."""
@@ -65,7 +71,10 @@ class EnsemblRegulationTool(BaseTool):
             return self._constrained_elements(arguments)
         elif self.endpoint_type == "binding_matrix":
             return self._binding_matrix(arguments)
-        return {"error": f"Unknown endpoint_type: {self.endpoint_type}"}
+        return {
+            "status": "error",
+            "error": f"Unknown endpoint_type: {self.endpoint_type}",
+        }
 
     def _motif_features(self, arguments: Dict[str, Any]) -> Dict[str, Any]:
         """Get TF binding motif features in a genomic region."""
@@ -73,7 +82,10 @@ class EnsemblRegulationTool(BaseTool):
         region = arguments.get("region", "")
 
         if not region:
-            return {"error": "region is required (e.g., '7:140424943-140524564')"}
+            return {
+                "status": "error",
+                "error": "region is required (e.g., '7:140424943-140524564')",
+            }
 
         url = f"{ENSEMBL_BASE_URL}/overlap/region/{species}/{region}"
         params = {"feature": "motif", "content-type": "application/json"}
@@ -123,7 +135,10 @@ class EnsemblRegulationTool(BaseTool):
         region = arguments.get("region", "")
 
         if not region:
-            return {"error": "region is required (e.g., '17:7661779-7687538')"}
+            return {
+                "status": "error",
+                "error": "region is required (e.g., '17:7661779-7687538')",
+            }
 
         url = f"{ENSEMBL_BASE_URL}/overlap/region/{species}/{region}"
         params = {"feature": "constrained", "content-type": "application/json"}
@@ -172,7 +187,10 @@ class EnsemblRegulationTool(BaseTool):
         matrix_id = arguments.get("binding_matrix_id", "")
 
         if not matrix_id:
-            return {"error": "binding_matrix_id is required (e.g., 'ENSPFM0320')"}
+            return {
+                "status": "error",
+                "error": "binding_matrix_id is required (e.g., 'ENSPFM0320')",
+            }
 
         url = f"{ENSEMBL_BASE_URL}/species/{species}/binding_matrix/{matrix_id}"
         params = {"content-type": "application/json"}

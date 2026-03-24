@@ -50,7 +50,7 @@ class STITCHTool(BaseTool):
         elif operation == "resolve":
             return self._resolve_identifiers(arguments)
         else:
-            return {"error": f"Unknown operation: {operation}"}
+            return {"status": "error", "error": f"Unknown operation: {operation}"}
 
     def _get_interactions(self, arguments: Dict[str, Any]) -> Dict[str, Any]:
         """
@@ -90,7 +90,7 @@ class STITCHTool(BaseTool):
             response.raise_for_status()
             return {"interactions": response.json()}
         except requests.RequestException as e:
-            return {"error": f"STITCH API request failed: {str(e)}"}
+            return {"status": "error", "error": f"STITCH API request failed: {str(e)}"}
 
     def _get_interactors(self, arguments: Dict[str, Any]) -> Dict[str, Any]:
         """
@@ -101,7 +101,7 @@ class STITCHTool(BaseTool):
         identifiers = arguments.get("identifiers", [])
 
         if not identifiers:
-            return {"error": "identifiers parameter is required"}
+            return {"status": "error", "error": "identifiers parameter is required"}
 
         if isinstance(identifiers, str):
             identifiers = [identifiers]
@@ -126,7 +126,7 @@ class STITCHTool(BaseTool):
             response.raise_for_status()
             return {"interactors": response.json()}
         except requests.RequestException as e:
-            return {"error": f"STITCH API request failed: {str(e)}"}
+            return {"status": "error", "error": f"STITCH API request failed: {str(e)}"}
 
     def _resolve_identifiers(self, arguments: Dict[str, Any]) -> Dict[str, Any]:
         """
@@ -137,7 +137,7 @@ class STITCHTool(BaseTool):
         identifier = arguments.get("identifier", "")
 
         if not identifier:
-            return {"error": "identifier parameter is required"}
+            return {"status": "error", "error": "identifier parameter is required"}
 
         params = {"identifier": identifier, "species": arguments.get("species", 9606)}
 
@@ -155,4 +155,4 @@ class STITCHTool(BaseTool):
             response.raise_for_status()
             return {"matches": response.json()}
         except requests.RequestException as e:
-            return {"error": f"STITCH API request failed: {str(e)}"}
+            return {"status": "error", "error": f"STITCH API request failed: {str(e)}"}

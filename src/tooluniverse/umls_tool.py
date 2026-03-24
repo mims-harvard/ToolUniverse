@@ -95,9 +95,9 @@ class UMLSRESTTool(BaseTool):
                 },
             }
         except requests.exceptions.RequestException as e:
-            return {"error": f"Request failed: {str(e)}"}
+            return {"status": "error", "error": f"Request failed: {str(e)}"}
         except ValueError as e:
-            return {"error": f"Failed to parse JSON: {str(e)}"}
+            return {"status": "error", "error": f"Failed to parse JSON: {str(e)}"}
 
     def run(self, arguments: Dict[str, Any]) -> Dict[str, Any]:
         """Execute the tool with given arguments."""

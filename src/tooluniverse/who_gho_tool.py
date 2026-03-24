@@ -147,9 +147,13 @@ class WHOGHORESTTool(BaseTool):
                 },
             }
         except requests.exceptions.RequestException as e:
-            return {"error": f"Request failed: {str(e)}"}
+            return {"status": "error", "error": f"Request failed: {str(e)}"}
         except ValueError as e:
-            return {"error": f"Failed to parse JSON: {str(e)}", "retryable": True}
+            return {
+                "status": "error",
+                "error": f"Failed to parse JSON: {str(e)}",
+                "retryable": True,
+            }
 
     def run(self, arguments: Dict[str, Any]) -> Dict[str, Any]:
         """Execute the tool with given arguments."""
@@ -327,7 +331,7 @@ class WHOGHORESTTool(BaseTool):
     def _make_request_for_data(self, params: Dict[str, Any]) -> Dict[str, Any]:
         """Make request to data using direct indicator endpoint format."""
         if "indicator_code" not in params:
-            return {"error": "indicator_code parameter is required"}
+            return {"status": "error", "error": "indicator_code parameter is required"}
 
         # Use direct indicator endpoint: /api/{IndicatorCode}
         indicator_code = params["indicator_code"]
@@ -356,9 +360,13 @@ class WHOGHORESTTool(BaseTool):
             data = resp.json()
             return {"data": data}
         except requests.exceptions.RequestException as e:
-            return {"error": f"Request failed: {str(e)}"}
+            return {"status": "error", "error": f"Request failed: {str(e)}"}
         except ValueError as e:
-            return {"error": f"Failed to parse JSON: {str(e)}", "retryable": True}
+            return {
+                "status": "error",
+                "error": f"Failed to parse JSON: {str(e)}",
+                "retryable": True,
+            }
 
 
 @register_tool("WHOGHOQueryTool")
@@ -374,7 +382,7 @@ class WHOGHOQueryTool(WHOGHORESTTool):
         """Execute query tool with natural language processing."""
         query = arguments.get("query", "")
         if not query:
-            return {"error": "Query parameter is required"}
+            return {"status": "error", "error": "Query parameter is required"}
 
         # Parse query to extract topic, country, year
         parsed = self.parse_query(query)
@@ -494,7 +502,7 @@ class WHOGHOTopicTool(WHOGHORESTTool):
         """Find indicators by topic."""
         topic = arguments.get("topic", "")
         if not topic:
-            return {"error": "Topic parameter is required"}
+            return {"status": "error", "error": "Topic parameter is required"}
 
         top = arguments.get("top", 10)
 
@@ -559,9 +567,9 @@ class WHOGHOStatisticTool(WHOGHORESTTool):
         year = arguments.get("year")
 
         if not indicator_name:
-            return {"error": "indicator_name parameter is required"}
+            return {"status": "error", "error": "indicator_name parameter is required"}
         if not country_code:
-            return {"error": "country_code parameter is required"}
+            return {"status": "error", "error": "country_code parameter is required"}
 
         # Step 1: Search for matching indicator
         search_result = self._make_request({"search_term": indicator_name, "top": 20})

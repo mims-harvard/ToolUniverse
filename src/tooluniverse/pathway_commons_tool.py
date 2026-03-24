@@ -62,7 +62,7 @@ class PathwayCommonsTool(BaseTool):
 
             return {"total_hits": data.get("numHits"), "pathways": pathways}
         except Exception as e:
-            return {"error": str(e)}
+            return {"status": "error", "error": str(e)}
 
     def get_interaction_graph(self, gene_list: List[str]) -> Dict[str, Any]:
         """
@@ -101,4 +101,4 @@ class PathwayCommonsTool(BaseTool):
 
             return {"format": "SIF", "interactions": interactions}
         except Exception as e:
-            return {"error": str(e)}
+            return {"status": "error", "error": str(e)}

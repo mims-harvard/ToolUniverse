@@ -50,10 +50,13 @@ class FileDownloadTool(BaseTool):
         """
         url = arguments.get("url")
         if not url:
-            return {"error": "Parameter 'url' is required."}
+            return {"status": "error", "error": "Parameter 'url' is required."}
 
         if not (url.startswith("http://") or url.startswith("https://")):
-            return {"error": "URL must start with http:// or https://"}
+            return {
+                "status": "error",
+                "error": "URL must start with http:// or https://",
+            }
 
         # Parse parameters
         output_path = arguments.get("output_path")
@@ -70,7 +73,10 @@ class FileDownloadTool(BaseTool):
                 try:
                     os.makedirs(output_dir, exist_ok=True)
                 except Exception as e:
-                    return {"error": f"Failed to create directory: {e}"}
+                    return {
+                        "status": "error",
+                        "error": f"Failed to create directory: {e}",
+                    }
         else:
             temp_dir = tempfile.gettempdir()
             parsed_url = urlparse(url)
@@ -111,17 +117,20 @@ class FileDownloadTool(BaseTool):
             }
 
         except requests.exceptions.Timeout:
-            return {"error": f"Request timed out after {timeout} seconds"}
+            return {
+                "status": "error",
+                "error": f"Request timed out after {timeout} seconds",
+            }
         except requests.exceptions.HTTPError as e:
-            return {"error": f"HTTP error: {e}"}
+            return {"status": "error", "error": f"HTTP error: {e}"}
         except requests.exceptions.ConnectionError as e:
-            return {"error": f"Connection error: {e}"}
+            return {"status": "error", "error": f"Connection error: {e}"}
         except requests.exceptions.RequestException as e:
-            return {"error": f"Request failed: {e}"}
+            return {"status": "error", "error": f"Request failed: {e}"}
         except IOError as e:
-            return {"error": f"Failed to write file: {e}"}
+            return {"status": "error", "error": f"Failed to write file: {e}"}
         except Exception as e:
-            return {"error": f"Unexpected error: {e}"}
+            return {"status": "error", "error": f"Unexpected error: {e}"}
 
     def _normalize_path(self, path: str) -> str:
         """
@@ -170,12 +179,12 @@ class BinaryDownloadTool(BaseTool):
         """
         url = arguments.get("url")
         if not url:
-            return {"error": "Parameter 'url' is required."}
+            return {"status": "error", "error": "Parameter 'url' is required."}
 
         output_path = arguments.get("output_path")
         if not output_path:
             msg = "Parameter 'output_path' is required for binary downloads."
-            return {"error": msg}
+            return {"status": "error", "error": msg}
 
         timeout = arguments.get("timeout", 30)
         # 1MB chunks for binary files
@@ -189,7 +198,7 @@ class BinaryDownloadTool(BaseTool):
             try:
                 os.makedirs(output_dir, exist_ok=True)
             except Exception as e:
-                return {"error": f"Failed to create directory: {e}"}
+                return {"status": "error", "error": f"Failed to create directory: {e}"}
 
         try:
             response = requests.get(url, timeout=timeout, stream=True)
@@ -212,7 +221,7 @@ class BinaryDownloadTool(BaseTool):
             }
 
         except Exception as e:
-            return {"error": f"Failed to download binary file: {e}"}
+            return {"status": "error", "error": f"Failed to download binary file: {e}"}
 
 
 @register_tool("TextDownloadTool")
@@ -243,7 +252,7 @@ class TextDownloadTool(BaseTool):
         """
         url = arguments.get("url")
         if not url:
-            return {"error": "Parameter 'url' is required."}
+            return {"status": "error", "error": "Parameter 'url' is required."}
 
         timeout = arguments.get("timeout", 30)
         encoding = arguments.get("encoding", None)  # Auto-detect if None
@@ -266,4 +275,4 @@ class TextDownloadTool(BaseTool):
             }
 
         except Exception as e:
-            return {"error": f"Failed to download text content: {e}"}
+            return {"status": "error", "error": f"Failed to download text content: {e}"}

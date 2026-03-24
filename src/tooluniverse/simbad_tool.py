@@ -47,7 +47,7 @@ class SIMBADTool(BaseTool):
         elif query_type == "identifier":
             return self._query_by_identifier(arguments)
         else:
-            return {"error": f"Unknown query_type: {query_type}"}
+            return {"status": "error", "error": f"Unknown query_type: {query_type}"}
 
     def _query_by_name(self, arguments: Dict[str, Any]) -> Dict[str, Any]:
         """

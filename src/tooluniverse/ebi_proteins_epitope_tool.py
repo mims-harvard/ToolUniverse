@@ -44,13 +44,22 @@ class EBIProteinsEpitopeTool(BaseTool):
         try:
             return self._get_epitopes(arguments)
         except requests.exceptions.Timeout:
-            return {"error": f"EBI Proteins API timed out after {self.timeout}s"}
+            return {
+                "status": "error",
+                "error": f"EBI Proteins API timed out after {self.timeout}s",
+            }
         except requests.exceptions.ConnectionError:
-            return {"error": "Failed to connect to EBI Proteins API"}
+            return {"status": "error", "error": "Failed to connect to EBI Proteins API"}
         except requests.exceptions.HTTPError as e:
-            return {"error": f"EBI Proteins API HTTP error: {e.response.status_code}"}
+            return {
+                "status": "error",
+                "error": f"EBI Proteins API HTTP error: {e.response.status_code}",
+            }
         except Exception as e:
-            return {"error": f"Unexpected error querying EBI Proteins: {str(e)}"}
+            return {
+                "status": "error",
+                "error": f"Unexpected error querying EBI Proteins: {str(e)}",
+            }
 
     def _get_epitopes(self, arguments: Dict[str, Any]) -> Dict[str, Any]:
         """Get epitope features for a protein by UniProt accession."""

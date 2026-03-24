@@ -43,13 +43,25 @@ class NCIThesaurusTool(BaseTool):
         try:
             return self._query(arguments)
         except requests.exceptions.Timeout:
-            return {"error": f"NCI Thesaurus API timed out after {self.timeout}s"}
+            return {
+                "status": "error",
+                "error": f"NCI Thesaurus API timed out after {self.timeout}s",
+            }
         except requests.exceptions.ConnectionError:
-            return {"error": "Failed to connect to NCI Thesaurus API"}
+            return {
+                "status": "error",
+                "error": "Failed to connect to NCI Thesaurus API",
+            }
         except requests.exceptions.HTTPError as e:
-            return {"error": f"NCI Thesaurus API HTTP error: {e.response.status_code}"}
+            return {
+                "status": "error",
+                "error": f"NCI Thesaurus API HTTP error: {e.response.status_code}",
+            }
         except Exception as e:
-            return {"error": f"Unexpected error querying NCI Thesaurus: {str(e)}"}
+            return {
+                "status": "error",
+                "error": f"Unexpected error querying NCI Thesaurus: {str(e)}",
+            }
 
     def _query(self, arguments: Dict[str, Any]) -> Dict[str, Any]:
         """Route to appropriate NCI endpoint."""
@@ -60,13 +72,13 @@ class NCIThesaurusTool(BaseTool):
         elif self.endpoint == "get_children":
             return self._get_children(arguments)
         else:
-            return {"error": f"Unknown endpoint: {self.endpoint}"}
+            return {"status": "error", "error": f"Unknown endpoint: {self.endpoint}"}
 
     def _search(self, arguments: Dict[str, Any]) -> Dict[str, Any]:
         """Search NCI Thesaurus by term."""
         term = arguments.get("term", "")
         if not term:
-            return {"error": "term parameter is required"}
+            return {"status": "error", "error": "term parameter is required"}
 
         page_size = arguments.get("page_size") or 10
 
@@ -107,7 +119,7 @@ class NCIThesaurusTool(BaseTool):
         """Get detailed concept information by code."""
         code = arguments.get("code", "")
         if not code:
-            return {"error": "code parameter is required"}
+            return {"status": "error", "error": "code parameter is required"}
 
         url = f"{NCI_BASE_URL}/concept/ncit/{code}"
         params = {"include": "summary"}
@@ -161,7 +173,7 @@ class NCIThesaurusTool(BaseTool):
         """Get child concepts for a given code."""
         code = arguments.get("code", "")
         if not code:
-            return {"error": "code parameter is required"}
+            return {"status": "error", "error": "code parameter is required"}
 
         url = f"{NCI_BASE_URL}/concept/ncit/{code}/children"
         response = requests.get(url, timeout=self.timeout)

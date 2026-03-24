@@ -51,9 +51,15 @@ class PDBeSearchTool(BaseTool):
                 "error": "Failed to connect to PDBe Search API. Check network connectivity."
             }
         except requests.exceptions.HTTPError as e:
-            return {"error": f"PDBe Search API HTTP error: {e.response.status_code}"}
+            return {
+                "status": "error",
+                "error": f"PDBe Search API HTTP error: {e.response.status_code}",
+            }
         except Exception as e:
-            return {"error": f"Unexpected error querying PDBe Search: {str(e)}"}
+            return {
+                "status": "error",
+                "error": f"Unexpected error querying PDBe Search: {str(e)}",
+            }
 
     def _dispatch(self, arguments: Dict[str, Any]) -> Dict[str, Any]:
         """Route to appropriate endpoint based on config."""
@@ -64,7 +70,10 @@ class PDBeSearchTool(BaseTool):
         elif self.endpoint_type == "search_by_organism":
             return self._search_by_organism(arguments)
         else:
-            return {"error": f"Unknown endpoint_type: {self.endpoint_type}"}
+            return {
+                "status": "error",
+                "error": f"Unknown endpoint_type: {self.endpoint_type}",
+            }
 
     def _search_structures(self, arguments: Dict[str, Any]) -> Dict[str, Any]:
         """Search PDB structures by keyword or protein name."""

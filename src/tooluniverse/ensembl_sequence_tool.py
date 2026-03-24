@@ -40,9 +40,12 @@ class EnsemblSequenceTool(BaseTool):
         try:
             return self._query(arguments)
         except requests.exceptions.Timeout:
-            return {"error": f"Ensembl Sequence API timed out after {self.timeout}s"}
+            return {
+                "status": "error",
+                "error": f"Ensembl Sequence API timed out after {self.timeout}s",
+            }
         except requests.exceptions.ConnectionError:
-            return {"error": "Failed to connect to Ensembl REST API"}
+            return {"status": "error", "error": "Failed to connect to Ensembl REST API"}
         except requests.exceptions.HTTPError as e:
             code = e.response.status_code if e.response is not None else "unknown"
             if code == 404:
@@ -55,8 +58,8 @@ class EnsemblSequenceTool(BaseTool):
                     body = e.response.json().get("error", "")
                 except Exception:
                     pass
-                return {"error": f"Bad request: {body}"}
-            return {"error": f"Ensembl API HTTP error: {code}"}
+                return {"status": "error", "error": f"Bad request: {body}"}
+            return {"status": "error", "error": f"Ensembl API HTTP error: {code}"}
         except Exception as e:
             return {
                 "error": f"Unexpected error querying Ensembl Sequence API: {str(e)}"
@@ -69,7 +72,7 @@ class EnsemblSequenceTool(BaseTool):
         elif self.endpoint == "id_sequence":
             return self._get_id_sequence(arguments)
         else:
-            return {"error": f"Unknown endpoint: {self.endpoint}"}
+            return {"status": "error", "error": f"Unknown endpoint: {self.endpoint}"}
 
     def _get_region_sequence(self, arguments: Dict[str, Any]) -> Dict[str, Any]:
         """Get DNA sequence for a genomic region."""

@@ -54,7 +54,10 @@ class UCSCGenomeTool(BaseTool):
                 "error": f"UCSC Genome Browser API HTTP error: {e.response.status_code}"
             }
         except Exception as e:
-            return {"error": f"Unexpected error querying UCSC Genome Browser: {str(e)}"}
+            return {
+                "status": "error",
+                "error": f"Unexpected error querying UCSC Genome Browser: {str(e)}",
+            }
 
     def _dispatch(self, arguments: Dict[str, Any]) -> Dict[str, Any]:
         """Route to appropriate endpoint based on config."""
@@ -65,7 +68,10 @@ class UCSCGenomeTool(BaseTool):
         elif self.endpoint_type == "get_track":
             return self._get_track(arguments)
         else:
-            return {"error": f"Unknown endpoint_type: {self.endpoint_type}"}
+            return {
+                "status": "error",
+                "error": f"Unknown endpoint_type: {self.endpoint_type}",
+            }
 
     def _search(self, arguments: Dict[str, Any]) -> Dict[str, Any]:
         """Search UCSC Genome Browser for genes, transcripts, or features."""
@@ -128,7 +134,7 @@ class UCSCGenomeTool(BaseTool):
             }
 
         if end <= start:
-            return {"error": "end must be greater than start"}
+            return {"status": "error", "error": "end must be greater than start"}
 
         if end - start > 100000:
             return {

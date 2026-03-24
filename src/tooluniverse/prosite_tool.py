@@ -57,13 +57,22 @@ class PROSITETool(BaseTool):
             elif self.endpoint == "scan_sequence":
                 return self._scan_sequence(arguments)
             else:
-                return {"error": f"Unknown endpoint: {self.endpoint}"}
+                return {
+                    "status": "error",
+                    "error": f"Unknown endpoint: {self.endpoint}",
+                }
         except requests.exceptions.Timeout:
-            return {"error": f"PROSITE API timed out after {self.timeout}s"}
+            return {
+                "status": "error",
+                "error": f"PROSITE API timed out after {self.timeout}s",
+            }
         except requests.exceptions.ConnectionError:
-            return {"error": "Failed to connect to PROSITE/InterPro API"}
+            return {
+                "status": "error",
+                "error": "Failed to connect to PROSITE/InterPro API",
+            }
         except Exception as e:
-            return {"error": f"PROSITE API error: {str(e)}"}
+            return {"status": "error", "error": f"PROSITE API error: {str(e)}"}
 
     def _parse_prosite_text(self, text: str) -> Dict[str, Any]:
         """
@@ -171,7 +180,7 @@ class PROSITETool(BaseTool):
         response = requests.get(url, timeout=self.timeout)
 
         if response.status_code == 404:
-            return {"error": f"PROSITE entry {acc_upper} not found"}
+            return {"status": "error", "error": f"PROSITE entry {acc_upper} not found"}
         response.raise_for_status()
 
         # Check if response is HTML (error page) instead of text
@@ -186,7 +195,10 @@ class PROSITETool(BaseTool):
         # Parse text format
         entry = self._parse_prosite_text(content)
         if not entry:
-            return {"error": f"Failed to parse PROSITE entry {acc_upper}"}
+            return {
+                "status": "error",
+                "error": f"Failed to parse PROSITE entry {acc_upper}",
+            }
 
         return {
             "data": entry,
@@ -255,7 +267,10 @@ class PROSITETool(BaseTool):
         """Scan a protein sequence against all PROSITE patterns."""
         sequence = arguments.get("sequence", "").strip()
         if not sequence:
-            return {"error": "sequence parameter is required (amino acid sequence)"}
+            return {
+                "status": "error",
+                "error": "sequence parameter is required (amino acid sequence)",
+            }
 
         # Validate it looks like a protein sequence
         valid_aa = set("ACDEFGHIKLMNPQRSTVWYXBZJU")

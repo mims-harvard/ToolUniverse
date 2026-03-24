@@ -25,7 +25,7 @@ class OSFPreprintsTool(BaseTool):
         provider = arguments.get("provider")
 
         if not query:
-            return {"error": "`query` parameter is required."}
+            return {"status": "error", "error": "`query` parameter is required."}
 
         params = {
             "page[size]": max(1, min(max_results, 100)),
@@ -39,7 +39,11 @@ class OSFPreprintsTool(BaseTool):
             resp.raise_for_status()
             data = resp.json()
         except requests.RequestException as e:
-            return {"error": "Network/API error calling OSF", "reason": str(e)}
+            return {
+                "status": "error",
+                "error": "Network/API error calling OSF",
+                "reason": str(e),
+            }
         except ValueError:
             ct = resp.headers.get("content-type", "")
             return {

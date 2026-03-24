@@ -44,13 +44,22 @@ class EnsemblComparaTool(BaseTool):
         try:
             return self._query(arguments)
         except requests.exceptions.Timeout:
-            return {"error": f"Ensembl Compara API timed out after {self.timeout}s"}
+            return {
+                "status": "error",
+                "error": f"Ensembl Compara API timed out after {self.timeout}s",
+            }
         except requests.exceptions.ConnectionError:
-            return {"error": "Failed to connect to Ensembl REST API"}
+            return {"status": "error", "error": "Failed to connect to Ensembl REST API"}
         except requests.exceptions.HTTPError as e:
-            return {"error": f"Ensembl API HTTP error: {e.response.status_code}"}
+            return {
+                "status": "error",
+                "error": f"Ensembl API HTTP error: {e.response.status_code}",
+            }
         except Exception as e:
-            return {"error": f"Unexpected error querying Ensembl Compara: {str(e)}"}
+            return {
+                "status": "error",
+                "error": f"Unexpected error querying Ensembl Compara: {str(e)}",
+            }
 
     def _query(self, arguments: Dict[str, Any]) -> Dict[str, Any]:
         """Route to appropriate Ensembl Compara endpoint."""
@@ -61,13 +70,16 @@ class EnsemblComparaTool(BaseTool):
         elif self.endpoint == "gene_tree":
             return self._get_gene_tree(arguments)
         else:
-            return {"error": f"Unknown endpoint: {self.endpoint}"}
+            return {"status": "error", "error": f"Unknown endpoint: {self.endpoint}"}
 
     def _get_orthologues(self, arguments: Dict[str, Any]) -> Dict[str, Any]:
         """Get orthologues for a gene across species."""
         gene = arguments.get("gene", "")
         if not gene:
-            return {"error": "gene parameter is required (symbol or Ensembl ID)"}
+            return {
+                "status": "error",
+                "error": "gene parameter is required (symbol or Ensembl ID)",
+            }
 
         species = arguments.get("species", "human")
         target_species = arguments.get("target_species")
@@ -122,7 +134,10 @@ class EnsemblComparaTool(BaseTool):
         """Get within-species paralogues (gene duplicates) for a gene."""
         gene = arguments.get("gene", "")
         if not gene:
-            return {"error": "gene parameter is required (symbol or Ensembl ID)"}
+            return {
+                "status": "error",
+                "error": "gene parameter is required (symbol or Ensembl ID)",
+            }
 
         species = arguments.get("species", "human")
 
@@ -169,7 +184,10 @@ class EnsemblComparaTool(BaseTool):
         """Get gene tree (phylogenetic tree of homologous genes)."""
         gene = arguments.get("gene", "")
         if not gene:
-            return {"error": "gene parameter is required (Ensembl gene ID)"}
+            return {
+                "status": "error",
+                "error": "gene parameter is required (Ensembl gene ID)",
+            }
 
         species = arguments.get("species", "human")
 

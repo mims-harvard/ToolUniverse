@@ -48,7 +48,10 @@ class EpiGraphDBTool(BaseRESTTool):
         try:
             return self._query(arguments)
         except requests.exceptions.Timeout:
-            return {"error": f"EpiGraphDB request timed out after {self.timeout}s"}
+            return {
+                "status": "error",
+                "error": f"EpiGraphDB request timed out after {self.timeout}s",
+            }
         except requests.exceptions.ConnectionError:
             return {
                 "error": "Failed to connect to EpiGraphDB. Check network connectivity."
@@ -58,7 +61,10 @@ class EpiGraphDBTool(BaseRESTTool):
                 "error": f"EpiGraphDB HTTP error: {e.response.status_code} - {e.response.text[:200]}"
             }
         except Exception as e:
-            return {"error": f"Unexpected error querying EpiGraphDB: {str(e)}"}
+            return {
+                "status": "error",
+                "error": f"Unexpected error querying EpiGraphDB: {str(e)}",
+            }
 
     def _query(self, arguments: dict) -> dict:
         """Route to the appropriate endpoint."""
@@ -80,14 +86,17 @@ class EpiGraphDBTool(BaseRESTTool):
         elif op == "opengwas_search":
             return self._search_opengwas(arguments)
         else:
-            return {"error": f"Unknown operation: {op}"}
+            return {"status": "error", "error": f"Unknown operation: {op}"}
 
     def _get_mr(self, arguments: dict) -> dict:
         """Get Mendelian Randomization results between exposure and outcome traits."""
         exposure_trait = arguments.get("exposure_trait", "").strip()
         outcome_trait = arguments.get("outcome_trait", "").strip()
         if not exposure_trait or not outcome_trait:
-            return {"error": "Both exposure_trait and outcome_trait are required"}
+            return {
+                "status": "error",
+                "error": "Both exposure_trait and outcome_trait are required",
+            }
 
         pval_threshold = float(arguments.get("pval_threshold", 1e-5))
         params = {
@@ -144,7 +153,10 @@ class EpiGraphDBTool(BaseRESTTool):
         """Get genetic correlations between a trait and other GWAS traits."""
         trait = arguments.get("trait", "").strip()
         if not trait:
-            return {"error": "trait parameter is required (e.g., 'Body mass index')"}
+            return {
+                "status": "error",
+                "error": "trait parameter is required (e.g., 'Body mass index')",
+            }
 
         pval_threshold = float(arguments.get("pval_threshold", 0.05))
         params = {
@@ -350,7 +362,10 @@ class EpiGraphDBTool(BaseRESTTool):
         gene_id = arguments.get("gene_id")
 
         if not gene_name and not gene_id:
-            return {"error": "Either gene_name or gene_id (Ensembl ID) is required"}
+            return {
+                "status": "error",
+                "error": "Either gene_name or gene_id (Ensembl ID) is required",
+            }
 
         params: dict[str, Any] = {"limit": min(int(arguments.get("limit", 10)), 50)}
         if gene_name:

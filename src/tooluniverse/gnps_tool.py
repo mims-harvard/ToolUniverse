@@ -42,15 +42,24 @@ class GNPSTool(BaseTool):
         try:
             return self._dispatch(arguments)
         except requests.exceptions.Timeout:
-            return {"error": f"GNPS API request timed out after {self.timeout} seconds"}
+            return {
+                "status": "error",
+                "error": f"GNPS API request timed out after {self.timeout} seconds",
+            }
         except requests.exceptions.ConnectionError:
             return {
                 "error": "Failed to connect to GNPS API. Check network connectivity."
             }
         except requests.exceptions.HTTPError as e:
-            return {"error": f"GNPS API HTTP error: {e.response.status_code}"}
+            return {
+                "status": "error",
+                "error": f"GNPS API HTTP error: {e.response.status_code}",
+            }
         except Exception as e:
-            return {"error": f"Unexpected error querying GNPS: {str(e)}"}
+            return {
+                "status": "error",
+                "error": f"Unexpected error querying GNPS: {str(e)}",
+            }
 
     def _dispatch(self, arguments: Dict[str, Any]) -> Dict[str, Any]:
         """Route to appropriate endpoint based on config."""
@@ -59,7 +68,10 @@ class GNPSTool(BaseTool):
         elif self.endpoint_type == "compare_spectra":
             return self._compare_spectra(arguments)
         else:
-            return {"error": f"Unknown endpoint_type: {self.endpoint_type}"}
+            return {
+                "status": "error",
+                "error": f"Unknown endpoint_type: {self.endpoint_type}",
+            }
 
     def _get_spectrum(self, arguments: Dict[str, Any]) -> Dict[str, Any]:
         """Get MS/MS spectrum by Universal Spectrum Identifier (USI)."""
@@ -129,7 +141,10 @@ class GNPSTool(BaseTool):
         usi1 = arguments.get("usi1", "")
         usi2 = arguments.get("usi2", "")
         if not usi1 or not usi2:
-            return {"error": "Both usi1 and usi2 parameters are required"}
+            return {
+                "status": "error",
+                "error": "Both usi1 and usi2 parameters are required",
+            }
 
         # Fetch both spectra
         params1 = {"usi1": usi1}

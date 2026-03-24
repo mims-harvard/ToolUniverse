@@ -44,13 +44,22 @@ class GOAPITool(BaseTool):
         try:
             return self._query(arguments)
         except requests.exceptions.Timeout:
-            return {"error": f"GO API timed out after {self.timeout}s"}
+            return {
+                "status": "error",
+                "error": f"GO API timed out after {self.timeout}s",
+            }
         except requests.exceptions.ConnectionError:
-            return {"error": "Failed to connect to GO API"}
+            return {"status": "error", "error": "Failed to connect to GO API"}
         except requests.exceptions.HTTPError as e:
-            return {"error": f"GO API HTTP error: {e.response.status_code}"}
+            return {
+                "status": "error",
+                "error": f"GO API HTTP error: {e.response.status_code}",
+            }
         except Exception as e:
-            return {"error": f"Unexpected error querying GO API: {str(e)}"}
+            return {
+                "status": "error",
+                "error": f"Unexpected error querying GO API: {str(e)}",
+            }
 
     def _query(self, arguments: Dict[str, Any]) -> Dict[str, Any]:
         """Route to appropriate GO endpoint."""
@@ -61,13 +70,16 @@ class GOAPITool(BaseTool):
         elif self.endpoint == "search_annotations":
             return self._search_annotations(arguments)
         else:
-            return {"error": f"Unknown endpoint: {self.endpoint}"}
+            return {"status": "error", "error": f"Unknown endpoint: {self.endpoint}"}
 
     def _get_term(self, arguments: Dict[str, Any]) -> Dict[str, Any]:
         """Get GO term details by GO ID."""
         go_id = arguments.get("go_id", "")
         if not go_id:
-            return {"error": "go_id parameter is required (e.g., GO:0006915)"}
+            return {
+                "status": "error",
+                "error": "go_id parameter is required (e.g., GO:0006915)",
+            }
 
         # Normalize GO ID
         if not go_id.startswith("GO:"):
@@ -152,7 +164,10 @@ class GOAPITool(BaseTool):
         """Search for genes annotated with a specific GO term."""
         go_id = arguments.get("go_id", "")
         if not go_id:
-            return {"error": "go_id parameter is required (e.g., GO:0006915)"}
+            return {
+                "status": "error",
+                "error": "go_id parameter is required (e.g., GO:0006915)",
+            }
 
         if not go_id.startswith("GO:"):
             go_id = f"GO:{go_id}"

@@ -21,7 +21,7 @@ class DBLPTool(BaseTool):
         query = arguments.get("query")
         limit = int(arguments.get("limit", 10))
         if not query:
-            return {"error": "`query` parameter is required."}
+            return {"status": "error", "error": "`query` parameter is required."}
         return self._search(query, limit)
 
     def _search(self, query, limit):

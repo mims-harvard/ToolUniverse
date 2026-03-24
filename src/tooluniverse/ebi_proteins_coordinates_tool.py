@@ -42,9 +42,12 @@ class EBIProteinsCoordinatesTool(BaseTool):
         try:
             return self._query(arguments)
         except requests.exceptions.Timeout:
-            return {"error": f"EBI Proteins API timed out after {self.timeout}s"}
+            return {
+                "status": "error",
+                "error": f"EBI Proteins API timed out after {self.timeout}s",
+            }
         except requests.exceptions.ConnectionError:
-            return {"error": "Failed to connect to EBI Proteins API"}
+            return {"status": "error", "error": "Failed to connect to EBI Proteins API"}
         except requests.exceptions.HTTPError as e:
             status = e.response.status_code if e.response is not None else "unknown"
             if status == 404:
@@ -52,17 +55,20 @@ class EBIProteinsCoordinatesTool(BaseTool):
                     "error": "Protein not found. Provide a valid UniProt accession (e.g., 'P04637' for TP53)."
                 }
             if status == 400:
-                return {"error": "Bad request. Check the UniProt accession format."}
-            return {"error": f"EBI Proteins API HTTP {status}"}
+                return {
+                    "status": "error",
+                    "error": "Bad request. Check the UniProt accession format.",
+                }
+            return {"status": "error", "error": f"EBI Proteins API HTTP {status}"}
         except Exception as e:
-            return {"error": f"Unexpected error: {str(e)}"}
+            return {"status": "error", "error": f"Unexpected error: {str(e)}"}
 
     def _query(self, arguments: Dict[str, Any]) -> Dict[str, Any]:
         """Route to appropriate endpoint."""
         if self.endpoint == "get_coordinates":
             return self._get_coordinates(arguments)
         else:
-            return {"error": f"Unknown endpoint: {self.endpoint}"}
+            return {"status": "error", "error": f"Unknown endpoint: {self.endpoint}"}
 
     def _get_coordinates(self, arguments: Dict[str, Any]) -> Dict[str, Any]:
         """Get protein-to-genomic coordinate mappings."""

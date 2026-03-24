@@ -25,7 +25,7 @@ class EFOTool(BaseTool):
         disease = arguments.get("disease")
         rows = arguments.get("rows", 1)
         if not disease:
-            return {"error": "`disease` parameter is required."}
+            return {"status": "error", "error": "`disease` parameter is required."}
         return self._search(disease, rows)
 
     def _search(self, disease, rows):
@@ -34,7 +34,11 @@ class EFOTool(BaseTool):
             response = requests.get(self.base_url, params=params, timeout=20)
             response.raise_for_status()
         except requests.RequestException as e:
-            return {"error": "OLS API request failed.", "details": str(e)}
+            return {
+                "status": "error",
+                "error": "OLS API request failed.",
+                "details": str(e),
+            }
 
         data = response.json().get("response", {})
         docs = data.get("docs", [])

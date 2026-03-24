@@ -44,15 +44,24 @@ class MeSHTool(BaseTool):
         try:
             return self._query(arguments)
         except requests.exceptions.Timeout:
-            return {"error": f"MeSH API request timed out after {self.timeout} seconds"}
+            return {
+                "status": "error",
+                "error": f"MeSH API request timed out after {self.timeout} seconds",
+            }
         except requests.exceptions.ConnectionError:
             return {
                 "error": "Failed to connect to MeSH API. Check network connectivity."
             }
         except requests.exceptions.HTTPError as e:
-            return {"error": f"MeSH API HTTP error: {e.response.status_code}"}
+            return {
+                "status": "error",
+                "error": f"MeSH API HTTP error: {e.response.status_code}",
+            }
         except Exception as e:
-            return {"error": f"Unexpected error querying MeSH: {str(e)}"}
+            return {
+                "status": "error",
+                "error": f"Unexpected error querying MeSH: {str(e)}",
+            }
 
     def _query(self, arguments: Dict[str, Any]) -> Dict[str, Any]:
         """Route to appropriate MeSH endpoint."""
@@ -63,13 +72,13 @@ class MeSHTool(BaseTool):
         elif self.endpoint == "search_terms":
             return self._search_terms(arguments)
         else:
-            return {"error": f"Unknown endpoint: {self.endpoint}"}
+            return {"status": "error", "error": f"Unknown endpoint: {self.endpoint}"}
 
     def _search_descriptors(self, arguments: Dict[str, Any]) -> Dict[str, Any]:
         """Search MeSH descriptors (main headings) by label."""
         query = arguments.get("query", "")
         if not query:
-            return {"error": "query parameter is required"}
+            return {"status": "error", "error": "query parameter is required"}
 
         match_type = arguments.get("match", "contains")
         limit = arguments.get("limit", 20)
@@ -192,7 +201,7 @@ class MeSHTool(BaseTool):
         """Search MeSH terms (entry terms/synonyms) by label."""
         query = arguments.get("query", "")
         if not query:
-            return {"error": "query parameter is required"}
+            return {"status": "error", "error": "query parameter is required"}
 
         match_type = arguments.get("match", "contains")
         limit = arguments.get("limit", 20)

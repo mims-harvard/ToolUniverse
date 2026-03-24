@@ -43,13 +43,22 @@ class RheaTool(BaseTool):
         try:
             return self._query(arguments)
         except requests.exceptions.Timeout:
-            return {"error": f"Rhea API request timed out after {self.timeout} seconds"}
+            return {
+                "status": "error",
+                "error": f"Rhea API request timed out after {self.timeout} seconds",
+            }
         except requests.exceptions.ConnectionError:
-            return {"error": "Failed to connect to Rhea API."}
+            return {"status": "error", "error": "Failed to connect to Rhea API."}
         except requests.exceptions.HTTPError as e:
-            return {"error": f"Rhea API HTTP error: {e.response.status_code}"}
+            return {
+                "status": "error",
+                "error": f"Rhea API HTTP error: {e.response.status_code}",
+            }
         except Exception as e:
-            return {"error": f"Unexpected error querying Rhea: {str(e)}"}
+            return {
+                "status": "error",
+                "error": f"Unexpected error querying Rhea: {str(e)}",
+            }
 
     def _query(self, arguments: Dict[str, Any]) -> Dict[str, Any]:
         """Route to appropriate Rhea endpoint."""
@@ -60,7 +69,7 @@ class RheaTool(BaseTool):
         elif self.endpoint == "search_by_chebi":
             return self._search_by_chebi(arguments)
         else:
-            return {"error": f"Unknown endpoint: {self.endpoint}"}
+            return {"status": "error", "error": f"Unknown endpoint: {self.endpoint}"}
 
     def _parse_tsv(self, text: str) -> List[Dict[str, str]]:
         """Parse TSV response into list of dicts."""

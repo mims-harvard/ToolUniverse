@@ -42,15 +42,24 @@ class HPOTool(BaseTool):
         try:
             return self._query(arguments)
         except requests.exceptions.Timeout:
-            return {"error": f"HPO API request timed out after {self.timeout} seconds"}
+            return {
+                "status": "error",
+                "error": f"HPO API request timed out after {self.timeout} seconds",
+            }
         except requests.exceptions.ConnectionError:
             return {
                 "error": "Failed to connect to HPO API. Check network connectivity."
             }
         except requests.exceptions.HTTPError as e:
-            return {"error": f"HPO API HTTP error: {e.response.status_code}"}
+            return {
+                "status": "error",
+                "error": f"HPO API HTTP error: {e.response.status_code}",
+            }
         except Exception as e:
-            return {"error": f"Unexpected error querying HPO: {str(e)}"}
+            return {
+                "status": "error",
+                "error": f"Unexpected error querying HPO: {str(e)}",
+            }
 
     def _query(self, arguments: Dict[str, Any]) -> Dict[str, Any]:
         """Route to appropriate HPO endpoint."""
@@ -61,13 +70,16 @@ class HPOTool(BaseTool):
         elif self.endpoint == "get_term_hierarchy":
             return self._get_term_hierarchy(arguments)
         else:
-            return {"error": f"Unknown endpoint: {self.endpoint}"}
+            return {"status": "error", "error": f"Unknown endpoint: {self.endpoint}"}
 
     def _get_term(self, arguments: Dict[str, Any]) -> Dict[str, Any]:
         """Get detailed information about an HPO term by its ID."""
         term_id = arguments.get("term_id", "")
         if not term_id:
-            return {"error": "term_id parameter is required (e.g., 'HP:0001250')"}
+            return {
+                "status": "error",
+                "error": "term_id parameter is required (e.g., 'HP:0001250')",
+            }
 
         # Normalize the ID format
         if not term_id.startswith("HP:"):
@@ -109,7 +121,7 @@ class HPOTool(BaseTool):
         """Search for HPO terms by keyword."""
         query = arguments.get("query", "")
         if not query:
-            return {"error": "query parameter is required"}
+            return {"status": "error", "error": "query parameter is required"}
 
         max_results = arguments.get("max_results", 10)
         if max_results > 50:
@@ -148,7 +160,10 @@ class HPOTool(BaseTool):
         """Get parent and child terms in the HPO hierarchy."""
         term_id = arguments.get("term_id", "")
         if not term_id:
-            return {"error": "term_id parameter is required (e.g., 'HP:0001250')"}
+            return {
+                "status": "error",
+                "error": "term_id parameter is required (e.g., 'HP:0001250')",
+            }
 
         if not term_id.startswith("HP:"):
             term_id = f"HP:{term_id}"

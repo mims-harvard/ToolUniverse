@@ -56,7 +56,7 @@ class MetabolomicsWorkbenchTool(BaseTool):
             elif context == "exactmass":
                 return self._search_exactmass(arguments)
             else:
-                return {"error": f"Unknown context: {context}"}
+                return {"status": "error", "error": f"Unknown context: {context}"}
         except Exception as e:
             raise self.handle_error(e)
 
@@ -88,7 +88,8 @@ class MetabolomicsWorkbenchTool(BaseTool):
                 # Check for API-level error status
                 if isinstance(data, dict) and data.get("status") == "error":
                     return {
-                        "error": data.get("message", "API returned an error status")
+                        "status": "error",
+                        "error": data.get("message", "API returned an error status"),
                     }
 
                 # Convert exactmass from string to number if present
@@ -132,7 +133,7 @@ class MetabolomicsWorkbenchTool(BaseTool):
         study_id = arguments.get("study_id", "")
         output_item = arguments.get("output_item", "summary")
         if not study_id:
-            return {"error": "study_id parameter is required"}
+            return {"status": "error", "error": "study_id parameter is required"}
         return self._make_request(f"study/study_id/{study_id}/{output_item}")
 
     def _query_compound(self, arguments: Dict[str, Any]) -> Dict[str, Any]:
@@ -141,7 +142,7 @@ class MetabolomicsWorkbenchTool(BaseTool):
         input_value = arguments.get("input_value", "")
         output_item = arguments.get("output_item", "all")
         if not input_value:
-            return {"error": "input_value parameter is required"}
+            return {"status": "error", "error": "input_value parameter is required"}
         return self._make_request(f"compound/{input_item}/{input_value}/{output_item}")
 
     def _query_refmet(self, arguments: Dict[str, Any]) -> Dict[str, Any]:
@@ -150,7 +151,7 @@ class MetabolomicsWorkbenchTool(BaseTool):
         input_value = arguments.get("input_value", "")
         output_item = arguments.get("output_item", "all")
         if not input_value:
-            return {"error": "input_value parameter is required"}
+            return {"status": "error", "error": "input_value parameter is required"}
         return self._make_request(f"refmet/{input_item}/{input_value}/{output_item}")
 
     def _search_moverz(self, arguments: Dict[str, Any]) -> Dict[str, Any]:
@@ -160,7 +161,7 @@ class MetabolomicsWorkbenchTool(BaseTool):
         tolerance = arguments.get("tolerance", 0.1)
         database = arguments.get("database", "MB")  # MB, LIPIDS, or REFMET
         if mz_value is None:
-            return {"error": "mz_value parameter is required"}
+            return {"status": "error", "error": "mz_value parameter is required"}
         # URL-encode adduct: '+' in 'M+H' must be %2B or the server drops the connection
         encoded_adduct = quote(str(adduct), safe="")
         return self._make_request(
@@ -172,6 +173,6 @@ class MetabolomicsWorkbenchTool(BaseTool):
         mass_value = arguments.get("mass_value")
         tolerance = arguments.get("tolerance", 0.1)
         if mass_value is None:
-            return {"error": "mass_value parameter is required"}
+            return {"status": "error", "error": "mass_value parameter is required"}
         # exactmass endpoint is non-functional; use moverz/REFMET with neutral adduct M
         return self._make_request(f"moverz/REFMET/{mass_value}/M/{tolerance}")

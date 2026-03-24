@@ -47,7 +47,7 @@ class EnsemblPhenotypeTool(BaseTool):
                 "Try a smaller region or a less-studied gene."
             }
         except requests.exceptions.ConnectionError:
-            return {"error": "Failed to connect to Ensembl REST API"}
+            return {"status": "error", "error": "Failed to connect to Ensembl REST API"}
         except requests.exceptions.HTTPError as e:
             status = e.response.status_code if e.response else "unknown"
             if status == 400:
@@ -58,9 +58,12 @@ class EnsemblPhenotypeTool(BaseTool):
                 return {
                     "error": "Not found: the gene, region, or variant was not found in Ensembl"
                 }
-            return {"error": f"Ensembl REST API HTTP error: {status}"}
+            return {
+                "status": "error",
+                "error": f"Ensembl REST API HTTP error: {status}",
+            }
         except Exception as e:
-            return {"error": f"Unexpected error: {str(e)}"}
+            return {"status": "error", "error": f"Unexpected error: {str(e)}"}
 
     def _dispatch(self, arguments: Dict[str, Any]) -> Dict[str, Any]:
         """Route to appropriate endpoint."""
@@ -70,7 +73,10 @@ class EnsemblPhenotypeTool(BaseTool):
             return self._phenotype_region(arguments)
         elif self.endpoint_type == "variant":
             return self._phenotype_variant(arguments)
-        return {"error": f"Unknown endpoint_type: {self.endpoint_type}"}
+        return {
+            "status": "error",
+            "error": f"Unknown endpoint_type: {self.endpoint_type}",
+        }
 
     def _phenotype_gene(self, arguments: Dict[str, Any]) -> Dict[str, Any]:
         """Get phenotype associations for a gene."""
@@ -78,7 +84,10 @@ class EnsemblPhenotypeTool(BaseTool):
         gene = arguments.get("gene", "")
 
         if not gene:
-            return {"error": "gene parameter is required (e.g., 'BRCA1')"}
+            return {
+                "status": "error",
+                "error": "gene parameter is required (e.g., 'BRCA1')",
+            }
 
         url = f"{ENSEMBL_BASE_URL}/phenotype/gene/{species}/{gene}"
         params = {"content-type": "application/json"}
@@ -135,7 +144,10 @@ class EnsemblPhenotypeTool(BaseTool):
         feature_type = arguments.get("feature_type")
 
         if not region:
-            return {"error": "region is required (e.g., '17:7661779-7687538')"}
+            return {
+                "status": "error",
+                "error": "region is required (e.g., '17:7661779-7687538')",
+            }
 
         url = f"{ENSEMBL_BASE_URL}/phenotype/region/{species}/{region}"
         params = {"content-type": "application/json"}
@@ -192,7 +204,10 @@ class EnsemblPhenotypeTool(BaseTool):
         variant_id = arguments.get("variant_id", "")
 
         if not variant_id:
-            return {"error": "variant_id is required (e.g., 'rs429358')"}
+            return {
+                "status": "error",
+                "error": "variant_id is required (e.g., 'rs429358')",
+            }
 
         # Use the variation endpoint with phenotypes=1
         url = f"{ENSEMBL_BASE_URL}/variation/{species}/{variant_id}"

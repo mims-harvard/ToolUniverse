@@ -73,7 +73,7 @@ class PyPIPackageInspector(BaseTool):
             )
 
             if response.status_code == 404:
-                return {"error": "Package not found on PyPI"}
+                return {"status": "error", "error": "Package not found on PyPI"}
 
             response.raise_for_status()
             data = response.json()
@@ -158,9 +158,9 @@ class PyPIPackageInspector(BaseTool):
             }
 
         except requests.exceptions.RequestException as e:
-            return {"error": f"PyPI API error: {str(e)}"}
+            return {"status": "error", "error": f"PyPI API error: {str(e)}"}
         except Exception as e:
-            return {"error": f"Unexpected error: {str(e)}"}
+            return {"status": "error", "error": f"Unexpected error: {str(e)}"}
 
     def _get_download_stats(self, package_name: str) -> Dict[str, Any]:
         """Fetch download statistics from pypistats.org"""
@@ -199,7 +199,7 @@ class PyPIPackageInspector(BaseTool):
             # Expected format: https://github.com/owner/repo
             parts = github_url.rstrip("/").split("/")
             if len(parts) < 2:
-                return {"error": "Invalid GitHub URL format"}
+                return {"status": "error", "error": "Invalid GitHub URL format"}
 
             repo_name = parts[-1]
             owner = parts[-2]
@@ -213,7 +213,7 @@ class PyPIPackageInspector(BaseTool):
             )
 
             if response.status_code == 404:
-                return {"error": "GitHub repository not found"}
+                return {"status": "error", "error": "GitHub repository not found"}
 
             response.raise_for_status()
             data = response.json()
@@ -253,9 +253,9 @@ class PyPIPackageInspector(BaseTool):
             }
 
         except requests.exceptions.RequestException as e:
-            return {"error": f"GitHub API error: {str(e)}"}
+            return {"status": "error", "error": f"GitHub API error: {str(e)}"}
         except Exception as e:
-            return {"error": f"Unexpected error: {str(e)}"}
+            return {"status": "error", "error": f"Unexpected error: {str(e)}"}
 
     def _calculate_quality_scores(
         self, pypi_data: Dict, downloads: Dict, github_data: Dict

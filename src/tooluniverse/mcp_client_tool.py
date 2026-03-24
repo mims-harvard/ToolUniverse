@@ -237,9 +237,12 @@ class MCPClientTool(BaseTool, BaseMCPClient):
                 elif operation == "get_prompt":
                     return await self._run_get_prompt(arguments)
                 else:
-                    return {"error": f"Unknown operation: {operation}"}
+                    return {
+                        "status": "error",
+                        "error": f"Unknown operation: {operation}",
+                    }
             except Exception as e:
-                return {"error": str(e)}
+                return {"status": "error", "error": str(e)}
             finally:
                 # Always clean up session
                 await self._close_session()
@@ -257,7 +260,10 @@ class MCPClientTool(BaseTool, BaseMCPClient):
         tool_arguments = arguments.get("tool_arguments", {})
 
         if not tool_name:
-            return {"error": "tool_name is required for call_tool operation"}
+            return {
+                "status": "error",
+                "error": "tool_name is required for call_tool operation",
+            }
 
         result = await self.call_tool(tool_name, tool_arguments)
         return result
@@ -272,7 +278,10 @@ class MCPClientTool(BaseTool, BaseMCPClient):
         uri = arguments.get("uri")
 
         if not uri:
-            return {"error": "uri is required for read_resource operation"}
+            return {
+                "status": "error",
+                "error": "uri is required for read_resource operation",
+            }
 
         result = await self.read_resource(uri)
         return result
@@ -288,7 +297,10 @@ class MCPClientTool(BaseTool, BaseMCPClient):
         prompt_arguments = arguments.get("prompt_arguments", {})
 
         if not prompt_name:
-            return {"error": "prompt_name is required for get_prompt operation"}
+            return {
+                "status": "error",
+                "error": "prompt_name is required for get_prompt operation",
+            }
 
         result = await self.get_prompt(prompt_name, prompt_arguments)
         return result
@@ -315,7 +327,7 @@ class MCPProxyTool(MCPClientTool):
                 result = await self.call_tool(self.target_tool_name, arguments)
                 return result
             except Exception as e:
-                return {"error": str(e)}
+                return {"status": "error", "error": str(e)}
             finally:
                 # Always clean up session
                 await self._close_session()

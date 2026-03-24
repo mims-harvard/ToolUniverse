@@ -217,10 +217,13 @@ class ComposeTool(BaseTool):
             Any: Result from the composition execution
         """
         if not self.tooluniverse:
-            return {"error": "ToolUniverse reference is required for ComposeTool"}
+            return {
+                "status": "error",
+                "error": "ToolUniverse reference is required for ComposeTool",
+            }
 
         if not self.composition_code:
-            return {"error": "No composition code provided"}
+            return {"status": "error", "error": "No composition code provided"}
 
         # Check for missing dependencies
         all_dependencies = self.discovered_dependencies.union(set(self.required_tools))
@@ -280,7 +283,11 @@ class ComposeTool(BaseTool):
             traceback.print_exc()  # Print full stack trace
             print(f"\033[91m{error_msg}\033[0m")
 
-            return {"error": error_msg, "traceback": traceback.format_exc()}
+            return {
+                "status": "error",
+                "error": error_msg,
+                "traceback": traceback.format_exc(),
+            }
 
     def _emit_stream_chunk(self, chunk, stream_callback):
         """

@@ -31,28 +31,35 @@ class URLHTMLTagTool(BaseTool):
     def run(self, arguments: dict):
         url = arguments.get("url")
         if not url:
-            return {"error": "Parameter 'url' is required."}
+            return {"status": "error", "error": "Parameter 'url' is required."}
 
         # Basic validation
         if not (url.startswith("http://") or url.startswith("https://")):
-            return {"error": "URL must start with http:// or https://"}
+            return {
+                "status": "error",
+                "error": "URL must start with http:// or https://",
+            }
 
         timeout = arguments.get("timeout", 20)
         try:
             resp = requests.get(url, timeout=timeout)
         except requests.Timeout:
-            return {"error": "Request timed out."}
+            return {"status": "error", "error": "Request timed out."}
         except Exception as e:
-            return {"error": f"Request failed: {e}"}
+            return {"status": "error", "error": f"Request failed: {e}"}
 
         if resp.status_code != 200:
-            return {"error": f"HTTP {resp.status_code}", "detail": resp.text[:300]}
+            return {
+                "status": "error",
+                "error": f"HTTP {resp.status_code}",
+                "detail": resp.text[:300],
+            }
 
         ctype = resp.headers.get("Content-Type", "").lower()
         if "html" not in ctype:
             # Still attempt extraction if text-like
             if not ctype.startswith("text/"):
-                return {"error": "Response is not HTML."}
+                return {"status": "error", "error": "Response is not HTML."}
 
         text = resp.text
 
@@ -63,7 +70,7 @@ class URLHTMLTagTool(BaseTool):
             flags=re.IGNORECASE | re.DOTALL,
         )
         if not m:
-            return {"error": f"No <{self.tag_to_fetch}> tag found."}
+            return {"status": "error", "error": f"No <{self.tag_to_fetch}> tag found."}
 
         raw_content = m.group(1).strip()
         # Collapse whitespace
@@ -183,14 +190,20 @@ class URLToPDFTextTool(BaseTool):
     def run(self, arguments: dict):
         url = arguments.get("url")
         if not url:
-            return {"error": "Parameter 'url' is required."}
+            return {"status": "error", "error": "Parameter 'url' is required."}
         if not (url.startswith("http://") or url.startswith("https://")):
-            return {"error": "URL must start with http:// or https://"}
+            return {
+                "status": "error",
+                "error": "URL must start with http:// or https://",
+            }
 
         try:
             timeout = max(1, int(arguments.get("timeout", 30)))
         except (TypeError, ValueError):
-            return {"error": "Parameter 'timeout' must be an integer (seconds)."}
+            return {
+                "status": "error",
+                "error": "Parameter 'timeout' must be an integer (seconds).",
+            }
 
         deadline = time.monotonic() + timeout
 
@@ -198,7 +211,10 @@ class URLToPDFTextTool(BaseTool):
             return max(min_seconds, deadline - time.monotonic())
 
         if time.monotonic() >= deadline:
-            return {"error": f"Request timed out after {timeout} seconds."}
+            return {
+                "status": "error",
+                "error": f"Request timed out after {timeout} seconds.",
+            }
 
         # First, check if the URL returns HTML or a downloadable file
         try:
@@ -213,27 +229,39 @@ class URLToPDFTextTool(BaseTool):
             if not is_html:
                 # Download the file directly and return its text content
                 if time.monotonic() >= deadline:
-                    return {"error": f"Request timed out after {timeout} seconds."}
+                    return {
+                        "status": "error",
+                        "error": f"Request timed out after {timeout} seconds.",
+                    }
                 resp = requests.get(
                     url,
                     timeout=remaining_seconds(),
                     allow_redirects=True,
                 )
                 if resp.status_code != 200:
-                    return {"error": f"HTTP {resp.status_code}"}
+                    return {"status": "error", "error": f"HTTP {resp.status_code}"}
                 text = resp.text
                 if not text.strip():
-                    return {"error": "File appears to be empty or binary."}
+                    return {
+                        "status": "error",
+                        "error": "File appears to be empty or binary.",
+                    }
                 return {self.return_key: text.strip()}
         except requests.exceptions.Timeout:
-            return {"error": f"Request timed out after {timeout} seconds."}
+            return {
+                "status": "error",
+                "error": f"Request timed out after {timeout} seconds.",
+            }
         except requests.exceptions.RequestException as e:
-            return {"error": f"Failed to check content type: {e}"}
+            return {"status": "error", "error": f"Failed to check content type: {e}"}
 
         # Ensure browsers are installed (auto-install if needed)
         remaining_install_seconds = int(deadline - time.monotonic())
         if remaining_install_seconds <= 0:
-            return {"error": f"Request timed out after {timeout} seconds."}
+            return {
+                "status": "error",
+                "error": f"Request timed out after {timeout} seconds.",
+            }
         install_timeout = max(5, remaining_install_seconds)
         ensure_error = self._ensure_playwright_browsers(
             browsers=("chromium",),
@@ -241,7 +269,10 @@ class URLToPDFTextTool(BaseTool):
             timeout_seconds=install_timeout,
         )
         if ensure_error is not None:
-            return {"error": f"Playwright browser check/install failed: {ensure_error}"}
+            return {
+                "status": "error",
+                "error": f"Playwright browser check/install failed: {ensure_error}",
+            }
 
         # Detect if running inside an active asyncio event loop (Colab/Jupyter)
         try:
@@ -296,9 +327,15 @@ class URLToPDFTextTool(BaseTool):
             try:
                 pdf_bytes = loop.run_until_complete(async_pdf())
             except AsyncPlaywrightTimeoutError:
-                return {"error": f"Request timed out after {timeout} seconds."}
+                return {
+                    "status": "error",
+                    "error": f"Request timed out after {timeout} seconds.",
+                }
             except Exception as e:
-                return {"error": f"Failed to render webpage to PDF (async): {e}"}
+                return {
+                    "status": "error",
+                    "error": f"Failed to render webpage to PDF (async): {e}",
+                }
         else:
             # Use sync Playwright API
             try:
@@ -307,7 +344,10 @@ class URLToPDFTextTool(BaseTool):
                     page = browser.new_page()
                     remaining_ms = int((deadline - time.monotonic()) * 1000)
                     if remaining_ms <= 0:
-                        return {"error": f"Request timed out after {timeout} seconds."}
+                        return {
+                            "status": "error",
+                            "error": f"Request timed out after {timeout} seconds.",
+                        }
                     remaining_ms = max(1000, remaining_ms)
                     page.set_default_timeout(remaining_ms)
                     page.set_default_navigation_timeout(remaining_ms)
@@ -322,16 +362,25 @@ class URLToPDFTextTool(BaseTool):
                             pass
                     pdf_timeout_ms = int((deadline - time.monotonic()) * 1000)
                     if pdf_timeout_ms <= 0:
-                        return {"error": f"Request timed out after {timeout} seconds."}
+                        return {
+                            "status": "error",
+                            "error": f"Request timed out after {timeout} seconds.",
+                        }
                     pdf_bytes = page.pdf(
                         format="A4",
                         print_background=True,
                     )
                     browser.close()
             except PlaywrightTimeoutError:
-                return {"error": f"Request timed out after {timeout} seconds."}
+                return {
+                    "status": "error",
+                    "error": f"Request timed out after {timeout} seconds.",
+                }
             except Exception as e:
-                return {"error": f"Failed to render webpage to PDF (sync): {e}"}
+                return {
+                    "status": "error",
+                    "error": f"Failed to render webpage to PDF (sync): {e}",
+                }
 
         # Step 2: Extract text from PDF
         try:
@@ -342,7 +391,10 @@ class URLToPDFTextTool(BaseTool):
                     if page_text:
                         text += page_text + "\n"
             if not text.strip():
-                return {"error": "No text could be extracted from rendered PDF."}
+                return {
+                    "status": "error",
+                    "error": "No text could be extracted from rendered PDF.",
+                }
             return {self.return_key: text.strip()}
         except Exception as e:
-            return {"error": f"Failed to extract text from PDF: {e}"}
+            return {"status": "error", "error": f"Failed to extract text from PDF: {e}"}

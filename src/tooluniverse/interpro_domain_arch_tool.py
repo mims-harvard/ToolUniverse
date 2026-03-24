@@ -37,9 +37,12 @@ class InterProDomainArchTool(BaseTool):
         try:
             return self._query(arguments)
         except requests.exceptions.Timeout:
-            return {"error": f"InterPro API timed out after {self.timeout}s"}
+            return {
+                "status": "error",
+                "error": f"InterPro API timed out after {self.timeout}s",
+            }
         except requests.exceptions.ConnectionError:
-            return {"error": "Failed to connect to InterPro API"}
+            return {"status": "error", "error": "Failed to connect to InterPro API"}
         except requests.exceptions.HTTPError as e:
             code = e.response.status_code if e.response is not None else "unknown"
             if code == 404:
@@ -49,12 +52,15 @@ class InterProDomainArchTool(BaseTool):
                         "pfam_accession", arguments.get("clan_accession", "")
                     ),
                 )
-                return {"error": f"Not found in InterPro: {param}"}
+                return {"status": "error", "error": f"Not found in InterPro: {param}"}
             if code == 204:
-                return {"error": "No results found"}
-            return {"error": f"InterPro API HTTP error: {code}"}
+                return {"status": "error", "error": "No results found"}
+            return {"status": "error", "error": f"InterPro API HTTP error: {code}"}
         except Exception as e:
-            return {"error": f"Unexpected error querying InterPro API: {str(e)}"}
+            return {
+                "status": "error",
+                "error": f"Unexpected error querying InterPro API: {str(e)}",
+            }
 
     def _query(self, arguments: Dict[str, Any]) -> Dict[str, Any]:
         """Route to appropriate endpoint."""
@@ -65,7 +71,7 @@ class InterProDomainArchTool(BaseTool):
         elif self.endpoint == "clan_members":
             return self._get_clan_members(arguments)
         else:
-            return {"error": f"Unknown endpoint: {self.endpoint}"}
+            return {"status": "error", "error": f"Unknown endpoint: {self.endpoint}"}
 
     def _get_protein_domain_architecture(
         self, arguments: Dict[str, Any]
@@ -134,7 +140,10 @@ class InterProDomainArchTool(BaseTool):
         """Find PDB structures containing a specific Pfam domain."""
         pfam_acc = arguments.get("pfam_accession", "")
         if not pfam_acc:
-            return {"error": "pfam_accession parameter is required (e.g., 'PF00870')"}
+            return {
+                "status": "error",
+                "error": "pfam_accession parameter is required (e.g., 'PF00870')",
+            }
 
         max_results = min(arguments.get("max_results", 20), 200)
 
@@ -176,7 +185,10 @@ class InterProDomainArchTool(BaseTool):
         """Get member families in a Pfam clan (superfamily)."""
         clan_acc = arguments.get("clan_accession", "")
         if not clan_acc:
-            return {"error": "clan_accession parameter is required (e.g., 'CL0016')"}
+            return {
+                "status": "error",
+                "error": "clan_accession parameter is required (e.g., 'CL0016')",
+            }
 
         max_results = min(arguments.get("max_results", 50), 200)
 

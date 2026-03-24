@@ -57,7 +57,7 @@ class FoodDataCentralTool(BaseTool):
             elif operation == "nutrients":
                 return self._get_food_nutrients(arguments)
             else:
-                return {"error": f"Unknown operation: {operation}"}
+                return {"status": "error", "error": f"Unknown operation: {operation}"}
         except requests.exceptions.Timeout:
             return {
                 "error": f"FoodData Central API request timed out after {self.timeout} seconds"
@@ -79,9 +79,15 @@ class FoodDataCentralTool(BaseTool):
                 return {
                     "error": "FoodData Central rate limit exceeded (1000 req/hr). Try again later."
                 }
-            return {"error": f"FoodData Central API HTTP error {status_code}: {detail}"}
+            return {
+                "status": "error",
+                "error": f"FoodData Central API HTTP error {status_code}: {detail}",
+            }
         except Exception as e:
-            return {"error": f"Unexpected error querying FoodData Central: {str(e)}"}
+            return {
+                "status": "error",
+                "error": f"Unexpected error querying FoodData Central: {str(e)}",
+            }
 
     def _make_get_request(
         self, endpoint: str, params: Dict[str, Any] = None
@@ -99,7 +105,7 @@ class FoodDataCentralTool(BaseTool):
         """Search for foods by keyword/query string."""
         query = arguments.get("query", "")
         if not query:
-            return {"error": "query parameter is required"}
+            return {"status": "error", "error": "query parameter is required"}
 
         params = {"query": query}
         if "page_size" in arguments:
@@ -152,7 +158,7 @@ class FoodDataCentralTool(BaseTool):
         """Get detailed food information by FDC ID."""
         fdc_id = arguments.get("fdc_id")
         if not fdc_id:
-            return {"error": "fdc_id parameter is required"}
+            return {"status": "error", "error": "fdc_id parameter is required"}
 
         response = self._make_get_request(f"food/{fdc_id}")
         data = response.json()
@@ -231,7 +237,7 @@ class FoodDataCentralTool(BaseTool):
         """Get only nutrients for a food by FDC ID (detailed nutrient profile)."""
         fdc_id = arguments.get("fdc_id")
         if not fdc_id:
-            return {"error": "fdc_id parameter is required"}
+            return {"status": "error", "error": "fdc_id parameter is required"}
 
         response = self._make_get_request(f"food/{fdc_id}")
         data = response.json()

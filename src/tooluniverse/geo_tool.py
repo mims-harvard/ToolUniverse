@@ -109,7 +109,10 @@ class GEORESTTool(NCBIEUtilsTool):
         # Validate required parameters
         for param in self.required:
             if param not in arguments:
-                return {"error": f"Missing required parameter: {param}"}
+                return {
+                    "status": "error",
+                    "error": f"Missing required parameter: {param}",
+                }
 
         # Set endpoint for the base class
         self.endpoint = self.endpoint_template
@@ -169,7 +172,7 @@ class GEOGetDatasetInfo(GEORESTTool):
         """Build parameters for GEO dataset info retrieval."""
         dataset_id = arguments.get("dataset_id", "")
         if not dataset_id:
-            return {"error": "dataset_id is required"}
+            return {"status": "error", "error": "dataset_id is required"}
 
         # Detect database type
         db = self._detect_database(dataset_id)
@@ -187,11 +190,14 @@ class GEOGetDatasetInfo(GEORESTTool):
         # Validate required parameters
         for param in self.required:
             if param not in arguments:
-                return {"error": f"Missing required parameter: {param}"}
+                return {
+                    "status": "error",
+                    "error": f"Missing required parameter: {param}",
+                }
 
         dataset_id = arguments.get("dataset_id", "")
         if not dataset_id:
-            return {"error": "dataset_id is required"}
+            return {"status": "error", "error": "dataset_id is required"}
 
         # Detect database type
         db = self._detect_database(dataset_id)
@@ -241,7 +247,7 @@ class GEOGetSampleInfo(GEORESTTool):
         """Build parameters for GEO sample info retrieval."""
         dataset_id = arguments.get("dataset_id", "")
         if not dataset_id:
-            return {"error": "dataset_id is required"}
+            return {"status": "error", "error": "dataset_id is required"}
 
         # Detect database type
         db = self._detect_database(dataset_id)
@@ -259,11 +265,14 @@ class GEOGetSampleInfo(GEORESTTool):
         # Validate required parameters
         for param in self.required:
             if param not in arguments:
-                return {"error": f"Missing required parameter: {param}"}
+                return {
+                    "status": "error",
+                    "error": f"Missing required parameter: {param}",
+                }
 
         dataset_id = arguments.get("dataset_id", "")
         if not dataset_id:
-            return {"error": "dataset_id is required"}
+            return {"status": "error", "error": "dataset_id is required"}
 
         # Detect database type
         db = self._detect_database(dataset_id)

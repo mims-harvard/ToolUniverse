@@ -45,13 +45,25 @@ class MonarchV3Tool(BaseTool):
         try:
             return self._query(arguments)
         except requests.exceptions.Timeout:
-            return {"error": f"Monarch API timed out after {self.timeout}s"}
+            return {
+                "status": "error",
+                "error": f"Monarch API timed out after {self.timeout}s",
+            }
         except requests.exceptions.ConnectionError:
-            return {"error": "Failed to connect to Monarch Initiative API"}
+            return {
+                "status": "error",
+                "error": "Failed to connect to Monarch Initiative API",
+            }
         except requests.exceptions.HTTPError as e:
-            return {"error": f"Monarch API HTTP error: {e.response.status_code}"}
+            return {
+                "status": "error",
+                "error": f"Monarch API HTTP error: {e.response.status_code}",
+            }
         except Exception as e:
-            return {"error": f"Unexpected error querying Monarch: {str(e)}"}
+            return {
+                "status": "error",
+                "error": f"Unexpected error querying Monarch: {str(e)}",
+            }
 
     def _query(self, arguments: Dict[str, Any]) -> Dict[str, Any]:
         """Route to appropriate Monarch V3 endpoint."""
@@ -68,7 +80,7 @@ class MonarchV3Tool(BaseTool):
         elif self.endpoint == "mondo_phenotypes":
             return self._mondo_get_phenotypes(arguments)
         else:
-            return {"error": f"Unknown endpoint: {self.endpoint}"}
+            return {"status": "error", "error": f"Unknown endpoint: {self.endpoint}"}
 
     def _get_entity(self, arguments: Dict[str, Any]) -> Dict[str, Any]:
         """Get detailed entity information by CURIE identifier."""
@@ -159,7 +171,7 @@ class MonarchV3Tool(BaseTool):
         """Search Monarch knowledge graph for entities by name/keyword."""
         query = arguments.get("query", "")
         if not query:
-            return {"error": "query parameter is required"}
+            return {"status": "error", "error": "query parameter is required"}
 
         limit = arguments.get("limit") or 10
         category = arguments.get("category")  # e.g., biolink:Gene, biolink:Disease

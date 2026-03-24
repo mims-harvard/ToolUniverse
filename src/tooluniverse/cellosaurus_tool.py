@@ -25,7 +25,7 @@ class CellosaurusSearchTool(BaseTool):
         size = arguments.get("size", 20)
 
         if not q:
-            return {"error": "`q` parameter is required."}
+            return {"status": "error", "error": "`q` parameter is required."}
 
         return self._search_cell_lines(q, offset, size)
 
@@ -69,9 +69,9 @@ class CellosaurusSearchTool(BaseTool):
             }
         except requests.HTTPError as http_err:
             status = getattr(http_err.response, "status_code", None)
-            return {"error": f"HTTP {status}: {http_err}"}
+            return {"status": "error", "error": f"HTTP {status}: {http_err}"}
         except Exception as e:
-            return {"error": str(e)}
+            return {"status": "error", "error": str(e)}
 
 
 @register_tool("CellosaurusQueryConverterTool")
@@ -890,7 +890,7 @@ class CellosaurusQueryConverterTool(BaseTool):
         include_explanation = arguments.get("include_explanation", True)
 
         if not query:
-            return {"error": "`query` parameter is required."}
+            return {"status": "error", "error": "`query` parameter is required."}
 
         return self._convert_query(query, include_explanation)
 
@@ -1161,7 +1161,7 @@ class CellosaurusGetCellLineInfoTool(BaseTool):
         fields = arguments.get("fields")
 
         if not accession:
-            return {"error": "`accession` parameter is required."}
+            return {"status": "error", "error": "`accession` parameter is required."}
 
         return self._get_cell_line_info(accession, format_type, fields)
 
@@ -1178,12 +1178,18 @@ class CellosaurusGetCellLineInfoTool(BaseTool):
             # Validate format
             valid_formats = ["json", "xml", "txt", "fasta"]
             if format_type not in valid_formats:
-                return {"error": (f"Format must be one of: {', '.join(valid_formats)}")}
+                return {
+                    "status": "error",
+                    "error": (f"Format must be one of: {', '.join(valid_formats)}"),
+                }
 
             # Validate fields if provided
             if fields is not None:
                 if not isinstance(fields, list):
-                    return {"error": "Fields must be a list of field names"}
+                    return {
+                        "status": "error",
+                        "error": "Fields must be a list of field names",
+                    }
 
                 # Valid Cellosaurus field tags
                 valid_fields = {
@@ -1251,7 +1257,10 @@ class CellosaurusGetCellLineInfoTool(BaseTool):
 
                 invalid_fields = set(fields) - valid_fields
                 if invalid_fields:
-                    return {"error": f"Invalid fields: {list(invalid_fields)}"}
+                    return {
+                        "status": "error",
+                        "error": f"Invalid fields: {list(invalid_fields)}",
+                    }
 
             # Prepare request parameters
             params = {"format": format_type}
@@ -1315,7 +1324,10 @@ class CellosaurusGetCellLineInfoTool(BaseTool):
         except requests.HTTPError as http_err:
             status = getattr(http_err.response, "status_code", None)
             if status == 404:
-                return {"error": f"Cell line with accession {accession} not found"}
-            return {"error": f"HTTP {status}: {http_err}"}
+                return {
+                    "status": "error",
+                    "error": f"Cell line with accession {accession} not found",
+                }
+            return {"status": "error", "error": f"HTTP {status}: {http_err}"}
         except Exception as e:
-            return {"error": str(e)}
+            return {"status": "error", "error": str(e)}

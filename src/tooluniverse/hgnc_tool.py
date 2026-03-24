@@ -42,15 +42,24 @@ class HGNCTool(BaseTool):
         try:
             return self._query(arguments)
         except requests.exceptions.Timeout:
-            return {"error": f"HGNC API request timed out after {self.timeout} seconds"}
+            return {
+                "status": "error",
+                "error": f"HGNC API request timed out after {self.timeout} seconds",
+            }
         except requests.exceptions.ConnectionError:
             return {
                 "error": "Failed to connect to HGNC API. Check network connectivity."
             }
         except requests.exceptions.HTTPError as e:
-            return {"error": f"HGNC API HTTP error: {e.response.status_code}"}
+            return {
+                "status": "error",
+                "error": f"HGNC API HTTP error: {e.response.status_code}",
+            }
         except Exception as e:
-            return {"error": f"Unexpected error querying HGNC: {str(e)}"}
+            return {
+                "status": "error",
+                "error": f"Unexpected error querying HGNC: {str(e)}",
+            }
 
     def _query(self, arguments: Dict[str, Any]) -> Dict[str, Any]:
         """Execute an HGNC query and return structured results."""
@@ -68,16 +77,16 @@ class HGNCTool(BaseTool):
         if search_field == "symbol":
             value = arguments.get("symbol", "")
             if not value:
-                return {"error": "symbol parameter is required"}
+                return {"status": "error", "error": "symbol parameter is required"}
         elif search_field == "hgnc_id":
             value = arguments.get("hgnc_id", "")
             if not value:
-                return {"error": "hgnc_id parameter is required"}
+                return {"status": "error", "error": "hgnc_id parameter is required"}
             # Ensure HGNC: prefix
             if not value.startswith("HGNC:"):
                 value = f"HGNC:{value}"
         else:
-            return {"error": f"Unknown fetch field: {search_field}"}
+            return {"status": "error", "error": f"Unknown fetch field: {search_field}"}
 
         url = f"{HGNC_BASE_URL}/fetch/{search_field}/{value}"
         response = requests.get(url, headers=headers, timeout=self.timeout)
@@ -116,7 +125,10 @@ class HGNCTool(BaseTool):
         # Determine the query value
         query = arguments.get("query") or arguments.get("location", "")
         if not query:
-            return {"error": "query or location parameter is required"}
+            return {
+                "status": "error",
+                "error": "query or location parameter is required",
+            }
 
         if search_field:
             url = f"{HGNC_BASE_URL}/search/{search_field}/{query}"

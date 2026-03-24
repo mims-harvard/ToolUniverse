@@ -59,18 +59,21 @@ class ReactomeRESTTool(BaseTool):
         if validate:
             validation_error = self.validate_parameters(arguments)
             if validation_error is not None:
-                return {"error": str(validation_error)}
+                return {"status": "error", "error": str(validation_error)}
 
         # 1. Validate required parameters (check from required_params list)
         for required_param in self.required_params:
             if required_param not in arguments:
-                return {"error": f"Parameter '{required_param}' is required."}
+                return {
+                    "status": "error",
+                    "error": f"Parameter '{required_param}' is required.",
+                }
 
         # 2. Build URL, replace {xxx} placeholders
         try:
             url = self._build_url(arguments)
         except ValueError as e:
-            return {"error": str(e)}
+            return {"status": "error", "error": str(e)}
 
         # 3. Find remaining arguments besides path parameters as query parameters
         path_keys = re.findall(r"\{([^{}]+)\}", self.endpoint_template)
@@ -162,7 +165,10 @@ class ReactomeRESTTool(BaseTool):
                         backoff_seconds=0.5,
                     )
         except Exception as e:
-            return {"error": f"Failed to request Reactome Content Service: {str(e)}"}
+            return {
+                "status": "error",
+                "error": f"Failed to request Reactome Content Service: {str(e)}",
+            }
 
         # 5. Check HTTP status code
         if resp.status_code != 200:
@@ -235,5 +241,8 @@ class ReactomeRESTTool(BaseTool):
             if isinstance(fragment, dict) and part in fragment:
                 fragment = fragment[part]
             else:
-                return {"error": f"Path '{self.extract_path}' not found in JSON."}
+                return {
+                    "status": "error",
+                    "error": f"Path '{self.extract_path}' not found in JSON.",
+                }
         return fragment

@@ -55,7 +55,10 @@ class EnsemblVEPTool(BaseTool):
                 "error": f"Ensembl API HTTP error: {e.response.status_code} - {e.response.text[:200]}"
             }
         except Exception as e:
-            return {"error": f"Unexpected error querying Ensembl: {str(e)}"}
+            return {
+                "status": "error",
+                "error": f"Unexpected error querying Ensembl: {str(e)}",
+            }
 
     def _query(self, arguments: Dict[str, Any]) -> Dict[str, Any]:
         """Route to appropriate Ensembl endpoint based on mode."""
@@ -66,13 +69,13 @@ class EnsemblVEPTool(BaseTool):
         elif self.mode == "variant_recoder":
             return self._variant_recoder(arguments)
         else:
-            return {"error": f"Unknown mode: {self.mode}"}
+            return {"status": "error", "error": f"Unknown mode: {self.mode}"}
 
     def _vep_hgvs(self, arguments: Dict[str, Any]) -> Dict[str, Any]:
         """Annotate a variant using HGVS notation."""
         hgvs = arguments.get("hgvs_notation", "")
         if not hgvs:
-            return {"error": "hgvs_notation parameter is required"}
+            return {"status": "error", "error": "hgvs_notation parameter is required"}
 
         species = arguments.get("species", "human")
         url = f"{ENSEMBL_BASE_URL}/vep/{species}/hgvs/{hgvs}"
@@ -109,7 +112,7 @@ class EnsemblVEPTool(BaseTool):
         """Annotate a variant using dbSNP rsID."""
         variant_id = arguments.get("variant_id", "")
         if not variant_id:
-            return {"error": "variant_id parameter is required"}
+            return {"status": "error", "error": "variant_id parameter is required"}
 
         species = arguments.get("species", "human")
         url = f"{ENSEMBL_BASE_URL}/vep/{species}/id/{variant_id}"
@@ -146,7 +149,7 @@ class EnsemblVEPTool(BaseTool):
         """Convert variant identifiers between formats."""
         variant_id = arguments.get("variant_id", "")
         if not variant_id:
-            return {"error": "variant_id parameter is required"}
+            return {"status": "error", "error": "variant_id parameter is required"}
 
         species = arguments.get("species", "human")
         url = f"{ENSEMBL_BASE_URL}/variant_recoder/{species}/{variant_id}"

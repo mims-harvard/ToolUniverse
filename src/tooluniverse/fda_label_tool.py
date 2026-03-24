@@ -82,13 +82,13 @@ class FDALabelTool(BaseTool):
                 return self._get_label(arguments)
             elif qt == "list_classes":
                 return self._list_classes(arguments)
-            return {"error": f"Unknown query_type: {qt}"}
+            return {"status": "error", "error": f"Unknown query_type: {qt}"}
         except requests.exceptions.Timeout:
-            return {"error": "openFDA request timed out"}
+            return {"status": "error", "error": "openFDA request timed out"}
         except requests.exceptions.RequestException as e:
-            return {"error": f"openFDA request failed: {e}"}
+            return {"status": "error", "error": f"openFDA request failed: {e}"}
         except Exception as e:
-            return {"error": f"Unexpected error: {e}"}
+            return {"status": "error", "error": f"Unexpected error: {e}"}
 
     def _query_drug_fields(self, drug_name: str, limit: int) -> list[dict] | None:
         """Search generic_name then brand_name with quoted then unquoted fallback.
@@ -118,7 +118,7 @@ class FDALabelTool(BaseTool):
         limit = min(int(arguments.get("limit", 5)), 20)
 
         if not drug_name and not indication:
-            return {"error": "Provide drug_name or indication"}
+            return {"status": "error", "error": "Provide drug_name or indication"}
 
         if drug_name:
             return self._query_drug_fields(drug_name, limit) or []
@@ -138,11 +138,11 @@ class FDALabelTool(BaseTool):
     def _get_label(self, arguments: dict) -> Any:
         drug_name = arguments.get("drug_name", "")
         if not drug_name:
-            return {"error": "drug_name is required"}
+            return {"status": "error", "error": "drug_name is required"}
 
         results = self._query_drug_fields(drug_name, limit=10)
         if not results:
-            return {"error": f"No FDA label found for '{drug_name}'"}
+            return {"status": "error", "error": f"No FDA label found for '{drug_name}'"}
 
         dn_upper = drug_name.upper()
 

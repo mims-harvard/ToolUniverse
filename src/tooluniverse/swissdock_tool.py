@@ -320,7 +320,7 @@ class SwissDockTool(AsyncPollingTool):
         if handler_name:
             return await getattr(self, handler_name)(arguments)
 
-        return {"error": f"Unknown operation: {self.operation}"}
+        return {"status": "error", "error": f"Unknown operation: {self.operation}"}
 
     async def _check_job_status_operation(
         self, arguments: Dict[str, Any]
@@ -329,7 +329,7 @@ class SwissDockTool(AsyncPollingTool):
         session_id = arguments.get("session_id")
 
         if not session_id:
-            return {"error": "session_id parameter is required"}
+            return {"status": "error", "error": "session_id parameter is required"}
 
         status_result = self._check_status_api(session_id)
         job_status = status_result["status"]
@@ -351,7 +351,7 @@ class SwissDockTool(AsyncPollingTool):
         session_id = arguments.get("session_id")
 
         if not session_id:
-            return {"error": "session_id parameter is required"}
+            return {"status": "error", "error": "session_id parameter is required"}
 
         # Check status first
         status_result = self._check_status_api(session_id)
@@ -371,4 +371,4 @@ class SwissDockTool(AsyncPollingTool):
             results = self._retrieve_results(session_id)
             return {"data": results}
         except Exception as e:
-            return {"error": f"Failed to retrieve results: {e}"}
+            return {"status": "error", "error": f"Failed to retrieve results: {e}"}

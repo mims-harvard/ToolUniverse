@@ -102,14 +102,20 @@ class UniProtRESTTool(BaseTool):
 
             # Return single item if only one match, otherwise return list
             if len(extracted_data) == 0:
-                return {"error": f"No data found for JSONPath: {extract_path}"}
+                return {
+                    "status": "error",
+                    "error": f"No data found for JSONPath: {extract_path}",
+                }
             elif len(extracted_data) == 1:
                 return extracted_data[0]
             else:
                 return extracted_data
 
         except ImportError:
-            return {"error": "jsonpath_ng library is required for data extraction"}
+            return {
+                "status": "error",
+                "error": "jsonpath_ng library is required for data extraction",
+            }
         except Exception as e:
             return {
                 "error": (
@@ -250,11 +256,15 @@ class UniProtRESTTool(BaseTool):
             }
 
         except requests.exceptions.Timeout:
-            return {"error": "Request to UniProt API timed out"}
+            return {"status": "error", "error": "Request to UniProt API timed out"}
         except requests.exceptions.RequestException as e:
-            return {"error": f"Request to UniProt API failed: {e}"}
+            return {"status": "error", "error": f"Request to UniProt API failed: {e}"}
         except ValueError as e:
-            return {"error": f"Failed to parse JSON response: {e}", "retryable": True}
+            return {
+                "status": "error",
+                "error": f"Failed to parse JSON response: {e}",
+                "retryable": True,
+            }
 
     def _handle_id_mapping(self, arguments: Dict[str, Any]) -> Any:
         """Handle ID mapping requests"""
@@ -425,11 +435,15 @@ class UniProtRESTTool(BaseTool):
                 "results": results,
             }
         except requests.exceptions.Timeout:
-            return {"error": "Request to UniProt API timed out"}
+            return {"status": "error", "error": "Request to UniProt API timed out"}
         except requests.exceptions.RequestException as e:
-            return {"error": f"Request to UniProt API failed: {e}"}
+            return {"status": "error", "error": f"Request to UniProt API failed: {e}"}
         except ValueError as e:
-            return {"error": f"Failed to parse JSON response: {e}", "retryable": True}
+            return {
+                "status": "error",
+                "error": f"Failed to parse JSON response: {e}",
+                "retryable": True,
+            }
 
     def _handle_uniparc_search(self, arguments: Dict[str, Any]) -> Any:
         """Handle UniParc search queries"""
@@ -454,11 +468,15 @@ class UniProtRESTTool(BaseTool):
                 "results": results,
             }
         except requests.exceptions.Timeout:
-            return {"error": "Request to UniProt API timed out"}
+            return {"status": "error", "error": "Request to UniProt API timed out"}
         except requests.exceptions.RequestException as e:
-            return {"error": f"Request to UniProt API failed: {e}"}
+            return {"status": "error", "error": f"Request to UniProt API failed: {e}"}
         except ValueError as e:
-            return {"error": f"Failed to parse JSON response: {e}", "retryable": True}
+            return {
+                "status": "error",
+                "error": f"Failed to parse JSON response: {e}",
+                "retryable": True,
+            }
 
     def run(self, arguments: Dict[str, Any]) -> Any:
         # Check if this is a search request
@@ -485,11 +503,15 @@ class UniProtRESTTool(BaseTool):
                 }
             data = resp.json()
         except requests.exceptions.Timeout:
-            return {"error": "Request to UniProt API timed out"}
+            return {"status": "error", "error": "Request to UniProt API timed out"}
         except requests.exceptions.RequestException as e:
-            return {"error": f"Request to UniProt API failed: {e}"}
+            return {"status": "error", "error": f"Request to UniProt API failed: {e}"}
         except ValueError as e:
-            return {"error": f"Failed to parse JSON response: {e}", "retryable": True}
+            return {
+                "status": "error",
+                "error": f"Failed to parse JSON response: {e}",
+                "retryable": True,
+            }
 
         # If extract_path is configured, extract the corresponding subset
         if self.extract_path:
@@ -497,7 +519,10 @@ class UniProtRESTTool(BaseTool):
 
             # Handle empty results
             if isinstance(result, list) and len(result) == 0:
-                return {"error": f"No data found for path: {self.extract_path}"}
+                return {
+                    "status": "error",
+                    "error": f"No data found for path: {self.extract_path}",
+                }
             elif isinstance(result, dict) and "error" in result:
                 return result
 

@@ -242,7 +242,7 @@ class ClinicalTrialsTool(RESTfulTool):
 
         nct_id = arguments.get("nct_id")
         if not nct_id:
-            return {"error": "nct_id is required"}
+            return {"status": "error", "error": "nct_id is required"}
 
         resp = requests.get(
             f"{self._BASE_URL}/studies/{nct_id}",
@@ -328,7 +328,7 @@ class ClinicalTrialsTool(RESTfulTool):
 
         field = arguments.get("field")
         if not field:
-            return {"error": "field is required"}
+            return {"status": "error", "error": "field is required"}
 
         # CTG API v2: endpoint is /stats/fieldValues (camelCase), param is 'fields' (plural)
         params = {"fields": field}

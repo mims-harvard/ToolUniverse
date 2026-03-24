@@ -35,7 +35,10 @@ class AlphaFoldRESTTool(BaseTool):
         #   ex. if arguments = {"qualifier": "P69905", "type": "MUTAGEN"}
         for ph in placeholders:
             if ph not in arguments or arguments[ph] is None:
-                return {"error": f"Missing required parameter '{ph}'"}
+                return {
+                    "status": "error",
+                    "error": f"Missing required parameter '{ph}'",
+                }
             url_path = url_path.replace(f"{{{ph}}}", str(arguments[ph]))
             used.add(ph)
         # Now url_path = "/annotations/P69905.json"
@@ -98,7 +101,7 @@ class AlphaFoldRESTTool(BaseTool):
                         }
             except Exception:
                 pass  # Fall through to generic error
-            return {"error": "Not found", "endpoint": url}
+            return {"status": "error", "error": "Not found", "endpoint": url}
         if resp.status_code == 500:
             return {
                 "error": "AlphaFold EBI API is temporarily unavailable (HTTP 500). "
@@ -120,7 +123,10 @@ class AlphaFoldRESTTool(BaseTool):
         # Validate required params
         missing = [k for k in self.required if k not in arguments]
         if missing:
-            return {"error": f"Missing required parameter(s): {', '.join(missing)}"}
+            return {
+                "status": "error",
+                "error": f"Missing required parameter(s): {', '.join(missing)}",
+            }
 
         # Build URL
         url = self._build_url(arguments)

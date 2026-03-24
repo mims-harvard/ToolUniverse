@@ -50,9 +50,15 @@ class NCBIDatasetsTool(BaseTool):
                 "error": "Failed to connect to NCBI Datasets API. Check network connectivity."
             }
         except requests.exceptions.HTTPError as e:
-            return {"error": f"NCBI Datasets API HTTP error: {e.response.status_code}"}
+            return {
+                "status": "error",
+                "error": f"NCBI Datasets API HTTP error: {e.response.status_code}",
+            }
         except Exception as e:
-            return {"error": f"Unexpected error querying NCBI Datasets: {str(e)}"}
+            return {
+                "status": "error",
+                "error": f"Unexpected error querying NCBI Datasets: {str(e)}",
+            }
 
     def _query(self, arguments: Dict[str, Any]) -> Dict[str, Any]:
         """Route to the appropriate NCBI Datasets endpoint."""
@@ -69,13 +75,16 @@ class NCBIDatasetsTool(BaseTool):
         elif endpoint_type == "taxonomy_suggest":
             return self._get_taxonomy_suggest(arguments)
         else:
-            return {"error": f"Unknown endpoint type: {endpoint_type}"}
+            return {
+                "status": "error",
+                "error": f"Unknown endpoint type: {endpoint_type}",
+            }
 
     def _get_gene_by_id(self, arguments: Dict[str, Any]) -> Dict[str, Any]:
         """Get gene information by NCBI Gene ID."""
         gene_id = arguments.get("gene_id", "")
         if not gene_id:
-            return {"error": "gene_id parameter is required"}
+            return {"status": "error", "error": "gene_id parameter is required"}
 
         url = f"{NCBI_DATASETS_BASE}/gene/id/{gene_id}"
         response = requests.get(
@@ -122,7 +131,7 @@ class NCBIDatasetsTool(BaseTool):
         symbol = arguments.get("symbol", "")
         taxon = arguments.get("taxon", "human")
         if not symbol:
-            return {"error": "symbol parameter is required"}
+            return {"status": "error", "error": "symbol parameter is required"}
 
         url = f"{NCBI_DATASETS_BASE}/gene/symbol/{symbol}/taxon/{taxon}"
         response = requests.get(
@@ -174,7 +183,7 @@ class NCBIDatasetsTool(BaseTool):
         """Get orthologs for a gene by NCBI Gene ID."""
         gene_id = arguments.get("gene_id", "")
         if not gene_id:
-            return {"error": "gene_id parameter is required"}
+            return {"status": "error", "error": "gene_id parameter is required"}
 
         page_size = arguments.get("page_size", 20)
         url = f"{NCBI_DATASETS_BASE}/gene/id/{gene_id}/orthologs"
@@ -219,7 +228,7 @@ class NCBIDatasetsTool(BaseTool):
         """Get taxonomy information by NCBI Taxonomy ID."""
         tax_id = arguments.get("tax_id", "")
         if not tax_id:
-            return {"error": "tax_id parameter is required"}
+            return {"status": "error", "error": "tax_id parameter is required"}
 
         url = f"{NCBI_DATASETS_BASE}/taxonomy/taxon/{tax_id}"
         response = requests.get(
@@ -258,7 +267,7 @@ class NCBIDatasetsTool(BaseTool):
         """Suggest taxonomy names matching a query string."""
         query = arguments.get("query", "")
         if not query:
-            return {"error": "query parameter is required"}
+            return {"status": "error", "error": "query parameter is required"}
 
         url = f"{NCBI_DATASETS_BASE}/taxonomy/taxon_suggest/{query}"
         response = requests.get(

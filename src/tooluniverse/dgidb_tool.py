@@ -48,7 +48,7 @@ class DGIdbTool(BaseTool):
         elif operation == "categories":
             return self._get_gene_categories(arguments)
         else:
-            return {"error": f"Unknown operation: {operation}"}
+            return {"status": "error", "error": f"Unknown operation: {operation}"}
 
     def _get_interactions(self, arguments: Dict[str, Any]) -> Dict[str, Any]:
         """
@@ -57,7 +57,10 @@ class DGIdbTool(BaseTool):
         genes = arguments.get("genes", [])
 
         if not genes:
-            return {"error": "genes parameter is required (list of gene symbols)"}
+            return {
+                "status": "error",
+                "error": "genes parameter is required (list of gene symbols)",
+            }
 
         if isinstance(genes, str):
             genes = [g.strip() for g in genes.split(",")]
@@ -132,7 +135,7 @@ class DGIdbTool(BaseTool):
             # Feature-68A-002: wrap in status envelope consistent with other ToolUniverse tools
             return {"status": "success", "data": data}
         except requests.RequestException as e:
-            return {"error": f"DGIdb API request failed: {str(e)}"}
+            return {"status": "error", "error": f"DGIdb API request failed: {str(e)}"}
 
     def _get_genes(self, arguments: Dict[str, Any]) -> Dict[str, Any]:
         """
@@ -141,7 +144,7 @@ class DGIdbTool(BaseTool):
         genes = arguments.get("genes", [])
 
         if not genes:
-            return {"error": "genes parameter is required"}
+            return {"status": "error", "error": "genes parameter is required"}
 
         if isinstance(genes, str):
             genes = [g.strip() for g in genes.split(",")]
@@ -171,7 +174,7 @@ class DGIdbTool(BaseTool):
             # Feature-68A-002: wrap in status envelope
             return {"status": "success", "data": response.json()}
         except requests.RequestException as e:
-            return {"error": f"DGIdb API request failed: {str(e)}"}
+            return {"status": "error", "error": f"DGIdb API request failed: {str(e)}"}
 
     def _get_drugs(self, arguments: Dict[str, Any]) -> Dict[str, Any]:
         """
@@ -180,7 +183,7 @@ class DGIdbTool(BaseTool):
         drugs = arguments.get("drugs", [])
 
         if not drugs:
-            return {"error": "drugs parameter is required"}
+            return {"status": "error", "error": "drugs parameter is required"}
 
         if isinstance(drugs, str):
             drugs = [d.strip() for d in drugs.split(",")]
@@ -208,7 +211,7 @@ class DGIdbTool(BaseTool):
             # Feature-68A-002: wrap in status envelope
             return {"status": "success", "data": response.json()}
         except requests.RequestException as e:
-            return {"error": f"DGIdb API request failed: {str(e)}"}
+            return {"status": "error", "error": f"DGIdb API request failed: {str(e)}"}
 
     def _get_gene_categories(self, arguments: Dict[str, Any]) -> Dict[str, Any]:
         """
@@ -217,7 +220,7 @@ class DGIdbTool(BaseTool):
         genes = arguments.get("genes", [])
 
         if not genes:
-            return {"error": "genes parameter is required"}
+            return {"status": "error", "error": "genes parameter is required"}
 
         if isinstance(genes, str):
             genes = [g.strip() for g in genes.split(",")]
@@ -247,4 +250,4 @@ class DGIdbTool(BaseTool):
             # Feature-68A-002: wrap in status envelope
             return {"status": "success", "data": response.json()}
         except requests.RequestException as e:
-            return {"error": f"DGIdb API request failed: {str(e)}"}
+            return {"status": "error", "error": f"DGIdb API request failed: {str(e)}"}

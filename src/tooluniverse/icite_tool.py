@@ -88,7 +88,7 @@ class ICiteSearchPublicationsTool(BaseRESTTool):
         offset = int(arguments.get("offset") or 0)
 
         if not query:
-            return {"error": "query parameter is required"}
+            return {"status": "error", "error": "query parameter is required"}
 
         try:
             # Fetch more from PubMed to account for offset
@@ -119,4 +119,4 @@ class ICiteSearchPublicationsTool(BaseRESTTool):
             return {"data": all_pubs}
 
         except Exception as e:
-            return {"error": f"iCite search error: {e}"}
+            return {"status": "error", "error": f"iCite search error: {e}"}
