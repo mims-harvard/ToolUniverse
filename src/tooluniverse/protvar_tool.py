@@ -42,9 +42,10 @@ def _get_json(url: str, timeout: int = 30) -> Any:
         "description": (
             "Map a human protein variant to genomic coordinates and get "
             "pathogenicity predictions (AlphaMissense, EVE, ESM, conservation). "
-            "Input format: 'ACCESSION CHANGE' e.g. 'P22304 S149T' or "
-            "'P04637 R175H'. Returns isoform mappings, consequence type, and "
-            "variant effect scores."
+            "Accepted input formats: (1) protein variant 'ACCESSION CHANGE' e.g. "
+            "'P04637 R175H'; (2) dbSNP rsID e.g. 'rs1799966'; "
+            "(3) VCF-style genomic 'chr17 43057065 . T G'. "
+            "Returns isoform mappings, consequence type, and variant effect scores."
         ),
         "parameter": {
             "type": "object",
@@ -52,10 +53,12 @@ def _get_json(url: str, timeout: int = 30) -> Any:
                 "variant": {
                     "type": "string",
                     "description": (
-                        "Protein variant in 'UniProtAccession Change' format. "
-                        "Example: 'P22304 S149T' (IDS S149T) or 'P04637 R175H' "
-                        "(TP53 R175H). The change uses single-letter amino acid "
-                        "codes: WildtypePositionMutant."
+                        "Variant identifier. Supported formats: "
+                        "(1) Protein: 'UniProtAccession SingleLetterChange' e.g. 'P04637 R175H'; "
+                        "(2) rsID: 'rs1799966'; "
+                        "(3) VCF genomic: 'chr17 43057065 . REF ALT'. "
+                        "Note: colon-separated 'chr:pos:ref:alt' format is NOT supported; "
+                        "use space-separated VCF format instead."
                     ),
                 },
             },
@@ -68,10 +71,23 @@ class ProtVarMapTool:
     def __init__(self, tool_config=None):
         self.tool_config = tool_config or {}
 
+    @staticmethod
+    def _normalize_variant(variant: str) -> str:
+        """Convert colon-separated genomic 'chr:pos:ref:alt' to VCF 'chr pos . ref alt'."""
+        import re
+
+        if re.match(r"^chr\w+:\d+:[ACGT]+:[ACGT]+$", variant, re.IGNORECASE):
+            parts = variant.split(":")
+            if len(parts) == 4:
+                return f"{parts[0]} {parts[1]} . {parts[2]} {parts[3]}"
+        return variant
+
     def run(self, arguments: Dict[str, Any]) -> Dict[str, Any]:
         variant = arguments.get("variant", "").strip()
         if not variant:
             return {"status": "error", "error": "variant is required"}
+
+        variant = self._normalize_variant(variant)
 
         base = self.tool_config.get("settings", {}).get("base_url", _BASE)
         timeout = int(self.tool_config.get("settings", {}).get("timeout", 30))
@@ -85,50 +101,63 @@ class ProtVarMapTool:
         if not result:
             return {"status": "error", "error": f"No mapping found for '{variant}'"}
 
-        # Flatten the nested response into a useful summary
+        # Flatten the nested response into a useful summary.
+        # Two response structures:
+        # - protein/rsID input: inputs[].derivedGenomicInputs[].mappings[].genes[].isoforms[]
+        # - VCF/genomic input: inputs[].mappings[].genes[].isoforms[]  (no derivedGenomicInputs)
         inputs = result.get("inputs", []) if isinstance(result, dict) else result
+        if not isinstance(inputs, list):
+            inputs = [inputs]
+
+        def _extract_isoform(iso, gene):
+            entry = {
+                "accession": iso.get("accession"),
+                "canonical": iso.get("canonical"),
+                "gene": gene.get("geneName"),
+                "ensg": gene.get("ensg"),
+                "consequence": iso.get("consequences"),
+                "ref_aa": iso.get("refAA"),
+                "alt_aa": iso.get("variantAA"),
+                "position": iso.get("isoformPosition"),
+                "codon_change": iso.get("codonChange"),
+                "protein_name": iso.get("proteinName"),
+            }
+            am = iso.get("amScore")
+            if am:
+                entry["alphamissense"] = {
+                    "score": am.get("amPathogenicity"),
+                    "class": am.get("amClass"),
+                }
+            eve = iso.get("eveScore")
+            if eve:
+                entry["eve"] = {"score": eve.get("score"), "class": eve.get("eveClass")}
+            esm = iso.get("esmScore")
+            if esm:
+                entry["esm_score"] = esm.get("score")
+            cs = iso.get("conservScore")
+            if cs:
+                entry["conservation_score"] = cs.get("score")
+            return entry
+
         mappings = []
-        for inp in inputs if isinstance(inputs, list) else [inputs]:
+        for inp in inputs:
+            # Path 1: derivedGenomicInputs (protein/rsID input)
             for gi in inp.get("derivedGenomicInputs", []):
                 for m in gi.get("mappings", []):
                     for gene in m.get("genes", []):
                         for iso in gene.get("isoforms", []):
-                            entry = {
-                                "accession": iso.get("accession"),
-                                "canonical": iso.get("canonical"),
-                                "gene": gene.get("geneName"),
-                                "ensg": gene.get("ensg"),
-                                "consequence": iso.get("consequences"),
-                                "ref_aa": iso.get("refAA"),
-                                "alt_aa": iso.get("variantAA"),
-                                "position": iso.get("isoformPosition"),
-                                "codon_change": iso.get("codonChange"),
-                                "protein_name": iso.get("proteinName"),
-                            }
-                            # Add scores
-                            am = iso.get("amScore")
-                            if am:
-                                entry["alphamissense"] = {
-                                    "score": am.get("amPathogenicity"),
-                                    "class": am.get("amClass"),
-                                }
-                            eve = iso.get("eveScore")
-                            if eve:
-                                entry["eve"] = {
-                                    "score": eve.get("score"),
-                                    "class": eve.get("eveClass"),
-                                }
-                            esm = iso.get("esmScore")
-                            if esm:
-                                entry["esm_score"] = esm.get("score")
-                            cs = iso.get("conservScore")
-                            if cs:
-                                entry["conservation_score"] = cs.get("score")
-                            mappings.append(entry)
+                            mappings.append(_extract_isoform(iso, gene))
+            # Path 2: direct mappings (VCF/genomic input)
+            for m in inp.get("mappings", []):
+                for gene in m.get("genes", []):
+                    for iso in gene.get("isoforms", []):
+                        mappings.append(_extract_isoform(iso, gene))
 
+        # Build genomic coordinates from whichever path has them
         genomic = {}
-        if isinstance(inputs, list) and inputs:
-            gi_list = inputs[0].get("derivedGenomicInputs", [])
+        if inputs:
+            inp0 = inputs[0]
+            gi_list = inp0.get("derivedGenomicInputs", [])
             if gi_list:
                 gi = gi_list[0]
                 genomic = {
@@ -136,6 +165,13 @@ class ProtVarMapTool:
                     "pos": gi.get("pos"),
                     "ref": gi.get("ref"),
                     "alt": gi.get("alt"),
+                }
+            elif inp0.get("chr") is not None:
+                genomic = {
+                    "chr": inp0.get("chr"),
+                    "pos": inp0.get("pos"),
+                    "ref": inp0.get("ref"),
+                    "alt": inp0.get("alt"),
                 }
 
         return {

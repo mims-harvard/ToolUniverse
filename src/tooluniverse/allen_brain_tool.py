@@ -176,12 +176,15 @@ class AllenBrainTool(BaseTool):
         if not result.get("success"):
             return {"status": "error", "error": "Allen Brain Atlas query failed"}
 
-        records = result.get("msg", [])
+        all_records = result.get("msg", [])
+        # Filter out QC-failed experiments so callers only see usable datasets
+        records = [r for r in all_records if not r.get("failed", False)]
         return {
             "status": "success",
             "data": records,
             "metadata": {
-                "total_results": result.get("total_rows", len(records)),
+                "total_results": len(records),
+                "total_including_failed": len(all_records),
                 "gene_acronym": gene_acronym,
                 "product_id": product_id,
             },

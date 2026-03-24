@@ -2,13 +2,13 @@
   {
     "name": "ProtVar_map_variant",
     "type": "ProtVarTool",
-    "description": "Map a human protein variant to genomic coordinates and get pathogenicity predictions (AlphaMissense, EVE, ESM, conservation). Input format: 'ACCESSION CHANGE' e.g. 'P22304 S149T' or 'P04637 R175H'. Returns isoform mappings, consequence type, and variant effect scores.",
+    "description": "Map a human protein variant to genomic coordinates and get pathogenicity predictions (AlphaMissense, EVE, ESM, conservation). Accepts three input formats: (1) protein 'ACCESSION CHANGE' e.g. 'P04637 R175H'; (2) dbSNP rsID e.g. 'rs1799966'; (3) VCF-style genomic 'chr17 43057065 . T G'. Returns isoform mappings, consequence type, and variant effect scores.",
     "parameter": {
       "type": "object",
       "properties": {
         "variant": {
           "type": "string",
-          "description": "Protein variant in 'UniProtAccession Change' format. Example: 'P22304 S149T' (IDS S149T) or 'P04637 R175H' (TP53 R175H). The change uses single-letter amino acid codes: WildtypePositionMutant."
+          "description": "Variant identifier in one of three formats: (1) 'UniProtAccession SingleLetterChange' e.g. 'P04637 R175H' (TP53 R175H); (2) dbSNP rsID e.g. 'rs1799966'; (3) VCF genomic 'chr17 43057065 . REF ALT'. Note: colon-separated 'chr:pos:ref:alt' is auto-converted to VCF format."
         }
       },
       "required": ["variant"]
@@ -66,8 +66,8 @@
       }
     },
     "test_examples": [
-      {"variant": "P22304 S149T"},
-      {"variant": "P04637 R175H"}
+      {"variant": "P04637 R175H"},
+      {"variant": "rs1799966"}
     ],
     "label": ["ProtVar", "Variant", "Pathogenicity", "AlphaMissense", "EVE"],
     "metadata": {
