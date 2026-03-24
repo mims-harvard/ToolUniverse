@@ -150,7 +150,12 @@ class EpigenomicsTool(BaseTool):
         if histone_mark:
             params["target.label"] = histone_mark
 
-        biosample = arguments.get("biosample_term_name") or arguments.get("biosample")
+        biosample = (
+            arguments.get("biosample_term_name")
+            or arguments.get("biosample")
+            or arguments.get("biosample_term")
+            or arguments.get("cell_type")
+        )
         if biosample:
             params["biosample_ontology.term_name"] = biosample
 

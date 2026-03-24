@@ -15,6 +15,8 @@ def ENCODE_search_histone_experiments(
     biosample: Optional[str | Any] = None,
     organism: Optional[str] = "Homo sapiens",
     limit: Optional[int] = 25,
+    biosample_term: Optional[str | Any] = None,
+    cell_type: Optional[str | Any] = None,
     *,
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
@@ -37,6 +39,10 @@ def ENCODE_search_histone_experiments(
         Organism scientific name (e.g., 'Homo sapiens', 'Mus musculus').
     limit : int
         Maximum number of results to return (1-100).
+    biosample_term : str | Any
+        Alias for biosample_term_name. Biosample tissue or cell line (e.g., "breast e...
+    cell_type : str | Any
+        Alias for biosample_term_name. Cell type or tissue (e.g., 'GM12878', 'K562', 'liver').
     stream_callback : Callable, optional
         Callback for streaming output
     use_cache : bool, default False
@@ -60,6 +66,8 @@ def ENCODE_search_histone_experiments(
             "biosample": biosample,
             "organism": organism,
             "limit": limit,
+            "biosample_term": biosample_term,
+            "cell_type": cell_type,
         }.items()
         if v is not None
     }

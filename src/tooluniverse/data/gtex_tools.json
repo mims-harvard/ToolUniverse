@@ -85,6 +85,18 @@
           "type": "string",
           "description": "Ensembl gene identifier (e.g., 'ENSG00000141510'). Use gene_symbol instead if you have a gene name."
         },
+        "gene_id": {
+          "type": "string",
+          "description": "Alias for ensembl_gene_id. Ensembl gene ID (e.g., 'ENSG00000141510')."
+        },
+        "tissue_id": {
+          "type": "string",
+          "description": "GTEx tissue ID to filter eQTL results (e.g., 'Brain_Cortex', 'Whole_Blood', 'Liver'). Case-sensitive."
+        },
+        "tissue": {
+          "type": "string",
+          "description": "Alias for tissue_id. GTEx tissue name (e.g., 'Brain_Cortex', 'Whole_Blood')."
+        },
         "page": {
           "type": "integer",
           "default": 1,

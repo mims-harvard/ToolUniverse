@@ -552,7 +552,11 @@ class OLSTool(BaseTool):
             or "",
             "short_form": short_form,
             "label": label,
-            "oboId": item.get("oboId") or item.get("obo_id"),
+            "oboId": item.get("oboId")
+            or item.get("obo_id")
+            or item.get("curie")
+            or short_form
+            or None,
             "isObsolete": item.get("isObsolete") or item.get("is_obsolete", False),
         }
 

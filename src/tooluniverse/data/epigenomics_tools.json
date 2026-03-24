@@ -52,6 +52,13 @@
             "null"
           ],
           "description": "Alias for biosample_term_name. Biosample tissue or cell line (e.g., \"breast epithelium\", \"liver\", \"K562\")."
+        },
+        "cell_type": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Alias for biosample_term_name. Cell type or tissue (e.g., 'GM12878', 'K562', 'liver', 'brain')."
         }
       },
       "additionalProperties": false
