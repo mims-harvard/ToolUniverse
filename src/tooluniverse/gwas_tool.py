@@ -22,7 +22,7 @@ class GWASRESTTool(BaseTool):
             response.raise_for_status()
             return response.json()
         except requests.exceptions.RequestException as e:
-            return {"error": f"Request failed: {str(e)}"}
+            return {"status": "error", "error": f"Request failed: {str(e)}"}
 
     def _coerce_str(self, value: Any) -> Optional[str]:
         """Return a stripped string, or None."""
@@ -152,9 +152,11 @@ class GWASRESTTool(BaseTool):
     ) -> Dict[str, Any]:
         """Extract data from the _embedded structure and add metadata."""
         if "error" in data:
+            if "status" not in data:
+                return {"status": "error", **data}
             return data
 
-        result: Dict[str, Any] = {"data": [], "metadata": {}}
+        result: Dict[str, Any] = {"status": "success", "data": [], "metadata": {}}
         metadata: Dict[str, Any] = {}
 
         # Extract the main data from _embedded
@@ -351,7 +353,7 @@ class GWASAssociationByID(GWASRESTTool):
     def run(self, arguments: Dict[str, Any]) -> Dict[str, Any]:
         """Get association by ID."""
         if "association_id" not in arguments:
-            return {"error": "association_id is required"}
+            return {"status": "error", "error": "association_id is required"}
 
         association_id = arguments["association_id"]
         return self._make_request(f"{self.endpoint}/{association_id}")
@@ -368,7 +370,7 @@ class GWASStudyByID(GWASRESTTool):
     def run(self, arguments: Dict[str, Any]) -> Dict[str, Any]:
         """Get study by ID."""
         if "study_id" not in arguments:
-            return {"error": "study_id is required"}
+            return {"status": "error", "error": "study_id is required"}
 
         study_id = arguments["study_id"]
         return self._make_request(f"{self.endpoint}/{study_id}")
@@ -385,7 +387,7 @@ class GWASSNPByID(GWASRESTTool):
     def run(self, arguments: Dict[str, Any]) -> Dict[str, Any]:
         """Get SNP by rs ID."""
         if "rs_id" not in arguments:
-            return {"error": "rs_id is required"}
+            return {"status": "error", "error": "rs_id is required"}
 
         rs_id = arguments["rs_id"]
         return self._make_request(f"{self.endpoint}/{rs_id}")
@@ -494,7 +496,7 @@ class GWASAssociationsForSNP(GWASRESTTool):
         """Get associations for a SNP."""
         rs_id = self._coerce_str(arguments.get("rs_id"))
         if not rs_id:
-            return {"error": "rs_id is required"}
+            return {"status": "error", "error": "rs_id is required"}
 
         params = {
             "rs_id": rs_id,
@@ -572,7 +574,7 @@ class GWASSNPsForGene(GWASRESTTool):
         """Get SNPs for a gene."""
         gene = arguments.get("mapped_gene") or arguments.get("gene")
         if not gene:
-            return {"error": "mapped_gene is required"}
+            return {"status": "error", "error": "mapped_gene is required"}
 
         params = {
             "geneName": gene,
@@ -596,7 +598,7 @@ class GWASAssociationsForStudy(GWASRESTTool):
     def run(self, arguments: Dict[str, Any]) -> Dict[str, Any]:
         """Get associations for a study."""
         if "accession_id" not in arguments:
-            return {"error": "accession_id is required"}
+            return {"status": "error", "error": "accession_id is required"}
 
         params = {
             "accession_id": arguments["accession_id"],
