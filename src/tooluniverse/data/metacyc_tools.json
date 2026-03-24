@@ -1,7 +1,7 @@
 [
   {
     "name": "MetaCyc_search_pathways",
-    "description": "Search MetaCyc for metabolic pathways by name or keyword. Returns pathway IDs and basic information. MetaCyc contains 2,800+ experimentally elucidated metabolic pathways.",
+    "description": "Search MetaCyc for metabolic pathways by name or keyword. Returns pathway IDs and basic information. MetaCyc contains 2,800+ experimentally elucidated metabolic pathways. Note: BioCyc/MetaCyc now requires a free account (https://biocyc.org/register.shtml). This tool will return an auth error until BIOCYC_API_KEY is configured.",
     "type": "MetaCycTool",
     "parameter": {
       "type": "object",
@@ -38,7 +38,7 @@
   },
   {
     "name": "MetaCyc_get_pathway",
-    "description": "Get metabolic pathway details from MetaCyc by pathway ID. Returns pathway information, URL to pathway diagram, and associated reactions/compounds.",
+    "description": "Get metabolic pathway details from MetaCyc by pathway ID. Returns pathway information, URL to pathway diagram, and associated reactions/compounds. Note: requires a free BioCyc account (https://biocyc.org/register.shtml); returns auth error without BIOCYC_API_KEY.",
     "type": "MetaCycTool",
     "parameter": {
       "type": "object",
@@ -75,7 +75,7 @@
   },
   {
     "name": "MetaCyc_get_compound",
-    "description": "Get metabolite/compound details from MetaCyc by compound ID. Returns compound information and URL to compound page.",
+    "description": "Get metabolite/compound details from MetaCyc by compound ID. Returns compound information and URL to compound page. Note: requires a free BioCyc account (https://biocyc.org/register.shtml); returns auth error without BIOCYC_API_KEY.",
     "type": "MetaCycTool",
     "parameter": {
       "type": "object",
@@ -112,7 +112,7 @@
   },
   {
     "name": "MetaCyc_get_reaction",
-    "description": "Get reaction details from MetaCyc by reaction ID. Returns reaction information including substrates, products, enzymes, and URL to reaction page.",
+    "description": "Get reaction details from MetaCyc by reaction ID. Returns reaction information including substrates, products, enzymes, and URL to reaction page. Note: requires a free BioCyc account (https://biocyc.org/register.shtml); returns auth error without BIOCYC_API_KEY.",
     "type": "MetaCycTool",
     "parameter": {
       "type": "object",

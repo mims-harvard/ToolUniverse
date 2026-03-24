@@ -48,6 +48,12 @@
             "type": "string"
           },
           "description": "Alias for gene_list. List of gene symbols to analyze."
+        },
+        "top_n": {
+          "type": "integer",
+          "description": "Alias for max_node. Maximum number of network nodes to retrieve.",
+          "minimum": 1,
+          "maximum": 100
         }
       },
       "required": []

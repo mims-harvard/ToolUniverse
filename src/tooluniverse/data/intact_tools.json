@@ -209,6 +209,16 @@
           "minimum": 1,
           "maximum": 3
         },
+        "limit": {
+          "type": "integer",
+          "description": "Maximum number of interactions to return (default: 50, max: 200). Alias: size.",
+          "default": 50
+        },
+        "size": {
+          "type": "integer",
+          "description": "Alias for limit. Maximum number of interactions to return (default: 50).",
+          "default": 50
+        },
         "format": {
           "type": "string",
           "enum": [

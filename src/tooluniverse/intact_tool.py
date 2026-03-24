@@ -218,7 +218,9 @@ class IntActRESTTool(BaseTool):
                 query_value = arguments.get(query_key, "")
                 if query_value:
                     params["query"] = query_value
-                    params["size"] = arguments.get("size", default_size)
+                    params["size"] = (
+                        arguments.get("size") or arguments.get("limit") or default_size
+                    )
 
             response = self.session.get(
                 ebi_search_url, params=params, timeout=self.timeout

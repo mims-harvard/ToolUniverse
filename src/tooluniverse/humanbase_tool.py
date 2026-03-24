@@ -19,7 +19,7 @@ class HumanBaseTool(BaseTool):
         # Feature-111A-007: 'genes' as alias for 'gene_list'
         gene_list = arguments.get("gene_list") or arguments.get("genes")
         tissue = arguments.get("tissue", "brain")
-        max_node = arguments.get("max_node", 10)
+        max_node = arguments.get("max_node") or arguments.get("top_n") or 10
         interaction = arguments.get("interaction", None)
         string_mode = arguments.get("string_mode", True)
 
