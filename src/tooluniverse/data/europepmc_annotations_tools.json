@@ -40,107 +40,43 @@
         {
           "type": "object",
           "properties": {
-            "data": {
-              "type": "object",
-              "properties": {
-                "article_id": {
-                  "type": "string"
-                },
-                "pmcid": {
-                  "type": [
-                    "string",
-                    "null"
-                  ]
-                },
-                "source": {
-                  "type": [
-                    "string",
-                    "null"
-                  ]
-                },
-                "annotation_count": {
-                  "type": "integer"
-                },
-                "annotations": {
-                  "type": "array",
-                  "items": {
-                    "type": "object",
-                    "properties": {
-                      "exact": {
-                        "type": "string"
-                      },
-                      "prefix": {
-                        "type": [
-                          "string",
-                          "null"
-                        ]
-                      },
-                      "postfix": {
-                        "type": [
-                          "string",
-                          "null"
-                        ]
-                      },
-                      "type": {
-                        "type": "string"
-                      },
-                      "section": {
-                        "type": [
-                          "string",
-                          "null"
-                        ]
-                      },
-                      "provider": {
-                        "type": [
-                          "string",
-                          "null"
-                        ]
-                      },
-                      "tags": {
-                        "type": "array",
-                        "items": {
-                          "type": "object",
-                          "properties": {
-                            "name": {
-                              "type": "string"
-                            },
-                            "uri": {
-                              "type": "string"
-                            }
-                          }
-                        }
+            "article_id": {"type": "string"},
+            "pmcid": {"type": ["string", "null"]},
+            "source": {"type": ["string", "null"]},
+            "annotation_count": {"type": "integer"},
+            "annotations": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "exact": {"type": "string"},
+                  "prefix": {"type": ["string", "null"]},
+                  "postfix": {"type": ["string", "null"]},
+                  "type": {"type": "string"},
+                  "section": {"type": ["string", "null"]},
+                  "provider": {"type": ["string", "null"]},
+                  "tags": {
+                    "type": "array",
+                    "items": {
+                      "type": "object",
+                      "properties": {
+                        "name": {"type": "string"},
+                        "uri": {"type": "string"}
                       }
                     }
                   }
                 }
               }
-            },
-            "metadata": {
-              "type": "object",
-              "properties": {
-                "source": {
-                  "type": "string"
-                },
-                "endpoint": {
-                  "type": "string"
-                }
-              }
             }
           },
-          "required": [
-            "data"
-          ]
+          "required": ["article_id", "annotations"]
         },
         {
           "type": "object",
           "properties": {
-            "error": {
-              "type": "string"
-            }
+            "error": {"type": "string"}
           },
-          "required": [
-            "error"
-          ]
+          "required": ["error"]
         }
       ]
     }
@@ -191,83 +127,30 @@
         {
           "type": "object",
           "properties": {
-            "data": {
-              "type": "object",
-              "properties": {
-                "article_count": {
-                  "type": "integer"
-                },
-                "annotation_type": {
-                  "type": "string"
-                },
-                "total_annotations": {
-                  "type": "integer"
-                },
-                "articles": {
-                  "type": "array",
-                  "items": {
-                    "type": "object",
-                    "properties": {
-                      "article_id": {
-                        "type": "string"
-                      },
-                      "pmcid": {
-                        "type": [
-                          "string",
-                          "null"
-                        ]
-                      },
-                      "annotation_count": {
-                        "type": "integer"
-                      },
-                      "annotations": {
-                        "type": "array",
-                        "items": {
-                          "type": "object",
-                          "properties": {
-                            "exact": {
-                              "type": "string"
-                            },
-                            "type": {
-                              "type": "string"
-                            },
-                            "tags": {
-                              "type": "array"
-                            }
-                          }
-                        }
-                      }
-                    }
-                  }
-                }
-              }
-            },
-            "metadata": {
-              "type": "object",
-              "properties": {
-                "source": {
-                  "type": "string"
-                },
-                "endpoint": {
-                  "type": "string"
+            "article_count": {"type": "integer"},
+            "annotation_type": {"type": "string"},
+            "total_annotations": {"type": "integer"},
+            "articles": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "article_id": {"type": "string"},
+                  "pmcid": {"type": ["string", "null"]},
+                  "annotation_count": {"type": "integer"},
+                  "annotations": {"type": "array"}
                 }
               }
             }
           },
-          "required": [
-            "data"
-          ]
+          "required": ["articles"]
         },
         {
           "type": "object",
           "properties": {
-            "error": {
-              "type": "string"
-            }
+            "error": {"type": "string"}
           },
-          "required": [
-            "error"
-          ]
+          "required": ["error"]
         }
       ]
     }
@@ -304,67 +187,23 @@
         {
           "type": "object",
           "properties": {
-            "data": {
-              "type": "object",
-              "properties": {
-                "article_id": {
-                  "type": "string"
-                },
-                "chemical_count": {
-                  "type": "integer"
-                },
-                "chemicals": {
-                  "type": "array",
-                  "items": {
-                    "type": "object",
-                    "properties": {
-                      "name": {
-                        "type": "string"
-                      },
-                      "chebi_uri": {
-                        "type": [
-                          "string",
-                          "null"
-                        ]
-                      },
-                      "chebi_name": {
-                        "type": [
-                          "string",
-                          "null"
-                        ]
-                      },
-                      "context": {
-                        "type": [
-                          "string",
-                          "null"
-                        ]
-                      },
-                      "section": {
-                        "type": [
-                          "string",
-                          "null"
-                        ]
-                      }
-                    }
-                  }
-                }
-              }
-            },
-            "metadata": {
-              "type": "object",
-              "properties": {
-                "source": {
-                  "type": "string"
-                },
-                "endpoint": {
-                  "type": "string"
+            "article_id": {"type": "string"},
+            "chemical_count": {"type": "integer"},
+            "chemicals": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "name": {"type": "string"},
+                  "chebi_uri": {"type": ["string", "null"]},
+                  "chebi_name": {"type": ["string", "null"]},
+                  "context": {"type": ["string", "null"]},
+                  "section": {"type": ["string", "null"]}
                 }
               }
             }
           },
-          "required": [
-            "data"
-          ]
+          "required": ["article_id", "chemicals"]
         },
         {
           "type": "object",
