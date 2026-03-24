@@ -159,35 +159,25 @@ class IntActRESTTool(BaseTool):
             if isinstance(data, dict) and "content" in data:
                 content = data["content"]
                 total = data.get("totalElements", len(content))
-                response_data = {
-                    "status": "success",
-                    "data": content,
+                meta: Dict[str, Any] = {
                     "url": response.url,
                     "count": len(content),
                     "totalElements": total,
                 }
                 if total > len(content):
-                    response_data["note"] = (
+                    meta["note"] = (
                         f"Showing {len(content)} of {total} results. "
                         "Use page/pageSize params for more."
                     )
-                return response_data
+                return {"status": "success", "data": content, "metadata": meta}
 
             # Build response
-            response_data = {
-                "status": "success",
-                "data": data,
-                "url": response.url,
-            }
-
-            # Add count for list results
+            meta = {"url": response.url}
             if isinstance(data, list):
-                response_data["count"] = len(data)
-            elif isinstance(data, dict) and "data" in data:
-                if isinstance(data["data"], list):
-                    response_data["count"] = len(data["data"])
-
-            return response_data
+                meta["count"] = len(data)
+            elif isinstance(data, dict) and isinstance(data.get("data"), list):
+                meta["count"] = len(data["data"])
+            return {"status": "success", "data": data, "metadata": meta}
 
         except requests.exceptions.RequestException:
             # Fallback to EBI Search if direct API fails
@@ -264,31 +254,30 @@ class IntActRESTTool(BaseTool):
                 return {
                     "status": "success",
                     "data": entries[0] if entries else {},
+                    "metadata": {
+                        "url": response.url,
+                        "count": len(entries),
+                        "hitCount": data.get("hitCount", len(entries)),
+                        "interaction_ids": interaction_ids[:10],
+                        "note": "Data retrieved via EBI Search API (IntAct domain). For detailed interactor info, use IntAct website.",
+                    },
+                }
+
+            note = "Data retrieved via EBI Search API (IntAct domain). Use interaction_ids to get details with intact_get_interaction_details or intact_get_interaction_network."
+            if tool_name == "intact_get_interactions_by_organism":
+                note = "Interactions retrieved via EBI Search API (IntAct domain) filtered by organism taxonomy ID. Use interaction_ids to get detailed interaction information."
+
+            return {
+                "status": "success",
+                "data": entries,
+                "metadata": {
                     "url": response.url,
                     "count": len(entries),
                     "hitCount": data.get("hitCount", len(entries)),
-                    "interaction_ids": interaction_ids[:10],  # First 10 IDs
-                    "note": "Data retrieved via EBI Search API (IntAct domain). For detailed interactor info, use IntAct website.",
-                }
-
-            # For interaction queries, include interaction IDs
-            response_data = {
-                "status": "success",
-                "data": entries,
-                "url": response.url,
-                "count": len(entries),
-                "hitCount": data.get("hitCount", len(entries)),
-                "interaction_ids": interaction_ids,  # All interaction IDs found
-                "note": "Data retrieved via EBI Search API (IntAct domain). Use interaction_ids to get details with intact_get_interaction_details or intact_get_interaction_network.",
+                    "interaction_ids": interaction_ids,
+                    "note": note,
+                },
             }
-
-            # Add tool-specific notes
-            if tool_name == "intact_get_interactions_by_organism":
-                response_data["note"] = (
-                    "Interactions retrieved via EBI Search API (IntAct domain) filtered by organism taxonomy ID. Use interaction_ids to get detailed interaction information."
-                )
-
-            return response_data
         except Exception as e:
             return {
                 "status": "error",
@@ -338,11 +327,13 @@ class IntActRESTTool(BaseTool):
             return {
                 "status": "success",
                 "data": elements,
-                "url": response.url,
-                "count": len(elements),
-                "totalNumberOfResults": total,
-                "complex_ac_list": complex_ac_list,
-                "note": "Data retrieved via IntAct Complex Web Service. Use complex_ac_list to reference specific complexes.",
+                "metadata": {
+                    "url": response.url,
+                    "count": len(elements),
+                    "totalNumberOfResults": total,
+                    "complex_ac_list": complex_ac_list,
+                    "note": "Data retrieved via IntAct Complex Web Service. Use complex_ac_list to reference specific complexes.",
+                },
             }
         except Exception as e:
             return {
@@ -377,10 +368,12 @@ class IntActRESTTool(BaseTool):
             return {
                 "status": "success",
                 "data": data,
-                "url": response.url,
-                "complex_ac": data.get("complexAc", complex_ac),
-                "complex_name": data.get("name", ""),
-                "note": "Data retrieved via IntAct Complex Web Service. Includes complex details, participants, functions, properties, and related information.",
+                "metadata": {
+                    "url": response.url,
+                    "complex_ac": data.get("complexAc", complex_ac),
+                    "complex_name": data.get("name", ""),
+                    "note": "Data retrieved via IntAct Complex Web Service. Includes complex details, participants, functions, properties, and related information.",
+                },
             }
         except requests.exceptions.HTTPError as e:
             if e.response.status_code == 404:
