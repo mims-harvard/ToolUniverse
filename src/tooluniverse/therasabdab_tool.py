@@ -137,12 +137,15 @@ class TheraSAbDabTool(BaseTool):
             # Load all therapeutics and filter locally
             all_therapeutics = self._load_all_therapeutics()
 
-            # Filter by query (case-insensitive search in name and target)
+            # Filter by query (case-insensitive, hyphen-normalized search in name and target)
+            # TheraSAbDab stores targets as "PDCD1/CD279/PD1" (no hyphens), so normalize
             query_lower = query.lower()
+            query_nohyphen = query_lower.replace("-", "")
             filtered = [
                 t
                 for t in all_therapeutics
                 if query_lower in (t.get("inn_name") or "").lower()
+                or query_nohyphen in (t.get("target") or "").lower().replace("-", "")
                 or query_lower in (t.get("target") or "").lower()
             ]
 
@@ -227,12 +230,15 @@ class TheraSAbDabTool(BaseTool):
             # Load all therapeutics and filter by target
             all_therapeutics = self._load_all_therapeutics()
 
-            # Filter by target (case-insensitive)
+            # Filter by target (case-insensitive, hyphen-normalized)
+            # TheraSAbDab stores targets as "PDCD1/CD279/PD1" (no hyphens)
             target_lower = target.lower()
+            target_nohyphen = target_lower.replace("-", "")
             filtered = [
                 t
                 for t in all_therapeutics
                 if target_lower in (t.get("target") or "").lower()
+                or target_nohyphen in (t.get("target") or "").lower().replace("-", "")
             ]
 
             return {
