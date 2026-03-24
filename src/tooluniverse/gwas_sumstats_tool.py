@@ -200,7 +200,6 @@ class GWASSumStatsTool(BaseTool):
                 }
             )
 
-        # Sort by p-value
         associations.sort(key=lambda x: x.get("p_value") or 1.0)
 
         return {

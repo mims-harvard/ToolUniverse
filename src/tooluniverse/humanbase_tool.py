@@ -52,24 +52,14 @@ class HumanBaseTool(BaseTool):
 
     def get_official_gene_name(self, gene_name):
         """
-        Retrieve the official gene symbol (same as EnrichrTool method)
-
-        Parameters
-            gene_name (str): The gene name or synonym to query.
-
-        Returns
-            str: The official gene symbol.
-        """
-        """
         Retrieve the official gene symbol for a given gene name or synonym using the MyGene.info API.
 
         Parameters
             gene_name (str): The gene name or synonym to query.
 
         Returns
-            str: The official gene symbol if found; otherwise, raises an Exception.
+            str: The official gene symbol if found; otherwise, an error message string.
         """
-        # URL-encode the gene_name to handle special characters
         encoded_gene_name = urllib.parse.quote(gene_name)
         url = f"https://mygene.info/v3/query?q={encoded_gene_name}&fields=symbol,alias&species=human"
 
@@ -82,7 +72,6 @@ class HumanBaseTool(BaseTool):
         if not hits:
             return f"No data found for: {gene_name}. Please check the gene name and try again."
 
-        # Attempt to find an exact match in the official symbol or among aliases.
         for hit in hits:
             symbol = hit.get("symbol", "")
             if symbol.upper() == gene_name.upper():
@@ -99,7 +88,6 @@ class HumanBaseTool(BaseTool):
                 )
                 return symbol
 
-        # If no exact match is found, return the symbol of the top hit.
         top_hit = hits[0]
         symbol = top_hit.get("symbol", None)
         if symbol:
@@ -121,45 +109,30 @@ class HumanBaseTool(BaseTool):
         Returns
             list: List of Entrez IDs corresponding to the gene names.
         """
-        # Define the NCBI Entrez API URL for querying gene information
         url = "https://eutils.ncbi.nlm.nih.gov/entrez/eutils/esearch.fcgi"
-
-        # Initialize a list to store Entrez IDs
         entrez_ids = []
         gene_names = [self.get_official_gene_name(gene) for gene in gene_names]
 
-        # Loop over each gene name in the input list
         for gene in gene_names:
-            # Define the parameters for the API request
             params = {
-                "db": "gene",  # Specify the database to search in (gene)
-                "term": gene
-                + "[gene] AND Homo sapiens[orgn]",  # Query term with organism filter
-                "retmode": "xml",  # Request the output in XML format
-                "retmax": "1",  # We only want the first result
+                "db": "gene",
+                "term": f"{gene}[gene] AND Homo sapiens[orgn]",
+                "retmode": "xml",
+                "retmax": "1",
             }
 
-            # Send the request to the Entrez API
             response = requests.get(url, params=params)
 
-            # Check if the response was successful
             if response.status_code == 200:
-                # Parse the XML response
                 xml_data = response.text
-
-                # Find the Entrez Gene ID in the XML response
                 start_idx = xml_data.find("<Id>")
                 end_idx = xml_data.find("</Id>")
 
                 if start_idx != -1 and end_idx != -1:
-                    # Extract and append the Entrez Gene ID to the list
-                    entrez_id = xml_data[start_idx + 4 : end_idx]
-                    entrez_ids.append(entrez_id)
+                    entrez_ids.append(xml_data[start_idx + 4 : end_idx])
                 else:
-                    # If no Entrez ID is found, append None
                     entrez_ids.append(None)
             else:
-                # Handle any errors in the API request
                 return f"Error fetching data for gene: {gene}. Please check whether the gene uses official gene name."
 
         return entrez_ids
@@ -226,7 +199,6 @@ class HumanBaseTool(BaseTool):
         network_url = f"https://hb.flatironinstitute.org/api/integrations/{tissue}/network/?giant_version={giant_version}&datatypes={interaction}&entrez={gene_id}&node_size={max_node}"
         edge_type_url = "https://hb.flatironinstitute.org/api/integrations/{tissue}/evidence/?giant_version={giant_version}&limit=20&source={source}&target={target}"
 
-        # Retrieve tissue-specific PPI
         try:
             response = requests.get(network_url, timeout=15)
             if response.status_code == 404:
@@ -234,7 +206,7 @@ class HumanBaseTool(BaseTool):
             response.raise_for_status()
             data = response.json()
 
-            if "genes" in data.keys():
+            if "genes" in data:
                 G.add_nodes_from(
                     [
                         (
@@ -245,7 +217,7 @@ class HumanBaseTool(BaseTool):
                     ]
                 )
 
-            if "edges" in data.keys():
+            if "edges" in data:
                 for e in data["edges"]:
                     source = data["genes"][e["source"]]["standard_name"]
                     target = data["genes"][e["target"]]["standard_name"]
@@ -270,7 +242,6 @@ class HumanBaseTool(BaseTool):
         except requests.exceptions.RequestException as exc:
             print(f"Error retrieving PPI data: {exc}")
 
-        # Check gene ontology (biological process) graph involved
         bp_url = f"https://hb.flatironinstitute.org/api/terms/annotated/?database=gene-ontology-bp&entrez={gene_id}&max_term_size=20"
 
         try:
@@ -278,7 +249,7 @@ class HumanBaseTool(BaseTool):
             response.raise_for_status()
             data = response.json()
 
-            if len(data) > 0:
+            if data:
                 # Grab the top 20 common pathways
                 bp_collection = [bp_entity["title"] for bp_entity in data]
             else:

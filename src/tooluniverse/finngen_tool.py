@@ -85,7 +85,6 @@ class FinnGenTool(BaseTool):
         resp.raise_for_status()
         all_phenos = resp.json()
 
-        # Filter
         results = []
         for p in all_phenos:
             if query:
@@ -112,7 +111,6 @@ class FinnGenTool(BaseTool):
                 }
             )
 
-        # Sort by num_cases descending
         results.sort(key=lambda x: x.get("num_cases", 0), reverse=True)
         total = len(results)
         results = results[:limit]
@@ -187,18 +185,16 @@ class FinnGenTool(BaseTool):
         resp.raise_for_status()
         data = resp.json()
 
-        regions = data.get("regions", [])
-        parsed_regions: List[Dict[str, Any]] = []
-        for r in regions:
-            parsed_regions.append(
-                {
-                    "phenocode": r.get("phenocode"),
-                    "chromosome": r.get("chr"),
-                    "start": r.get("start"),
-                    "end": r.get("end"),
-                    "type": r.get("type"),
-                }
-            )
+        parsed_regions: List[Dict[str, Any]] = [
+            {
+                "phenocode": r.get("phenocode"),
+                "chromosome": r.get("chr"),
+                "start": r.get("start"),
+                "end": r.get("end"),
+                "type": r.get("type"),
+            }
+            for r in data.get("regions", [])
+        ]
 
         return {
             "status": "success",
