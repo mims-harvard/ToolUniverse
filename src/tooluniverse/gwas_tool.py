@@ -198,7 +198,10 @@ class GWASAssociationSearch(GWASRESTTool):
         params = {}
 
         # Handle various search parameters
-        disease_trait = self._coerce_str(arguments.get("disease_trait"))
+        # Feature-94A-001: accept 'query' as alias for 'disease_trait'
+        disease_trait = self._coerce_str(
+            arguments.get("disease_trait") or arguments.get("query")
+        )
 
         # Prefer efo_id filtering. If user provided efo_uri, normalize to efo_id.
         efo_id = self._efo_id_from_uri_or_id(arguments.get("efo_id"))
@@ -246,7 +249,7 @@ class GWASAssociationSearch(GWASRESTTool):
         if direction:
             params["direction"] = direction
 
-        size = self._coerce_int(arguments.get("size"))
+        size = self._coerce_int(arguments.get("size") or arguments.get("limit"))
         if size is not None:
             params["size"] = size
 

@@ -5,16 +5,18 @@
     "description": "Get binding affinity data (Ki, IC50, Kd) for a single protein by UniProt ID. Returns SMILES structures and measured affinities from BindingDB. Essential for drug discovery target analysis. Example: P00533 (EGFR) returns known inhibitors with binding constants.",
     "parameter": {
       "type": "object",
-      "required": ["uniprot"],
+      "required": [
+        "uniprot_id"
+      ],
       "properties": {
-        "uniprot": {
-          "type": "string",
-          "description": "UniProt accession ID (e.g., P00533 for EGFR)"
-        },
         "affinity_cutoff": {
           "type": "integer",
           "description": "Maximum affinity in nM (default: 10000)",
           "default": 10000
+        },
+        "uniprot_id": {
+          "type": "string",
+          "description": "UniProt accession ID (e.g., P00533 for EGFR)"
         }
       }
     },
@@ -26,19 +28,45 @@
       "items": {
         "type": "object",
         "properties": {
-          "query": {"type": "string"},
-          "monomerid": {"type": "string"},
-          "smile": {"type": "string"},
-          "affinity_type": {"type": "string"},
-          "affinity": {"type": "string"},
-          "pmid": {"type": ["string", "null"]},
-          "doi": {"type": ["string", "null"]}
+          "query": {
+            "type": "string"
+          },
+          "monomerid": {
+            "type": "string"
+          },
+          "smile": {
+            "type": "string"
+          },
+          "affinity_type": {
+            "type": "string"
+          },
+          "affinity": {
+            "type": "string"
+          },
+          "pmid": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "doi": {
+            "type": [
+              "string",
+              "null"
+            ]
+          }
         }
       }
     },
     "test_examples": [
-      {"uniprot": "P35354", "affinity_cutoff": 100},
-      {"uniprot": "P00742", "affinity_cutoff": 1000}
+      {
+        "uniprot": "P35354",
+        "affinity_cutoff": 100
+      },
+      {
+        "uniprot": "P00742",
+        "affinity_cutoff": 1000
+      }
     ]
   },
   {
@@ -47,16 +75,18 @@
     "description": "Get binding affinity data for multiple proteins by UniProt IDs. Returns SMILES and affinities for all matching ligands. Use for comparing binding profiles across protein family members or paralogs.",
     "parameter": {
       "type": "object",
-      "required": ["uniprots"],
+      "required": [
+        "uniprot_ids"
+      ],
       "properties": {
-        "uniprots": {
-          "type": "string",
-          "description": "Comma-separated UniProt IDs (e.g., P00176,P00183)"
-        },
         "affinity_cutoff": {
           "type": "integer",
           "description": "Maximum affinity in nM (default: 10000)",
           "default": 10000
+        },
+        "uniprot_ids": {
+          "type": "string",
+          "description": "Comma-separated UniProt IDs (e.g., P00176,P00183)"
         }
       }
     },
@@ -68,18 +98,41 @@
       "items": {
         "type": "object",
         "properties": {
-          "query": {"type": "string"},
-          "monomerid": {"type": "string"},
-          "smile": {"type": "string"},
-          "affinity_type": {"type": "string"},
-          "affinity": {"type": "string"},
-          "pmid": {"type": ["string", "null"]},
-          "doi": {"type": ["string", "null"]}
+          "query": {
+            "type": "string"
+          },
+          "monomerid": {
+            "type": "string"
+          },
+          "smile": {
+            "type": "string"
+          },
+          "affinity_type": {
+            "type": "string"
+          },
+          "affinity": {
+            "type": "string"
+          },
+          "pmid": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "doi": {
+            "type": [
+              "string",
+              "null"
+            ]
+          }
         }
       }
     },
     "test_examples": [
-      {"uniprots": "P00176,P00183", "affinity_cutoff": 10000}
+      {
+        "uniprots": "P00176,P00183",
+        "affinity_cutoff": 10000
+      }
     ]
   },
   {
@@ -88,7 +141,9 @@
     "description": "Get binding affinity data for proteins by PDB structure ID. Returns ligands with measured affinities for the protein structure. Useful for structure-activity relationship analysis when you have co-crystal structures.",
     "parameter": {
       "type": "object",
-      "required": ["pdb_ids"],
+      "required": [
+        "pdb_ids"
+      ],
       "properties": {
         "pdb_ids": {
           "type": "string",
@@ -114,19 +169,46 @@
       "items": {
         "type": "object",
         "properties": {
-          "query": {"type": "string"},
-          "monomerid": {"type": "string"},
-          "smile": {"type": "string"},
-          "affinity_type": {"type": "string"},
-          "affinity": {"type": "string"},
-          "pmid": {"type": ["string", "null"]},
-          "doi": {"type": ["string", "null"]}
+          "query": {
+            "type": "string"
+          },
+          "monomerid": {
+            "type": "string"
+          },
+          "smile": {
+            "type": "string"
+          },
+          "affinity_type": {
+            "type": "string"
+          },
+          "affinity": {
+            "type": "string"
+          },
+          "pmid": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "doi": {
+            "type": [
+              "string",
+              "null"
+            ]
+          }
         }
       }
     },
     "test_examples": [
-      {"pdb_ids": "1Q0L", "affinity_cutoff": 100},
-      {"pdb_ids": "3ANM", "affinity_cutoff": 1000, "sequence_identity": 90}
+      {
+        "pdb_ids": "1Q0L",
+        "affinity_cutoff": 100
+      },
+      {
+        "pdb_ids": "3ANM",
+        "affinity_cutoff": 1000,
+        "sequence_identity": 90
+      }
     ]
   },
   {
@@ -135,7 +217,9 @@
     "description": "Find protein targets for a compound by SMILES structure. Returns proteins with binding affinity data for similar compounds. Essential for polypharmacology analysis and off-target prediction.",
     "parameter": {
       "type": "object",
-      "required": ["smiles"],
+      "required": [
+        "smiles"
+      ],
       "properties": {
         "smiles": {
           "type": "string",
@@ -156,18 +240,41 @@
       "items": {
         "type": "object",
         "properties": {
-          "query": {"type": "string"},
-          "monomerid": {"type": "string"},
-          "smile": {"type": "string"},
-          "affinity_type": {"type": "string"},
-          "affinity": {"type": "string"},
-          "pmid": {"type": ["string", "null"]},
-          "doi": {"type": ["string", "null"]}
+          "query": {
+            "type": "string"
+          },
+          "monomerid": {
+            "type": "string"
+          },
+          "smile": {
+            "type": "string"
+          },
+          "affinity_type": {
+            "type": "string"
+          },
+          "affinity": {
+            "type": "string"
+          },
+          "pmid": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "doi": {
+            "type": [
+              "string",
+              "null"
+            ]
+          }
         }
       }
     },
     "test_examples": [
-      {"smiles": "CC(C)Cc1ccc(cc1)C(C)C(=O)O", "similarity_cutoff": 0.8}
+      {
+        "smiles": "CC(C)Cc1ccc(cc1)C(C)C(=O)O",
+        "similarity_cutoff": 0.8
+      }
     ]
   }
 ]

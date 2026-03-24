@@ -42,9 +42,12 @@ class BindingDBTool(BaseTool):
 
     def _get_ligands_by_uniprot(self, arguments: Dict[str, Any]) -> Dict[str, Any]:
         """Get binding data for a single UniProt protein."""
-        uniprot = arguments.get("uniprot")
+        uniprot = arguments.get("uniprot_id") or arguments.get("uniprot")
         if not uniprot:
-            return {"status": "error", "error": "Missing required parameter: uniprot"}
+            return {
+                "status": "error",
+                "error": "Missing required parameter: uniprot_id",
+            }
 
         cutoff = arguments.get("affinity_cutoff", 10000)  # nM
 
@@ -93,9 +96,12 @@ class BindingDBTool(BaseTool):
 
     def _get_ligands_by_uniprots(self, arguments: Dict[str, Any]) -> Dict[str, Any]:
         """Get binding data for multiple UniProt proteins."""
-        uniprots = arguments.get("uniprots")
+        uniprots = arguments.get("uniprot_ids") or arguments.get("uniprots")
         if not uniprots:
-            return {"status": "error", "error": "Missing required parameter: uniprots"}
+            return {
+                "status": "error",
+                "error": "Missing required parameter: uniprot_ids",
+            }
 
         # Accept both string and list
         if isinstance(uniprots, list):
