@@ -368,6 +368,14 @@
         "gene_symbol": {
           "type": "string",
           "description": "Alias for gene. Filter by gene symbol (e.g., CYP2D6, TPMT)."
+        },
+        "drug": {
+          "type": "string",
+          "description": "Filter by drug name (e.g., 'codeine', 'warfarin', 'clopidogrel'). Case-insensitive substring match against drug names in the guideline."
+        },
+        "drug_name": {
+          "type": "string",
+          "description": "Alias for drug."
         }
       },
       "required": []
