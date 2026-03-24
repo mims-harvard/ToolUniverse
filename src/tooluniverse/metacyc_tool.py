@@ -136,17 +136,8 @@ class MetaCycTool(BaseTool):
                     "metadata": {"source": "MetaCyc"},
                 }
 
-            # Return search guidance with web URL
-            return {
-                "status": "success",
-                "data": {
-                    "query": query,
-                    "results": [],
-                    "search_url": f"{BIOCYC_BASE_URL}/META/substring-search?type=PATHWAY&object={query}",
-                    "note": "Visit search_url for full results. Use get_pathway with pathway ID once found.",
-                },
-                "metadata": {"source": "MetaCyc"},
-            }
+            # Non-JSON response — likely auth wall
+            return _AUTH_WALL_ERROR
 
         except requests.exceptions.RequestException as e:
             return {"status": "error", "error": f"Request failed: {str(e)}"}
