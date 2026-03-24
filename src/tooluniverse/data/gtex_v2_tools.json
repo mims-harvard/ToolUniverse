@@ -8,22 +8,35 @@
       "properties": {
         "operation": {
           "type": "string",
-          "enum": ["get_median_gene_expression"],
+          "enum": [
+            "get_median_gene_expression"
+          ],
           "description": "Operation type"
         },
         "gencode_id": {
-          "type": ["string", "array"],
-          "items": {"type": "string"},
-          "description": "Versioned GENCODE ID(s), e.g. 'ENSG00000141510.18' for TP53. Can be single string or array of up to 60000 IDs"
+          "type": [
+            "string",
+            "array"
+          ],
+          "items": {
+            "type": "string"
+          },
+          "description": "Gene identifier(s): gene symbol (e.g. 'TP53'), unversioned Ensembl ID (e.g. 'ENSG00000141510'), or versioned GENCODE ID (e.g. 'ENSG00000141510.18'). Auto-resolved to versioned GENCODE ID. Can be single string or array."
         },
         "tissue_site_detail_id": {
           "type": "array",
-          "items": {"type": "string"},
+          "items": {
+            "type": "string"
+          },
           "description": "Optional: Tissue IDs to filter (e.g. ['Liver', 'Brain_Cortex']). Omit for all tissues. See GTEx_get_tissue_sites for valid IDs"
         },
         "dataset_id": {
           "type": "string",
-          "enum": ["gtex_v8", "gtex_v10", "gtex_snrnaseq_pilot"],
+          "enum": [
+            "gtex_v8",
+            "gtex_v10",
+            "gtex_snrnaseq_pilot"
+          ],
           "default": "gtex_v8",
           "description": "GTEx dataset version (default: gtex_v8; v10 returns empty for most endpoints)"
         },
@@ -41,18 +54,30 @@
           "description": "Results per page"
         }
       },
-      "required": ["operation", "gencode_id"]
+      "required": [
+        "gencode_id"
+      ]
     },
     "return_schema": {
       "type": "array",
       "items": {
         "type": "object",
         "properties": {
-          "median": {"type": "number"},
-          "tissueSiteDetailId": {"type": "string"},
-          "gencodeId": {"type": "string"},
-          "geneSymbol": {"type": "string"},
-          "unit": {"type": "string"}
+          "median": {
+            "type": "number"
+          },
+          "tissueSiteDetailId": {
+            "type": "string"
+          },
+          "gencodeId": {
+            "type": "string"
+          },
+          "geneSymbol": {
+            "type": "string"
+          },
+          "unit": {
+            "type": "string"
+          }
         }
       }
     },
@@ -72,12 +97,18 @@
       "properties": {
         "operation": {
           "type": "string",
-          "enum": ["get_tissue_sites"],
+          "enum": [
+            "get_tissue_sites"
+          ],
           "description": "Operation type"
         },
         "dataset_id": {
           "type": "string",
-          "enum": ["gtex_v8", "gtex_v10", "gtex_snrnaseq_pilot"],
+          "enum": [
+            "gtex_v8",
+            "gtex_v10",
+            "gtex_snrnaseq_pilot"
+          ],
           "default": "gtex_v8",
           "description": "GTEx dataset version"
         },
@@ -95,20 +126,40 @@
           "description": "Results per page"
         }
       },
-      "required": ["operation"]
+      "required": []
     },
     "return_schema": {
       "type": "array",
       "items": {
         "type": "object",
         "properties": {
-          "tissueSiteDetailId": {"type": "string"},
-          "tissueSiteDetail": {"type": "string"},
-          "tissueSite": {"type": "string"},
-          "colorHex": {"type": "string"},
-          "eGeneCount": {"type": ["integer", "null"]},
-          "expressedGeneCount": {"type": ["integer", "null"]},
-          "rnaSeqSampleSummary": {"type": "object"}
+          "tissueSiteDetailId": {
+            "type": "string"
+          },
+          "tissueSiteDetail": {
+            "type": "string"
+          },
+          "tissueSite": {
+            "type": "string"
+          },
+          "colorHex": {
+            "type": "string"
+          },
+          "eGeneCount": {
+            "type": [
+              "integer",
+              "null"
+            ]
+          },
+          "expressedGeneCount": {
+            "type": [
+              "integer",
+              "null"
+            ]
+          },
+          "rnaSeqSampleSummary": {
+            "type": "object"
+          }
         }
       }
     },
@@ -127,17 +178,25 @@
       "properties": {
         "operation": {
           "type": "string",
-          "enum": ["get_eqtl_genes"],
+          "enum": [
+            "get_eqtl_genes"
+          ],
           "description": "Operation type"
         },
         "tissue_site_detail_id": {
           "type": "array",
-          "items": {"type": "string"},
+          "items": {
+            "type": "string"
+          },
           "description": "Optional: Filter by tissue IDs. Omit for all tissues"
         },
         "dataset_id": {
           "type": "string",
-          "enum": ["gtex_v8", "gtex_v10", "gtex_snrnaseq_pilot"],
+          "enum": [
+            "gtex_v8",
+            "gtex_v10",
+            "gtex_snrnaseq_pilot"
+          ],
           "default": "gtex_v8",
           "description": "GTEx dataset version"
         },
@@ -153,27 +212,43 @@
           "default": 250
         }
       },
-      "required": ["operation"]
+      "required": []
     },
     "return_schema": {
       "type": "array",
       "items": {
         "type": "object",
         "properties": {
-          "gencodeId": {"type": "string"},
-          "geneSymbol": {"type": "string"},
-          "tissueSiteDetailId": {"type": "string"},
-          "pValue": {"type": "number"},
-          "qValue": {"type": "number"},
-          "log2AllelicFoldChange": {"type": "number"},
-          "empiricalPValue": {"type": "number"}
+          "gencodeId": {
+            "type": "string"
+          },
+          "geneSymbol": {
+            "type": "string"
+          },
+          "tissueSiteDetailId": {
+            "type": "string"
+          },
+          "pValue": {
+            "type": "number"
+          },
+          "qValue": {
+            "type": "number"
+          },
+          "log2AllelicFoldChange": {
+            "type": "number"
+          },
+          "empiricalPValue": {
+            "type": "number"
+          }
         }
       }
     },
     "test_examples": [
       {
         "operation": "get_eqtl_genes",
-        "tissue_site_detail_id": ["Whole_Blood"]
+        "tissue_site_detail_id": [
+          "Whole_Blood"
+        ]
       }
     ]
   },
@@ -186,27 +261,39 @@
       "properties": {
         "operation": {
           "type": "string",
-          "enum": ["get_single_tissue_eqtls"],
+          "enum": [
+            "get_single_tissue_eqtls"
+          ],
           "description": "Operation type"
         },
         "gencode_id": {
           "type": "array",
-          "items": {"type": "string"},
+          "items": {
+            "type": "string"
+          },
           "description": "Optional: Versioned GENCODE ID(s) to query"
         },
         "variant_id": {
           "type": "array",
-          "items": {"type": "string"},
+          "items": {
+            "type": "string"
+          },
           "description": "Optional: GTEx variant ID(s) to query"
         },
         "tissue_site_detail_id": {
           "type": "array",
-          "items": {"type": "string"},
+          "items": {
+            "type": "string"
+          },
           "description": "Optional: Tissue ID(s) to filter. At least one of gencode_id, variant_id, or tissue_site_detail_id required"
         },
         "dataset_id": {
           "type": "string",
-          "enum": ["gtex_v8", "gtex_v10", "gtex_snrnaseq_pilot"],
+          "enum": [
+            "gtex_v8",
+            "gtex_v10",
+            "gtex_snrnaseq_pilot"
+          ],
           "default": "gtex_v8"
         },
         "page": {
@@ -221,30 +308,52 @@
           "default": 250
         }
       },
-      "required": ["operation"]
+      "required": []
     },
     "return_schema": {
       "type": "array",
       "items": {
         "type": "object",
         "properties": {
-          "gencodeId": {"type": "string"},
-          "geneSymbol": {"type": "string"},
-          "variantId": {"type": "string"},
-          "snpId": {"type": "string"},
-          "tissueSiteDetailId": {"type": "string"},
-          "pValue": {"type": "number"},
-          "nes": {"type": "number"},
-          "chromosome": {"type": "string"},
-          "pos": {"type": "integer"}
+          "gencodeId": {
+            "type": "string"
+          },
+          "geneSymbol": {
+            "type": "string"
+          },
+          "variantId": {
+            "type": "string"
+          },
+          "snpId": {
+            "type": "string"
+          },
+          "tissueSiteDetailId": {
+            "type": "string"
+          },
+          "pValue": {
+            "type": "number"
+          },
+          "nes": {
+            "type": "number"
+          },
+          "chromosome": {
+            "type": "string"
+          },
+          "pos": {
+            "type": "integer"
+          }
         }
       }
     },
     "test_examples": [
       {
         "operation": "get_single_tissue_eqtls",
-        "gencode_id": ["ENSG00000227232.5"],
-        "tissue_site_detail_id": ["Whole_Blood"]
+        "gencode_id": [
+          "ENSG00000227232.5"
+        ],
+        "tissue_site_detail_id": [
+          "Whole_Blood"
+        ]
       }
     ]
   },
@@ -257,7 +366,9 @@
       "properties": {
         "operation": {
           "type": "string",
-          "enum": ["calculate_eqtl"],
+          "enum": [
+            "calculate_eqtl"
+          ],
           "description": "Operation type"
         },
         "gencode_id": {
@@ -274,26 +385,56 @@
         },
         "dataset_id": {
           "type": "string",
-          "enum": ["gtex_v8", "gtex_v10", "gtex_snrnaseq_pilot"],
+          "enum": [
+            "gtex_v8",
+            "gtex_v10",
+            "gtex_snrnaseq_pilot"
+          ],
           "default": "gtex_v8"
         }
       },
-      "required": ["operation", "gencode_id", "variant_id", "tissue_site_detail_id"]
+      "required": [
+        "gencode_id",
+        "variant_id",
+        "tissue_site_detail_id"
+      ]
     },
     "return_schema": {
       "type": "object",
       "properties": {
-        "gencodeId": {"type": "string"},
-        "geneSymbol": {"type": "string"},
-        "variantId": {"type": "string"},
-        "tissueSiteDetailId": {"type": "string"},
-        "pValue": {"type": "number"},
-        "nes": {"type": "number"},
-        "tStatistic": {"type": "number"},
-        "pValueThreshold": {"type": "number"},
-        "data": {"type": "array"},
-        "genotypes": {"type": "array"},
-        "maf": {"type": "number"}
+        "gencodeId": {
+          "type": "string"
+        },
+        "geneSymbol": {
+          "type": "string"
+        },
+        "variantId": {
+          "type": "string"
+        },
+        "tissueSiteDetailId": {
+          "type": "string"
+        },
+        "pValue": {
+          "type": "number"
+        },
+        "nes": {
+          "type": "number"
+        },
+        "tStatistic": {
+          "type": "number"
+        },
+        "pValueThreshold": {
+          "type": "number"
+        },
+        "data": {
+          "type": "array"
+        },
+        "genotypes": {
+          "type": "array"
+        },
+        "maf": {
+          "type": "number"
+        }
       }
     },
     "test_examples": [
@@ -315,7 +456,9 @@
       "properties": {
         "operation": {
           "type": "string",
-          "enum": ["get_top_expressed_genes"],
+          "enum": [
+            "get_top_expressed_genes"
+          ],
           "description": "Operation type"
         },
         "tissue_site_detail_id": {
@@ -329,7 +472,11 @@
         },
         "dataset_id": {
           "type": "string",
-          "enum": ["gtex_v8", "gtex_v10", "gtex_snrnaseq_pilot"],
+          "enum": [
+            "gtex_v8",
+            "gtex_v10",
+            "gtex_snrnaseq_pilot"
+          ],
           "default": "gtex_v8"
         },
         "page": {
@@ -344,18 +491,30 @@
           "default": 250
         }
       },
-      "required": ["operation", "tissue_site_detail_id"]
+      "required": [
+        "tissue_site_detail_id"
+      ]
     },
     "return_schema": {
       "type": "array",
       "items": {
         "type": "object",
         "properties": {
-          "gencodeId": {"type": "string"},
-          "geneSymbol": {"type": "string"},
-          "median": {"type": "number"},
-          "unit": {"type": "string"},
-          "tissueSiteDetailId": {"type": "string"}
+          "gencodeId": {
+            "type": "string"
+          },
+          "geneSymbol": {
+            "type": "string"
+          },
+          "median": {
+            "type": "number"
+          },
+          "unit": {
+            "type": "string"
+          },
+          "tissueSiteDetailId": {
+            "type": "string"
+          }
         }
       }
     },
@@ -376,31 +535,55 @@
       "properties": {
         "operation": {
           "type": "string",
-          "enum": ["get_dataset_info"],
+          "enum": [
+            "get_dataset_info"
+          ],
           "description": "Operation type"
         },
         "dataset_id": {
           "type": "string",
-          "enum": ["gtex_v8", "gtex_v10", "gtex_snrnaseq_pilot"],
+          "enum": [
+            "gtex_v8",
+            "gtex_v10",
+            "gtex_snrnaseq_pilot"
+          ],
           "description": "Optional: Specific dataset ID. Omit to get all datasets"
         }
       },
-      "required": ["operation"]
+      "required": []
     },
     "return_schema": {
       "type": "array",
       "items": {
         "type": "object",
         "properties": {
-          "datasetId": {"type": "string"},
-          "displayName": {"type": "string"},
-          "description": {"type": "string"},
-          "gencodeVersion": {"type": "string"},
-          "genomeBuild": {"type": "string"},
-          "dbSnpBuild": {"type": "integer"},
-          "subjectCount": {"type": "integer"},
-          "tissueCount": {"type": "integer"},
-          "rnaSeqSampleCount": {"type": "integer"}
+          "datasetId": {
+            "type": "string"
+          },
+          "displayName": {
+            "type": "string"
+          },
+          "description": {
+            "type": "string"
+          },
+          "gencodeVersion": {
+            "type": "string"
+          },
+          "genomeBuild": {
+            "type": "string"
+          },
+          "dbSnpBuild": {
+            "type": "integer"
+          },
+          "subjectCount": {
+            "type": "integer"
+          },
+          "tissueCount": {
+            "type": "integer"
+          },
+          "rnaSeqSampleCount": {
+            "type": "integer"
+          }
         }
       }
     },
@@ -419,27 +602,43 @@
       "properties": {
         "operation": {
           "type": "string",
-          "enum": ["get_gene_expression"],
+          "enum": [
+            "get_gene_expression"
+          ],
           "description": "Operation type"
         },
         "gencode_id": {
-          "type": ["string", "array"],
-          "items": {"type": "string"},
+          "type": [
+            "string",
+            "array"
+          ],
+          "items": {
+            "type": "string"
+          },
           "description": "Required: Versioned GENCODE ID(s)"
         },
         "tissue_site_detail_id": {
           "type": "array",
-          "items": {"type": "string"},
+          "items": {
+            "type": "string"
+          },
           "description": "Optional: Filter by tissues"
         },
         "attribute_subset": {
           "type": "string",
-          "enum": ["sex", "ageBracket"],
+          "enum": [
+            "sex",
+            "ageBracket"
+          ],
           "description": "Optional: Subset by donor sex or age bracket"
         },
         "dataset_id": {
           "type": "string",
-          "enum": ["gtex_v8", "gtex_v10", "gtex_snrnaseq_pilot"],
+          "enum": [
+            "gtex_v8",
+            "gtex_v10",
+            "gtex_snrnaseq_pilot"
+          ],
           "default": "gtex_v8"
         },
         "page": {
@@ -454,19 +653,36 @@
           "default": 250
         }
       },
-      "required": ["operation", "gencode_id"]
+      "required": [
+        "gencode_id"
+      ]
     },
     "return_schema": {
       "type": "array",
       "items": {
         "type": "object",
         "properties": {
-          "gencodeId": {"type": "string"},
-          "geneSymbol": {"type": "string"},
-          "tissueSiteDetailId": {"type": "string"},
-          "data": {"type": "array", "items": {"type": "number"}},
-          "unit": {"type": "string"},
-          "subsetGroup": {"type": "string"}
+          "gencodeId": {
+            "type": "string"
+          },
+          "geneSymbol": {
+            "type": "string"
+          },
+          "tissueSiteDetailId": {
+            "type": "string"
+          },
+          "data": {
+            "type": "array",
+            "items": {
+              "type": "number"
+            }
+          },
+          "unit": {
+            "type": "string"
+          },
+          "subsetGroup": {
+            "type": "string"
+          }
         }
       }
     },
@@ -474,7 +690,9 @@
       {
         "operation": "get_gene_expression",
         "gencode_id": "ENSG00000141510.18",
-        "tissue_site_detail_id": ["Liver"],
+        "tissue_site_detail_id": [
+          "Liver"
+        ],
         "attribute_subset": "sex"
       }
     ]
@@ -488,40 +706,62 @@
       "properties": {
         "operation": {
           "type": "string",
-          "enum": ["get_sample_info"],
+          "enum": [
+            "get_sample_info"
+          ],
           "description": "Operation type"
         },
         "sample_id": {
           "type": "array",
-          "items": {"type": "string"},
+          "items": {
+            "type": "string"
+          },
           "description": "Optional: GTEx sample IDs"
         },
         "subject_id": {
           "type": "array",
-          "items": {"type": "string"},
+          "items": {
+            "type": "string"
+          },
           "description": "Optional: GTEx subject/donor IDs"
         },
         "tissue_site_detail_id": {
           "type": "array",
-          "items": {"type": "string"},
+          "items": {
+            "type": "string"
+          },
           "description": "Optional: Filter by tissues"
         },
         "sex": {
           "type": "string",
-          "enum": ["male", "female"],
+          "enum": [
+            "male",
+            "female"
+          ],
           "description": "Optional: Filter by donor sex"
         },
         "age_bracket": {
           "type": "array",
           "items": {
             "type": "string",
-            "enum": ["20-29", "30-39", "40-49", "50-59", "60-69", "70-79"]
+            "enum": [
+              "20-29",
+              "30-39",
+              "40-49",
+              "50-59",
+              "60-69",
+              "70-79"
+            ]
           },
           "description": "Optional: Filter by age brackets"
         },
         "dataset_id": {
           "type": "string",
-          "enum": ["gtex_v8", "gtex_v10", "gtex_snrnaseq_pilot"],
+          "enum": [
+            "gtex_v8",
+            "gtex_v10",
+            "gtex_snrnaseq_pilot"
+          ],
           "default": "gtex_v8"
         },
         "page": {
@@ -536,29 +776,61 @@
           "default": 250
         }
       },
-      "required": ["operation"]
+      "required": []
     },
     "return_schema": {
       "type": "array",
       "items": {
         "type": "object",
         "properties": {
-          "sampleId": {"type": "string"},
-          "subjectId": {"type": "string"},
-          "tissueSiteDetailId": {"type": "string"},
-          "sex": {"type": "string"},
-          "ageBracket": {"type": "string"},
-          "ischemicTime": {"type": ["integer", "null"]},
-          "rin": {"type": ["number", "null"]},
-          "hardyScale": {"type": ["string", "null"]},
-          "pathologyNotes": {"type": ["string", "null"]}
+          "sampleId": {
+            "type": "string"
+          },
+          "subjectId": {
+            "type": "string"
+          },
+          "tissueSiteDetailId": {
+            "type": "string"
+          },
+          "sex": {
+            "type": "string"
+          },
+          "ageBracket": {
+            "type": "string"
+          },
+          "ischemicTime": {
+            "type": [
+              "integer",
+              "null"
+            ]
+          },
+          "rin": {
+            "type": [
+              "number",
+              "null"
+            ]
+          },
+          "hardyScale": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "pathologyNotes": {
+            "type": [
+              "string",
+              "null"
+            ]
+          }
         }
       }
     },
     "test_examples": [
       {
         "operation": "get_sample_info",
-        "tissue_site_detail_id": ["Whole_Blood"],
+        "tissue_site_detail_id": [
+          "Whole_Blood"
+        ],
         "sex": "female",
         "items_per_page": 10
       }
@@ -573,7 +845,9 @@
       "properties": {
         "operation": {
           "type": "string",
-          "enum": ["get_multi_tissue_eqtls"],
+          "enum": [
+            "get_multi_tissue_eqtls"
+          ],
           "description": "Operation type"
         },
         "gencode_id": {
@@ -586,7 +860,11 @@
         },
         "dataset_id": {
           "type": "string",
-          "enum": ["gtex_v8", "gtex_v10", "gtex_snrnaseq_pilot"],
+          "enum": [
+            "gtex_v8",
+            "gtex_v10",
+            "gtex_snrnaseq_pilot"
+          ],
           "default": "gtex_v8"
         },
         "page": {
@@ -601,25 +879,53 @@
           "default": 250
         }
       },
-      "required": ["operation", "gencode_id"]
+      "required": [
+        "gencode_id"
+      ]
     },
     "return_schema": {
       "type": "array",
       "items": {
         "type": "object",
         "properties": {
-          "gencodeId": {"type": "string"},
-          "variantId": {"type": "string"},
-          "metaP": {"type": "number"},
+          "gencodeId": {
+            "type": "string"
+          },
+          "variantId": {
+            "type": "string"
+          },
+          "metaP": {
+            "type": "number"
+          },
           "tissues": {
             "type": "object",
             "additionalProperties": {
               "type": "object",
               "properties": {
-                "mValue": {"type": ["number", "null"]},
-                "pValue": {"type": ["number", "null"]},
-                "nes": {"type": ["number", "null"]},
-                "se": {"type": ["number", "null"]}
+                "mValue": {
+                  "type": [
+                    "number",
+                    "null"
+                  ]
+                },
+                "pValue": {
+                  "type": [
+                    "number",
+                    "null"
+                  ]
+                },
+                "nes": {
+                  "type": [
+                    "number",
+                    "null"
+                  ]
+                },
+                "se": {
+                  "type": [
+                    "number",
+                    "null"
+                  ]
+                }
               }
             }
           }
