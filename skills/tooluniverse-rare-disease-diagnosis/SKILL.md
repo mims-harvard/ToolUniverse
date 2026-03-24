@@ -195,7 +195,7 @@ See [CHECKLIST.md](CHECKLIST.md) for the full interactive checklist.
 
 | Primary Tool | Fallback 1 | Fallback 2 |
 |--------------|------------|------------|
-| `Orphanet_search_by_hpo` | `OMIM_search` | PubMed phenotype search |
+| `get_joint_associated_diseases_by_HPO_ID_list` | `Orphanet_search_diseases` | PubMed phenotype search |
 | `ClinVar_get_variant` | `gnomAD_get_variant` | VEP annotation |
 | `NvidiaNIM_alphafold2` | `alphafold_get_prediction` | UniProt features |
 | `GTEx_expression` | `HPA_expression` | Tissue-specific literature |

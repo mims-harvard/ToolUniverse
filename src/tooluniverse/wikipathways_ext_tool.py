@@ -129,6 +129,14 @@ class WikiPathwaysExtTool(BaseTool):
         response.raise_for_status()
         data = response.json()
 
+        # WikiPathways returns a list on server error (e.g., ["error", 500, "..."])
+        if isinstance(data, list):
+            msg = str(data[2])[:200] if len(data) > 2 else str(data)
+            return {
+                "status": "error",
+                "error": f"WikiPathways API server error: {msg}",
+            }
+
         results = data.get("result", [])
 
         # Filter by species
