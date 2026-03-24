@@ -56,12 +56,14 @@
         },
         "pdb_id": {
           "type": "string",
-          "description": "4-character PDB ID (e.g., 1IGT, 6W41)"
+          "description": "4-character PDB ID (e.g., 1IGT, 6W41). Alias: pdb_code."
+        },
+        "pdb_code": {
+          "type": "string",
+          "description": "Alias for pdb_id. 4-character PDB ID (e.g., 1IGT, 6W41)."
         }
       },
-      "required": [
-        "pdb_id"
-      ]
+      "required": []
     },
     "return_schema": {
       "type": "object",

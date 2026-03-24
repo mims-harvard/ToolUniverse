@@ -97,9 +97,12 @@ Apply when user asks:
 - `organism` param is silently ignored if not passed correctly; use the `/find/{organism}/{keyword}` format
 
 ### MetaCyc Pathway Tools
+
+> **NOTE: MetaCyc tools are currently unavailable.** BioCyc now requires a free account for all API access. Use KEGG or Reactome as alternatives for metabolic pathway analysis.
+
 | Tool | Purpose | Key Parameters |
 |------|---------|----------------|
-| `MetaCyc_search_pathways` | Search MetaCyc pathways | `query` |
+| ~~`MetaCyc_search_pathways`~~ | ⚠️ UNAVAILABLE (requires BioCyc account) | — |
 
 ### Variant Annotation
 | Tool | Purpose | Key Parameters |
@@ -215,9 +218,10 @@ Phase 3: STRING/PANTHER Enrichment
   -> PANTHER_enrichment(gene_list="GENE1,GENE2,...", organism=9606,
      annotation_dataset="GO:0008150")  [GO Biological Process]
 
-Phase 4: MetaCyc Metabolic Pathways (if metabolic disease)
-  -> MetaCyc_search_pathways(query=<disease_or_process>)
-  -> Cross-reference with GWAS genes in metabolic enzymes
+Phase 4: Metabolic Pathways (if metabolic disease)
+  -> KEGG: kegg_search_pathway(query=<disease_or_process>)
+  -> Reactome: ReactomeContent_search(query=<disease_or_process>)
+  -> (MetaCyc unavailable — requires BioCyc authentication)
 
 Phase 5: Tissue-Specific Network Context
   -> humanbase_ppi_analysis(gene_list=<genes>, tissue=<relevant_tissue>,

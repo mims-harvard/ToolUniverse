@@ -120,7 +120,7 @@ class SAbDabTool(BaseTool):
             arguments: Dict containing:
                 - pdb_id: 4-character PDB ID
         """
-        pdb_id = arguments.get("pdb_id", "")
+        pdb_id = arguments.get("pdb_id") or arguments.get("pdb_code") or ""
         if not pdb_id:
             return {"status": "error", "error": "Missing required parameter: pdb_id"}
 
