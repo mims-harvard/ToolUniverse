@@ -14,7 +14,7 @@ def SwissTargetPrediction_organisms(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> dict[str, Any]:
+) -> Any:
     """
     List the organisms (proteomes) supported by SwissTargetPrediction. Returns organism names with th...
 
@@ -31,7 +31,7 @@ def SwissTargetPrediction_organisms(
 
     Returns
     -------
-    dict[str, Any]
+    Any
     """
     # Handle mutable defaults to avoid B006 linting error
 

@@ -1,7 +1,7 @@
 """
 eMolecules_get_compound
 
-Get compound details by eMolecules ID. Returns structure, vendors, pricing, and availability info...
+Get compound details by eMolecules ID. Returns a URL linking to the compound page with vendor, pr...
 """
 
 from typing import Any, Optional, Callable
@@ -17,7 +17,7 @@ def eMolecules_get_compound(
     validate: bool = True,
 ) -> dict[str, Any]:
     """
-    Get compound details by eMolecules ID. Returns structure, vendors, pricing, and availability info...
+    Get compound details by eMolecules ID. Returns a URL linking to the compound page with vendor, pr...
 
     Parameters
     ----------

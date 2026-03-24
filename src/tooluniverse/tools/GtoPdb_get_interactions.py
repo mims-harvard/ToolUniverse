@@ -18,7 +18,7 @@ def GtoPdb_get_interactions(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> list[Any]:
     """
     Get pharmacological interactions between targets and ligands from the Guide to Pharmacology datab...
 
@@ -43,7 +43,7 @@ def GtoPdb_get_interactions(
 
     Returns
     -------
-    Any
+    list[Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

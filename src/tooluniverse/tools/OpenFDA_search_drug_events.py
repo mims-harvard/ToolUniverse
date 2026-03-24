@@ -9,9 +9,11 @@ from ._shared_client import get_shared_client
 
 
 def OpenFDA_search_drug_events(
-    search: str,
+    search: Optional[str] = None,
     limit: Optional[int | Any] = None,
     count: Optional[str | Any] = None,
+    drug_name: Optional[str | Any] = None,
+    reaction: Optional[str | Any] = None,
     *,
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
@@ -28,6 +30,10 @@ def OpenFDA_search_drug_events(
         Maximum number of reports to return (default 1, max 100)
     count : str | Any
         Field to count by for frequency analysis (e.g., 'patient.reaction.reactionmed...
+    drug_name : str | Any
+        Drug name to search for adverse events (e.g., 'warfarin', 'metformin'). Alter...
+    reaction : str | Any
+        MedDRA adverse reaction term (British spelling: 'haemorrhage' not 'hemorrhage...
     stream_callback : Callable, optional
         Callback for streaming output
     use_cache : bool, default False
@@ -44,7 +50,13 @@ def OpenFDA_search_drug_events(
     # Strip None values so optional parameters don't trigger schema validation errors
     _args = {
         k: v
-        for k, v in {"search": search, "limit": limit, "count": count}.items()
+        for k, v in {
+            "search": search,
+            "limit": limit,
+            "count": count,
+            "drug_name": drug_name,
+            "reaction": reaction,
+        }.items()
         if v is not None
     }
     return get_shared_client().run_one_function(

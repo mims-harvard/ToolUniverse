@@ -9,8 +9,9 @@ from ._shared_client import get_shared_client
 
 
 def Orphanet_get_gene_diseases(
-    gene_name: str,
     operation: Optional[str] = None,
+    gene_name: Optional[str] = None,
+    gene_symbol: Optional[str | Any] = None,
     *,
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
@@ -24,7 +25,9 @@ def Orphanet_get_gene_diseases(
     operation : str
         Operation type (fixed: get_gene_diseases)
     gene_name : str
-        Gene symbol (e.g., 'FBN1', 'BRCA1', 'HTT') or gene name keyword (e.g., 'fibri...
+        Gene symbol or name keyword (e.g., 'FBN1', 'BRCA1', 'huntingtin'). Use gene_s...
+    gene_symbol : str | Any
+        Alternative to gene_name: standard HGNC gene symbol (e.g., 'GBA1', 'FBN1'). N...
     stream_callback : Callable, optional
         Callback for streaming output
     use_cache : bool, default False
@@ -41,7 +44,11 @@ def Orphanet_get_gene_diseases(
     # Strip None values so optional parameters don't trigger schema validation errors
     _args = {
         k: v
-        for k, v in {"operation": operation, "gene_name": gene_name}.items()
+        for k, v in {
+            "operation": operation,
+            "gene_name": gene_name,
+            "gene_symbol": gene_symbol,
+        }.items()
         if v is not None
     }
     return get_shared_client().run_one_function(

@@ -17,7 +17,7 @@ def GtoPdb_search_ligands(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> list[Any]:
     """
     Search the Guide to Pharmacology database for pharmacological ligands (drugs, natural products, e...
 
@@ -40,7 +40,7 @@ def GtoPdb_search_ligands(
 
     Returns
     -------
-    Any
+    list[Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

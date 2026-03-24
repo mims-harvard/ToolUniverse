@@ -1,7 +1,7 @@
 """
 ToolUniverse Tools
 
-Type-safe Python interface to 2062 scientific tools.
+Type-safe Python interface to 2056 scientific tools.
 Each tool is in its own module for minimal import overhead.
 
 Usage:
@@ -84,7 +84,6 @@ from .BMRB_get_entries_by_uniprot import BMRB_get_entries_by_uniprot
 from .BMRB_get_entry import BMRB_get_entry
 from .BMRB_get_entry_citation import BMRB_get_entry_citation
 from .BMRB_search_by_keyword import BMRB_search_by_keyword
-from .BRENDA_get_inhibitors import BRENDA_get_inhibitors
 from .BVBRC_get_genome import BVBRC_get_genome
 from .BVBRC_get_protein_structure import BVBRC_get_protein_structure
 from .BVBRC_get_taxonomy import BVBRC_get_taxonomy
@@ -976,9 +975,6 @@ from .HGNC_fetch_gene_by_id import HGNC_fetch_gene_by_id
 from .HGNC_fetch_gene_by_symbol import HGNC_fetch_gene_by_symbol
 from .HGNC_search_by_location import HGNC_search_by_location
 from .HGNC_search_genes import HGNC_search_genes
-from .HMDB_get_diseases import HMDB_get_diseases
-from .HMDB_get_metabolite import HMDB_get_metabolite
-from .HMDB_search import HMDB_search
 from .HPA_generic_search import HPA_generic_search
 from .HPA_get_biological_processes_by_gene import HPA_get_biological_processes_by_gene
 from .HPA_get_cancer_prognostics_by_gene import HPA_get_cancer_prognostics_by_gene
@@ -1148,6 +1144,9 @@ from .MetaboAnalyst_biomarker_enrichment import MetaboAnalyst_biomarker_enrichme
 from .MetaboAnalyst_get_pathway_library import MetaboAnalyst_get_pathway_library
 from .MetaboAnalyst_name_to_id import MetaboAnalyst_name_to_id
 from .MetaboAnalyst_pathway_enrichment import MetaboAnalyst_pathway_enrichment
+from .Metabolite_get_diseases import Metabolite_get_diseases
+from .Metabolite_get_info import Metabolite_get_info
+from .Metabolite_search import Metabolite_search
 from .MetabolomicsWorkbench_get_compound_by_pubchem_cid import (
     MetabolomicsWorkbench_get_compound_by_pubchem_cid,
 )
@@ -1580,8 +1579,6 @@ from .PharmGKB_get_gene_details import PharmGKB_get_gene_details
 from .PharmGKB_search_drugs import PharmGKB_search_drugs
 from .PharmGKB_search_genes import PharmGKB_search_genes
 from .PharmGKB_search_variants import PharmGKB_search_variants
-from .PharmVar_get_alleles import PharmVar_get_alleles
-from .PharmVar_list_genes import PharmVar_list_genes
 from .PharmacoDB_get_biomarker_assoc import PharmacoDB_get_biomarker_assoc
 from .PharmacoDB_get_cell_line import PharmacoDB_get_cell_line
 from .PharmacoDB_get_compound import PharmacoDB_get_compound
@@ -1795,7 +1792,6 @@ from .SemanticScholar_get_pdf_snippets import SemanticScholar_get_pdf_snippets
 from .SemanticScholar_get_recommendations import SemanticScholar_get_recommendations
 from .SemanticScholar_search_authors import SemanticScholar_search_authors
 from .SemanticScholar_search_papers import SemanticScholar_search_papers
-from .SoilGrids_get_properties import SoilGrids_get_properties
 from .SpliceAI_get_max_delta import SpliceAI_get_max_delta
 from .SpliceAI_predict_pangolin import SpliceAI_predict_pangolin
 from .SpliceAI_predict_splice import SpliceAI_predict_splice
@@ -2536,8 +2532,6 @@ from .openalex_literature_search import openalex_literature_search
 from .openalex_search_authors import openalex_search_authors
 from .openalex_search_institutions import openalex_search_institutions
 from .openalex_search_works import openalex_search_works
-from .pc_get_interactions import pc_get_interactions
-from .pc_search_pathways import pc_search_pathways
 from .pdbe_get_entry_assemblies import pdbe_get_entry_assemblies
 from .pdbe_get_entry_experiment import pdbe_get_entry_experiment
 from .pdbe_get_entry_molecules import pdbe_get_entry_molecules
@@ -2624,7 +2618,6 @@ __all__ = [
     "BMRB_get_entry",
     "BMRB_get_entry_citation",
     "BMRB_search_by_keyword",
-    "BRENDA_get_inhibitors",
     "BVBRC_get_genome",
     "BVBRC_get_protein_structure",
     "BVBRC_get_taxonomy",
@@ -3296,9 +3289,6 @@ __all__ = [
     "HGNC_fetch_gene_by_symbol",
     "HGNC_search_by_location",
     "HGNC_search_genes",
-    "HMDB_get_diseases",
-    "HMDB_get_metabolite",
-    "HMDB_search",
     "HPA_generic_search",
     "HPA_get_biological_processes_by_gene",
     "HPA_get_cancer_prognostics_by_gene",
@@ -3454,6 +3444,9 @@ __all__ = [
     "MetaboAnalyst_get_pathway_library",
     "MetaboAnalyst_name_to_id",
     "MetaboAnalyst_pathway_enrichment",
+    "Metabolite_get_diseases",
+    "Metabolite_get_info",
+    "Metabolite_search",
     "MetabolomicsWorkbench_get_compound_by_pubchem_cid",
     "MetabolomicsWorkbench_get_refmet_info",
     "MetabolomicsWorkbench_get_study",
@@ -3762,8 +3755,6 @@ __all__ = [
     "PharmGKB_search_drugs",
     "PharmGKB_search_genes",
     "PharmGKB_search_variants",
-    "PharmVar_get_alleles",
-    "PharmVar_list_genes",
     "PharmacoDB_get_biomarker_assoc",
     "PharmacoDB_get_cell_line",
     "PharmacoDB_get_compound",
@@ -3951,7 +3942,6 @@ __all__ = [
     "SemanticScholar_get_recommendations",
     "SemanticScholar_search_authors",
     "SemanticScholar_search_papers",
-    "SoilGrids_get_properties",
     "SpliceAI_get_max_delta",
     "SpliceAI_predict_pangolin",
     "SpliceAI_predict_splice",
@@ -4604,8 +4594,6 @@ __all__ = [
     "openalex_search_authors",
     "openalex_search_institutions",
     "openalex_search_works",
-    "pc_get_interactions",
-    "pc_search_pathways",
     "pdbe_get_entry_assemblies",
     "pdbe_get_entry_experiment",
     "pdbe_get_entry_molecules",

@@ -16,7 +16,7 @@ def SYNERGxDB_list_drugs(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> list[Any]:
     """
     List drugs in the SYNERGxDB database with their identifiers. Returns drug names, IDs, PubChem CID...
 
@@ -37,7 +37,7 @@ def SYNERGxDB_list_drugs(
 
     Returns
     -------
-    Any
+    list[Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

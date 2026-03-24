@@ -68,16 +68,16 @@ class GWASRESTTool(BaseTool):
         """Resolve a disease trait name to an EFO ID.
 
         Tries the GWAS Catalog efoTraits endpoint first, then falls back to
-        a study-based resolution (the /v2/studies endpoint does support
-        disease_trait filtering and returns efo_traits in each study record).
-
-        The /v2/associations endpoint ignores the disease_trait query parameter,
-        so we must resolve the trait name to an EFO ID for reliable filtering.
+        a study-based resolution. The /v2/associations endpoint ignores the
+        disease_trait query parameter, so we must resolve to an EFO ID.
         """
         # Primary: GWAS Catalog efoTraits endpoint
-        url = f"{self.base_url}/v2/efoTraits/search/findByTrait"
         try:
-            resp = requests.get(url, params={"trait": disease_trait}, timeout=15)
+            resp = requests.get(
+                f"{self.base_url}/v2/efoTraits/search/findByTrait",
+                params={"trait": disease_trait},
+                timeout=15,
+            )
             if resp.status_code == 200:
                 traits = resp.json().get("_embedded", {}).get("efoTraits", [])
                 if traits:
@@ -87,8 +87,7 @@ class GWASRESTTool(BaseTool):
         except Exception:
             pass
 
-        # Fallback: search studies by disease_trait, extract efo_id from first result.
-        # /v2/studies DOES support disease_trait filtering and returns efo_traits.
+        # Fallback: search studies by disease_trait, extract efo_id from first result
         try:
             resp = requests.get(
                 f"{self.base_url}/v2/studies",
@@ -107,6 +106,46 @@ class GWASRESTTool(BaseTool):
             pass
 
         return None
+
+    def _resolve_trait_or_error(
+        self, disease_trait: Optional[str], efo_id: Optional[str]
+    ) -> Dict[str, Any]:
+        """Resolve disease_trait to efo_id if needed, returning result dict.
+
+        Returns {"efo_id": <str>} on success, or {"error": <dict>} if
+        resolution fails and would produce an unfiltered query.
+        """
+        if disease_trait and not efo_id:
+            resolved = self._resolve_trait_to_efo_id(disease_trait)
+            if resolved:
+                return {"efo_id": resolved}
+            return {
+                "error": {
+                    "status": "error",
+                    "error": (
+                        f"Could not resolve trait '{disease_trait}' to an EFO ID. "
+                        "Try a more specific name, or provide efo_id directly "
+                        "(e.g., 'EFO_0000305' for breast carcinoma)."
+                    ),
+                }
+            }
+        return {"efo_id": efo_id}
+
+    @staticmethod
+    def _empty_result_note(efo_id: str) -> str:
+        """Return a suggestion note when no associations are found for an EFO ID."""
+        return (
+            f"No associations found for EFO ID '{efo_id}'. "
+            "GWAS Catalog may use a broader parent term — try disease_trait "
+            "with a text query (e.g., 'colorectal cancer') to find related associations."
+        )
+
+    def _add_empty_result_note(
+        self, result: Dict[str, Any], efo_id: Optional[str]
+    ) -> None:
+        """Add a suggestion note to result if the data list is empty."""
+        if efo_id and isinstance(result.get("data"), list) and not result["data"]:
+            result["note"] = self._empty_result_note(efo_id)
 
     def _extract_embedded_data(
         self, data: Dict[str, Any], data_type: str
@@ -224,7 +263,9 @@ class GWASAssociationSearch(GWASRESTTool):
             }
 
         data = self._make_request(self.endpoint, params)
-        return self._extract_embedded_data(data, "associations")
+        result = self._extract_embedded_data(data, "associations")
+        self._add_empty_result_note(result, efo_id)
+        return result
 
 
 @register_tool("GWASStudySearch")
@@ -367,34 +408,21 @@ class GWASVariantsForTrait(GWASRESTTool):
         ) or self._efo_id_from_uri_or_id(arguments.get("efo_uri"))
         efo_trait = self._coerce_str(arguments.get("efo_trait"))
 
-        # Feature-79C: /v2/associations ignores disease_trait param server-side.
-        # Auto-resolve trait name to efo_id for reliable filtering.
-        # Feature-82A-005: return error on resolution failure (same guard as
-        # GWASAssociationSearch) to prevent 1M+ unfiltered results.
-        if disease_trait and not efo_id:
-            resolved = self._resolve_trait_to_efo_id(disease_trait)
-            if resolved:
-                efo_id = resolved
-            else:
-                return {
-                    "status": "error",
-                    "error": (
-                        f"Could not resolve trait '{disease_trait}' to an EFO ID. "
-                        "Try a more specific name, or provide efo_id directly "
-                        "(e.g., 'EFO_0000305' for breast carcinoma)."
-                    ),
-                }
+        # /v2/associations ignores disease_trait — resolve to efo_id
+        resolution = self._resolve_trait_or_error(disease_trait, efo_id)
+        if "error" in resolution:
+            return resolution["error"]
+        efo_id = resolution["efo_id"]
 
         if not disease_trait and not efo_id and not efo_trait:
             return {
                 "error": "Provide at least one of: disease_trait, efo_id (or efo_uri), efo_trait."
             }
 
-        params = {
+        params: Dict[str, Any] = {
             "size": arguments.get("size", 200),
             "page": arguments.get("page", 0),
         }
-
         if efo_id:
             params["efo_id"] = efo_id
         elif efo_trait:
@@ -404,6 +432,7 @@ class GWASVariantsForTrait(GWASRESTTool):
         result = self._extract_embedded_data(data, "associations")
         if efo_id and disease_trait:
             result["resolved_efo_id"] = efo_id
+        self._add_empty_result_note(result, efo_id)
         return result
 
 
@@ -423,35 +452,23 @@ class GWASAssociationsForTrait(GWASRESTTool):
         ) or self._efo_id_from_uri_or_id(arguments.get("efo_uri"))
         efo_trait = self._coerce_str(arguments.get("efo_trait"))
 
-        # Feature-79C: /v2/associations ignores disease_trait param server-side.
-        # Auto-resolve trait name to efo_id for reliable filtering.
-        # Feature-82A-005: return error on resolution failure.
-        if disease_trait and not efo_id:
-            resolved = self._resolve_trait_to_efo_id(disease_trait)
-            if resolved:
-                efo_id = resolved
-            else:
-                return {
-                    "status": "error",
-                    "error": (
-                        f"Could not resolve trait '{disease_trait}' to an EFO ID. "
-                        "Try a more specific name, or provide efo_id directly "
-                        "(e.g., 'EFO_0000305' for breast carcinoma)."
-                    ),
-                }
+        # /v2/associations ignores disease_trait — resolve to efo_id
+        resolution = self._resolve_trait_or_error(disease_trait, efo_id)
+        if "error" in resolution:
+            return resolution["error"]
+        efo_id = resolution["efo_id"]
 
         if not disease_trait and not efo_id and not efo_trait:
             return {
                 "error": "Provide at least one of: disease_trait, efo_id (or efo_uri), efo_trait."
             }
 
-        params = {
+        params: Dict[str, Any] = {
             "sort": "p_value",
             "direction": "asc",
             "size": arguments.get("size", 40),
             "page": arguments.get("page", 0),
         }
-
         if efo_id:
             params["efo_id"] = efo_id
         elif efo_trait:
@@ -461,6 +478,7 @@ class GWASAssociationsForTrait(GWASRESTTool):
         result = self._extract_embedded_data(data, "associations")
         if efo_id and disease_trait:
             result["resolved_efo_id"] = efo_id
+        self._add_empty_result_note(result, efo_id)
         return result
 
 

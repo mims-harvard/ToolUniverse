@@ -1,7 +1,7 @@
 """
 eMolecules_get_vendors
 
-Get list of chemical suppliers for a compound by SMILES. Returns vendor names, pricing, and avail...
+Generate an eMolecules vendor search URL for a compound by SMILES. Returns a search_url to browse...
 """
 
 from typing import Any, Optional, Callable
@@ -17,7 +17,7 @@ def eMolecules_get_vendors(
     validate: bool = True,
 ) -> dict[str, Any]:
     """
-    Get list of chemical suppliers for a compound by SMILES. Returns vendor names, pricing, and avail...
+    Generate an eMolecules vendor search URL for a compound by SMILES. Returns a search_url to browse...
 
     Parameters
     ----------

@@ -1,7 +1,7 @@
 """
 eMolecules_search_smiles
 
-Search eMolecules by chemical structure (SMILES). Supports exact match, substructure, and similar...
+Generate an eMolecules structure search URL for a SMILES string. Supports exact, substructure, an...
 """
 
 from typing import Any, Optional, Callable
@@ -19,7 +19,7 @@ def eMolecules_search_smiles(
     validate: bool = True,
 ) -> dict[str, Any]:
     """
-    Search eMolecules by chemical structure (SMILES). Supports exact match, substructure, and similar...
+    Generate an eMolecules structure search URL for a SMILES string. Supports exact, substructure, an...
 
     Parameters
     ----------

@@ -1,7 +1,7 @@
 """
 eMolecules_search
 
-Search eMolecules vendor aggregator by keyword or compound name. eMolecules aggregates compounds ...
+Generate an eMolecules search URL for a compound name or keyword. eMolecules aggregates 200+ supp...
 """
 
 from typing import Any, Optional, Callable
@@ -18,7 +18,7 @@ def eMolecules_search(
     validate: bool = True,
 ) -> dict[str, Any]:
     """
-    Search eMolecules vendor aggregator by keyword or compound name. eMolecules aggregates compounds ...
+    Generate an eMolecules search URL for a compound name or keyword. eMolecules aggregates 200+ supp...
 
     Parameters
     ----------
