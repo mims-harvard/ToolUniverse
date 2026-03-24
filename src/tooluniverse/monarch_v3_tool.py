@@ -97,6 +97,7 @@ class MonarchV3Tool(BaseTool):
         data = response.json()
 
         return {
+            "status": "success",
             "data": {
                 "id": data.get("id"),
                 "name": data.get("name"),
@@ -161,6 +162,7 @@ class MonarchV3Tool(BaseTool):
             )
 
         return {
+            "status": "success",
             "data": associations,
             "metadata": {
                 "source": "Monarch Initiative V3",
@@ -206,6 +208,7 @@ class MonarchV3Tool(BaseTool):
             )
 
         return {
+            "status": "success",
             "data": results,
             "metadata": {
                 "source": "Monarch Initiative V3",
@@ -251,6 +254,7 @@ class MonarchV3Tool(BaseTool):
             )
 
         return {
+            "status": "success",
             "data": results,
             "metadata": {
                 "source": "Mondo Disease Ontology (via Monarch Initiative V3)",
@@ -338,6 +342,7 @@ class MonarchV3Tool(BaseTool):
             inheritance = None
 
         return {
+            "status": "success",
             "data": {
                 "id": data.get("id"),
                 "name": data.get("name"),
@@ -394,6 +399,7 @@ class MonarchV3Tool(BaseTool):
             )
 
         return {
+            "status": "success",
             "data": phenotypes,
             "metadata": {
                 "source": "Mondo Disease Ontology (via Monarch Initiative V3)",

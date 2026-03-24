@@ -107,6 +107,7 @@ class EuroPMCAnnotationsTool(BaseTool):
 
         if not isinstance(raw, list) or len(raw) == 0:
             return {
+                "status": "success",
                 "data": {
                     "article_id": article_id,
                     "pmcid": None,
@@ -146,6 +147,7 @@ class EuroPMCAnnotationsTool(BaseTool):
             )
 
         return {
+            "status": "success",
             "data": {
                 "article_id": article_id,
                 "pmcid": article.get("pmcid"),
@@ -207,6 +209,7 @@ class EuroPMCAnnotationsTool(BaseTool):
             )
 
         return {
+            "status": "success",
             "data": {
                 "article_count": len(articles),
                 "annotation_type": annotation_type,
@@ -233,6 +236,7 @@ class EuroPMCAnnotationsTool(BaseTool):
 
         if not isinstance(raw, list) or len(raw) == 0:
             return {
+                "status": "success",
                 "data": {
                     "article_id": article_id,
                     "chemical_count": 0,
@@ -273,6 +277,7 @@ class EuroPMCAnnotationsTool(BaseTool):
             )
 
         return {
+            "status": "success",
             "data": {
                 "article_id": article_id,
                 "chemical_count": len(chemicals),

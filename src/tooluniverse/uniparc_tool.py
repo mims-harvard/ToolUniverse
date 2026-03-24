@@ -121,6 +121,7 @@ class UniParcTool(BaseTool):
 
         seq = data.get("sequence", {})
         return {
+            "status": "success",
             "data": {
                 "uniparc_id": data.get("uniParcId"),
                 "sequence": {
@@ -187,6 +188,7 @@ class UniParcTool(BaseTool):
             )
 
         return {
+            "status": "success",
             "data": entries,
             "metadata": {
                 "source": "UniProt UniParc (uniprot.org/uniparc)",

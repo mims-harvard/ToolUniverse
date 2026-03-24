@@ -97,6 +97,7 @@ class UniProtTaxonomyTool(BaseTool):
         stats = data.get("statistics", {})
 
         return {
+            "status": "success",
             "data": {
                 "taxon_id": data.get("taxonId"),
                 "scientific_name": data.get("scientificName"),
@@ -151,6 +152,7 @@ class UniProtTaxonomyTool(BaseTool):
             )
 
         return {
+            "status": "success",
             "data": results,
             "metadata": {
                 "source": "UniProt Taxonomy (rest.uniprot.org)",

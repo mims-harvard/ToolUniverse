@@ -149,6 +149,7 @@ class UniProtLocationsTool(BaseTool):
         data = response.json()
 
         return {
+            "status": "success",
             "data": self._parse_location(data),
             "metadata": {
                 "source": "UniProt Subcellular Locations",
@@ -185,6 +186,7 @@ class UniProtLocationsTool(BaseTool):
         results = [self._parse_location(loc) for loc in results_raw]
 
         return {
+            "status": "success",
             "data": results,
             "metadata": {
                 "source": "UniProt Subcellular Locations",

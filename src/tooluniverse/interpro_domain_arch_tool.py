@@ -125,6 +125,7 @@ class InterProDomainArchTool(BaseTool):
         domains.sort(key=lambda d: d.get("start", 0))
 
         return {
+            "status": "success",
             "data": {
                 "accession": accession,
                 "protein_length": protein_length,
@@ -170,6 +171,7 @@ class InterProDomainArchTool(BaseTool):
             )
 
         return {
+            "status": "success",
             "data": {
                 "pfam_accession": pfam_acc,
                 "total_structures": total,
@@ -226,6 +228,7 @@ class InterProDomainArchTool(BaseTool):
         members.sort(key=lambda m: m.get("accession", ""))
 
         return {
+            "status": "success",
             "data": {
                 "clan_accession": clan_acc,
                 "clan_name": clan_name,

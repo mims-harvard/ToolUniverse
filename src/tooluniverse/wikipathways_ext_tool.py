@@ -94,6 +94,7 @@ class WikiPathwaysExtTool(BaseTool):
         unique_genes = sorted(set(xrefs))
 
         return {
+            "status": "success",
             "data": {
                 "pathway_id": pathway_id,
                 "gene_count": len(unique_genes),
@@ -153,6 +154,7 @@ class WikiPathwaysExtTool(BaseTool):
                 )
 
         return {
+            "status": "success",
             "data": {
                 "gene": gene,
                 "total_pathways": len(unique_pathways),

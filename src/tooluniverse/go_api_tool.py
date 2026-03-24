@@ -97,6 +97,7 @@ class GOAPITool(BaseTool):
         ]
 
         return {
+            "status": "success",
             "data": {
                 "go_id": data.get("goid"),
                 "label": data.get("label"),
@@ -153,6 +154,7 @@ class GOAPITool(BaseTool):
             )
 
         return {
+            "status": "success",
             "data": associations,
             "metadata": {
                 "source": "Gene Ontology (GO)",
@@ -202,6 +204,7 @@ class GOAPITool(BaseTool):
             )
 
         return {
+            "status": "success",
             "data": genes,
             "metadata": {
                 "source": "Gene Ontology (GO)",

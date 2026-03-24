@@ -27,6 +27,7 @@ class ODPHPRESTTool(BaseTool):
             resp.raise_for_status()
             data = resp.json()
             return {
+                "status": "success",
                 "data": data.get("Result"),
                 "metadata": {
                     "source": "ODPHP MyHealthfinder",

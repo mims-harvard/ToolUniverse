@@ -118,6 +118,7 @@ class EnsemblRegulationTool(BaseTool):
             )
 
         return {
+            "status": "success",
             "data": {
                 "region": region,
                 "species": species,
@@ -170,6 +171,7 @@ class EnsemblRegulationTool(BaseTool):
         elements.sort(key=lambda x: x.get("score", 0), reverse=True)
 
         return {
+            "status": "success",
             "data": {
                 "region": region,
                 "species": species,
@@ -211,6 +213,7 @@ class EnsemblRegulationTool(BaseTool):
                 tfs.append(str(tf))
 
         return {
+            "status": "success",
             "data": {
                 "stable_id": raw.get("stable_id", matrix_id),
                 "name": raw.get("name"),

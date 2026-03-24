@@ -111,6 +111,7 @@ class HPOTool(BaseTool):
             ]
 
         return {
+            "status": "success",
             "data": result,
             "metadata": {
                 "source": "HPO (JAX Ontology)",
@@ -149,6 +150,7 @@ class HPOTool(BaseTool):
             )
 
         return {
+            "status": "success",
             "data": results,
             "metadata": {
                 "source": "HPO (JAX Ontology)",
@@ -187,6 +189,7 @@ class HPOTool(BaseTool):
                 )
 
         return {
+            "status": "success",
             "data": results,
             "metadata": {
                 "source": "HPO (JAX Ontology)",

@@ -107,6 +107,7 @@ class NCIThesaurusTool(BaseTool):
             )
 
         return {
+            "status": "success",
             "data": results,
             "metadata": {
                 "source": "NCI Thesaurus (NCIt)",
@@ -156,6 +157,7 @@ class NCIThesaurusTool(BaseTool):
             )
 
         return {
+            "status": "success",
             "data": {
                 "code": data.get("code", ""),
                 "name": data.get("name", ""),
@@ -192,6 +194,7 @@ class NCIThesaurusTool(BaseTool):
             )
 
         return {
+            "status": "success",
             "data": results,
             "metadata": {
                 "source": "NCI Thesaurus (NCIt)",

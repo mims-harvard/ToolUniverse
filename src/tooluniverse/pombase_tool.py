@@ -127,6 +127,7 @@ class PomBaseTool(BaseTool):
         }
 
         return {
+            "status": "success",
             "data": result,
             "metadata": {
                 "source": "PomBase",
@@ -180,6 +181,7 @@ class PomBaseTool(BaseTool):
         total_genes = len(all_genes) if isinstance(all_genes, list) else 0
 
         return {
+            "status": "success",
             "data": results,
             "metadata": {
                 "source": "PomBase",
@@ -246,6 +248,7 @@ class PomBaseTool(BaseTool):
         }
 
         return {
+            "status": "success",
             "data": result,
             "metadata": {
                 "source": "PomBase",

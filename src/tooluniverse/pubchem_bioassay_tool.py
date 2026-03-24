@@ -119,6 +119,7 @@ class PubChemBioAssayTool(BaseTool):
             result["comment"] = result["comment"][:3]
 
         return {
+            "status": "success",
             "data": result,
             "metadata": {
                 "source": "PubChem BioAssay",
@@ -177,6 +178,7 @@ class PubChemBioAssayTool(BaseTool):
                 results = [{"aid": a} for a in aids_truncated]
 
         return {
+            "status": "success",
             "data": {
                 "total_assays": len(aids_list),
                 "assays": results,
@@ -255,6 +257,7 @@ class PubChemBioAssayTool(BaseTool):
             result["description"] = desc[:3]
 
         return {
+            "status": "success",
             "data": result,
             "metadata": {
                 "source": "PubChem BioAssay",

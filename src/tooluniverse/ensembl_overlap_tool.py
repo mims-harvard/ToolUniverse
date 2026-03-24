@@ -141,6 +141,7 @@ class EnsemblOverlapTool(BaseTool):
         type_summary = {k: len(v) for k, v in by_type.items()}
 
         return {
+            "status": "success",
             "data": {
                 "region": region,
                 "species": species,
@@ -209,6 +210,7 @@ class EnsemblOverlapTool(BaseTool):
         type_summary = {k: len(v) for k, v in by_type.items()}
 
         return {
+            "status": "success",
             "data": {
                 "gene_id": gene_id,
                 "features": formatted_features,

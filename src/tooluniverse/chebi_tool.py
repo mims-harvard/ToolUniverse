@@ -148,6 +148,7 @@ class ChEBITool(BaseTool):
         }
 
         return {
+            "status": "success",
             "data": result,
             "metadata": {
                 "source": "ChEBI",
@@ -211,6 +212,7 @@ class ChEBITool(BaseTool):
         }
 
         return {
+            "status": "success",
             "data": result,
             "metadata": {
                 "source": "ChEBI",
@@ -261,6 +263,7 @@ class ChEBITool(BaseTool):
         }
 
         return {
+            "status": "success",
             "data": result,
             "metadata": {
                 "source": "ChEBI",

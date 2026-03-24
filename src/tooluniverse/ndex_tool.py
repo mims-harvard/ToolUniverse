@@ -107,6 +107,7 @@ class NDExTool(BaseTool):
             )
 
         return {
+            "status": "success",
             "data": networks,
             "metadata": {
                 "source": "NDEx (Network Data Exchange)",
@@ -133,6 +134,7 @@ class NDExTool(BaseTool):
             properties[p.get("predicateString", "")] = str(p.get("value", ""))[:300]
 
         return {
+            "status": "success",
             "data": {
                 "uuid": data.get("externalId"),
                 "name": data.get("name"),
@@ -197,6 +199,7 @@ class NDExTool(BaseTool):
         max_edges = 500
 
         return {
+            "status": "success",
             "data": {
                 "network_name": network_attrs.get("name", ""),
                 "nodes": nodes[:max_nodes],

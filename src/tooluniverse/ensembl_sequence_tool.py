@@ -103,6 +103,7 @@ class EnsemblSequenceTool(BaseTool):
 
         seq = data.get("seq", "")
         return {
+            "status": "success",
             "data": {
                 "species": species,
                 "region": region,
@@ -145,6 +146,7 @@ class EnsemblSequenceTool(BaseTool):
         molecule = data.get("molecule", "")
 
         return {
+            "status": "success",
             "data": {
                 "ensembl_id": data.get("id", ensembl_id),
                 "molecule": molecule,

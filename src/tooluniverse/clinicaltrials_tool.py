@@ -166,6 +166,7 @@ class CTGovAPITool(BaseRESTTool):
             )
 
         return {
+            "status": "success",
             "data": {
                 "studies": studies,
                 "total_count": data.get("totalCount"),
@@ -261,6 +262,7 @@ class CTGovAPITool(BaseRESTTool):
             )
 
         return {
+            "status": "success",
             "data": {
                 "nct_id": id_mod.get("nctId"),
                 "brief_title": id_mod.get("briefTitle"),
@@ -313,6 +315,7 @@ class CTGovAPITool(BaseRESTTool):
         data = resp.json()
 
         return {
+            "status": "success",
             "data": {
                 "total_studies": data.get("totalStudies") or data.get("studiesCount"),
                 "average_byte_size": data.get("averageByteSize"),
@@ -371,6 +374,7 @@ class CTGovAPITool(BaseRESTTool):
         ]
 
         return {
+            "status": "success",
             "data": {
                 "field": field_obj.get("piece"),
                 "field_path": field_obj.get("field"),

@@ -135,6 +135,7 @@ class EpiGraphDBTool(BaseRESTTool):
             )
 
         return {
+            "status": "success",
             "data": {
                 "mr_results": mr_results,
                 "total_count": len(results),
@@ -193,6 +194,7 @@ class EpiGraphDBTool(BaseRESTTool):
             )
 
         return {
+            "status": "success",
             "data": {
                 "correlations": cor_results,
                 "total_count": len(results),
@@ -249,6 +251,7 @@ class EpiGraphDBTool(BaseRESTTool):
         drug_list = sorted(seen_drugs.values(), key=lambda x: -x["evidence_count"])[:30]
 
         return {
+            "status": "success",
             "data": {
                 "drugs": drug_list,
                 "total_evidence_count": len(results),
@@ -304,6 +307,7 @@ class EpiGraphDBTool(BaseRESTTool):
         efo_list = list(seen_efo.values())
 
         return {
+            "status": "success",
             "data": {
                 "efo_mappings": efo_list,
                 "total_count": len(efo_list),
@@ -350,6 +354,7 @@ class EpiGraphDBTool(BaseRESTTool):
             )
 
         return {
+            "status": "success",
             "data": {
                 "disease_efo_mappings": mappings,
                 "total_count": len(results),
@@ -403,6 +408,7 @@ class EpiGraphDBTool(BaseRESTTool):
             )
 
         return {
+            "status": "success",
             "data": {
                 "genes": genes,
                 "total_found": len(genes),
@@ -453,6 +459,7 @@ class EpiGraphDBTool(BaseRESTTool):
             )
 
         return {
+            "status": "success",
             "data": {
                 "gene_drug_associations": drug_associations,
                 "total_count": len(drug_associations),
@@ -505,6 +512,7 @@ class EpiGraphDBTool(BaseRESTTool):
                 )
 
         return {
+            "status": "success",
             "data": {
                 "gwas_studies": studies,
                 "total_found": len(studies),

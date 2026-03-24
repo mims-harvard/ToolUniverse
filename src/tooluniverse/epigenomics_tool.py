@@ -148,6 +148,7 @@ class EpigenomicsTool(BaseTool):
                 raw = self._encode_search(fallback_params)
             except Exception:
                 return {
+                    "status": "success",
                     "data": [],
                     "metadata": {
                         "source": "ENCODE",
@@ -178,6 +179,7 @@ class EpigenomicsTool(BaseTool):
             )
 
         return {
+            "status": "success",
             "data": {
                 "total": raw.get("total", 0),
                 "experiments": experiments,
@@ -228,6 +230,7 @@ class EpigenomicsTool(BaseTool):
             )
 
         return {
+            "status": "success",
             "data": {
                 "total": raw.get("total", 0),
                 "experiments": experiments,
@@ -279,6 +282,7 @@ class EpigenomicsTool(BaseTool):
             )
 
         return {
+            "status": "success",
             "data": {
                 "total": raw.get("total", 0),
                 "experiments": experiments,
@@ -331,6 +335,7 @@ class EpigenomicsTool(BaseTool):
             )
 
         return {
+            "status": "success",
             "data": {
                 "total": raw.get("total", 0),
                 "annotations": annotations,
@@ -379,6 +384,7 @@ class EpigenomicsTool(BaseTool):
             )
 
         return {
+            "status": "success",
             "data": {
                 "total": raw.get("total", 0),
                 "annotations": annotations,
@@ -465,6 +471,7 @@ class EpigenomicsTool(BaseTool):
                 )
 
         return {
+            "status": "success",
             "data": {
                 "total": total,
                 "datasets": datasets,
@@ -518,6 +525,7 @@ class EpigenomicsTool(BaseTool):
                 )
 
         return {
+            "status": "success",
             "data": {
                 "total": total,
                 "datasets": datasets,
@@ -558,6 +566,7 @@ class EpigenomicsTool(BaseTool):
             supp_data.append(suppfile)
 
         return {
+            "status": "success",
             "data": {
                 "accession": uid_data.get("accession", ""),
                 "title": uid_data.get("title", ""),
@@ -623,6 +632,7 @@ class EpigenomicsTool(BaseTool):
             )
 
         return {
+            "status": "success",
             "data": {
                 "species": species,
                 "region": f"{chrom}:{start}-{end}",
@@ -732,6 +742,7 @@ class UCSCEpigenomicsTool(BaseTool):
             )
 
         return {
+            "status": "success",
             "data": {
                 "genome": genome,
                 "region": f"{chrom}:{start}-{end}",
@@ -780,6 +791,7 @@ class UCSCEpigenomicsTool(BaseTool):
             )
 
         return {
+            "status": "success",
             "data": {
                 "genome": genome,
                 "region": f"{chrom}:{start}-{end}",
@@ -825,6 +837,7 @@ class UCSCEpigenomicsTool(BaseTool):
             )
 
         return {
+            "status": "success",
             "data": {
                 "genome": genome,
                 "region": f"{chrom}:{start}-{end}",

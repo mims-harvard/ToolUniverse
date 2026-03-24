@@ -108,6 +108,7 @@ class UniChemTool(BaseTool):
         compounds = raw.get("compounds", [])
         if not compounds:
             return {
+                "status": "success",
                 "data": {
                     "inchi": None,
                     "inchikey": None,
@@ -158,6 +159,7 @@ class UniChemTool(BaseTool):
         }
 
         return {
+            "status": "success",
             "data": result,
             "metadata": {
                 "source": "UniChem",
@@ -197,6 +199,7 @@ class UniChemTool(BaseTool):
         }
 
         return {
+            "status": "success",
             "data": result,
             "metadata": {
                 "source": "UniChem",

@@ -262,6 +262,7 @@ class ProteinsPlusRESTTool(AsyncPollingTool):
     def format_result(self, result: Any) -> Dict[str, Any]:
         """Format ProteinsPlus results into standard response format."""
         return {
+            "status": "success",
             "data": result,
             "metadata": {
                 "source": "ProteinsPlus",
@@ -349,6 +350,7 @@ class ProteinsPlusRESTTool(AsyncPollingTool):
 
             data = response.json()
             return {
+                "status": "success",
                 "data": data,
                 "metadata": {
                     "source": "ProteinsPlus",

@@ -123,6 +123,7 @@ class EBIProteinsInteractionsTool(BaseTool):
         truncated = unique_interactions[:limit]
 
         return {
+            "status": "success",
             "data": {
                 "query_accession": accession,
                 "interactions": truncated,
@@ -223,6 +224,7 @@ class EBIProteinsInteractionsTool(BaseTool):
         )[:50]
 
         return {
+            "status": "success",
             "data": {
                 "query_accession": accession,
                 "protein_name": protein_name,

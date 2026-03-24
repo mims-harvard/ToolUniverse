@@ -162,6 +162,7 @@ class QuickGOTool(BaseTool):
                 pass  # Best-effort; don't fail if name resolution fails
 
         return {
+            "status": "success",
             "data": annotations,
             "metadata": {
                 "source": "QuickGO",
@@ -212,6 +213,7 @@ class QuickGOTool(BaseTool):
             )
 
         return {
+            "status": "success",
             "data": annotations,
             "metadata": {
                 "source": "QuickGO",
@@ -237,6 +239,7 @@ class QuickGOTool(BaseTool):
 
         if not results:
             return {
+                "status": "success",
                 "data": {},
                 "metadata": {
                     "source": "QuickGO",
@@ -287,6 +290,7 @@ class QuickGOTool(BaseTool):
         }
 
         return {
+            "status": "success",
             "data": result,
             "metadata": {
                 "source": "QuickGO",
@@ -322,6 +326,7 @@ class QuickGOTool(BaseTool):
                 )
 
         return {
+            "status": "success",
             "data": children,
             "metadata": {
                 "source": "QuickGO",

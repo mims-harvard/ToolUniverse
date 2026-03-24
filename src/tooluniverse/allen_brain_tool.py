@@ -118,6 +118,7 @@ class AllenBrainTool(BaseTool):
 
         records = result.get("msg", [])
         return {
+            "status": "success",
             "data": records,
             "metadata": {
                 "total_results": result.get("total_rows", len(records)),
@@ -146,6 +147,7 @@ class AllenBrainTool(BaseTool):
 
         records = result.get("msg", [])
         return {
+            "status": "success",
             "data": records,
             "metadata": {
                 "total_results": result.get("total_rows", len(records)),
@@ -176,6 +178,7 @@ class AllenBrainTool(BaseTool):
 
         records = result.get("msg", [])
         return {
+            "status": "success",
             "data": records,
             "metadata": {
                 "total_results": result.get("total_rows", len(records)),
@@ -204,6 +207,7 @@ class AllenBrainTool(BaseTool):
             }
 
         return {
+            "status": "success",
             "data": records[0],
             "metadata": {"total_results": 1},
         }

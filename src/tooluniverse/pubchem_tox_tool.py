@@ -163,6 +163,7 @@ class PubChemToxTool(BaseTool):
         ghs_info = self._extract_info_from_sections(sections, "GHS Classification")
 
         return {
+            "status": "success",
             "data": {
                 "cid": cid,
                 "compound_name": title,
@@ -189,6 +190,7 @@ class PubChemToxTool(BaseTool):
         tox_values = [item["value"] for item in raw_info if item.get("value")]
 
         return {
+            "status": "success",
             "data": {
                 "cid": cid,
                 "compound_name": title,
@@ -226,6 +228,7 @@ class PubChemToxTool(BaseTool):
                 )
 
         return {
+            "status": "success",
             "data": {
                 "cid": cid,
                 "compound_name": title,
@@ -251,6 +254,7 @@ class PubChemToxTool(BaseTool):
         target_organs = [item["value"] for item in raw_info if item.get("value")]
 
         return {
+            "status": "success",
             "data": {
                 "cid": cid,
                 "compound_name": title,
@@ -302,6 +306,7 @@ class PubChemToxTool(BaseTool):
                 continue
 
         return {
+            "status": "success",
             "data": {
                 "cid": cid,
                 "compound_name": title,
@@ -358,6 +363,7 @@ class PubChemToxTool(BaseTool):
                     )
 
         return {
+            "status": "success",
             "data": {
                 "cid": cid,
                 "compound_name": title,

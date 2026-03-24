@@ -101,6 +101,7 @@ class KEGGExtTool(BaseTool):
 
         if not pathways:
             return {
+                "status": "success",
                 "data": {
                     "gene_id": gene_id,
                     "pathway_count": 0,
@@ -138,6 +139,7 @@ class KEGGExtTool(BaseTool):
                 pd["pathway_name"] = name
 
         return {
+            "status": "success",
             "data": {
                 "gene_id": gene_id,
                 "pathway_count": len(pathway_details),
@@ -197,6 +199,7 @@ class KEGGExtTool(BaseTool):
                     break
 
         return {
+            "status": "success",
             "data": {
                 "pathway_id": pathway_id,
                 "pathway_name": pw_name,
@@ -307,6 +310,7 @@ class KEGGExtTool(BaseTool):
                 current_field = None
 
         return {
+            "status": "success",
             "data": result,
             "metadata": {
                 "source": "KEGG REST API",
@@ -340,6 +344,7 @@ class KEGGExtTool(BaseTool):
                     )
 
         return {
+            "status": "success",
             "data": {
                 "hierarchy_count": len(hierarchies),
                 "hierarchies": hierarchies,
@@ -372,6 +377,7 @@ class KEGGExtTool(BaseTool):
         tree = response.json()
 
         return {
+            "status": "success",
             "data": tree,
             "metadata": {
                 "source": "KEGG BRITE",

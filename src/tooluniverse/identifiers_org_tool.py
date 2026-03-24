@@ -99,6 +99,7 @@ class IdentifiersOrgTool(BaseRESTTool):
             )
 
         return {
+            "status": "success",
             "data": {
                 "compact_id": compact_id,
                 "namespace": parsed.get("namespace"),
@@ -127,6 +128,7 @@ class IdentifiersOrgTool(BaseRESTTool):
         data = resp.json()
 
         return {
+            "status": "success",
             "data": data,
             "metadata": {
                 "prefix": prefix,
@@ -169,6 +171,7 @@ class IdentifiersOrgTool(BaseRESTTool):
             )
 
         return {
+            "status": "success",
             "data": {
                 "namespaces": ns_list,
                 "total_elements": page_info.get("totalElements"),
@@ -207,6 +210,7 @@ class IdentifiersOrgTool(BaseRESTTool):
         ]
 
         return {
+            "status": "success",
             "data": {
                 "namespaces": ns_list,
                 "total_elements": page_info.get("totalElements"),

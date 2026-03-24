@@ -160,11 +160,13 @@ class BVBRCTool(BaseTool):
 
         if not data:
             return {
+                "status": "success",
                 "data": {},
                 "metadata": {"source": "BV-BRC", "query_genome_id": genome_id},
             }
 
         return {
+            "status": "success",
             "data": data[0] if isinstance(data, list) else data,
             "metadata": {"source": "BV-BRC", "query_genome_id": genome_id},
         }
@@ -200,6 +202,7 @@ class BVBRCTool(BaseTool):
 
         results = data if isinstance(data, list) else [data] if data else []
         return {
+            "status": "success",
             "data": results,
             "metadata": {
                 "source": "BV-BRC",
@@ -252,6 +255,7 @@ class BVBRCTool(BaseTool):
 
         results = data if isinstance(data, list) else [data] if data else []
         return {
+            "status": "success",
             "data": results,
             "metadata": {
                 "source": "BV-BRC",
@@ -308,6 +312,7 @@ class BVBRCTool(BaseTool):
 
         results = data if isinstance(data, list) else [data] if data else []
         return {
+            "status": "success",
             "data": results,
             "metadata": {
                 "source": "BV-BRC",
@@ -364,6 +369,7 @@ class BVBRCTool(BaseTool):
 
         results = data if isinstance(data, list) else [data] if data else []
         return {
+            "status": "success",
             "data": results,
             "metadata": {
                 "source": "BV-BRC",
@@ -417,6 +423,7 @@ class BVBRCTool(BaseTool):
 
         results = data if isinstance(data, list) else [data] if data else []
         return {
+            "status": "success",
             "data": results,
             "metadata": {
                 "source": "BV-BRC",
@@ -474,6 +481,7 @@ class BVBRCTool(BaseTool):
 
         results = data if isinstance(data, list) else [data] if data else []
         return {
+            "status": "success",
             "data": results,
             "metadata": {
                 "source": "BV-BRC",
@@ -497,11 +505,13 @@ class BVBRCTool(BaseTool):
 
         if not data:
             return {
+                "status": "success",
                 "data": {},
                 "metadata": {"source": "BV-BRC", "query_pdb_id": pdb_id},
             }
 
         return {
+            "status": "success",
             "data": data,
             "metadata": {"source": "BV-BRC", "query_pdb_id": pdb_id},
         }
@@ -548,6 +558,7 @@ class BVBRCTool(BaseTool):
 
         results = data if isinstance(data, list) else [data] if data else []
         return {
+            "status": "success",
             "data": results,
             "metadata": {
                 "source": "BV-BRC",
@@ -571,11 +582,13 @@ class BVBRCTool(BaseTool):
 
         if not data:
             return {
+                "status": "success",
                 "data": {},
                 "metadata": {"source": "BV-BRC", "query_taxon_id": str(taxon_id)},
             }
 
         return {
+            "status": "success",
             "data": data,
             "metadata": {"source": "BV-BRC", "query_taxon_id": str(taxon_id)},
         }
@@ -606,6 +619,7 @@ class BVBRCTool(BaseTool):
 
         results = data if isinstance(data, list) else [data] if data else []
         return {
+            "status": "success",
             "data": results,
             "metadata": {
                 "source": "BV-BRC",
@@ -658,6 +672,7 @@ class BVBRCTool(BaseTool):
 
         results = data if isinstance(data, list) else [data] if data else []
         return {
+            "status": "success",
             "data": results,
             "metadata": {
                 "source": "BV-BRC",
@@ -717,6 +732,7 @@ class BVBRCTool(BaseTool):
 
         results = data if isinstance(data, list) else [data] if data else []
         return {
+            "status": "success",
             "data": results,
             "metadata": {
                 "source": "BV-BRC",

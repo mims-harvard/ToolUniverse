@@ -105,6 +105,7 @@ class STRINGExtTool(BaseTool):
         top_annotations = {cat: items[:15] for cat, items in by_category.items()}
 
         return {
+            "status": "success",
             "data": {
                 "identifiers": identifiers,
                 "species": species,
@@ -144,6 +145,7 @@ class STRINGExtTool(BaseTool):
         data = response.json()
 
         return {
+            "status": "success",
             "data": {
                 "identifiers": identifiers,
                 "species": species,

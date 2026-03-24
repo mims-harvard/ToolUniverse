@@ -117,6 +117,7 @@ class UCSCGenomeTool(BaseTool):
         }
 
         return {
+            "status": "success",
             "data": result,
             "metadata": {
                 "source": "UCSC Genome Browser",
@@ -164,6 +165,7 @@ class UCSCGenomeTool(BaseTool):
         }
 
         return {
+            "status": "success",
             "data": result,
             "metadata": {
                 "source": "UCSC Genome Browser",
@@ -216,6 +218,7 @@ class UCSCGenomeTool(BaseTool):
         }
 
         return {
+            "status": "success",
             "data": result,
             "metadata": {
                 "source": "UCSC Genome Browser",

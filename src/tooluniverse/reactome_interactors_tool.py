@@ -93,6 +93,7 @@ class ReactomeInteractorsTool(BaseTool):
         entities = data.get("entities", [])
         if not entities:
             return {
+                "status": "success",
                 "data": {"accession": accession, "interactors": [], "total": 0},
                 "metadata": {"source": "Reactome Interactors (IntAct)"},
             }
@@ -113,6 +114,7 @@ class ReactomeInteractorsTool(BaseTool):
         interactors.sort(key=lambda x: x.get("score") or 0, reverse=True)
 
         return {
+            "status": "success",
             "data": {
                 "accession": entity.get("acc"),
                 "total_interactors": entity.get("count"),
@@ -156,6 +158,7 @@ class ReactomeInteractorsTool(BaseTool):
                 )
 
         return {
+            "status": "success",
             "data": pathways,
             "metadata": {
                 "source": "Reactome Content Service",
@@ -209,6 +212,7 @@ class ReactomeInteractorsTool(BaseTool):
                 )
 
         return {
+            "status": "success",
             "data": results[:50],
             "metadata": {
                 "source": "Reactome Content Service",

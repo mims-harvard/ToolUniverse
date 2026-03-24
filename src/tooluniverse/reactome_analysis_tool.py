@@ -191,6 +191,7 @@ class ReactomeAnalysisTool(BaseTool):
             )
 
         return {
+            "status": "success",
             "data": {
                 "token": summary.get("token"),
                 "analysis_type": summary.get("type"),

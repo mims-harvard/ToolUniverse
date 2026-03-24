@@ -204,6 +204,7 @@ class PROSITETool(BaseTool):
             }
 
         return {
+            "status": "success",
             "data": entry,
             "metadata": {
                 "source": "PROSITE (ExPASy/SIB)",
@@ -259,6 +260,7 @@ class PROSITETool(BaseTool):
                 )
 
         return {
+            "status": "success",
             "data": results,
             "metadata": {
                 "source": "PROSITE via InterPro API (EBI)",
@@ -313,6 +315,7 @@ class PROSITETool(BaseTool):
             )
 
         return {
+            "status": "success",
             "data": matches,
             "metadata": {
                 "source": "ScanProsite (ExPASy/SIB)",

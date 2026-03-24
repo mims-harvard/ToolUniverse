@@ -156,6 +156,7 @@ class PANTHERTool(BaseTool):
         }
 
         return {
+            "status": "success",
             "data": result,
             "metadata": {
                 "source": "PANTHER",
@@ -242,6 +243,7 @@ class PANTHERTool(BaseTool):
         }
 
         return {
+            "status": "success",
             "data": result,
             "metadata": {
                 "source": "PANTHER",
@@ -314,6 +316,7 @@ class PANTHERTool(BaseTool):
         }
 
         return {
+            "status": "success",
             "data": result,
             "metadata": {
                 "source": "PANTHER",

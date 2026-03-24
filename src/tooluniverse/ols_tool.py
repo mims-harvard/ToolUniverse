@@ -274,6 +274,7 @@ class OLSTool(BaseTool):
             page_info = {}
 
         return {
+            "status": "success",
             "results": validated or ontologies,
             "pagination": {
                 "page": page_info.get("number", page),

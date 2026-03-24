@@ -103,6 +103,7 @@ class UniRefTool(BaseTool):
         common_taxon = data.get("commonTaxon") or {}
 
         return {
+            "status": "success",
             "data": {
                 "cluster_id": data.get("id"),
                 "name": data.get("name"),
@@ -186,6 +187,7 @@ class UniRefTool(BaseTool):
             )
 
         return {
+            "status": "success",
             "data": results,
             "metadata": {
                 "source": "UniProt UniRef",

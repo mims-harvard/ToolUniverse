@@ -75,6 +75,7 @@ class NHANESTool(BaseTool):
                     )
 
         return {
+            "status": "success",
             "data": {
                 "datasets": datasets[:20],  # Limit results
                 "note": "NHANES data is available as downloadable files (SAS, XPT formats) from the CDC website. Visit the download URLs to access datasets. Files may require SAS or conversion tools to read.",
@@ -123,6 +124,7 @@ class NHANESTool(BaseTool):
                     break
 
         return {
+            "status": "success",
             "data": {
                 "datasets": datasets,
                 "note": "NHANES datasets are available for download from the CDC website. Use the download URLs to access data files.",

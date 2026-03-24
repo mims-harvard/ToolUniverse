@@ -98,12 +98,14 @@ class NCBIDatasetsTool(BaseTool):
         reports = result.get("reports", [])
         if not reports:
             return {
+                "status": "success",
                 "data": {},
                 "metadata": {"total_results": 0, "query_gene_id": str(gene_id)},
             }
 
         gene_data = reports[0].get("gene", {})
         return {
+            "status": "success",
             "data": {
                 "gene_id": gene_data.get("gene_id"),
                 "symbol": gene_data.get("symbol"),
@@ -145,6 +147,7 @@ class NCBIDatasetsTool(BaseTool):
         reports = result.get("reports", [])
         if not reports:
             return {
+                "status": "success",
                 "data": [],
                 "metadata": {
                     "total_results": 0,
@@ -172,6 +175,7 @@ class NCBIDatasetsTool(BaseTool):
             )
 
         return {
+            "status": "success",
             "data": genes,
             "metadata": {
                 "total_results": len(genes),
@@ -218,6 +222,7 @@ class NCBIDatasetsTool(BaseTool):
             )
 
         return {
+            "status": "success",
             "data": orthologs,
             "metadata": {
                 "total_results": len(orthologs),
@@ -242,12 +247,14 @@ class NCBIDatasetsTool(BaseTool):
         nodes = result.get("taxonomy_nodes", [])
         if not nodes:
             return {
+                "status": "success",
                 "data": {},
                 "metadata": {"total_results": 0, "query_tax_id": str(tax_id)},
             }
 
         tax_data = nodes[0].get("taxonomy", {})
         return {
+            "status": "success",
             "data": {
                 "tax_id": tax_data.get("tax_id"),
                 "organism_name": tax_data.get("organism_name"),
@@ -293,6 +300,7 @@ class NCBIDatasetsTool(BaseTool):
             )
 
         return {
+            "status": "success",
             "data": items,
             "metadata": {
                 "total_results": len(items),

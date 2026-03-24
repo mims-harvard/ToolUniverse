@@ -117,6 +117,7 @@ class BgeeTool(BaseTool):
             )
 
         return {
+            "status": "success",
             "data": results,
             "metadata": {
                 "source": "Bgee",
@@ -187,6 +188,7 @@ class BgeeTool(BaseTool):
             results.append(entry)
 
         return {
+            "status": "success",
             "data": results,
             "metadata": {
                 "source": "Bgee",
@@ -231,6 +233,7 @@ class BgeeTool(BaseTool):
             )
 
         return {
+            "status": "success",
             "data": results,
             "metadata": {
                 "source": "Bgee",

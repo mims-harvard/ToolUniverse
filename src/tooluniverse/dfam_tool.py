@@ -111,6 +111,7 @@ class DfamTool(BaseTool):
             )
 
         return {
+            "status": "success",
             "data": families,
             "metadata": {
                 "source": "Dfam (dfam.org)",
@@ -144,6 +145,7 @@ class DfamTool(BaseTool):
             )
 
         return {
+            "status": "success",
             "data": {
                 "accession": data.get("accession"),
                 "name": data.get("name"),
@@ -216,6 +218,7 @@ class DfamTool(BaseTool):
             )
 
         return {
+            "status": "success",
             "data": annotations,
             "metadata": {
                 "source": "Dfam (dfam.org)",

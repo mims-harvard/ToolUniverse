@@ -131,6 +131,7 @@ class GNPSTool(BaseTool):
         }
 
         return {
+            "status": "success",
             "data": result,
             "metadata": {
                 "source": "GNPS Metabolomics USI",
@@ -190,6 +191,7 @@ class GNPSTool(BaseTool):
         }
 
         return {
+            "status": "success",
             "data": result,
             "metadata": {
                 "source": "GNPS Metabolomics USI",

@@ -139,6 +139,7 @@ class WHOGHORESTTool(BaseTool):
             resp.raise_for_status()
             data = resp.json()
             return {
+                "status": "success",
                 "data": data,
                 "metadata": {
                     "source": "WHO Global Health Observatory",
@@ -482,6 +483,7 @@ class WHOGHOQueryTool(WHOGHORESTTool):
 
         # Return best match (first result)
         return {
+            "status": "success",
             "data": results[0] if len(results) == 1 else results,
             "metadata": {
                 "source": "WHO Global Health Observatory",
@@ -546,6 +548,7 @@ class WHOGHOTopicTool(WHOGHORESTTool):
             )
 
         return {
+            "status": "success",
             "data": {
                 "indicators": result_indicators,
                 "topic": topic,
@@ -682,6 +685,7 @@ class WHOGHOStatisticTool(WHOGHORESTTool):
         )
 
         return {
+            "status": "success",
             "data": formatted,
             "metadata": {
                 "source": "WHO Global Health Observatory",

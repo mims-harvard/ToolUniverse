@@ -133,6 +133,7 @@ class EOLTool(BaseTool):
             )
 
         return {
+            "status": "success",
             "data": results,
             "metadata": {
                 "source": "Encyclopedia of Life",
@@ -232,6 +233,7 @@ class EOLTool(BaseTool):
             )
 
         return {
+            "status": "success",
             "data": {
                 "page_id": tc.get("identifier"),
                 "scientific_name": tc.get("scientificName"),
@@ -299,6 +301,7 @@ class EOLTool(BaseTool):
             )
 
         return {
+            "status": "success",
             "data": {
                 "taxon_id": data.get("taxonID"),
                 "scientific_name": data.get("scientificName"),
@@ -352,6 +355,7 @@ class EOLTool(BaseTool):
             )
 
         return {
+            "status": "success",
             "data": {
                 "name": data.get("name"),
                 "description": data.get("description"),

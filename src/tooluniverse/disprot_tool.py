@@ -110,6 +110,7 @@ class DisProtTool(BaseTool):
             )
 
         return {
+            "status": "success",
             "data": entries,
             "metadata": {
                 "source": "DisProt (disprot.org)",
@@ -174,6 +175,7 @@ class DisProtTool(BaseTool):
         gene_name = genes[0].get("name", {}).get("value", "") if genes else ""
 
         return {
+            "status": "success",
             "data": {
                 "disprot_id": data.get("disprot_id"),
                 "acc": data.get("acc"),

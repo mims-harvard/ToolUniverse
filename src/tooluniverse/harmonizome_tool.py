@@ -98,6 +98,7 @@ class HarmonizomeTool(BaseTool):
             )
 
         return {
+            "status": "success",
             "data": {
                 "symbol": data.get("symbol"),
                 "name": data.get("name"),
@@ -130,6 +131,7 @@ class HarmonizomeTool(BaseTool):
             )
 
         return {
+            "status": "success",
             "data": datasets,
             "metadata": {
                 "source": "Harmonizome (maayanlab.cloud/Harmonizome)",

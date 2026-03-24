@@ -166,6 +166,7 @@ class ProteomeXchangeTool(BaseTool):
         }
 
         return {
+            "status": "success",
             "data": result,
             "metadata": {
                 "source": "ProteomeXchange",
@@ -213,6 +214,7 @@ class ProteomeXchangeTool(BaseTool):
             )
 
         return {
+            "status": "success",
             "data": datasets,
             "metadata": {
                 "source": "ProteomeXchange/ProteomeCentral",

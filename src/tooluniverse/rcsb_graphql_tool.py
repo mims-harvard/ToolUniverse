@@ -147,6 +147,7 @@ class RCSBGraphQLTool(BaseTool):
         entries = result.get("data", {}).get("entries", [])
         if not entries:
             return {
+                "status": "success",
                 "data": [],
                 "metadata": {
                     "source": "RCSB PDB GraphQL Data API",
@@ -192,6 +193,7 @@ class RCSBGraphQLTool(BaseTool):
             )
 
         return {
+            "status": "success",
             "data": structures,
             "metadata": {
                 "source": "RCSB PDB GraphQL Data API",
@@ -268,6 +270,7 @@ class RCSBGraphQLTool(BaseTool):
             )
 
         return {
+            "status": "success",
             "data": {
                 "comp_id": basic.get("id"),
                 "name": basic.get("name"),
@@ -336,6 +339,7 @@ class RCSBGraphQLTool(BaseTool):
         entities = result.get("data", {}).get("polymer_entities", [])
         if not entities:
             return {
+                "status": "success",
                 "data": [],
                 "metadata": {
                     "source": "RCSB PDB GraphQL Data API",
@@ -389,6 +393,7 @@ class RCSBGraphQLTool(BaseTool):
             )
 
         return {
+            "status": "success",
             "data": polymer_list,
             "metadata": {
                 "source": "RCSB PDB GraphQL Data API",

@@ -118,6 +118,7 @@ class EnsemblVariationExtTool(BaseTool):
         unique_pops = set(p.get("population", "") for p in populations)
 
         return {
+            "status": "success",
             "data": {
                 "variant_id": data.get("name"),
                 "most_severe_consequence": data.get("most_severe_consequence"),
@@ -170,6 +171,7 @@ class EnsemblVariationExtTool(BaseTool):
         synonyms = data.get("synonyms", [])
 
         return {
+            "status": "success",
             "data": {
                 "name": data.get("name"),
                 "source": data.get("source"),

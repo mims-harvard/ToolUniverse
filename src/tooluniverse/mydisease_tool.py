@@ -193,6 +193,7 @@ class MyDiseaseTool(BaseTool):
             result["disgenet"] = data["disgenet"]
 
         return {
+            "status": "success",
             "data": result,
             "metadata": {
                 "source": "MyDisease.info (BioThings)",
@@ -250,6 +251,7 @@ class MyDiseaseTool(BaseTool):
             diseases.append(entry)
 
         return {
+            "status": "success",
             "data": {
                 "total_hits": data.get("total", 0),
                 "returned": len(diseases),

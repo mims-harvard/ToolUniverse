@@ -119,6 +119,7 @@ class ICDTool(BaseTool):
             resp = requests.get(url, headers=headers, params=params, timeout=30)
             resp.raise_for_status()
             return {
+                "status": "success",
                 "data": resp.json(),
                 "metadata": {
                     "source": "WHO ICD-11 API",
@@ -186,6 +187,7 @@ class ICD10Tool(BaseTool):
                         formatted_results.append({"code": item[0], "name": item[1]})
 
                 return {
+                    "status": "success",
                     "data": {"total": total, "results": formatted_results},
                     "metadata": {
                         "source": "NLM Clinical Tables - ICD-10-CM",
@@ -197,6 +199,7 @@ class ICD10Tool(BaseTool):
 
             # Direct code lookup
             return {
+                "status": "success",
                 "data": data,
                 "metadata": {
                     "source": "NLM Clinical Tables - ICD-10-CM",

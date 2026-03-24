@@ -116,6 +116,7 @@ class DiseaseOntologyTool(BaseTool):
             synonyms.append(s)
 
         return {
+            "status": "success",
             "data": {
                 "id": data.get("id"),
                 "name": data.get("name"),
@@ -173,6 +174,7 @@ class DiseaseOntologyTool(BaseTool):
                     )
 
         return {
+            "status": "success",
             "data": {
                 "id": data.get("id"),
                 "name": data.get("name"),

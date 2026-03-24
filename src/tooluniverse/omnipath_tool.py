@@ -169,6 +169,7 @@ class OmniPathTool(BaseTool):
         interactions.sort(key=lambda x: x.get("curation_effort") or 0, reverse=True)
 
         return {
+            "status": "success",
             "data": interactions,
             "metadata": {
                 "source": "OmniPath (omnipathdb.org)",
@@ -227,6 +228,7 @@ class OmniPathTool(BaseTool):
             )
 
         return {
+            "status": "success",
             "data": results,
             "metadata": {
                 "source": "OmniPath Intercell (omnipathdb.org)",
@@ -296,6 +298,7 @@ class OmniPathTool(BaseTool):
         interactions.sort(key=lambda x: x.get("curation_effort") or 0, reverse=True)
 
         return {
+            "status": "success",
             "data": interactions,
             "metadata": {
                 "source": "OmniPath (omnipathdb.org)",
@@ -340,6 +343,7 @@ class OmniPathTool(BaseTool):
             )
 
         return {
+            "status": "success",
             "data": complexes,
             "metadata": {
                 "source": "OmniPath Complexes (omnipathdb.org)",
@@ -388,6 +392,7 @@ class OmniPathTool(BaseTool):
             )
 
         return {
+            "status": "success",
             "data": annotations,
             "metadata": {
                 "source": "OmniPath Annotations (omnipathdb.org)",
@@ -444,6 +449,7 @@ class OmniPathTool(BaseTool):
             )
 
         return {
+            "status": "success",
             "data": results,
             "metadata": {
                 "source": "OmniPath Enzyme-Substrate (omnipathdb.org)",
@@ -509,6 +515,7 @@ class OmniPathTool(BaseTool):
         interactions.sort(key=lambda x: x.get("curation_effort") or 0, reverse=True)
 
         return {
+            "status": "success",
             "data": interactions,
             "metadata": {
                 "source": "OmniPath DoRothEA + CollecTRI (omnipathdb.org)",
@@ -575,6 +582,7 @@ class OmniPathTool(BaseTool):
             by_level.setdefault(lvl, []).append(i)
 
         return {
+            "status": "success",
             "data": interactions,
             "metadata": {
                 "source": "OmniPath DoRothEA (omnipathdb.org)",

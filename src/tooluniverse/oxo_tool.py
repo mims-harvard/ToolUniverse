@@ -88,6 +88,7 @@ class OxOTool(BaseTool):
 
         if not search_results:
             return {
+                "status": "success",
                 "data": {
                     "query_id": term_id,
                     "query_label": None,
@@ -118,6 +119,7 @@ class OxOTool(BaseTool):
             )
 
         return {
+            "status": "success",
             "data": {
                 "query_id": result.get("queryId", term_id),
                 "query_label": query_source.get("label")
@@ -190,6 +192,7 @@ class OxOTool(BaseTool):
             )
 
         return {
+            "status": "success",
             "data": {
                 "queries": len(term_ids),
                 "results": all_results,

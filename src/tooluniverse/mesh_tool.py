@@ -114,6 +114,7 @@ class MeSHTool(BaseTool):
             )
 
         return {
+            "status": "success",
             "data": results,
             "metadata": {
                 "source": "NLM MeSH",
@@ -192,6 +193,7 @@ class MeSHTool(BaseTool):
         }
 
         return {
+            "status": "success",
             "data": result,
             "metadata": {
                 "source": "NLM MeSH",
@@ -237,6 +239,7 @@ class MeSHTool(BaseTool):
             )
 
         return {
+            "status": "success",
             "data": results,
             "metadata": {
                 "source": "NLM MeSH",

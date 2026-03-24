@@ -103,6 +103,7 @@ class EnsemblArchiveTool(BaseTool):
         }
 
         return {
+            "status": "success",
             "data": result,
             "metadata": {
                 "source": "Ensembl Archive",
@@ -155,6 +156,7 @@ class EnsemblArchiveTool(BaseTool):
                 )
 
         return {
+            "status": "success",
             "data": {
                 "queried_ids": len(ids),
                 "found": len(results),

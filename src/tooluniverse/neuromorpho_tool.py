@@ -99,6 +99,7 @@ class NeuroMorphoTool(BaseTool):
         data = response.json()
 
         return {
+            "status": "success",
             "data": data,
             "metadata": {"total_results": 1},
         }
@@ -137,6 +138,7 @@ class NeuroMorphoTool(BaseTool):
         page_info = data.get("page", {})
 
         return {
+            "status": "success",
             "data": neurons,
             "metadata": {
                 "total_results": page_info.get("totalElements", len(neurons)),
@@ -166,6 +168,7 @@ class NeuroMorphoTool(BaseTool):
         data = response.json()
 
         return {
+            "status": "success",
             "data": data,
             "metadata": {"total_results": 1},
         }
@@ -187,6 +190,7 @@ class NeuroMorphoTool(BaseTool):
         page_info = data.get("page", {})
 
         return {
+            "status": "success",
             "data": fields,
             "metadata": {
                 "field_name": field_name,

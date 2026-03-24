@@ -108,6 +108,7 @@ class ClinGenARTool(BaseTool):
             )
 
         return {
+            "status": "success",
             "data": {
                 "allele_id": allele_id,
                 "allele_url": allele_url,
@@ -156,6 +157,7 @@ class ClinGenARTool(BaseTool):
                 databases[db_name] = db_entries
 
         return {
+            "status": "success",
             "data": {
                 "allele_id": allele_id,
                 "community_standard_title": title,

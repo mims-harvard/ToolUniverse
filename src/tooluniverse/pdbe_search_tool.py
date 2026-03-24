@@ -117,6 +117,7 @@ class PDBeSearchTool(BaseTool):
             structures.append(entry)
 
         return {
+            "status": "success",
             "data": structures,
             "metadata": {
                 "source": "PDBe Search",
@@ -178,6 +179,7 @@ class PDBeSearchTool(BaseTool):
         result["compound_id"] = compound_id
 
         return {
+            "status": "success",
             "data": result,
             "metadata": {
                 "source": "PDBe",
@@ -229,6 +231,7 @@ class PDBeSearchTool(BaseTool):
             structures.append(entry)
 
         return {
+            "status": "success",
             "data": structures,
             "metadata": {
                 "source": "PDBe Search",

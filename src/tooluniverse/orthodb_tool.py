@@ -119,6 +119,7 @@ class OrthoDBTool(BaseTool):
                 pass
 
         return {
+            "status": "success",
             "data": {
                 "query": query,
                 "groups": groups,
@@ -184,6 +185,7 @@ class OrthoDBTool(BaseTool):
             )
 
         return {
+            "status": "success",
             "data": {
                 "group_id": group_data.get("id"),
                 "name": group_data.get("name"),
@@ -251,6 +253,7 @@ class OrthoDBTool(BaseTool):
             organisms[org] = organisms.get(org, 0) + 1
 
         return {
+            "status": "success",
             "data": {
                 "group_id": group_id,
                 "orthologs": orthologs,

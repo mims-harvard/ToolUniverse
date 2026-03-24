@@ -123,6 +123,7 @@ class OpenTreeTool(BaseTool):
                 )
 
         return {
+            "status": "success",
             "data": results,
             "metadata": {
                 "source": "Open Tree of Life TNRS",
@@ -145,6 +146,7 @@ class OpenTreeTool(BaseTool):
         data = response.json()
 
         return {
+            "status": "success",
             "data": {
                 "ott_id": data.get("ott_id"),
                 "name": data.get("name"),
@@ -183,6 +185,7 @@ class OpenTreeTool(BaseTool):
         nearest_taxon = data.get("nearest_taxon", {})
 
         return {
+            "status": "success",
             "data": {
                 "mrca_name": nearest_taxon.get("name"),
                 "mrca_ott_id": nearest_taxon.get("ott_id"),
@@ -217,6 +220,7 @@ class OpenTreeTool(BaseTool):
         data = response.json()
 
         return {
+            "status": "success",
             "data": {
                 "newick": data.get("newick", ""),
                 "supporting_studies": data.get("supporting_studies", []),

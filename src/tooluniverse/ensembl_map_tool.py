@@ -97,6 +97,7 @@ class EnsemblMapTool(BaseTool):
         mappings = data.get("mappings", [])
 
         return {
+            "status": "success",
             "data": {
                 "mappings": [
                     {
@@ -145,6 +146,7 @@ class EnsemblMapTool(BaseTool):
         mappings = data.get("mappings", [])
 
         return {
+            "status": "success",
             "data": {
                 "mappings": [
                     {

@@ -148,6 +148,7 @@ class WormBaseTool(BaseTool):
         }
 
         return {
+            "status": "success",
             "data": result,
             "metadata": {
                 "source": "WormBase",
@@ -232,6 +233,7 @@ class WormBaseTool(BaseTool):
         }
 
         return {
+            "status": "success",
             "data": result,
             "metadata": {
                 "source": "WormBase",
@@ -352,6 +354,7 @@ class WormBaseTool(BaseTool):
         }
 
         return {
+            "status": "success",
             "data": result,
             "metadata": {
                 "source": "WormBase",

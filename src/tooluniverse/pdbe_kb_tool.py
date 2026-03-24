@@ -99,6 +99,7 @@ class PDBe_KB_Tool(BaseTool):
 
         stats = data[acc]
         return {
+            "status": "success",
             "data": {
                 "uniprot_accession": acc,
                 "pdbs": stats.get("pdbs"),
@@ -158,6 +159,7 @@ class PDBe_KB_Tool(BaseTool):
             )
 
         return {
+            "status": "success",
             "data": {
                 "uniprot_accession": acc,
                 "protein_length": protein_data.get("length"),
@@ -210,6 +212,7 @@ class PDBe_KB_Tool(BaseTool):
             )
 
         return {
+            "status": "success",
             "data": {
                 "uniprot_accession": acc,
                 "protein_length": protein_data.get("length"),
@@ -283,6 +286,7 @@ class PDBe_KB_Tool(BaseTool):
             )
 
         return {
+            "status": "success",
             "data": {
                 "uniprot_accession": acc,
                 "segments": segments,

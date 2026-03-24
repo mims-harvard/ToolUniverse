@@ -173,6 +173,7 @@ class GenomeNexusTool(BaseTool):
             }
 
         return {
+            "status": "success",
             "data": {
                 "variant": data.get("variant"),
                 "hgvsg": data.get("hgvsg"),
@@ -244,6 +245,7 @@ class GenomeNexusTool(BaseTool):
                 )
 
         return {
+            "status": "success",
             "data": {
                 "variant": data.get("variant"),
                 "gene_symbol": gene_symbol,
@@ -282,6 +284,7 @@ class GenomeNexusTool(BaseTool):
             )
 
         return {
+            "status": "success",
             "data": {
                 "transcriptId": data.get("transcriptId"),
                 "geneId": data.get("geneId"),

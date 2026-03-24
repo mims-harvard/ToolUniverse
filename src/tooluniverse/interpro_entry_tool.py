@@ -112,6 +112,7 @@ class InterProEntryTool(BaseTool):
             )
 
         return {
+            "status": "success",
             "data": {
                 "protein_accession": accession,
                 "total_entries": data.get("count", len(entries)),
@@ -178,6 +179,7 @@ class InterProEntryTool(BaseTool):
             )
 
         return {
+            "status": "success",
             "data": {
                 "query": query,
                 "total_results": data.get("count", len(entries)),

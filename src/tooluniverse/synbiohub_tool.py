@@ -125,6 +125,7 @@ class SynBioHubTool(BaseTool):
             )
 
         return {
+            "status": "success",
             "data": results,
             "metadata": {
                 "source": "SynBioHub",
@@ -157,6 +158,7 @@ class SynBioHubTool(BaseTool):
             )
 
         return {
+            "status": "success",
             "data": collections,
             "metadata": {
                 "source": "SynBioHub",
@@ -250,6 +252,7 @@ class SynBioHubTool(BaseTool):
                 result["sequence_length"] = len(elements)
 
         return {
+            "status": "success",
             "data": result,
             "metadata": {
                 "source": "SynBioHub",

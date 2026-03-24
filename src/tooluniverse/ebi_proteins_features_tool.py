@@ -120,6 +120,7 @@ class EBIProteinsFeaturesTool(BaseTool):
         }
 
         return {
+            "status": "success",
             "data": {
                 "accession": data.get("accession"),
                 "entry_name": data.get("entryName"),

@@ -289,6 +289,7 @@ class SwissDockTool(AsyncPollingTool):
     def format_result(self, result: Any) -> Dict[str, Any]:
         """Format SwissDock results into standard response format."""
         return {
+            "status": "success",
             "data": result,
             "metadata": {
                 "tool": self.name,
@@ -335,13 +336,14 @@ class SwissDockTool(AsyncPollingTool):
         job_status = status_result["status"]
 
         return {
+            "status": "success",
             "data": {
                 "session_id": session_id,
                 "job_status": job_status,
                 "is_finished": job_status == "FINISHED",
                 "has_error": job_status in ["ERROR", "NOT_FOUND"],
                 "error": status_result.get("error"),
-            }
+            },
         }
 
     async def _retrieve_results_operation(
@@ -359,11 +361,12 @@ class SwissDockTool(AsyncPollingTool):
 
         if job_status != "FINISHED":
             return {
+                "status": "success",
                 "data": {
                     "session_id": session_id,
                     "job_status": job_status,
                     "message": f"Job is not finished yet. Status: {job_status}",
-                }
+                },
             }
 
         # Retrieve results

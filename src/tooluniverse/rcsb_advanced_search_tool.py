@@ -191,6 +191,7 @@ class RCSBAdvancedSearchTool(BaseTool):
 
         if response.status_code == 204 or len(response.content) == 0:
             return {
+                "status": "success",
                 "data": [],
                 "metadata": {
                     "source": "RCSB PDB Advanced Search",
@@ -212,6 +213,7 @@ class RCSBAdvancedSearchTool(BaseTool):
             )
 
         return {
+            "status": "success",
             "data": results,
             "metadata": {
                 "source": "RCSB PDB Advanced Search",
@@ -253,6 +255,7 @@ class RCSBAdvancedSearchTool(BaseTool):
 
         if response.status_code == 204 or len(response.content) == 0:
             return {
+                "status": "success",
                 "data": [],
                 "metadata": {
                     "source": "RCSB PDB Motif Search",
@@ -282,6 +285,7 @@ class RCSBAdvancedSearchTool(BaseTool):
             )
 
         return {
+            "status": "success",
             "data": results,
             "metadata": {
                 "source": "RCSB PDB Motif Search",

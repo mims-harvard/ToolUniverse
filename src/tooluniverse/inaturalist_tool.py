@@ -104,6 +104,7 @@ class INaturalistTool(BaseTool):
             )
 
         return {
+            "status": "success",
             "data": results,
             "metadata": {
                 "source": "iNaturalist",
@@ -203,6 +204,7 @@ class INaturalistTool(BaseTool):
             )
 
         return {
+            "status": "success",
             "data": results,
             "metadata": {
                 "source": "iNaturalist",
@@ -246,6 +248,7 @@ class INaturalistTool(BaseTool):
             )
 
         return {
+            "status": "success",
             "data": results,
             "metadata": {
                 "source": "iNaturalist",

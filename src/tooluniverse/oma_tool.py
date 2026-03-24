@@ -111,6 +111,7 @@ class OMATool(BaseTool):
         }
 
         return {
+            "status": "success",
             "data": result,
             "metadata": {
                 "source": "OMA Browser",
@@ -158,6 +159,7 @@ class OMATool(BaseTool):
             )
 
         return {
+            "status": "success",
             "data": results,
             "metadata": {
                 "source": "OMA Browser",
@@ -205,6 +207,7 @@ class OMATool(BaseTool):
             )
 
         return {
+            "status": "success",
             "data": results,
             "metadata": {
                 "source": "OMA Browser",
@@ -250,6 +253,7 @@ class OMATool(BaseTool):
         }
 
         return {
+            "status": "success",
             "data": result,
             "metadata": {
                 "source": "OMA Browser",

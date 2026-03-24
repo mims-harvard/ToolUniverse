@@ -114,6 +114,7 @@ class EnsemblXrefsTool(BaseTool):
             )
 
         return {
+            "status": "success",
             "data": {
                 "ensembl_id": ensembl_id,
                 "xrefs": xrefs[:100],
@@ -162,6 +163,7 @@ class EnsemblXrefsTool(BaseTool):
             )
 
         return {
+            "status": "success",
             "data": {
                 "symbol": symbol,
                 "species": species,

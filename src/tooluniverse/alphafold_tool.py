@@ -162,6 +162,7 @@ class AlphaFoldRESTTool(BaseTool):
                     }
 
                 return {
+                    "status": "success",
                     "data": data,
                     "metadata": {
                         "count": len(data) if isinstance(data, list) else 1,
@@ -182,6 +183,7 @@ class AlphaFoldRESTTool(BaseTool):
 
         # Fallback for non-JSON output
         return {
+            "status": "success",
             "data": resp.text,
             "metadata": {"endpoint": url, "query": arguments},
         }

@@ -120,6 +120,7 @@ class UniProtRefTool(BaseTool):
             )
 
         return {
+            "status": "success",
             "data": diseases,
             "metadata": {
                 "source": "UniProt Controlled Disease Vocabulary",
@@ -152,6 +153,7 @@ class UniProtRefTool(BaseTool):
             )
 
         return {
+            "status": "success",
             "data": {
                 "id": r.get("id"),
                 "name": r.get("name"),
@@ -203,6 +205,7 @@ class UniProtRefTool(BaseTool):
             )
 
         return {
+            "status": "success",
             "data": keywords,
             "metadata": {
                 "source": "UniProt Keyword Controlled Vocabulary",
@@ -245,6 +248,7 @@ class UniProtRefTool(BaseTool):
             )
 
         return {
+            "status": "success",
             "data": {
                 "id": kw.get("id"),
                 "name": kw.get("name"),
@@ -299,6 +303,7 @@ class UniProtRefTool(BaseTool):
             )
 
         return {
+            "status": "success",
             "data": {
                 "id": r.get("id"),
                 "description": (r.get("description") or "")[:500],
@@ -348,6 +353,7 @@ class UniProtRefTool(BaseTool):
             )
 
         return {
+            "status": "success",
             "data": proteomes,
             "metadata": {
                 "source": "UniProt Proteomes",

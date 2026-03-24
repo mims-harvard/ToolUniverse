@@ -114,6 +114,7 @@ class NextstrainTool(BaseTool):
             )
 
         return {
+            "status": "success",
             "data": results,
             "metadata": {
                 "source": "Nextstrain",
@@ -194,6 +195,7 @@ class NextstrainTool(BaseTool):
             ][:15]
 
         return {
+            "status": "success",
             "data": result,
             "metadata": {
                 "source": "Nextstrain",

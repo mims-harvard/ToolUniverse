@@ -110,6 +110,7 @@ class SGDTool(BaseTool):
         }
 
         return {
+            "status": "success",
             "data": result,
             "metadata": {
                 "source": "SGD",
@@ -158,6 +159,7 @@ class SGDTool(BaseTool):
             )
 
         return {
+            "status": "success",
             "data": results,
             "metadata": {
                 "source": "SGD",
@@ -202,6 +204,7 @@ class SGDTool(BaseTool):
             )
 
         return {
+            "status": "success",
             "data": results,
             "metadata": {
                 "source": "SGD",
@@ -252,6 +255,7 @@ class SGDTool(BaseTool):
             )
 
         return {
+            "status": "success",
             "data": results,
             "metadata": {
                 "source": "SGD",
@@ -292,6 +296,7 @@ class SGDTool(BaseTool):
 
         if raw is None:
             return {
+                "status": "success",
                 "data": [],
                 "metadata": {"total_results": 0, "query": query, "source": "SGD"},
             }
@@ -318,6 +323,7 @@ class SGDTool(BaseTool):
         total = raw.get("total", {})
 
         return {
+            "status": "success",
             "data": results,
             "metadata": {
                 "total_results": total.get("value", len(results)),

@@ -184,6 +184,7 @@ class AsyncPollingTool(ABC):
         Example:
             def format_result(self, result):
                 return {
+                    "status": "success",
                     "data": {
                         "analysis": result["analysis"],
                         "score": result["score"]

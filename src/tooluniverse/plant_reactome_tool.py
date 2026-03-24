@@ -111,6 +111,7 @@ class PlantReactomeTool(BaseTool):
                 )
 
         return {
+            "status": "success",
             "data": results,
             "metadata": {
                 "source": "Plant Reactome (Gramene)",
@@ -133,6 +134,7 @@ class PlantReactomeTool(BaseTool):
         data = response.json()
 
         return {
+            "status": "success",
             "data": data,
             "metadata": {
                 "source": "Plant Reactome (Gramene)",
@@ -160,6 +162,7 @@ class PlantReactomeTool(BaseTool):
             )
 
         return {
+            "status": "success",
             "data": species_list,
             "metadata": {
                 "source": "Plant Reactome (Gramene)",

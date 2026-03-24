@@ -106,6 +106,7 @@ class RCSBDataTool(BaseTool):
         resolution = entry_info.get("resolution_combined", [])
 
         return {
+            "status": "success",
             "data": {
                 "pdb_id": data.get("rcsb_id"),
                 "title": struct.get("title"),
@@ -182,6 +183,7 @@ class RCSBDataTool(BaseTool):
             )
 
         return {
+            "status": "success",
             "data": {
                 "pdb_id": pdb_id,
                 "assembly_id": data.get("rcsb_id"),
@@ -240,6 +242,7 @@ class RCSBDataTool(BaseTool):
             )
 
         return {
+            "status": "success",
             "data": {
                 "pdb_id": pdb_id,
                 "entity_id": data.get("rcsb_id"),

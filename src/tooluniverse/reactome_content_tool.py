@@ -131,6 +131,7 @@ class ReactomeContentTool(BaseTool):
                 )
 
         return {
+            "status": "success",
             "data": {
                 "query": query,
                 "species": species,
@@ -179,6 +180,7 @@ class ReactomeContentTool(BaseTool):
                 reactions.append(entry)
 
         return {
+            "status": "success",
             "data": {
                 "identifier": identifier,
                 "total_events": len(events),
@@ -264,6 +266,7 @@ class ReactomeContentTool(BaseTool):
             summation = " ".join(texts)
 
         return {
+            "status": "success",
             "data": {
                 "identifier": data.get("stId"),
                 "name": data.get("displayName"),

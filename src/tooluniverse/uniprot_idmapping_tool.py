@@ -148,6 +148,7 @@ class UniProtIDMappingTool(BaseTool):
 
         # Feature-68B-003: extract failedIds so callers can detect unmapped input IDs
         return {
+            "status": "success",
             "results": results_data.get("results", []),
             "job_id": job_id,
             "failed_ids": results_data.get("failedIds", []),
@@ -187,6 +188,7 @@ class UniProtIDMappingTool(BaseTool):
             parsed.append({"from": r.get("from", ""), "to": str(to_val)})
 
         return {
+            "status": "success",
             "data": {
                 "from_db": from_db,
                 "to_db": to_db,
@@ -221,6 +223,7 @@ class UniProtIDMappingTool(BaseTool):
         ]
 
         return {
+            "status": "success",
             "data": {
                 "query_ids": uniprot_ids,
                 "result_count": len(parsed),
@@ -259,6 +262,7 @@ class UniProtIDMappingTool(BaseTool):
             parsed.append({"from": r.get("from", ""), "to": str(to_val)})
 
         return {
+            "status": "success",
             "data": {
                 "gene_names": gene_names,
                 "species_taxid": tax_id,
@@ -298,6 +302,7 @@ class UniProtIDMappingTool(BaseTool):
             )
 
         return {
+            "status": "success",
             "data": {
                 "group_count": len(groups),
                 "groups": groups,

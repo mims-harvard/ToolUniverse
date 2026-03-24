@@ -97,6 +97,7 @@ class ICiteSearchPublicationsTool(BaseRESTTool):
 
             if not pmids:
                 return {
+                    "status": "success",
                     "data": [],
                     "message": f"No PubMed results found for query: {query}",
                 }

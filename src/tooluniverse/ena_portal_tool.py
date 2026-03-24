@@ -117,6 +117,7 @@ class ENAPortalTool(BaseTool):
             results.append(item)
 
         return {
+            "status": "success",
             "data": results,
             "metadata": {
                 "source": "ENA Portal API",
@@ -168,6 +169,7 @@ class ENAPortalTool(BaseTool):
             results.append(item)
 
         return {
+            "status": "success",
             "data": results,
             "metadata": {
                 "source": "ENA Portal API",
@@ -202,6 +204,7 @@ class ENAPortalTool(BaseTool):
         count_val = int(lines[-1]) if len(lines) > 1 else int(lines[0])
 
         return {
+            "status": "success",
             "data": {
                 "count": count_val,
                 "result_type": result_type,

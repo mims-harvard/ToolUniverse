@@ -127,6 +127,7 @@ class RheaTool(BaseTool):
         results = self._parse_tsv(response.text)
 
         return {
+            "status": "success",
             "data": results,
             "metadata": {
                 "source": "Rhea (SIB)",
@@ -163,6 +164,7 @@ class RheaTool(BaseTool):
         results = self._parse_tsv(response.text)
 
         return {
+            "status": "success",
             "data": results,
             "metadata": {
                 "source": "Rhea (SIB)",
@@ -199,6 +201,7 @@ class RheaTool(BaseTool):
         results = self._parse_tsv(response.text)
 
         return {
+            "status": "success",
             "data": results,
             "metadata": {
                 "source": "Rhea (SIB)",

@@ -146,6 +146,7 @@ class EnsemblLDTool(BaseTool):
         }
 
         return {
+            "status": "success",
             "data": result,
             "metadata": {
                 "source": "Ensembl REST API",
@@ -211,6 +212,7 @@ class EnsemblLDTool(BaseTool):
         }
 
         return {
+            "status": "success",
             "data": result,
             "metadata": {
                 "source": "Ensembl REST API",

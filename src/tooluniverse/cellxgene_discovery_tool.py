@@ -109,6 +109,7 @@ class CellxGeneDiscoveryTool(BaseTool):
             )
 
         return {
+            "status": "success",
             "data": {
                 "total_collections": total,
                 "returned": len(results),
@@ -162,6 +163,7 @@ class CellxGeneDiscoveryTool(BaseTool):
             )
 
         return {
+            "status": "success",
             "data": {
                 "collection_id": c.get("collection_id"),
                 "name": c.get("name"),
@@ -269,6 +271,7 @@ class CellxGeneDiscoveryTool(BaseTool):
             )
 
         return {
+            "status": "success",
             "data": {
                 "total_matching": total,
                 "returned": len(results),

@@ -108,6 +108,7 @@ class PDBeValidationTool(BaseTool):
             }
 
         return {
+            "status": "success",
             "data": {
                 "pdb_id": pdb_id,
                 "quality_metrics": quality_metrics,
@@ -200,6 +201,7 @@ class PDBeValidationTool(BaseTool):
             )
 
         return {
+            "status": "success",
             "data": {
                 "pdb_id": pdb_id,
                 "molecules": molecules,

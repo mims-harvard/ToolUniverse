@@ -107,6 +107,7 @@ class CATHTool(BaseTool):
         }
 
         return {
+            "status": "success",
             "data": result,
             "metadata": {
                 "source": "CATH v4.3.0",
@@ -158,6 +159,7 @@ class CATHTool(BaseTool):
             result["class_name"] = class_names[result["class"]]
 
         return {
+            "status": "success",
             "data": result,
             "metadata": {
                 "source": "CATH v4.3.0",

@@ -128,6 +128,7 @@ class GlyGenTool(BaseTool):
         }
 
         return {
+            "status": "success",
             "data": result,
             "metadata": {
                 "source": "GlyGen",
@@ -215,6 +216,7 @@ class GlyGenTool(BaseTool):
             )
 
         return {
+            "status": "success",
             "data": results,
             "metadata": {
                 "total_results": list_data.get("pagination", {}).get(
@@ -276,6 +278,7 @@ class GlyGenTool(BaseTool):
         }
 
         return {
+            "status": "success",
             "data": result,
             "metadata": {
                 "source": "GlyGen",
@@ -359,6 +362,7 @@ class GlyGenTool(BaseTool):
             )
 
         return {
+            "status": "success",
             "data": results,
             "metadata": {
                 "total_results": list_data.get("pagination", {}).get(
@@ -409,6 +413,7 @@ class GlyGenTool(BaseTool):
         }
 
         return {
+            "status": "success",
             "data": result,
             "metadata": {
                 "source": "GlyGen",

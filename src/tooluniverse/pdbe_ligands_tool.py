@@ -117,6 +117,7 @@ class PDBeLigandsTool(BaseTool):
             )
 
         return {
+            "status": "success",
             "data": {
                 "pdb_id": pdb_id,
                 "ligands": ligands,
@@ -189,6 +190,7 @@ class PDBeLigandsTool(BaseTool):
             )
 
         return {
+            "status": "success",
             "data": {
                 "pdb_id": pdb_id,
                 "molecules": result_molecules,

@@ -134,6 +134,7 @@ class EBIProteinsCoordinatesTool(BaseTool):
             )
 
         return {
+            "status": "success",
             "data": {
                 "accession": data.get("accession"),
                 "protein_name": data.get("name"),

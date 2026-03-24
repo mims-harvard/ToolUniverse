@@ -109,6 +109,7 @@ class BioImageArchiveTool(BaseTool):
             )
 
         return {
+            "status": "success",
             "data": results,
             "metadata": {
                 "source": "BioImage Archive (EBI BioStudies)",
@@ -164,6 +165,7 @@ class BioImageArchiveTool(BaseTool):
                 imaging_method = value
 
         return {
+            "status": "success",
             "data": {
                 "accession": data.get("accno", accession),
                 "type": data.get("type"),
@@ -214,6 +216,7 @@ class BioImageArchiveTool(BaseTool):
             )
 
         return {
+            "status": "success",
             "data": results,
             "metadata": {
                 "source": "BioImage Archive (EBI BioStudies - BioImages collection)",

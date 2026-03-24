@@ -126,6 +126,7 @@ class PfamTool(BaseTool):
             )
 
         return {
+            "status": "success",
             "data": {
                 "query": query,
                 "total_results": total,
@@ -190,6 +191,7 @@ class PfamTool(BaseTool):
         go_terms = meta.get("go_terms", []) or []
 
         return {
+            "status": "success",
             "data": {
                 "accession": meta.get("accession", ""),
                 "name": full_name,
@@ -285,6 +287,7 @@ class PfamTool(BaseTool):
             )
 
         return {
+            "status": "success",
             "data": {
                 "pfam_accession": pfam_acc,
                 "total_proteins": total,
@@ -352,6 +355,7 @@ class PfamTool(BaseTool):
         domains.sort(key=lambda d: d.get("start", 0))
 
         return {
+            "status": "success",
             "data": {
                 "accession": accession,
                 "protein_length": protein_length,
@@ -393,6 +397,7 @@ class PfamTool(BaseTool):
             )
 
         return {
+            "status": "success",
             "data": {
                 "query": query if query else "(all clans)",
                 "total_results": total,
@@ -438,6 +443,7 @@ class PfamTool(BaseTool):
             )
 
         return {
+            "status": "success",
             "data": {
                 "pfam_accession": pfam_acc,
                 "total_proteomes": total,

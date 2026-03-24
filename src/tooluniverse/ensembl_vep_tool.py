@@ -93,6 +93,7 @@ class EnsemblVEPTool(BaseTool):
         if isinstance(data, list) and data:
             result = data[0]
             return {
+                "status": "success",
                 "data": self._format_vep_result(result),
                 "metadata": {
                     "source": "Ensembl VEP",
@@ -102,6 +103,7 @@ class EnsemblVEPTool(BaseTool):
                 },
             }
         return {
+            "status": "success",
             "data": {},
             "metadata": {
                 "source": "Ensembl VEP",
@@ -130,6 +132,7 @@ class EnsemblVEPTool(BaseTool):
         if isinstance(data, list) and data:
             result = data[0]
             return {
+                "status": "success",
                 "data": self._format_vep_result(result),
                 "metadata": {
                     "source": "Ensembl VEP",
@@ -139,6 +142,7 @@ class EnsemblVEPTool(BaseTool):
                 },
             }
         return {
+            "status": "success",
             "data": {},
             "metadata": {
                 "source": "Ensembl VEP",
@@ -186,6 +190,7 @@ class EnsemblVEPTool(BaseTool):
                         )
 
         return {
+            "status": "success",
             "data": alleles,
             "metadata": {
                 "source": "Ensembl Variant Recoder",

@@ -100,6 +100,7 @@ class PDBeSIFTSTool(BaseTool):
             )
 
         return {
+            "status": "success",
             "data": {
                 "uniprot_accession": accession,
                 "structures": structures,
@@ -152,6 +153,7 @@ class PDBeSIFTSTool(BaseTool):
             )
 
         return {
+            "status": "success",
             "data": {
                 "pdb_id": pdb_id,
                 "proteins": proteins,
@@ -207,6 +209,7 @@ class PDBeSIFTSTool(BaseTool):
         )
 
         return {
+            "status": "success",
             "data": {
                 "uniprot_accession": accession,
                 "pdb_entries": sorted_entries[:50],

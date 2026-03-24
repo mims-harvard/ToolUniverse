@@ -120,6 +120,7 @@ class EBIProteinsExtTool(BaseTool):
             )
 
         return {
+            "status": "success",
             "data": {
                 "accession": data.get("accession"),
                 "entry_name": data.get("entryName"),
@@ -175,6 +176,7 @@ class EBIProteinsExtTool(BaseTool):
             )
 
         return {
+            "status": "success",
             "data": {
                 "accession": data.get("accession"),
                 "entry_name": data.get("entryName"),
@@ -274,6 +276,7 @@ class EBIProteinsExtTool(BaseTool):
             )
 
         return {
+            "status": "success",
             "data": {
                 "accession": data.get("accession"),
                 "entry_name": data.get("entryName"),
@@ -332,6 +335,7 @@ class EBIProteinsExtTool(BaseTool):
             )
 
         return {
+            "status": "success",
             "data": {
                 "accession": data.get("accession"),
                 "entry_name": data.get("entryName"),
@@ -386,6 +390,7 @@ class EBIProteinsExtTool(BaseTool):
             )
 
         return {
+            "status": "success",
             "data": {
                 "accession": data.get("accession"),
                 "entry_name": data.get("entryName"),
@@ -430,6 +435,7 @@ class EBIProteinsExtTool(BaseTool):
             )
 
         return {
+            "status": "success",
             "data": {
                 "accession": data.get("accession"),
                 "name": data.get("name"),
@@ -482,6 +488,7 @@ class EBIProteinsExtTool(BaseTool):
             )
 
         return {
+            "status": "success",
             "data": {
                 "accession": data.get("accession"),
                 "entry_name": data.get("entryName"),

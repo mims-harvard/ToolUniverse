@@ -102,6 +102,7 @@ class ITISTool(BaseTool):
                 )
 
         return {
+            "status": "success",
             "data": results,
             "metadata": {
                 "source": "ITIS",
@@ -136,6 +137,7 @@ class ITISTool(BaseTool):
                 )
 
         return {
+            "status": "success",
             "data": results,
             "metadata": {
                 "source": "ITIS",
@@ -171,6 +173,7 @@ class ITISTool(BaseTool):
                 )
 
         return {
+            "status": "success",
             "data": results,
             "metadata": {
                 "source": "ITIS",
@@ -226,6 +229,7 @@ class ITISTool(BaseTool):
         }
 
         return {
+            "status": "success",
             "data": result,
             "metadata": {
                 "source": "ITIS",

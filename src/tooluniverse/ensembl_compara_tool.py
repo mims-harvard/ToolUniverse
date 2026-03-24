@@ -121,6 +121,7 @@ class EnsemblComparaTool(BaseTool):
                 )
 
         return {
+            "status": "success",
             "data": results,
             "metadata": {
                 "source": "Ensembl Compara",
@@ -171,6 +172,7 @@ class EnsemblComparaTool(BaseTool):
                 )
 
         return {
+            "status": "success",
             "data": results,
             "metadata": {
                 "source": "Ensembl Compara",
@@ -225,6 +227,7 @@ class EnsemblComparaTool(BaseTool):
         self._collect_members(tree_data, members)
 
         return {
+            "status": "success",
             "data": {
                 "tree_id": tree_id,
                 "newick": newick,

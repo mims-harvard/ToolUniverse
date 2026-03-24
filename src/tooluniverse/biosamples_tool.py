@@ -125,6 +125,7 @@ class BioSamplesTool(BaseTool):
             ]
 
         return {
+            "status": "success",
             "data": result,
             "metadata": {
                 "source": "EBI BioSamples",
@@ -187,6 +188,7 @@ class BioSamplesTool(BaseTool):
         page_info = raw.get("page", {})
 
         return {
+            "status": "success",
             "data": results,
             "metadata": {
                 "source": "EBI BioSamples",
@@ -261,6 +263,7 @@ class BioSamplesTool(BaseTool):
         page_info = raw.get("page", {})
 
         return {
+            "status": "success",
             "data": results,
             "metadata": {
                 "source": "EBI BioSamples",

@@ -105,6 +105,7 @@ class MobiDBTool(BaseTool):
             }
 
         return {
+            "status": "success",
             "data": {
                 "accession": data.get("acc"),
                 "gene": data.get("gene"),
@@ -168,6 +169,7 @@ class MobiDBTool(BaseTool):
                     }
 
         return {
+            "status": "success",
             "data": {
                 "accession": data.get("acc"),
                 "gene": data.get("gene"),

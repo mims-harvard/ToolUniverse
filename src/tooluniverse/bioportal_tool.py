@@ -128,6 +128,7 @@ class BioPortalTool(BaseTool):
             )
 
         return {
+            "status": "success",
             "data": results,
             "metadata": {
                 "source": "BioPortal (NCBO)",
@@ -165,6 +166,7 @@ class BioPortalTool(BaseTool):
         data = response.json()
 
         return {
+            "status": "success",
             "data": {
                 "label": data.get("prefLabel"),
                 "id": data.get("@id"),
@@ -226,6 +228,7 @@ class BioPortalTool(BaseTool):
                 )
 
         return {
+            "status": "success",
             "data": annotations,
             "metadata": {
                 "source": "BioPortal Annotator (NCBO)",
@@ -292,6 +295,7 @@ class BioPortalTool(BaseTool):
             )
 
         return {
+            "status": "success",
             "data": concepts,
             "metadata": {
                 "source": "BioPortal (NCBO)",

@@ -99,6 +99,7 @@ class HGNCTool(BaseTool):
 
         if not docs:
             return {
+                "status": "success",
                 "data": {},
                 "metadata": {
                     "source": "HGNC",
@@ -110,6 +111,7 @@ class HGNCTool(BaseTool):
 
         gene = docs[0]
         return {
+            "status": "success",
             "data": gene,
             "metadata": {
                 "source": "HGNC",
@@ -144,6 +146,7 @@ class HGNCTool(BaseTool):
         docs = resp.get("docs", [])
 
         return {
+            "status": "success",
             "data": docs,
             "metadata": {
                 "source": "HGNC",

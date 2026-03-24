@@ -132,6 +132,7 @@ class miRNASearchTool(BaseTool):
                 )
 
             return {
+                "status": "success",
                 "data": {
                     "total_hits": result.get("hitCount", 0),
                     "returned": len(entries),
@@ -216,6 +217,7 @@ class miRNAGetTool(BaseTool):
         result = resp.json()
 
         return {
+            "status": "success",
             "data": {
                 "rnacentral_id": result.get("rnacentral_id", ""),
                 "description": result.get("description", ""),
@@ -264,6 +266,7 @@ class miRNAGetTool(BaseTool):
             )
 
         return {
+            "status": "success",
             "data": {
                 "total_publications": result.get("count", 0),
                 "returned": len(publications),
@@ -310,6 +313,7 @@ class miRNAGetTool(BaseTool):
             )
 
         return {
+            "status": "success",
             "data": {
                 "total_xrefs": result.get("count", 0),
                 "returned": len(xrefs),

@@ -107,6 +107,7 @@ class InterProExtTool(BaseTool):
             )
 
         return {
+            "status": "success",
             "data": {
                 "domain_id": domain_id,
                 "total_proteins": total_count,

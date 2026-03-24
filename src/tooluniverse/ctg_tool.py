@@ -227,6 +227,7 @@ class ClinicalTrialsTool(RESTfulTool):
             )
 
         return {
+            "status": "success",
             "data": {
                 "studies": studies,
                 # totalCount may be absent from API response; fallback to len(studies)
@@ -295,6 +296,7 @@ class ClinicalTrialsTool(RESTfulTool):
         }
 
         return {
+            "status": "success",
             "data": study,
             "metadata": {
                 "source": "ClinicalTrials.gov API v2",
@@ -311,6 +313,7 @@ class ClinicalTrialsTool(RESTfulTool):
         data = resp.json()
 
         return {
+            "status": "success",
             "data": {
                 "total_studies": data.get("totalStudiesCount"),
                 "average_byte_size": data.get("averageByteSize"),
@@ -350,6 +353,7 @@ class ClinicalTrialsTool(RESTfulTool):
             ]
 
         return {
+            "status": "success",
             "data": {
                 "field": field,
                 "values": values,

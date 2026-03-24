@@ -136,6 +136,7 @@ class SwissModelTool(BaseTool):
         }
 
         return {
+            "status": "success",
             "data": result,
             "metadata": {
                 "source": "SWISS-MODEL Repository",
@@ -202,6 +203,7 @@ class SwissModelTool(BaseTool):
         summary["methods_distribution"] = methods
 
         return {
+            "status": "success",
             "data": summary,
             "metadata": {
                 "source": "SWISS-MODEL Repository",

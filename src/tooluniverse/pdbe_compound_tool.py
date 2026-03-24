@@ -129,6 +129,7 @@ class PDBECompoundTool(BaseTool):
             )
 
         return {
+            "status": "success",
             "data": {
                 "comp_id": comp_id,
                 "name": compound.get("name"),
@@ -195,6 +196,7 @@ class PDBECompoundTool(BaseTool):
             pdb_ids = []
 
         return {
+            "status": "success",
             "data": {
                 "comp_id": comp_id,
                 "name": compound.get("name"),

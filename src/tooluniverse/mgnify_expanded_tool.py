@@ -122,6 +122,7 @@ class MGnifyExpandedTool(BaseTool):
         }
 
         return {
+            "status": "success",
             "data": result,
             "metadata": {
                 "source": "MGnify",
@@ -169,6 +170,7 @@ class MGnifyExpandedTool(BaseTool):
         pagination = raw.get("meta", {}).get("pagination", {})
 
         return {
+            "status": "success",
             "data": results,
             "metadata": {
                 "total_results": pagination.get("count", len(results)),
@@ -210,6 +212,7 @@ class MGnifyExpandedTool(BaseTool):
         pagination = raw.get("meta", {}).get("pagination", {})
 
         return {
+            "status": "success",
             "data": results,
             "metadata": {
                 "total_results": pagination.get("count", len(results)),
@@ -252,6 +255,7 @@ class MGnifyExpandedTool(BaseTool):
         }
 
         return {
+            "status": "success",
             "data": result,
             "metadata": {
                 "source": "MGnify",

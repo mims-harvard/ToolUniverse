@@ -130,6 +130,7 @@ class GxATool(BaseTool):
             )
 
         return {
+            "status": "success",
             "data": {
                 "total_experiments": total,
                 "returned": len(results),
@@ -217,6 +218,7 @@ class GxATool(BaseTool):
                 )
 
         return {
+            "status": "success",
             "data": {
                 "experiment_accession": accession,
                 "experiment_description": exp_info.get("description", ""),
@@ -255,6 +257,7 @@ class GxATool(BaseTool):
         anatomogram = data.get("anatomogram", {})
 
         return {
+            "status": "success",
             "data": {
                 "accession": exp.get("accession", accession),
                 "description": exp.get("description"),

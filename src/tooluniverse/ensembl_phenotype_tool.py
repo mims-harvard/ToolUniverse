@@ -128,6 +128,7 @@ class EnsemblPhenotypeTool(BaseTool):
                 unique_phenos.append(p)
 
         return {
+            "status": "success",
             "data": {
                 "gene": gene,
                 "species": species,
@@ -189,6 +190,7 @@ class EnsemblPhenotypeTool(BaseTool):
                     )
 
         return {
+            "status": "success",
             "data": {
                 "region": region,
                 "species": species,
@@ -243,6 +245,7 @@ class EnsemblPhenotypeTool(BaseTool):
 
         # Limit to top 200 (can be very large for well-studied variants)
         return {
+            "status": "success",
             "data": {
                 "variant_id": variant_id,
                 "species": species,

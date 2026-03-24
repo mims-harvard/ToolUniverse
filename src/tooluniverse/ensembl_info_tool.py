@@ -110,6 +110,7 @@ class EnsemblInfoTool(BaseTool):
         chromosomes.sort(key=chrom_sort_key)
 
         return {
+            "status": "success",
             "data": {
                 "species": species,
                 "assembly_name": data.get("assembly_name"),
@@ -178,6 +179,7 @@ class EnsemblInfoTool(BaseTool):
             )
 
         return {
+            "status": "success",
             "data": {
                 "total_species": len(data.get("species", [])),
                 "matched_species": len(species_results),

@@ -125,6 +125,7 @@ class GProfilerTool(BaseTool):
             )
 
         return {
+            "status": "success",
             "data": enriched_terms,
             "metadata": {
                 "source": "g:Profiler (biit.cs.ut.ee/gprofiler) - University of Tartu",
@@ -172,6 +173,7 @@ class GProfilerTool(BaseTool):
             )
 
         return {
+            "status": "success",
             "data": converted,
             "metadata": {
                 "source": "g:Profiler g:Convert (biit.cs.ut.ee/gprofiler)",
@@ -217,6 +219,7 @@ class GProfilerTool(BaseTool):
             )
 
         return {
+            "status": "success",
             "data": orthologs,
             "metadata": {
                 "source": "g:Profiler g:Orth (biit.cs.ut.ee/gprofiler)",
@@ -274,6 +277,7 @@ class GProfilerTool(BaseTool):
             )
 
         return {
+            "status": "success",
             "data": annotations,
             "metadata": {
                 "source": "g:Profiler g:SNPense (biit.cs.ut.ee/gprofiler)",

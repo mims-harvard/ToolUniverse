@@ -94,6 +94,7 @@ class EBITaxonomyTool(BaseTool):
         data = response.json()
 
         return {
+            "status": "success",
             "data": {
                 "tax_id": data.get("taxId"),
                 "scientific_name": data.get("scientificName"),
@@ -145,6 +146,7 @@ class EBITaxonomyTool(BaseTool):
             )
 
         return {
+            "status": "success",
             "data": items,
             "metadata": {
                 "total_results": len(items),
@@ -182,6 +184,7 @@ class EBITaxonomyTool(BaseTool):
             )
 
         return {
+            "status": "success",
             "data": items,
             "metadata": {
                 "total_results": len(items),
@@ -217,6 +220,7 @@ class EBITaxonomyTool(BaseTool):
             )
 
         return {
+            "status": "success",
             "data": items,
             "metadata": {
                 "total_results": len(items),

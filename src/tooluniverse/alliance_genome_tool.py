@@ -124,6 +124,7 @@ class AllianceGenomeTool(BaseTool):
         ]
 
         return {
+            "status": "success",
             "data": {
                 "id": data.get("id"),
                 "symbol": data.get("symbol"),
@@ -187,6 +188,7 @@ class AllianceGenomeTool(BaseTool):
             )
 
         return {
+            "status": "success",
             "data": genes,
             "metadata": {
                 "total_results": len(genes),
@@ -229,6 +231,7 @@ class AllianceGenomeTool(BaseTool):
             )
 
         return {
+            "status": "success",
             "data": phenotypes,
             "metadata": {
                 "total_results": total,
@@ -282,6 +285,7 @@ class AllianceGenomeTool(BaseTool):
             )
 
         return {
+            "status": "success",
             "data": genes,
             "metadata": {
                 "total_results": total,
@@ -313,6 +317,7 @@ class AllianceGenomeTool(BaseTool):
         synonym_names = [s.get("name") for s in synonyms if s.get("name")]
 
         return {
+            "status": "success",
             "data": {
                 "disease_id": do_term.get("curie"),
                 "name": do_term.get("name"),
@@ -379,6 +384,7 @@ class AllianceGenomeTool(BaseTool):
             )
 
         return {
+            "status": "success",
             "data": orthologs,
             "metadata": {
                 "total_results": total,
@@ -438,6 +444,7 @@ class AllianceGenomeTool(BaseTool):
             )
 
         return {
+            "status": "success",
             "data": alleles,
             "metadata": {
                 "total_results": total,
@@ -484,6 +491,7 @@ class AllianceGenomeTool(BaseTool):
             )
 
         return {
+            "status": "success",
             "data": {
                 "total_annotations": total_annotations,
                 "expression_groups": expression_groups,
@@ -555,6 +563,7 @@ class AllianceGenomeTool(BaseTool):
             )
 
         return {
+            "status": "success",
             "data": interactions,
             "metadata": {
                 "total_results": total,
@@ -616,6 +625,7 @@ class AllianceGenomeTool(BaseTool):
             )
 
         return {
+            "status": "success",
             "data": models,
             "metadata": {
                 "total_results": total,
@@ -645,6 +655,7 @@ class AllianceGenomeTool(BaseTool):
         synonym_list = [s.get("displayText") for s in synonyms if s.get("displayText")]
 
         return {
+            "status": "success",
             "data": {
                 "id": allele.get("primaryExternalId"),
                 "symbol": allele.get("alleleSymbol", {}).get("displayText"),

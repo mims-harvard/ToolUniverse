@@ -96,6 +96,7 @@ class ThreeDBeaconsTool(BaseTool):
         )
 
         return {
+            "status": "success",
             "data": {
                 "accession": uniprot_entry.get("ac", accession),
                 "sequence_length": uniprot_entry.get("sequence_length"),
@@ -180,6 +181,7 @@ class ThreeDBeaconsTool(BaseTool):
             result_structures.append(entry)
 
         return {
+            "status": "success",
             "data": {
                 "accession": uniprot_entry.get("ac", accession),
                 "sequence_length": uniprot_entry.get("sequence_length"),

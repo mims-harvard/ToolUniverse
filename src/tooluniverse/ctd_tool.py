@@ -93,6 +93,7 @@ class CTDTool(BaseTool):
 
         if not raw_text or raw_text == "[]":
             return {
+                "status": "success",
                 "data": [],
                 "metadata": {
                     "total_results": 0,

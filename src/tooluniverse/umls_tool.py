@@ -84,6 +84,7 @@ class UMLSRESTTool(BaseTool):
             resp.raise_for_status()
             data = resp.json()
             return {
+                "status": "success",
                 "data": data,
                 "metadata": {
                     "source": "UMLS (Unified Medical Language System)",
