@@ -38,6 +38,13 @@
           "type": "boolean",
           "description": "Include obsolete terms (default: false)",
           "default": false
+        },
+        "limit": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "description": "Alias for rows. Maximum number of results to return (default: 10, max: 100)."
         }
       },
       "required": [
@@ -429,7 +436,7 @@
   {
     "type": "OLSTool",
     "name": "ols_get_term_children",
-    "description": "Get child terms of a specific term in an ontology. Use `term_id` with CURIE format (e.g., 'HP:0001928') — the ontology is auto-inferred from the prefix. Or supply `term_iri` + `ontology` explicitly.",
+    "description": "Get child terms of a specific term in an ontology. Use `term_id` with CURIE format (e.g., 'HP:0001928') \u2014 the ontology is auto-inferred from the prefix. Or supply `term_iri` + `ontology` explicitly.",
     "parameter": {
       "type": "object",
       "properties": {
@@ -529,7 +536,7 @@
   {
     "type": "OLSTool",
     "name": "ols_get_term_ancestors",
-    "description": "Get ancestor terms of a specific term in an ontology. Use `term_id` with CURIE format (e.g., 'HP:0001928') — the ontology is auto-inferred from the prefix. Or supply `term_iri` + `ontology` explicitly.",
+    "description": "Get ancestor terms of a specific term in an ontology. Use `term_id` with CURIE format (e.g., 'HP:0001928') \u2014 the ontology is auto-inferred from the prefix. Or supply `term_iri` + `ontology` explicitly.",
     "parameter": {
       "type": "object",
       "properties": {

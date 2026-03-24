@@ -157,6 +157,7 @@ class ClinicalTrialsTool(RESTfulTool):
             "condition": "query.cond",
             "status": "filter.overallStatus",
             "query": "query.term",
+            "keyword": "query.term",
             "max_results": "pageSize",
             "limit": "pageSize",
         }

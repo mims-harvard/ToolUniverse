@@ -208,7 +208,12 @@ class OLSTool(BaseTool):
                 "error": "`query` parameter is required for `search_terms`.",
             }
 
-        rows = int(arguments.get("rows") or arguments.get("size") or 10)
+        rows = int(
+            arguments.get("rows")
+            or arguments.get("limit")
+            or arguments.get("size")
+            or 10
+        )
         ontology = arguments.get("ontology")
         exact_match = bool(arguments.get("exact_match", False))
         include_obsolete = bool(arguments.get("include_obsolete", False))
