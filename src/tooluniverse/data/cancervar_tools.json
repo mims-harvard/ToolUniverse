@@ -1,0 +1,99 @@
+[
+  {
+    "name": "CancerVar_classify_variant",
+    "description": "Classify a somatic cancer variant using AMP/ASCO/CAP 2017 guidelines (CancerVar). Returns a Tier I–IV assignment: Tier I = Strong Clinical Significance (FDA-approved therapy association), Tier II = Potential Clinical Significance (investigational/preclinical evidence), Tier III = Unknown Clinical Significance, Tier IV = Benign/Likely Benign. Also returns 12 CBP evidence scores and an Oncogenicity Pathogenicity Index (OPAI, 0–1). Input requires genomic coordinates in hg19 or hg38. No API key needed. Example: BRAF V600E (chr7:140453136 A>T hg19) is Tier I (strong) with OPAI=0.99.",
+    "type": "CancerVarTool",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "chrom": {
+          "type": "string",
+          "description": "Chromosome number or name. Can include 'chr' prefix (e.g., '7', 'chr7', 'X')."
+        },
+        "pos": {
+          "type": "integer",
+          "description": "Genomic position (1-based)."
+        },
+        "ref": {
+          "type": "string",
+          "description": "Reference allele (e.g., 'A', 'G', 'ATCG')."
+        },
+        "alt": {
+          "type": "string",
+          "description": "Alternate allele (e.g., 'T', 'C')."
+        },
+        "build": {
+          "type": "string",
+          "enum": ["hg19", "hg38"],
+          "default": "hg19",
+          "description": "Genome build. Default: hg19."
+        }
+      },
+      "required": ["chrom", "pos", "ref", "alt"]
+    },
+    "fields": {
+      "operation": "classify",
+      "endpoint": "http://cancervar.wglab.org/api_new.php"
+    },
+    "return_schema": {
+      "type": "object",
+      "properties": {
+        "status": {"type": "string"},
+        "data": {
+          "type": "object",
+          "properties": {
+            "tier": {
+              "type": "string",
+              "description": "AMP/ASCO/CAP tier: Tier_I_strong | Tier_II_potential | Tier_III_unknown | Tier_IV_benign"
+            },
+            "tier_score": {"type": ["integer", "null"]},
+            "tier_description": {"type": "string"},
+            "opai": {
+              "type": ["number", "null"],
+              "description": "Oncogenicity Pathogenicity Index (0–1; higher = more oncogenic)"
+            },
+            "variant": {
+              "type": "object",
+              "properties": {
+                "chromosome": {"type": ["integer", "string", "null"]},
+                "position": {"type": ["integer", "null"]},
+                "ref_allele": {"type": ["string", "null"]},
+                "alt_allele": {"type": ["string", "null"]},
+                "gene": {"type": ["string", "null"]},
+                "build": {"type": ["string", "null"]}
+              }
+            },
+            "cbp_criteria": {
+              "type": "object",
+              "description": "12 CBP evidence criteria with values and descriptions",
+              "additionalProperties": true
+            }
+          }
+        },
+        "metadata": {"type": "object", "additionalProperties": true}
+      }
+    },
+    "test_examples": [
+      {
+        "chrom": "7",
+        "pos": 140453136,
+        "ref": "A",
+        "alt": "T",
+        "build": "hg19"
+      },
+      {
+        "chrom": "1",
+        "pos": 115256529,
+        "ref": "T",
+        "alt": "C",
+        "build": "hg19"
+      }
+    ],
+    "label": ["CancerVar", "AMP", "ASCO", "CAP", "somatic", "cancer", "variant", "oncology"],
+    "metadata": {
+      "tags": ["variant_interpretation", "somatic_variant", "cancer_genomics", "clinical_oncology", "AMP_classification"],
+      "estimated_execution_time": "< 5 seconds",
+      "guideline": "AMP/ASCO/CAP 2017 Standards and Guidelines for Somatic Variant Interpretation"
+    }
+  }
+]

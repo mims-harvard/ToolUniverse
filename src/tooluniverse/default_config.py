@@ -103,6 +103,7 @@ default_tool_files = {
     "pubchem": os.path.join(current_dir, "data", "pubchem_tools.json"),
     "medlineplus": os.path.join(current_dir, "data", "medlineplus_tools.json"),
     "rxnorm": os.path.join(current_dir, "data", "rxnorm_tools.json"),
+    "rxnorm_extended": os.path.join(current_dir, "data", "rxnorm_extended_tools.json"),
     "loinc": os.path.join(current_dir, "data", "loinc_tools.json"),
     "uniprot": os.path.join(current_dir, "data", "uniprot_tools.json"),
     "cellosaurus": os.path.join(current_dir, "data", "cellosaurus_tools.json"),
@@ -239,6 +240,8 @@ default_tool_files = {
     "kegg": os.path.join(current_dir, "data", "kegg_tools.json"),
     "ensembl": os.path.join(current_dir, "data", "ensembl_tools.json"),
     "clinvar": os.path.join(current_dir, "data", "clinvar_tools.json"),
+    "intervar": os.path.join(current_dir, "data", "intervar_tools.json"),
+    "cancervar": os.path.join(current_dir, "data", "cancervar_tools.json"),
     "geo": os.path.join(current_dir, "data", "geo_tools.json"),
     "dbsnp": os.path.join(current_dir, "data", "dbsnp_tools.json"),
     "gnomad": os.path.join(current_dir, "data", "gnomad_tools.json"),
@@ -502,6 +505,10 @@ default_tool_files = {
     "inaturalist": os.path.join(current_dir, "data", "inaturalist_tools.json"),
     # NCI Thesaurus - National Cancer Institute terminology (cancer diseases, drugs, genes)
     "nci_thesaurus": os.path.join(current_dir, "data", "nci_thesaurus_tools.json"),
+    # NCI CACTUS - Chemical Identifier Resolver (name/SMILES/InChI/CAS cross-conversion)
+    "nci_cactus": os.path.join(current_dir, "data", "nci_cactus_tools.json"),
+    # OncoTree - MSK cancer type ontology (897+ cancer types, UMLS/NCI cross-refs)
+    "oncotree": os.path.join(current_dir, "data", "oncotree_tools.json"),
     # ClinGen Allele Registry - Standardized allele IDs (HGVS normalization, cross-references)
     "clingen_ar": os.path.join(current_dir, "data", "clingen_ar_tools.json"),
     # NDEx - Network Data Exchange (biological network repository, PPI, signaling, regulatory networks)
