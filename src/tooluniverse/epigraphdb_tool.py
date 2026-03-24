@@ -423,7 +423,9 @@ class EpiGraphDBTool(BaseRESTTool):
 
     def _get_gene_drugs(self, arguments: dict) -> dict:
         """Get drug-gene associations from pharmacogenomics databases."""
-        gene_name = arguments.get("gene_name", "").strip()
+        gene_name = (
+            arguments.get("gene_name") or arguments.get("gene_symbol") or ""
+        ).strip()
         if not gene_name:
             return {
                 "status": "error",

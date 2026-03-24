@@ -112,6 +112,7 @@ class IntActRESTTool(BaseTool):
                 "gene",
                 "gene_name",
                 "protein_name",
+                "protein",
             ):
                 if arguments.get(alias):
                     arguments = dict(arguments, identifier=arguments[alias])

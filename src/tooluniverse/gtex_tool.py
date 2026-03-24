@@ -237,7 +237,11 @@ class GTExEQTLTool:
                 },
             }
         except Exception as e:
-            return {
-                "status": "error",
-                "error": str(e),
-            }
+            err = str(e)
+            if "422" in err or "Unprocessable" in err:
+                err = (
+                    f"{err} — GTEx tissue IDs are case-sensitive "
+                    "(e.g., 'Brain_Frontal_Cortex_BA9', not 'Brain_Frontal_Cortex_Ba9'). "
+                    "Use GTEx_get_expression_summary to discover valid tissue IDs."
+                )
+            return {"status": "error", "error": err}

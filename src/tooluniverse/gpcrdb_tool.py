@@ -206,6 +206,7 @@ class GPCRdbTool(BaseTool):
         "dopamine": "001_001_004",
         "adrenoceptor": "001_001_003",
         "adrenergic": "001_001_003",
+        "adrenergic receptors": "001_001_003",
         "muscarinic": "001_001_002",
         "histamine": "001_001_005",
         "beta-adrenergic": "001_001_003_008",

@@ -625,15 +625,16 @@
           "type": "string",
           "description": "Gene symbol to find drug associations for (e.g., 'TP53', 'EGFR', 'DPYD', 'CYP2D6')."
         },
+        "gene_symbol": {
+          "type": "string",
+          "description": "Alias for gene_name. Gene symbol (e.g., 'CYP2D6', 'BRCA1')."
+        },
         "pval_threshold": {
           "type": "number",
           "description": "P-value threshold (default 0.05).",
           "default": 0.05
         }
-      },
-      "required": [
-        "gene_name"
-      ]
+      }
     },
     "fields": {
       "operation": "gene_drugs"

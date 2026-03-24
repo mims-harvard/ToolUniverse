@@ -233,6 +233,10 @@
         "protein_name": {
           "type": "string",
           "description": "Alias for gene_symbol/identifier. Common protein name (e.g., MDM2, TP53)."
+        },
+        "protein": {
+          "type": "string",
+          "description": "Alias for identifier. Gene symbol or protein name (e.g., 'TP53', 'BRCA1')."
         }
       },
       "required": []

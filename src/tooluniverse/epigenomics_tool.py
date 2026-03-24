@@ -110,6 +110,10 @@ class EpigenomicsTool(BaseTool):
             return self._geo_atacseq_search(arguments)
         elif self.endpoint == "encode_rnaseq":
             return self._encode_rnaseq_search(arguments)
+        elif self.endpoint == "encode_hic":
+            return self._encode_hic_search(arguments)
+        elif self.endpoint == "encode_microrna":
+            return self._encode_microrna_search(arguments)
         else:
             return {"status": "error", "error": f"Unknown endpoint: {self.endpoint}"}
 
@@ -656,7 +660,7 @@ class EpigenomicsTool(BaseTool):
         """Search GEO for RNA-seq datasets."""
         query = arguments.get("query", "")
         organism = arguments.get("organism", "Homo sapiens")
-        limit = arguments.get("limit", 20)
+        limit = arguments.get("limit") or arguments.get("max_results") or 20
 
         term_parts = [query, "RNA-seq"]
         if organism:
@@ -708,7 +712,7 @@ class EpigenomicsTool(BaseTool):
         """Search GEO for ATAC-seq datasets (chromatin accessibility)."""
         query = arguments.get("query", "")
         organism = arguments.get("organism", "Homo sapiens")
-        limit = arguments.get("limit", 20)
+        limit = arguments.get("limit") or arguments.get("max_results") or 20
 
         term_parts = [query, "ATAC-seq"]
         if organism:
@@ -815,6 +819,19 @@ class EpigenomicsTool(BaseTool):
                     },
                 }
 
+        # If no results and assay was 'total RNA-seq', retry with 'polyA plus RNA-seq'
+        # Some cell lines (e.g. HeLa-S3) have no total RNA-seq but have polyA plus RNA-seq.
+        if raw.get("total", 0) == 0 and biosample and assay_type == "total RNA-seq":
+            polya_params = dict(params)
+            polya_params["assay_title"] = "polyA plus RNA-seq"
+            try:
+                polya_raw = self._encode_search(polya_params)
+                if polya_raw.get("total", 0) > 0:
+                    raw = polya_raw
+                    assay_type = "polyA plus RNA-seq"
+            except Exception:
+                pass
+
         experiments = []
         for exp in raw.get("@graph", []):
             experiments.append(
@@ -830,18 +847,25 @@ class EpigenomicsTool(BaseTool):
                 }
             )
 
+        metadata: Dict[str, Any] = {
+            "source": "ENCODE Project (encodeproject.org)",
+            "assay_type": assay_type,
+            "organism": organism,
+            "note": "Available assay types: 'total RNA-seq', 'polyA plus RNA-seq', 'small RNA-seq', 'microRNA-seq'.",
+        }
+        if raw.get("total", 0) == 0 and biosample:
+            metadata["note"] = (
+                f"No results for biosample='{biosample}' with assay_type='{assay_type}'. "
+                "Try a different assay_type: 'polyA plus RNA-seq', 'small RNA-seq', 'microRNA-seq'. "
+                "ENCODE requires exact ontology names (e.g., 'K562', 'HepG2', 'liver')."
+            )
         return {
             "status": "success",
             "data": {
                 "total": raw.get("total", 0),
                 "experiments": experiments,
             },
-            "metadata": {
-                "source": "ENCODE Project (encodeproject.org)",
-                "assay_type": assay_type,
-                "organism": organism,
-                "note": "Available assay types: 'total RNA-seq', 'polyA plus RNA-seq', 'small RNA-seq', 'microRNA-seq'.",
-            },
+            "metadata": metadata,
         }
 
     # =========================================================================
@@ -1109,5 +1133,125 @@ class UCSCEpigenomicsTool(BaseTool):
                 "track": "encRegTfbsClustered",
                 "genome": genome,
                 "description": "340 TFs across 129 cell types",
+            },
+        }
+
+    # =========================================================================
+    # ENCODE Hi-C / 3D Genome Tools
+    # =========================================================================
+
+    def _encode_hic_search(self, arguments: Dict[str, Any]) -> Dict[str, Any]:
+        """Search ENCODE Hi-C and intact Hi-C experiments for 3D genome data."""
+        assay_type = arguments.get("assay_type", "intact Hi-C")
+        params = {
+            "type": "Experiment",
+            "assay_title": assay_type,
+            "status": "released",
+        }
+
+        biosample = (
+            arguments.get("biosample_term_name")
+            or arguments.get("biosample")
+            or arguments.get("cell_type")
+            or arguments.get("tissue")
+        )
+        if biosample:
+            params["biosample_ontology.term_name"] = biosample
+
+        organism = arguments.get("organism", "Homo sapiens")
+        if organism:
+            params["replicates.library.biosample.organism.scientific_name"] = organism
+
+        limit = arguments.get("limit", 25)
+        params["limit"] = min(int(limit), 100)
+
+        raw = self._encode_search(params)
+
+        experiments = []
+        for exp in raw.get("@graph", []):
+            lab = exp.get("lab", {})
+            lab_name = lab.get("title", "") if isinstance(lab, dict) else str(lab)
+
+            experiments.append(
+                {
+                    "accession": exp.get("accession", ""),
+                    "assay_title": exp.get("assay_title", ""),
+                    "biosample_summary": exp.get("biosample_summary", ""),
+                    "description": exp.get("description", ""),
+                    "status": exp.get("status", ""),
+                    "lab": lab_name,
+                    "date_released": exp.get("date_released", ""),
+                }
+            )
+
+        return {
+            "status": "success",
+            "data": {
+                "total": raw.get("total", 0),
+                "experiments": experiments,
+            },
+            "metadata": {
+                "source": "ENCODE Project (encodeproject.org)",
+                "assay": assay_type,
+                "organism": organism,
+            },
+        }
+
+    # =========================================================================
+    # ENCODE microRNA-seq Tools
+    # =========================================================================
+
+    def _encode_microrna_search(self, arguments: Dict[str, Any]) -> Dict[str, Any]:
+        """Search ENCODE microRNA-seq experiments."""
+        params = {
+            "type": "Experiment",
+            "assay_title": "microRNA-seq",
+            "status": "released",
+        }
+
+        biosample = (
+            arguments.get("biosample_term_name")
+            or arguments.get("biosample")
+            or arguments.get("cell_type")
+            or arguments.get("tissue")
+        )
+        if biosample:
+            params["biosample_ontology.term_name"] = biosample
+
+        organism = arguments.get("organism", "Homo sapiens")
+        if organism:
+            params["replicates.library.biosample.organism.scientific_name"] = organism
+
+        limit = arguments.get("limit", 25)
+        params["limit"] = min(int(limit), 100)
+
+        raw = self._encode_search(params)
+
+        experiments = []
+        for exp in raw.get("@graph", []):
+            lab = exp.get("lab", {})
+            lab_name = lab.get("title", "") if isinstance(lab, dict) else str(lab)
+
+            experiments.append(
+                {
+                    "accession": exp.get("accession", ""),
+                    "assay_title": exp.get("assay_title", ""),
+                    "biosample_summary": exp.get("biosample_summary", ""),
+                    "status": exp.get("status", ""),
+                    "lab": lab_name,
+                    "date_released": exp.get("date_released", ""),
+                }
+            )
+
+        return {
+            "status": "success",
+            "data": {
+                "total": raw.get("total", 0),
+                "experiments": experiments,
+            },
+            "metadata": {
+                "source": "ENCODE Project (encodeproject.org)",
+                "assay": "microRNA-seq",
+                "organism": organism,
             },
         }

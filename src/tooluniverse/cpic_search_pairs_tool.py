@@ -130,7 +130,7 @@ class CPICListGuidelinesTool(BaseTool):
         try:
             r = requests.get(
                 f"{_CPIC_API}/guideline",
-                params={"select": "*"},
+                params={"select": "*,drug(name)"},
                 timeout=15,
             )
             r.raise_for_status()
@@ -150,7 +150,9 @@ class CPICListGuidelinesTool(BaseTool):
             data = [
                 g
                 for g in data
-                if any(drug in str(d).lower() for d in (g.get("drugs") or []))
+                if any(
+                    drug in (d.get("name") or "").lower() for d in (g.get("drug") or [])
+                )
             ]
 
         return {
