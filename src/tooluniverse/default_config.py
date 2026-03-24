@@ -977,6 +977,8 @@ default_tool_files = {
     "pdbepisa": os.path.join(current_dir, "data", "pdbepisa_tools.json"),
     # DynaMut2 - Protein stability prediction from single-point mutations (ddG)
     "dynamut2": os.path.join(current_dir, "data", "dynamut2_tools.json"),
+    # iPTMnet - Post-translational modification network database
+    "iptmnet": os.path.join(current_dir, "data", "iptmnet_tools.json"),
     # SIDER - Drug side effects from drug labels (MedDRA-coded, with frequencies)
     "sider": os.path.join(current_dir, "data", "sider_tools.json"),
     # OpenFDA Drug Approvals - FDA drug approval history, products, and submissions

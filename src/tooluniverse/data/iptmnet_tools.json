@@ -1,0 +1,217 @@
+[
+  {
+    "name": "iPTMnet_search",
+    "type": "iPTMnetTool",
+    "description": "Search the iPTMnet database for proteins with post-translational modification (PTM) data. Find proteins by gene name, protein name, or keyword. Filter by role (Substrate = modified protein, Enzyme = modifier) and PTM type (Phosphorylation, Acetylation, Ubiquitination, Methylation, etc.). iPTMnet integrates data from PhosphoSitePlus, UniProt, PRO ontology, and text mining. Returns UniProt IDs, PTM site counts, enzyme/substrate roles, and isoform counts.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "operation": {
+          "type": "string",
+          "enum": ["search"],
+          "description": "Operation type"
+        },
+        "search_term": {
+          "type": "string",
+          "description": "Search query: gene name (TP53, EGFR, AKT1), protein name (p53, insulin receptor), or keyword (kinase, ubiquitin)"
+        },
+        "role": {
+          "type": "string",
+          "enum": ["Substrate", "Enzyme", "Substrate,Enzyme"],
+          "default": "Substrate",
+          "description": "Filter by protein role. Substrate = proteins that are modified; Enzyme = proteins that modify others. Default: Substrate"
+        },
+        "ptm_type": {
+          "type": ["string", "null"],
+          "description": "Filter by PTM type: Phosphorylation, Acetylation, Ubiquitination, Methylation, Sumoylation, N-Glycosylation, O-Glycosylation, S-Nitrosylation, etc. Case-sensitive. Omit to return all types."
+        },
+        "term_type": {
+          "type": "string",
+          "enum": ["All", "UniProtID", "UniProtAC", "GeneName", "ProteinName"],
+          "default": "All",
+          "description": "Type of search term. Default: All (searches across all fields)"
+        },
+        "max_results": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 100,
+          "default": 25,
+          "description": "Maximum results to return (default: 25)"
+        }
+      },
+      "required": ["operation", "search_term"]
+    },
+    "return_schema": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "uniprot_id": {"type": "string", "description": "UniProt accession"},
+          "uniprot_ac": {"type": "string", "description": "UniProt entry name"},
+          "protein_name": {"type": "string"},
+          "gene_name": {"type": "string"},
+          "organism": {"type": "string"},
+          "substrate_role": {"type": "boolean"},
+          "substrate_num": {"type": "integer"},
+          "enzyme_role": {"type": "boolean"},
+          "enzyme_num": {"type": "integer"},
+          "ptm_dependent_ppi": {"type": "boolean"},
+          "ptm_sites": {"type": "integer"},
+          "isoforms": {"type": "integer"}
+        }
+      }
+    },
+    "test_examples": [
+      {
+        "operation": "search",
+        "search_term": "TP53",
+        "role": "Substrate",
+        "max_results": 5
+      }
+    ]
+  },
+  {
+    "name": "iPTMnet_get_ptm_sites",
+    "type": "iPTMnetTool",
+    "description": "Get all post-translational modification (PTM) sites for a protein from iPTMnet. Returns residue, position, PTM type, confidence score, source databases, catalytic enzymes, and PubMed references for each site. Data aggregated from PhosphoSitePlus, UniProt, and text mining. Covers phosphorylation, acetylation, ubiquitination, methylation, glycosylation, sumoylation, and more. Results organized by protein isoform. Use with UniProt accession (e.g., P04637 for TP53).",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "operation": {
+          "type": "string",
+          "enum": ["get_ptm_sites"],
+          "description": "Operation type"
+        },
+        "uniprot_id": {
+          "type": "string",
+          "description": "UniProt accession, e.g., P04637 (TP53), P00533 (EGFR), P31749 (AKT1), Q16539 (MAPK14/p38)"
+        },
+        "ptm_type": {
+          "type": ["string", "null"],
+          "description": "Filter by PTM type: Phosphorylation, Acetylation, Ubiquitination, Methylation, Sumoylation, N-Glycosylation, O-Glycosylation, S-Nitrosylation. Case-insensitive. Omit to return all types."
+        }
+      },
+      "required": ["operation", "uniprot_id"]
+    },
+    "return_schema": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "isoform": {"type": "string", "description": "UniProt isoform ID (e.g., P04637-1)"},
+          "residue": {"type": "string", "description": "Modified amino acid (K, S, T, Y, etc.)"},
+          "site": {"type": ["string", "null"], "description": "Site notation (e.g., S15, K120, Y1068)"},
+          "ptm_type": {"type": ["string", "null"], "description": "PTM type (Phosphorylation, Acetylation, etc.)"},
+          "score": {"type": ["integer", "null"], "description": "Confidence score (1=high)"},
+          "sources": {"type": "array", "items": {"type": "string"}, "description": "Source databases (PSP, UniProt, etc.)"},
+          "enzymes": {"type": "array", "items": {"type": "object"}, "description": "Catalytic enzymes"},
+          "pmids": {"type": "array", "items": {"type": "string"}, "description": "PubMed IDs"}
+        }
+      }
+    },
+    "test_examples": [
+      {
+        "operation": "get_ptm_sites",
+        "uniprot_id": "P04637"
+      },
+      {
+        "operation": "get_ptm_sites",
+        "uniprot_id": "P00533",
+        "ptm_type": "Phosphorylation"
+      }
+    ]
+  },
+  {
+    "name": "iPTMnet_get_proteoforms",
+    "type": "iPTMnetTool",
+    "description": "Get proteoform records for a protein from iPTMnet. Proteoforms represent specific combinations of PTM sites on a protein, as defined by the PRO ontology. Each proteoform has a PRO ID, modified sites, the responsible enzyme (if known), source database, and PubMed references. Useful for understanding which specific PTM combinations have been experimentally observed. Use with UniProt accession (e.g., P04637 for TP53).",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "operation": {
+          "type": "string",
+          "enum": ["get_proteoforms"],
+          "description": "Operation type"
+        },
+        "uniprot_id": {
+          "type": "string",
+          "description": "UniProt accession, e.g., P04637 (TP53), P00533 (EGFR), P31749 (AKT1)"
+        }
+      },
+      "required": ["operation", "uniprot_id"]
+    },
+    "return_schema": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "pro_id": {"type": "string", "description": "PRO ontology ID (e.g., PR:000027764)"},
+          "label": {"type": "string", "description": "Human-readable proteoform label"},
+          "sites": {"type": "array", "items": {"type": "string"}, "description": "Modified sites (e.g., pS15, pT18)"},
+          "enzyme_pro_id": {"type": "string", "description": "PRO ID of the modifying enzyme"},
+          "enzyme_label": {"type": "string", "description": "Name of the modifying enzyme"},
+          "source": {"type": "string", "description": "Source database"},
+          "pmids": {"type": "array", "items": {"type": "string"}, "description": "PubMed IDs"}
+        }
+      }
+    },
+    "test_examples": [
+      {
+        "operation": "get_proteoforms",
+        "uniprot_id": "P04637"
+      }
+    ]
+  },
+  {
+    "name": "iPTMnet_get_ptm_ppi",
+    "type": "iPTMnetTool",
+    "description": "Get PTM-dependent protein-protein interactions from iPTMnet. Returns interactions where a post-translational modification on one protein affects its binding to another protein. Each interaction includes the PTM type, modified substrate with site position, the interacting partner, association type (association/dissociation), data source, and PubMed reference. Essential for understanding how PTMs regulate protein interaction networks. Use with UniProt accession (e.g., P04637 for TP53).",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "operation": {
+          "type": "string",
+          "enum": ["get_ptm_ppi"],
+          "description": "Operation type"
+        },
+        "uniprot_id": {
+          "type": "string",
+          "description": "UniProt accession, e.g., P04637 (TP53), P00533 (EGFR), P31749 (AKT1)"
+        },
+        "ptm_type": {
+          "type": ["string", "null"],
+          "description": "Filter by PTM type: Phosphorylation, Acetylation, Ubiquitination, Methylation. Case-insensitive. Omit to return all types."
+        }
+      },
+      "required": ["operation", "uniprot_id"]
+    },
+    "return_schema": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "ptm_type": {"type": ["string", "null"], "description": "Type of modification"},
+          "substrate_uniprot_id": {"type": "string", "description": "UniProt ID of modified protein"},
+          "substrate_name": {"type": "string", "description": "Name of modified protein"},
+          "site": {"type": "string", "description": "Modified site (e.g., S15, Y1068)"},
+          "interactant_uniprot_id": {"type": "string", "description": "UniProt ID of interacting partner"},
+          "interactant_name": {"type": "string", "description": "Name of interacting partner"},
+          "association_type": {"type": "string", "description": "Effect on interaction: association or dissociation"},
+          "source": {"type": "string", "description": "Data source"},
+          "pmid": {"type": "string", "description": "PubMed ID"}
+        }
+      }
+    },
+    "test_examples": [
+      {
+        "operation": "get_ptm_ppi",
+        "uniprot_id": "P04637"
+      },
+      {
+        "operation": "get_ptm_ppi",
+        "uniprot_id": "P00533",
+        "ptm_type": "Phosphorylation"
+      }
+    ]
+  }
+]
