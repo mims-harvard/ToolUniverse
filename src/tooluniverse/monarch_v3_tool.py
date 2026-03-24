@@ -67,26 +67,21 @@ class MonarchV3Tool(BaseTool):
 
     def _query(self, arguments: Dict[str, Any]) -> Dict[str, Any]:
         """Route to appropriate Monarch V3 endpoint."""
-        if self.endpoint == "entity":
-            return self._get_entity(arguments)
-        elif self.endpoint == "associations":
-            return self._get_associations(arguments)
-        elif self.endpoint == "search":
-            return self._search(arguments)
-        elif self.endpoint == "mondo_search":
-            return self._mondo_search(arguments)
-        elif self.endpoint == "mondo_disease":
-            return self._mondo_get_disease(arguments)
-        elif self.endpoint == "mondo_phenotypes":
-            return self._mondo_get_phenotypes(arguments)
-        elif self.endpoint == "histopheno":
-            return self._histopheno(arguments)
-        elif self.endpoint == "mappings":
-            return self._get_mappings(arguments)
-        elif self.endpoint == "semsim_search":
-            return self._semsim_search(arguments)
-        else:
-            return {"status": "error", "error": f"Unknown endpoint: {self.endpoint}"}
+        handlers = {
+            "entity": self._get_entity,
+            "associations": self._get_associations,
+            "search": self._search,
+            "mondo_search": self._mondo_search,
+            "mondo_disease": self._mondo_get_disease,
+            "mondo_phenotypes": self._mondo_get_phenotypes,
+            "histopheno": self._histopheno,
+            "mappings": self._get_mappings,
+            "semsim_search": self._semsim_search,
+        }
+        handler = handlers.get(self.endpoint)
+        if handler:
+            return handler(arguments)
+        return {"status": "error", "error": f"Unknown endpoint: {self.endpoint}"}
 
     def _get_entity(self, arguments: Dict[str, Any]) -> Dict[str, Any]:
         """Get detailed entity information by CURIE identifier."""
@@ -94,7 +89,7 @@ class MonarchV3Tool(BaseTool):
         if not entity_id:
             return {
                 "status": "error",
-                "error": "entity_id (or id) parameter is required (e.g., HGNC:11998, MONDO:0005148, HP:0001250)",
+                "error": "id parameter is required (e.g., HGNC:11998, MONDO:0005148, HP:0001250)",
             }
 
         url = f"{MONARCH_BASE_URL}/entity/{entity_id}"
@@ -123,29 +118,26 @@ class MonarchV3Tool(BaseTool):
         }
 
     def _get_associations(self, arguments: Dict[str, Any]) -> Dict[str, Any]:
-        """Get associations for an entity with filtering by category."""
+        """Get associations for an entity with optional filtering by category."""
         subject = arguments.get("subject", "")
-        if not subject:
+        obj = arguments.get("object", "")
+        if not subject and not obj:
             return {
                 "status": "error",
-                "error": "subject parameter is required (e.g., HGNC:11998 or MONDO:0005148)",
+                "error": "Either subject or object CURIE is required (e.g., HGNC:11998 or MONDO:0005148)",
             }
 
         category = arguments.get("category", "")
-        if not category:
-            return {
-                "status": "error",
-                "error": "category parameter is required. Options: biolink:GeneToPhenotypicFeatureAssociation, biolink:DiseaseToPhenotypicFeatureAssociation, biolink:CorrelatedGeneToDiseaseAssociation, biolink:CausalGeneToDiseaseAssociation, biolink:VariantToDiseaseAssociation, biolink:GeneToPathwayAssociation",
-            }
-
         limit = arguments.get("limit") or 20
 
-        url = f"{MONARCH_BASE_URL}/association"
-        params = {
-            "subject": subject,
-            "category": category,
-            "limit": min(limit, 200),
-        }
+        url = f"{MONARCH_BASE_URL}/association/all"
+        params = {"limit": min(limit, 200)}
+        if subject:
+            params["subject"] = subject
+        if obj:
+            params["object"] = obj
+        if category:
+            params["category"] = category
 
         response = requests.get(url, params=params, timeout=self.timeout)
         response.raise_for_status()
@@ -185,7 +177,7 @@ class MonarchV3Tool(BaseTool):
             return {"status": "error", "error": "query parameter is required"}
 
         limit = arguments.get("limit") or 10
-        category = arguments.get("category")  # e.g., biolink:Gene, biolink:Disease
+        category = arguments.get("category")
 
         url = f"{MONARCH_BASE_URL}/search"
         params = {
@@ -283,7 +275,6 @@ class MonarchV3Tool(BaseTool):
         response.raise_for_status()
         data = response.json()
 
-        # Verify this is a disease
         category = data.get("category", "")
         if category and "Disease" not in category:
             return {
@@ -291,51 +282,33 @@ class MonarchV3Tool(BaseTool):
                 "error": f"Entity {disease_id} is not a disease (category: {category})",
             }
 
-        # Extract hierarchy
         hierarchy = data.get("node_hierarchy", {})
         parent_diseases = []
         if hierarchy and isinstance(hierarchy, dict):
             for parent in hierarchy.get("super_classes", []):
                 if isinstance(parent, dict):
                     parent_diseases.append(
-                        {
-                            "id": parent.get("id"),
-                            "name": parent.get("name"),
-                        }
+                        {"id": parent.get("id"), "name": parent.get("name")}
                     )
 
-        # Extract mappings (cross-references to other ontologies)
         mappings = []
         for m in data.get("mappings", []) or []:
             if isinstance(m, dict):
-                mappings.append(
-                    {
-                        "id": m.get("id"),
-                        "url": m.get("url"),
-                    }
-                )
+                mappings.append({"id": m.get("id"), "url": m.get("url")})
 
-        # Extract association counts
         assoc_counts = {}
         for ac in data.get("association_counts", []) or []:
             if isinstance(ac, dict):
                 assoc_counts[ac.get("label", "")] = ac.get("count", 0)
 
-        # Extract causal genes (API returns full entity objects, extract key fields)
         raw_genes = data.get("causal_gene", []) or []
         causal_genes = []
         for gene in raw_genes:
             if isinstance(gene, dict):
-                causal_genes.append(
-                    {
-                        "id": gene.get("id"),
-                        "name": gene.get("name"),
-                    }
-                )
+                causal_genes.append({"id": gene.get("id"), "name": gene.get("name")})
             elif isinstance(gene, str):
                 causal_genes.append({"id": gene, "name": None})
 
-        # Extract inheritance pattern (API returns full entity object or None)
         raw_inheritance = data.get("inheritance")
         if isinstance(raw_inheritance, dict):
             inheritance = {
@@ -417,7 +390,7 @@ class MonarchV3Tool(BaseTool):
     # --- Additional Monarch V3 endpoints ---
 
     def _histopheno(self, arguments: Dict[str, Any]) -> Dict[str, Any]:
-        """Get phenotype counts by body system for a disease (histopheno profile)."""
+        """Get phenotype counts by body system for a disease."""
         entity_id = arguments.get("entity_id", "").strip()
         if not entity_id:
             return {
@@ -441,7 +414,6 @@ class MonarchV3Tool(BaseTool):
                         "id": item.get("id"),
                     }
                 )
-        # Sort by count descending
         items.sort(key=lambda x: x["phenotype_count"], reverse=True)
 
         return {
@@ -455,7 +427,7 @@ class MonarchV3Tool(BaseTool):
         }
 
     def _get_mappings(self, arguments: Dict[str, Any]) -> Dict[str, Any]:
-        """Get cross-ontology mappings for an entity (e.g., MONDO to OMIM, ICD10, SNOMED)."""
+        """Get cross-ontology mappings for an entity."""
         entity_id = arguments.get("entity_id", "").strip()
         if not entity_id:
             return {
@@ -537,7 +509,7 @@ class MonarchV3Tool(BaseTool):
                             "matched_label": v.get("match_target_label"),
                             "score": v.get("score"),
                         }
-                        for v in (similarity.get("object_best_matches", {}).values())
+                        for v in similarity.get("object_best_matches", {}).values()
                     ],
                 }
             )

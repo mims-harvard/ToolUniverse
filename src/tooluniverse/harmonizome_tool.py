@@ -60,16 +60,17 @@ class HarmonizomeTool(BaseTool):
 
     def _query(self, arguments: Dict[str, Any]) -> Dict[str, Any]:
         """Route to appropriate endpoint."""
-        if self.endpoint == "get_gene":
-            return self._get_gene(arguments)
-        elif self.endpoint == "list_datasets":
-            return self._list_datasets(arguments)
-        elif self.endpoint == "get_dataset":
-            return self._get_dataset(arguments)
-        elif self.endpoint == "search_genes":
-            return self._search_genes(arguments)
-        else:
-            return {"status": "error", "error": f"Unknown endpoint: {self.endpoint}"}
+        handlers = {
+            "get_gene": self._get_gene,
+            "list_datasets": self._list_datasets,
+            "get_dataset": self._get_dataset,
+            "search": self._search,
+            "search_genes": self._search_genes,
+        }
+        handler = handlers.get(self.endpoint)
+        if handler:
+            return handler(arguments)
+        return {"status": "error", "error": f"Unknown endpoint: {self.endpoint}"}
 
     def _get_gene(self, arguments: Dict[str, Any]) -> Dict[str, Any]:
         """Get gene details from Harmonizome."""
@@ -190,6 +191,126 @@ class HarmonizomeTool(BaseTool):
             "metadata": {
                 "source": "Harmonizome (maayanlab.cloud/Harmonizome)",
                 "dataset_name": dataset_name,
+            },
+        }
+
+    def _search(self, arguments: Dict[str, Any]) -> Dict[str, Any]:
+        """Search Harmonizome for genes, datasets, or attributes by keyword."""
+        query = arguments.get("query", "")
+        if not query:
+            return {"status": "error", "error": "query parameter is required."}
+
+        entity_type = arguments.get("entity_type", "gene")
+        if entity_type not in ("gene", "dataset", "attribute"):
+            return {
+                "status": "error",
+                "error": f"entity_type must be 'gene', 'dataset', or 'attribute', got '{entity_type}'",
+            }
+
+        limit = arguments.get("limit") or 20
+
+        if entity_type == "gene":
+            # For gene search, try exact lookup first, then suggest API
+            results = []
+            try:
+                gene_url = f"{HARMONIZOME_BASE_URL}/gene/{query}"
+                gene_resp = requests.get(gene_url, timeout=self.timeout)
+                if gene_resp.status_code == 200:
+                    g = gene_resp.json()
+                    if "symbol" in g:
+                        results.append(
+                            {
+                                "symbol": g.get("symbol"),
+                                "name": g.get("name"),
+                                "ncbi_entrez_gene_id": g.get("ncbiEntrezGeneId"),
+                            }
+                        )
+            except Exception:
+                pass
+            # Also get suggestions
+            try:
+                suggest_url = f"{HARMONIZOME_BASE_URL}/suggest"
+                suggest_resp = requests.get(
+                    suggest_url, params={"q": query}, timeout=self.timeout
+                )
+                if suggest_resp.status_code == 200:
+                    suggestions = suggest_resp.json()
+                    if isinstance(suggestions, list):
+                        # Try top suggestions as gene symbols
+                        for s in suggestions[:10]:
+                            if len(results) >= limit:
+                                break
+                            if any(r.get("symbol") == s for r in results):
+                                continue
+                            try:
+                                g_url = f"{HARMONIZOME_BASE_URL}/gene/{s}"
+                                g_resp = requests.get(g_url, timeout=self.timeout)
+                                if g_resp.status_code == 200:
+                                    g = g_resp.json()
+                                    if "symbol" in g:
+                                        results.append(
+                                            {
+                                                "symbol": g.get("symbol"),
+                                                "name": g.get("name"),
+                                                "ncbi_entrez_gene_id": g.get(
+                                                    "ncbiEntrezGeneId"
+                                                ),
+                                            }
+                                        )
+                            except Exception:
+                                continue
+            except Exception:
+                pass
+            return {
+                "status": "success",
+                "data": results[:limit],
+                "metadata": {
+                    "source": "Harmonizome (maayanlab.cloud/Harmonizome)",
+                    "entity_type": "gene",
+                    "query": query,
+                },
+            }
+
+        if entity_type == "dataset":
+            # Filter the dataset list by query
+            ds_url = f"{HARMONIZOME_BASE_URL}/dataset"
+            ds_resp = requests.get(ds_url, timeout=self.timeout)
+            ds_resp.raise_for_status()
+            ds_data = ds_resp.json()
+            query_lower = query.lower()
+            matches = [
+                {"name": e.get("name"), "href": e.get("href")}
+                for e in ds_data.get("entities", [])
+                if query_lower in (e.get("name") or "").lower()
+            ]
+            return {
+                "status": "success",
+                "data": matches[:limit],
+                "metadata": {
+                    "source": "Harmonizome (maayanlab.cloud/Harmonizome)",
+                    "entity_type": "dataset",
+                    "query": query,
+                    "total_matches": len(matches),
+                },
+            }
+
+        # attribute search: use suggest endpoint
+        suggest_url = f"{HARMONIZOME_BASE_URL}/suggest"
+        suggest_resp = requests.get(
+            suggest_url, params={"q": query}, timeout=self.timeout
+        )
+        suggest_resp.raise_for_status()
+        suggestions = suggest_resp.json()
+        if not isinstance(suggestions, list):
+            suggestions = []
+        return {
+            "status": "success",
+            "data": suggestions[:limit],
+            "metadata": {
+                "source": "Harmonizome (maayanlab.cloud/Harmonizome)",
+                "entity_type": "attribute",
+                "query": query,
+                "total_suggestions": len(suggestions),
             },
         }
 
