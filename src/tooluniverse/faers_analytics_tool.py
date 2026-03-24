@@ -440,7 +440,8 @@ class FAERSAnalyticsTool(BaseTool):
             # Parse and aggregate by year
             yearly_counts = {}
             for result in results:
-                date_str = result.get("term", "")
+                # OpenFDA count=receivedate returns "time" key, not "term"
+                date_str = result.get("time") or result.get("term", "")
                 if len(date_str) >= 4:
                     year = date_str[:4]
                     count = result.get("count", 0)

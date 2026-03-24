@@ -239,9 +239,7 @@
     "description": "Parse adverse reactions section from SPL XML into structured table format. Returns AE frequencies, severity, and descriptions. Example: setid='030d9bca-a934-6ef9-e063-6394a90a8277' extracts headache 10%, GI upset 5%.",
     "parameter": {
       "type": "object",
-      "required": [
-        "setid"
-      ],
+      "required": [],
       "properties": {
         "operation": {
           "const": "parse_adverse_reactions",
@@ -251,6 +249,10 @@
           "type": "string",
           "format": "uuid",
           "description": "SPL Set ID to parse"
+        },
+        "drug_name": {
+          "type": "string",
+          "description": "Drug name for automatic Set ID lookup (alternative to setid)"
         }
       }
     },
@@ -280,9 +282,7 @@
     "description": "Parse dosage and administration section from SPL XML. Returns structured dosing instructions, dose modifications, and administration guidelines. Example: standard dose, dose adjustments for renal/hepatic impairment.",
     "parameter": {
       "type": "object",
-      "required": [
-        "setid"
-      ],
+      "required": [],
       "properties": {
         "operation": {
           "const": "parse_dosing",
@@ -292,6 +292,10 @@
           "type": "string",
           "format": "uuid",
           "description": "SPL Set ID to parse"
+        },
+        "drug_name": {
+          "type": "string",
+          "description": "Drug name for automatic Set ID lookup (alternative to setid)"
         }
       }
     },
@@ -321,9 +325,7 @@
     "description": "Parse contraindications section from SPL XML into structured list. Returns conditions, populations, or situations where drug should not be used. Example: pregnancy, hypersensitivity, severe renal impairment.",
     "parameter": {
       "type": "object",
-      "required": [
-        "setid"
-      ],
+      "required": [],
       "properties": {
         "operation": {
           "const": "parse_contraindications",
@@ -333,6 +335,10 @@
           "type": "string",
           "format": "uuid",
           "description": "SPL Set ID to parse"
+        },
+        "drug_name": {
+          "type": "string",
+          "description": "Drug name for automatic Set ID lookup (alternative to setid)"
         }
       }
     },
@@ -362,9 +368,7 @@
     "description": "Parse drug interactions section from SPL XML into structured format. Returns CYP substrates/inhibitors/inducers, P-gp interactions, and specific drug-drug interactions. Example: avoid with strong CYP3A4 inhibitors.",
     "parameter": {
       "type": "object",
-      "required": [
-        "setid"
-      ],
+      "required": [],
       "properties": {
         "operation": {
           "const": "parse_drug_interactions",
@@ -374,6 +378,10 @@
           "type": "string",
           "format": "uuid",
           "description": "SPL Set ID to parse"
+        },
+        "drug_name": {
+          "type": "string",
+          "description": "Drug name for automatic Set ID lookup (alternative to setid)"
         }
       }
     },
@@ -403,9 +411,7 @@
     "description": "Parse clinical pharmacology section from SPL XML. Returns PK parameters (Cmax, Tmax, t1/2, AUC), PD effects, metabolism pathways, and elimination. Example: absorption, distribution, metabolism tables.",
     "parameter": {
       "type": "object",
-      "required": [
-        "setid"
-      ],
+      "required": [],
       "properties": {
         "operation": {
           "const": "parse_clinical_pharmacology",
@@ -415,6 +421,10 @@
           "type": "string",
           "format": "uuid",
           "description": "SPL Set ID to parse"
+        },
+        "drug_name": {
+          "type": "string",
+          "description": "Drug name for automatic Set ID lookup (alternative to setid)"
         }
       }
     },

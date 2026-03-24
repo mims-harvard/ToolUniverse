@@ -143,8 +143,31 @@ class DailyMedSPLParserTool(BaseTool):
             operation = self.get_schema_const_operation()
         setid = arguments.get("setid")
 
+        # Auto-resolve drug_name to setid when only the name is provided
         if not setid:
-            return {"status": "error", "error": "Missing required parameter: setid"}
+            drug_name = arguments.get("drug_name")
+            if drug_name:
+                try:
+                    resp = requests.get(
+                        f"{DAILYMED_BASE}/spls.json",
+                        params={"drug_name": drug_name, "pagesize": 1},
+                        timeout=10,
+                    )
+                    if resp.status_code == 200:
+                        items = resp.json().get("data", [])
+                        if items:
+                            setid = items[0].get("setid")
+                except Exception:
+                    pass
+
+        if not setid:
+            return {
+                "status": "error",
+                "error": (
+                    "Missing required parameter: setid. "
+                    "Provide a DailyMed Set ID UUID, or use drug_name for automatic lookup."
+                ),
+            }
 
         if not operation:
             return {"status": "error", "error": "Missing required parameter: operation"}
