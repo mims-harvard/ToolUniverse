@@ -260,9 +260,13 @@
           "type": "string",
           "enum": [
             "AMPLIFICATION",
-            "DELETION"
+            "DELETION",
+            "Amplification",
+            "Deletion",
+            "amplification",
+            "deletion"
           ],
-          "description": "Type of copy number alteration"
+          "description": "Type of copy number alteration (case-insensitive: AMPLIFICATION or DELETION)"
         },
         "tumor_type": {
           "type": "string",

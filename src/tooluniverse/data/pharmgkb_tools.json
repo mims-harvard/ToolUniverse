@@ -237,6 +237,14 @@
         "gene_id": {
           "type": "string",
           "description": "PharmGKB Gene Accession ID (e.g., \"PA128\"). NOTE: Gene-based lookup is not supported \u2014 will return an error with instructions to use annotation_id instead."
+        },
+        "gene": {
+          "type": "string",
+          "description": "NOT SUPPORTED: PharmGKB API requires a specific annotation_id (e.g. \"1447954390\"), not a gene symbol. Browse https://www.pharmgkb.org/clinicalAnnotation to find annotation IDs. For gene-drug dosing use CPIC_list_guidelines instead."
+        },
+        "gene_symbol": {
+          "type": "string",
+          "description": "Alias for gene \u2014 NOT SUPPORTED. See gene parameter."
         }
       },
       "required": []

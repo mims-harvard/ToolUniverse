@@ -175,6 +175,17 @@ class PharmGKBTool(BaseTool):
             result = api_response.get("data", api_response)
             return {"status": "success", "data": result}
 
+        # Gene symbol (e.g., "CYP2C19") is not a supported parameter — redirect user.
+        gene_symbol = arguments.get("gene") or arguments.get("gene_symbol")
+        if gene_symbol:
+            return self._error(
+                f"PharmGKB API does not support gene symbol lookup ('{gene_symbol}'). "
+                f"To find clinical annotations, browse "
+                f"https://www.pharmgkb.org/gene?symbol={gene_symbol} "
+                f"and copy the numeric annotation_id from the annotation URL. "
+                f"For drug-gene dosing guidelines, use CPIC_list_guidelines instead."
+            )
+
         # Feature-68A-003: relatedGenes.id filter returns HTTP 400 from PharmGKB API.
         # Return a clear error rather than false success.
         gene_id = arguments.get("gene_id")
