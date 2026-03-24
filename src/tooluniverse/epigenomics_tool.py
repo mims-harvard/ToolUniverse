@@ -43,8 +43,24 @@ class EpigenomicsTool(BaseTool):
         fields = tool_config.get("fields", {})
         self.endpoint = fields.get("endpoint", "histone_chipseq")
 
+    _ORGANISM_ALIASES = {
+        "human": "Homo sapiens",
+        "homo sapiens": "Homo sapiens",
+        "mouse": "Mus musculus",
+        "mus musculus": "Mus musculus",
+        "rat": "Rattus norvegicus",
+        "zebrafish": "Danio rerio",
+        "fly": "Drosophila melanogaster",
+        "worm": "Caenorhabditis elegans",
+    }
+
     def run(self, arguments: Dict[str, Any]) -> Dict[str, Any]:
         """Execute the epigenomics API call."""
+        # Normalize organism aliases to scientific names required by ENCODE API
+        if "organism" in arguments:
+            org = arguments["organism"].lower()
+            if org in self._ORGANISM_ALIASES:
+                arguments = dict(arguments, organism=self._ORGANISM_ALIASES[org])
         try:
             result = self._dispatch(arguments)
             if isinstance(result, dict) and "status" not in result:
