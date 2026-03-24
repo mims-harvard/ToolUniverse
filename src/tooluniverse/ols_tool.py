@@ -203,7 +203,25 @@ class OLSTool(BaseTool):
             params["ontology"] = ontology
 
         data = self._get_json("/api/search", params=params)
-        formatted = self._format_term_collection(data, rows)
+
+        # OLS /api/search returns a Solr-style envelope: {"response": {"docs": [...], "numFound": N}, ...}
+        # Extract docs and numFound directly to avoid returning noisy facet_counts.
+        solr_response = data.get("response") if isinstance(data, dict) else None
+        if isinstance(solr_response, dict) and "docs" in solr_response:
+            docs = solr_response.get("docs", [])
+            num_found = solr_response.get("numFound", len(docs))
+            term_models = [self._build_term_model(item) for item in docs[:rows]]
+            term_models = [m for m in term_models if m is not None]
+            formatted: Dict[str, Any] = {
+                "terms": [
+                    m.model_dump(by_alias=True, mode="json") for m in term_models
+                ],
+                "total_items": num_found,
+                "showing": len(term_models),
+            }
+        else:
+            formatted = self._format_term_collection(data, rows)
+
         formatted["query"] = query
         formatted["filters"] = {
             "ontology": ontology,

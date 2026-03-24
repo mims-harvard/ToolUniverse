@@ -190,9 +190,15 @@ class GTExEQTLTool:
         timeout = int(self.tool_config.get("settings", {}).get("timeout", 30))
 
         # Resolve gene symbol or unversioned Ensembl ID to versioned GENCODE ID
-        gene_input = arguments.get("gene_symbol") or arguments.get(
-            "ensembl_gene_id", ""
-        )
+        gene_input = arguments.get("gene_symbol") or arguments.get("ensembl_gene_id")
+        if not gene_input:
+            return {
+                "status": "error",
+                "error": (
+                    "Provide 'gene_symbol' (e.g. 'VKORC1') or 'ensembl_gene_id' "
+                    "(e.g. 'ENSG00000197708') to query eQTLs."
+                ),
+            }
         gencode_id = _resolve_gene_id(gene_input, base, timeout)
 
         query: Dict[str, Any] = {
@@ -212,16 +218,16 @@ class GTExEQTLTool:
             eqtl_data = _extract_data_list(api_response)
 
             return {
+                "status": "success",
                 "source": "GTEx",
                 "endpoint": "association/singleTissueEqtl",
                 "query": query,
                 "data": {"singleTissueEqtl": eqtl_data},
-                "success": True,
             }
         except Exception as e:
             return {
+                "status": "error",
                 "error": str(e),
                 "source": "GTEx",
                 "endpoint": "association/singleTissueEqtl",
-                "success": False,
             }
