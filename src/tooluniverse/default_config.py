@@ -1003,6 +1003,8 @@ default_tool_files = {
     "clingen_allele": os.path.join(current_dir, "data", "clingen_allele_tools.json"),
     # SIGNOR - Causal signaling network relationships
     "signor": os.path.join(current_dir, "data", "signor_tools.json"),
+    # ProtParam - Local protein physicochemical property calculations
+    "protparam": os.path.join(current_dir, "data", "protparam_tools.json"),
 }
 
 # Auto-load any user-provided tools from ~/.tooluniverse/user_tools/

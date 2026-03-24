@@ -398,6 +398,7 @@ STATIC_LAZY_REGISTRY = {
     "ProteinsPlusRESTTool": "proteinsplus_tool",
     "ProteomeXchangeTool": "proteomexchange_tool",
     "ProteomicsDBTool": "proteomicsdb_tool",
+    "ProtParamTool": "protparam_tool",
     "ProtVarFunctionTool": "protvar_tool",
     "ProtVarPopulationTool": "protvar_tool",
     "ProtVarTool": "protvar_tool",

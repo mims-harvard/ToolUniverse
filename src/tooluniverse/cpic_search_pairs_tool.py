@@ -41,17 +41,32 @@ class CPICSearchPairsTool(BaseRESTTool):
     # Parameters that are PostgREST column filters requiring the eq. prefix
     _FILTER_PARAMS = ("genesymbol", "cpiclevel")
 
-    def _build_params(self, args: Dict[str, Any]) -> Dict[str, Any]:
-        # Feature-68A-004: auto-prepend 'eq.' to PostgREST filter params if user
-        # provides a plain value like 'CYP2D6' instead of 'eq.CYP2D6'.
+    def _resolve_aliases(self, args: Dict[str, Any]) -> Dict[str, Any]:
+        """Resolve gene_symbol/gene aliases to genesymbol."""
         normalized = dict(args)
-        if "genesymbol" not in normalized:
+        if not normalized.get("genesymbol"):
             alias = normalized.pop("gene_symbol", None) or normalized.pop("gene", None)
             if alias:
                 normalized["genesymbol"] = alias
+        else:
+            normalized.pop("gene_symbol", None)
+            normalized.pop("gene", None)
+        return normalized
+
+    def _build_params(self, args: Dict[str, Any]) -> Dict[str, Any]:
+        # Resolve aliases then auto-prepend 'eq.' to bare PostgREST filter values.
+        # Only done here (not in _build_url) because the URL template already
+        # embeds 'eq.' inline (e.g. ?genesymbol=eq.{genesymbol}).
+        normalized = self._resolve_aliases(args)
         for key in self._FILTER_PARAMS:
             val = normalized.get(key)
-            if val and isinstance(val, str):
-                if not any(val.startswith(op) for op in _POSTGREST_OPS):
-                    normalized[key] = f"eq.{val}"
+            if (
+                val
+                and isinstance(val, str)
+                and not any(val.startswith(op) for op in _POSTGREST_OPS)
+            ):
+                normalized[key] = f"eq.{val}"
         return super()._build_params(normalized)
+
+    def _build_url(self, args: Dict[str, Any]) -> str:
+        return super()._build_url(self._resolve_aliases(args))

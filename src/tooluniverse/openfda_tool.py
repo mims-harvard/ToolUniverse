@@ -1804,12 +1804,18 @@ class OpenFDADrugEventsTool(BaseRESTTool):
     'haemorrhage' not 'hemorrhage', 'haematoma' not 'hematoma').
     """
 
+    # Valid OpenFDA drug/event.json query parameters
+    _VALID_API_PARAMS = frozenset({"search", "limit", "count", "skip", "api_key"})
+
     def run(self, arguments: Dict[str, Any]) -> Dict[str, Any]:
         args = dict(arguments)
         drug_name = args.pop("drug_name", None)
         reaction = args.pop("reaction", None)
 
-        # Feature-83B-003: build Lucene query from convenience params when
+        # Strip params unknown to openFDA to avoid HTTP 400 "Invalid parameter".
+        args = {k: v for k, v in args.items() if k in self._VALID_API_PARAMS}
+
+        # Build Lucene query from convenience params when
         # 'search' is not provided directly.
         if not args.get("search"):
             if not drug_name:

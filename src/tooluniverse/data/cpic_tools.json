@@ -237,18 +237,24 @@
   },
   {
     "name": "CPIC_get_gene_drug_pairs",
-    "description": "Get all gene-drug pairs for a pharmacogene from CPIC. Shows which drugs are affected by variants in a specific gene, with CPIC evidence level and PharmGKB clinical annotation level. Evidence levels: A (strongest) to D (weakest). Useful for understanding the clinical significance of a pharmacogene.",
+    "description": "Get all gene-drug pairs for a pharmacogene from CPIC. Shows which drugs are affected by variants in a specific gene, with CPIC evidence level and PharmGKB clinical annotation level. Evidence levels: A (strongest) to D (weakest). Useful for understanding the clinical significance of a pharmacogene. Provide gene as 'genesymbol', 'gene_symbol', or 'gene'.",
     "parameter": {
       "type": "object",
       "properties": {
         "genesymbol": {
-          "type": "string",
+          "type": ["string", "null"],
           "description": "Gene symbol (e.g., 'CYP2D6', 'CYP2C19', 'SLCO1B1', 'TPMT', 'DPYD', 'VKORC1')"
+        },
+        "gene_symbol": {
+          "type": ["string", "null"],
+          "description": "Alias for genesymbol (e.g., 'CYP2D6')"
+        },
+        "gene": {
+          "type": ["string", "null"],
+          "description": "Alias for genesymbol (e.g., 'CYP2D6')"
         }
       },
-      "required": [
-        "genesymbol"
-      ]
+      "required": []
     },
     "fields": {
       "endpoint": "https://api.cpicpgx.org/v1/pair?genesymbol=eq.{genesymbol}",
@@ -256,7 +262,7 @@
         "select": "*,drug(name)"
       }
     },
-    "type": "BaseRESTTool",
+    "type": "CPICSearchPairsTool",
     "test_examples": [
       {
         "genesymbol": "CYP2D6"
@@ -579,8 +585,12 @@
           "description": "Maximum number of results to return (default 50)"
         },
         "gene_symbol": {
-          "type": "string",
+          "type": ["string", "null"],
           "description": "Gene symbol alias (e.g., 'CYP2D6', 'VKORC1') \u2014 alternative to genesymbol"
+        },
+        "gene": {
+          "type": ["string", "null"],
+          "description": "Gene symbol alias (e.g., 'CYP2D6') \u2014 alternative to genesymbol"
         }
       },
       "required": [],
