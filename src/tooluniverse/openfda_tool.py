@@ -1810,7 +1810,7 @@ class OpenFDADrugEventsTool(BaseRESTTool):
     def run(self, arguments: Dict[str, Any]) -> Dict[str, Any]:
         args = dict(arguments)
         drug_name = args.pop("drug_name", None)
-        reaction = args.pop("reaction", None)
+        reaction = args.pop("reaction", None) or args.pop("adverse_event", None)
 
         # Strip params unknown to openFDA to avoid HTTP 400 "Invalid parameter".
         args = {k: v for k, v in args.items() if k in self._VALID_API_PARAMS}

@@ -242,15 +242,24 @@
       "type": "object",
       "properties": {
         "genesymbol": {
-          "type": ["string", "null"],
+          "type": [
+            "string",
+            "null"
+          ],
           "description": "Gene symbol (e.g., 'CYP2D6', 'CYP2C19', 'SLCO1B1', 'TPMT', 'DPYD', 'VKORC1')"
         },
         "gene_symbol": {
-          "type": ["string", "null"],
+          "type": [
+            "string",
+            "null"
+          ],
           "description": "Alias for genesymbol (e.g., 'CYP2D6')"
         },
         "gene": {
-          "type": ["string", "null"],
+          "type": [
+            "string",
+            "null"
+          ],
           "description": "Alias for genesymbol (e.g., 'CYP2D6')"
         }
       },
@@ -351,14 +360,19 @@
     "description": "List all CPIC pharmacogenomic guidelines. Returns ~29 evidence-based guidelines (count may vary as guidelines are added/updated) for using pharmacogenomic test results to optimize drug therapy. Each guideline covers one or more gene-drug pairs with specific dosing recommendations based on genotype/phenotype. Includes guideline ID, name, URL, associated genes, and PharmGKB IDs. Use the returned guideline ID with CPIC_get_recommendations to retrieve specific dosing recommendations.",
     "parameter": {
       "type": "object",
-      "properties": {},
-      "required": [],
-      "additionalProperties": false
+      "properties": {
+        "gene": {
+          "type": "string",
+          "description": "Filter by gene symbol (e.g., CYP2D6, TPMT). Returns only guidelines involving this gene."
+        },
+        "gene_symbol": {
+          "type": "string",
+          "description": "Alias for gene. Filter by gene symbol (e.g., CYP2D6, TPMT)."
+        }
+      },
+      "required": []
     },
-    "fields": {
-      "endpoint": "https://api.cpicpgx.org/v1/guideline"
-    },
-    "type": "BaseRESTTool",
+    "type": "CPICListGuidelinesTool",
     "test_examples": [
       {}
     ],
@@ -586,11 +600,17 @@
           "description": "Maximum number of results to return (default 50)"
         },
         "gene_symbol": {
-          "type": ["string", "null"],
+          "type": [
+            "string",
+            "null"
+          ],
           "description": "Gene symbol alias (e.g., 'CYP2D6', 'VKORC1') \u2014 alternative to genesymbol"
         },
         "gene": {
-          "type": ["string", "null"],
+          "type": [
+            "string",
+            "null"
+          ],
           "description": "Gene symbol alias (e.g., 'CYP2D6') \u2014 alternative to genesymbol"
         }
       },

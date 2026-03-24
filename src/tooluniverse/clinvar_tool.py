@@ -151,10 +151,17 @@ class ClinVarSearchVariants(ClinVarRESTTool):
 
     def run(self, arguments: Dict[str, Any]) -> Dict[str, Any]:
         """Search variants by gene or condition."""
+        # Normalize aliases before dispatch
+        if not arguments.get("gene") and arguments.get("gene_symbol"):
+            arguments = dict(arguments, gene=arguments["gene_symbol"])
+        if not arguments.get("clinical_significance") and arguments.get("significance"):
+            arguments = dict(arguments, clinical_significance=arguments["significance"])
+        if not arguments.get("condition") and arguments.get("query"):
+            arguments = dict(arguments, condition=arguments["query"])
+
         params = {
             "db": "clinvar",
             "retmode": "json",
-            # Feature-68A-009: accept 'limit' as alias for 'max_results'
             "retmax": arguments.get("max_results") or arguments.get("limit", 20),
         }
 

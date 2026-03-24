@@ -113,6 +113,46 @@ class CPICGetRecommendationsTool(BaseTool):
             return {"status": "error", "error": f"CPIC API error: {e}"}
 
 
+@register_tool("CPICListGuidelinesTool")
+class CPICListGuidelinesTool(BaseTool):
+    """
+    List CPIC pharmacogenomic guidelines with optional gene-symbol filtering.
+
+    Fetches all guidelines and optionally filters client-side by gene symbol,
+    since the CPIC /guideline endpoint does not support server-side gene filtering.
+    """
+
+    def run(self, arguments: Dict[str, Any]) -> Dict[str, Any]:
+        gene = (arguments.get("gene") or arguments.get("gene_symbol") or "").upper()
+
+        try:
+            r = requests.get(
+                f"{_CPIC_API}/guideline",
+                params={"select": "*"},
+                timeout=15,
+            )
+            r.raise_for_status()
+            data = r.json()
+        except requests.exceptions.RequestException as e:
+            return {"status": "error", "error": f"CPIC API error: {e}"}
+
+        if gene:
+            data = [
+                g
+                for g in data
+                if any(s.upper() == gene for s in (g.get("genes") or []))
+            ]
+
+        return {
+            "status": "success",
+            "data": data,
+            "metadata": {
+                "total": len(data),
+                "gene_filter": gene or None,
+            },
+        }
+
+
 # PostgREST filter operator prefixes
 _POSTGREST_OPS = (
     "eq.",

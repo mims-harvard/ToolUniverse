@@ -134,6 +134,10 @@
         "event_type": {
           "type": "string",
           "description": "Alias for seriousness_type. Type of serious event (e.g., hospitalization, death, life_threatening)."
+        },
+        "adverse_event": {
+          "type": "string",
+          "description": "Specific adverse event MedDRA term to filter within serious events (e.g., MYOCARDIAL INFARCTION, DEATH). Use uppercase MedDRA PT terms."
         }
       }
     },
