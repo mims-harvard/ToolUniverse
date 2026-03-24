@@ -993,6 +993,10 @@ default_tool_files = {
     "nca": os.path.join(current_dir, "data", "nca_tools.json"),
     # RDKit cheminformatics: pharmacophore features and matched molecular pairs (MMP)
     "rdkit_cheminfo": os.path.join(current_dir, "data", "rdkit_cheminfo_tools.json"),
+    # ProtVar (EBI) - Variant interpretation: mapping, function, population, pathogenicity
+    "protvar": os.path.join(current_dir, "data", "protvar_tools.json"),
+    # AOPWiki - Adverse Outcome Pathways: toxicology causal chains (MIE -> KE -> AO)
+    "aopwiki": os.path.join(current_dir, "data", "aopwiki_tools.json"),
 }
 
 # Auto-load any user-provided tools from ~/.tooluniverse/user_tools/

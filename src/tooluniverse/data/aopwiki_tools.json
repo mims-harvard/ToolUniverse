@@ -1,0 +1,116 @@
+[
+  {
+    "name": "AOPWiki_list_aops",
+    "type": "AOPWikiListTool",
+    "description": "List Adverse Outcome Pathways (AOPs) from AOPWiki. Returns AOP IDs, titles, and short names. AOPs describe causal chains from molecular initiating events through key events to adverse outcomes, used in toxicology and risk assessment.",
+    "parameter": {
+      "type": "object",
+      "properties": {}
+    },
+    "return_schema": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "id": {"type": "integer"},
+          "title": {"type": ["string", "null"]},
+          "short_name": {"type": ["string", "null"]}
+        }
+      }
+    },
+    "test_examples": [
+      {}
+    ],
+    "label": ["AOPWiki", "Toxicology", "Adverse Outcome Pathway"],
+    "metadata": {
+      "tags": ["toxicology", "adverse outcome pathway", "regulatory"],
+      "estimated_execution_time": "2-3 seconds"
+    }
+  },
+  {
+    "name": "AOPWiki_get_aop",
+    "type": "AOPWikiDetailTool",
+    "description": "Get detailed information about a specific Adverse Outcome Pathway (AOP) from AOPWiki by AOP ID. Returns the molecular initiating events (MIEs), key events (KEs), adverse outcomes (AOs), stressors (chemicals), and key event relationships (causal chain).",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "aop_id": {
+          "type": "integer",
+          "description": "AOP numeric identifier. Find IDs using AOPWiki_list_aops. Example: 3 (mitochondrial complex I inhibition leading to parkinsonian motor deficits)."
+        }
+      },
+      "required": ["aop_id"]
+    },
+    "return_schema": {
+      "type": "object",
+      "properties": {
+        "id": {"type": "integer"},
+        "title": {"type": ["string", "null"]},
+        "short_name": {"type": ["string", "null"]},
+        "created_at": {"type": ["string", "null"]},
+        "updated_at": {"type": ["string", "null"]},
+        "stressors": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "id": {"type": ["integer", "null"]},
+              "name": {"type": ["string", "null"]}
+            }
+          }
+        },
+        "molecular_initiating_events": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "event_id": {"type": ["integer", "null"]},
+              "event": {"type": ["string", "null"]}
+            }
+          }
+        },
+        "key_events": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "event_id": {"type": ["integer", "null"]},
+              "event": {"type": ["string", "null"]}
+            }
+          }
+        },
+        "adverse_outcomes": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "event_id": {"type": ["integer", "null"]},
+              "event": {"type": ["string", "null"]}
+            }
+          }
+        },
+        "relationships": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "upstream_event_id": {"type": ["integer", "null"]},
+              "upstream_event": {"type": ["string", "null"]},
+              "downstream_event_id": {"type": ["integer", "null"]},
+              "downstream_event": {"type": ["string", "null"]}
+            }
+          }
+        }
+      }
+    },
+    "test_examples": [
+      {"aop_id": 3},
+      {"aop_id": 12}
+    ],
+    "label": ["AOPWiki", "Toxicology", "Adverse Outcome Pathway"],
+    "metadata": {
+      "tags": ["toxicology", "adverse outcome pathway", "regulatory", "stressor"],
+      "estimated_execution_time": "2-3 seconds"
+    }
+  }
+]
