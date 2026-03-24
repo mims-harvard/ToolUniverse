@@ -43,7 +43,7 @@
 
 **Note**: Also known as 5382insC (legacy notation)
 
-*Source: `Ensembl_get_variant_info`, `myvariant_query`*
+*Source: `EnsemblVar_get_variant_consequences`, `MyVariant_query_variants`*
 
 ---
 
@@ -66,7 +66,7 @@
 
 **Interpretation**: Elevated in Ashkenazi Jewish population (founder variant). Overall frequency consistent with disease prevalence when accounting for reduced penetrance and carrier frequency.
 
-*Source: `gnomad_search`, accessed 2026-02-04*
+*Source: `gnomad_search_variants`, accessed 2026-02-04*
 
 ---
 
@@ -116,7 +116,7 @@
 
 **NMD Prediction**: Predicted to undergo nonsense-mediated decay (PTC at codon 1829, well before last exon junction)
 
-*Source: `myvariant_query`*
+*Source: `MyVariant_query_variants`*
 
 ---
 
@@ -152,7 +152,7 @@
 
 **PS3 Evidence**: Strong - multiple functional studies demonstrating loss of DNA repair function
 
-*Source: `PubMed_search`*
+*Source: `PubMed_search_articles`*
 
 ---
 
@@ -228,10 +228,10 @@
 
 | Tool | Purpose | Result |
 |------|---------|--------|
-| `clinvar_search` | Classification lookup | VCV000017661 |
-| `gnomad_search` | Population frequency | AF=0.00006 |
-| `myvariant_query` | Aggregated annotations | Complete |
-| `PubMed_search` | Literature evidence | 47 relevant papers |
+| `clinvar_search_variants` | Classification lookup | VCV000017661 |
+| `gnomad_search_variants` | Population frequency | AF=0.00006 |
+| `MyVariant_query_variants` | Aggregated annotations | Complete |
+| `PubMed_search_articles` | Literature evidence | 47 relevant papers |
 | `OMIM_search` | Gene-disease | HBOC confirmed |
 ```
 
@@ -278,7 +278,7 @@
 | Consequence | Missense |
 | Exon | 5 of 11 |
 
-*Source: `Ensembl_get_variant_info`, `myvariant_query`*
+*Source: `EnsemblVar_get_variant_consequences`, `MyVariant_query_variants`*
 
 ---
 
@@ -299,7 +299,7 @@
 
 **Interpretation**: Absent from gnomAD (>140,000 individuals). Supports PM2 (absent from controls).
 
-*Source: `gnomad_search`, accessed 2026-02-04*
+*Source: `gnomad_search_variants`, accessed 2026-02-04*
 
 ---
 
@@ -351,7 +351,7 @@
 
 **Concordance**: 4/4 predictors indicate damaging → **PP3 applies**
 
-*Source: `myvariant_query`*
+*Source: `MyVariant_query_variants`*
 
 ---
 
@@ -416,7 +416,7 @@
 **PS3**: Not directly applicable (no R175C-specific functional study)
 **PS1**: Not applicable (amino acid change differs from R175H)
 
-*Source: `PubMed_search`*
+*Source: `PubMed_search_articles`*
 
 ---
 
@@ -492,11 +492,11 @@
 
 | Tool | Purpose | Result |
 |------|---------|--------|
-| `clinvar_search` | Classification | VCV000376642 (VUS) |
-| `gnomad_search` | Population freq | 0 (absent) |
-| `myvariant_query` | Predictions | All damaging |
+| `clinvar_search_variants` | Classification | VCV000376642 (VUS) |
+| `gnomad_search_variants` | Population freq | 0 (absent) |
+| `MyVariant_query_variants` | Predictions | All damaging |
 | `PDB_get_structure` | Structure | 2OCJ |
-| `PubMed_search` | Literature | R175 studies |
+| `PubMed_search_articles` | Literature | R175 studies |
 ```
 
 ---

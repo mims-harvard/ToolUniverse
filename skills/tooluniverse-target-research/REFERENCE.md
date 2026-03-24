@@ -76,7 +76,7 @@ Complete reference of 225+ ToolUniverse tools for target research, organized by 
 | `cBioPortal_get_genes` | `keyword` | Cancer gene search |
 | `civic_search_genes` | `gene_symbol` | CIViC gene info |
 | `gnomad_get_gene` | `gene_symbol` | gnomAD gene data |
-| `gnomad_search_genes` | `query` | gnomAD gene search |
+| `gnomad_search_variants_genes` | `query` | gnomAD gene search |
 | `gnomad_get_gene_constraints` | `gene_symbol` | Constraint scores |
 
 ## 3. Drug-Target Interactions

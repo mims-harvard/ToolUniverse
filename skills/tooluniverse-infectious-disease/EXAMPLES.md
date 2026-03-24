@@ -223,7 +223,7 @@ This novel betacoronavirus shares key features with SARS-CoV-2, enabling rapid k
 | NvidiaNIM_alphafold2 | Mpro, RdRp sequences | Structure prediction |
 | NvidiaNIM_diffdock | Top 24 drugs | Docking screen |
 | ChEMBL_search_drugs | coronavirus antivirals | Drug candidates |
-| PubMed_search | coronavirus drug resistance | Literature |
+| PubMed_search_articles | coronavirus drug resistance | Literature |
 ```
 
 ---

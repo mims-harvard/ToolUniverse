@@ -469,10 +469,10 @@ def search_treatment_literature(tu, cancer_type, biomarker, drug_name):
 ```python
 def search_preprints(tu, cancer_type, biomarker):
     """Search preprints for cutting-edge findings."""
-    biorxiv = tu.tools.BioRxiv_search_preprints(
+    biorxiv = tu.tools.BioRxiv_list_recent_preprints(
         query=f"{cancer_type} {biomarker} treatment", limit=10
     )
-    medrxiv = tu.tools.MedRxiv_search_preprints(
+    medrxiv = tu.tools.MedRxiv_get_preprint(
         query=f"{cancer_type} {biomarker}", limit=10
     )
     return {'biorxiv': biorxiv, 'medrxiv': medrxiv}

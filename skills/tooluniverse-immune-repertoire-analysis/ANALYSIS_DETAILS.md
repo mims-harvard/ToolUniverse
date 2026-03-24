@@ -394,7 +394,7 @@ def predict_specificity_vdjdb(cdr3_sequences, chain='TRB'):
     specificity_results = {}
     for cdr3 in cdr3_sequences[:5]:
         result = tu.run_one_function({
-            "name": "PubMed_search",
+            "name": "PubMed_search_articles",
             "arguments": {
                 "query": f'"{cdr3}" AND (epitope OR antigen OR specificity)',
                 "max_results": 10

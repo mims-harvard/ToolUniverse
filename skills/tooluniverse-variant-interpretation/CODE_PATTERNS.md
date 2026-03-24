@@ -374,7 +374,7 @@ protein_seq = tu.tools.UniProt_get_protein_sequence(accession=uniprot_id)
 
 # 2. Get/predict structure
 try:
-    pdb_hits = tu.tools.PDB_search_by_uniprot(uniprot_id=uniprot_id)
+    pdb_hits = tu.tools.PDBe_get_uniprot_mappings(uniprot_id=uniprot_id)
     structure = tu.tools.PDB_get_structure(pdb_id=pdb_hits[0]['pdb_id'])
 except:
     structure = tu.tools.NvidiaNIM_alphafold2(
@@ -430,17 +430,17 @@ def validate_expression_context(tu, gene_symbol, phenotype_tissues):
 def comprehensive_literature_search(tu, gene, variant, phenotype):
     """Search across all literature sources."""
 
-    pubmed = tu.tools.PubMed_search(
+    pubmed = tu.tools.PubMed_search_articles(
         query=f'"{gene}" AND ("{variant}" OR functional)',
         max_results=30
     )
 
-    biorxiv = tu.tools.BioRxiv_search_preprints(
+    biorxiv = tu.tools.BioRxiv_list_recent_preprints(
         query=f"{gene} {phenotype}",
         limit=10
     )
 
-    medrxiv = tu.tools.MedRxiv_search_preprints(
+    medrxiv = tu.tools.MedRxiv_get_preprint(
         query=f"{gene} variant {phenotype}",
         limit=10
     )

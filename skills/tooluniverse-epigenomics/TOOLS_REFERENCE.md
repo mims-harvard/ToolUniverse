@@ -28,7 +28,7 @@ Detailed parameter specifications and return schemas for all ToolUniverse tools 
 |------|-----------|---------|
 | `MyGene_query_genes` | `query: str` | `{hits: [{_id, symbol, ensembl, ...}]}` |
 | `MyGene_batch_query` | `gene_ids: list[str]`, `fields: str` | `{results: [{query, symbol, ...}]}` |
-| `HGNC_get_gene_info` | `symbol: str` | Gene symbol, aliases, IDs |
+| `HGNC_fetch_gene_by_symbol` | `symbol: str` | Gene symbol, aliases, IDs |
 | `GO_get_annotations_for_gene` | `gene_id: str` | GO annotations |
 
 ## Sequencing Data Retrieval Tools (SRA)

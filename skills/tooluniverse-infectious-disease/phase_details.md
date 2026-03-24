@@ -187,9 +187,9 @@ def comprehensive_outbreak_literature(tu, pathogen_name):
     pubmed = tu.tools.PubMed_search_articles(
         query=f"{pathogen_name} AND (outbreak OR treatment OR drug)",
         limit=50, sort="date")
-    biorxiv = tu.tools.BioRxiv_search_preprints(
+    biorxiv = tu.tools.BioRxiv_list_recent_preprints(
         query=f"{pathogen_name} treatment mechanism", limit=20)
-    medrxiv = tu.tools.MedRxiv_search_preprints(
+    medrxiv = tu.tools.MedRxiv_get_preprint(
         query=f"{pathogen_name} clinical trial", limit=20)
     arxiv = tu.tools.ArXiv_search_papers(
         query=f"{pathogen_name} drug discovery", category="q-bio", limit=10)

@@ -142,14 +142,14 @@ result = tu.tools.NvidiaNIM_esm2_650m(
 
 | Tool | Purpose | Key Parameters |
 |------|---------|----------------|
-| `PDB_search_by_uniprot` | Find PDB structures | `uniprot_id` |
+| `PDBe_get_uniprot_mappings` | Find PDB structures | `uniprot_id` |
 | `PDB_get_structure` | Download PDB file | `pdb_id` |
 | `alphafold_get_prediction` | Get AlphaFold DB structure | `accession` |
 
 **Example - Get target structure**:
 ```python
 # Try PDB first
-pdb_hits = tu.tools.PDB_search_by_uniprot(uniprot_id="Q9NZQ7")
+pdb_hits = tu.tools.PDBe_get_uniprot_mappings(uniprot_id="Q9NZQ7")
 if pdb_hits:
     structure = tu.tools.PDB_get_structure(pdb_id=pdb_hits[0]['pdb_id'])
 else:

@@ -266,7 +266,7 @@ def query_depmap_dependencies(gene_symbol):
     from tooluniverse import ToolUniverse
     tu = ToolUniverse()
     result = tu.run_one_function({
-        "name": "PubMed_search",
+        "name": "PubMed_search_articles",
         "arguments": {
             "query": f'("{gene_symbol}"[Gene]) AND ("CRISPR screen" OR "gene essentiality" OR "DepMap")',
             "max_results": 20

@@ -10,7 +10,7 @@ Detailed code examples and procedures for each design phase.
 def get_target_structure(tu, target_id):
     """Get target structure: PDB first, then EMDB cryo-EM, then AlphaFold."""
     # Try PDB (X-ray/NMR)
-    pdb_results = tu.tools.PDB_search_by_uniprot(uniprot_id=target_id)
+    pdb_results = tu.tools.PDBe_get_uniprot_mappings(uniprot_id=target_id)
     if pdb_results:
         best_pdb = sorted(pdb_results, key=lambda x: x['resolution'])[0]
         return {'source': 'PDB', 'pdb_id': best_pdb['pdb_id']}

@@ -53,7 +53,7 @@ def annotate_gene(tu, gene_symbol):
     """Comprehensive gene annotation."""
     omim = tu.tools.OMIM_search(operation="search", query=gene_symbol, limit=5)
     disgenet = tu.tools.DisGeNET_search_gene(operation="search_gene", gene=gene_symbol, limit=10)
-    ncbi = tu.tools.NCBI_gene_search(term=gene_symbol, organism="human")
+    ncbi = tu.tools.NCBIGene_search(term=gene_symbol, organism="human")
     return {'symbol': gene_symbol, 'omim': omim, 'disgenet': disgenet, 'ncbi': ncbi}
 ```
 
@@ -203,11 +203,11 @@ def comprehensive_literature_search(tu, genes, sv_type, phenotype):
     """Search literature for SV evidence."""
     literature = []
     for gene in genes:
-        dosage_papers = tu.tools.PubMed_search(
+        dosage_papers = tu.tools.PubMed_search_articles(
             query=f'"{gene}" AND (haploinsufficiency OR dosage sensitivity OR deletion syndrome)',
             max_results=20
         )
-        case_papers = tu.tools.PubMed_search(
+        case_papers = tu.tools.PubMed_search_articles(
             query=f'"{gene}" AND deletion AND {phenotype}', max_results=15
         )
         literature.append({'gene': gene, 'dosage_papers': dosage_papers, 'case_reports': case_papers})

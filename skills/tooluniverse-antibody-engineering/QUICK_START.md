@@ -378,7 +378,7 @@ The working pipeline performs 5-step analysis:
 These tools from the original skill are not in ToolUniverse:
 - `AlphaFold_get_prediction` - Blocks structure modeling phase
 - `UniProt_get_protein_by_accession` - Blocks target characterization
-- `PubMed_search` - Available as `PubMed_search_articles`
+- `PubMed_search_articles` - Available as `PubMed_search_articles`
 
 ### Missing Implementations
 These analysis functions need to be implemented:

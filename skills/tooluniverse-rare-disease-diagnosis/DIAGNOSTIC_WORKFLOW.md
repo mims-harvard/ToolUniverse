@@ -632,7 +632,7 @@ def search_disease_literature(tu, disease_name, genes):
 def search_preprints(tu, disease_name, genes):
     """Search preprints for cutting-edge findings."""
 
-    biorxiv = tu.tools.BioRxiv_search_preprints(
+    biorxiv = tu.tools.BioRxiv_list_recent_preprints(
         query=f"{disease_name} genetics",
         limit=10
     )

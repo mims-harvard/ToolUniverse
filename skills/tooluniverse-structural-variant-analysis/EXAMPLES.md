@@ -72,7 +72,7 @@
 
 **Molecular Consequence**: Complete deletion of NF1 gene → haploinsufficiency → loss of RAS-GAP activity → RAS pathway hyperactivation → tumor predisposition
 
-*Sources: `Ensembl_lookup_gene`, `NCBI_gene_search`, `OMIM_get_entry`*
+*Sources: `Ensembl_lookup_gene`, `NCBIGene_search`, `OMIM_get_entry`*
 
 ### 2.2 Partially Disrupted Genes
 
@@ -248,7 +248,7 @@ Classification: PATHOGENIC ★★★
 
 **ACMG Code**: **PS3_Supporting** - Well-established in literature that NF1 deletions cause NF1
 
-*Source: `PubMed_search` - query: "NF1 deletion neurofibromatosis"*
+*Source: `PubMed_search_articles` - query: "NF1 deletion neurofibromatosis"*
 
 ### 6.2 NF1 Molecular Mechanism (Functional Evidence)
 
@@ -432,7 +432,7 @@ No significant uncertainties affect the Pathogenic classification. NF1 haploinsu
 | Database | Tool | Query | Result |
 |----------|------|-------|--------|
 | Ensembl | `Ensembl_lookup_gene` | NF1 gene coordinates | chr17:31094927-31377677 confirmed |
-| NCBI Gene | `NCBI_gene_search` | NF1 function | GeneID: 4763, RAS-GAP function confirmed |
+| NCBI Gene | `NCBIGene_search` | NF1 function | GeneID: 4763, RAS-GAP function confirmed |
 | ClinVar | `ClinVar_search_variants` | chr17:31094927-31377677 DEL | 3 pathogenic matches found |
 | gnomAD | Browser query | NF1 LoF variants | 0 LoF in 152,312 alleles; pLI=1.00 |
 
@@ -451,8 +451,8 @@ No significant uncertainties affect the Pathogenic classification. NF1 haploinsu
 
 | Database | Tool | Query | Results |
 |----------|------|-------|---------|
-| PubMed | `PubMed_search` | "NF1 deletion neurofibromatosis" | 245 articles, top 20 reviewed |
-| PubMed | `PubMed_search` | "NF1 haploinsufficiency mechanism" | 78 articles |
+| PubMed | `PubMed_search_articles` | "NF1 deletion neurofibromatosis" | 245 articles, top 20 reviewed |
+| PubMed | `PubMed_search_articles` | "NF1 haploinsufficiency mechanism" | 78 articles |
 
 ### 10.4 Quality Control
 

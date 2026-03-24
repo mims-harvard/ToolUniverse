@@ -6,11 +6,11 @@
 
 | Tool | Purpose | Key Parameters |
 |------|---------|----------------|
-| `myvariant_query` | Query variant annotations | `variant_id`, `fields` |
+| `MyVariant_query_variants` | Query variant annotations | `variant_id`, `fields` |
 
 **Example - Query variant**:
 ```python
-result = tu.tools.myvariant_query(
+result = tu.tools.MyVariant_query_variants(
     variant_id="chr17:g.7674220C>T",
     fields="clinvar,gnomad,cadd,dbnsfp"
 )
@@ -31,12 +31,12 @@ result = tu.tools.myvariant_query(
 
 | Tool | Purpose | Key Parameters |
 |------|---------|----------------|
-| `clinvar_search` | Search by variant | `variant`, `gene` |
+| `clinvar_search_variants` | Search by variant | `variant`, `gene` |
 | `clinvar_get_variant` | Get by VCV ID | `variation_id` |
 
 **Example - Search ClinVar**:
 ```python
-result = tu.tools.clinvar_search(
+result = tu.tools.clinvar_search_variants(
     variant="NM_007294.4:c.5266dupC"
 )
 # Returns: VCV ID, classification, review status, submitters
@@ -90,11 +90,11 @@ result = tu.tools.VariantValidator_validate_variant(
 
 | Tool | Purpose | Key Parameters |
 |------|---------|----------------|
-| `gnomad_search` | Get allele frequencies | `variant`, `dataset` |
+| `gnomad_search_variants` | Get allele frequencies | `variant`, `dataset` |
 
 **Example - Query gnomAD**:
 ```python
-result = tu.tools.gnomad_search(
+result = tu.tools.gnomad_search_variants(
     variant="17-7674220-C-T"
 )
 # Returns: AF, ancestry-specific AFs, AC, AN, homozygotes
@@ -664,12 +664,12 @@ papers = tu.tools.SemanticScholar_search_papers(
 
 | Tool | Purpose | Key Parameters |
 |------|---------|----------------|
-| `Ensembl_get_variant_info` | VEP annotations | `variant_id` |
+| `EnsemblVar_get_variant_consequences` | VEP annotations | `variant_id` |
 | `Ensembl_get_gene_info` | Gene details | `gene_id` |
 
 **Example - Get VEP data**:
 ```python
-result = tu.tools.Ensembl_get_variant_info(
+result = tu.tools.EnsemblVar_get_variant_consequences(
     variant_id="rs28934576"
 )
 # Returns: Consequence, transcript, SIFT, PolyPhen
@@ -719,13 +719,13 @@ result = tu.tools.OMIM_search(query="BRCA1")
 
 | Tool | Purpose | Key Parameters |
 |------|---------|----------------|
-| `PDB_search_by_uniprot` | Find structures | `uniprot_id` |
+| `PDBe_get_uniprot_mappings` | Find structures | `uniprot_id` |
 | `PDB_get_structure` | Download PDB | `pdb_id` |
 
 **Example - Get structure**:
 ```python
 # Find PDB structures for TP53
-hits = tu.tools.PDB_search_by_uniprot(uniprot_id="P04637")
+hits = tu.tools.PDBe_get_uniprot_mappings(uniprot_id="P04637")
 if hits:
     structure = tu.tools.PDB_get_structure(pdb_id=hits[0]['pdb_id'])
 ```
@@ -764,7 +764,7 @@ structure = tu.tools.NvidiaNIM_alphafold2(
 | Tool | Purpose | Key Parameters |
 |------|---------|----------------|
 | `InterPro_get_protein_domains` | Domain annotations | `accession` |
-| `UniProt_get_protein_function` | Functional sites | `accession` |
+| `UniProt_get_function_by_accession` | Functional sites | `accession` |
 
 **Example - Get domains**:
 ```python
@@ -780,19 +780,19 @@ domains = tu.tools.InterPro_get_protein_domains(accession="P04637")
 
 | Tool | Purpose | Key Parameters |
 |------|---------|----------------|
-| `PubMed_search` | Search articles | `query`, `max_results` |
+| `PubMed_search_articles` | Search articles | `query`, `max_results` |
 | `PubMed_get_abstract` | Get abstract | `pmid` |
 
 **Example - Search for functional studies**:
 ```python
 # Gene + variant search
-result = tu.tools.PubMed_search(
+result = tu.tools.PubMed_search_articles(
     query="BRCA1 AND c.5266dupC",
     max_results=10
 )
 
 # Functional studies
-result = tu.tools.PubMed_search(
+result = tu.tools.PubMed_search_articles(
     query="BRCA1 AND functional study",
     max_results=20
 )
@@ -817,22 +817,22 @@ def annotate_variant(tu, variant_hgvs, gene):
     """Complete variant annotation workflow."""
     
     # Phase 1: Get aggregated annotations
-    annotations = tu.tools.myvariant_query(
+    annotations = tu.tools.MyVariant_query_variants(
         variant_id=variant_hgvs,
         fields="clinvar,gnomad,cadd,dbnsfp"
     )
     
     # Phase 2: ClinVar detail
-    clinvar = tu.tools.clinvar_search(variant=variant_hgvs)
+    clinvar = tu.tools.clinvar_search_variants(variant=variant_hgvs)
     
     # Phase 3: Population frequency
-    gnomad = tu.tools.gnomad_search(variant=variant_hgvs)
+    gnomad = tu.tools.gnomad_search_variants(variant=variant_hgvs)
     
     # Phase 4: Gene context
     omim = tu.tools.OMIM_search(query=gene)
     
     # Phase 5: Literature
-    literature = tu.tools.PubMed_search(
+    literature = tu.tools.PubMed_search_articles(
         query=f"{gene} AND {variant_hgvs}",
         max_results=20
     )
@@ -853,7 +853,7 @@ def structural_analysis_for_vus(tu, gene, uniprot_id, residue_position):
     """Structural analysis for VUS missense variants."""
     
     # Try PDB first
-    pdb_structures = tu.tools.PDB_search_by_uniprot(uniprot_id=uniprot_id)
+    pdb_structures = tu.tools.PDBe_get_uniprot_mappings(uniprot_id=uniprot_id)
     
     if pdb_structures:
         # Use best resolution experimental structure
@@ -869,7 +869,7 @@ def structural_analysis_for_vus(tu, gene, uniprot_id, residue_position):
     domains = tu.tools.InterPro_get_protein_domains(accession=uniprot_id)
     
     # Get functional sites
-    functions = tu.tools.UniProt_get_protein_function(accession=uniprot_id)
+    functions = tu.tools.UniProt_get_function_by_accession(accession=uniprot_id)
     
     # Analyze residue context
     analysis = {
@@ -956,22 +956,22 @@ def calculate_acmg_classification(evidence_codes):
 ### Variant Annotations
 | Primary | Fallback 1 | Fallback 2 |
 |---------|------------|------------|
-| `myvariant_query` | `clinvar_search` + `gnomad_search` | Direct database queries |
+| `MyVariant_query_variants` | `clinvar_search_variants` + `gnomad_search_variants` | Direct database queries |
 
 ### Structure
 | Primary | Fallback 1 | Fallback 2 |
 |---------|------------|------------|
-| `PDB_search_by_uniprot` | `alphafold_get_prediction` | `NvidiaNIM_alphafold2` |
+| `PDBe_get_uniprot_mappings` | `alphafold_get_prediction` | `NvidiaNIM_alphafold2` |
 
 ### Gene Information
 | Primary | Fallback 1 | Fallback 2 |
 |---------|------------|------------|
-| `OMIM_search` | `NCBI_gene_search` | `Ensembl_get_gene_info` |
+| `OMIM_search` | `NCBIGene_search` | `Ensembl_get_gene_info` |
 
 ### Literature
 | Primary | Fallback 1 |
 |---------|------------|
-| `PubMed_search` | `EuropePMC_search` |
+| `PubMed_search_articles` | `EuropePMC_search_articles` |
 
 ---
 
@@ -979,9 +979,9 @@ def calculate_acmg_classification(evidence_codes):
 
 | Tool | Wrong | Correct |
 |------|-------|---------|
-| `myvariant_query` | `id="rs123"` | `variant_id="rs123"` |
-| `clinvar_search` | `gene="BRCA1:c.123"` | `variant="NM_007294.4:c.123A>G"` |
-| `gnomad_search` | `variant="c.123A>G"` | `variant="17-41245466-A-G"` |
+| `MyVariant_query_variants` | `id="rs123"` | `variant_id="rs123"` |
+| `clinvar_search_variants` | `gene="BRCA1:c.123"` | `variant="NM_007294.4:c.123A>G"` |
+| `gnomad_search_variants` | `variant="c.123A>G"` | `variant="17-41245466-A-G"` |
 | `alphafold_get_prediction` | `uniprot="P04637"` | `accession="P04637"` |
 
 ---
