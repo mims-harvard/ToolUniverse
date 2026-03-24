@@ -12,7 +12,11 @@
         },
         "query": {
           "type": "string",
-          "description": "Search query - antigen name, species, or keywords"
+          "description": "Search query - antigen name, species, or keywords (e.g., 'HER2', 'anti-CD20')"
+        },
+        "antigen": {
+          "type": "string",
+          "description": "Alias for query. Antigen name to search (e.g., 'EGFR', 'HER2')."
         },
         "limit": {
           "type": "integer",
@@ -20,9 +24,7 @@
           "default": 50
         }
       },
-      "required": [
-        "query"
-      ]
+      "required": []
     },
     "return_schema": {
       "type": "object",

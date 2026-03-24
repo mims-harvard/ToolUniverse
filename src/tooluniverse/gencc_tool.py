@@ -47,6 +47,23 @@ CLASSIFICATION_ORDER = {
 }
 
 
+def _disease_matches(record: Dict[str, str], query_lower: str) -> bool:
+    """Match a GenCC record by disease name or curie, with word-tokenized fallback.
+
+    Exact substring match first. If that fails, falls back to requiring all
+    query words to appear in the disease title (handles hyphens in GenCC names,
+    e.g. 'breast cancer' matches 'breast-ovarian cancer, familial...').
+    """
+    title = record.get("disease_title", "").lower()
+    curie = record.get("disease_curie", "").lower()
+    orig = record.get("disease_original_curie", "").lower()
+    if query_lower in title or query_lower in curie or query_lower in orig:
+        return True
+    # Word-tokenized fallback: all words in the query must appear in title
+    words = query_lower.split()
+    return len(words) > 1 and all(w in title for w in words)
+
+
 def _gene_matches(record: Dict[str, str], gene_symbol: str) -> bool:
     """Match a GenCC record by gene symbol, checking both current and submitted HGNC symbol.
 
@@ -235,13 +252,7 @@ class GenCCTool(BaseTool):
 
             # Search by disease name (case-insensitive contains) or disease curie
             disease_lower = disease.lower()
-            matches = [
-                r
-                for r in records
-                if disease_lower in r.get("disease_title", "").lower()
-                or disease_lower in r.get("disease_curie", "").lower()
-                or disease_lower in r.get("disease_original_curie", "").lower()
-            ]
+            matches = [r for r in records if _disease_matches(r, disease_lower)]
 
             # Optional classification filter
             if classification_filter:
@@ -326,12 +337,7 @@ class GenCCTool(BaseTool):
             if gene_symbol:
                 records = [r for r in records if _gene_matches(r, gene_symbol)]
             if disease_filter:
-                records = [
-                    r
-                    for r in records
-                    if disease_filter in r.get("disease_title", "").lower()
-                    or disease_filter in r.get("disease_curie", "").lower()
-                ]
+                records = [r for r in records if _disease_matches(r, disease_filter)]
             if submitter_filter:
                 records = [
                     r

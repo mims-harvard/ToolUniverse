@@ -63,7 +63,7 @@ class SAbDabTool(BaseTool):
                 - query: Search query (antigen name, species, etc.)
                 - limit: Maximum results
         """
-        query = arguments.get("query", "")
+        query = arguments.get("query") or arguments.get("antigen", "")
         limit = arguments.get("limit", 50)
 
         try:

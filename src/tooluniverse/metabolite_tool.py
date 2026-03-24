@@ -123,7 +123,7 @@ class MetaboliteTool(BaseTool):
         """Fetch Title, IUPAC name, formula, weight, SMILES, InChIKey from PubChem."""
         resp = requests.get(
             f"{PUBCHEM_API}/compound/cid/{cid}/property/"
-            "Title,MolecularFormula,MolecularWeight,CanonicalSMILES,InChIKey,IUPACName/JSON",
+            "Title,MolecularFormula,MolecularWeight,IsomericSMILES,InChIKey,IUPACName/JSON",
             timeout=self.timeout,
         )
         if resp.status_code == 200:
@@ -216,7 +216,7 @@ class MetaboliteTool(BaseTool):
                     "iupac_name": props.get("IUPACName"),
                     "formula": props.get("MolecularFormula"),
                     "molecular_weight": props.get("MolecularWeight"),
-                    "smiles": props.get("CanonicalSMILES"),
+                    "smiles": props.get("SMILES") or props.get("IsomericSMILES"),
                     "inchikey": props.get("InChIKey"),
                 },
                 "metadata": {
@@ -284,7 +284,7 @@ class MetaboliteTool(BaseTool):
             results = []
             if cids_to_fetch:
                 cid_str = ",".join(str(c) for c in cids_to_fetch)
-                prop_url = f"{PUBCHEM_API}/compound/cid/{cid_str}/property/Title,MolecularFormula,MolecularWeight,CanonicalSMILES/JSON"
+                prop_url = f"{PUBCHEM_API}/compound/cid/{cid_str}/property/Title,MolecularFormula,MolecularWeight,IsomericSMILES/JSON"
                 prop_resp = requests.get(prop_url, timeout=self.timeout)
                 if prop_resp.status_code == 200:
                     for p in (
@@ -296,7 +296,7 @@ class MetaboliteTool(BaseTool):
                                 "name": p.get("Title"),
                                 "formula": p.get("MolecularFormula"),
                                 "molecular_weight": p.get("MolecularWeight"),
-                                "smiles": p.get("CanonicalSMILES"),
+                                "smiles": p.get("SMILES") or p.get("IsomericSMILES"),
                             }
                         )
             return {
