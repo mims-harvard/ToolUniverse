@@ -150,7 +150,7 @@ For detailed code examples and algorithms for each phase, see [DIAGNOSTIC_WORKFL
 ### Phase 6: Literature Evidence
 
 - **PubMed**: `PubMed_search_articles(query="disease AND genetics")` for published studies
-- **Preprints**: `BioRxiv_search_preprints`, `ArXiv_search_papers(category="q-bio")` for latest findings
+- **Preprints**: `BioRxiv_list_recent_preprints`, `ArXiv_search_papers(category="q-bio")` for latest findings
 - **Citations**: `openalex_search_works` for citation analysis of key papers
 - Note: preprints are not peer-reviewed; flag accordingly
 

@@ -71,7 +71,7 @@ Every optimization MUST include per-variant documentation with:
 | `iedb_search_bcell` | B-cell epitope prediction | Immunogenicity |
 | `UniProt_get_protein_by_accession` | Target antigen information | Target |
 | `STRING_get_interactions` | Protein interaction network | Bispecifics |
-| `PubMed_search` | Literature precedents | Validation |
+| `PubMed_search_articles` | Literature precedents | Validation |
 
 **CRITICAL**: SOAP tools (IMGT, SAbDab, TheraSAbDab) require an `operation` parameter. See `QUICK_START.md` for correct usage.
 

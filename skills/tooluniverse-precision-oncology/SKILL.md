@@ -99,7 +99,7 @@ Phase 6: Report Synthesis -> Executive summary + prioritized recommendations
 
 ### Phase 5.5: Literature
 - `PubMed_search_articles` - Published evidence
-- `BioRxiv_search_preprints` / `MedRxiv_search_preprints` - Preprints (flag as NOT peer-reviewed)
+- `BioRxiv_list_recent_preprints` / `MedRxiv_get_preprint` - Preprints (flag as NOT peer-reviewed)
 - `openalex_search_works` - Citation analysis
 
 ---

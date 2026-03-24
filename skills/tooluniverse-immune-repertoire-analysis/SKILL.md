@@ -73,7 +73,7 @@ Identify expanded clonotypes above a frequency threshold (default: 95th percenti
 Query epitope databases for known TCR-epitope associations:
 - **IEDB** (`IEDB_search_tcells`): Search by CDR3 receptor sequence
 - **VDJdb** (manual): https://vdjdb.cdr3.net/search
-- **PubMed literature** (`PubMed_search`): Search for CDR3 + epitope/antigen/specificity
+- **PubMed literature** (`PubMed_search_articles`): Search for CDR3 + epitope/antigen/specificity
 
 ### Phase 8: Integration with Single-Cell Data
 
@@ -91,7 +91,7 @@ Link TCR/BCR clonotypes to cell phenotypes from paired single-cell RNA-seq:
 **Key Tools Used**:
 - `IEDB_search_tcells` - Known T-cell epitopes
 - `IEDB_search_bcells` - Known B-cell epitopes
-- `PubMed_search` - Literature on TCR/BCR specificity
+- `PubMed_search_articles` - Literature on TCR/BCR specificity
 - `UniProt_get_protein` - Antigen protein information
 
 **Integration with Other Skills**:

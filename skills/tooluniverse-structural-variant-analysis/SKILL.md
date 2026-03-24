@@ -82,7 +82,7 @@ For SV type definitions, scoring tables, and ACMG code details, see `CLASSIFICAT
 | Tool | Purpose |
 |------|---------|
 | `Ensembl_lookup_gene` | Gene structure, coordinates, exons |
-| `NCBI_gene_search` | Official symbol, aliases, description |
+| `NCBIGene_search` | Official symbol, aliases, description |
 | `Gene_Ontology_get_term_info` | Biological process, molecular function |
 | `OMIM_search`, `OMIM_get_entry` | Disease associations, inheritance |
 | `DisGeNET_search_gene` | Gene-disease association scores |
@@ -102,7 +102,7 @@ For implementation pseudocode, see `ANALYSIS_PROCEDURES.md` Phase 2.
 |------|---------|
 | `ClinGen_search_dosage_sensitivity` | HI/TS scores (0-3, gold standard) |
 | `ClinGen_search_gene_validity` | Gene-disease validity level |
-| `gnomad_search` | pLI scores for LoF intolerance |
+| `gnomad_search_variants` | pLI scores for LoF intolerance |
 | `DECIPHER_search` | Developmental disorder cases |
 | `OMIM_get_entry` | Inheritance pattern (AD suggests dosage sensitivity) |
 
@@ -117,7 +117,7 @@ Key thresholds: ClinGen HI/TS score 3 = definitive dosage sensitivity. pLI >= 0.
 **Tools**:
 | Tool | Purpose |
 |------|---------|
-| `gnomad_search` | Population SV frequencies |
+| `gnomad_search_variants` | Population SV frequencies |
 | `ClinVar_search_variants` | Known pathogenic/benign SVs |
 | `DECIPHER_search` | Patient SVs with phenotypes |
 
@@ -144,8 +144,8 @@ For detailed scoring breakdowns and implementation, see `CLASSIFICATION_GUIDE.md
 **Tools**:
 | Tool | Purpose |
 |------|---------|
-| `PubMed_search` | Peer-reviewed literature |
-| `EuropePMC_search` | European literature (additional coverage) |
+| `PubMed_search_articles` | Peer-reviewed literature |
+| `EuropePMC_search_articles` | European literature (additional coverage) |
 | `DECIPHER_search` | Patient case database |
 
 Search strategies: gene-specific dosage sensitivity papers, SV-specific case reports, DECIPHER cohort phenotype analysis. See `ANALYSIS_PROCEDURES.md` Phase 6.
@@ -198,7 +198,7 @@ SV_analysis_[TYPE]_chr[CHR]_[START]_[END]_[GENES].md
 | `Ensembl_lookup_gene` | Gene coordinates, structure | **Required** |
 | `OMIM_search`, `OMIM_get_entry` | Gene-disease associations | **Required** |
 | `DisGeNET_search_gene` | Additional disease associations | Recommended |
-| `PubMed_search` | Literature evidence | Recommended |
+| `PubMed_search_articles` | Literature evidence | Recommended |
 | `Gene_Ontology_get_term_info` | Gene function | Supporting |
 
 ---

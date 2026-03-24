@@ -88,7 +88,7 @@ Generate markdown report with:
 ## ToolUniverse Tool Integration
 
 **Key Tools Used**:
-- `PubMed_search` - Literature search for gene essentiality
+- `PubMed_search_articles` - Literature search for gene essentiality
 - `Enrichr_submit_genelist` - Pathway enrichment submission
 - `Enrichr_get_results` - Retrieve enrichment results
 - `DGIdb_query_gene` - Drug-gene interactions and druggability

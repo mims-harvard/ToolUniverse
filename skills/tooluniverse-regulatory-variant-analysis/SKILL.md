@@ -90,7 +90,7 @@ ols_result = tu.tools.ols_search_terms(query="type 2 diabetes", ontology="efo")
 - NOTE: Param is `variant_id`, NOT `rsid`.
 - Response format is variable: can be `[{...}]`, `{data, metadata}`, or `{error}`. Handle all three.
 
-**myvariant_query**: `variant_id` (string), `fields` (string).
+**MyVariant_query_variants**: `variant_id` (string), `fields` (string).
 - Aggregated annotations from ClinVar, dbSNP, gnomAD, CADD.
 
 ---
@@ -337,7 +337,7 @@ Integrate all evidence to assess regulatory variant impact.
 | `ols_search_terms` | `query`, `ontology`, `exact`, `rows` | Ontology term search |
 | `ols_get_term_info` | `term_id` | Ontology term details (ontology inferred from CURIE) |
 | `EnsemblVEP_annotate_rsid` | `variant_id` (NOT rsid) | VEP annotation for rsID |
-| `myvariant_query` | `variant_id`, `fields` | Aggregated variant annotations |
+| `MyVariant_query_variants` | `variant_id`, `fields` | Aggregated variant annotations |
 
 ---
 
