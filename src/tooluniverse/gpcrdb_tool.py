@@ -42,6 +42,10 @@ class GPCRdbTool(BaseTool):
 
     def run(self, arguments: Dict[str, Any]) -> Dict[str, Any]:
         """Execute GPCRdb API call based on operation type."""
+        # Normalize protein_id alias → protein
+        if not arguments.get("protein") and arguments.get("protein_id"):
+            arguments = dict(arguments, protein=arguments["protein_id"])
+
         operation = arguments.get("operation", "")
         # Auto-fill operation from tool config const if not provided by user
         if not operation:
@@ -102,7 +106,31 @@ class GPCRdbTool(BaseTool):
 
         except requests.exceptions.HTTPError as e:
             if e.response.status_code == 404:
-                return {"status": "error", "error": f"Protein not found: {protein}"}
+                # Try accession endpoint (for UniProt IDs like P07550)
+                try:
+                    acc_response = requests.get(
+                        f"{GPCRDB_API_URL}/protein/accession/{protein}/",
+                        timeout=self.timeout,
+                        headers={
+                            "Accept": "application/json",
+                            "User-Agent": "ToolUniverse/GPCRdb",
+                        },
+                    )
+                    acc_response.raise_for_status()
+                    data = acc_response.json()
+                    if isinstance(data, dict) and "name" in data:
+                        data["name"] = _HTML_TAG_RE.sub("", html.unescape(data["name"]))
+                    return {
+                        "status": "success",
+                        "data": data,
+                        "metadata": {"source": "GPCRdb", "protein": protein},
+                    }
+                except Exception:
+                    pass
+                return {
+                    "status": "error",
+                    "error": f"Protein not found: {protein}. Use GPCRdb entry name (e.g. adrb2_human) or UniProt accession (e.g. P07550).",
+                }
             return {"status": "error", "error": f"HTTP error: {e.response.status_code}"}
         except requests.exceptions.RequestException as e:
             return {"status": "error", "error": f"Request failed: {str(e)}"}
@@ -144,13 +172,19 @@ class GPCRdbTool(BaseTool):
 
             proteins = data if isinstance(data, list) else [data]
 
+            note = None
+            if family and len(proteins) == 0:
+                note = f"No proteins found for family slug '{family}'. The 'family' parameter requires a numeric GPCRdb slug (e.g., '001_001_003_008' for beta-adrenergic). Call without 'family' first to see available family slugs."
+            elif not family:
+                note = "To list proteins in a specific family, pass its numeric slug as 'family' (e.g., '001_001_003_008'). Call without 'family' to discover available slugs."
+
             return {
                 "status": "success",
                 "data": {
                     "proteins": proteins,
                     "count": len(proteins),
                     "family": family if family else "all families",
-                    "note": "Specify 'family' parameter to list proteins in a specific family. Without family, returns list of protein families.",
+                    **({"note": note} if note else {}),
                 },
                 "metadata": {
                     "source": "GPCRdb",
@@ -173,6 +207,7 @@ class GPCRdbTool(BaseTool):
         """
         protein = arguments.get("protein", "")
         state = arguments.get("state", "")
+        resolution = arguments.get("resolution")
 
         try:
             if protein:
@@ -198,6 +233,19 @@ class GPCRdbTool(BaseTool):
                 structures = [
                     s for s in structures if s.get("state", "").lower() == state.lower()
                 ]
+
+            # Filter by max resolution (client-side, GPCRdb API has no resolution param)
+            if resolution is not None:
+                try:
+                    max_res = float(resolution)
+                    structures = [
+                        s
+                        for s in structures
+                        if s.get("resolution") is not None
+                        and float(s["resolution"]) <= max_res
+                    ]
+                except (ValueError, TypeError):
+                    pass
 
             return {
                 "status": "success",
@@ -251,6 +299,15 @@ class GPCRdbTool(BaseTool):
 
             ligands = data if isinstance(data, list) else data.get("ligands", [])
 
+            # Sanitize HTML entities and fix nan DOIs in each ligand record
+            for lig in ligands:
+                for field in ("Ligand name", "Protein name"):
+                    if isinstance(lig.get(field), str):
+                        lig[field] = _HTML_TAG_RE.sub("", html.unescape(lig[field]))
+                doi = lig.get("DOI", "")
+                if isinstance(doi, str) and doi.lower().endswith("/nan"):
+                    lig["DOI"] = None
+
             return {
                 "status": "success",
                 "data": {
@@ -303,13 +360,19 @@ class GPCRdbTool(BaseTool):
 
             mutations = data if isinstance(data, list) else data.get("mutations", [])
 
+            result: Dict[str, Any] = {
+                "protein": protein,
+                "mutations": mutations,
+                "count": len(mutations),
+            }
+            if len(mutations) == 0:
+                result["note"] = (
+                    "The GPCRdb mutations API (/services/mutants/) currently returns empty results for all receptors. For mutation data, visit https://gpcrdb.org/mutations/."
+                )
+
             return {
                 "status": "success",
-                "data": {
-                    "protein": protein,
-                    "mutations": mutations,
-                    "count": len(mutations),
-                },
+                "data": result,
                 "metadata": {
                     "source": "GPCRdb",
                     "protein": protein,
