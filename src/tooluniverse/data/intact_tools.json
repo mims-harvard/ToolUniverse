@@ -29,7 +29,10 @@
       "return_format": "JSON"
     },
     "return_schema": {
-      "type": ["array", "object"],
+      "type": [
+        "array",
+        "object"
+      ],
       "description": "Interactor information including names, organism, cross-references (returns array for multiple results or object for single result)"
     },
     "test_examples": [
@@ -226,6 +229,10 @@
             "xml"
           ],
           "default": "json"
+        },
+        "protein_name": {
+          "type": "string",
+          "description": "Alias for gene_symbol/identifier. Common protein name (e.g., MDM2, TP53)."
         }
       },
       "required": []
@@ -239,18 +246,41 @@
         {
           "type": "object",
           "properties": {
-            "status": {"type": "string", "enum": ["success"]},
-            "data": {"type": "array"},
-            "count": {"type": "integer"},
-            "hitCount": {"type": "integer"},
-            "interaction_ids": {"type": "array", "items": {"type": "string"}}
+            "status": {
+              "type": "string",
+              "enum": [
+                "success"
+              ]
+            },
+            "data": {
+              "type": "array"
+            },
+            "count": {
+              "type": "integer"
+            },
+            "hitCount": {
+              "type": "integer"
+            },
+            "interaction_ids": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            }
           }
         },
         {
           "type": "object",
           "properties": {
-            "status": {"type": "string", "enum": ["error"]},
-            "error": {"type": "string"}
+            "status": {
+              "type": "string",
+              "enum": [
+                "error"
+              ]
+            },
+            "error": {
+              "type": "string"
+            }
           }
         }
       ]

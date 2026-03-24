@@ -94,6 +94,8 @@ class ProteinsAPIRESTTool(BaseTool):
                 params["offset"] = args["offset"]
             # Feature-69A-007: Default to human (taxId 9606) to avoid non-human proteins
             # appearing before human proteins. User can override with organism param.
+            if "reviewed" in args:
+                params["reviewed"] = str(args["reviewed"]).lower()
             if "organism" in args:
                 params["organism"] = args["organism"]
             elif "taxid" in args:

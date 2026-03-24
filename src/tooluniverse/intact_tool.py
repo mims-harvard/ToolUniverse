@@ -103,9 +103,15 @@ class IntActRESTTool(BaseTool):
 
     def run(self, arguments: Dict[str, Any]) -> Dict[str, Any]:
         """Execute the IntAct API call"""
-        # Normalize protein_id / gene_symbol / uniprot_id → identifier
+        # Normalize protein_id / gene_symbol / uniprot_id / protein_name → identifier
         if "identifier" not in arguments:
-            for alias in ("uniprot_id", "protein_id", "gene_symbol", "gene_name"):
+            for alias in (
+                "uniprot_id",
+                "protein_id",
+                "gene_symbol",
+                "gene_name",
+                "protein_name",
+            ):
                 if arguments.get(alias):
                     arguments = dict(arguments, identifier=arguments[alias])
                     break

@@ -248,6 +248,10 @@
         "gene": {
           "type": "string",
           "description": "Alias for query. Gene name to search."
+        },
+        "reviewed": {
+          "type": "boolean",
+          "description": "If true, return only reviewed Swiss-Prot entries. If false or omitted, includes unreviewed TrEMBL entries."
         }
       },
       "required": []
