@@ -57,6 +57,18 @@ class MassIVETool(BaseTool):
                     results.append({"name": name, "value": value})
         return results
 
+    def _parse_cv_groups(self, groups: List) -> List[Dict[str, str]]:
+        """Parse a list of CV-param groups into a list of name->value dicts."""
+        result = []
+        for group in groups:
+            entries = self._extract_all_cv_values(
+                group if isinstance(group, list) else [group]
+            )
+            d = {e["name"]: e["value"] for e in entries}
+            if d:
+                result.append(d)
+        return result
+
     def _parse_dataset(self, raw):
         """Parse a raw ProXI dataset into a cleaner format."""
         accessions = []
@@ -147,29 +159,8 @@ class MassIVETool(BaseTool):
         result = self._parse_dataset(data)
 
         # Add extra fields available in detail view
-        contacts = []
-        for contact_group in data.get("contacts", []):
-            entries = self._extract_all_cv_values(
-                contact_group if isinstance(contact_group, list) else [contact_group]
-            )
-            contact_dict = {}
-            for e in entries:
-                contact_dict[e["name"]] = e["value"]
-            if contact_dict:
-                contacts.append(contact_dict)
-        result["contacts"] = contacts
-
-        publications = []
-        for pub_group in data.get("publications", []):
-            entries = self._extract_all_cv_values(
-                pub_group if isinstance(pub_group, list) else [pub_group]
-            )
-            pub_dict = {}
-            for e in entries:
-                pub_dict[e["name"]] = e["value"]
-            if pub_dict:
-                publications.append(pub_dict)
-        result["publications"] = publications
+        result["contacts"] = self._parse_cv_groups(data.get("contacts", []))
+        result["publications"] = self._parse_cv_groups(data.get("publications", []))
 
         modifications = []
         for mod in data.get("modifications", []):
