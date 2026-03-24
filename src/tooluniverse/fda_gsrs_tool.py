@@ -70,7 +70,7 @@ class FDAGSRSTool(BaseTool):
 
         return {
             "uuid": r.get("uuid", ""),
-            "unii": r.get("unii", ""),
+            "unii": r.get("approvalID") or r.get("unii", ""),
             "name": r.get("_name", ""),
             "substanceClass": r.get("substanceClass", ""),
             "status": r.get("status", ""),
@@ -210,7 +210,7 @@ class FDAGSRSTool(BaseTool):
             "status": "success",
             "data": {
                 "uuid": r.get("uuid", ""),
-                "unii": r.get("unii", ""),
+                "unii": r.get("approvalID") or r.get("unii", ""),
                 "name": r.get("_name", ""),
                 "substanceClass": r.get("substanceClass", ""),
                 "status": r.get("status", ""),
