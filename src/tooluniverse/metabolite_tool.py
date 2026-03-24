@@ -174,6 +174,10 @@ class MetaboliteTool(BaseTool):
         cas = _cas_from_synonyms(synonyms)
         if cas:
             candidates.append(cas)
+        # Also try common synonyms (e.g. "glucosylceramide" when title is "GlcCer(d18:1/...)")
+        for syn in synonyms[:10]:
+            if syn and syn not in candidates and len(syn) < 50 and not syn[0].isdigit():
+                candidates.append(syn)
 
         for term in candidates:
             rows = self._ctd_diseases(term)
@@ -235,25 +239,66 @@ class MetaboliteTool(BaseTool):
         search_type = arguments.get("search_type", "name")
         try:
             if search_type == "formula":
-                url = f"{PUBCHEM_API}/compound/fastformula/{query}/property/Title,MolecularFormula,MolecularWeight,CanonicalSMILES/JSON"
+                url = f"{PUBCHEM_API}/compound/fastformula/{requests.utils.quote(query)}/property/Title,MolecularFormula,MolecularWeight,CanonicalSMILES/JSON"
+                resp = requests.get(url, timeout=self.timeout)
+                cids_to_fetch: list[int] = []
+                if resp.status_code == 200:
+                    for p in (
+                        resp.json().get("PropertyTable", {}).get("Properties", [])[:10]
+                    ):
+                        cids_to_fetch.append(p.get("CID"))
             else:
-                url = f"{PUBCHEM_API}/compound/name/{requests.utils.quote(query)}/property/Title,MolecularFormula,MolecularWeight,CanonicalSMILES/JSON"
-
-            resp = requests.get(url, timeout=self.timeout)
-            results = []
-            if resp.status_code == 200:
-                for p in (
-                    resp.json().get("PropertyTable", {}).get("Properties", [])[:10]
-                ):
-                    results.append(
-                        {
-                            "pubchem_cid": p.get("CID"),
-                            "name": p.get("Title"),
-                            "formula": p.get("MolecularFormula"),
-                            "molecular_weight": p.get("MolecularWeight"),
-                            "smiles": p.get("CanonicalSMILES"),
-                        }
+                # Try exact name first; fall back to PubChem keyword search on miss
+                exact_url = f"{PUBCHEM_API}/compound/name/{requests.utils.quote(query)}/cids/JSON"
+                resp = requests.get(exact_url, timeout=self.timeout)
+                if resp.status_code == 200:
+                    cids_to_fetch = (
+                        resp.json().get("IdentifierList", {}).get("CID", [])[:10]
                     )
+                else:
+                    # Keyword fallback via PubChem autocomplete → fastsimilarity is not
+                    # available without a structure; use the compound keyword search instead
+                    kw_url = f"https://pubchem.ncbi.nlm.nih.gov/rest/autocomplete/compound/{requests.utils.quote(query)}/json?limit=10"
+                    kw_resp = requests.get(kw_url, timeout=self.timeout)
+                    cids_to_fetch = []
+                    if kw_resp.status_code == 200:
+                        suggestions = (
+                            kw_resp.json()
+                            .get("dictionary_terms", {})
+                            .get("compound", [])
+                        )
+                        for suggestion in suggestions[:5]:
+                            cid_resp = requests.get(
+                                f"{PUBCHEM_API}/compound/name/{requests.utils.quote(suggestion)}/cids/JSON",
+                                timeout=self.timeout,
+                            )
+                            if cid_resp.status_code == 200:
+                                cids = (
+                                    cid_resp.json()
+                                    .get("IdentifierList", {})
+                                    .get("CID", [])
+                                )
+                                cids_to_fetch.extend(cids[:2])
+                        cids_to_fetch = list(dict.fromkeys(cids_to_fetch))[:10]
+
+            results = []
+            if cids_to_fetch:
+                cid_str = ",".join(str(c) for c in cids_to_fetch)
+                prop_url = f"{PUBCHEM_API}/compound/cid/{cid_str}/property/Title,MolecularFormula,MolecularWeight,CanonicalSMILES/JSON"
+                prop_resp = requests.get(prop_url, timeout=self.timeout)
+                if prop_resp.status_code == 200:
+                    for p in (
+                        prop_resp.json().get("PropertyTable", {}).get("Properties", [])
+                    ):
+                        results.append(
+                            {
+                                "pubchem_cid": p.get("CID"),
+                                "name": p.get("Title"),
+                                "formula": p.get("MolecularFormula"),
+                                "molecular_weight": p.get("MolecularWeight"),
+                                "smiles": p.get("CanonicalSMILES"),
+                            }
+                        )
             return {
                 "status": "success",
                 "data": {"query": query, "results": results, "count": len(results)},
@@ -290,6 +335,15 @@ class MetaboliteTool(BaseTool):
             title = props.get("Title") or props.get("IUPACName", identifier)
             synonyms = self._get_synonyms(cid)
 
+            # Prepend the original user input as the first candidate for CTD resolution
+            # (e.g. "glucocerebroside" is recognized by CTD even if PubChem title is "GlcCer(d18:1/...)")
+            if (
+                identifier
+                and not identifier.upper().startswith("HMDB")
+                and not identifier.isdigit()
+                and identifier != title
+            ):
+                synonyms = [identifier] + list(synonyms)
             term_used, rows = self._resolve_ctd_term(title, synonyms)
             diseases = [
                 {

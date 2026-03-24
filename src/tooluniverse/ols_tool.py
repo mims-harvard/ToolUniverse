@@ -40,6 +40,13 @@ def _expand_short_term_id(term_id: str) -> str:
     return term_id
 
 
+def _infer_ontology_from_term_id(term_id: str) -> str:
+    """Infer OLS ontology identifier from a CURIE prefix (e.g. 'HP:0001234' → 'hp')."""
+    if term_id and ":" in term_id and not term_id.startswith("http"):
+        return term_id.split(":", 1)[0].lower()
+    return ""
+
+
 class OntologyInfo(BaseModel):
     """Description of a single ontology entry in OLS."""
 
@@ -329,14 +336,15 @@ class OLSTool(BaseTool):
         return term.model_dump(by_alias=True, mode="json")
 
     def _handle_get_term_children(self, arguments: Dict[str, Any]) -> Dict[str, Any]:
-        term_iri = _expand_short_term_id(
-            arguments.get("term_iri") or arguments.get("term_id", "")
+        raw_term_id = arguments.get("term_iri") or arguments.get("term_id", "")
+        term_iri = _expand_short_term_id(raw_term_id)
+        ontology = arguments.get("ontology") or _infer_ontology_from_term_id(
+            raw_term_id
         )
-        ontology = arguments.get("ontology")
         if not term_iri or not ontology:
             return {
                 "status": "error",
-                "error": "`term_iri` and `ontology` parameters are required for `get_term_children`.",
+                "error": "`term_iri` (or `term_id`) and `ontology` are required for `get_term_children`. Tip: if you pass `term_id` like 'HP:0001234', the ontology is inferred automatically.",
             }
 
         include_obsolete = bool(arguments.get("include_obsolete", False))
@@ -359,14 +367,15 @@ class OLSTool(BaseTool):
         return formatted
 
     def _handle_get_term_ancestors(self, arguments: Dict[str, Any]) -> Dict[str, Any]:
-        term_iri = _expand_short_term_id(
-            arguments.get("term_iri") or arguments.get("term_id", "")
+        raw_term_id = arguments.get("term_iri") or arguments.get("term_id", "")
+        term_iri = _expand_short_term_id(raw_term_id)
+        ontology = arguments.get("ontology") or _infer_ontology_from_term_id(
+            raw_term_id
         )
-        ontology = arguments.get("ontology")
         if not term_iri or not ontology:
             return {
                 "status": "error",
-                "error": "`term_iri` and `ontology` parameters are required for `get_term_ancestors`.",
+                "error": "`term_iri` (or `term_id`) and `ontology` are required for `get_term_ancestors`. Tip: if you pass `term_id` like 'HP:0001234', the ontology is inferred automatically.",
             }
 
         include_obsolete = bool(arguments.get("include_obsolete", False))

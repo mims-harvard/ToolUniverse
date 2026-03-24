@@ -198,5 +198,73 @@
         "limit": 10
       }
     ]
+  },
+  {
+    "name": "HMDB_search",
+    "description": "Alias for Metabolite_search. Search for metabolites by compound name or molecular formula via PubChem. Accepts common names, synonyms (e.g., 'glucosylceramide', 'glucose', 'ATP').",
+    "type": "MetaboliteTool",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "operation": {
+          "type": "string",
+          "const": "search"
+        },
+        "query": {
+          "type": "string",
+          "description": "Compound name or molecular formula to search"
+        }
+      },
+      "required": ["query"]
+    },
+    "test_examples": [{"query": "glucose"}]
+  },
+  {
+    "name": "HMDB_get_metabolite",
+    "description": "Alias for Metabolite_get_info. Get compound information by HMDB ID, compound name, or PubChem CID.",
+    "type": "MetaboliteTool",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "operation": {
+          "type": "string",
+          "const": "get_info"
+        },
+        "hmdb_id": {
+          "type": "string",
+          "description": "HMDB ID (e.g., HMDB0000122)"
+        },
+        "compound_name": {
+          "type": "string",
+          "description": "Compound name (e.g., glucose)"
+        }
+      },
+      "required": []
+    },
+    "test_examples": [{"hmdb_id": "HMDB0000122"}]
+  },
+  {
+    "name": "HMDB_get_diseases",
+    "description": "Alias for Metabolite_get_diseases. Get disease associations for a metabolite via CTD database.",
+    "type": "MetaboliteTool",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "operation": {
+          "type": "string",
+          "const": "get_diseases"
+        },
+        "hmdb_id": {
+          "type": "string",
+          "description": "HMDB ID (e.g., HMDB0000122)"
+        },
+        "compound_name": {
+          "type": "string",
+          "description": "Compound name (e.g., glucose)"
+        }
+      },
+      "required": []
+    },
+    "test_examples": [{"hmdb_id": "HMDB0000122", "limit": 5}]
   }
 ]
