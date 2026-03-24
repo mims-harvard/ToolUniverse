@@ -53,7 +53,7 @@ assert "OpenAlex (search_keywords not query)" \
 
 # --- Live Tool Calls: Protein/Drug/Safety ---
 assert "UniProt query" \
-  'uvx --from tooluniverse tu run UniProt_get_entry_by_accession '\''{"accession": "P12345"}'\'' 2>/dev/null | grep -q primaryAccession'
+  'out=$(uvx --from tooluniverse tu run UniProt_get_entry_by_accession '\''{"accession": "P12345"}'\'' 2>/dev/null) && echo "$out" | grep -q primaryAccession'
 assert "FAERS drug safety" \
   'uvx --from tooluniverse tu run FAERS_count_reactions_by_drug_event '\''{"medicinalproduct": "metformin"}'\'' 2>/dev/null | grep -q result'
 
