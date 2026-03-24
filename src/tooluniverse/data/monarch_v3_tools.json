@@ -27,38 +27,7 @@
       }
     ],
     "return_schema": {
-      "oneOf": [
-        {
-          "type": "object",
-          "properties": {
-            "data": {
-              "type": "object"
-            },
-            "metadata": {
-              "type": "object",
-              "properties": {
-                "source": {
-                  "type": "string"
-                }
-              }
-            }
-          },
-          "required": [
-            "data"
-          ]
-        },
-        {
-          "type": "object",
-          "properties": {
-            "error": {
-              "type": "string"
-            }
-          },
-          "required": [
-            "error"
-          ]
-        }
-      ]
+      "type": "object"
     }
   },
   {
@@ -100,47 +69,7 @@
       }
     ],
     "return_schema": {
-      "oneOf": [
-        {
-          "type": "object",
-          "properties": {
-            "data": {
-              "type": "array"
-            },
-            "metadata": {
-              "type": "object",
-              "properties": {
-                "source": {
-                  "type": "string"
-                },
-                "subject": {
-                  "type": "string"
-                },
-                "category": {
-                  "type": "string"
-                },
-                "total_results": {
-                  "type": "integer"
-                }
-              }
-            }
-          },
-          "required": [
-            "data"
-          ]
-        },
-        {
-          "type": "object",
-          "properties": {
-            "error": {
-              "type": "string"
-            }
-          },
-          "required": [
-            "error"
-          ]
-        }
-      ]
+      "type": "array"
     }
   },
   {
@@ -181,44 +110,7 @@
       }
     ],
     "return_schema": {
-      "oneOf": [
-        {
-          "type": "object",
-          "properties": {
-            "data": {
-              "type": "array"
-            },
-            "metadata": {
-              "type": "object",
-              "properties": {
-                "source": {
-                  "type": "string"
-                },
-                "query": {
-                  "type": "string"
-                },
-                "total_results": {
-                  "type": "integer"
-                }
-              }
-            }
-          },
-          "required": [
-            "data"
-          ]
-        },
-        {
-          "type": "object",
-          "properties": {
-            "error": {
-              "type": "string"
-            }
-          },
-          "required": [
-            "error"
-          ]
-        }
-      ]
+      "type": "object"
     }
   },
   {
@@ -249,67 +141,7 @@
       }
     ],
     "return_schema": {
-      "oneOf": [
-        {
-          "type": "object",
-          "properties": {
-            "data": {
-              "type": "array",
-              "items": {
-                "type": "object",
-                "properties": {
-                  "body_system": {
-                    "type": [
-                      "string",
-                      "null"
-                    ],
-                    "description": "Anatomical system label (e.g., nervous_system, skeletal_system)"
-                  },
-                  "phenotype_count": {
-                    "type": "integer",
-                    "description": "Number of phenotypic features in this system"
-                  },
-                  "id": {
-                    "type": [
-                      "string",
-                      "null"
-                    ],
-                    "description": "UPHENO or HP identifier for the body system category"
-                  }
-                }
-              }
-            },
-            "metadata": {
-              "type": "object",
-              "properties": {
-                "source": {
-                  "type": "string"
-                },
-                "entity_id": {
-                  "type": "string"
-                },
-                "total_systems_with_phenotypes": {
-                  "type": "integer"
-                }
-              }
-            }
-          },
-          "required": [
-            "data"
-          ]
-        },
-        {
-          "type": "object",
-          "properties": {
-            "error": {
-              "type": "string"
-            }
-          },
-          "required": [
-            "error"
-          ]
-        }
-      ]
+      "type": "array"
     }
   },
   {
@@ -345,94 +177,7 @@
       }
     ],
     "return_schema": {
-      "oneOf": [
-        {
-          "type": "object",
-          "properties": {
-            "data": {
-              "type": "array",
-              "items": {
-                "type": "object",
-                "properties": {
-                  "subject_id": {
-                    "type": [
-                      "string",
-                      "null"
-                    ],
-                    "description": "Source entity CURIE"
-                  },
-                  "subject_label": {
-                    "type": [
-                      "string",
-                      "null"
-                    ],
-                    "description": "Source entity name"
-                  },
-                  "predicate": {
-                    "type": [
-                      "string",
-                      "null"
-                    ],
-                    "description": "Mapping relationship (e.g., skos:exactMatch, skos:closeMatch)"
-                  },
-                  "object_id": {
-                    "type": [
-                      "string",
-                      "null"
-                    ],
-                    "description": "Mapped entity CURIE in target ontology"
-                  },
-                  "object_label": {
-                    "type": [
-                      "string",
-                      "null"
-                    ],
-                    "description": "Mapped entity name"
-                  },
-                  "mapping_source": {
-                    "type": [
-                      "array",
-                      "null"
-                    ],
-                    "items": {
-                      "type": "string"
-                    },
-                    "description": "Source of the mapping"
-                  }
-                }
-              }
-            },
-            "metadata": {
-              "type": "object",
-              "properties": {
-                "source": {
-                  "type": "string"
-                },
-                "entity_id": {
-                  "type": "string"
-                },
-                "total_mappings": {
-                  "type": "integer"
-                }
-              }
-            }
-          },
-          "required": [
-            "data"
-          ]
-        },
-        {
-          "type": "object",
-          "properties": {
-            "error": {
-              "type": "string"
-            }
-          },
-          "required": [
-            "error"
-          ]
-        }
-      ]
+      "type": "array"
     }
   },
   {
@@ -485,136 +230,7 @@
       }
     ],
     "return_schema": {
-      "oneOf": [
-        {
-          "type": "object",
-          "properties": {
-            "data": {
-              "type": "array",
-              "items": {
-                "type": "object",
-                "properties": {
-                  "disease_id": {
-                    "type": [
-                      "string",
-                      "null"
-                    ],
-                    "description": "Disease CURIE (MONDO ID)"
-                  },
-                  "disease_name": {
-                    "type": [
-                      "string",
-                      "null"
-                    ],
-                    "description": "Disease name"
-                  },
-                  "score": {
-                    "type": [
-                      "number",
-                      "null"
-                    ],
-                    "description": "Overall similarity score"
-                  },
-                  "average_score": {
-                    "type": [
-                      "number",
-                      "null"
-                    ],
-                    "description": "Average information content across phenotype matches"
-                  },
-                  "best_score": {
-                    "type": [
-                      "number",
-                      "null"
-                    ],
-                    "description": "Best individual phenotype match score"
-                  },
-                  "metric": {
-                    "type": [
-                      "string",
-                      "null"
-                    ],
-                    "description": "Similarity metric used"
-                  },
-                  "matched_phenotypes": {
-                    "type": "array",
-                    "items": {
-                      "type": "object",
-                      "properties": {
-                        "query_phenotype": {
-                          "type": [
-                            "string",
-                            "null"
-                          ]
-                        },
-                        "query_label": {
-                          "type": [
-                            "string",
-                            "null"
-                          ]
-                        },
-                        "matched_phenotype": {
-                          "type": [
-                            "string",
-                            "null"
-                          ]
-                        },
-                        "matched_label": {
-                          "type": [
-                            "string",
-                            "null"
-                          ]
-                        },
-                        "score": {
-                          "type": [
-                            "number",
-                            "null"
-                          ]
-                        }
-                      }
-                    },
-                    "description": "Per-phenotype best match details"
-                  }
-                }
-              }
-            },
-            "metadata": {
-              "type": "object",
-              "properties": {
-                "source": {
-                  "type": "string"
-                },
-                "query_phenotypes": {
-                  "type": "array",
-                  "items": {
-                    "type": "string"
-                  }
-                },
-                "group": {
-                  "type": "string"
-                },
-                "total_results": {
-                  "type": "integer"
-                }
-              }
-            }
-          },
-          "required": [
-            "data"
-          ]
-        },
-        {
-          "type": "object",
-          "properties": {
-            "error": {
-              "type": "string"
-            }
-          },
-          "required": [
-            "error"
-          ]
-        }
-      ]
+      "type": "array"
     }
   }
 ]
