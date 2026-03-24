@@ -176,7 +176,7 @@
   },
   {
     "name": "OpenTargets_target_disease_evidence",
-    "description": "Explore IntOGen somatic driver evidence for a target-disease association. IMPORTANT: IntOGen only covers somatic tumor driver mutations \u2014 this tool returns empty data ({}) for non-cancer diseases (e.g., type 2 diabetes, hypertension). Empty results are expected and normal when querying non-oncology phenotypes. For non-cancer diseases or to query other data sources, use OpenTargets_get_evidence_by_datasource instead. Input is disease efoId (e.g., EFO_0000384 for Crohn's disease) and target ensemblId (e.g., ENSG00000141510 for TP53).",
+    "description": "Explore IntOGen somatic driver evidence for a target-disease association. IMPORTANT: IntOGen only covers somatic tumor driver mutations \u2014 this tool returns empty data ({}) for non-cancer diseases (e.g., type 2 diabetes, hypertension). Empty results are expected and normal when querying non-oncology phenotypes. For non-cancer diseases or to query other data sources, use OpenTargets_get_evidence_by_datasource instead. Accepts gene_symbol (e.g. 'TP53') and disease_name (e.g. 'Crohn disease') as alternatives to ensemblId/efoId — IDs are auto-resolved via OpenTargets search.",
     "label": [
       "Target",
       "Disease",
@@ -190,17 +190,22 @@
       "properties": {
         "efoId": {
           "type": "string",
-          "description": "The efoId of a disease or phenotype."
+          "description": "EFO/MONDO disease ID (e.g., EFO_0000384). Alternative to disease_name."
         },
         "ensemblId": {
           "type": "string",
-          "description": "The ensemblId of a target."
+          "description": "Ensembl gene ID (e.g., ENSG00000141510). Alternative to gene_symbol."
+        },
+        "gene_symbol": {
+          "type": "string",
+          "description": "HGNC gene symbol (e.g., 'TP53', 'BRCA1'). Auto-resolved to ensemblId."
+        },
+        "disease_name": {
+          "type": "string",
+          "description": "Disease or phenotype name (e.g., 'Crohn disease', 'breast carcinoma'). Auto-resolved to efoId."
         }
       },
-      "required": [
-        "efoId",
-        "ensemblId"
-      ]
+      "required": []
     },
     "query_schema": "\nquery targetDiseaseEvidence($efoId: String!, $ensemblId: String!) {\n  disease(efoId: $efoId) {\n    id\n    name\n    evidences(datasourceIds: [\"intogen\"], ensemblIds: [$ensemblId]) {\n      count\n      rows {\n        disease {\n          id\n          name\n        }\n        diseaseFromSource\n        target {\n          id\n          approvedSymbol\n        }\n        mutatedSamples {\n          functionalConsequence {\n            id\n            label\n          }\n          numberSamplesTested\n          numberMutatedSamples\n        }\n        resourceScore\n        significantDriverMethods\n        cohortId\n        cohortShortName\n        cohortDescription\n      }\n    }\n  }\n}\n",
     "type": "OpenTarget",
@@ -256,11 +261,19 @@
       "properties": {
         "efoId": {
           "type": "string",
-          "description": "Disease EFO ID (e.g., 'EFO_0000384' for Crohn's disease)"
+          "description": "Disease EFO ID (e.g., 'EFO_0000384' for Crohn's disease). Alternative to disease_name."
         },
         "ensemblId": {
           "type": "string",
-          "description": "Target Ensembl gene ID (e.g., 'ENSG00000141510' for TP53)"
+          "description": "Target Ensembl gene ID (e.g., 'ENSG00000141510' for TP53). Alternative to gene_symbol."
+        },
+        "gene_symbol": {
+          "type": "string",
+          "description": "HGNC gene symbol (e.g., 'TP53', 'BRCA1'). Auto-resolved to ensemblId."
+        },
+        "disease_name": {
+          "type": "string",
+          "description": "Disease or phenotype name (e.g., 'Crohn disease'). Auto-resolved to efoId."
         },
         "datasourceIds": {
           "type": "array",
@@ -275,10 +288,7 @@
           "default": 50
         }
       },
-      "required": [
-        "efoId",
-        "ensemblId"
-      ]
+      "required": []
     },
     "query_schema": "\nquery getEvidenceByDatasource($efoId: String!, $ensemblId: String!, $datasourceIds: [String!], $size: Int) {\n  disease(efoId: $efoId) {\n    id\n    name\n    evidences(datasourceIds: $datasourceIds, ensemblIds: [$ensemblId], size: $size) {\n      count\n      rows {\n        datasourceId\n        datatypeId\n        disease {\n          id\n          name\n        }\n        diseaseFromSource\n        target {\n          id\n          approvedSymbol\n        }\n        score\n        resourceScore\n        literature\n        urls {\n          url\n          niceName\n        }\n      }\n    }\n  }\n}\n",
     "type": "OpenTarget",

@@ -93,13 +93,66 @@ class GraphQLTool(BaseTool):
         return {"status": "success", "data": result.get("data", result)}
 
 
+_OT_SEARCH_QUERY = """
+query otSearch($q: String!, $entity: [String!]!) {
+  search(queryString: $q, entityNames: $entity, page: {index: 0, size: 1}) {
+    hits { id name }
+  }
+}
+"""
+
+
+def _ot_resolve_id(endpoint_url: str, query_string: str, entity: str) -> str | None:
+    """Resolve a gene symbol or disease name to an OpenTargets ID via search."""
+    result = execute_query(
+        endpoint_url,
+        _OT_SEARCH_QUERY,
+        {"q": query_string, "entity": [entity]},
+    )
+    if result:
+        hits = result.get("data", {}).get("search", {}).get("hits", [])
+        if hits:
+            return hits[0]["id"]
+    return None
+
+
 @register_tool("OpenTarget")
 class OpentargetTool(GraphQLTool):
     def __init__(self, tool_config):
-        endpoint_url = "https://api.platform.opentargets.org/api/v4/graphql"
-        super().__init__(tool_config, endpoint_url)
+        self.endpoint_url = "https://api.platform.opentargets.org/api/v4/graphql"
+        super().__init__(tool_config, self.endpoint_url)
 
     def run(self, arguments):
+        arguments = copy.deepcopy(arguments)
+
+        # Resolve gene_symbol → ensemblId if ensemblId not provided
+        if "ensemblId" not in arguments and "gene_symbol" in arguments:
+            resolved = _ot_resolve_id(
+                self.endpoint_url, arguments.pop("gene_symbol"), "target"
+            )
+            if resolved:
+                arguments["ensemblId"] = resolved
+            else:
+                return {
+                    "status": "error",
+                    "error": f"Could not resolve gene symbol to Ensembl ID. "
+                    "Try passing ensemblId directly (e.g. ENSG00000141510 for TP53).",
+                }
+
+        # Resolve disease_name → efoId if efoId not provided
+        if "efoId" not in arguments and "disease_name" in arguments:
+            resolved = _ot_resolve_id(
+                self.endpoint_url, arguments.pop("disease_name"), "disease"
+            )
+            if resolved:
+                arguments["efoId"] = resolved
+            else:
+                return {
+                    "status": "error",
+                    "error": f"Could not resolve disease name to EFO ID. "
+                    "Try passing efoId directly (e.g. EFO_0000384 for Crohn's disease).",
+                }
+
         result = super().run(arguments)
 
         # If no results, retry with '-' replaced by ' '
