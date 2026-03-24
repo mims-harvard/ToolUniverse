@@ -33,6 +33,8 @@ class FAERSAnalyticsTool(BaseTool):
         # Normalize aliases
         if not arguments.get("adverse_event") and arguments.get("reaction"):
             arguments = dict(arguments, adverse_event=arguments["reaction"])
+        if not arguments.get("stratify_by") and arguments.get("demographic"):
+            arguments = dict(arguments, stratify_by=arguments["demographic"])
         operation = arguments.get("operation")
         # Auto-fill operation from tool config const if not provided by user
         if not operation:

@@ -1,3 +1,4 @@
+import re
 import requests
 from typing import Dict, Any, Optional
 from .base_tool import BaseTool
@@ -209,6 +210,11 @@ class GWASAssociationSearch(GWASRESTTool):
         efo_id = self._efo_id_from_uri_or_id(arguments.get("efo_id"))
         if not efo_id:
             efo_id = self._efo_id_from_uri_or_id(arguments.get("efo_uri"))
+
+        # Feature-111A-004: if disease_trait looks like an EFO/OBA/HP ID, treat as efo_id
+        if disease_trait and not efo_id and re.match(r"^[A-Z]+[_:]\d+", disease_trait):
+            efo_id = self._efo_id_from_uri_or_id(disease_trait)
+            disease_trait = None
 
         # Feature-79C: /v2/associations ignores disease_trait param server-side.
         # Auto-resolve trait name to efo_id for reliable filtering.

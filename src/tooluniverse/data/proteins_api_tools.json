@@ -240,11 +240,17 @@
           ],
           "default": "json",
           "description": "Response format. JSON is recommended for most use cases."
+        },
+        "gene_symbol": {
+          "type": "string",
+          "description": "Alias for query. Gene symbol to search (e.g., TP53, BRCA1)."
+        },
+        "gene": {
+          "type": "string",
+          "description": "Alias for query. Gene name to search."
         }
       },
-      "required": [
-        "query"
-      ]
+      "required": []
     },
     "fields": {
       "endpoint": "https://www.ebi.ac.uk/proteins/api/proteins",

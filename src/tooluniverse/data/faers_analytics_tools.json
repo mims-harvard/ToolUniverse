@@ -72,6 +72,15 @@
         "reaction": {
           "type": "string",
           "description": "Alias for adverse_event. MedDRA Preferred Term for the adverse drug reaction (e.g., \"hemorrhage\", \"nausea\")."
+        },
+        "demographic": {
+          "type": "string",
+          "enum": [
+            "sex",
+            "age",
+            "country"
+          ],
+          "description": "Alias for stratify_by. Demographic dimension to stratify by (sex, age, or country)."
         }
       }
     },

@@ -400,6 +400,12 @@ class ProteinsAPIRESTTool(BaseTool):
             "proteins_api_get_genome_mappings",
         ]
 
+        # Feature-111B-007: gene_symbol/gene as aliases for query in proteins_api_search
+        if tool_name == "proteins_api_search" and not arguments.get("query"):
+            gene_alias = arguments.get("gene_symbol") or arguments.get("gene")
+            if gene_alias:
+                arguments = dict(arguments, query=gene_alias)
+
         if tool_name in batch_tools and "accession" in arguments:
             accession = arguments.get("accession")
             accessions = self._parse_accessions(accession)

@@ -41,15 +41,23 @@
           "type": "boolean",
           "description": "Whether to return the result in string mode. If True, the result will be a string of the network graph and the biological processes. If False, the result will be a NetworkX graph and a list of biological processes.",
           "default": true
+        },
+        "genes": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "Alias for gene_list. List of gene symbols to analyze."
         }
       },
-      "required": [
-        "gene_list"
-      ]
+      "required": []
     },
     "test_examples": [
       {
-        "gene_list": ["TP53", "BRCA1"],
+        "gene_list": [
+          "TP53",
+          "BRCA1"
+        ],
         "tissue": "brain",
         "max_node": 3,
         "interaction": "co-expression",

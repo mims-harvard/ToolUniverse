@@ -55,6 +55,10 @@ class ReactomeRESTTool(BaseTool):
     def run(
         self, arguments: dict, stream_callback=None, use_cache=False, validate=True
     ):
+        # Feature-111A-006: id is a backward alias for uniprot_id (renamed in round 68B)
+        if not arguments.get("uniprot_id") and arguments.get("id"):
+            arguments = dict(arguments, uniprot_id=arguments["id"])
+
         # Optional schema validation (when jsonschema is available)
         if validate:
             validation_error = self.validate_parameters(arguments)
@@ -214,7 +218,8 @@ class ReactomeRESTTool(BaseTool):
                         # Single value or simple format
                         data.append({"value": line.strip()})
 
-                return data if len(data) > 1 else (data[0] if data else {})
+                parsed = data if len(data) > 1 else (data[0] if data else {})
+                return {"status": "success", "data": parsed}
             else:
                 # Parse JSON
                 data = resp.json()
@@ -235,7 +240,7 @@ class ReactomeRESTTool(BaseTool):
 
         # 7. If no extract_path in config, return complete JSON
         if not self.extract_path:
-            return data
+            return {"status": "success", "data": data}
 
         # 8. Otherwise drill down according to "dot-separated path" in extract_path
         fragment = data
@@ -247,4 +252,4 @@ class ReactomeRESTTool(BaseTool):
                     "status": "error",
                     "error": f"Path '{self.extract_path}' not found in JSON.",
                 }
-        return fragment
+        return {"status": "success", "data": fragment}

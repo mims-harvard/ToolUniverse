@@ -16,7 +16,8 @@ class HumanBaseTool(BaseTool):
 
     def run(self, arguments):
         """Main entry point for the tool."""
-        gene_list = arguments.get("gene_list")
+        # Feature-111A-007: 'genes' as alias for 'gene_list'
+        gene_list = arguments.get("gene_list") or arguments.get("genes")
         tissue = arguments.get("tissue", "brain")
         max_node = arguments.get("max_node", 10)
         interaction = arguments.get("interaction", None)

@@ -83,6 +83,10 @@ class BRENDATool(BaseTool):
         }
 
     def run(self, arguments: Dict[str, Any]) -> Dict[str, Any]:
+        # Feature-111B-006: enzyme_id as alias for ec_number
+        if not arguments.get("ec_number") and arguments.get("enzyme_id"):
+            arguments = dict(arguments, ec_number=arguments["enzyme_id"])
+
         operation = arguments.get("operation", "") or self.get_schema_const_operation()
 
         dispatch = {

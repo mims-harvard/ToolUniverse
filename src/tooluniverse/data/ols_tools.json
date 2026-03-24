@@ -446,10 +446,13 @@
           "type": "integer",
           "description": "Number of results to return (default: 20)",
           "default": 20
+        },
+        "term_id": {
+          "type": "string",
+          "description": "Alias for term_iri. Short-form ontology ID (e.g., GO:0008150) or full IRI."
         }
       },
       "required": [
-        "term_iri",
         "ontology"
       ]
     },
@@ -545,10 +548,13 @@
           "type": "integer",
           "description": "Number of results to return (default: 20)",
           "default": 20
+        },
+        "term_id": {
+          "type": "string",
+          "description": "Alias for term_iri. Short-form ontology ID (e.g., GO:0008150) or full IRI."
         }
       },
       "required": [
-        "term_iri",
         "ontology"
       ]
     },
@@ -638,10 +644,13 @@
           "type": "integer",
           "description": "Number of similar terms to return (default: 10)",
           "default": 10
+        },
+        "term_id": {
+          "type": "string",
+          "description": "Alias for term_iri. Short-form ontology ID (e.g., GO:0008150) or full IRI."
         }
       },
       "required": [
-        "term_iri",
         "ontology"
       ]
     },

@@ -22,11 +22,13 @@
         "organism": {
           "type": "string",
           "description": "Optional organism filter (e.g., 'Homo sapiens', 'Escherichia coli')"
+        },
+        "enzyme_id": {
+          "type": "string",
+          "description": "Alias for ec_number. Enzyme identifier in EC notation (e.g., 1.1.1.1)."
         }
       },
-      "required": [
-        "ec_number"
-      ]
+      "required": []
     },
     "return_schema": {
       "type": "object",
@@ -79,11 +81,13 @@
         "organism": {
           "type": "string",
           "description": "Optional organism filter"
+        },
+        "enzyme_id": {
+          "type": "string",
+          "description": "Alias for ec_number. Enzyme identifier in EC notation (e.g., 1.1.1.1)."
         }
       },
-      "required": [
-        "ec_number"
-      ]
+      "required": []
     },
     "return_schema": {
       "type": "object",
@@ -136,11 +140,13 @@
         "organism": {
           "type": "string",
           "description": "Optional organism filter"
+        },
+        "enzyme_id": {
+          "type": "string",
+          "description": "Alias for ec_number. Enzyme identifier in EC notation (e.g., 1.1.1.1)."
         }
       },
-      "required": [
-        "ec_number"
-      ]
+      "required": []
     },
     "return_schema": {
       "type": "object",
@@ -186,11 +192,13 @@
         "ec_number": {
           "type": "string",
           "description": "EC number (e.g., 1.1.1.1)"
+        },
+        "enzyme_id": {
+          "type": "string",
+          "description": "Alias for ec_number. Enzyme identifier in EC notation (e.g., 1.1.1.1)."
         }
       },
-      "required": [
-        "ec_number"
-      ]
+      "required": []
     },
     "return_schema": {
       "type": "object",
