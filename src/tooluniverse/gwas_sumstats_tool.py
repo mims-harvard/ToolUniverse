@@ -74,7 +74,7 @@ class GWASSumStatsTool(BaseTool):
 
     def _list_studies(self, arguments: Dict[str, Any]) -> Dict[str, Any]:
         """List GWAS studies with deposited summary statistics."""
-        size = arguments.get("size", 20)
+        size = arguments.get("size") or arguments.get("limit") or 20
 
         url = f"{GWAS_SS_BASE_URL}/studies"
         params = {"size": min(size, 100)}

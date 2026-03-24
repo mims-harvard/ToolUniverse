@@ -92,8 +92,13 @@ class FinnGenTool(BaseTool):
                 searchable = f"{p.get('phenocode', '')} {p.get('phenostring', '')} {p.get('category', '')}".lower()
                 if query not in searchable:
                     continue
-            if category and category not in p.get("category", "").lower():
-                continue
+            if category:
+                # Match against human-readable category name OR phenocode prefix
+                # e.g. "C3_" matches phenocodes starting with "C3_"; "Neoplasms" matches category name
+                phenocode = p.get("phenocode", "").lower()
+                cat_name = p.get("category", "").lower()
+                if category not in cat_name and not phenocode.startswith(category):
+                    continue
             if min_cases and p.get("num_cases", 0) < min_cases:
                 continue
             results.append(

@@ -189,6 +189,20 @@ class HumanBaseTool(BaseTool):
             return nx.Graph(), None
 
         tissue = tissue.replace(" ", "-").replace("_", "-").lower()
+        # Map common tissue names to valid HumanBase API slugs
+        _TISSUE_ALIASES = {
+            "breast": "mammary-gland",
+            "prostate": "prostate-gland",
+            "kidney": "kidney-cortex",
+            "intestine": "small-intestine",
+            "bowel": "small-intestine",
+            "adipose": "adipose-tissue",
+            "fat": "adipose-tissue",
+            "skin": "skin-fibroblast",
+            "immune": "blood",
+            "pbmc": "blood",
+        }
+        tissue = _TISSUE_ALIASES.get(tissue, tissue)
 
         # HumanBase API requires giant_version parameter.
         # Slugs ending in "-v3" use giant_version=v3; others use v1.

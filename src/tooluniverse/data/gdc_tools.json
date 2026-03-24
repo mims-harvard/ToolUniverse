@@ -407,7 +407,7 @@
   {
     "name": "GDC_get_mutation_frequency",
     "type": "GDCMutationFrequencyTool",
-    "description": "Get pan-cancer mutation frequency statistics for a gene across all TCGA/GDC cancer projects. Returns total SSM occurrence count and per-project breakdown. Note: cancer_type filtering is NOT supported — results are always pan-cancer totals. For cancer-specific mutation data, filter the returned per_project breakdown by project_id (e.g. 'TCGA-COAD'). Answers 'How often is this gene mutated across all cancers?'",
+    "description": "Get pan-cancer mutation frequency statistics for a gene across all TCGA/GDC cancer projects. Returns total SSM occurrence count (no per-project breakdown — use GDC_get_ssm_by_gene with project_id for cancer-specific data). Answers 'How often is this gene mutated across all cancers?'",
     "parameter": {
       "type": "object",
       "properties": {
