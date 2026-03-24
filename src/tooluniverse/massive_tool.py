@@ -9,7 +9,7 @@ API: https://massive.ucsd.edu/ProteoSAFe/proxi/v0.1/datasets
 """
 
 import requests
-from typing import Dict, Any, List, Optional
+from typing import Dict, Any, List
 from .base_tool import BaseTool
 from .tool_registry import register_tool
 
@@ -40,23 +40,6 @@ class MassIVETool(BaseTool):
         if op == "get_dataset":
             return self._get_dataset(arguments)
         return {"status": "error", "error": f"Unknown operation: {op}"}
-
-    def _extract_cv_value(self, cv_list, target_name=None):
-        """Extract value from a CV-param style list."""
-        if not cv_list:
-            return None
-        if isinstance(cv_list, list) and cv_list:
-            # Sometimes nested: [[{...}, {...}]]
-            items = cv_list
-            if items and isinstance(items[0], list):
-                items = items[0]
-            for item in items:
-                if isinstance(item, dict):
-                    if target_name and target_name in item.get("name", ""):
-                        return item.get("value")
-                    if not target_name:
-                        return item.get("value")
-        return None
 
     def _extract_all_cv_values(self, cv_list):
         """Extract all name-value pairs from a CV-param list."""

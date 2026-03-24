@@ -11,7 +11,7 @@ API: https://run.opencravat.org/submit/annotators (list available annotators)
 """
 
 import requests
-from typing import Dict, Any, List, Optional
+from typing import Dict, Any
 from .base_tool import BaseTool
 from .tool_registry import register_tool
 
