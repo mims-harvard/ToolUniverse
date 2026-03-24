@@ -312,23 +312,54 @@ class FDAOrangeBookTool(BaseTool):
                     "error": "Must provide brand_name or generic_name",
                 }
 
-            # Search for all products
+            # Step 1: Search by brand_name/generic_name to find the reference drug
             search_result = self._search_drug(arguments)
             if search_result.get("status") != "success":
                 return search_result
 
             drugs = search_result.get("drugs", [])
 
-            # Count reference vs generic products
+            # Step 2: If brand_name was used, extract active ingredient and do a
+            # broader ingredient-based search to capture ANDA generics (which have
+            # different brand names than the originator NDA).
+            if brand_name and not generic_name:
+                active_ingredient = None
+                for drug in drugs:
+                    for product in drug.get("products", []):
+                        ingredients = product.get("active_ingredients", [])
+                        if ingredients:
+                            active_ingredient = ingredients[0].get("name")
+                            break
+                    if active_ingredient:
+                        break
+
+                if active_ingredient:
+                    ingredient_result = self._search_drug(
+                        {"generic_name": active_ingredient, "limit": 100}
+                    )
+                    if ingredient_result.get("status") == "success":
+                        # Merge, deduplicating by application_number
+                        seen = {d["application_number"] for d in drugs}
+                        for d in ingredient_result.get("drugs", []):
+                            if d["application_number"] not in seen:
+                                drugs.append(d)
+                                seen.add(d["application_number"])
+
+            # Categorize reference vs generic products
             reference_drugs = []
             generic_drugs = []
+            seen_apps: set = set()
 
             for drug in drugs:
+                app_num = drug.get("application_number", "")
+                if app_num in seen_apps:
+                    continue
+                seen_apps.add(app_num)
                 for product in drug.get("products", []):
                     if product.get("reference_drug") == "Yes":
                         reference_drugs.append(
                             {
-                                "application_number": drug.get("application_number"),
+                                "application_number": app_num,
                                 "brand_name": product.get("brand_name"),
                                 "sponsor": drug.get("sponsor_name"),
                                 "marketing_status": product.get("marketing_status"),
@@ -337,7 +368,7 @@ class FDAOrangeBookTool(BaseTool):
                     else:
                         generic_drugs.append(
                             {
-                                "application_number": drug.get("application_number"),
+                                "application_number": app_num,
                                 "brand_name": product.get("brand_name") or "Generic",
                                 "sponsor": drug.get("sponsor_name"),
                                 "marketing_status": product.get("marketing_status"),
