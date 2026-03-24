@@ -9,8 +9,9 @@ from ._shared_client import get_shared_client
 
 
 def GPCRdb_get_protein(
-    protein: str,
     operation: Optional[str] = None,
+    protein: Optional[str] = None,
+    protein_id: Optional[str] = None,
     *,
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
@@ -25,6 +26,8 @@ def GPCRdb_get_protein(
         Operation type (fixed: get_protein)
     protein : str
         Protein entry name (e.g., adrb2_human for beta-2 adrenergic receptor) or UniP...
+    protein_id : str
+        Alias for protein parameter
     stream_callback : Callable, optional
         Callback for streaming output
     use_cache : bool, default False
@@ -41,7 +44,11 @@ def GPCRdb_get_protein(
     # Strip None values so optional parameters don't trigger schema validation errors
     _args = {
         k: v
-        for k, v in {"operation": operation, "protein": protein}.items()
+        for k, v in {
+            "operation": operation,
+            "protein": protein,
+            "protein_id": protein_id,
+        }.items()
         if v is not None
     }
     return get_shared_client().run_one_function(

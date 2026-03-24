@@ -1,7 +1,7 @@
 """
 GenCC_get_classifications
 
-Get summary statistics of gene-disease validity classifications from GenCC (Gene Curation Coaliti...
+Get summary statistics of gene-disease validity classifications from GenCC. Returns counts per cl...
 """
 
 from typing import Any, Optional, Callable
@@ -10,6 +10,8 @@ from ._shared_client import get_shared_client
 
 def GenCC_get_classifications(
     operation: Optional[str] = None,
+    gene_symbol: Optional[str] = None,
+    disease: Optional[str] = None,
     submitter: Optional[str] = "",
     *,
     stream_callback: Optional[Callable[[str], None]] = None,
@@ -17,12 +19,16 @@ def GenCC_get_classifications(
     validate: bool = True,
 ) -> dict[str, Any]:
     """
-    Get summary statistics of gene-disease validity classifications from GenCC (Gene Curation Coaliti...
+    Get summary statistics of gene-disease validity classifications from GenCC. Returns counts per cl...
 
     Parameters
     ----------
     operation : str
         Operation type (fixed: get_classifications)
+    gene_symbol : str
+        Optional HGNC gene symbol to filter classification stats (e.g., 'GBA', 'BRCA2')
+    disease : str
+        Optional disease name substring to filter classification stats (e.g., 'Gauche...
     submitter : str
         Optional filter by submitting organization name (e.g., 'ClinGen', 'Ambry', 'G...
     stream_callback : Callable, optional
@@ -41,7 +47,12 @@ def GenCC_get_classifications(
     # Strip None values so optional parameters don't trigger schema validation errors
     _args = {
         k: v
-        for k, v in {"operation": operation, "submitter": submitter}.items()
+        for k, v in {
+            "operation": operation,
+            "gene_symbol": gene_symbol,
+            "disease": disease,
+            "submitter": submitter,
+        }.items()
         if v is not None
     }
     return get_shared_client().run_one_function(

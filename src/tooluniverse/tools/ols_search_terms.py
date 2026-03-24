@@ -12,6 +12,7 @@ def ols_search_terms(
     query: str,
     operation: Optional[str] = None,
     rows: Optional[int] = 10,
+    size: Optional[int] = 10,
     ontology: Optional[str] = None,
     exact_match: Optional[bool] = False,
     include_obsolete: Optional[bool] = False,
@@ -30,7 +31,9 @@ def ols_search_terms(
     query : str
         The search query for terms
     rows : int
-        Number of results to return (default: 10)
+        Number of results to return (default: 10). Alias: size.
+    size : int
+        Alias for rows. Number of results to return (default: 10).
     ontology : str
         Filter by specific ontology (optional)
     exact_match : bool
@@ -57,6 +60,7 @@ def ols_search_terms(
             "operation": operation,
             "query": query,
             "rows": rows,
+            "size": size,
             "ontology": ontology,
             "exact_match": exact_match,
             "include_obsolete": include_obsolete,

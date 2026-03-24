@@ -9,8 +9,9 @@ from ._shared_client import get_shared_client
 
 
 def SAbDab_search_structures(
-    query: str,
     operation: Optional[str] = None,
+    query: Optional[str] = None,
+    antigen: Optional[str] = None,
     limit: Optional[int] = 50,
     *,
     stream_callback: Optional[Callable[[str], None]] = None,
@@ -25,7 +26,9 @@ def SAbDab_search_structures(
     operation : str
 
     query : str
-        Search query - antigen name, species, or keywords
+        Search query - antigen name, species, or keywords (e.g., 'HER2', 'anti-CD20')
+    antigen : str
+        Alias for query. Antigen name to search (e.g., 'EGFR', 'HER2').
     limit : int
         Maximum results (default: 50)
     stream_callback : Callable, optional
@@ -44,7 +47,12 @@ def SAbDab_search_structures(
     # Strip None values so optional parameters don't trigger schema validation errors
     _args = {
         k: v
-        for k, v in {"operation": operation, "query": query, "limit": limit}.items()
+        for k, v in {
+            "operation": operation,
+            "query": query,
+            "antigen": antigen,
+            "limit": limit,
+        }.items()
         if v is not None
     }
     return get_shared_client().run_one_function(

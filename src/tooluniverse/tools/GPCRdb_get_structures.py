@@ -12,6 +12,8 @@ def GPCRdb_get_structures(
     operation: Optional[str] = None,
     protein: Optional[str] = None,
     state: Optional[str] = None,
+    resolution: Optional[float] = None,
+    protein_id: Optional[str] = None,
     *,
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
@@ -28,6 +30,10 @@ def GPCRdb_get_structures(
         Protein entry name (optional - returns all structures if not specified)
     state : str
         Receptor state filter: active, inactive, intermediate
+    resolution : float
+        Maximum resolution in Angstroms (client-side filter, e.g., 2.5 returns only s...
+    protein_id : str
+        Alias for protein parameter
     stream_callback : Callable, optional
         Callback for streaming output
     use_cache : bool, default False
@@ -44,7 +50,13 @@ def GPCRdb_get_structures(
     # Strip None values so optional parameters don't trigger schema validation errors
     _args = {
         k: v
-        for k, v in {"operation": operation, "protein": protein, "state": state}.items()
+        for k, v in {
+            "operation": operation,
+            "protein": protein,
+            "state": state,
+            "resolution": resolution,
+            "protein_id": protein_id,
+        }.items()
         if v is not None
     }
     return get_shared_client().run_one_function(

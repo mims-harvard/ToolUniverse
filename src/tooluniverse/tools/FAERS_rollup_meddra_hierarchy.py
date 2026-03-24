@@ -9,8 +9,9 @@ from ._shared_client import get_shared_client
 
 
 def FAERS_rollup_meddra_hierarchy(
-    drug_name: str,
     operation: Optional[str] = None,
+    drug_name: Optional[str] = None,
+    drug: Optional[str] = None,
     *,
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
@@ -25,6 +26,8 @@ def FAERS_rollup_meddra_hierarchy(
         Operation type (fixed)
     drug_name : str
         Generic drug name
+    drug : str
+        Alias for drug_name. Generic drug name.
     stream_callback : Callable, optional
         Callback for streaming output
     use_cache : bool, default False
@@ -41,7 +44,11 @@ def FAERS_rollup_meddra_hierarchy(
     # Strip None values so optional parameters don't trigger schema validation errors
     _args = {
         k: v
-        for k, v in {"operation": operation, "drug_name": drug_name}.items()
+        for k, v in {
+            "operation": operation,
+            "drug_name": drug_name,
+            "drug": drug,
+        }.items()
         if v is not None
     }
     return get_shared_client().run_one_function(

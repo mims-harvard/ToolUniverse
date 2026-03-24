@@ -9,9 +9,11 @@ from ._shared_client import get_shared_client
 
 
 def FAERS_filter_serious_events(
-    drug_name: str,
     operation: Optional[str] = None,
+    drug_name: Optional[str] = None,
     seriousness_type: Optional[str] = "all",
+    drug: Optional[str] = None,
+    event_type: Optional[str] = None,
     *,
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
@@ -28,6 +30,10 @@ def FAERS_filter_serious_events(
         Generic drug name
     seriousness_type : str
         Type of serious event to filter
+    drug : str
+        Alias for drug_name. Generic drug name.
+    event_type : str
+        Alias for seriousness_type. Type of serious event (e.g., hospitalization, dea...
     stream_callback : Callable, optional
         Callback for streaming output
     use_cache : bool, default False
@@ -48,6 +54,8 @@ def FAERS_filter_serious_events(
             "operation": operation,
             "drug_name": drug_name,
             "seriousness_type": seriousness_type,
+            "drug": drug,
+            "event_type": event_type,
         }.items()
         if v is not None
     }

@@ -12,6 +12,7 @@ def ols_get_term_info(
     operation: Optional[str] = None,
     id: Optional[str] = None,
     term_id: Optional[str] = None,
+    term_iri: Optional[str] = None,
     *,
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
@@ -28,6 +29,8 @@ def ols_get_term_info(
         Ontology term ID or IRI (e.g. HP:0001903, http://purl.obolibrary.org/obo/HP_0...
     term_id : str
         Alias for id — ontology term ID (e.g. HP:0001903)
+    term_iri : str
+        Alias for id. Full IRI or short-form ID (e.g., GO:0008150, EFO:0003971). Same...
     stream_callback : Callable, optional
         Callback for streaming output
     use_cache : bool, default False
@@ -44,7 +47,12 @@ def ols_get_term_info(
     # Strip None values so optional parameters don't trigger schema validation errors
     _args = {
         k: v
-        for k, v in {"operation": operation, "id": id, "term_id": term_id}.items()
+        for k, v in {
+            "operation": operation,
+            "id": id,
+            "term_id": term_id,
+            "term_iri": term_iri,
+        }.items()
         if v is not None
     }
     return get_shared_client().run_one_function(

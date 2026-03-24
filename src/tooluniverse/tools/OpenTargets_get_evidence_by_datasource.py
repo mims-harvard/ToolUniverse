@@ -9,8 +9,10 @@ from ._shared_client import get_shared_client
 
 
 def OpenTargets_get_evidence_by_datasource(
-    efoId: str,
-    ensemblId: str,
+    efoId: Optional[str] = None,
+    ensemblId: Optional[str] = None,
+    gene_symbol: Optional[str] = None,
+    disease_name: Optional[str] = None,
     datasourceIds: Optional[list[str]] = None,
     size: Optional[int] = 50,
     *,
@@ -24,9 +26,13 @@ def OpenTargets_get_evidence_by_datasource(
     Parameters
     ----------
     efoId : str
-        Disease EFO ID (e.g., 'EFO_0000384' for Crohn's disease)
+        Disease EFO ID (e.g., 'EFO_0000384' for Crohn's disease). Alternative to dise...
     ensemblId : str
-        Target Ensembl gene ID (e.g., 'ENSG00000141510' for TP53)
+        Target Ensembl gene ID (e.g., 'ENSG00000141510' for TP53). Alternative to gen...
+    gene_symbol : str
+        HGNC gene symbol (e.g., 'TP53', 'BRCA1'). Auto-resolved to ensemblId.
+    disease_name : str
+        Disease or phenotype name (e.g., 'Crohn disease'). Auto-resolved to efoId.
     datasourceIds : list[str]
         List of datasource IDs to filter evidence. Examples: ['chembl', 'europepmc'],...
     size : int
@@ -50,6 +56,8 @@ def OpenTargets_get_evidence_by_datasource(
         for k, v in {
             "efoId": efoId,
             "ensemblId": ensemblId,
+            "gene_symbol": gene_symbol,
+            "disease_name": disease_name,
             "datasourceIds": datasourceIds,
             "size": size,
         }.items()

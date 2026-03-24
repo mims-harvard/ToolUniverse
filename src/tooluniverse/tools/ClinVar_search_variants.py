@@ -1,5 +1,5 @@
 """
-clinvar_search_variants
+ClinVar_search_variants
 
 Search for variants in ClinVar database by gene name, condition, or variant ID. Returns variant i...
 """
@@ -8,7 +8,7 @@ from typing import Any, Optional, Callable
 from ._shared_client import get_shared_client
 
 
-def clinvar_search_variants(
+def ClinVar_search_variants(
     gene: Optional[str] = None,
     condition: Optional[str] = None,
     variant_id: Optional[str] = None,
@@ -65,7 +65,7 @@ def clinvar_search_variants(
     }
     return get_shared_client().run_one_function(
         {
-            "name": "clinvar_search_variants",
+            "name": "ClinVar_search_variants",
             "arguments": _args,
         },
         stream_callback=stream_callback,
@@ -74,4 +74,4 @@ def clinvar_search_variants(
     )
 
 
-__all__ = ["clinvar_search_variants"]
+__all__ = ["ClinVar_search_variants"]

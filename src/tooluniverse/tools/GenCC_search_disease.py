@@ -9,8 +9,9 @@ from ._shared_client import get_shared_client
 
 
 def GenCC_search_disease(
-    disease: str,
     operation: Optional[str] = None,
+    disease: Optional[str] = None,
+    disease_name: Optional[str] = None,
     classification: Optional[str] = "",
     *,
     stream_callback: Optional[Callable[[str], None]] = None,
@@ -26,6 +27,8 @@ def GenCC_search_disease(
         Operation type (fixed: search_disease)
     disease : str
         Disease name or ID to search (e.g., 'Marfan syndrome', 'MONDO:0007947', 'brea...
+    disease_name : str
+        Alias for disease. Disease name or ID to search.
     classification : str
         Optional filter by classification level (e.g., Definitive, Strong)
     stream_callback : Callable, optional
@@ -47,6 +50,7 @@ def GenCC_search_disease(
         for k, v in {
             "operation": operation,
             "disease": disease,
+            "disease_name": disease_name,
             "classification": classification,
         }.items()
         if v is not None

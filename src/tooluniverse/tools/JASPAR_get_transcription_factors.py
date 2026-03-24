@@ -1,7 +1,7 @@
 """
 JASPAR_get_transcription_factors
 
-List transcription factor binding site matrices (PFMs/PWMs metadata) from JASPAR. Use this to bro...
+List all JASPAR transcription factor binding profiles. Returns all matrices; does NOT support fil...
 """
 
 from typing import Any, Optional, Callable
@@ -18,7 +18,7 @@ def JASPAR_get_transcription_factors(
     validate: bool = True,
 ) -> dict[str, Any]:
     """
-    List transcription factor binding site matrices (PFMs/PWMs metadata) from JASPAR. Use this to bro...
+    List all JASPAR transcription factor binding profiles. Returns all matrices; does NOT support fil...
 
     Parameters
     ----------

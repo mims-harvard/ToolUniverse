@@ -1,5 +1,5 @@
 """
-clinvar_get_clinical_significance
+ClinVar_get_clinical_significance
 
 Get clinical significance information for a variant from ClinVar. Returns pathogenicity classific...
 """
@@ -8,7 +8,7 @@ from typing import Any, Optional, Callable
 from ._shared_client import get_shared_client
 
 
-def clinvar_get_clinical_significance(
+def ClinVar_get_clinical_significance(
     variant_id: str,
     *,
     stream_callback: Optional[Callable[[str], None]] = None,
@@ -39,7 +39,7 @@ def clinvar_get_clinical_significance(
     _args = {k: v for k, v in {"variant_id": variant_id}.items() if v is not None}
     return get_shared_client().run_one_function(
         {
-            "name": "clinvar_get_clinical_significance",
+            "name": "ClinVar_get_clinical_significance",
             "arguments": _args,
         },
         stream_callback=stream_callback,
@@ -48,4 +48,4 @@ def clinvar_get_clinical_significance(
     )
 
 
-__all__ = ["clinvar_get_clinical_significance"]
+__all__ = ["ClinVar_get_clinical_significance"]
