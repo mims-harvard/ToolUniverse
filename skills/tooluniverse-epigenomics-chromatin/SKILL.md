@@ -122,6 +122,23 @@ result = tu.tools.ENCODE_search_histone_experiments(target="H3K27ac", cell_type=
 # result["data"]["experiments"][0]["accession"] -> "ENCSR000AKC"
 ```
 
+### ENCODE RNA-seq experiments
+
+**ENCODE_search_rnaseq_experiments**: `assay_type` (string, default `"total RNA-seq"`), `biosample` (string/null, e.g. `"liver"`), `limit` (int).
+Available `assay_type` values: `"total RNA-seq"`, `"polyA plus RNA-seq"`, `"small RNA-seq"`, `"microRNA-seq"`.
+
+```python
+# Search total RNA-seq for liver
+result = tu.tools.ENCODE_search_rnaseq_experiments(assay_type="total RNA-seq", biosample="liver", limit=5)
+```
+
+**IMPORTANT -- polyA plus RNA-seq fallback**: Some biosamples have few or zero `total RNA-seq` experiments. If a search returns 0 results, retry with `assay_type="polyA plus RNA-seq"`:
+```python
+result = tu.tools.ENCODE_search_rnaseq_experiments(assay_type="total RNA-seq", biosample="K562", limit=5)
+if result["data"]["total"] == 0:
+    result = tu.tools.ENCODE_search_rnaseq_experiments(assay_type="polyA plus RNA-seq", biosample="K562", limit=5)
+```
+
 ### Common histone marks and their meaning
 
 | Mark | Function | Color (ENCODE) |
@@ -137,6 +154,28 @@ result = tu.tools.ENCODE_search_histone_experiments(target="H3K27ac", cell_type=
 
 **GEO_search_chipseq_datasets**: Search GEO for ChIP-seq datasets.
 - Complementary to ENCODE for older or non-ENCODE datasets.
+
+### GEO RNA-seq datasets
+
+**GEO_search_rnaseq_datasets**: `query` (string, free-text keyword), `organism` (string, default "Homo sapiens"), `limit` (int, also `max_results` accepted).
+Returns GEO Series accessions (GSExxxxxx) with titles, summaries, organism, sample counts, and publication dates.
+
+```json
+{"query": "breast cancer", "limit": 5}
+```
+
+NOTE: Both `limit` and `max_results` are accepted as parameter names.
+
+### GEO ATAC-seq datasets
+
+**GEO_search_atacseq_datasets**: `query` (string), `organism` (string, default "Homo sapiens"), `limit` (int, also `max_results` accepted).
+Returns GEO ATAC-seq datasets. Automatically adds "ATAC-seq" to the search term.
+
+```json
+{"query": "T cells", "limit": 5}
+```
+
+NOTE: Both `limit` and `max_results` are accepted as parameter names.
 
 ---
 
@@ -511,6 +550,9 @@ ccres = tu.tools.UCSC_get_encode_cCREs(chrom="chr17", start=7668421, end=7687490
 | Tool | Key Parameters | Notes |
 |------|---------------|-------|
 | ENCODE_search_histone_experiments | target, cell_type (or tissue alias), limit | target = histone mark name; tissue terms may need ENCODE ontology names |
+| ENCODE_search_rnaseq_experiments | assay_type, biosample, limit | assay_type: "total RNA-seq" or "polyA plus RNA-seq"; fall back to polyA if 0 results |
+| GEO_search_rnaseq_datasets | query, organism, limit (or max_results) | limit and max_results both accepted |
+| GEO_search_atacseq_datasets | query, organism, limit (or max_results) | limit and max_results both accepted; "ATAC-seq" auto-appended to query |
 | ENCODE_search_chromatin_accessibility | cell_type, limit | Returns ATAC-seq experiments |
 | ENCODE_get_chromatin_state | cell_type, limit | ChromHMM 15-state annotations |
 | ENCODE_search_annotations | annotation_type, biosample_term_name, organism, assembly, limit | General annotation search |
@@ -562,6 +604,9 @@ ccres = tu.tools.UCSC_get_encode_cCREs(chrom="chr17", start=7668421, end=7687490
 | Phase | Primary Tool | Fallback |
 |-------|-------------|----------|
 | Histone ChIP-seq | ENCODE_search_histone_experiments | GEO_search_chipseq_datasets |
+| RNA-seq experiments | ENCODE_search_rnaseq_experiments (total RNA-seq) | ENCODE_search_rnaseq_experiments (polyA plus RNA-seq) |
+| RNA-seq datasets (GEO) | GEO_search_rnaseq_datasets | EuropePMC_search_articles (query + "RNA-seq") |
+| ATAC-seq datasets (GEO) | GEO_search_atacseq_datasets | ENCODE_search_chromatin_accessibility |
 | Chromatin accessibility | ENCODE_search_chromatin_accessibility | ENCODE_search_experiments (filter ATAC-seq) |
 | cCREs | UCSC_get_encode_cCREs | SCREEN_get_regulatory_elements |
 | eQTLs | GTEx_get_single_tissue_eqtls | eQTL_get_associations (EBI Catalogue) |

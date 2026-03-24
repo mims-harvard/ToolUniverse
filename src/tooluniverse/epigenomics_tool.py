@@ -930,6 +930,126 @@ class EpigenomicsTool(BaseTool):
             },
         }
 
+    # =========================================================================
+    # ENCODE Hi-C / 3D Genome Tools
+    # =========================================================================
+
+    def _encode_hic_search(self, arguments: Dict[str, Any]) -> Dict[str, Any]:
+        """Search ENCODE Hi-C and intact Hi-C experiments for 3D genome data."""
+        assay_type = arguments.get("assay_type", "intact Hi-C")
+        params = {
+            "type": "Experiment",
+            "assay_title": assay_type,
+            "status": "released",
+        }
+
+        biosample = (
+            arguments.get("biosample_term_name")
+            or arguments.get("biosample")
+            or arguments.get("cell_type")
+            or arguments.get("tissue")
+        )
+        if biosample:
+            params["biosample_ontology.term_name"] = biosample
+
+        organism = arguments.get("organism", "Homo sapiens")
+        if organism:
+            params["replicates.library.biosample.organism.scientific_name"] = organism
+
+        limit = arguments.get("limit", 25)
+        params["limit"] = min(int(limit), 100)
+
+        raw = self._encode_search(params)
+
+        experiments = []
+        for exp in raw.get("@graph", []):
+            lab = exp.get("lab", {})
+            lab_name = lab.get("title", "") if isinstance(lab, dict) else str(lab)
+
+            experiments.append(
+                {
+                    "accession": exp.get("accession", ""),
+                    "assay_title": exp.get("assay_title", ""),
+                    "biosample_summary": exp.get("biosample_summary", ""),
+                    "description": exp.get("description", ""),
+                    "status": exp.get("status", ""),
+                    "lab": lab_name,
+                    "date_released": exp.get("date_released", ""),
+                }
+            )
+
+        return {
+            "status": "success",
+            "data": {
+                "total": raw.get("total", 0),
+                "experiments": experiments,
+            },
+            "metadata": {
+                "source": "ENCODE Project (encodeproject.org)",
+                "assay": assay_type,
+                "organism": organism,
+            },
+        }
+
+    # =========================================================================
+    # ENCODE microRNA-seq Tools
+    # =========================================================================
+
+    def _encode_microrna_search(self, arguments: Dict[str, Any]) -> Dict[str, Any]:
+        """Search ENCODE microRNA-seq experiments."""
+        params = {
+            "type": "Experiment",
+            "assay_title": "microRNA-seq",
+            "status": "released",
+        }
+
+        biosample = (
+            arguments.get("biosample_term_name")
+            or arguments.get("biosample")
+            or arguments.get("cell_type")
+            or arguments.get("tissue")
+        )
+        if biosample:
+            params["biosample_ontology.term_name"] = biosample
+
+        organism = arguments.get("organism", "Homo sapiens")
+        if organism:
+            params["replicates.library.biosample.organism.scientific_name"] = organism
+
+        limit = arguments.get("limit", 25)
+        params["limit"] = min(int(limit), 100)
+
+        raw = self._encode_search(params)
+
+        experiments = []
+        for exp in raw.get("@graph", []):
+            lab = exp.get("lab", {})
+            lab_name = lab.get("title", "") if isinstance(lab, dict) else str(lab)
+
+            experiments.append(
+                {
+                    "accession": exp.get("accession", ""),
+                    "assay_title": exp.get("assay_title", ""),
+                    "biosample_summary": exp.get("biosample_summary", ""),
+                    "status": exp.get("status", ""),
+                    "lab": lab_name,
+                    "date_released": exp.get("date_released", ""),
+                }
+            )
+
+        return {
+            "status": "success",
+            "data": {
+                "total": raw.get("total", 0),
+                "experiments": experiments,
+            },
+            "metadata": {
+                "source": "ENCODE Project (encodeproject.org)",
+                "assay": "microRNA-seq",
+                "organism": organism,
+            },
+        }
+
 
 @register_tool("UCSCEpigenomicsTool")
 class UCSCEpigenomicsTool(BaseTool):
@@ -1133,125 +1253,5 @@ class UCSCEpigenomicsTool(BaseTool):
                 "track": "encRegTfbsClustered",
                 "genome": genome,
                 "description": "340 TFs across 129 cell types",
-            },
-        }
-
-    # =========================================================================
-    # ENCODE Hi-C / 3D Genome Tools
-    # =========================================================================
-
-    def _encode_hic_search(self, arguments: Dict[str, Any]) -> Dict[str, Any]:
-        """Search ENCODE Hi-C and intact Hi-C experiments for 3D genome data."""
-        assay_type = arguments.get("assay_type", "intact Hi-C")
-        params = {
-            "type": "Experiment",
-            "assay_title": assay_type,
-            "status": "released",
-        }
-
-        biosample = (
-            arguments.get("biosample_term_name")
-            or arguments.get("biosample")
-            or arguments.get("cell_type")
-            or arguments.get("tissue")
-        )
-        if biosample:
-            params["biosample_ontology.term_name"] = biosample
-
-        organism = arguments.get("organism", "Homo sapiens")
-        if organism:
-            params["replicates.library.biosample.organism.scientific_name"] = organism
-
-        limit = arguments.get("limit", 25)
-        params["limit"] = min(int(limit), 100)
-
-        raw = self._encode_search(params)
-
-        experiments = []
-        for exp in raw.get("@graph", []):
-            lab = exp.get("lab", {})
-            lab_name = lab.get("title", "") if isinstance(lab, dict) else str(lab)
-
-            experiments.append(
-                {
-                    "accession": exp.get("accession", ""),
-                    "assay_title": exp.get("assay_title", ""),
-                    "biosample_summary": exp.get("biosample_summary", ""),
-                    "description": exp.get("description", ""),
-                    "status": exp.get("status", ""),
-                    "lab": lab_name,
-                    "date_released": exp.get("date_released", ""),
-                }
-            )
-
-        return {
-            "status": "success",
-            "data": {
-                "total": raw.get("total", 0),
-                "experiments": experiments,
-            },
-            "metadata": {
-                "source": "ENCODE Project (encodeproject.org)",
-                "assay": assay_type,
-                "organism": organism,
-            },
-        }
-
-    # =========================================================================
-    # ENCODE microRNA-seq Tools
-    # =========================================================================
-
-    def _encode_microrna_search(self, arguments: Dict[str, Any]) -> Dict[str, Any]:
-        """Search ENCODE microRNA-seq experiments."""
-        params = {
-            "type": "Experiment",
-            "assay_title": "microRNA-seq",
-            "status": "released",
-        }
-
-        biosample = (
-            arguments.get("biosample_term_name")
-            or arguments.get("biosample")
-            or arguments.get("cell_type")
-            or arguments.get("tissue")
-        )
-        if biosample:
-            params["biosample_ontology.term_name"] = biosample
-
-        organism = arguments.get("organism", "Homo sapiens")
-        if organism:
-            params["replicates.library.biosample.organism.scientific_name"] = organism
-
-        limit = arguments.get("limit", 25)
-        params["limit"] = min(int(limit), 100)
-
-        raw = self._encode_search(params)
-
-        experiments = []
-        for exp in raw.get("@graph", []):
-            lab = exp.get("lab", {})
-            lab_name = lab.get("title", "") if isinstance(lab, dict) else str(lab)
-
-            experiments.append(
-                {
-                    "accession": exp.get("accession", ""),
-                    "assay_title": exp.get("assay_title", ""),
-                    "biosample_summary": exp.get("biosample_summary", ""),
-                    "status": exp.get("status", ""),
-                    "lab": lab_name,
-                    "date_released": exp.get("date_released", ""),
-                }
-            )
-
-        return {
-            "status": "success",
-            "data": {
-                "total": raw.get("total", 0),
-                "experiments": experiments,
-            },
-            "metadata": {
-                "source": "ENCODE Project (encodeproject.org)",
-                "assay": "microRNA-seq",
-                "organism": organism,
             },
         }

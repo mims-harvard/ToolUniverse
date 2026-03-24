@@ -142,6 +142,58 @@ Use ToolUniverse tools to add biological context after computational analysis:
 - **ChIPAtlas** - Query available ChIP-seq experiments by antigen/cell type
 - **Ensembl regulatory features** - Annotate genomic regions with regulatory overlaps
 
+#### ENCODE RNA-seq and ATAC-seq datasets
+
+**ENCODE_search_rnaseq_experiments**: `assay_type` (string, default "total RNA-seq"), `biosample` (string/null, e.g. "liver"), `limit` (int).
+Available assay_type values: `"total RNA-seq"`, `"polyA plus RNA-seq"`, `"small RNA-seq"`, `"microRNA-seq"`.
+- NOTE: If `total RNA-seq` returns 0 results for a biosample, fall back to `polyA plus RNA-seq`.
+
+```json
+{"assay_type": "total RNA-seq", "biosample": "K562", "limit": 5}
+// Fallback if 0 results:
+{"assay_type": "polyA plus RNA-seq", "biosample": "K562", "limit": 5}
+```
+
+**ENCODE_search_histone_experiments**: `target` (string, histone mark name e.g. "H3K27ac"), `cell_type` (string/null), `tissue` (alias for cell_type), `biosample` (alias), `limit` (int).
+Returns `{status, data: {total, experiments: [{accession, histone_mark, biosample_summary, status, lab}]}}`.
+
+#### GEO RNA-seq and ATAC-seq datasets
+
+**GEO_search_rnaseq_datasets**: `query` (string, free-text keyword), `organism` (string, default "Homo sapiens"), `limit` (int, also `max_results` accepted).
+Returns GEO Series accessions (GSExxxxxx) with titles, summaries, sample counts.
+
+**GEO_search_atacseq_datasets**: `query` (string), `organism` (string, default "Homo sapiens"), `limit` (int, also `max_results` accepted).
+Returns GEO ATAC-seq datasets matching the query.
+
+NOTE: Both `limit` and `max_results` are accepted as parameter names for GEO tools.
+
+```json
+// GEO RNA-seq for breast cancer
+{"query": "breast cancer", "limit": 5}
+
+// GEO ATAC-seq for T cells
+{"query": "T cells", "limit": 5}
+```
+
+#### GTEx expression and eQTL tools
+
+**GTEx_get_median_gene_expression**: `gene_symbol` (string). Returns median TPM per tissue across all GTEx tissues.
+
+**GTEx_get_expression_summary**: `gene_symbol` (string). Returns clustered median expression.
+- NOTE: Use `gene_symbol` (e.g. "PCSK9"), NOT a versioned Ensembl ID.
+
+**GTEx_query_eqtl**: `gene_symbol` (string), `tissue_id` (string, exact tissueSiteDetailId), `page` (int, 1-indexed), `size` (int, default 10).
+- CRITICAL: `tissue_id` is case-sensitive and must be exact (e.g. `"Whole_Blood"`, not `"whole blood"`).
+- Returns empty array if no significant eQTLs exist for that gene+tissue pair.
+
+```json
+// eQTLs for PCSK9 in Whole Blood
+{"gene_symbol": "PCSK9", "tissue_id": "Whole_Blood"}
+
+// Median expression across all tissues
+{"gene_symbol": "BRCA1"}
+```
+
 See `CODE_REFERENCE.md` Phase 6 and `TOOLS_REFERENCE.md` for parameters.
 
 ### Phase 7: Genome-Wide Statistics
@@ -199,6 +251,13 @@ See `ANALYSIS_PROCEDURES.md` for detailed step-by-step flows and edge case handl
 - `RegulomeDB_query_variant` - Variant regulatory score
 - `jaspar_search_matrices` - TF binding matrices
 - `ENCODE_search_experiments` - Experiment metadata (assay_title must be "TF ChIP-seq" not "ChIP-seq")
+- `ENCODE_search_rnaseq_experiments` - RNA-seq experiments (assay_type: "total RNA-seq" or "polyA plus RNA-seq")
+- `ENCODE_search_histone_experiments` - Histone ChIP-seq experiments by mark and cell type
+- `GEO_search_rnaseq_datasets` - GEO RNA-seq datasets (limit or max_results accepted)
+- `GEO_search_atacseq_datasets` - GEO ATAC-seq datasets (limit or max_results accepted)
+- `GTEx_get_median_gene_expression` - Median TPM across GTEx tissues
+- `GTEx_get_expression_summary` - Clustered expression summary
+- `GTEx_query_eqtl` - eQTL associations (tissue_id must be exact, e.g. 'Whole_Blood')
 - `ChIPAtlas_get_experiments` - ChIP-seq experiments (REQUIRES `operation` param)
 - `ChIPAtlas_search_datasets` - Dataset search (REQUIRES `operation` param)
 - `ChIPAtlas_enrichment_analysis` - Enrichment from BED/motifs/genes
@@ -230,6 +289,21 @@ See `TOOLS_REFERENCE.md` for full parameter details and return schemas.
 | hg38 (GRCh38) | Human | chr1-chr22 | chrX, chrY |
 | hg19 (GRCh37) | Human | chr1-chr22 | chrX, chrY |
 | mm10 (GRCm38) | Mouse | chr1-chr19 | chrX, chrY |
+
+## GTEx Tissue Site Detail IDs (common)
+
+| Tissue | tissueSiteDetailId |
+|--------|-------------------|
+| Whole Blood | Whole_Blood |
+| Liver | Liver |
+| Lung | Lung |
+| Breast | Breast_Mammary_Tissue |
+| Brain Cortex | Brain_Cortex |
+| Heart Left Ventricle | Heart_Left_Ventricle |
+| Kidney Cortex | Kidney_Cortex |
+| Thyroid | Thyroid |
+| Adipose Subcutaneous | Adipose_Subcutaneous |
+| Muscle Skeletal | Muscle_Skeletal |
 
 ## Limitations
 
