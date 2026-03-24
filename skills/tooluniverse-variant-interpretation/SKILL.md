@@ -91,7 +91,7 @@ Confirms gene expression in disease-relevant tissues. Supports PP4 if highly res
 
 ## Phase 5: Literature Evidence
 
-Tools: `PubMed_search`, `EuropePMC_search`, `BioRxiv_search_preprints`, `MedRxiv_search_preprints`, `openalex_search_works`, `SemanticScholar_search_papers`
+Tools: `PubMed_search_articles`, `EuropePMC_search_articles`, `BioRxiv_search_preprints`, `MedRxiv_search_preprints`, `openalex_search_works`, `SemanticScholar_search_papers`
 
 Always flag preprints as NOT peer-reviewed.
 

@@ -76,7 +76,7 @@ Apply when user asks about:
 | `intact_get_interaction_network` | `identifier` (str, gene symbol like "IL6"), `limit` (int) | Interaction partners with descriptions |
 | `intact_search_interactions` | `query` (str), `limit` (int) | Search interactions by keyword |
 | `intact_get_interactor` | `interactor_id` (str, UniProt ID) | Details for a specific interactor |
-| `BioGRID_get_interactions` | `gene_name` (str), `organism` (int, default 9606), `limit` (int) | PPI data: symbols, experimental system, throughput |
+| `BioGRID_get_interactions` | `gene_names` (list, e.g. `["CD274"]`), `organism` (str "9606"), `limit` (int) | PPI data: symbols, experimental system, throughput |
 | `BioGRID_get_chemical_interactions` | `gene_names` (list), `chemical_names` (list), `organism` (int), `limit` (int) | Drug-gene interaction data |
 
 ### Cytokine/Receptor Signaling (OpenTargets + GWAS)
@@ -89,7 +89,7 @@ Apply when user asks about:
 | `OpenTargets_get_target_safety_profile_by_ensemblID` | `ensemblId` (str) | Safety liabilities for immune targets |
 | `gwas_search_associations` | `query` (str, e.g. "rheumatoid arthritis") | GWAS hits: p-values, effect sizes, risk alleles |
 | `gwas_get_variants_for_trait` | `efo_trait` (str) | Variants associated with an immune trait |
-| `gwas_get_snps_for_gene` | `gene_symbol` (str) | GWAS SNPs mapped to an immune gene |
+| `gwas_get_snps_for_gene` | `mapped_gene` (str, e.g. "PDCD1") | GWAS SNPs mapped to an immune gene |
 
 > **Resolve gene symbols to Ensembl IDs** with `OpenTargets_get_target_id_description_by_name` before calling ensemblId-based tools.
 
@@ -156,8 +156,8 @@ Apply when user asks about:
    - `iedb_search_tcell_assays(sequence_contains="SFVLNWYRMSPSNQTDKLAAFPEDR", limit=10)` -- T-cell reactivity
 
 4. **Map interaction partners** of the target
-   - `intact_get_interaction_network(identifier="PDCD1", limit=20)` -- PPI network
-   - `BioGRID_get_interactions(gene_name="PDCD1", limit=20)` -- additional PPIs
+   - `intact_get_interaction_network(identifier="Q9NZQ7", limit=20)` -- PPI network (use UniProt accession, not gene symbol)
+   - `BioGRID_get_interactions(gene_names=["PDCD1"], organism="9606", limit=20)` -- additional PPIs
 
 5. **Assess clinical safety** of drugs targeting it
    - `FAERS_calculate_disproportionality(drug_name="pembrolizumab", adverse_event="colitis")`
@@ -214,7 +214,7 @@ Apply when user asks about:
    - `FAERS_stratify_by_demographics(drug_name="nivolumab", stratify_by="age")`
 
 4. **Target safety profile** via OpenTargets
-   - Resolve target: `OpenTargets_get_target_id_description_by_name(query="PDCD1")` -- get Ensembl ID
+   - Resolve target: `OpenTargets_get_target_id_description_by_name(targetName="PDCD1")` -- get Ensembl ID
    - `OpenTargets_get_target_safety_profile_by_ensemblID(ensemblId="ENSG00000188389")`
 
 5. **Active clinical trials** for both drugs
@@ -229,15 +229,19 @@ Apply when user asks about:
 |-------|-------|---------|
 | Reactome pathway ID param | `pathway_id="R-HSA-168256"` | `stId="R-HSA-168256"` |
 | ReactomeAnalysis identifiers | `identifiers=["STAT4","IRF5"]` | `identifiers="STAT4 IRF5"` (space-separated string) |
-| OpenTargets target lookup | `ensemblId="IL6"` | First resolve: `OpenTargets_get_target_id_description_by_name(query="IL6")` |
+| OpenTargets target lookup | `ensemblId="IL6"` | First resolve: `OpenTargets_get_target_id_description_by_name(targetName="IL6")` |
+| OpenTargets target lookup param | `query="IL6"` | Correct param is `targetName="IL6"` (not `query`) |
 | FAERS drug name | `drug_name="Keytruda"` | `drug_name="pembrolizumab"` (use generic names) |
-| IntAct identifier | `identifier="P05231"` | `identifier="IL6"` (gene symbols work, UniProt also accepted) |
-| BioGRID organism | `organism="human"` | `organism=9606` (NCBI taxon ID) |
+| IntAct identifier | `identifier="CD274"` | `identifier="Q9NZQ7"` (UniProt accession required; gene symbols return 0 results) |
+| BioGRID organism | `organism="human"` | `organism="9606"` (string NCBI taxon ID) |
+| BioGRID interactions param | `gene_name="CD274"` | `gene_names=["CD274"]` (list, not string) |
+| TheraSAbDab target search | `TheraSAbDab_search_by_target(target="PD-1")` returns 0 | Use `TheraSAbDab_search_therapeutics(query="pembrolizumab")` by drug name; search_by_target requires exact ENCODE antigen registry string |
+| gwas_get_snps_for_gene param | `gene_symbol="PDCD1"` | `mapped_gene="PDCD1"` (correct param name) |
 | SAbDab search | Expecting JSON from `SAbDab_search_structures` | Returns URL only; use `SAbDab_get_structure` with PDB ID |
 | IEDB sequence search | `organism_name="SARS-CoV-2"` (old API) | `sequence_contains="YLQPRTFLL"` or `filters` dict |
 | KEGG disease ID | `disease_id="lupus"` | `disease_id="H00080"` (use KEGG ID format) |
 | GWAS broken tool | `gwas_get_associations_for_trait(...)` | Use `gwas_search_associations(query=...)` instead |
-| TIMER2 operation | Missing `operation` param | Must provide `operation`, `cancer`, `gene` |
+| TIMER2 operation | Missing `operation` param | Only `"immune_estimation"` is valid; `cancer` must be TCGA code (e.g. "luad_tcga"), `gene` is symbol |
 
 ---
 

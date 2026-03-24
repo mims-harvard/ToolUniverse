@@ -161,6 +161,8 @@ See [report_template.md](report_template.md) for full example output.
 
 Use HuBMAP tools to discover published spatial biology datasets for reference, validation, or cross-study comparison.
 
+> **Availability Note**: `HuBMAP_search_datasets`, `HuBMAP_list_organs`, and `HuBMAP_get_dataset` may not be registered in your ToolUniverse instance. Verify with `tu.list_tools()` before use. If unavailable, use **OmicsDI** (`OmicsDI_search_datasets(query="spatial transcriptomics kidney")`) or **CELLxGENE** (`CELLxGENE_get_cell_metadata`) as reliable alternatives for spatial dataset discovery.
+
 | Tool | Purpose | Key Parameters |
 |------|---------|----------------|
 | `HuBMAP_search_datasets` | Search HuBMAP published datasets by organ, assay, or keyword | `organ` (code, e.g. "LK"="Left Kidney", "BR"="Brain"), `dataset_type` (e.g. "RNAseq", "CODEX", "MALDI"), `query` (free text), `limit` (default 10) |
@@ -177,8 +179,17 @@ Use HuBMAP tools to discover published spatial biology datasets for reference, v
 - Cross-referencing donor metadata (age, sex) for spatial datasets
 - Retrieving DOI links for published spatial atlas datasets
 
+**Fallback if HuBMAP tools unavailable**:
 ```python
-# Example: Find spatial datasets for kidney
+# Use OmicsDI for spatial dataset discovery
+result = tu.tools.OmicsDI_search_datasets(query="spatial transcriptomics kidney Visium")
+
+# Use CELLxGENE for cell-level expression context
+result = tu.tools.CELLxGENE_get_cell_metadata(tissue="kidney")
+```
+
+```python
+# Example: Find spatial datasets for kidney (if HuBMAP tools available)
 result = tu.tools.HuBMAP_search_datasets(organ="LK", limit=5)
 # Returns: {data: {total, returned, datasets: [{hubmap_id, title, dataset_type, organ, doi_url, ...}]}}
 

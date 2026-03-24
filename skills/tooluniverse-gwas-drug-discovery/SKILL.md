@@ -91,14 +91,14 @@ from tooluniverse import ToolUniverse
 tu = ToolUniverse(use_cache=True)
 tu.load_tools()
 
-# Step 1: Get GWAS associations
-associations = tu.tools.gwas_get_associations_for_trait(trait="type 2 diabetes")
+# Step 1: Get GWAS associations (use disease_trait not trait; no p_value_threshold param)
+associations = tu.tools.gwas_get_associations_for_trait(disease_trait="type 2 diabetes")
 
-# Step 2: Assess druggability
-tractability = tu.tools.OpenTargets_get_target_tractability_by_ensemblID(ensemblID="ENSG00000148737")
+# Step 2: Assess druggability (ensemblId lowercase d)
+tractability = tu.tools.OpenTargets_get_target_tractability_by_ensemblID(ensemblId="ENSG00000148737")
 
-# Step 3: Find existing drugs
-drugs = tu.tools.OpenTargets_get_associated_drugs_by_disease_efoId(efoId="EFO_0001360")
+# Step 3: Find existing drugs per target via DGIdb (OpenTargets drug query may return HTTP 400)
+drugs = tu.tools.DGIdb_get_drug_gene_interactions(genes=["TCF7L2"])
 ```
 
 ---
@@ -122,7 +122,7 @@ drugs = tu.tools.OpenTargets_get_associated_drugs_by_disease_efoId(efoId="EFO_00
 - `OpenTargets_get_drug_warnings_by_chemblId`
 
 **Literature**:
-- `PubMed_search_articles` / `EuropePMC_search_articles` / `ClinicalTrials_search`
+- `PubMed_search_articles` / `EuropePMC_search_articles` / `ClinicalTrials_search_studies`
 
 ---
 
@@ -135,6 +135,18 @@ drugs = tu.tools.OpenTargets_get_associated_drugs_by_disease_efoId(efoId="EFO_00
 5. **Batch operations**: Use `tu.run_batch()` for parallel queries across targets
 
 ---
+
+## Parameter Gotchas
+
+| Issue | Wrong | Correct |
+|-------|-------|---------|
+| GWAS trait param | `gwas_get_associations_for_trait(trait=...)` | `disease_trait=...` (no `trait` param exists) |
+| GWAS p-value filter | `p_value_threshold=5e-8` | No such param; filter client-side after fetching results |
+| OpenTargets ensembl case | `ensemblID="ENSG..."` | `ensemblId="ENSG..."` (lowercase 'd') |
+| ClinicalTrials tool name | `ClinicalTrials_search(...)` | `ClinicalTrials_search_studies(...)` |
+| DGIdb tool name | `DGIdb_get_interactions(...)` | `DGIdb_get_drug_gene_interactions(genes=[...])` |
+| OpenTargets disease drugs | `OpenTargets_get_associated_drugs_by_disease_efoId` may return HTTP 400 | Fall back to `DGIdb_get_drug_gene_interactions` per gene |
+| GWAS study search param | `gwas_search_studies(disease_trait=...)` | Use `efo_trait=...` for studies (disease_trait works for associations only) |
 
 ## Troubleshooting
 
