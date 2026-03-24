@@ -665,6 +665,8 @@ default_tool_files = {
     "synbiohub": os.path.join(current_dir, "data", "synbiohub_tools.json"),
     # BioPortal - NCBO ontology browser and annotation service
     "bioportal": os.path.join(current_dir, "data", "bioportal_tools.json"),
+    # FinnGen - Finnish population genomics (486K participants, 2470 phenotypes)
+    "finngen": os.path.join(current_dir, "data", "finngen_tools.json"),
     # FlyBase - Drosophila melanogaster genetics (via Alliance of Genome Resources)
     "flybase": os.path.join(current_dir, "data", "flybase_tools.json"),
     # ZFIN - Zebrafish Information Network (via Alliance of Genome Resources)
@@ -676,6 +678,14 @@ default_tool_files = {
     # ClinicalTrials.gov - World's largest clinical trial registry (572,000+ trials)
     # EpiGraphDB - Mendelian Randomization, genetic correlations, drug repurposing via GWAS
     "epigraphdb": os.path.join(current_dir, "data", "epigraphdb_tools.json"),
+    # Foldseek - Fast protein structure similarity search (AlphaFold DB, PDB)
+    "foldseek": os.path.join(current_dir, "data", "foldseek_tools.json"),
+    # MedGen - NCBI medical genetics (conditions, genes, HPO, OMIM aggregation)
+    "medgen": os.path.join(current_dir, "data", "medgen_tools.json"),
+    # Europe PMC Annotations - Text-mined gene/disease/chemical annotations from articles
+    "epmc_annotations": os.path.join(
+        current_dir, "data", "epmc_annotations_tools.json"
+    ),
     # Bio.tools - ELIXIR bioinformatics tool/software registry (30,000+ entries)
     "biotools_registry": os.path.join(
         current_dir, "data", "biotools_registry_tools.json"

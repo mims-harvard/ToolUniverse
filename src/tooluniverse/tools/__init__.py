@@ -1,7 +1,7 @@
 """
 ToolUniverse Tools
 
-Type-safe Python interface to 2136 scientific tools.
+Type-safe Python interface to 2139 scientific tools.
 Each tool is in its own module for minimal import overhead.
 
 Usage:
@@ -258,6 +258,9 @@ from .ClinGen_get_variant_classifications import ClinGen_get_variant_classificat
 from .ClinGen_search_actionability import ClinGen_search_actionability
 from .ClinGen_search_dosage_sensitivity import ClinGen_search_dosage_sensitivity
 from .ClinGen_search_gene_validity import ClinGen_search_gene_validity
+from .ClinVar_get_clinical_significance import ClinVar_get_clinical_significance
+from .ClinVar_get_variant_details import ClinVar_get_variant_details
+from .ClinVar_search_variants import ClinVar_search_variants
 from .ClinicalTrialDesignAgent import ClinicalTrialDesignAgent
 from .ClinicalTrials_get_database_stats import ClinicalTrials_get_database_stats
 from .ClinicalTrials_get_field_values import ClinicalTrials_get_field_values
@@ -994,6 +997,9 @@ from .HGNC_fetch_gene_by_id import HGNC_fetch_gene_by_id
 from .HGNC_fetch_gene_by_symbol import HGNC_fetch_gene_by_symbol
 from .HGNC_search_by_location import HGNC_search_by_location
 from .HGNC_search_genes import HGNC_search_genes
+from .HMDB_get_diseases import HMDB_get_diseases
+from .HMDB_get_metabolite import HMDB_get_metabolite
+from .HMDB_search import HMDB_search
 from .HPA_generic_search import HPA_generic_search
 from .HPA_get_biological_processes_by_gene import HPA_get_biological_processes_by_gene
 from .HPA_get_cancer_prognostics_by_gene import HPA_get_cancer_prognostics_by_gene
@@ -2085,9 +2091,6 @@ from .civic_search_genes import civic_search_genes
 from .civic_search_molecular_profiles import civic_search_molecular_profiles
 from .civic_search_therapies import civic_search_therapies
 from .civic_search_variants import civic_search_variants
-from .clinvar_get_clinical_significance import clinvar_get_clinical_significance
-from .clinvar_get_variant_details import clinvar_get_variant_details
-from .clinvar_search_variants import clinvar_search_variants
 from .convert_to_markdown import convert_to_markdown
 from .dbfetch_fetch_batch import dbfetch_fetch_batch
 from .dbfetch_fetch_entry import dbfetch_fetch_entry
@@ -2870,6 +2873,9 @@ __all__ = [
     "ClinGen_search_actionability",
     "ClinGen_search_dosage_sensitivity",
     "ClinGen_search_gene_validity",
+    "ClinVar_get_clinical_significance",
+    "ClinVar_get_variant_details",
+    "ClinVar_search_variants",
     "ClinicalTrialDesignAgent",
     "ClinicalTrials_get_database_stats",
     "ClinicalTrials_get_field_values",
@@ -3388,6 +3394,9 @@ __all__ = [
     "HGNC_fetch_gene_by_symbol",
     "HGNC_search_by_location",
     "HGNC_search_genes",
+    "HMDB_get_diseases",
+    "HMDB_get_metabolite",
+    "HMDB_search",
     "HPA_generic_search",
     "HPA_get_biological_processes_by_gene",
     "HPA_get_cancer_prognostics_by_gene",
@@ -4301,9 +4310,6 @@ __all__ = [
     "civic_search_molecular_profiles",
     "civic_search_therapies",
     "civic_search_variants",
-    "clinvar_get_clinical_significance",
-    "clinvar_get_variant_details",
-    "clinvar_search_variants",
     "convert_to_markdown",
     "dbfetch_fetch_batch",
     "dbfetch_fetch_entry",

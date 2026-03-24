@@ -1,0 +1,258 @@
+[
+  {
+    "name": "EPMC_get_text_mined_annotations",
+    "description": "Get all text-mined annotations from a biomedical article via Europe PMC. Returns gene/protein mentions, diseases, chemicals, organisms, and GO terms automatically extracted from the full text. Useful for quickly identifying which genes, drugs, or diseases are discussed in a paper. Example: pmid='33332779' (COVID-19 tocilizumab trial) returns IL-6 receptor, tocilizumab, SARS-CoV-2, etc.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "pmid": {
+          "type": "string",
+          "description": "PubMed ID (e.g., '33332779'). Either pmid or pmcid is required."
+        },
+        "pmcid": {
+          "type": "string",
+          "description": "PubMed Central ID (e.g., 'PMC7781101'). Alternative to pmid."
+        },
+        "annotation_type": {
+          "type": "string",
+          "description": "Filter by annotation type. Options: 'Gene_Proteins', 'Diseases', 'Chemicals', 'Organisms', 'Gene_Ontology', 'EFO'. Leave empty for all types."
+        }
+      },
+      "required": []
+    },
+    "fields": {
+      "operation": "get_annotations"
+    },
+    "type": "EPMCAnnotationsTool",
+    "test_examples": [
+      {
+        "pmid": "33332779"
+      },
+      {
+        "pmcid": "PMC7781101",
+        "annotation_type": "Gene_Proteins"
+      }
+    ],
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "object",
+          "properties": {
+            "article_id": {"type": "string"},
+            "pmcid": {"type": ["string", "null"]},
+            "annotations": {"type": ["object", "array"]},
+            "annotation_counts": {"type": "object"}
+          },
+          "required": ["article_id", "annotations"]
+        },
+        {
+          "type": "object",
+          "properties": {
+            "error": {"type": "string"}
+          },
+          "required": ["error"]
+        }
+      ]
+    }
+  },
+  {
+    "name": "EPMC_get_article_genes",
+    "description": "Get genes and proteins mentioned in a biomedical article, identified by text mining from Europe PMC. Returns gene/protein names with UniProt links and mention frequency. Useful for identifying which genes a paper discusses. Example: pmid='33332779' returns interleukin-6 receptor and other proteins.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "pmid": {
+          "type": "string",
+          "description": "PubMed ID (e.g., '33332779')."
+        },
+        "pmcid": {
+          "type": "string",
+          "description": "PubMed Central ID (e.g., 'PMC7781101'). Alternative to pmid."
+        }
+      },
+      "required": []
+    },
+    "fields": {
+      "operation": "get_genes"
+    },
+    "type": "EPMCAnnotationsTool",
+    "test_examples": [
+      {
+        "pmid": "33332779"
+      }
+    ],
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "object",
+          "properties": {
+            "article_id": {"type": "string"},
+            "pmcid": {"type": ["string", "null"]},
+            "annotations": {"type": "array"},
+            "annotation_counts": {"type": "object"},
+            "total_entities": {"type": "integer"},
+            "entity_type": {"type": "string"}
+          },
+          "required": ["article_id", "annotations"]
+        },
+        {
+          "type": "object",
+          "properties": {
+            "error": {"type": "string"}
+          },
+          "required": ["error"]
+        }
+      ]
+    }
+  },
+  {
+    "name": "EPMC_get_article_diseases",
+    "description": "Get diseases mentioned in a biomedical article, identified by text mining from Europe PMC. Returns disease names with ontology links (EFO, HPO) and mention frequency. Example: pmid='33332779' returns COVID-19, pneumonia, etc.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "pmid": {
+          "type": "string",
+          "description": "PubMed ID (e.g., '33332779')."
+        },
+        "pmcid": {
+          "type": "string",
+          "description": "PubMed Central ID (e.g., 'PMC7781101'). Alternative to pmid."
+        }
+      },
+      "required": []
+    },
+    "fields": {
+      "operation": "get_diseases"
+    },
+    "type": "EPMCAnnotationsTool",
+    "test_examples": [
+      {
+        "pmid": "33332779"
+      }
+    ],
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "object",
+          "properties": {
+            "article_id": {"type": "string"},
+            "pmcid": {"type": ["string", "null"]},
+            "annotations": {"type": "array"},
+            "annotation_counts": {"type": "object"},
+            "total_entities": {"type": "integer"},
+            "entity_type": {"type": "string"}
+          },
+          "required": ["article_id", "annotations"]
+        },
+        {
+          "type": "object",
+          "properties": {
+            "error": {"type": "string"}
+          },
+          "required": ["error"]
+        }
+      ]
+    }
+  },
+  {
+    "name": "EPMC_get_article_chemicals",
+    "description": "Get chemicals and drugs mentioned in a biomedical article, identified by text mining from Europe PMC. Returns chemical/drug names with database links and mention frequency. Example: pmid='33332779' returns tocilizumab, dexamethasone, etc.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "pmid": {
+          "type": "string",
+          "description": "PubMed ID (e.g., '33332779')."
+        },
+        "pmcid": {
+          "type": "string",
+          "description": "PubMed Central ID (e.g., 'PMC7781101'). Alternative to pmid."
+        }
+      },
+      "required": []
+    },
+    "fields": {
+      "operation": "get_chemicals"
+    },
+    "type": "EPMCAnnotationsTool",
+    "test_examples": [
+      {
+        "pmid": "33332779"
+      }
+    ],
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "object",
+          "properties": {
+            "article_id": {"type": "string"},
+            "pmcid": {"type": ["string", "null"]},
+            "annotations": {"type": "array"},
+            "annotation_counts": {"type": "object"},
+            "total_entities": {"type": "integer"},
+            "entity_type": {"type": "string"}
+          },
+          "required": ["article_id", "annotations"]
+        },
+        {
+          "type": "object",
+          "properties": {
+            "error": {"type": "string"}
+          },
+          "required": ["error"]
+        }
+      ]
+    }
+  },
+  {
+    "name": "EPMC_get_article_organisms",
+    "description": "Get organisms mentioned in a biomedical article, identified by text mining from Europe PMC. Returns organism names with NCBI Taxonomy links and mention frequency. Example: pmid='33332779' returns SARS-CoV-2, Homo sapiens, etc.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "pmid": {
+          "type": "string",
+          "description": "PubMed ID (e.g., '33332779')."
+        },
+        "pmcid": {
+          "type": "string",
+          "description": "PubMed Central ID (e.g., 'PMC7781101'). Alternative to pmid."
+        }
+      },
+      "required": []
+    },
+    "fields": {
+      "operation": "get_organisms"
+    },
+    "type": "EPMCAnnotationsTool",
+    "test_examples": [
+      {
+        "pmid": "33332779"
+      }
+    ],
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "object",
+          "properties": {
+            "article_id": {"type": "string"},
+            "pmcid": {"type": ["string", "null"]},
+            "annotations": {"type": "array"},
+            "annotation_counts": {"type": "object"},
+            "total_entities": {"type": "integer"},
+            "entity_type": {"type": "string"}
+          },
+          "required": ["article_id", "annotations"]
+        },
+        {
+          "type": "object",
+          "properties": {
+            "error": {"type": "string"}
+          },
+          "required": ["error"]
+        }
+      ]
+    }
+  }
+]
