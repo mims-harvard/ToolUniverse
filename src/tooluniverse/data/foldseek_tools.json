@@ -20,7 +20,7 @@
         },
         "mode": {
           "type": "string",
-          "description": "Search mode: '3diaa' (fast 3Di+AA, default), 'tmalign' (TM-align, slower but more sensitive).",
+          "description": "Search mode: 'tmalign' (fast 3Di+AA, default), 'tmalign' (TM-align, slower but more sensitive).",
           "default": "3diaa"
         },
         "max_results": {
@@ -48,36 +48,102 @@
         {
           "type": "object",
           "properties": {
-            "query": {"type": "string"},
+            "query": {
+              "type": "string"
+            },
             "alignments": {
               "type": "array",
               "items": {
                 "type": "object",
                 "properties": {
-                  "target": {"type": ["string", "null"]},
-                  "database": {"type": ["string", "null"]},
-                  "seq_identity": {"type": ["number", "null"]},
-                  "e_value": {"type": ["number", "null"]},
-                  "score": {"type": ["number", "null"]},
-                  "query_start": {"type": ["integer", "null"]},
-                  "query_end": {"type": ["integer", "null"]},
-                  "target_start": {"type": ["integer", "null"]},
-                  "target_end": {"type": ["integer", "null"]},
-                  "alignment_length": {"type": ["integer", "null"]},
-                  "target_description": {"type": ["string", "null"]}
+                  "target": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "database": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "seq_identity": {
+                    "type": [
+                      "number",
+                      "null"
+                    ]
+                  },
+                  "e_value": {
+                    "type": [
+                      "number",
+                      "null"
+                    ]
+                  },
+                  "score": {
+                    "type": [
+                      "number",
+                      "null"
+                    ]
+                  },
+                  "query_start": {
+                    "type": [
+                      "integer",
+                      "null"
+                    ]
+                  },
+                  "query_end": {
+                    "type": [
+                      "integer",
+                      "null"
+                    ]
+                  },
+                  "target_start": {
+                    "type": [
+                      "integer",
+                      "null"
+                    ]
+                  },
+                  "target_end": {
+                    "type": [
+                      "integer",
+                      "null"
+                    ]
+                  },
+                  "alignment_length": {
+                    "type": [
+                      "integer",
+                      "null"
+                    ]
+                  },
+                  "target_description": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  }
                 }
               }
             },
-            "total_hits": {"type": "integer"}
+            "total_hits": {
+              "type": "integer"
+            }
           },
-          "required": ["query", "alignments"]
+          "required": [
+            "query",
+            "alignments"
+          ]
         },
         {
           "type": "object",
           "properties": {
-            "error": {"type": "string"}
+            "error": {
+              "type": "string"
+            }
           },
-          "required": ["error"]
+          "required": [
+            "error"
+          ]
         }
       ]
     }
@@ -98,7 +164,9 @@
           "default": 10
         }
       },
-      "required": ["ticket_id"]
+      "required": [
+        "ticket_id"
+      ]
     },
     "fields": {
       "operation": "get_result"
@@ -110,31 +178,68 @@
         {
           "type": "object",
           "properties": {
-            "query": {"type": "string"},
-            "ticket_id": {"type": "string"},
-            "job_status": {"type": "string"},
+            "query": {
+              "type": "string"
+            },
+            "ticket_id": {
+              "type": "string"
+            },
+            "job_status": {
+              "type": "string"
+            },
             "alignments": {
               "type": "array",
               "items": {
                 "type": "object",
                 "properties": {
-                  "target": {"type": ["string", "null"]},
-                  "database": {"type": ["string", "null"]},
-                  "seq_identity": {"type": ["number", "null"]},
-                  "e_value": {"type": ["number", "null"]},
-                  "score": {"type": ["number", "null"]}
+                  "target": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "database": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "seq_identity": {
+                    "type": [
+                      "number",
+                      "null"
+                    ]
+                  },
+                  "e_value": {
+                    "type": [
+                      "number",
+                      "null"
+                    ]
+                  },
+                  "score": {
+                    "type": [
+                      "number",
+                      "null"
+                    ]
+                  }
                 }
               }
             },
-            "total_hits": {"type": "integer"}
+            "total_hits": {
+              "type": "integer"
+            }
           }
         },
         {
           "type": "object",
           "properties": {
-            "error": {"type": "string"}
+            "error": {
+              "type": "string"
+            }
           },
-          "required": ["error"]
+          "required": [
+            "error"
+          ]
         }
       ]
     }

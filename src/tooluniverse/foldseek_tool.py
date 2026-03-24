@@ -73,7 +73,7 @@ class FoldseekTool(BaseRESTTool):
         pdb_id = arguments.get("pdb_id", "").strip().upper()
         sequence = arguments.get("sequence", "").strip()
         database = arguments.get("database", "afdb50")
-        mode = arguments.get("mode", "3diaa")
+        mode = arguments.get("mode", "tmalign")
         max_results = min(int(arguments.get("max_results", 10)), 50)
 
         if not pdb_id and not sequence:
@@ -82,9 +82,10 @@ class FoldseekTool(BaseRESTTool):
                 "error": "Either pdb_id or sequence (amino acid sequence) is required.",
             }
 
-        # If pdb_id provided, fetch PDB from RCSB
-        pdb_content = None
+        data: dict[str, Any] = {"mode": mode, "database[]": database}
+
         if pdb_id:
+            # Fetch PDB structure from RCSB and submit as a file
             pdb_url = f"https://files.rcsb.org/download/{pdb_id}.pdb"
             resp = requests.get(pdb_url, timeout=15)
             if resp.status_code != 200:
@@ -92,23 +93,19 @@ class FoldseekTool(BaseRESTTool):
                     "status": "error",
                     "error": f"Could not fetch PDB file for {pdb_id} from RCSB.",
                 }
-            pdb_content = resp.text
-        elif sequence:
-            # Create a minimal PDB-like input from sequence for 3Di mode
-            # Foldseek also accepts FASTA for sequence-based searches
-            pdb_content = f">query\n{sequence}\n"
-
-        # Submit search
-        files = {"q": ("query.pdb", pdb_content)}
-        data: dict[str, Any] = {"mode": mode}
-        data[f"database[]"] = database
-
-        resp = requests.post(
-            f"{FOLDSEEK_BASE}/ticket",
-            files=files,
-            data=data,
-            timeout=self.timeout,
-        )
+            resp = requests.post(
+                f"{FOLDSEEK_BASE}/ticket",
+                files={"q": (f"{pdb_id}.pdb", resp.text)},
+                data=data,
+                timeout=self.timeout,
+            )
+        else:
+            # Submit amino acid sequence as form data (not file upload)
+            resp = requests.post(
+                f"{FOLDSEEK_BASE}/ticket",
+                data={**data, "q": sequence},
+                timeout=self.timeout,
+            )
         if resp.status_code != 200:
             return {
                 "status": "error",
