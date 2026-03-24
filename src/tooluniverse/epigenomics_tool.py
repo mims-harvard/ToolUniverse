@@ -124,15 +124,29 @@ class EpigenomicsTool(BaseTool):
         response.raise_for_status()
         return response.json()
 
+    @staticmethod
+    def _is_histone_mark(target: str) -> bool:
+        """Return True if target looks like a histone modification (e.g. H3K27ac, H3K4me3)."""
+        import re
+
+        return bool(re.match(r"^H[1-4][A-Za-z0-9]", target))
+
     def _encode_histone_search(self, arguments: Dict[str, Any]) -> Dict[str, Any]:
-        """Search ENCODE histone ChIP-seq experiments."""
+        """Search ENCODE histone or TF ChIP-seq experiments."""
+        histone_mark = arguments.get("histone_mark") or arguments.get("target")
+
+        # Auto-detect TF targets and route to the correct ENCODE assay type
+        if histone_mark and not self._is_histone_mark(histone_mark):
+            assay_title = "TF ChIP-seq"
+        else:
+            assay_title = "Histone ChIP-seq"
+
         params = {
             "type": "Experiment",
-            "assay_title": "Histone ChIP-seq",
+            "assay_title": assay_title,
             "status": "released",
         }
 
-        histone_mark = arguments.get("histone_mark") or arguments.get("target")
         if histone_mark:
             params["target.label"] = histone_mark
 
@@ -202,7 +216,7 @@ class EpigenomicsTool(BaseTool):
             },
             "metadata": {
                 "source": "ENCODE Project (encodeproject.org)",
-                "assay": "Histone ChIP-seq",
+                "assay": assay_title,
                 "histone_mark_filter": histone_mark,
                 "organism": organism,
             },

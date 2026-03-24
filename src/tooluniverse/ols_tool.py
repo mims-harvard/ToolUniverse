@@ -317,9 +317,20 @@ class OLSTool(BaseTool):
                 "error": "`id` parameter is required for `get_term_info`. Use HP:0001903 style IDs.",
             }
 
-        data = self._get_json("/api/terms", params={"id": identifier})
-        embedded = data.get("_embedded", {})
-        terms = embedded.get("terms") if isinstance(embedded, dict) else None
+        # Use ontology-specific endpoint when a CURIE prefix is known (e.g. GO:, HP:)
+        # to avoid getting a term from an importing ontology (e.g. bcgo) instead of canonical source.
+        ontology = arguments.get("ontology") or _infer_ontology_from_term_id(identifier)
+        terms = None
+        if ontology:
+            data = self._get_json(
+                f"/api/ontologies/{ontology}/terms", params={"obo_id": identifier}
+            )
+            embedded = data.get("_embedded", {})
+            terms = embedded.get("terms") if isinstance(embedded, dict) else None
+        if not terms:
+            data = self._get_json("/api/terms", params={"id": identifier})
+            embedded = data.get("_embedded", {})
+            terms = embedded.get("terms") if isinstance(embedded, dict) else None
         if not terms:
             return {
                 "status": "error",
