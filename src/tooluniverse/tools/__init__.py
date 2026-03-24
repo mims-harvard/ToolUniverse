@@ -1,7 +1,7 @@
 """
 ToolUniverse Tools
 
-Type-safe Python interface to 2139 scientific tools.
+Type-safe Python interface to 2156 scientific tools.
 Each tool is in its own module for minimal import overhead.
 
 Usage:
@@ -414,8 +414,13 @@ from .EOL_get_collection import EOL_get_collection
 from .EOL_get_hierarchy_entry import EOL_get_hierarchy_entry
 from .EOL_get_page import EOL_get_page
 from .EOL_search_species import EOL_search_species
+from .EPMC_get_article_chemicals import EPMC_get_article_chemicals
+from .EPMC_get_article_diseases import EPMC_get_article_diseases
+from .EPMC_get_article_genes import EPMC_get_article_genes
+from .EPMC_get_article_organisms import EPMC_get_article_organisms
 from .EPMC_get_citations import EPMC_get_citations
 from .EPMC_get_references import EPMC_get_references
+from .EPMC_get_text_mined_annotations import EPMC_get_text_mined_annotations
 from .ERDDAP_get_dataset_info import ERDDAP_get_dataset_info
 from .ERDDAP_search_datasets import ERDDAP_search_datasets
 from .ESMFold_predict_structure import ESMFold_predict_structure
@@ -899,6 +904,10 @@ from .Fatcat_search_scholar import Fatcat_search_scholar
 from .Figshare_get_article import Figshare_get_article
 from .Figshare_search_articles import Figshare_search_articles
 from .Finish import Finish
+from .FinnGen_get_phenotype import FinnGen_get_phenotype
+from .FinnGen_get_region_associations import FinnGen_get_region_associations
+from .FinnGen_get_variant_finemapping import FinnGen_get_variant_finemapping
+from .FinnGen_list_phenotypes import FinnGen_list_phenotypes
 from .FlyBase_get_gene import FlyBase_get_gene
 from .FlyBase_get_gene_alleles import FlyBase_get_gene_alleles
 from .FlyBase_get_gene_disease_models import FlyBase_get_gene_disease_models
@@ -907,6 +916,8 @@ from .FlyBase_get_gene_interactions import FlyBase_get_gene_interactions
 from .FlyBase_get_gene_orthologs import FlyBase_get_gene_orthologs
 from .FlyMine_search import FlyMine_search
 from .FlyMine_search_genes import FlyMine_search_genes
+from .Foldseek_get_result import Foldseek_get_result
+from .Foldseek_search_structure import Foldseek_search_structure
 from .FoodDataCentral_get_food import FoodDataCentral_get_food
 from .FoodDataCentral_search_foods import FoodDataCentral_search_foods
 from .FourDN_get_download_url import FourDN_get_download_url
@@ -964,6 +975,9 @@ from .GTEx_get_single_tissue_eqtls import GTEx_get_single_tissue_eqtls
 from .GTEx_get_tissue_sites import GTEx_get_tissue_sites
 from .GTEx_get_top_expressed_genes import GTEx_get_top_expressed_genes
 from .GTEx_query_eqtl import GTEx_query_eqtl
+from .GWASSumStats_get_region_associations import GWASSumStats_get_region_associations
+from .GWASSumStats_get_trait_studies import GWASSumStats_get_trait_studies
+from .GWASSumStats_list_studies import GWASSumStats_list_studies
 from .GWAS_search_associations_by_gene import GWAS_search_associations_by_gene
 from .GenCC_get_classifications import GenCC_get_classifications
 from .GenCC_search_disease import GenCC_search_disease
@@ -1171,6 +1185,9 @@ from .Mcule_lookup_compound import Mcule_lookup_compound
 from .MeSH_get_descriptor import MeSH_get_descriptor
 from .MeSH_search_descriptors import MeSH_search_descriptors
 from .MeSH_search_terms import MeSH_search_terms
+from .MedGen_get_clinical_features import MedGen_get_clinical_features
+from .MedGen_get_condition import MedGen_get_condition
+from .MedGen_search_conditions import MedGen_search_conditions
 from .MedRxiv_get_preprint import MedRxiv_get_preprint
 from .MedicalLiteratureReviewer import MedicalLiteratureReviewer
 from .MedicalTermNormalizer import MedicalTermNormalizer
@@ -3029,8 +3046,13 @@ __all__ = [
     "EOL_get_hierarchy_entry",
     "EOL_get_page",
     "EOL_search_species",
+    "EPMC_get_article_chemicals",
+    "EPMC_get_article_diseases",
+    "EPMC_get_article_genes",
+    "EPMC_get_article_organisms",
     "EPMC_get_citations",
     "EPMC_get_references",
+    "EPMC_get_text_mined_annotations",
     "ERDDAP_get_dataset_info",
     "ERDDAP_search_datasets",
     "ESMFold_predict_structure",
@@ -3296,6 +3318,10 @@ __all__ = [
     "Figshare_get_article",
     "Figshare_search_articles",
     "Finish",
+    "FinnGen_get_phenotype",
+    "FinnGen_get_region_associations",
+    "FinnGen_get_variant_finemapping",
+    "FinnGen_list_phenotypes",
     "FlyBase_get_gene",
     "FlyBase_get_gene_alleles",
     "FlyBase_get_gene_disease_models",
@@ -3304,6 +3330,8 @@ __all__ = [
     "FlyBase_get_gene_orthologs",
     "FlyMine_search",
     "FlyMine_search_genes",
+    "Foldseek_get_result",
+    "Foldseek_search_structure",
     "FoodDataCentral_get_food",
     "FoodDataCentral_search_foods",
     "FourDN_get_download_url",
@@ -3361,6 +3389,9 @@ __all__ = [
     "GTEx_get_tissue_sites",
     "GTEx_get_top_expressed_genes",
     "GTEx_query_eqtl",
+    "GWASSumStats_get_region_associations",
+    "GWASSumStats_get_trait_studies",
+    "GWASSumStats_list_studies",
     "GWAS_search_associations_by_gene",
     "GenCC_get_classifications",
     "GenCC_search_disease",
@@ -3556,6 +3587,9 @@ __all__ = [
     "MeSH_get_descriptor",
     "MeSH_search_descriptors",
     "MeSH_search_terms",
+    "MedGen_get_clinical_features",
+    "MedGen_get_condition",
+    "MedGen_search_conditions",
     "MedRxiv_get_preprint",
     "MedicalLiteratureReviewer",
     "MedicalTermNormalizer",

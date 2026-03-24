@@ -1,30 +1,27 @@
 """
-GDC_get_mutation_frequency
+GWASSumStats_get_trait_studies
 
-Get pan-cancer mutation frequency statistics for a gene across all TCGA/GDC cancer projects. Retu...
+Get GWAS studies with deposited summary statistics for a specific EFO trait. Returns study access...
 """
 
 from typing import Any, Optional, Callable
 from ._shared_client import get_shared_client
 
 
-def GDC_get_mutation_frequency(
-    gene_symbol: str,
-    gene: Optional[str] = None,
+def GWASSumStats_get_trait_studies(
+    trait_id: str,
     *,
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> dict[str, Any]:
+) -> list[Any]:
     """
-    Get pan-cancer mutation frequency statistics for a gene across all TCGA/GDC cancer projects. Retu...
+    Get GWAS studies with deposited summary statistics for a specific EFO trait. Returns study access...
 
     Parameters
     ----------
-    gene_symbol : str
-        Gene symbol (e.g., 'TP53', 'KRAS', 'EGFR')
-    gene : str
-        Gene symbol alias — alternative to gene_symbol
+    trait_id : str
+        EFO trait ontology ID (e.g., 'EFO_0000249' for Alzheimer disease, 'EFO_000164...
     stream_callback : Callable, optional
         Callback for streaming output
     use_cache : bool, default False
@@ -34,19 +31,15 @@ def GDC_get_mutation_frequency(
 
     Returns
     -------
-    dict[str, Any]
+    list[Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 
     # Strip None values so optional parameters don't trigger schema validation errors
-    _args = {
-        k: v
-        for k, v in {"gene_symbol": gene_symbol, "gene": gene}.items()
-        if v is not None
-    }
+    _args = {k: v for k, v in {"trait_id": trait_id}.items() if v is not None}
     return get_shared_client().run_one_function(
         {
-            "name": "GDC_get_mutation_frequency",
+            "name": "GWASSumStats_get_trait_studies",
             "arguments": _args,
         },
         stream_callback=stream_callback,
@@ -55,4 +48,4 @@ def GDC_get_mutation_frequency(
     )
 
 
-__all__ = ["GDC_get_mutation_frequency"]
+__all__ = ["GWASSumStats_get_trait_studies"]

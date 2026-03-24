@@ -11,6 +11,9 @@ from ._shared_client import get_shared_client
 def GTEx_query_eqtl(
     gene_symbol: Optional[str] = None,
     ensembl_gene_id: Optional[str] = None,
+    gene_id: Optional[str] = None,
+    tissue_id: Optional[str] = None,
+    tissue: Optional[str] = None,
     page: Optional[int] = 1,
     size: Optional[int] = 10,
     *,
@@ -27,6 +30,12 @@ def GTEx_query_eqtl(
         Gene symbol (e.g., 'TP53', 'BRCA1'). Auto-resolved to versioned GENCODE ID.
     ensembl_gene_id : str
         Ensembl gene identifier (e.g., 'ENSG00000141510'). Use gene_symbol instead if...
+    gene_id : str
+        Alias for ensembl_gene_id. Ensembl gene ID (e.g., 'ENSG00000141510').
+    tissue_id : str
+        GTEx tissue ID to filter eQTL results (e.g., 'Brain_Cortex', 'Whole_Blood', '...
+    tissue : str
+        Alias for tissue_id. GTEx tissue name (e.g., 'Brain_Cortex', 'Whole_Blood').
     page : int
         Page number (1-based).
     size : int
@@ -50,6 +59,9 @@ def GTEx_query_eqtl(
         for k, v in {
             "gene_symbol": gene_symbol,
             "ensembl_gene_id": ensembl_gene_id,
+            "gene_id": gene_id,
+            "tissue_id": tissue_id,
+            "tissue": tissue,
             "page": page,
             "size": size,
         }.items()

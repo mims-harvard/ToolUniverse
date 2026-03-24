@@ -15,6 +15,8 @@ def intact_get_interaction_network(
     gene_symbol: Optional[str] = None,
     gene_name: Optional[str] = None,
     depth: Optional[int] = 1,
+    limit: Optional[int] = 50,
+    size: Optional[int] = 50,
     format: Optional[str] = "json",
     *,
     stream_callback: Optional[Callable[[str], None]] = None,
@@ -38,6 +40,10 @@ def intact_get_interaction_network(
         Alias for identifier: gene name.
     depth : int
         Network depth: 1 for direct interactions only, 2 for 2-hop network, etc. (def...
+    limit : int
+        Maximum number of interactions to return (default: 50, max: 200). Alias: size.
+    size : int
+        Alias for limit. Maximum number of interactions to return (default: 50).
     format : str
 
     stream_callback : Callable, optional
@@ -63,6 +69,8 @@ def intact_get_interaction_network(
             "gene_symbol": gene_symbol,
             "gene_name": gene_name,
             "depth": depth,
+            "limit": limit,
+            "size": size,
             "format": format,
         }.items()
         if v is not None

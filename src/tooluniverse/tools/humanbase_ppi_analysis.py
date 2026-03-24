@@ -15,6 +15,7 @@ def humanbase_ppi_analysis(
     interaction: Optional[str] = None,
     string_mode: Optional[bool] = True,
     genes: Optional[list[str]] = None,
+    top_n: Optional[int] = None,
     *,
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
@@ -37,6 +38,8 @@ def humanbase_ppi_analysis(
         Whether to return the result in string mode. If True, the result will be a st...
     genes : list[str]
         Alias for gene_list. List of gene symbols to analyze.
+    top_n : int
+        Alias for max_node. Maximum number of network nodes to retrieve.
     stream_callback : Callable, optional
         Callback for streaming output
     use_cache : bool, default False
@@ -60,6 +63,7 @@ def humanbase_ppi_analysis(
             "interaction": interaction,
             "string_mode": string_mode,
             "genes": genes,
+            "top_n": top_n,
         }.items()
         if v is not None
     }

@@ -1,30 +1,30 @@
 """
-GDC_get_mutation_frequency
+MedGen_search_conditions
 
-Get pan-cancer mutation frequency statistics for a gene across all TCGA/GDC cancer projects. Retu...
+Search NCBI MedGen for genetic conditions, diseases, or syndromes by keyword. Returns condition n...
 """
 
 from typing import Any, Optional, Callable
 from ._shared_client import get_shared_client
 
 
-def GDC_get_mutation_frequency(
-    gene_symbol: str,
-    gene: Optional[str] = None,
+def MedGen_search_conditions(
+    query: str,
+    max_results: Optional[int] = 10,
     *,
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> dict[str, Any]:
+) -> Any:
     """
-    Get pan-cancer mutation frequency statistics for a gene across all TCGA/GDC cancer projects. Retu...
+    Search NCBI MedGen for genetic conditions, diseases, or syndromes by keyword. Returns condition n...
 
     Parameters
     ----------
-    gene_symbol : str
-        Gene symbol (e.g., 'TP53', 'KRAS', 'EGFR')
-    gene : str
-        Gene symbol alias — alternative to gene_symbol
+    query : str
+        Search term (e.g., 'cystic fibrosis', 'BRCA1', 'Marfan syndrome', 'autosomal ...
+    max_results : int
+        Maximum number of results (default 10, max 50).
     stream_callback : Callable, optional
         Callback for streaming output
     use_cache : bool, default False
@@ -34,19 +34,19 @@ def GDC_get_mutation_frequency(
 
     Returns
     -------
-    dict[str, Any]
+    Any
     """
     # Handle mutable defaults to avoid B006 linting error
 
     # Strip None values so optional parameters don't trigger schema validation errors
     _args = {
         k: v
-        for k, v in {"gene_symbol": gene_symbol, "gene": gene}.items()
+        for k, v in {"query": query, "max_results": max_results}.items()
         if v is not None
     }
     return get_shared_client().run_one_function(
         {
-            "name": "GDC_get_mutation_frequency",
+            "name": "MedGen_search_conditions",
             "arguments": _args,
         },
         stream_callback=stream_callback,
@@ -55,4 +55,4 @@ def GDC_get_mutation_frequency(
     )
 
 
-__all__ = ["GDC_get_mutation_frequency"]
+__all__ = ["MedGen_search_conditions"]

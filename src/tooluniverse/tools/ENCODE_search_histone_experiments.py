@@ -42,7 +42,7 @@ def ENCODE_search_histone_experiments(
     biosample_term : str | Any
         Alias for biosample_term_name. Biosample tissue or cell line (e.g., "breast e...
     cell_type : str | Any
-        Alias for biosample_term_name. Cell type or tissue (e.g., 'GM12878', 'K562', 'liver').
+        Alias for biosample_term_name. Cell type or tissue (e.g., 'GM12878', 'K562', ...
     stream_callback : Callable, optional
         Callback for streaming output
     use_cache : bool, default False

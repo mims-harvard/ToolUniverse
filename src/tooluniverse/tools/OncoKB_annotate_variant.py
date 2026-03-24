@@ -9,8 +9,9 @@ from ._shared_client import get_shared_client
 
 
 def OncoKB_annotate_variant(
-    gene: str,
     operation: Optional[str] = None,
+    gene: Optional[str] = None,
+    gene_symbol: Optional[str] = None,
     variant: Optional[str] = None,
     tumor_type: Optional[str] = None,
     alteration: Optional[str] = None,
@@ -28,6 +29,8 @@ def OncoKB_annotate_variant(
         Operation type (fixed: annotate_variant)
     gene : str
         Gene symbol (e.g., BRAF, EGFR, TP53, KRAS)
+    gene_symbol : str
+        Alias for gene. Gene symbol (e.g., BRAF, EGFR, TP53, KRAS).
     variant : str
         Variant notation - protein change (e.g., V600E, T790M, G12D)
     tumor_type : str
@@ -53,6 +56,7 @@ def OncoKB_annotate_variant(
         for k, v in {
             "operation": operation,
             "gene": gene,
+            "gene_symbol": gene_symbol,
             "variant": variant,
             "tumor_type": tumor_type,
             "alteration": alteration,

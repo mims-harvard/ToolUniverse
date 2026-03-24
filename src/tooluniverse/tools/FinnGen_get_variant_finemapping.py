@@ -1,30 +1,27 @@
 """
-GDC_get_mutation_frequency
+FinnGen_get_variant_finemapping
 
-Get pan-cancer mutation frequency statistics for a gene across all TCGA/GDC cancer projects. Retu...
+Get fine-mapping regions associated with a genomic variant in FinnGen. Returns phenotypes where t...
 """
 
 from typing import Any, Optional, Callable
 from ._shared_client import get_shared_client
 
 
-def GDC_get_mutation_frequency(
-    gene_symbol: str,
-    gene: Optional[str] = None,
+def FinnGen_get_variant_finemapping(
+    variant: str,
     *,
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> dict[str, Any]:
+) -> list[Any]:
     """
-    Get pan-cancer mutation frequency statistics for a gene across all TCGA/GDC cancer projects. Retu...
+    Get fine-mapping regions associated with a genomic variant in FinnGen. Returns phenotypes where t...
 
     Parameters
     ----------
-    gene_symbol : str
-        Gene symbol (e.g., 'TP53', 'KRAS', 'EGFR')
-    gene : str
-        Gene symbol alias — alternative to gene_symbol
+    variant : str
+        Genomic variant in chr:pos:ref:alt format (GRCh38). Examples: '19:44908684:T:...
     stream_callback : Callable, optional
         Callback for streaming output
     use_cache : bool, default False
@@ -34,19 +31,15 @@ def GDC_get_mutation_frequency(
 
     Returns
     -------
-    dict[str, Any]
+    list[Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 
     # Strip None values so optional parameters don't trigger schema validation errors
-    _args = {
-        k: v
-        for k, v in {"gene_symbol": gene_symbol, "gene": gene}.items()
-        if v is not None
-    }
+    _args = {k: v for k, v in {"variant": variant}.items() if v is not None}
     return get_shared_client().run_one_function(
         {
-            "name": "GDC_get_mutation_frequency",
+            "name": "FinnGen_get_variant_finemapping",
             "arguments": _args,
         },
         stream_callback=stream_callback,
@@ -55,4 +48,4 @@ def GDC_get_mutation_frequency(
     )
 
 
-__all__ = ["GDC_get_mutation_frequency"]
+__all__ = ["FinnGen_get_variant_finemapping"]
