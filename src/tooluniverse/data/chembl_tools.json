@@ -110,11 +110,13 @@
           ],
           "default": "json",
           "description": "Response format"
+        },
+        "molecule_chembl_id": {
+          "type": "string",
+          "description": "Alias for chembl_id. ChEMBL molecule ID, e.g., CHEMBL1229517."
         }
       },
-      "required": [
-        "chembl_id"
-      ]
+      "required": []
     },
     "return_schema": {
       "type": "object",

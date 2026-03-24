@@ -80,6 +80,9 @@ class BioGRIDRESTTool(BaseTool):
         if "organism" in arguments:
             organism = arguments["organism"]
             params["taxId"] = self._ORGANISM_MAP.get(organism.lower(), organism)
+        else:
+            # Feature-120B-002: default to human (9606) to avoid returning multi-species results
+            params["taxId"] = 9606
 
         # Note: BioGRID API does not support filtering by "physical"/"genetic" via evidenceList.
         # The interaction_type parameter is informational only; filtering must be done client-side

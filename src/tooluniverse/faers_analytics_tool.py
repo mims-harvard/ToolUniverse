@@ -210,10 +210,10 @@ class FAERSAnalyticsTool(BaseTool):
             adverse_event = arguments.get("adverse_event")
             stratify_by = arguments.get("stratify_by", "sex")  # sex, age, country
 
-            if not drug_name or not adverse_event:
+            if not drug_name:
                 return {
                     "status": "error",
-                    "error": "Must provide drug_name and adverse_event",
+                    "error": "Must provide drug_name",
                 }
 
             if stratify_by not in ["sex", "age", "country"]:
@@ -231,8 +231,11 @@ class FAERSAnalyticsTool(BaseTool):
 
             count_field = field_map[stratify_by]
 
-            # Get stratified counts
-            base_query = f'patient.drug.openfda.generic_name:"{drug_name}"+AND+patient.reaction.reactionmeddrapt:"{adverse_event}"'
+            # Feature-121A-003: adverse_event is optional — filter by drug alone if omitted
+            if adverse_event:
+                base_query = f'patient.drug.openfda.generic_name:"{drug_name}"+AND+patient.reaction.reactionmeddrapt:"{adverse_event}"'
+            else:
+                base_query = f'patient.drug.openfda.generic_name:"{drug_name}"'
 
             url = f"{FDA_BASE_URL}?search={base_query}&count={count_field}"
 

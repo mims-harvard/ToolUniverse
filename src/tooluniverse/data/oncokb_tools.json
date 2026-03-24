@@ -273,11 +273,14 @@
         "tumor_type": {
           "type": "string",
           "description": "Optional OncoTree tumor type code"
+        },
+        "copy_number_alteration": {
+          "type": "string",
+          "description": "Alias for copy_number_type. Amplification or Deletion."
         }
       },
       "required": [
-        "gene",
-        "copy_number_type"
+        "gene"
       ]
     },
     "return_schema": {

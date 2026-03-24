@@ -287,7 +287,11 @@ class OncoKBTool(BaseTool):
     def _annotate_copy_number(self, arguments: Dict[str, Any]) -> Dict[str, Any]:
         """Annotate copy number alterations (amplification/deletion)."""
         gene = arguments.get("gene", "")
-        cna_type = arguments.get("copy_number_type", "").upper()
+        # Feature-120B-004: accept copy_number_alteration as alias for copy_number_type
+        cna_type = (
+            arguments.get("copy_number_type")
+            or arguments.get("copy_number_alteration", "")
+        ).upper()
 
         if not gene:
             return {"status": "error", "error": "Missing required parameter: gene"}
