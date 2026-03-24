@@ -46,16 +46,27 @@ class EpigenomicsTool(BaseTool):
     def run(self, arguments: Dict[str, Any]) -> Dict[str, Any]:
         """Execute the epigenomics API call."""
         try:
-            return self._dispatch(arguments)
+            result = self._dispatch(arguments)
+            if isinstance(result, dict) and "status" not in result:
+                if "error" in result:
+                    return {"status": "error", **result}
+                return {"status": "success", **result}
+            return result
         except requests.exceptions.Timeout:
-            return {"error": f"API request timed out after {self.timeout}s"}
+            return {
+                "status": "error",
+                "error": f"API request timed out after {self.timeout}s",
+            }
         except requests.exceptions.ConnectionError:
-            return {"error": "Failed to connect to API. Check network connectivity."}
+            return {
+                "status": "error",
+                "error": "Failed to connect to API. Check network connectivity.",
+            }
         except requests.exceptions.HTTPError as e:
             status = e.response.status_code if e.response is not None else "unknown"
-            return {"error": f"API HTTP error: {status}"}
+            return {"status": "error", "error": f"API HTTP error: {status}"}
         except Exception as e:
-            return {"error": f"Unexpected error: {str(e)}"}
+            return {"status": "error", "error": f"Unexpected error: {str(e)}"}
 
     def _dispatch(self, arguments: Dict[str, Any]) -> Dict[str, Any]:
         """Route to appropriate endpoint based on config."""

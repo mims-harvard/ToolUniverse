@@ -122,15 +122,21 @@ class ClinicalTrialsTool(RESTfulTool):
                 "The run method should be implemented in subclasses."
             )
         if self._operation == "search":
-            return self._run_search(arguments)
+            result = self._run_search(arguments)
         elif self._operation == "get_study":
-            return self._run_get_study(arguments)
+            result = self._run_get_study(arguments)
         elif self._operation == "stats_size":
-            return self._run_stats_size(arguments)
+            result = self._run_stats_size(arguments)
         elif self._operation == "field_values":
-            return self._run_field_values(arguments)
+            result = self._run_field_values(arguments)
         else:
-            return {"error": f"Unknown operation: {self._operation}"}
+            return {"status": "error", "error": f"Unknown operation: {self._operation}"}
+
+        if isinstance(result, dict) and "status" not in result:
+            if "error" in result:
+                return {"status": "error", **result}
+            return {"status": "success", **result}
+        return result
 
     def _run_search(self, arguments):
         """Handle search operations (search_studies, search_by_intervention, search_by_sponsor)."""
@@ -481,10 +487,12 @@ class ClinicalTrialsSearchTool(ClinicalTrialsTool):
             and len(response["studies"]) > 0
         ):
             response = self._simplify_output(response)
-        else:
-            return "No studies found for the given query parameters. Please examine your input and try different parameters."
+            return {"status": "success", **response}
 
-        return response
+        return {
+            "status": "error",
+            "error": "No studies found for the given query parameters. Please examine your input and try different parameters.",
+        }
 
     def _simplify_output(self, response):
         new_response = []
@@ -557,7 +565,8 @@ class ClinicalTrialsDetailsTool(ClinicalTrialsTool):
             or len(nct_ids_list) == 0
         ):
             return {
-                "error": "Missing or invalid required parameter: nct_ids (must be a non-empty list)"
+                "status": "error",
+                "error": "Missing or invalid required parameter: nct_ids (must be a non-empty list)",
             }
         del arguments[
             "nct_ids"
@@ -739,9 +748,12 @@ class ClinicalTrialsDetailsTool(ClinicalTrialsTool):
             ]
 
         if sum([len(response) > 1 for response in responses]) == 0:
-            return "No relevant information found for the given NCT IDs."
+            return {
+                "status": "error",
+                "error": "No relevant information found for the given NCT IDs.",
+            }
 
-        return responses
+        return {"status": "success", "data": responses}
 
     def _simplify_output(self, study, query_type):
         """Manually extract generally most useful information"""
