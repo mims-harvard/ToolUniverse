@@ -86,7 +86,7 @@ class GDCCasesTool:
             filters = {
                 "op": "=",
                 "content": {
-                    "field": "projects.project_id",
+                    "field": "project.project_id",
                     "value": [arguments["project_id"]],
                 },
             }
@@ -665,3 +665,186 @@ class GDCMutationFrequencyTool:
                 "error": str(e),
                 "source": "GDC",
             }
+
+
+@register_tool(
+    "GDCClinicalDataTool",
+    config={
+        "name": "GDC_get_clinical_data",
+        "type": "GDCClinicalDataTool",
+        "description": (
+            "Get detailed clinical data for cancer cases from NCI GDC/TCGA. "
+            "Returns demographics (gender, race, vital_status, age_at_index), "
+            "diagnoses (primary_diagnosis, tumor_stage, age_at_diagnosis, days_to_last_follow_up), "
+            "and treatments (therapeutic_agents, treatment_type). "
+            "Filter by project, primary_site, disease_type, or vital_status."
+        ),
+        "parameter": {
+            "type": "object",
+            "properties": {
+                "project_id": {
+                    "type": "string",
+                    "description": "GDC project identifier (e.g., 'TCGA-BRCA', 'TCGA-LUAD', 'TARGET-AML')",
+                },
+                "primary_site": {
+                    "type": "string",
+                    "description": "Primary anatomical site (e.g., 'Breast', 'Lung', 'Brain')",
+                },
+                "disease_type": {
+                    "type": "string",
+                    "description": "Disease type filter (e.g., 'Ductal and Lobular Neoplasms')",
+                },
+                "vital_status": {
+                    "type": "string",
+                    "description": "Vital status filter: 'Alive' or 'Dead'",
+                    "enum": ["Alive", "Dead"],
+                },
+                "gender": {
+                    "type": "string",
+                    "description": "Gender filter: 'female' or 'male'",
+                    "enum": ["female", "male"],
+                },
+                "size": {
+                    "type": "integer",
+                    "default": 10,
+                    "minimum": 1,
+                    "maximum": 100,
+                    "description": "Number of cases to return (1-100)",
+                },
+                "offset": {
+                    "type": "integer",
+                    "default": 0,
+                    "minimum": 0,
+                    "description": "Pagination offset (0-based)",
+                },
+            },
+        },
+        "settings": {"base_url": "https://api.gdc.cancer.gov", "timeout": 30},
+    },
+)
+class GDCClinicalDataTool:
+    """Get detailed clinical data for GDC/TCGA cancer cases."""
+
+    _CLINICAL_FIELDS = ",".join(
+        [
+            "case_id",
+            "submitter_id",
+            "project.project_id",
+            "project.name",
+            "primary_site",
+            "disease_type",
+        ]
+    )
+
+    _FILTER_MAP = {
+        "project_id": "project.project_id",
+        "primary_site": "primary_site",
+        "disease_type": "disease_type",
+        "vital_status": "demographic.vital_status",
+        "gender": "demographic.gender",
+    }
+
+    def __init__(self, tool_config=None):
+        self.tool_config = tool_config or {}
+
+    def run(self, arguments: Dict[str, Any]):
+        base = self.tool_config.get("settings", {}).get(
+            "base_url", "https://api.gdc.cancer.gov"
+        )
+        timeout = int(self.tool_config.get("settings", {}).get("timeout", 30))
+
+        conditions = []
+        for param, field in self._FILTER_MAP.items():
+            value = arguments.get(param)
+            if value:
+                conditions.append(
+                    {"op": "=", "content": {"field": field, "value": [value]}}
+                )
+
+        query: Dict[str, Any] = {
+            "fields": self._CLINICAL_FIELDS,
+            "expand": "diagnoses,demographic,treatments",
+            "size": min(int(arguments.get("size", 10)), 100),
+            "from": int(arguments.get("offset", 0)),
+        }
+
+        if conditions:
+            if len(conditions) == 1:
+                query["filters"] = json.dumps(conditions[0])
+            else:
+                query["filters"] = json.dumps({"op": "and", "content": conditions})
+
+        url = f"{base}/cases?{urlencode(query)}"
+        try:
+            raw = _http_get(
+                url, headers={"Accept": "application/json"}, timeout=timeout
+            )
+            hits = raw.get("data", {}).get("hits", [])
+            pagination = raw.get("data", {}).get("pagination", {})
+
+            cases = []
+            for hit in hits:
+                demo = hit.get("demographic", {}) or {}
+                diagnoses_raw = hit.get("diagnoses", []) or []
+                treatments_raw = hit.get("treatments", []) or []
+                project = hit.get("project", {}) or {}
+
+                case_record = {
+                    "case_id": hit.get("case_id"),
+                    "submitter_id": hit.get("submitter_id"),
+                    "project_id": project.get("project_id"),
+                    "project_name": project.get("name"),
+                    "primary_site": hit.get("primary_site"),
+                    "disease_type": hit.get("disease_type"),
+                    "gender": demo.get("gender"),
+                    "race": demo.get("race"),
+                    "ethnicity": demo.get("ethnicity"),
+                    "vital_status": demo.get("vital_status"),
+                    "age_at_index": demo.get("age_at_index"),
+                    "days_to_birth": demo.get("days_to_birth"),
+                    "days_to_death": demo.get("days_to_death"),
+                    "year_of_death": demo.get("year_of_death"),
+                    "diagnoses": [
+                        {
+                            "primary_diagnosis": dx.get("primary_diagnosis"),
+                            "age_at_diagnosis": dx.get("age_at_diagnosis"),
+                            "tumor_stage": dx.get("ajcc_pathologic_stage"),
+                            "tumor_grade": dx.get("tumor_grade"),
+                            "morphology": dx.get("morphology"),
+                            "tissue_or_organ_of_origin": dx.get(
+                                "tissue_or_organ_of_origin"
+                            ),
+                            "days_to_last_follow_up": dx.get("days_to_last_follow_up"),
+                            "classification_of_tumor": dx.get(
+                                "classification_of_tumor"
+                            ),
+                            "icd_10_code": dx.get("icd_10_code"),
+                            "year_of_diagnosis": dx.get("year_of_diagnosis"),
+                        }
+                        for dx in diagnoses_raw
+                    ],
+                    "treatments": [
+                        {
+                            "treatment_type": tx.get("treatment_type"),
+                            "therapeutic_agents": tx.get("therapeutic_agents"),
+                            "treatment_or_therapy": tx.get("treatment_or_therapy"),
+                        }
+                        for tx in treatments_raw
+                    ],
+                }
+                cases.append(case_record)
+
+            return {
+                "status": "success",
+                "data": {
+                    "cases": cases,
+                    "pagination": {
+                        "total": pagination.get("total", 0),
+                        "count": pagination.get("count", 0),
+                        "page": pagination.get("page", 0),
+                        "pages": pagination.get("pages", 0),
+                    },
+                },
+            }
+        except Exception as e:
+            return {"status": "error", "error": str(e)}

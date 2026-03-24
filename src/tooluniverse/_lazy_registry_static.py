@@ -201,6 +201,7 @@ STATIC_LAZY_REGISTRY = {
     "GBIFTool": "gbif_tool",
     "GDCCNVTool": "gdc_tool",
     "GDCCasesTool": "gdc_tool",
+    "GDCClinicalDataTool": "gdc_tool",
     "GDCFilesTool": "gdc_tool",
     "GDCGeneExpressionTool": "gdc_tool",
     "GDCMutationFrequencyTool": "gdc_tool",
