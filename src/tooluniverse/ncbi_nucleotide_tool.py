@@ -104,7 +104,7 @@ class NCBINucleotideSearchTool(NCBIEUtilsTool):
                 "db": self.db,
                 "term": search_term,
                 "retmode": "json",
-                "retmax": arguments.get("limit", 20),
+                "retmax": arguments.get("limit") or arguments.get("max_results") or 20,
                 "sort": arguments.get("sort", "relevance"),
             }
 

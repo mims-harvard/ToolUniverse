@@ -292,6 +292,7 @@ class FAERSAnalyticsTool(BaseTool):
         """Filter for serious adverse events (death, hospitalization, disability, life-threatening)."""
         try:
             drug_name = arguments.get("drug_name")
+            adverse_event = arguments.get("adverse_event")
             seriousness_type = arguments.get(
                 "seriousness_type", "all"
             )  # all, death, hospitalization, disability, life_threatening
@@ -301,6 +302,12 @@ class FAERSAnalyticsTool(BaseTool):
 
             # Build query for serious events
             base_query = f'patient.drug.openfda.generic_name:"{drug_name}"'
+
+            # Add specific reaction filter if provided
+            if adverse_event:
+                base_query += (
+                    f'+AND+patient.reaction.reactionmeddrapt:"{adverse_event.upper()}"'
+                )
 
             # Add seriousness filter
             seriousness_map = {
@@ -343,14 +350,16 @@ class FAERSAnalyticsTool(BaseTool):
                     {"reaction": result.get("term"), "count": result.get("count")}
                 )
 
-            return {
-                "status": "success",
+            result: Dict[str, Any] = {
                 "drug_name": drug_name,
                 "seriousness_type": seriousness_type,
                 "total_serious_events": total_serious,
                 "top_serious_reactions": serious_reactions,
                 "note": f"Serious events: {'All' if seriousness_type == 'all' else seriousness_type.replace('_', ' ')}",
             }
+            if adverse_event:
+                result["adverse_event_filter"] = adverse_event.upper()
+            return {"status": "success", "data": result}
 
         except requests.exceptions.RequestException as e:
             return {"status": "error", "error": f"API request failed: {str(e)}"}
