@@ -109,7 +109,7 @@ class MetaboliteTool(BaseTool):
                     return compounds[0].get("id", {}).get("id", {}).get("cid")
             return None
 
-        # Compound name → PubChem CID
+        # Compound name → PubChem CID (exact match first, then autocomplete fallback)
         resp = requests.get(
             f"{PUBCHEM_API}/compound/name/{requests.utils.quote(identifier)}/cids/JSON",
             timeout=self.timeout,
@@ -117,6 +117,22 @@ class MetaboliteTool(BaseTool):
         if resp.status_code == 200:
             cids = resp.json().get("IdentifierList", {}).get("CID", [])
             return cids[0] if cids else None
+        # Autocomplete fallback for lipid classes and inexact names
+        ac_resp = requests.get(
+            f"https://pubchem.ncbi.nlm.nih.gov/rest/autocomplete/compound/{requests.utils.quote(identifier)}/json?limit=5",
+            timeout=self.timeout,
+        )
+        if ac_resp.status_code == 200:
+            suggestions = ac_resp.json().get("dictionary_terms", {}).get("compound", [])
+            for suggestion in suggestions[:3]:
+                cid_resp = requests.get(
+                    f"{PUBCHEM_API}/compound/name/{requests.utils.quote(suggestion)}/cids/JSON",
+                    timeout=self.timeout,
+                )
+                if cid_resp.status_code == 200:
+                    cids = cid_resp.json().get("IdentifierList", {}).get("CID", [])
+                    if cids:
+                        return cids[0]
         return None
 
     def _get_properties(self, cid: int) -> Dict[str, Any]:

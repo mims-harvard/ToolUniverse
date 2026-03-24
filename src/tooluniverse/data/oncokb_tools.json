@@ -15,6 +15,10 @@
           "type": "string",
           "description": "Gene symbol (e.g., BRAF, EGFR, TP53, KRAS)"
         },
+        "gene_symbol": {
+          "type": "string",
+          "description": "Alias for gene. Gene symbol (e.g., BRAF, EGFR, TP53, KRAS)."
+        },
         "variant": {
           "type": "string",
           "description": "Variant notation - protein change (e.g., V600E, T790M, G12D)"
@@ -28,9 +32,7 @@
           "description": "Alias for variant. Protein change notation (e.g., \"V600E\", \"T790M\", \"G12D\")."
         }
       },
-      "required": [
-        "gene"
-      ]
+      "required": []
     },
     "return_schema": {
       "type": "object",
