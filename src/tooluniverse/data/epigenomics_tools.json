@@ -32,7 +32,8 @@
           "maximum": 100,
           "description": "Maximum number of results to return (1-100)."
         }
-      }
+      },
+      "additionalProperties": false
     },
     "fields": {
       "endpoint": "histone_chipseq"
