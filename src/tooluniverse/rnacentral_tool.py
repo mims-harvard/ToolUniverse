@@ -60,6 +60,7 @@ class RNAcentralSearchTool:
                 url, headers={"Accept": "application/json"}, timeout=timeout
             )
             return {
+                "status": "success",
                 "source": "RNAcentral",
                 "endpoint": "rna",
                 "query": query,
@@ -109,6 +110,7 @@ class RNAcentralGetTool:
                 url, headers={"Accept": "application/json"}, timeout=timeout
             )
             return {
+                "status": "success",
                 "source": "RNAcentral",
                 "endpoint": "rna/{accession}",
                 "accession": acc,

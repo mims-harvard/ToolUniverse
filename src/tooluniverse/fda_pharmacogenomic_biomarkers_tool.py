@@ -66,6 +66,7 @@ class FDAPharmacogenomicBiomarkersTool(BaseTool):
             limited_results = filtered_results[:limit]
 
             return {
+                "status": "success",
                 "count": len(filtered_results),
                 "shown": len(limited_results),
                 "results": limited_results,

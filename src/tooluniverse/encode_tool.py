@@ -154,6 +154,7 @@ class ENCODESearchTool:
                 url, headers={"Accept": "application/json"}, timeout=timeout
             )
             return {
+                "status": "success",
                 "source": "ENCODE",
                 "endpoint": "search",
                 "query": query,

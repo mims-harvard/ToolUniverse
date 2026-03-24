@@ -85,6 +85,7 @@ class MGnifyStudiesTool:
                 data_array = api_response if isinstance(api_response, list) else []
 
             return {
+                "status": "success",
                 "source": "MGnify",
                 "endpoint": "studies",
                 "query": query,
@@ -161,6 +162,7 @@ class MGnifyAnalysesTool:
                 data_array = api_response if isinstance(api_response, list) else []
 
             return {
+                "status": "success",
                 "source": "MGnify",
                 "endpoint": "analyses",
                 "query": query,

@@ -102,6 +102,7 @@ class GDCCasesTool:
                 url, headers={"Accept": "application/json"}, timeout=timeout
             )
             return {
+                "status": "success",
                 "source": "GDC",
                 "endpoint": "cases",
                 "query": query,
@@ -180,6 +181,7 @@ class GDCFilesTool:
                 url, headers={"Accept": "application/json"}, timeout=timeout
             )
             return {
+                "status": "success",
                 "source": "GDC",
                 "endpoint": "files",
                 "query": query,

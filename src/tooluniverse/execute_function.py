@@ -4027,6 +4027,7 @@ class ToolUniverse:
 
         # Summary for all tools
         return {
+            "status": "success",
             "total": len(self.all_tool_dict),
             "available": len(self.all_tool_dict) - len(tool_errors),
             "unavailable": len(tool_errors),

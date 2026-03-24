@@ -73,6 +73,7 @@ class GBIFTool:
                 url, headers={"Accept": "application/json"}, timeout=timeout
             )
             return {
+                "status": "success",
                 "source": "GBIF",
                 "endpoint": "species/search",
                 "query": query,
@@ -152,6 +153,7 @@ class GBIFOccurrenceTool:
                 url, headers={"Accept": "application/json"}, timeout=timeout
             )
             return {
+                "status": "success",
                 "source": "GBIF",
                 "endpoint": "occurrence/search",
                 "query": query,
