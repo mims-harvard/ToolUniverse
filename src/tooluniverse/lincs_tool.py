@@ -1,4 +1,3 @@
-# lincs_tool.py
 """
 LINCS SigCom (Signature Commons) API tool for ToolUniverse.
 

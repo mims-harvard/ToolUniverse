@@ -1,4 +1,3 @@
-# mutalyzer_tool.py
 """
 Mutalyzer API tool for ToolUniverse.
 
@@ -82,7 +81,6 @@ class MutalyzerTool(BaseTool):
         resp.raise_for_status()
         data = resp.json()
 
-        # Extract key fields into a clean structure
         result = {
             "input_description": data.get("input_description"),
             "corrected_description": data.get("corrected_description"),

@@ -48,18 +48,12 @@ class InterProRESTTool(BaseTool):
 
     def run(self, arguments: Dict[str, Any]) -> Dict[str, Any]:
         """Execute the InterPro API call"""
+        url = ""
         try:
-            # Build URL from endpoint template
             url = self._build_url(arguments)
-
-            # Make API request
             response = self.session.get(url, timeout=self.timeout)
             response.raise_for_status()
-
-            # Parse JSON response
             data = response.json()
-
-            # Extract data if specified
             extract_path = self.tool_config["fields"].get("extract_path")
             if extract_path:
                 result = self._extract_data(data, extract_path)
@@ -77,5 +71,5 @@ class InterProRESTTool(BaseTool):
             return {
                 "status": "error",
                 "error": f"InterPro API error: {str(e)}",
-                "url": url if "url" in dir() else "",
+                "url": url,
             }
