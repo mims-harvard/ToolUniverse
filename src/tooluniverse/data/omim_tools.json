@@ -3,7 +3,7 @@
     "name": "OMIM_search",
     "description": "Search OMIM database for Mendelian diseases and genes. OMIM is the authoritative source for human genetic disorders. Search by gene name, disease name, or phenotype keywords. Returns MIM numbers, titles, and entry types. Requires OMIM_API_KEY env var (register at omim.org/api).",
     "type": "OMIMTool",
-    "required_api_keys": [
+    "optional_api_keys": [
       "OMIM_API_KEY"
     ],
     "parameter": {
@@ -78,7 +78,7 @@
     "name": "OMIM_get_entry",
     "description": "Get detailed OMIM entry by MIM number. Returns comprehensive information including text description, clinical features, inheritance, molecular genetics, and references. MIM numbers are 6-digit identifiers (e.g., 164730 for BRAF gene). Requires OMIM_API_KEY.",
     "type": "OMIMTool",
-    "required_api_keys": [
+    "optional_api_keys": [
       "OMIM_API_KEY"
     ],
     "parameter": {
@@ -141,7 +141,7 @@
     "name": "OMIM_get_gene_map",
     "description": "Get OMIM gene-disease mapping information. Returns genes mapped to chromosomal locations with associated phenotypes and inheritance patterns. Query by MIM number or chromosome. Useful for finding all disease genes on a chromosome.",
     "type": "OMIMTool",
-    "required_api_keys": [
+    "optional_api_keys": [
       "OMIM_API_KEY"
     ],
     "parameter": {
@@ -202,7 +202,7 @@
     "name": "OMIM_get_clinical_synopsis",
     "description": "Get clinical synopsis (phenotype features) for an OMIM phenotype entry. Returns structured clinical features organized by body system (e.g., neurologic, cardiovascular). Essential for phenotype-based disease matching. Requires OMIM_API_KEY.",
     "type": "OMIMTool",
-    "required_api_keys": [
+    "optional_api_keys": [
       "OMIM_API_KEY"
     ],
     "parameter": {

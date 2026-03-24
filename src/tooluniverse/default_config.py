@@ -37,6 +37,7 @@ default_tool_files = {
     "pubtator": os.path.join(current_dir, "data", "pubtator_tools.json"),
     "EFO": os.path.join(current_dir, "data", "efo_tools.json"),
     "Enrichr": os.path.join(current_dir, "data", "enrichr_tools.json"),
+    "enrichr_ext": os.path.join(current_dir, "data", "enrichr_ext_tools.json"),
     "HumanBase": os.path.join(current_dir, "data", "humanbase_tools.json"),
     "OpenAlex": os.path.join(current_dir, "data", "openalex_tools.json"),
     # Literature search tools

@@ -130,6 +130,7 @@ STATIC_LAZY_REGISTRY = {
     "EmbeddingSync": "database_setup.embedding_sync",
     "EnamineTool": "enamine_tool",
     "EnrichrTool": "enrichr_tool",
+    "EnrichrExtTool": "enrichr_ext_tool",
     "EnsemblArchiveTool": "ensembl_archive_tool",
     "EnsemblComparaTool": "ensembl_compara_tool",
     "EnsemblGetSequence": "ensembl_tool",
