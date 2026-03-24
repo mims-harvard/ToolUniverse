@@ -151,13 +151,21 @@ class OpentargetTool(GraphQLTool):
                     "Try passing ensemblId directly (e.g. ENSG00000141510 for TP53).",
                 }
 
-        # Resolve disease_name → efoId if efoId not provided
-        if "efoId" not in arguments and "disease_name" in arguments:
+        # Resolve disease_name → efoId (or diseaseIds) if not provided
+        needs_disease_ids = "diseaseIds" in self.query_schema
+        if (
+            "efoId" not in arguments
+            and "diseaseIds" not in arguments
+            and "disease_name" in arguments
+        ):
             resolved = _ot_resolve_id(
                 self.endpoint_url, arguments.pop("disease_name"), "disease"
             )
             if resolved:
-                arguments["efoId"] = resolved
+                if needs_disease_ids:
+                    arguments["diseaseIds"] = [resolved]
+                else:
+                    arguments["efoId"] = resolved
             else:
                 return {
                     "status": "error",
@@ -244,6 +252,33 @@ class OpentargetGeneticsTool(GraphQLTool):
     def __init__(self, tool_config):
         endpoint_url = "https://api.genetics.opentargets.org/graphql"
         super().__init__(tool_config, endpoint_url)
+
+    def run(self, arguments):
+        arguments = copy.deepcopy(arguments)
+        # Resolve disease_name → diseaseIds if not already provided
+        if "diseaseIds" not in arguments:
+            disease_name = None
+            for alias in ("disease_name", "disease", "trait"):
+                if arguments.get(alias):
+                    disease_name = arguments.pop(alias)
+                    break
+            if disease_name:
+                resolved = _ot_resolve_id(
+                    "https://api.platform.opentargets.org/api/v4/graphql",
+                    disease_name,
+                    "disease",
+                )
+                if resolved:
+                    arguments["diseaseIds"] = [resolved]
+                else:
+                    return {
+                        "status": "error",
+                        "error": (
+                            f"Could not resolve '{disease_name}' to a disease ID. "
+                            "Try passing diseaseIds directly (e.g. ['MONDO_0005148'] for type 2 diabetes)."
+                        ),
+                    }
+        return super().run(arguments)
 
 
 @register_tool("DiseaseTargetScoreTool")

@@ -89,5 +89,87 @@
         }
       ]
     }
+  },
+  {
+    "name": "VariantValidator_gene2transcripts",
+    "description": "Get all transcripts for a gene using VariantValidator. Returns MANE Select and MANE Plus Clinical transcript annotations, Ensembl and RefSeq transcript identifiers, genomic coordinates, and cross-references. Useful for identifying the correct transcript for variant annotation. Supports filter for MANE transcripts only or all transcripts.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "gene_symbol": {
+          "type": "string",
+          "description": "HGNC gene symbol (e.g., 'TP53', 'BRCA1', 'EGFR')"
+        },
+        "transcript_set": {
+          "type": "string",
+          "description": "Transcript filter: 'mane' for MANE Select/Plus Clinical only, 'refseq' for RefSeq transcripts, 'ensembl' for Ensembl, 'all' for everything",
+          "default": "mane"
+        },
+        "genome_build": {
+          "type": "string",
+          "description": "Reference genome assembly: 'GRCh37' or 'GRCh38' (default: GRCh38)",
+          "default": "GRCh38"
+        }
+      },
+      "required": ["gene_symbol"]
+    },
+    "fields": {
+      "endpoint": "https://rest.variantvalidator.org/VariantValidator/tools/gene2transcripts_v2/{gene_symbol}/{transcript_set}/all/{genome_build}",
+      "params": {
+        "content-type": "application/json"
+      }
+    },
+    "type": "BaseRESTTool",
+    "test_examples": [
+      {"gene_symbol": "TP53", "transcript_set": "mane", "genome_build": "GRCh38"},
+      {"gene_symbol": "BRCA1", "transcript_set": "mane", "genome_build": "GRCh38"}
+    ],
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "current_name": {"type": ["string", "null"]},
+              "current_symbol": {"type": ["string", "null"]},
+              "hgnc": {"type": ["string", "null"]},
+              "previous_symbol": {"type": ["string", "null"]},
+              "requested_symbol": {"type": ["string", "null"]},
+              "transcripts": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "reference": {"type": ["string", "null"], "description": "Transcript accession (e.g., NM_000546.6 or ENST00000269305.9)"},
+                    "description": {"type": ["string", "null"]},
+                    "coding_start": {"type": ["integer", "null"]},
+                    "coding_end": {"type": ["integer", "null"]},
+                    "length": {"type": ["integer", "null"]},
+                    "annotations": {
+                      "type": "object",
+                      "properties": {
+                        "chromosome": {"type": ["string", "null"]},
+                        "mane_select": {"type": ["boolean", "null"]},
+                        "mane_plus_clinical": {"type": ["boolean", "null"]},
+                        "ensembl_select": {"type": ["boolean", "null"]},
+                        "db_xref": {"type": ["object", "null"]}
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        {
+          "type": "object",
+          "properties": {
+            "error": {"type": "string"}
+          },
+          "required": ["error"]
+        }
+      ]
+    }
   }
 ]

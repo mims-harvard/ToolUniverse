@@ -1049,6 +1049,10 @@ default_tool_files = {
     "aopwiki": os.path.join(current_dir, "data", "aopwiki_tools.json"),
     # MaveDB - Multiplexed Assays of Variant Effect (deep mutational scanning)
     "mavedb": os.path.join(current_dir, "data", "mavedb_tools.json"),
+    # HuBMAP - Human BioMolecular Atlas Program (spatial biology / single-cell atlases)
+    "hubmap": os.path.join(current_dir, "data", "hubmap_tools.json"),
+    # SRA - NCBI Sequence Read Archive (sequencing experiments search)
+    "sra": os.path.join(current_dir, "data", "sra_tools.json"),
     # ClinGen Allele Registry - Canonical allele identifiers and cross-references
     "clingen_allele": os.path.join(current_dir, "data", "clingen_allele_tools.json"),
     # SIGNOR - Causal signaling network relationships

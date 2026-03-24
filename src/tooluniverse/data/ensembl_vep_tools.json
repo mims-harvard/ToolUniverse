@@ -239,7 +239,15 @@
       "properties": {
         "variant_id": {
           "type": "string",
-          "description": "dbSNP rs identifier. Examples: 'rs7903146' (TCF7L2, type 2 diabetes), 'rs429358' (APOE, Alzheimer's), 'rs1801133' (MTHFR C677T)."
+          "description": "dbSNP rs identifier. Examples: 'rs7903146' (TCF7L2, type 2 diabetes), 'rs429358' (APOE, Alzheimer's), 'rs1801133' (MTHFR C677T). Aliases: rsid, rs_id."
+        },
+        "rsid": {
+          "type": "string",
+          "description": "Alias for variant_id. dbSNP rs identifier (e.g., 'rs7903146')."
+        },
+        "rs_id": {
+          "type": "string",
+          "description": "Alias for variant_id. dbSNP rs identifier (e.g., 'rs7903146')."
         },
         "species": {
           "type": "string",
@@ -247,9 +255,7 @@
           "default": "human"
         }
       },
-      "required": [
-        "variant_id"
-      ]
+      "required": []
     },
     "fields": {
       "mode": "vep_id"

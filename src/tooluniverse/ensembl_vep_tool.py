@@ -115,7 +115,11 @@ class EnsemblVEPTool(BaseTool):
 
     def _vep_id(self, arguments: Dict[str, Any]) -> Dict[str, Any]:
         """Annotate a variant using dbSNP rsID."""
-        variant_id = arguments.get("variant_id", "")
+        variant_id = (
+            arguments.get("variant_id")
+            or arguments.get("rsid")
+            or arguments.get("rs_id")
+        )
         if not variant_id:
             return {"status": "error", "error": "variant_id parameter is required"}
 

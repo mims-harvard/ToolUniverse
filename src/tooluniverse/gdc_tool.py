@@ -764,7 +764,9 @@ class GDCClinicalDataTool:
         query: Dict[str, Any] = {
             "fields": self._CLINICAL_FIELDS,
             "expand": "diagnoses,demographic,treatments",
-            "size": min(int(arguments.get("size", 10)), 100),
+            "size": min(
+                int(arguments.get("size") or arguments.get("limit") or 10), 100
+            ),
             "from": int(arguments.get("offset", 0)),
         }
 

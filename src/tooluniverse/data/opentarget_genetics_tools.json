@@ -546,11 +546,21 @@
           "type": "integer",
           "description": "Page index for pagination (0-based, default 0)",
           "default": 0
+        },
+        "disease_name": {
+          "type": "string",
+          "description": "Disease or trait name for auto-resolution (e.g., 'type 2 diabetes'). Resolved to diseaseIds automatically."
+        },
+        "disease": {
+          "type": "string",
+          "description": "Alias for disease_name."
+        },
+        "trait": {
+          "type": "string",
+          "description": "Alias for disease_name."
         }
       },
-      "required": [
-        "diseaseIds"
-      ]
+      "required": []
     },
     "query_schema": "\nquery searchStudies($diseaseIds: [String!], $enableIndirect: Boolean = true, $size: Int = 10, $index: Int = 0) {\n  studies(diseaseIds: $diseaseIds, enableIndirect: $enableIndirect, page: {size: $size, index: $index}) {\n    count\n    rows {\n      id\n      studyType\n      traitFromSource\n      publicationFirstAuthor\n      publicationTitle\n      publicationDate\n      pubmedId\n      nSamples\n      nCases\n      nControls\n      hasSumstats\n      diseases {\n        id\n        name\n      }\n    }\n  }\n}\n",
     "type": "OpenTarget",

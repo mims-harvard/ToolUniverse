@@ -371,8 +371,9 @@ class GWASSNPSearch(GWASRESTTool):
         """Search for SNPs with optional filters."""
         params = {}
 
-        if "rs_id" in arguments:
-            params["rs_id"] = arguments["rs_id"]
+        rs_id = arguments.get("rs_id") or arguments.get("rsid")
+        if rs_id:
+            params["rs_id"] = rs_id
         if "mapped_gene" in arguments:
             params["mapped_gene"] = arguments["mapped_gene"]
         if "size" in arguments:

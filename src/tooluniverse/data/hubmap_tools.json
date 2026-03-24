@@ -1,0 +1,197 @@
+[
+  {
+    "name": "HuBMAP_search_datasets",
+    "description": "Search HuBMAP (Human BioMolecular Atlas Program) published datasets by organ, assay type, or free text. HuBMAP provides spatial biology and single-cell atlas datasets across 43 human organs with data types including scRNA-Seq, CODEX, MALDI, LC-MS, snATAC-Seq, and more. Organ codes: LK=Left Kidney, RK=Right Kidney, LI=Large Intestine, SI=Small Intestine, HT=Heart, LV=Liver, LU=Lung, SP=Spleen, TH=Thymus, LY=Lymph Node, BL=Bladder, PA=Pancreas, SK=Skin, BR=Brain, BM=Bone Marrow, MU=Muscle.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "organ": {
+          "type": "string",
+          "description": "Organ code to filter by (e.g., 'LK' for left kidney, 'HT' for heart, 'LV' for liver, 'LU' for lung, 'BR' for brain, 'SP' for spleen). Use HuBMAP_list_organs to see all codes."
+        },
+        "dataset_type": {
+          "type": "string",
+          "description": "Filter by assay/data type (e.g., 'RNAseq', 'CODEX', 'MALDI', 'snATACseq', 'LC-MS', 'scRNAseq-10xGenomics-v3')"
+        },
+        "query": {
+          "type": "string",
+          "description": "Free text search across title, description, and anatomy fields"
+        },
+        "status": {
+          "type": "string",
+          "description": "Dataset status filter. Default: 'Published'",
+          "default": "Published"
+        },
+        "limit": {
+          "type": "integer",
+          "description": "Maximum number of results (1-50, default 10)",
+          "default": 10
+        }
+      },
+      "required": []
+    },
+    "fields": {
+      "operation": "search_datasets"
+    },
+    "type": "HuBMAPTool",
+    "test_examples": [
+      {"organ": "LK", "limit": 3},
+      {"dataset_type": "RNAseq", "organ": "SP", "limit": 3},
+      {"query": "kidney", "limit": 3}
+    ],
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "object",
+          "properties": {
+            "data": {
+              "type": "object",
+              "properties": {
+                "total": {"type": "integer"},
+                "returned": {"type": "integer"},
+                "datasets": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "hubmap_id": {"type": ["string", "null"]},
+                      "title": {"type": ["string", "null"]},
+                      "dataset_type": {"type": ["string", "null"]},
+                      "organ": {"type": ["string", "null"]},
+                      "status": {"type": ["string", "null"]},
+                      "group_name": {"type": ["string", "null"]},
+                      "anatomy": {"type": ["string", "null"]},
+                      "doi_url": {"type": ["string", "null"]},
+                      "data_types": {"type": ["array", "null"]},
+                      "donor_sex": {"type": ["string", "null"]},
+                      "donor_age": {"type": ["number", "string", "null"]}
+                    }
+                  }
+                }
+              }
+            },
+            "metadata": {"type": "object"}
+          }
+        },
+        {
+          "type": "object",
+          "properties": {
+            "error": {"type": "string"}
+          },
+          "required": ["error"]
+        }
+      ]
+    }
+  },
+  {
+    "name": "HuBMAP_list_organs",
+    "description": "List all organs available in the HuBMAP (Human BioMolecular Atlas Program) atlas. Returns organ names, codes (for use in HuBMAP_search_datasets), UBERON ontology IDs, and CUI codes. HuBMAP maps 43 organs including kidney, heart, liver, lung, brain, spleen, intestine, skin, and more.",
+    "parameter": {
+      "type": "object",
+      "properties": {},
+      "required": []
+    },
+    "fields": {
+      "operation": "list_organs"
+    },
+    "type": "HuBMAPTool",
+    "test_examples": [
+      {}
+    ],
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "object",
+          "properties": {
+            "data": {
+              "type": "object",
+              "properties": {
+                "total": {"type": "integer"},
+                "organs": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "code": {"type": ["string", "null"]},
+                      "term": {"type": ["string", "null"]},
+                      "organ_uberon": {"type": ["string", "null"]},
+                      "organ_cui": {"type": ["string", "null"]},
+                      "rui_supported": {"type": ["boolean", "null"]}
+                    }
+                  }
+                }
+              }
+            },
+            "metadata": {"type": "object"}
+          }
+        },
+        {
+          "type": "object",
+          "properties": {
+            "error": {"type": "string"}
+          },
+          "required": ["error"]
+        }
+      ]
+    }
+  },
+  {
+    "name": "HuBMAP_get_dataset",
+    "description": "Get detailed metadata for a specific HuBMAP dataset by its HuBMAP ID. Returns comprehensive information including title, description, data type, organ, group, contacts, contributors, DOI, and data access level. Use HuBMAP_search_datasets first to find HuBMAP IDs.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "hubmap_id": {
+          "type": "string",
+          "description": "HuBMAP dataset identifier (e.g., 'HBM626.FHJD.938')"
+        }
+      },
+      "required": ["hubmap_id"]
+    },
+    "fields": {
+      "operation": "get_dataset"
+    },
+    "type": "HuBMAPTool",
+    "test_examples": [
+      {"hubmap_id": "HBM626.FHJD.938"}
+    ],
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "object",
+          "properties": {
+            "data": {
+              "type": "object",
+              "properties": {
+                "hubmap_id": {"type": ["string", "null"]},
+                "entity_type": {"type": ["string", "null"]},
+                "dataset_type": {"type": ["string", "null"]},
+                "status": {"type": ["string", "null"]},
+                "title": {"type": ["string", "null"]},
+                "description": {"type": ["string", "null"]},
+                "organ": {"type": ["string", "null"]},
+                "group_name": {"type": ["string", "null"]},
+                "data_types": {"type": ["array", "null"]},
+                "doi_url": {"type": ["string", "null"]},
+                "dbgap_study_url": {"type": ["string", "null"]},
+                "contains_human_genetic_sequences": {"type": ["boolean", "null"]},
+                "data_access_level": {"type": ["string", "null"]},
+                "created_timestamp": {"type": ["integer", "null"]},
+                "contacts": {"type": "array"},
+                "contributors": {"type": "array"}
+              }
+            },
+            "metadata": {"type": "object"}
+          }
+        },
+        {
+          "type": "object",
+          "properties": {
+            "error": {"type": "string"}
+          },
+          "required": ["error"]
+        }
+      ]
+    }
+  }
+]
