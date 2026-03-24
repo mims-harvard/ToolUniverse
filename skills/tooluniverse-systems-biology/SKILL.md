@@ -53,12 +53,28 @@ Input → Phase 1: Enrichment → Phase 2: Protein Mapping → Phase 3: Keyword 
 
 ### Tools Used
 
+**ReactomeAnalysis_pathway_enrichment** (recommended — returns FDR-corrected results with Reactome pathway IDs):
+- **Input**: `identifiers` (newline-separated gene symbols, e.g., "PIK3CA\nAKT1\nMTOR"), `page_size` (int)
+- **Output**: Enriched pathways with p-values, FDR, entity counts, Reactome stable IDs
+
 **enrichr_gene_enrichment_analysis**:
 - **Input**:
   - `gene_list`: Array of gene symbols (e.g., ["TP53", "BRCA1", "EGFR"])
   - `library`: Pathway database (e.g., "KEGG_2021_Human", "Reactome_2022")
 - **Output**: Array of enriched pathways with p-values, adjusted p-values, genes
 - **Use**: Statistical over-representation analysis
+
+**STRING_get_network** (protein interaction networks):
+- **Input**: `identifiers` (gene symbol), `species` (9606 for human), `limit` (max interactors)
+- **Output**: Interaction edges with combined scores, evidence types
+
+**STRING_functional_enrichment** (functional enrichment from PPI networks):
+- **Input**: `protein_ids` (array of gene symbols), `species` (9606), `category` ("KEGG", "GO", "Pfam")
+- **Output**: Enriched functional categories with FDR values
+
+**intact_get_interactions** (detailed binary protein interactions):
+- **Input**: `identifier` (UniProt accession)
+- **Output**: Interaction records with experimental evidence types
 
 ### Workflow
 

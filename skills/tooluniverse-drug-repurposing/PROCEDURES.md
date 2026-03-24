@@ -82,7 +82,7 @@ for drug in top_candidates:
 # 3.2 Assess ADMET properties (for novel formulations)
 for drug in top_candidates:
     if 'smiles' in drug:
-        admet = tu.tools.ADMETAI_predict_admet(
+        admet = tu.tools.ADMETAI_predict_physicochemical_properties(
             smiles=drug['smiles'],
             use_cache=True
         )
@@ -100,7 +100,7 @@ for drug in top_candidates:
         query=f"{drug['name']} AND {disease_name}",
         limit=50
     )
-    trials = tu.tools.ClinicalTrials_search(
+    trials = tu.tools.search_clinical_trials(
         condition=disease_name,
         intervention=drug['name']
     )
@@ -224,7 +224,7 @@ for compound in similar['data']:
 
 ```python
 for drug in candidates_with_smiles:
-    admet = tu.tools.ADMETAI_predict_admet(smiles=drug['smiles'], use_cache=True)
+    admet = tu.tools.ADMETAI_predict_physicochemical_properties(smiles=drug['smiles'], use_cache=True)
     admet_results.append({
         'drug': drug['name'],
         'admet': admet,

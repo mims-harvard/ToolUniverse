@@ -284,9 +284,9 @@ bioactivity = tu.tools.ChEMBL_get_bioactivity_by_chemblid(
 
 ### ADMET Prediction Tools
 
-#### ADMETAI_predict_admet
+#### ADMETAI_predict_physicochemical_properties
 ```python
-admet = tu.tools.ADMETAI_predict_admet(
+admet = tu.tools.ADMETAI_predict_physicochemical_properties(
     smiles="CC(C)Cc1ccc(cc1)C(C)C(O)=O"
 )
 # Returns: Absorption, distribution, metabolism, excretion, toxicity predictions
@@ -328,9 +328,9 @@ papers = tu.tools.EuropePMC_search_articles(
 ```
 **Use**: Alternative/additional literature source
 
-#### ClinicalTrials_search
+#### search_clinical_trials
 ```python
-trials = tu.tools.ClinicalTrials_search(
+trials = tu.tools.search_clinical_trials(
     condition="COVID-19",
     intervention="hydroxychloroquine"
 )
@@ -398,7 +398,7 @@ Recommended limits by tool:
 tu = ToolUniverse(use_cache=True)
 
 # Or per-call
-result = tu.tools.ADMETAI_predict_admet(smiles="...", use_cache=True)
+result = tu.tools.ADMETAI_predict_physicochemical_properties(smiles="...", use_cache=True)
 ```
 
 ---
@@ -549,7 +549,7 @@ query = f"{drug} AND {disease}"
 # Search multiple sources
 pubmed = tu.tools.PubMed_search_articles(query=query, max_results=100)
 pmc = tu.tools.EuropePMC_search_articles(query=query, limit=100)
-trials = tu.tools.ClinicalTrials_search(condition=disease, intervention=drug)
+trials = tu.tools.search_clinical_trials(condition=disease, intervention=drug)
 
 # Count evidence types
 review_count = sum(1 for p in pubmed.get('data', []) 

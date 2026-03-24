@@ -209,7 +209,7 @@ for indication in sorted(potential_indications, key=lambda x: x['association_sco
         max_results=10
     )
     
-    clinical_trials = tu.tools.ClinicalTrials_search(
+    clinical_trials = tu.tools.search_clinical_trials(
         condition=indication['disease'],
         intervention=drug_name
     )
@@ -367,7 +367,7 @@ for candidate in approved_candidates[:20]:  # Analyze top 20
     )
     
     # Search clinical trials
-    trials = tu.tools.ClinicalTrials_search(
+    trials = tu.tools.search_clinical_trials(
         condition="COVID-19",
         intervention=drug
     )
@@ -964,7 +964,7 @@ def comprehensive_repurposing_analysis(drug_name, new_indication):
     print(f"\n7. CLINICAL TRIALS")
     print("-"*80)
     
-    trials = tu.tools.ClinicalTrials_search(
+    trials = tu.tools.search_clinical_trials(
         condition=new_indication,
         intervention=drug_name
     )

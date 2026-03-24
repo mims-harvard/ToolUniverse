@@ -87,10 +87,10 @@ for target in targets['data'][:5]:
 - `drugbank_get_drug_interactions_by_drug_name_or_id` - Interactions
 
 **Property Prediction**:
-- `ADMETAI_predict_admet` / `ADMETAI_predict_toxicity` - ADMET and toxicity
+- `ADMETAI_predict_physicochemical_properties` / `ADMETAI_predict_toxicity` - ADMET and toxicity
 
 **Literature**:
-- `PubMed_search_articles` / `EuropePMC_search_articles` / `ClinicalTrials_search`
+- `PubMed_search_articles` / `EuropePMC_search_articles` / `search_clinical_trials`
 
 ---
 

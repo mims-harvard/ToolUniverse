@@ -48,7 +48,7 @@ for drug in top_candidates:
     adverse_events = tu.tools.FAERS_search_reports_by_drug_and_reaction(drug_name=drug['name'], limit=100)
     interactions = tu.tools.drugbank_get_drug_interactions_by_drug_name_or_id(drug_name_or_id=drug['name'])
     if 'smiles' in drug:
-        admet = tu.tools.ADMETAI_predict_admet(smiles=drug['smiles'], use_cache=True)
+        admet = tu.tools.ADMETAI_predict_physicochemical_properties(smiles=drug['smiles'], use_cache=True)
 ```
 
 ---
@@ -60,7 +60,7 @@ for drug in top_candidates:
     query = f"{drug['name']} AND {disease_name}"
     pubmed_results = tu.tools.PubMed_search_articles(query=query, max_results=50)
     pmc_results = tu.tools.EuropePMC_search_articles(query=query, limit=50)
-    trials = tu.tools.ClinicalTrials_search(condition=disease_name, intervention=drug['name'])
+    trials = tu.tools.search_clinical_trials(condition=disease_name, intervention=drug['name'])
 ```
 
 ---
@@ -181,7 +181,7 @@ for compound in similar['data']:
 ### AI-Powered Candidate Selection
 ```python
 for drug in candidates_with_smiles:
-    admet = tu.tools.ADMETAI_predict_admet(smiles=drug['smiles'], use_cache=True)
+    admet = tu.tools.ADMETAI_predict_physicochemical_properties(smiles=drug['smiles'], use_cache=True)
     # Keep only drugs passing ADMET criteria
 ```
 
