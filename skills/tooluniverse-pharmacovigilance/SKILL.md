@@ -48,6 +48,8 @@ Every safety signal MUST include source tool, data period, PRR, case counts, and
 | Tool | WRONG Parameter | CORRECT Parameter |
 |------|-----------------|-------------------|
 | `FAERS_count_reactions_by_drug_event` | `drug` | `drug_name` |
+| `FAERS_filter_serious_events` | American spelling (e.g., "Hemorrhage") | MedDRA British spelling (e.g., "Haemorrhage") |
+| `FAERS_stratify_by_demographics` | Requiring `adverse_event` | `adverse_event` is optional (omit for all-event stratification) |
 | `DailyMed_search_spls` | `name` | `drug_name` |
 | `PharmGKB_search_drug` | `drug` | `query` |
 | `OpenFDA_get_drug_events` | `drug_name` | `search` |
@@ -101,6 +103,30 @@ Phase 7: Report Synthesis
 
 **Severity classification**:
 - Fatal (highest priority), Life-threatening, Hospitalization, Disability, Other serious, Non-serious
+
+### FAERS `filter_serious_events` -- MedDRA Spelling (CRITICAL)
+
+`FAERS_filter_serious_events` uses **MedDRA preferred terms** which follow British
+English spelling conventions. Common examples:
+
+| Incorrect (American) | Correct (MedDRA/British) |
+|----------------------|--------------------------|
+| HEMORRHAGE | Haemorrhage |
+| ANEMIA | Anaemia |
+| EDEMA | Oedema |
+| DIARRHEA | Diarrhoea |
+| LEUKOPENIA | Leucopenia |
+| ESOPHAGITIS | Oesophagitis |
+
+The `adverse_event` parameter should use the **exact MedDRA preferred term spelling**.
+Using American English spelling or uppercase will return zero results or incorrect matches.
+When in doubt, first query `FAERS_count_reactions_by_drug_event` to see the exact event
+names as they appear in the FAERS database, then use those exact strings.
+
+**Additional FAERS notes:**
+- `adverse_event` is now correctly appended to the OpenFDA query in `_filter_serious_events`
+- `FAERS_stratify_by_demographics`: `adverse_event` is optional -- when omitted, stratification
+  covers all events for the drug. Sex codes: 0=Unknown, 1=Male, 2=Female
 
 See [SIGNAL_DETECTION.md](SIGNAL_DETECTION.md) for detailed disproportionality formulas and example output tables.
 

@@ -1035,6 +1035,8 @@ default_tool_files = {
     "bridgedb": os.path.join(current_dir, "data", "bridgedb_tools.json"),
     # GTDB - Genome Taxonomy Database for standardized prokaryotic taxonomy
     "gtdb": os.path.join(current_dir, "data", "gtdb_tools.json"),
+    # IGSR - International Genome Sample Resource (1000 Genomes Project)
+    "igsr": os.path.join(current_dir, "data", "igsr_tools.json"),
     # Drug property filters: Lipinski Ro5, QED, PAINS, Veber, Egan, Ghose (RDKit)
     "drug_properties": os.path.join(current_dir, "data", "drug_properties_tools.json"),
     # Non-Compartmental Analysis (NCA) for pharmacokinetics: AUC, t½, CL, Vd, F

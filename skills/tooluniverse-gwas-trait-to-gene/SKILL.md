@@ -64,16 +64,16 @@ This skill enables systematic discovery of genes linked to diseases/traits by an
 ## Required ToolUniverse Tools
 
 ### GWAS Catalog (11 tools)
-- `gwas_get_associations_for_trait` - Get all associations for a trait (sorted by p-value)
+- `gwas_get_associations_for_trait` - Get all associations for a trait (sorted by p-value). **NOTE: This tool is BROKEN** -- use `gwas_search_associations(query=trait)` as a working alternative
 - `gwas_search_snps` - Search SNPs by gene mapping
 - `gwas_get_snp_by_id` - Get SNP details (MAF, consequence, location)
 - `gwas_get_study_by_id` - Get study metadata
-- `gwas_search_associations` - Search associations with filters
+- `gwas_search_associations` - Search associations with filters (RECOMMENDED for trait lookups)
 - `gwas_search_studies` - Search studies by trait/cohort
 - `gwas_get_associations_for_snp` - Get all associations for a SNP
-- `gwas_get_variants_for_trait` - Get variants for a trait
+- `gwas_get_variants_for_trait` - Get variants for a trait. **Supports `p_value_threshold` parameter** for server-side filtering (see notes below)
 - `gwas_get_studies_for_trait` - Get studies for a trait
-- `gwas_get_snps_for_gene` - Get SNPs mapped to a gene
+- `gwas_get_snps_for_gene` - Get SNPs mapped to a gene. **Parameter is `gene_symbol`** (NOT `mapped_gene`)
 - `gwas_get_associations_for_study` - Get associations from a study
 
 ### Open Targets Genetics (6 tools)
@@ -171,6 +171,42 @@ discover_gwas_genes(
 - **Linkage Disequilibrium**: Lead SNP may tag the true causal variant in a nearby gene
 - **Fine-mapping**: L2G scores provide better causal gene evidence than positional mapping
 - **Functional Evidence**: Validate with orthogonal data (eQTLs, knockout models, etc.)
+
+## Tool-Specific Notes (Updated)
+
+### `gwas_get_variants_for_trait` -- p-value Filtering
+
+This tool now accepts an optional `p_value_threshold` parameter for server-side
+p-value filtering. When provided, the GWAS Catalog API filters variants to only
+return those below the specified threshold.
+
+```python
+# Server-side filtering (preferred -- reduces data transfer)
+result = tu.tools.gwas_get_variants_for_trait(
+    trait="type 2 diabetes",
+    p_value_threshold=5e-8
+)
+```
+
+**Client-side fallback**: When the API returns unfiltered results (some trait
+queries ignore the threshold parameter), the tool also applies client-side
+p-value filtering. This means you may see fewer results than expected if the
+API returned pre-filtered data and the client filter applies again. Always
+check the actual p-values in the returned data.
+
+### `gwas_get_associations_for_trait` -- BROKEN
+
+This tool returns errors for most queries. Use `gwas_search_associations(query=<trait>)`
+as a reliable alternative. The response format is `{data: [{...}], metadata: {...}}`.
+
+### `gwas_get_snps_for_gene` -- Parameter Rename
+
+The parameter was renamed from `mapped_gene` to `gene_symbol` for clarity. Use:
+```python
+result = tu.tools.gwas_get_snps_for_gene(gene_symbol="TCF7L2")
+```
+
+---
 
 ## Limitations
 

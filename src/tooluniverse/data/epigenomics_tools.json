@@ -1576,7 +1576,10 @@
       "type": "object",
       "properties": {
         "query": {
-          "type": ["string", "null"],
+          "type": [
+            "string",
+            "null"
+          ],
           "description": "Search query (e.g., 'BRCA1 breast cancer', 'T cell activation', 'Alzheimer disease'). Leave empty to search broadly."
         },
         "organism": {
@@ -1602,48 +1605,96 @@
         {
           "type": "object",
           "properties": {
-            "status": {"type": "string"},
+            "status": {
+              "type": "string"
+            },
             "data": {
               "type": "object",
               "properties": {
-                "total": {"type": "integer"},
+                "total": {
+                  "type": "integer"
+                },
                 "datasets": {
                   "type": "array",
                   "items": {
                     "type": "object",
                     "properties": {
-                      "accession": {"type": "string"},
-                      "title": {"type": "string"},
-                      "summary": {"type": "string"},
-                      "organism": {"type": "string"},
-                      "n_samples": {"type": "integer"},
-                      "date_published": {"type": ["string", "null"]}
+                      "accession": {
+                        "type": "string"
+                      },
+                      "title": {
+                        "type": "string"
+                      },
+                      "summary": {
+                        "type": "string"
+                      },
+                      "organism": {
+                        "type": "string"
+                      },
+                      "n_samples": {
+                        "type": "integer"
+                      },
+                      "date_published": {
+                        "type": [
+                          "string",
+                          "null"
+                        ]
+                      }
                     }
                   }
                 }
               }
             },
-            "metadata": {"type": "object"}
+            "metadata": {
+              "type": "object"
+            }
           },
-          "required": ["status", "data"]
+          "required": [
+            "status",
+            "data"
+          ]
         },
         {
           "type": "object",
           "properties": {
-            "status": {"type": "string"},
-            "error": {"type": "string"}
+            "status": {
+              "type": "string"
+            },
+            "error": {
+              "type": "string"
+            }
           },
-          "required": ["status", "error"]
+          "required": [
+            "status",
+            "error"
+          ]
         }
       ]
     },
     "test_examples": [
-      {"query": "breast cancer BRCA1", "organism": "Homo sapiens", "limit": 5},
-      {"query": "T cell activation", "limit": 5}
+      {
+        "query": "breast cancer BRCA1",
+        "organism": "Homo sapiens",
+        "limit": 5
+      },
+      {
+        "query": "T cell activation",
+        "limit": 5
+      }
     ],
-    "label": ["GEO", "RNA-seq", "Transcriptomics", "Gene Expression"],
+    "label": [
+      "GEO",
+      "RNA-seq",
+      "Transcriptomics",
+      "Gene Expression"
+    ],
     "metadata": {
-      "tags": ["rna-seq", "transcriptomics", "gene-expression", "geo"],
+      "tags": [
+        "rna-seq",
+        "transcriptomics",
+        "gene-expression",
+        "geo"
+      ],
       "estimated_execution_time": "< 5 seconds"
     }
   },
@@ -1655,7 +1706,10 @@
       "type": "object",
       "properties": {
         "query": {
-          "type": ["string", "null"],
+          "type": [
+            "string",
+            "null"
+          ],
           "description": "Search query (e.g., 'T cell differentiation', 'liver hepatocyte', 'hematopoiesis'). Leave empty to search broadly."
         },
         "organism": {
@@ -1681,48 +1735,97 @@
         {
           "type": "object",
           "properties": {
-            "status": {"type": "string"},
+            "status": {
+              "type": "string"
+            },
             "data": {
               "type": "object",
               "properties": {
-                "total": {"type": "integer"},
+                "total": {
+                  "type": "integer"
+                },
                 "datasets": {
                   "type": "array",
                   "items": {
                     "type": "object",
                     "properties": {
-                      "accession": {"type": "string"},
-                      "title": {"type": "string"},
-                      "summary": {"type": "string"},
-                      "organism": {"type": "string"},
-                      "n_samples": {"type": "integer"},
-                      "date_published": {"type": ["string", "null"]}
+                      "accession": {
+                        "type": "string"
+                      },
+                      "title": {
+                        "type": "string"
+                      },
+                      "summary": {
+                        "type": "string"
+                      },
+                      "organism": {
+                        "type": "string"
+                      },
+                      "n_samples": {
+                        "type": "integer"
+                      },
+                      "date_published": {
+                        "type": [
+                          "string",
+                          "null"
+                        ]
+                      }
                     }
                   }
                 }
               }
             },
-            "metadata": {"type": "object"}
+            "metadata": {
+              "type": "object"
+            }
           },
-          "required": ["status", "data"]
+          "required": [
+            "status",
+            "data"
+          ]
         },
         {
           "type": "object",
           "properties": {
-            "status": {"type": "string"},
-            "error": {"type": "string"}
+            "status": {
+              "type": "string"
+            },
+            "error": {
+              "type": "string"
+            }
           },
-          "required": ["status", "error"]
+          "required": [
+            "status",
+            "error"
+          ]
         }
       ]
     },
     "test_examples": [
-      {"query": "T cell differentiation", "organism": "Homo sapiens", "limit": 5},
-      {"query": "liver", "organism": "Mus musculus", "limit": 5}
+      {
+        "query": "T cell differentiation",
+        "organism": "Homo sapiens",
+        "limit": 5
+      },
+      {
+        "query": "liver",
+        "organism": "Mus musculus",
+        "limit": 5
+      }
     ],
-    "label": ["GEO", "ATAC-seq", "Chromatin Accessibility", "Epigenomics"],
+    "label": [
+      "GEO",
+      "ATAC-seq",
+      "Chromatin Accessibility",
+      "Epigenomics"
+    ],
     "metadata": {
-      "tags": ["atac-seq", "chromatin-accessibility", "open-chromatin", "epigenomics"],
+      "tags": [
+        "atac-seq",
+        "chromatin-accessibility",
+        "open-chromatin",
+        "epigenomics"
+      ],
       "estimated_execution_time": "< 5 seconds"
     }
   },
@@ -1734,19 +1837,31 @@
       "type": "object",
       "properties": {
         "biosample_term_name": {
-          "type": ["string", "null"],
+          "type": [
+            "string",
+            "null"
+          ],
           "description": "Biosample name from ENCODE ontology (e.g., 'K562', 'HepG2', 'GM12878', 'liver', 'brain'). Leave empty to search all biosamples."
         },
         "biosample": {
-          "type": ["string", "null"],
+          "type": [
+            "string",
+            "null"
+          ],
           "description": "Alias for biosample_term_name. Cell type or tissue (e.g., 'K562', 'liver')."
         },
         "cell_type": {
-          "type": ["string", "null"],
+          "type": [
+            "string",
+            "null"
+          ],
           "description": "Alias for biosample_term_name. Cell type (e.g., 'K562', 'HepG2', 'GM12878')."
         },
         "tissue": {
-          "type": ["string", "null"],
+          "type": [
+            "string",
+            "null"
+          ],
           "description": "Alias for biosample_term_name. Tissue type (e.g., 'liver', 'brain', 'heart')."
         },
         "organism": {
@@ -1777,49 +1892,290 @@
         {
           "type": "object",
           "properties": {
-            "status": {"type": "string"},
+            "status": {
+              "type": "string"
+            },
             "data": {
               "type": "object",
               "properties": {
-                "total": {"type": "integer"},
+                "total": {
+                  "type": "integer"
+                },
                 "experiments": {
                   "type": "array",
                   "items": {
                     "type": "object",
                     "properties": {
-                      "accession": {"type": "string"},
-                      "assay_title": {"type": "string"},
-                      "biosample_summary": {"type": "string"},
-                      "status": {"type": "string"},
-                      "lab": {"type": "string"},
-                      "date_released": {"type": ["string", "null"]}
+                      "accession": {
+                        "type": "string"
+                      },
+                      "assay_title": {
+                        "type": "string"
+                      },
+                      "biosample_summary": {
+                        "type": "string"
+                      },
+                      "status": {
+                        "type": "string"
+                      },
+                      "lab": {
+                        "type": "string"
+                      },
+                      "date_released": {
+                        "type": [
+                          "string",
+                          "null"
+                        ]
+                      }
                     }
                   }
                 }
               }
             },
-            "metadata": {"type": "object"}
+            "metadata": {
+              "type": "object"
+            }
           },
-          "required": ["status", "data"]
+          "required": [
+            "status",
+            "data"
+          ]
         },
         {
           "type": "object",
           "properties": {
-            "status": {"type": "string"},
-            "error": {"type": "string"}
+            "status": {
+              "type": "string"
+            },
+            "error": {
+              "type": "string"
+            }
           },
-          "required": ["status", "error"]
+          "required": [
+            "status",
+            "error"
+          ]
         }
       ]
     },
     "test_examples": [
-      {"biosample_term_name": "K562", "assay_type": "total RNA-seq", "limit": 3},
-      {"assay_type": "microRNA-seq", "organism": "Homo sapiens", "limit": 5}
+      {
+        "biosample_term_name": "K562",
+        "assay_type": "total RNA-seq",
+        "limit": 3
+      },
+      {
+        "assay_type": "microRNA-seq",
+        "organism": "Homo sapiens",
+        "limit": 5
+      }
     ],
-    "label": ["ENCODE", "RNA-seq", "Transcriptomics", "Gene Expression"],
+    "label": [
+      "ENCODE",
+      "RNA-seq",
+      "Transcriptomics",
+      "Gene Expression"
+    ],
     "metadata": {
-      "tags": ["rna-seq", "transcriptomics", "encode", "gene-expression"],
+      "tags": [
+        "rna-seq",
+        "transcriptomics",
+        "encode",
+        "gene-expression"
+      ],
       "estimated_execution_time": "< 5 seconds"
     }
+  },
+  {
+    "name": "ENCODE_search_hic_experiments",
+    "type": "EpigenomicsTool",
+    "description": "Search ENCODE Hi-C and intact Hi-C experiments for 3D genome organization data. Hi-C captures chromatin interactions genome-wide, revealing topologically associating domains (TADs), chromatin loops, and A/B compartments. Returns experiment accessions, biosample details, and metadata. Use this to find 3D genome structure data for specific cell types or tissues. Intact Hi-C is the newer protocol with improved resolution.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "assay_type": {
+          "type": "string",
+          "default": "intact Hi-C",
+          "description": "Hi-C assay type: 'intact Hi-C' (newer protocol, better resolution) or 'Hi-C' (original protocol). Default is 'intact Hi-C'."
+        },
+        "biosample_term_name": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Biosample name filter (e.g., 'K562', 'GM12878', 'H1'). Leave empty for all."
+        },
+        "organism": {
+          "type": "string",
+          "default": "Homo sapiens",
+          "description": "Organism scientific name (e.g., 'Homo sapiens', 'Mus musculus')."
+        },
+        "limit": {
+          "type": "integer",
+          "default": 25,
+          "minimum": 1,
+          "maximum": 100,
+          "description": "Maximum number of results to return."
+        }
+      }
+    },
+    "fields": {
+      "endpoint": "encode_hic"
+    },
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "object",
+          "properties": {
+            "total": {
+              "type": "integer"
+            },
+            "experiments": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "accession": {
+                    "type": "string"
+                  },
+                  "assay_title": {
+                    "type": "string"
+                  },
+                  "biosample_summary": {
+                    "type": "string"
+                  },
+                  "description": {
+                    "type": "string"
+                  },
+                  "status": {
+                    "type": "string"
+                  },
+                  "lab": {
+                    "type": "string"
+                  },
+                  "date_released": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          }
+        },
+        {
+          "type": "object",
+          "properties": {
+            "error": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "error"
+          ]
+        }
+      ]
+    },
+    "test_examples": [
+      {
+        "assay_type": "intact Hi-C",
+        "organism": "Homo sapiens",
+        "limit": 5
+      },
+      {
+        "assay_type": "Hi-C",
+        "limit": 3
+      }
+    ]
+  },
+  {
+    "name": "ENCODE_search_microrna_experiments",
+    "type": "EpigenomicsTool",
+    "description": "Search ENCODE microRNA-seq experiments. MicroRNA-seq profiles small regulatory RNAs (miRNAs, ~22nt) that post-transcriptionally regulate gene expression by targeting mRNA 3' UTRs. Returns experiment accessions, biosample details, and metadata. Use this to find miRNA expression profiling data for specific cell types or tissues. ENCODE has 400+ released microRNA-seq experiments across diverse cell types.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "biosample_term_name": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Biosample name filter (e.g., 'K562', 'GM12878', 'liver', 'heart'). Leave empty for all."
+        },
+        "organism": {
+          "type": "string",
+          "default": "Homo sapiens",
+          "description": "Organism scientific name (e.g., 'Homo sapiens', 'Mus musculus')."
+        },
+        "limit": {
+          "type": "integer",
+          "default": 25,
+          "minimum": 1,
+          "maximum": 100,
+          "description": "Maximum number of results to return."
+        }
+      }
+    },
+    "fields": {
+      "endpoint": "encode_microrna"
+    },
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "object",
+          "properties": {
+            "total": {
+              "type": "integer"
+            },
+            "experiments": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "accession": {
+                    "type": "string"
+                  },
+                  "assay_title": {
+                    "type": "string"
+                  },
+                  "biosample_summary": {
+                    "type": "string"
+                  },
+                  "status": {
+                    "type": "string"
+                  },
+                  "lab": {
+                    "type": "string"
+                  },
+                  "date_released": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          }
+        },
+        {
+          "type": "object",
+          "properties": {
+            "error": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "error"
+          ]
+        }
+      ]
+    },
+    "test_examples": [
+      {
+        "biosample_term_name": "K562",
+        "organism": "Homo sapiens",
+        "limit": 5
+      },
+      {
+        "organism": "Homo sapiens",
+        "limit": 10
+      }
+    ]
   }
 ]

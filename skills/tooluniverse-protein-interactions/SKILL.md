@@ -157,6 +157,10 @@ result = analyze_protein_network(
 print(f"Primary source: {result.primary_source}")  # "STRING" or "BioGRID"
 ```
 
+**BioGRID chemical interactions note:** `BioGRID_get_chemical_interactions` always
+returns a limitation note in the response. This is expected behavior -- the tool
+documents that chemical interaction data may be incomplete.
+
 ### 6. Including Structural Data
 
 Add SAXS/SANS solution structures:
@@ -351,6 +355,36 @@ tooluniverse-protein-interactions/
 ├── DOMAIN_ANALYSIS.md         # Design rationale
 └── KNOWN_ISSUES.md            # ToolUniverse limitations
 ```
+
+## Tool-Specific Notes (Updated)
+
+### IntAct Interaction Data
+
+When using IntAct tools (`intact_get_interactions`, `intact_search_interactions`,
+`intact_get_interaction_network`), note that `interaction_ids` are now returned in
+the `metadata` field of the response, NOT as a top-level key. Access them as:
+
+```python
+result = tu.tools.intact_get_interactions(...)
+# Correct: interaction IDs are in metadata
+interaction_ids = result.get("metadata", {}).get("interaction_ids", [])
+# WRONG: result.get("interaction_ids")  -- no longer at top level
+```
+
+### BioGRID Chemical Interactions
+
+`BioGRID_get_chemical_interactions` always includes a limitation note in the
+response indicating that chemical interaction data coverage may be incomplete.
+This is by design. The tool defaults to `taxId=9606` (human) when no organism
+argument is provided.
+
+### IntAct `protein_name` Alias
+
+IntAct tools now support `protein_name` as an alias parameter for protein queries,
+in addition to the original parameter names. This simplifies queries when you have
+a protein name but not the specific identifier format.
+
+---
 
 ## Known Limitations
 
