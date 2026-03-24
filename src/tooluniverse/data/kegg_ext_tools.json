@@ -8,9 +8,22 @@
                 "gene_id": {
                     "type": "string",
                     "description": "KEGG gene identifier in organism:id format. Examples: 'hsa:7157' (human TP53), 'hsa:672' (human BRCA1), 'mmu:22059' (mouse Trp53). Use organism prefix: hsa=human, mmu=mouse, rno=rat, dme=fly, sce=yeast."
+                },
+                "gene_symbol": {
+                    "type": "string",
+                    "description": "Alias for gene_id: human gene symbol (e.g. 'TP53', 'BRCA1'). Auto-resolved to KEGG gene ID using organism='hsa'."
+                },
+                "gene": {
+                    "type": "string",
+                    "description": "Alias for gene_id: human gene symbol (e.g. 'TP53', 'EGFR')."
+                },
+                "organism": {
+                    "type": "string",
+                    "description": "KEGG organism code for gene symbol resolution (default: 'hsa' for human). Used only when gene_symbol is provided instead of gene_id.",
+                    "default": "hsa"
                 }
             },
-            "required": ["gene_id"]
+            "required": []
         },
         "fields": {
             "endpoint": "get_gene_pathways"

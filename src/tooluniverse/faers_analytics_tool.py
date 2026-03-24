@@ -549,13 +549,15 @@ class FAERSAnalyticsTool(BaseTool):
 
             return {
                 "status": "success",
-                "drug_name": drug_name,
-                "meddra_hierarchy": {
-                    "PT_level": pt_level,
-                    "total_unique_PTs": len(pt_level),
+                "data": {
+                    "drug_name": drug_name,
+                    "meddra_hierarchy": {
+                        "PT_level": pt_level,
+                        "total_unique_PTs": len(pt_level),
+                    },
+                    "note": "Full MedDRA hierarchy (HLT, SOC) requires MedDRA license. Showing Preferred Term (PT) level only.",
+                    "recommendation": "Use MedDRA dictionary to map PTs to higher-level terms for system organ class analysis",
                 },
-                "note": "Full MedDRA hierarchy (HLT, SOC) requires MedDRA license. Showing Preferred Term (PT) level only.",
-                "recommendation": "Use MedDRA dictionary to map PTs to higher-level terms for system organ class analysis",
             }
 
         except requests.exceptions.RequestException as e:

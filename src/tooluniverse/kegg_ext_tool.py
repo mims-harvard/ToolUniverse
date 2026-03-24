@@ -20,6 +20,30 @@ from .base_tool import BaseTool
 KEGG_BASE_URL = "https://rest.kegg.jp"
 
 
+def _parse_tsv_column(text: str, column: int = 0) -> list:
+    """Extract a single column from KEGG tab-separated text output."""
+    results = []
+    for line in text.strip().split("\n"):
+        parts = line.strip().split("\t")
+        if len(parts) > column:
+            results.append(parts[column])
+    return results
+
+
+def _fetch_pathway_names(organism: str, timeout: int) -> Dict[str, str]:
+    """Fetch pathway_id → pathway_name mapping for an organism."""
+    url = f"{KEGG_BASE_URL}/list/pathway/{organism}"
+    resp = requests.get(url, timeout=timeout)
+    if resp.status_code != 200:
+        return {}
+    pw_names = {}
+    for line in resp.text.strip().split("\n"):
+        parts = line.strip().split("\t")
+        if len(parts) >= 2:
+            pw_names[parts[0]] = parts[1]
+    return pw_names
+
+
 class KEGGExtTool(BaseTool):
     """
     Tool for KEGG REST API extended endpoints providing gene-pathway links,
@@ -95,35 +119,61 @@ class KEGGExtTool(BaseTool):
         else:
             return {"status": "error", "error": f"Unknown endpoint: {self.endpoint}"}
 
+    def _resolve_gene_symbol(self, symbol: str, organism: str = "hsa") -> str:
+        """Resolve gene symbol (e.g. TP53) to KEGG gene ID (e.g. hsa:7157).
+
+        Parses /find results and matches by exact gene symbol (case-insensitive).
+        """
+        url = f"{KEGG_BASE_URL}/find/{organism}/{symbol}"
+        resp = requests.get(url, timeout=self.timeout)
+        if resp.status_code != 200 or not resp.text.strip():
+            return ""
+        symbol_upper = symbol.upper()
+        for line in resp.text.strip().split("\n"):
+            parts = line.split("\t")
+            if len(parts) < 2:
+                continue
+            kegg_id = parts[0].strip()
+            # Format: "SYMBOL1, SYN2, SYN3; description"
+            annotation = parts[1].split(";")[0]
+            symbols = [s.strip().upper() for s in annotation.split(",")]
+            if symbol_upper in symbols:
+                return kegg_id
+        return ""
+
     def _get_gene_pathways(self, arguments: Dict[str, Any]) -> Dict[str, Any]:
         """Get all KEGG pathways that a gene participates in."""
-        gene_id = arguments.get("gene_id", "")
+        gene_id = (
+            arguments.get("gene_id")
+            or arguments.get("gene_symbol")
+            or arguments.get("gene")
+            or ""
+        )
         if not gene_id:
             return {
                 "status": "error",
-                "error": "gene_id is required (e.g., 'hsa:7157' for human TP53)",
+                "error": "gene_id is required (e.g., 'hsa:7157' for human TP53). You may also pass gene_symbol='TP53'.",
             }
 
-        # Ensure proper KEGG format (org:id)
+        # Auto-resolve gene symbol to KEGG ID (e.g. TP53 → hsa:7157)
+        organism = arguments.get("organism", "hsa")
         if ":" not in gene_id:
-            return {
-                "status": "error",
-                "error": "gene_id must be in KEGG format 'organism:id' (e.g., 'hsa:7157')",
-            }
+            resolved = self._resolve_gene_symbol(gene_id, organism)
+            if not resolved:
+                return {
+                    "status": "error",
+                    "error": f"Could not resolve gene symbol '{gene_id}' to a KEGG gene ID for organism '{organism}'. Use KEGG format 'hsa:7157' directly, or verify the gene symbol.",
+                }
+            gene_id = resolved
 
-        # Get pathway links
+        # Get pathway links for this gene
         url = f"{KEGG_BASE_URL}/link/pathway/{gene_id}"
         response = requests.get(url, timeout=self.timeout)
         response.raise_for_status()
 
-        pathways = []
-        for line in response.text.strip().split("\n"):
-            if line.strip():
-                parts = line.strip().split("\t")
-                if len(parts) >= 2:
-                    pathways.append(parts[1])
+        pathway_ids = _parse_tsv_column(response.text, column=1)
 
-        if not pathways:
+        if not pathway_ids:
             return {
                 "status": "success",
                 "data": {
@@ -134,33 +184,14 @@ class KEGGExtTool(BaseTool):
                 "metadata": {"source": "KEGG REST API", "gene_id": gene_id},
             }
 
-        # Get pathway names
-        pathway_details = []
-        for pw_id in pathways:
-            pathway_details.append({"pathway_id": pw_id})
-
-        # Batch get pathway names via list
+        # Batch-fetch pathway names for this organism
         org = gene_id.split(":")[0]
-        list_url = f"{KEGG_BASE_URL}/list/pathway/{org}"
-        list_response = requests.get(list_url, timeout=self.timeout)
+        pw_names = _fetch_pathway_names(org, self.timeout)
 
-        if list_response.status_code == 200:
-            pw_names = {}
-            for line in list_response.text.strip().split("\n"):
-                if line.strip():
-                    parts = line.strip().split("\t")
-                    if len(parts) >= 2:
-                        pw_names[parts[0]] = parts[1]
-
-            for pd in pathway_details:
-                # Map path:hsaXXXXX format
-                pw_id = pd["pathway_id"]
-                name = pw_names.get(pw_id, "")
-                if not name:
-                    # Try without path: prefix
-                    short_id = pw_id.replace("path:", "")
-                    name = pw_names.get(short_id, "")
-                pd["pathway_name"] = name
+        pathway_details = []
+        for pw_id in pathway_ids:
+            name = pw_names.get(pw_id) or pw_names.get(pw_id.replace("path:", ""), "")
+            pathway_details.append({"pathway_id": pw_id, "pathway_name": name})
 
         return {
             "status": "success",
