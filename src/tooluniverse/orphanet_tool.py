@@ -61,7 +61,11 @@ class OrphanetTool(BaseTool):
         """Execute Orphanet API call based on operation type."""
         # Normalize orpha_code aliases
         if not arguments.get("orpha_code"):
-            alias = arguments.get("orphacode") or arguments.get("orpha_id")
+            alias = (
+                arguments.get("orphacode")
+                or arguments.get("orpha_id")
+                or arguments.get("disease_id")
+            )
             if alias:
                 arguments = dict(arguments, orpha_code=alias)
         operation = arguments.get("operation", "")
