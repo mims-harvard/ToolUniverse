@@ -1,5 +1,5 @@
 import requests
-from typing import Dict, Any, Optional
+from typing import Any, Dict, Optional, cast
 from .base_tool import BaseTool
 from .tool_registry import register_tool
 
@@ -7,7 +7,7 @@ from .tool_registry import register_tool
 class GWASRESTTool(BaseTool):
     """Base class for GWAS Catalog REST API tools."""
 
-    def __init__(self, tool_config):
+    def __init__(self, tool_config: Dict[str, Any]) -> None:
         super().__init__(tool_config)
         self.base_url = "https://www.ebi.ac.uk/gwas/rest/api"
         self.endpoint = ""  # Will be set by subclasses
@@ -20,7 +20,7 @@ class GWASRESTTool(BaseTool):
         try:
             response = requests.get(url, params=params, timeout=60)
             response.raise_for_status()
-            return response.json()
+            return cast(Dict[str, Any], response.json())
         except requests.exceptions.RequestException as e:
             return {"error": f"Request failed: {str(e)}"}
 
@@ -91,7 +91,7 @@ class GWASRESTTool(BaseTool):
             for trait in traits:
                 label = trait.get("trait", "")
                 if self._label_overlaps(disease_trait, label) >= 0.4:
-                    short_name = trait.get("shortForm")
+                    short_name: Optional[str] = trait.get("shortForm")
                     if short_name:
                         return short_name
         except Exception:
@@ -137,13 +137,13 @@ class GWASRESTTool(BaseTool):
 class GWASAssociationSearch(GWASRESTTool):
     """Search for GWAS associations by various criteria."""
 
-    def __init__(self, tool_config):
+    def __init__(self, tool_config: Dict[str, Any]) -> None:
         super().__init__(tool_config)
         self.endpoint = "/v2/associations"
 
     def run(self, arguments: Dict[str, Any]) -> Dict[str, Any]:
         """Search for associations with optional filters."""
-        params = {}
+        params: Dict[str, Any] = {}
 
         # Handle various search parameters
         disease_trait = self._coerce_str(arguments.get("disease_trait"))
@@ -199,13 +199,13 @@ class GWASAssociationSearch(GWASRESTTool):
 class GWASStudySearch(GWASRESTTool):
     """Search for GWAS studies by various criteria."""
 
-    def __init__(self, tool_config):
+    def __init__(self, tool_config: Dict[str, Any]) -> None:
         super().__init__(tool_config)
         self.endpoint = "/v2/studies"
 
     def run(self, arguments: Dict[str, Any]) -> Dict[str, Any]:
         """Search for studies with optional filters."""
-        params = {}
+        params: Dict[str, Any] = {}
 
         disease_trait = self._coerce_str(arguments.get("disease_trait"))
 
@@ -253,13 +253,13 @@ class GWASStudySearch(GWASRESTTool):
 class GWASSNPSearch(GWASRESTTool):
     """Search for GWAS single nucleotide polymorphisms (SNPs)."""
 
-    def __init__(self, tool_config):
+    def __init__(self, tool_config: Dict[str, Any]) -> None:
         super().__init__(tool_config)
         self.endpoint = "/v2/single-nucleotide-polymorphisms"
 
     def run(self, arguments: Dict[str, Any]) -> Dict[str, Any]:
         """Search for SNPs with optional filters."""
-        params = {}
+        params: Dict[str, Any] = {}
 
         if "rs_id" in arguments:
             params["rs_id"] = arguments["rs_id"]
@@ -279,7 +279,7 @@ class GWASSNPSearch(GWASRESTTool):
 class GWASAssociationByID(GWASRESTTool):
     """Get a specific GWAS association by its ID."""
 
-    def __init__(self, tool_config):
+    def __init__(self, tool_config: Dict[str, Any]) -> None:
         super().__init__(tool_config)
         self.endpoint = "/v2/associations"
 
@@ -296,7 +296,7 @@ class GWASAssociationByID(GWASRESTTool):
 class GWASStudyByID(GWASRESTTool):
     """Get a specific GWAS study by its ID."""
 
-    def __init__(self, tool_config):
+    def __init__(self, tool_config: Dict[str, Any]) -> None:
         super().__init__(tool_config)
         self.endpoint = "/v2/studies"
 
@@ -313,7 +313,7 @@ class GWASStudyByID(GWASRESTTool):
 class GWASSNPByID(GWASRESTTool):
     """Get a specific GWAS SNP by its rs ID."""
 
-    def __init__(self, tool_config):
+    def __init__(self, tool_config: Dict[str, Any]) -> None:
         super().__init__(tool_config)
         self.endpoint = "/v2/single-nucleotide-polymorphisms"
 
@@ -331,7 +331,7 @@ class GWASSNPByID(GWASRESTTool):
 class GWASVariantsForTrait(GWASRESTTool):
     """Get all variants associated with a specific trait."""
 
-    def __init__(self, tool_config):
+    def __init__(self, tool_config: Dict[str, Any]) -> None:
         super().__init__(tool_config)
         self.endpoint = "/v2/associations"
 
@@ -355,7 +355,7 @@ class GWASVariantsForTrait(GWASRESTTool):
                 "error": "Provide at least one of: disease_trait, efo_id (or efo_uri), efo_trait."
             }
 
-        params = {
+        params: Dict[str, Any] = {
             "size": arguments.get("size", 200),
             "page": arguments.get("page", 0),
         }
@@ -376,7 +376,7 @@ class GWASVariantsForTrait(GWASRESTTool):
 class GWASAssociationsForTrait(GWASRESTTool):
     """Get all associations for a specific trait, sorted by p-value."""
 
-    def __init__(self, tool_config):
+    def __init__(self, tool_config: Dict[str, Any]) -> None:
         super().__init__(tool_config)
         self.endpoint = "/v2/associations"
 
@@ -400,7 +400,7 @@ class GWASAssociationsForTrait(GWASRESTTool):
                 "error": "Provide at least one of: disease_trait, efo_id (or efo_uri), efo_trait."
             }
 
-        params = {
+        params: Dict[str, Any] = {
             "sort": "p_value",
             "direction": "asc",
             "size": arguments.get("size", 40),
@@ -423,7 +423,7 @@ class GWASAssociationsForTrait(GWASRESTTool):
 class GWASAssociationsForSNP(GWASRESTTool):
     """Get all associations for a specific SNP."""
 
-    def __init__(self, tool_config):
+    def __init__(self, tool_config: Dict[str, Any]) -> None:
         super().__init__(tool_config)
         self.endpoint = "/v2/associations"
 
@@ -433,7 +433,7 @@ class GWASAssociationsForSNP(GWASRESTTool):
         if not rs_id:
             return {"error": "rs_id is required"}
 
-        params = {
+        params: Dict[str, Any] = {
             "rs_id": rs_id,
             "size": self._coerce_int(arguments.get("size")) or 200,
             "page": self._coerce_int(arguments.get("page")) or 0,
@@ -454,7 +454,7 @@ class GWASAssociationsForSNP(GWASRESTTool):
 class GWASStudiesForTrait(GWASRESTTool):
     """Get studies for a specific trait with optional filters."""
 
-    def __init__(self, tool_config):
+    def __init__(self, tool_config: Dict[str, Any]) -> None:
         super().__init__(tool_config)
         self.endpoint = "/v2/studies"
 
@@ -470,7 +470,7 @@ class GWASStudiesForTrait(GWASRESTTool):
                 "error": "Provide at least one of: disease_trait, efo_id (or efo_uri), efo_trait."
             }
 
-        params = {
+        params: Dict[str, Any] = {
             "size": self._coerce_int(arguments.get("size")) or 200,
             "page": self._coerce_int(arguments.get("page")) or 0,
         }
@@ -498,7 +498,7 @@ class GWASStudiesForTrait(GWASRESTTool):
 class GWASSNPsForGene(GWASRESTTool):
     """Get SNPs mapped to a specific gene."""
 
-    def __init__(self, tool_config):
+    def __init__(self, tool_config: Dict[str, Any]) -> None:
         super().__init__(tool_config)
         self.endpoint = "/v2/single-nucleotide-polymorphisms"
 

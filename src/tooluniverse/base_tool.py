@@ -44,12 +44,12 @@ class BaseTool:
     # Expose as a static method so subclasses can call self.tool_error(...)
     tool_error = staticmethod(tool_error)
 
-    def __init__(self, tool_config):
+    def __init__(self, tool_config: Dict[str, Any]) -> None:
         self.tool_config = self._apply_defaults(tool_config)
         self._cached_version_hash: Optional[str] = None
 
     @classmethod
-    def get_default_config_file(cls):
+    def get_default_config_file(cls) -> Any:
         """
         Get the path to the default configuration file for this tool type.
 
@@ -74,7 +74,7 @@ class BaseTool:
             import importlib.resources as pkg_resources
         except ImportError:
             # Fallback for Python < 3.9
-            import importlib_resources as pkg_resources
+            import importlib_resources as pkg_resources  # type: ignore[no-redef]
 
         try:
             # Try to use package resources first (works with installed
@@ -97,7 +97,7 @@ class BaseTool:
             return defaults_file
 
     @classmethod
-    def load_defaults_from_file(cls):
+    def load_defaults_from_file(cls) -> Dict[str, Any]:
         """Load defaults from the configuration file"""
         defaults_file = cls.get_default_config_file()
 
@@ -119,7 +119,8 @@ class BaseTool:
 
             # Look for defaults under the tool type key
             tool_type = cls.__name__
-            return data.get(f"{tool_type.lower()}_defaults", {})
+            result: Dict[str, Any] = data.get(f"{tool_type.lower()}_defaults", {})
+            return result
 
         except (FileNotFoundError, json.JSONDecodeError):
             # File doesn't exist or invalid JSON, return empty defaults
@@ -128,7 +129,7 @@ class BaseTool:
             print(f"Warning: Could not load defaults for {cls.__name__}: {e}")
             return {}
 
-    def _apply_defaults(self, tool_config):
+    def _apply_defaults(self, tool_config: Dict[str, Any]) -> Dict[str, Any]:
         """Apply default configuration to the tool config"""
         # Load defaults from file
         defaults = self.load_defaults_from_file()
@@ -168,7 +169,7 @@ class BaseTool:
             will still work - they will only receive the arguments parameter.
         """
 
-    def check_function_call(self, function_call_json):
+    def check_function_call(self, function_call_json: Any) -> Any:
         if isinstance(function_call_json, str):
             function_call_json = extract_function_call_json(function_call_json)
         if function_call_json is not None:
@@ -178,21 +179,21 @@ class BaseTool:
 
     def get_schema_const_operation(self) -> str:
         """Return the const operation value from the tool's parameter schema, or empty string."""
-        return (
+        return str(
             self.tool_config.get("parameter", {})
             .get("properties", {})
             .get("operation", {})
             .get("const", "")
         )
 
-    def get_required_parameters(self):
+    def get_required_parameters(self) -> list[str]:
         """
         Retrieve required parameters from the endpoint definition.
         Returns
         list: List of required parameters for the given endpoint.
         """
         schema = self.tool_config.get("parameter", {})
-        required_params = schema.get("required", [])
+        required_params: list[str] = schema.get("required", [])
         return required_params
 
     def validate_parameters(self, arguments: Dict[str, Any]) -> Optional[ToolError]:
@@ -386,7 +387,7 @@ class BaseTool:
         Returns
             True if tool supports streaming, False otherwise
         """
-        return self.tool_config.get("supports_streaming", False)
+        return bool(self.tool_config.get("supports_streaming", False))
 
     def supports_caching(self) -> bool:
         """
@@ -395,7 +396,7 @@ class BaseTool:
         Returns
             True if tool results can be cached, False otherwise
         """
-        return self.tool_config.get("cacheable", True)
+        return bool(self.tool_config.get("cacheable", True))
 
     def get_batch_concurrency_limit(self) -> int:
         """Return maximum concurrent executions allowed during batch runs (0 = unlimited)."""
@@ -410,7 +411,7 @@ class BaseTool:
 
     def get_cache_namespace(self) -> str:
         """Return cache namespace identifier for this tool."""
-        return self.tool_config.get("name", self.__class__.__name__)
+        return str(self.tool_config.get("name", self.__class__.__name__))
 
     def get_cache_version(self) -> str:
         """Return a stable cache version fingerprint for this tool."""

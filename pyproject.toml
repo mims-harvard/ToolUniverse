@@ -187,3 +187,35 @@ unsafe-fixes = true
 
 [tool.ruff.lint]
 ignore = ["E203", "E402", "E501", "F401", "F541"]
+
+# ---------------------------------------------------------------------------
+# mypy: gradual adoption — strict for infrastructure, lenient for tool wrappers
+# ---------------------------------------------------------------------------
+[tool.mypy]
+python_version = "3.12"
+ignore_missing_imports = true
+follow_imports = "silent"
+# Default: lenient — don't block on the 200+ tool wrapper files
+disallow_untyped_defs = false
+warn_return_any = false
+warn_unused_configs = true
+show_error_codes = true
+pretty = true
+exclude = [
+    "docs/",
+    "examples/",
+    "skills/",
+    "tests/",
+    ".venv/",
+]
+
+# Strict overrides for infrastructure files we own and maintain.
+# New files should be added here as they are type-hardened.
+[[tool.mypy.overrides]]
+module = [
+    "tooluniverse.base_tool",
+    "tooluniverse.gwas_tool",
+    "tooluniverse.semantic_scholar_tool",
+]
+disallow_untyped_defs = true
+warn_return_any = true
