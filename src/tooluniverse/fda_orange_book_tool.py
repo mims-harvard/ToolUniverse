@@ -345,36 +345,39 @@ class FDAOrangeBookTool(BaseTool):
                                 drugs.append(d)
                                 seen.add(d["application_number"])
 
-            # Categorize reference vs generic products
+            # Categorize reference vs generic products (one entry per application number)
             reference_drugs = []
             generic_drugs = []
-            seen_apps: set = set()
+            seen_ref_apps: set = set()
+            seen_gen_apps: set = set()
 
             for drug in drugs:
                 app_num = drug.get("application_number", "")
-                if app_num in seen_apps:
-                    continue
-                seen_apps.add(app_num)
                 for product in drug.get("products", []):
                     if product.get("reference_drug") == "Yes":
-                        reference_drugs.append(
-                            {
-                                "application_number": app_num,
-                                "brand_name": product.get("brand_name"),
-                                "sponsor": drug.get("sponsor_name"),
-                                "marketing_status": product.get("marketing_status"),
-                            }
-                        )
+                        if app_num not in seen_ref_apps:
+                            seen_ref_apps.add(app_num)
+                            reference_drugs.append(
+                                {
+                                    "application_number": app_num,
+                                    "brand_name": product.get("brand_name"),
+                                    "sponsor": drug.get("sponsor_name"),
+                                    "marketing_status": product.get("marketing_status"),
+                                }
+                            )
                     else:
-                        generic_drugs.append(
-                            {
-                                "application_number": app_num,
-                                "brand_name": product.get("brand_name") or "Generic",
-                                "sponsor": drug.get("sponsor_name"),
-                                "marketing_status": product.get("marketing_status"),
-                                "te_code": product.get("te_code"),
-                            }
-                        )
+                        if app_num not in seen_gen_apps:
+                            seen_gen_apps.add(app_num)
+                            generic_drugs.append(
+                                {
+                                    "application_number": app_num,
+                                    "brand_name": product.get("brand_name")
+                                    or "Generic",
+                                    "sponsor": drug.get("sponsor_name"),
+                                    "marketing_status": product.get("marketing_status"),
+                                    "te_code": product.get("te_code"),
+                                }
+                            )
 
             return {
                 "status": "success",

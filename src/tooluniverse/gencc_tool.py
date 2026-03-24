@@ -131,7 +131,10 @@ class GenCCTool(BaseTool):
 
             # Filter by gene symbol
             matches = [
-                r for r in records if r.get("gene_symbol", "").upper() == gene_symbol
+                r
+                for r in records
+                if r.get("gene_symbol", "").upper() == gene_symbol
+                or r.get("submitted_as_hgnc_symbol", "").upper() == gene_symbol
             ]
 
             # Optional classification filter
@@ -306,10 +309,26 @@ class GenCCTool(BaseTool):
                 - submitter: Optional filter by submitting organization name
         """
         submitter_filter = arguments.get("submitter", "")
+        gene_symbol = arguments.get("gene_symbol", "").strip().upper()
+        disease_filter = arguments.get("disease", "").strip().lower()
 
         try:
             records = _download_gencc_data()
 
+            if gene_symbol:
+                records = [
+                    r
+                    for r in records
+                    if r.get("gene_symbol", "").upper() == gene_symbol
+                    or r.get("submitted_as_hgnc_symbol", "").upper() == gene_symbol
+                ]
+            if disease_filter:
+                records = [
+                    r
+                    for r in records
+                    if disease_filter in r.get("disease_title", "").lower()
+                    or disease_filter in r.get("disease_curie", "").lower()
+                ]
             if submitter_filter:
                 records = [
                     r

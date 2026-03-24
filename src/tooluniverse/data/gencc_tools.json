@@ -181,7 +181,7 @@
   },
   {
     "name": "GenCC_get_classifications",
-    "description": "Get summary statistics of gene-disease validity classifications from GenCC (Gene Curation Coalition). Returns counts for each classification level (Definitive, Strong, Moderate, Limited, etc.), total submissions, unique genes, unique diseases, and top contributing organizations. Useful for understanding the landscape of curated gene-disease evidence.",
+    "description": "Get summary statistics of gene-disease validity classifications from GenCC. Returns counts per classification level (Definitive, Strong, Moderate, Limited, etc.). Optionally filter by gene_symbol (e.g., 'GBA'), disease name substring, or submitter organization. Without filters, returns global stats across all 40,000+ curated submissions.",
     "type": "GenCCTool",
     "parameter": {
       "type": "object",
@@ -190,6 +190,14 @@
           "type": "string",
           "const": "get_classifications",
           "description": "Operation type (fixed: get_classifications)"
+        },
+        "gene_symbol": {
+          "type": "string",
+          "description": "Optional HGNC gene symbol to filter classification stats (e.g., 'GBA', 'BRCA2')"
+        },
+        "disease": {
+          "type": "string",
+          "description": "Optional disease name substring to filter classification stats (e.g., 'Gaucher', 'breast cancer')"
         },
         "submitter": {
           "type": "string",
