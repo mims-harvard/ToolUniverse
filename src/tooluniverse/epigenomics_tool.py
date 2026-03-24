@@ -155,6 +155,7 @@ class EpigenomicsTool(BaseTool):
             or arguments.get("biosample")
             or arguments.get("biosample_term")
             or arguments.get("cell_type")
+            or arguments.get("tissue")
         )
         if biosample:
             params["biosample_ontology.term_name"] = biosample
@@ -188,10 +189,12 @@ class EpigenomicsTool(BaseTool):
                     "metadata": {
                         "source": "ENCODE",
                         "total": 0,
-                        "note": f"No results for biosample_term_name='{biosample}'. "
-                        "ENCODE requires ontology cell line/tissue names (e.g., 'K562', "
-                        "'HepG2', 'liver'), not disease names. Use GEO_search_chipseq_datasets "
-                        "for disease-based searches.",
+                        "note": f"No results for biosample='{biosample}'. "
+                        "ENCODE requires exact ontology names for cell lines or tissues "
+                        "(e.g., 'K562', 'HepG2', 'liver', 'brain', 'breast epithelium', 'MCF-7'). "
+                        "Common anatomy terms like 'breast' must be spelled as ENCODE uses them "
+                        "(try 'breast epithelium', 'mammary gland', or a cell line like 'MCF-7'). "
+                        "Use GEO_search_chipseq_datasets for disease-based searches.",
                     },
                 }
 

@@ -312,8 +312,9 @@ class FDAOrangeBookTool(BaseTool):
                     "error": "Must provide brand_name, generic_name, or drug_name",
                 }
 
-            # Step 1: Search by brand_name/generic_name to find the reference drug
-            search_result = self._search_drug(arguments)
+            # Step 1: Search by brand_name/generic_name to find the reference drug.
+            # Use limit=100 to avoid missing reference drugs beyond the default 10.
+            search_result = self._search_drug({**arguments, "limit": 100})
             if search_result.get("status") != "success":
                 return search_result
 

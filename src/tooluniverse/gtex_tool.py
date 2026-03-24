@@ -215,7 +215,8 @@ class GTExEQTLTool:
         if tissue:
             query["tissueSiteDetailId"] = tissue
         if "page" in arguments:
-            query["page"] = int(arguments["page"])
+            # User-facing page is 1-indexed; GTEx API is 0-indexed
+            query["page"] = max(0, int(arguments["page"]) - 1)
         if "size" in arguments:
             query["pageSize"] = int(arguments["size"])
 
