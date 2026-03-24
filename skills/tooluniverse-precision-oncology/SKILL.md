@@ -67,6 +67,9 @@ Phase 6: Report Synthesis -> Executive summary + prioritized recommendations
 - `COSMIC_get_mutations_by_gene` / `COSMIC_search_mutations` - Somatic mutations
 - `GDC_get_mutation_frequency` / `GDC_get_ssm_by_gene` - TCGA patient data
 - `GDC_get_gene_expression` / `GDC_get_cnv_data` - Expression and CNV
+- `GDC_get_survival` - Kaplan-Meier survival data by project and optional gene mutation filter
+- `GDC_get_clinical_data` - TCGA clinical metadata (stage, vital status, treatment, demographics)
+- `Progenetix_cnv_search` - Copy number variation biosamples by genomic region and cancer type (NCIt code)
 - `DepMap_get_gene_dependencies` / `DepMap_get_drug_response` - Target essentiality
 - `OncoKB_annotate_variant` / `OncoKB_get_gene_info` - Actionability
 - `cBioPortal_get_mutations` / `cBioPortal_get_cancer_studies` - Cross-study data
@@ -76,7 +79,7 @@ Phase 6: Report Synthesis -> Executive summary + prioritized recommendations
 - `CELLxGENE_get_expression_data` / `CELLxGENE_get_cell_metadata` - Cell-type expression
 
 ### Phase 3: Treatment Options
-- `OpenTargets_get_associated_drugs_by_target_ensemblId` - Approved drugs
+- `OpenTargets_get_associated_drugs_by_target_ensemblID` - Approved drugs
 - `DailyMed_search_spls` - FDA label details
 - `ChEMBL_get_drug_mechanisms_of_action_by_chemblId` - Drug mechanism
 
