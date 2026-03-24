@@ -42,9 +42,15 @@ class GPCRdbTool(BaseTool):
 
     def run(self, arguments: Dict[str, Any]) -> Dict[str, Any]:
         """Execute GPCRdb API call based on operation type."""
-        # Normalize protein_id alias → protein
-        if not arguments.get("protein") and arguments.get("protein_id"):
-            arguments = dict(arguments, protein=arguments["protein_id"])
+        # Normalize aliases → protein
+        if not arguments.get("protein"):
+            alias = (
+                arguments.get("protein_id")
+                or arguments.get("receptor_name")
+                or arguments.get("protein_name")
+            )
+            if alias:
+                arguments = dict(arguments, protein=alias)
 
         operation = arguments.get("operation", "")
         # Auto-fill operation from tool config const if not provided by user
@@ -298,6 +304,19 @@ class GPCRdbTool(BaseTool):
             data = response.json()
 
             ligands = data if isinstance(data, list) else data.get("ligands", [])
+
+            # Filter by ligand type if specified (e.g., agonist, antagonist, inhibitor)
+            # GPCRdb API returns "Ligand type" field (e.g., "small molecule", "peptide")
+            ligand_type = (
+                arguments.get("type") or arguments.get("ligand_type") or ""
+            ).lower()
+            if ligand_type:
+                ligands = [
+                    lig
+                    for lig in ligands
+                    if ligand_type
+                    in (lig.get("Ligand type") or lig.get("type") or "").lower()
+                ]
 
             # Sanitize HTML entities and fix nan DOIs in each ligand record
             for lig in ligands:

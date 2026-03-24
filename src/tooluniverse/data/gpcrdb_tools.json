@@ -18,6 +18,14 @@
         "protein_id": {
           "type": "string",
           "description": "Alias for protein parameter"
+        },
+        "receptor_name": {
+          "type": "string",
+          "description": "Alias for protein. GPCRdb entry name (e.g., adrb2_human)."
+        },
+        "protein_name": {
+          "type": "string",
+          "description": "Alias for protein. GPCRdb entry name (e.g., adrb2_human)."
         }
       },
       "required": []
@@ -125,11 +133,19 @@
         },
         "resolution": {
           "type": "number",
-          "description": "Maximum resolution in Angstroms (client-side filter, e.g., 2.5 returns only structures ≤2.5Å)"
+          "description": "Maximum resolution in Angstroms (client-side filter, e.g., 2.5 returns only structures \u22642.5\u00c5)"
         },
         "protein_id": {
           "type": "string",
           "description": "Alias for protein parameter"
+        },
+        "receptor_name": {
+          "type": "string",
+          "description": "Alias for protein. GPCRdb entry name (e.g., adrb2_human)."
+        },
+        "protein_name": {
+          "type": "string",
+          "description": "Alias for protein. GPCRdb entry name (e.g., adrb2_human)."
         }
       },
       "required": []
@@ -181,6 +197,22 @@
         "protein_id": {
           "type": "string",
           "description": "Alias for protein parameter"
+        },
+        "receptor_name": {
+          "type": "string",
+          "description": "Alias for protein. GPCRdb entry name (e.g., adrb2_human)."
+        },
+        "protein_name": {
+          "type": "string",
+          "description": "Alias for protein. GPCRdb entry name (e.g., adrb2_human)."
+        },
+        "type": {
+          "type": "string",
+          "description": "Ligand class filter (e.g., small molecule, peptide, antibody)."
+        },
+        "ligand_type": {
+          "type": "string",
+          "description": "Alias for type. Ligand class filter (e.g., small molecule, peptide)."
         }
       },
       "required": []
@@ -232,6 +264,14 @@
         "protein_id": {
           "type": "string",
           "description": "Alias for protein parameter"
+        },
+        "receptor_name": {
+          "type": "string",
+          "description": "Alias for protein. GPCRdb entry name (e.g., adrb2_human)."
+        },
+        "protein_name": {
+          "type": "string",
+          "description": "Alias for protein. GPCRdb entry name (e.g., adrb2_human)."
         }
       },
       "required": []

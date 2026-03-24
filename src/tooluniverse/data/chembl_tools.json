@@ -638,10 +638,23 @@
         "offset": {
           "type": "integer",
           "default": 0
+        },
+        "target_chembl_id": {
+          "type": "string",
+          "description": "Alias for target_chembl_id__exact. ChEMBL target ID (e.g., CHEMBL213)."
         }
       },
-      "required": [
-        "target_chembl_id__exact"
+      "oneOf": [
+        {
+          "required": [
+            "target_chembl_id__exact"
+          ]
+        },
+        {
+          "required": [
+            "target_chembl_id"
+          ]
+        }
       ]
     },
     "return_schema": {
