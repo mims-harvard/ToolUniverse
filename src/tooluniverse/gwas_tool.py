@@ -128,8 +128,12 @@ class GWASRESTTool(BaseTool):
                     "status": "error",
                     "error": (
                         f"Could not resolve trait '{disease_trait}' to an EFO ID. "
-                        "Try a more specific name, or provide efo_id directly "
-                        "(e.g., 'EFO_0000305' for breast carcinoma)."
+                        "GWAS Catalog uses specific EFO/MONDO terms. "
+                        "For drug response traits, use the underlying disease instead "
+                        "(e.g., 'depression' or 'major depressive disorder' instead of "
+                        "'antidepressant response'). Or provide efo_id directly "
+                        "(e.g., 'MONDO_0002009' for major depressive disorder, "
+                        "'EFO_0000305' for breast carcinoma)."
                     ),
                 },
             }
@@ -231,8 +235,12 @@ class GWASAssociationSearch(GWASRESTTool):
                     "status": "error",
                     "error": (
                         f"Could not resolve trait '{disease_trait}' to an EFO ID. "
-                        "Try a more specific or standard disease name, "
-                        "or provide efo_id directly (e.g., 'EFO_0001645')."
+                        "GWAS Catalog uses specific EFO/MONDO disease terms. "
+                        "For drug response traits, use the underlying disease "
+                        "(e.g., 'depression' instead of 'antidepressant response', "
+                        "'coronary artery disease' instead of 'statin response'). "
+                        "Or provide efo_id directly (e.g., 'MONDO_0002009' for "
+                        "major depressive disorder, 'EFO_0001645' for myocardial infarction)."
                     ),
                 }
 

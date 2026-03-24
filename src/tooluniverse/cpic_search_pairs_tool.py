@@ -5,7 +5,7 @@ Extends BaseRESTTool with automatic PostgREST operator normalization so users
 can pass plain gene symbols (e.g., 'CYP2D6') instead of 'eq.CYP2D6'.
 """
 
-from typing import Any, Dict
+from typing import Any, Dict, Optional, Tuple
 
 import requests
 
@@ -16,18 +16,27 @@ from .tool_registry import register_tool
 _CPIC_API = "https://api.cpicpgx.org/v1"
 
 
-def _resolve_drug_to_guideline_id(drug_name: str) -> int | None:
-    """Look up CPIC guideline ID for a drug name via CPIC API."""
+def _resolve_drug_to_guideline_id(
+    drug_name: str,
+) -> Optional[Tuple[int, Optional[str]]]:
+    """Look up CPIC guideline ID and RxNorm ID for a drug name via CPIC API.
+
+    Returns (guideline_id, rxnorm_id) tuple, or None if not found.
+    rxnorm_id may be None if the drug has no RxNorm entry.
+    """
     try:
         r = requests.get(
             f"{_CPIC_API}/drug",
-            params={"select": "name,guidelineid", "name": f"ilike.*{drug_name}*"},
+            params={
+                "select": "name,guidelineid,rxnormid",
+                "name": f"ilike.*{drug_name}*",
+            },
             timeout=15,
         )
         r.raise_for_status()
         rows = r.json()
         if rows and rows[0].get("guidelineid"):
-            return rows[0]["guidelineid"]
+            return rows[0]["guidelineid"], rows[0].get("rxnormid")
     except Exception:
         pass
     return None
@@ -44,6 +53,7 @@ class CPICGetRecommendationsTool(BaseTool):
 
     def run(self, arguments: Dict[str, Any]) -> Dict[str, Any]:
         guideline_id = arguments.get("guideline_id")
+        rxnorm_id: Optional[str] = None
 
         if guideline_id is None:
             drug = arguments.get("drug") or arguments.get("drug_name")
@@ -55,8 +65,8 @@ class CPICGetRecommendationsTool(BaseTool):
                         "Use CPIC_list_guidelines to browse available guidelines."
                     ),
                 }
-            guideline_id = _resolve_drug_to_guideline_id(drug)
-            if guideline_id is None:
+            result = _resolve_drug_to_guideline_id(drug)
+            if result is None:
                 return {
                     "status": "error",
                     "error": (
@@ -64,18 +74,23 @@ class CPICGetRecommendationsTool(BaseTool):
                         "Use CPIC_list_guidelines to find valid guideline IDs."
                     ),
                 }
+            guideline_id, rxnorm_id = result
 
         limit = arguments.get("limit", 50) or 50
         offset = arguments.get("offset", 0) or 0
 
         try:
             url = f"{_CPIC_API}/recommendation"
-            params = {
+            params: Dict[str, Any] = {
                 "select": "*,drug(name)",
                 "guidelineid": f"eq.{guideline_id}",
                 "limit": limit,
                 "offset": offset,
             }
+            # Filter by specific drug within multi-drug guidelines (e.g., CYP2D6/Opioids
+            # covers codeine, tramadol, hydrocodone — filter to the requested drug).
+            if rxnorm_id:
+                params["drugid"] = f"eq.RxNorm:{rxnorm_id}"
             r = requests.get(url, params=params, timeout=30)
             r.raise_for_status()
             data = r.json()

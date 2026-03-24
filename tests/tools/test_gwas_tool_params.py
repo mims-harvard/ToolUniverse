@@ -87,17 +87,16 @@ def test_gwas_study_search_accepts_efo_id(monkeypatch):
 
 @pytest.mark.unit
 def test_gwas_search_ignores_empty_values(monkeypatch):
+    """When all filter values are empty/None, the tool returns an error
+    (Feature-81B-008: requires at least one filter to avoid returning 1M+ rows)."""
     tool = GWASAssociationSearch({"name": "gwas_search_associations"})
 
-    captured = {}
-
     def fake_make_request(endpoint, params=None):
-        captured["params"] = params or {}
-        return {"_embedded": {"associations": []}, "_links": {}, "page": {}}
+        raise AssertionError("No network call should be made for all-empty inputs")
 
     monkeypatch.setattr(tool, "_make_request", fake_make_request)
 
-    tool.run(
+    result = tool.run(
         {
             "disease_trait": None,
             "rs_id": "  ",
@@ -109,4 +108,5 @@ def test_gwas_search_ignores_empty_values(monkeypatch):
         }
     )
 
-    assert captured["params"] == {}
+    assert result["status"] == "error"
+    assert "filter" in result["error"].lower() or "required" in result["error"].lower()

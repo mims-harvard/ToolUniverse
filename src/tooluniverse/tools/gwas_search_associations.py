@@ -10,6 +10,7 @@ from ._shared_client import get_shared_client
 
 def gwas_search_associations(
     disease_trait: Optional[str] = None,
+    query: Optional[str] = None,
     efo_uri: Optional[str] = None,
     efo_id: Optional[str] = None,
     efo_trait: Optional[str] = None,
@@ -33,6 +34,8 @@ def gwas_search_associations(
     ----------
     disease_trait : str
         Disease or trait name for text-based search (e.g., 'diabetes', 'coronary arte...
+    query : str
+        Alias for disease_trait. Disease or trait name (e.g., 'type 2 diabetes'). NOT...
     efo_uri : str
         Full EFO ontology URI (e.g., 'http://www.ebi.ac.uk/efo/EFO_0001645')
     efo_id : str
@@ -73,6 +76,7 @@ def gwas_search_associations(
         k: v
         for k, v in {
             "disease_trait": disease_trait,
+            "query": query,
             "efo_uri": efo_uri,
             "efo_id": efo_id,
             "efo_trait": efo_trait,

@@ -1,7 +1,7 @@
 """
 CPIC_get_recommendations
 
-Get drug dosing recommendations from a specific CPIC pharmacogenomic guideline. Returns clinicall...
+Get drug dosing recommendations from a CPIC pharmacogenomic guideline. Returns clinically actiona...
 """
 
 from typing import Any, Optional, Callable
@@ -9,7 +9,9 @@ from ._shared_client import get_shared_client
 
 
 def CPIC_get_recommendations(
-    guideline_id: int,
+    guideline_id: Optional[int] = None,
+    drug: Optional[str] = None,
+    drug_name: Optional[str] = None,
     limit: Optional[int | Any] = None,
     offset: Optional[int | Any] = None,
     *,
@@ -18,12 +20,16 @@ def CPIC_get_recommendations(
     validate: bool = True,
 ) -> Any:
     """
-    Get drug dosing recommendations from a specific CPIC pharmacogenomic guideline. Returns clinicall...
+    Get drug dosing recommendations from a CPIC pharmacogenomic guideline. Returns clinically actiona...
 
     Parameters
     ----------
     guideline_id : int
-        CPIC guideline numeric ID (e.g., 100421 for HLA-B/abacavir, 100416 for CYP2D6...
+        CPIC guideline numeric ID. Alternative to drug/drug_name. Use CPIC_list_guide...
+    drug : str
+        Drug name to auto-resolve guideline_id (e.g., 'codeine', 'abacavir', 'tamoxif...
+    drug_name : str
+        Alias for drug.
     limit : int | Any
         Maximum number of recommendations to return (default 50)
     offset : int | Any
@@ -46,6 +52,8 @@ def CPIC_get_recommendations(
         k: v
         for k, v in {
             "guideline_id": guideline_id,
+            "drug": drug,
+            "drug_name": drug_name,
             "limit": limit,
             "offset": offset,
         }.items()
