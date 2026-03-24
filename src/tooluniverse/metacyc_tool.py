@@ -14,10 +14,16 @@ from typing import Any, Dict, List, Optional
 from .base_tool import BaseTool
 from .tool_registry import register_tool
 
-# BioCyc website (for human-readable URLs)
 BIOCYC_BASE_URL = "https://biocyc.org"
-# BioCyc web services API (for programmatic access)
 BIOCYC_API_URL = "https://websvc.biocyc.org"
+_AUTH_WALL_ERROR = {
+    "status": "error",
+    "error": (
+        "BioCyc now requires a free account for API access. MetaCyc tools are unavailable. "
+        "Create an account at https://biocyc.org/signup.shtml or use KEGG/Reactome tools as alternatives."
+    ),
+    "retryable": False,
+}
 
 
 @register_tool("MetaCycTool")
@@ -165,11 +171,7 @@ class MetaCycTool(BaseTool):
         try:
             xml = self._fetch_biocyc_xml(pathway_id)
             if xml == "AUTH_REQUIRED":
-                return {
-                    "status": "error",
-                    "error": "BioCyc now requires a free account for API access. MetaCyc tools are unavailable. Create an account at https://biocyc.org/signup.shtml or use KEGG/Reactome tools as alternatives.",
-                    "retryable": False,
-                }
+                return _AUTH_WALL_ERROR
             if xml is None:
                 return {"status": "error", "error": f"Pathway not found: {pathway_id}"}
 
@@ -216,11 +218,7 @@ class MetaCycTool(BaseTool):
         try:
             xml = self._fetch_biocyc_xml(compound_id)
             if xml == "AUTH_REQUIRED":
-                return {
-                    "status": "error",
-                    "error": "BioCyc now requires a free account for API access. MetaCyc tools are unavailable. Create an account at https://biocyc.org/signup.shtml or use KEGG/Reactome tools as alternatives.",
-                    "retryable": False,
-                }
+                return _AUTH_WALL_ERROR
             if xml is None:
                 return {
                     "status": "error",
@@ -265,11 +263,7 @@ class MetaCycTool(BaseTool):
         try:
             xml = self._fetch_biocyc_xml(reaction_id)
             if xml == "AUTH_REQUIRED":
-                return {
-                    "status": "error",
-                    "error": "BioCyc now requires a free account for API access. MetaCyc tools are unavailable. Create an account at https://biocyc.org/signup.shtml or use KEGG/Reactome tools as alternatives.",
-                    "retryable": False,
-                }
+                return _AUTH_WALL_ERROR
             if xml is None:
                 return {
                     "status": "error",

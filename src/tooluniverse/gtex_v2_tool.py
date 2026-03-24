@@ -70,27 +70,16 @@ class GTExV2Tool(BaseTool):
                     "error": f"Missing required parameter: {param}",
                 }
 
-        # Allow gene_symbol as alias for gencode_id (auto-resolved by handlers)
         if "gene_symbol" in arguments and "gencode_id" not in arguments:
-            arguments = {**arguments, "gencode_id": arguments["gene_symbol"]}
+            arguments["gencode_id"] = arguments["gene_symbol"]
 
-        operation = arguments.get("operation")
+        operation = arguments.get("operation") or self.get_schema_const_operation()
         if not operation:
-            # Infer operation from the single-value enum in config (each tool has exactly one)
-            op_enum = (
-                self.parameter.get("properties", {})
-                .get("operation", {})
-                .get("enum", [])
-            )
-            if op_enum:
-                operation = op_enum[0]
-            else:
-                return {
-                    "status": "error",
-                    "error": "Missing required parameter: operation",
-                }
+            return {
+                "status": "error",
+                "error": "Missing required parameter: operation",
+            }
 
-        # Route to appropriate operation handler
         operation_handlers = {
             "get_median_gene_expression": self._get_median_gene_expression,
             "get_gene_expression": self._get_gene_expression,

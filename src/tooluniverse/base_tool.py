@@ -152,13 +152,21 @@ class BaseTool:
             return False, "Invalid JSON string of function call"
 
     def get_schema_const_operation(self) -> str:
-        """Return the const operation value from the tool's parameter schema, or empty string."""
-        return (
+        """Return the operation value from the tool's parameter schema, or empty string.
+
+        Checks `const` first (single fixed value), then falls back to the first
+        value in `enum` (single-value enum is equivalent to const).
+        """
+        op_schema = (
             self.tool_config.get("parameter", {})
             .get("properties", {})
             .get("operation", {})
-            .get("const", "")
         )
+        const = op_schema.get("const", "")
+        if const:
+            return const
+        enum = op_schema.get("enum", [])
+        return enum[0] if enum else ""
 
     def get_required_parameters(self):
         """
