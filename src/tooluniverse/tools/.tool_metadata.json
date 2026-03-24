@@ -674,10 +674,20 @@
   "GBIF_search_occurrences": "16b3954fe23ee518f931fc8f5cdffc9e",
   "GBIF_search_species": "73a92b76d6282921f4df933d1aa4df07",
   "GBIF_suggest_species": "7b2423a8cc6d0dd6f16936a9f0034c0b",
+  "GDC_get_clinical_data": {
+    "module": "gdc_tool",
+    "source_json": "gdc_tools.json",
+    "tool_class": "GDCClinicalDataTool"
+  },
   "GDC_get_cnv_data": "8bff28ef559b84c523b8a2bc454bd5c9",
   "GDC_get_gene_expression": "81fe84b1d73548cf544a35258b94b700",
   "GDC_get_mutation_frequency": "14df2a4f759c9cedaaeec1f0df6bef17",
   "GDC_get_ssm_by_gene": "fd41c31ff785283c61e0cff65fe8d18a",
+  "GDC_get_survival": {
+    "module": "gdc_tool",
+    "source_json": "gdc_tools.json",
+    "tool_class": "GDCSurvivalTool"
+  },
   "GDC_list_files": "5f3dadeff451ca633e3221c6a4b8c93e",
   "GDC_list_projects": "d2d76172f587658d1416af1eeed6b2e4",
   "GDC_search_cases": "add45cff4aec38ad13501b2039e529f5",
