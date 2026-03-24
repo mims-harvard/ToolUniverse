@@ -86,7 +86,10 @@
           "description": "Operation type (fixed: get_disease)"
         },
         "orpha_code": {
-          "type": "string",
+          "type": [
+            "string",
+            "integer"
+          ],
           "description": "Orphanet ORPHA code (e.g., 558, 166024). Can include ORPHA: prefix."
         },
         "lang": {
@@ -150,7 +153,10 @@
           "description": "Operation type (fixed: get_genes)"
         },
         "orpha_code": {
-          "type": "string",
+          "type": [
+            "string",
+            "integer"
+          ],
           "description": "Orphanet ORPHA code for the disease"
         }
       },
@@ -213,7 +219,10 @@
           "description": "Operation type (fixed: get_classification)"
         },
         "orpha_code": {
-          "type": "string",
+          "type": [
+            "string",
+            "integer"
+          ],
           "description": "Orphanet ORPHA code"
         },
         "lang": {
@@ -325,7 +334,10 @@
           "description": "Operation type (fixed: get_phenotypes)"
         },
         "orpha_code": {
-          "type": "string",
+          "type": [
+            "string",
+            "integer"
+          ],
           "description": "Orphanet ORPHA code (e.g., 558 for Marfan, 586 for Cystic Fibrosis)"
         }
       },
@@ -400,7 +412,10 @@
           "description": "Operation type (fixed: get_epidemiology)"
         },
         "orpha_code": {
-          "type": "string",
+          "type": [
+            "string",
+            "integer"
+          ],
           "description": "Orphanet ORPHA code (e.g., 558 for Marfan, 586 for Cystic Fibrosis)"
         }
       },
@@ -478,7 +493,10 @@
           "description": "Operation type (fixed: get_natural_history)"
         },
         "orpha_code": {
-          "type": "string",
+          "type": [
+            "string",
+            "integer"
+          ],
           "description": "Orphanet ORPHA code (e.g., 558 for Marfan, 399 for Huntington)"
         }
       },
@@ -642,7 +660,10 @@
           "description": "Operation type (fixed: get_icd_mapping)"
         },
         "orpha_code": {
-          "type": "string",
+          "type": [
+            "string",
+            "integer"
+          ],
           "description": "Orphanet ORPHA code (e.g., 558 for Marfan, 586 for Cystic Fibrosis)"
         },
         "coding_system": {

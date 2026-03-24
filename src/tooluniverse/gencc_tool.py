@@ -173,6 +173,18 @@ class GenCCTool(BaseTool):
                 key=lambda x: CLASSIFICATION_ORDER.get(x["classification"], 99)
             )
 
+            metadata: Dict[str, Any] = {
+                "source": "GenCC (Gene Curation Coalition)",
+                "gene_symbol": gene_symbol,
+            }
+            if not results:
+                # GenCC uses current HGNC-approved symbols; older/alias symbols return empty.
+                metadata["note"] = (
+                    f"No GenCC submissions found for '{gene_symbol}'. "
+                    "GenCC uses current HGNC-approved gene symbols. "
+                    "If the gene was recently renamed (e.g. GBA→GBA1), "
+                    "try the current approved symbol from HGNC."
+                )
             return {
                 "status": "success",
                 "data": {
@@ -181,10 +193,7 @@ class GenCCTool(BaseTool):
                     "submission_count": len(results),
                     "unique_diseases": len(set(r["disease_curie"] for r in results)),
                 },
-                "metadata": {
-                    "source": "GenCC (Gene Curation Coalition)",
-                    "gene_symbol": gene_symbol,
-                },
+                "metadata": metadata,
             }
 
         except requests.exceptions.RequestException as e:

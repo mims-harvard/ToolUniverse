@@ -472,8 +472,15 @@ def _render_run(d: dict) -> str:
     # Feature-25B-02: for "tool not found" errors, replace generic network tips
     # with tool-discovery tips and include fuzzy suggestions when available.
     is_not_found = "not found" in short_err.lower()
+    is_api_key_error = "requires api key" in short_err.lower()
     suggestions = d.get("suggestions") or details.get("suggestions") or []
-    if is_not_found:
+    if is_api_key_error:
+        lines.append("Tips:")
+        lines.append(
+            "  • Set the required environment variable(s) in your shell or .tooluniverse/.env"
+        )
+        lines.append("  • Run `tu status` to check which API keys are configured")
+    elif is_not_found:
         if suggestions:
             lines.append(f"  Did you mean: {', '.join(suggestions[:3])}?")
         lines.append("Tips:")

@@ -362,6 +362,8 @@ class ToolUniverse:
         self.all_tools: List[Dict[str, Any]] = []
         self.all_tool_dict: Dict[str, Dict[str, Any]] = {}
         self.tool_category_dicts: Dict[str, List[Dict[str, Any]]] = {}
+        # Maps tool name → missing required API key names (for better "not found" errors)
+        self._excluded_api_key_tools: Dict[str, List[str]] = {}
         self.tool_finder = None
         if tool_files is None:
             tool_files = default_tool_files
@@ -1263,6 +1265,7 @@ class ToolUniverse:
                 )
                 if not all_keys_available:
                     all_missing_keys.update(missing_keys)
+                    self._excluded_api_key_tools[tool_name] = list(missing_keys)
                     self.logger.debug(
                         f"Skipping tool '{tool_name}' due to missing API keys: {', '.join(missing_keys)}"
                     )
@@ -3123,9 +3126,15 @@ class ToolUniverse:
                             validate,
                         )
                     else:
-                        error_msg = (
-                            f"Tool '{function_name}' not found even after loading tools"
-                        )
+                        _missing_keys = self._excluded_api_key_tools.get(function_name)
+                        if _missing_keys:
+                            error_msg = (
+                                f"Tool '{function_name}' requires API key(s) not set: "
+                                f"{', '.join(_missing_keys)}. "
+                                "Set them as environment variables and retry."
+                            )
+                        else:
+                            error_msg = f"Tool '{function_name}' not found even after loading tools"
                         return self._create_dual_format_error(
                             ToolUnavailableError(
                                 error_msg,
@@ -3299,9 +3308,17 @@ class ToolUniverse:
                         validate,
                     )
                 else:
-                    error_msg = (
-                        f"Tool '{function_name}' not found even after loading tools"
-                    )
+                    _missing_keys = self._excluded_api_key_tools.get(function_name)
+                    if _missing_keys:
+                        error_msg = (
+                            f"Tool '{function_name}' requires API key(s) not set: "
+                            f"{', '.join(_missing_keys)}. "
+                            "Set them as environment variables and retry."
+                        )
+                    else:
+                        error_msg = (
+                            f"Tool '{function_name}' not found even after loading tools"
+                        )
                     return self._create_dual_format_error(
                         ToolUnavailableError(
                             error_msg,
@@ -3809,6 +3826,14 @@ class ToolUniverse:
 
             # Check again after loading
             if function_name not in self.all_tool_dict:
+                missing_keys = self._excluded_api_key_tools.get(function_name)
+                if missing_keys:
+                    return ToolUnavailableError(
+                        f"Tool '{function_name}' requires API key(s) not set: "
+                        f"{', '.join(missing_keys)}. "
+                        "Set them as environment variables and retry.",
+                        retriable=False,
+                    )
                 return ToolUnavailableError(
                     f"Tool '{function_name}' not found even after loading tools",
                     retriable=False,
