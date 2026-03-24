@@ -116,6 +116,18 @@ Classify immune cells, check checkpoint expression, assess Hot vs Cold vs Exclud
 Search published evidence, suggest validation experiments (smFISH, IHC, PLA).
 - Tools: `PubMed_search_articles`, `openalex_literature_search`
 
+### Data Discovery: HuBMAP Spatial Atlas Tools
+
+Use HuBMAP tools to find published spatial biology reference datasets for comparison, validation, or cross-study analysis.
+
+| Tool | Purpose | Key Parameters |
+|------|---------|----------------|
+| `HuBMAP_search_datasets` | Search published spatial datasets by organ/assay/keyword | `organ` (code: "LK"=Kidney, "BR"=Brain, "LU"=Lung, etc.), `dataset_type` ("RNAseq", "CODEX", "MALDI"), `query`, `limit` |
+| `HuBMAP_list_organs` | List all available organs with codes and UBERON IDs | (no required params) |
+| `HuBMAP_get_dataset` | Get detailed metadata for a specific HuBMAP dataset | `hubmap_id` (e.g. "HBM626.FHJD.938") |
+
+**When to use**: Phase 0 (find reference datasets for the tissue), Phase 8 (cross-reference findings with published HuBMAP atlas data).
+
 See **phase-procedures.md** for detailed workflows, decision logic, and tool parameter specifications per phase.
 
 ---

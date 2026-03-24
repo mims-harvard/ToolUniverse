@@ -53,6 +53,39 @@ result = tu.tools.clinvar_search(
 
 ---
 
+### VariantValidator - MANE Transcript Lookup & Variant Validation
+
+| Tool | Purpose | Key Parameters |
+|------|---------|----------------|
+| `VariantValidator_gene2transcripts` | Get MANE Select/Plus Clinical transcripts for a gene | `gene_symbol`, `transcript_set`, `genome_build` |
+| `VariantValidator_validate_variant` | Validate and normalize HGVS variant descriptions | `genome_build`, `variant_description`, `select_transcripts` |
+
+**Example - Get MANE transcript**:
+```python
+result = tu.tools.VariantValidator_gene2transcripts(
+    gene_symbol="TP53", transcript_set="mane", genome_build="GRCh38"
+)
+# Returns: [{current_symbol: "TP53", transcripts: [{reference: "NM_000546.6",
+#   annotations: {mane_select: true, mane_plus_clinical: false}}]}]
+```
+
+**Example - Validate variant**:
+```python
+result = tu.tools.VariantValidator_validate_variant(
+    genome_build="GRCh38",
+    variant_description="NM_007294.4:c.5266dup",
+    select_transcripts="NM_007294.4"
+)
+# Returns: validated HGVS, protein consequence, genomic coordinates, gene IDs
+```
+
+**When to use**:
+- Phase 1: Always use `gene2transcripts` to identify the MANE Select transcript before annotating variants
+- Phase 1: Use `validate_variant` to normalize user-provided HGVS notation and get cross-genome-build coordinates
+- Prefer MANE Select transcript for canonical annotation; fall back to MANE Plus Clinical if relevant
+
+---
+
 ### gnomAD - Population Frequencies
 
 | Tool | Purpose | Key Parameters |

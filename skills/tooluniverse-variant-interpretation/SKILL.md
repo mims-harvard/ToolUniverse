@@ -42,9 +42,18 @@ Phase 6: ACMG CLASSIFICATION      → Evidence codes, classification, recommenda
 
 ## Phase 1: Variant Identity
 
-Tools: `myvariant_query`, `Ensembl_get_variant_info`, `NCBI_gene_search`
+Tools: `myvariant_query`, `Ensembl_get_variant_info`, `NCBI_gene_search`, `VariantValidator_gene2transcripts`, `VariantValidator_validate_variant`
 
-Capture: HGVS notation (c. and p.), gene symbol, canonical transcript (MANE Select), consequence type, amino acid change, exon/intron location.
+**VariantValidator_gene2transcripts**: Look up MANE Select and MANE Plus Clinical transcripts for a gene. Use this to identify the correct canonical transcript before variant annotation.
+- Parameters: `gene_symbol` (e.g. "TP53"), `transcript_set` ("mane" | "refseq" | "ensembl" | "all"), `genome_build` ("GRCh38" default)
+- Returns: Array of `{current_symbol, transcripts: [{reference, annotations: {mane_select, mane_plus_clinical}}]}`
+- Aliases: `gene` and `gene_name` also accepted for `gene_symbol`
+
+**VariantValidator_validate_variant**: Validate HGVS variant descriptions and get normalized notation with genomic/transcript/protein consequences.
+- Parameters: `genome_build` ("GRCh37" | "GRCh38"), `variant_description` (HGVS, e.g. "NM_007294.4:c.5266dup"), `select_transcripts` (transcript or "all")
+- Returns: Validated HGVS, protein consequence, genomic coordinates, gene IDs
+
+Capture: HGVS notation (c. and p.), gene symbol, canonical transcript (MANE Select via VariantValidator), consequence type, amino acid change, exon/intron location.
 
 ## Phase 2: Clinical Databases
 

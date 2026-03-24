@@ -270,6 +270,30 @@ See `ANALYSIS_PROCEDURES.md` for detailed step-by-step flows and edge case handl
 - `HGNC_get_gene_info` - Gene symbol, aliases, IDs
 - `GO_get_annotations_for_gene` - GO annotations
 
+### Sequencing Data Retrieval Tools (SRA)
+- `SRA_search_experiments` - Search NCBI SRA for raw sequencing experiments by keyword, organism, library strategy, or platform
+- `SRA_get_experiment` - Get detailed metadata for a specific SRA experiment by accession
+
+Use SRA tools to find raw epigenomics sequencing data (ChIP-seq, Bisulfite-Seq, ATAC-seq) for cross-study comparison or to identify available datasets for a tissue/condition.
+
+| Tool | Key Parameters | Returns |
+|------|----------------|---------|
+| `SRA_search_experiments` | `query` (free text), `organism` (e.g. "Homo sapiens"), `library_strategy` ("ChIP-Seq", "Bisulfite-Seq", "ATAC-seq"), `platform` ("ILLUMINA"), `limit` | `{data: {total, returned, experiments: [{uid, title, organism, library_strategy, experiment_accession, study_accession, bioproject}]}}` |
+| `SRA_get_experiment` | `accession` (SRX/ERX/DRX/SRP/ERP/DRP) | Full experiment metadata with runs |
+
+```python
+# Example: Find ATAC-seq experiments for human liver
+result = tu.tools.SRA_search_experiments(
+    query="liver", organism="Homo sapiens",
+    library_strategy="ATAC-seq", limit=5
+)
+
+# Example: Find Bisulfite-Seq for breast cancer
+result = tu.tools.SRA_search_experiments(
+    query="breast cancer", library_strategy="Bisulfite-Seq", limit=5
+)
+```
+
 See `TOOLS_REFERENCE.md` for full parameter details and return schemas.
 
 ---

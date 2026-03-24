@@ -31,6 +31,15 @@ Detailed parameter specifications and return schemas for all ToolUniverse tools 
 | `HGNC_get_gene_info` | `symbol: str` | Gene symbol, aliases, IDs |
 | `GO_get_annotations_for_gene` | `gene_id: str` | GO annotations |
 
+## Sequencing Data Retrieval Tools (SRA)
+
+| Tool | Parameters | Returns |
+|------|-----------|---------|
+| `SRA_search_experiments` | `query: str`, `organism: str` (e.g. "Homo sapiens"), `library_strategy: str` ("ChIP-Seq", "Bisulfite-Seq", "ATAC-seq", "RNA-Seq"), `platform: str` ("ILLUMINA"), `limit: int` (default 10) | `{data: {total, returned, query_used, experiments: [{uid, title, organism, platform, library_strategy, experiment_accession, study_accession, bioproject, runs}]}}` |
+| `SRA_get_experiment` | `accession: str` (SRX/ERX/DRX/SRP/ERP/DRP/SRS/ERS/DRS) | Full experiment metadata with title, organism, platform, library info, runs |
+
+**Use cases**: Finding raw ChIP-seq/Bisulfite-Seq/ATAC-seq experiments for cross-study comparison, identifying available datasets for a tissue/condition, retrieving SRA accessions for data download.
+
 ---
 
 ## Critical Tool Notes
