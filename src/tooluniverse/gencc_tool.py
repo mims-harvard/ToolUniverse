@@ -47,6 +47,17 @@ CLASSIFICATION_ORDER = {
 }
 
 
+def _gene_matches(record: Dict[str, str], gene_symbol: str) -> bool:
+    """Match a GenCC record by gene symbol, checking both current and submitted HGNC symbol.
+
+    Needed because HGNC renames genes (e.g. GBA → GBA1); submissions may use the old name.
+    """
+    return (
+        record.get("gene_symbol", "").upper() == gene_symbol
+        or record.get("submitted_as_hgnc_symbol", "").upper() == gene_symbol
+    )
+
+
 def _download_gencc_data() -> List[Dict[str, str]]:
     """Download and parse GenCC TSV data with caching."""
     now = time.time()
@@ -130,12 +141,7 @@ class GenCCTool(BaseTool):
             records = _download_gencc_data()
 
             # Filter by gene symbol
-            matches = [
-                r
-                for r in records
-                if r.get("gene_symbol", "").upper() == gene_symbol
-                or r.get("submitted_as_hgnc_symbol", "").upper() == gene_symbol
-            ]
+            matches = [r for r in records if _gene_matches(r, gene_symbol)]
 
             # Optional classification filter
             if classification_filter:
@@ -308,7 +314,7 @@ class GenCCTool(BaseTool):
             arguments: Dict containing:
                 - submitter: Optional filter by submitting organization name
         """
-        submitter_filter = arguments.get("submitter", "")
+        submitter_filter = arguments.get("submitter", "").strip()
         gene_symbol = arguments.get("gene_symbol", "").strip().upper()
         disease_filter = arguments.get("disease", "").strip().lower()
 
@@ -316,12 +322,7 @@ class GenCCTool(BaseTool):
             records = _download_gencc_data()
 
             if gene_symbol:
-                records = [
-                    r
-                    for r in records
-                    if r.get("gene_symbol", "").upper() == gene_symbol
-                    or r.get("submitted_as_hgnc_symbol", "").upper() == gene_symbol
-                ]
+                records = [r for r in records if _gene_matches(r, gene_symbol)]
             if disease_filter:
                 records = [
                     r
