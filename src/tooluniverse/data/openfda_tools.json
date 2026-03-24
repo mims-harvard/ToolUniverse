@@ -198,7 +198,10 @@
           ]
         }
       ]
-    }
+    },
+    "optional_api_keys": [
+      "FDA_API_KEY"
+    ]
   },
   {
     "name": "OpenFDA_search_drug_events",
@@ -351,7 +354,10 @@
           ]
         }
       ]
-    }
+    },
+    "optional_api_keys": [
+      "FDA_API_KEY"
+    ]
   },
   {
     "name": "OpenFDA_search_drug_ndc",
@@ -483,7 +489,10 @@
           ]
         }
       ]
-    }
+    },
+    "optional_api_keys": [
+      "FDA_API_KEY"
+    ]
   },
   {
     "name": "OpenFDA_search_drug_enforcement",
@@ -615,7 +624,10 @@
           ]
         }
       ]
-    }
+    },
+    "optional_api_keys": [
+      "FDA_API_KEY"
+    ]
   },
   {
     "name": "OpenFDA_search_device_enforcement",
@@ -722,7 +734,10 @@
           ]
         }
       ]
-    }
+    },
+    "optional_api_keys": [
+      "FDA_API_KEY"
+    ]
   },
   {
     "name": "OpenFDA_search_device_510k",
@@ -827,7 +842,10 @@
           ]
         }
       ]
-    }
+    },
+    "optional_api_keys": [
+      "FDA_API_KEY"
+    ]
   },
   {
     "name": "OpenFDA_search_food_enforcement",
@@ -945,6 +963,9 @@
           ]
         }
       ]
-    }
+    },
+    "optional_api_keys": [
+      "FDA_API_KEY"
+    ]
   }
 ]

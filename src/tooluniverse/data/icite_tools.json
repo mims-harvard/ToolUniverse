@@ -118,15 +118,24 @@
                     "description": "True if this is a clinical article"
                   },
                   "human": {
-                    "type": ["number", "null"],
+                    "type": [
+                      "number",
+                      "null"
+                    ],
                     "description": "1 if research involves humans"
                   },
                   "animal": {
-                    "type": ["number", "null"],
+                    "type": [
+                      "number",
+                      "null"
+                    ],
                     "description": "1 if research involves animals"
                   },
                   "molecular_cellular": {
-                    "type": ["number", "null"],
+                    "type": [
+                      "number",
+                      "null"
+                    ],
                     "description": "1 if molecular/cellular research"
                   },
                   "cited_by": {
@@ -160,7 +169,10 @@
           ]
         }
       ]
-    }
+    },
+    "optional_api_keys": [
+      "NCBI_API_KEY"
+    ]
   },
   {
     "name": "iCite_search_publications",
@@ -263,10 +275,16 @@
                     "type": "boolean"
                   },
                   "human": {
-                    "type": ["number", "null"]
+                    "type": [
+                      "number",
+                      "null"
+                    ]
                   },
                   "animal": {
-                    "type": ["number", "null"]
+                    "type": [
+                      "number",
+                      "null"
+                    ]
                   }
                 }
               }
@@ -285,6 +303,9 @@
           ]
         }
       ]
-    }
+    },
+    "optional_api_keys": [
+      "NCBI_API_KEY"
+    ]
   }
 ]

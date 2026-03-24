@@ -8,19 +8,30 @@
       "properties": {
         "operation": {
           "type": "string",
-          "enum": ["search_approvals"],
+          "enum": [
+            "search_approvals"
+          ],
           "description": "Operation type"
         },
         "drug_name": {
-          "type": ["string", "null"],
+          "type": [
+            "string",
+            "null"
+          ],
           "description": "Drug name to search (brand or generic, e.g., 'aspirin', 'metformin', 'Lipitor', 'atorvastatin')"
         },
         "sponsor": {
-          "type": ["string", "null"],
+          "type": [
+            "string",
+            "null"
+          ],
           "description": "Sponsor/manufacturer name (e.g., 'PFIZER', 'MERCK', 'NOVARTIS')"
         },
         "application_number": {
-          "type": ["string", "null"],
+          "type": [
+            "string",
+            "null"
+          ],
           "description": "FDA application number (e.g., 'NDA021457', 'ANDA078372', 'BLA125554')"
         },
         "limit": {
@@ -31,30 +42,104 @@
           "description": "Maximum number of results (default: 5, max: 20)"
         }
       },
-      "required": ["operation"]
+      "required": [
+        "operation"
+      ]
     },
     "return_schema": {
       "type": "object",
       "properties": {
-        "query": {"type": "string", "description": "Search query used"},
-        "total": {"type": "integer", "description": "Total matching approvals in FDA database"},
+        "query": {
+          "type": "string",
+          "description": "Search query used"
+        },
+        "total": {
+          "type": "integer",
+          "description": "Total matching approvals in FDA database"
+        },
         "approvals": {
           "type": "array",
           "items": {
             "type": "object",
             "properties": {
-              "application_number": {"type": ["string", "null"], "description": "FDA application number (NDA/ANDA/BLA)"},
-              "sponsor_name": {"type": ["string", "null"], "description": "Sponsor/manufacturer name"},
-              "brand_name": {"type": ["string", "null"], "description": "Brand name(s)"},
-              "generic_name": {"type": ["string", "null"], "description": "Generic name(s)"},
-              "active_ingredients": {"type": ["array", "null"], "description": "List of active ingredients"},
-              "dosage_forms": {"type": ["array", "null"], "description": "Dosage forms (TABLET, CAPSULE, etc.)"},
-              "routes": {"type": ["array", "null"], "description": "Administration routes (ORAL, INTRAVENOUS, etc.)"},
-              "strengths": {"type": ["array", "null"], "description": "Available strengths"},
-              "original_approval_date": {"type": ["string", "null"], "description": "Original approval date (YYYY-MM-DD)"},
-              "most_recent_submission_date": {"type": ["string", "null"], "description": "Most recent submission date"},
-              "total_submissions": {"type": "integer", "description": "Total FDA submissions for this application"},
-              "product_count": {"type": "integer", "description": "Number of approved products"}
+              "application_number": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "FDA application number (NDA/ANDA/BLA)"
+              },
+              "sponsor_name": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "Sponsor/manufacturer name"
+              },
+              "brand_name": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "Brand name(s)"
+              },
+              "generic_name": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "Generic name(s)"
+              },
+              "active_ingredients": {
+                "type": [
+                  "array",
+                  "null"
+                ],
+                "description": "List of active ingredients"
+              },
+              "dosage_forms": {
+                "type": [
+                  "array",
+                  "null"
+                ],
+                "description": "Dosage forms (TABLET, CAPSULE, etc.)"
+              },
+              "routes": {
+                "type": [
+                  "array",
+                  "null"
+                ],
+                "description": "Administration routes (ORAL, INTRAVENOUS, etc.)"
+              },
+              "strengths": {
+                "type": [
+                  "array",
+                  "null"
+                ],
+                "description": "Available strengths"
+              },
+              "original_approval_date": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "Original approval date (YYYY-MM-DD)"
+              },
+              "most_recent_submission_date": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "Most recent submission date"
+              },
+              "total_submissions": {
+                "type": "integer",
+                "description": "Total FDA submissions for this application"
+              },
+              "product_count": {
+                "type": "integer",
+                "description": "Number of approved products"
+              }
             }
           }
         }
@@ -71,6 +156,9 @@
         "drug_name": "aspirin",
         "limit": 3
       }
+    ],
+    "optional_api_keys": [
+      "FDA_API_KEY"
     ]
   },
   {
@@ -82,50 +170,152 @@
       "properties": {
         "operation": {
           "type": "string",
-          "enum": ["get_approval_history"],
+          "enum": [
+            "get_approval_history"
+          ],
           "description": "Operation type"
         },
         "drug_name": {
-          "type": ["string", "null"],
+          "type": [
+            "string",
+            "null"
+          ],
           "description": "Drug name (brand or generic, e.g., 'warfarin', 'Eliquis', 'pembrolizumab')"
         },
         "application_number": {
-          "type": ["string", "null"],
+          "type": [
+            "string",
+            "null"
+          ],
           "description": "FDA application number (e.g., 'NDA021457'). More specific than drug_name."
         }
       },
-      "required": ["operation"]
+      "required": [
+        "operation"
+      ]
     },
     "return_schema": {
       "type": "object",
       "properties": {
-        "application_number": {"type": ["string", "null"], "description": "FDA application number"},
-        "sponsor_name": {"type": ["string", "null"], "description": "Sponsor/manufacturer"},
-        "brand_name": {"type": ["string", "null"], "description": "Brand name(s)"},
-        "generic_name": {"type": ["string", "null"], "description": "Generic name(s)"},
-        "total_submissions": {"type": "integer", "description": "Total number of submissions"},
+        "application_number": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "FDA application number"
+        },
+        "sponsor_name": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Sponsor/manufacturer"
+        },
+        "brand_name": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Brand name(s)"
+        },
+        "generic_name": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Generic name(s)"
+        },
+        "total_submissions": {
+          "type": "integer",
+          "description": "Total number of submissions"
+        },
         "submission_history": {
           "type": "array",
           "items": {
             "type": "object",
             "properties": {
-              "submission_type": {"type": ["string", "null"], "description": "Type: ORIG (original), SUPPL (supplement)"},
-              "submission_number": {"type": ["string", "null"], "description": "Submission sequence number"},
-              "submission_status": {"type": ["string", "null"], "description": "Status: AP (approved), TA (tentative approval)"},
-              "submission_status_date": {"type": ["string", "null"], "description": "Status date (YYYY-MM-DD)"},
-              "review_priority": {"type": ["string", "null"], "description": "Review priority: STANDARD or PRIORITY"},
-              "submission_class_code": {"type": ["string", "null"], "description": "Class code (e.g., LABELING, MANUF, EFFICACY)"},
-              "submission_class_description": {"type": ["string", "null"], "description": "Human-readable class description"},
+              "submission_type": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "Type: ORIG (original), SUPPL (supplement)"
+              },
+              "submission_number": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "Submission sequence number"
+              },
+              "submission_status": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "Status: AP (approved), TA (tentative approval)"
+              },
+              "submission_status_date": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "Status date (YYYY-MM-DD)"
+              },
+              "review_priority": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "Review priority: STANDARD or PRIORITY"
+              },
+              "submission_class_code": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "Class code (e.g., LABELING, MANUF, EFFICACY)"
+              },
+              "submission_class_description": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "Human-readable class description"
+              },
               "application_docs": {
-                "type": ["array", "null"],
+                "type": [
+                  "array",
+                  "null"
+                ],
                 "description": "Linked FDA review documents",
                 "items": {
                   "type": "object",
                   "properties": {
-                    "id": {"type": ["string", "null"]},
-                    "type": {"type": ["string", "null"]},
-                    "title": {"type": ["string", "null"]},
-                    "url": {"type": ["string", "null"]}
+                    "id": {
+                      "type": [
+                        "string",
+                        "null"
+                      ]
+                    },
+                    "type": {
+                      "type": [
+                        "string",
+                        "null"
+                      ]
+                    },
+                    "title": {
+                      "type": [
+                        "string",
+                        "null"
+                      ]
+                    },
+                    "url": {
+                      "type": [
+                        "string",
+                        "null"
+                      ]
+                    }
                   }
                 }
               }
@@ -143,6 +333,9 @@
         "operation": "get_approval_history",
         "drug_name": "pembrolizumab"
       }
+    ],
+    "optional_api_keys": [
+      "FDA_API_KEY"
     ]
   },
   {
@@ -154,50 +347,144 @@
       "properties": {
         "operation": {
           "type": "string",
-          "enum": ["get_approved_products"],
+          "enum": [
+            "get_approved_products"
+          ],
           "description": "Operation type"
         },
         "drug_name": {
-          "type": ["string", "null"],
+          "type": [
+            "string",
+            "null"
+          ],
           "description": "Drug name (brand or generic, e.g., 'atorvastatin', 'Lipitor')"
         },
         "application_number": {
-          "type": ["string", "null"],
+          "type": [
+            "string",
+            "null"
+          ],
           "description": "FDA application number (e.g., 'NDA020702')"
         }
       },
-      "required": ["operation"]
+      "required": [
+        "operation"
+      ]
     },
     "return_schema": {
       "type": "object",
       "properties": {
-        "application_number": {"type": ["string", "null"], "description": "FDA application number"},
-        "sponsor_name": {"type": ["string", "null"], "description": "Sponsor/manufacturer"},
-        "brand_name": {"type": ["string", "null"], "description": "Brand name(s)"},
-        "generic_name": {"type": ["string", "null"], "description": "Generic name(s)"},
-        "total_products": {"type": "integer", "description": "Total number of approved products"},
+        "application_number": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "FDA application number"
+        },
+        "sponsor_name": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Sponsor/manufacturer"
+        },
+        "brand_name": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Brand name(s)"
+        },
+        "generic_name": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Generic name(s)"
+        },
+        "total_products": {
+          "type": "integer",
+          "description": "Total number of approved products"
+        },
         "products": {
           "type": "array",
           "items": {
             "type": "object",
             "properties": {
-              "product_number": {"type": ["string", "null"], "description": "Product number within the application"},
-              "brand_name": {"type": ["string", "null"], "description": "Product brand name"},
+              "product_number": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "Product number within the application"
+              },
+              "brand_name": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "Product brand name"
+              },
               "active_ingredients": {
-                "type": ["array", "null"],
+                "type": [
+                  "array",
+                  "null"
+                ],
                 "items": {
                   "type": "object",
                   "properties": {
-                    "name": {"type": ["string", "null"], "description": "Active ingredient name"},
-                    "strength": {"type": ["string", "null"], "description": "Strength (e.g., '500MG', '10MG/ML')"}
+                    "name": {
+                      "type": [
+                        "string",
+                        "null"
+                      ],
+                      "description": "Active ingredient name"
+                    },
+                    "strength": {
+                      "type": [
+                        "string",
+                        "null"
+                      ],
+                      "description": "Strength (e.g., '500MG', '10MG/ML')"
+                    }
                   }
                 }
               },
-              "dosage_form": {"type": ["string", "null"], "description": "Dosage form (TABLET, CAPSULE, INJECTION, etc.)"},
-              "route": {"type": ["string", "null"], "description": "Administration route (ORAL, INTRAVENOUS, etc.)"},
-              "marketing_status": {"type": ["string", "null"], "description": "Marketing status (e.g., Prescription, Over-the-counter)"},
-              "reference_drug": {"type": ["string", "null"], "description": "Whether this is the reference listed drug (Yes/No)"},
-              "te_code": {"type": ["string", "null"], "description": "Therapeutic equivalence code (e.g., AB, AA)"}
+              "dosage_form": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "Dosage form (TABLET, CAPSULE, INJECTION, etc.)"
+              },
+              "route": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "Administration route (ORAL, INTRAVENOUS, etc.)"
+              },
+              "marketing_status": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "Marketing status (e.g., Prescription, Over-the-counter)"
+              },
+              "reference_drug": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "Whether this is the reference listed drug (Yes/No)"
+              },
+              "te_code": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "Therapeutic equivalence code (e.g., AB, AA)"
+              }
             }
           }
         }
@@ -212,6 +499,9 @@
         "operation": "get_approved_products",
         "drug_name": "atorvastatin"
       }
+    ],
+    "optional_api_keys": [
+      "FDA_API_KEY"
     ]
   }
 ]

@@ -261,6 +261,9 @@
           "description": "Error message (only present if status is error)"
         }
       }
-    }
+    },
+    "optional_api_keys": [
+      "SEMANTIC_SCHOLAR_API_KEY"
+    ]
   }
 ]

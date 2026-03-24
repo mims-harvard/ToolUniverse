@@ -6,11 +6,17 @@
       "type": "object",
       "properties": {
         "drug_name": {
-          "type": ["string", "null"],
+          "type": [
+            "string",
+            "null"
+          ],
           "description": "Brand or generic drug name to search (e.g., 'metformin', 'atorvastatin', 'lisinopril'). Mutually exclusive with indication."
         },
         "indication": {
-          "type": ["string", "null"],
+          "type": [
+            "string",
+            "null"
+          ],
           "description": "Medical condition to search in indications sections (e.g., 'hypertension', 'type 2 diabetes', 'atrial fibrillation'). Mutually exclusive with drug_name."
         },
         "limit": {
@@ -19,7 +25,9 @@
           "default": 5
         }
       },
-      "required": ["limit"]
+      "required": [
+        "limit"
+      ]
     },
     "fields": {
       "endpoint": "https://api.fda.gov/drug/label.json",
@@ -27,8 +35,14 @@
     },
     "type": "FDALabelTool",
     "test_examples": [
-      {"drug_name": "metformin", "limit": 3},
-      {"indication": "hypertension", "limit": 3}
+      {
+        "drug_name": "metformin",
+        "limit": 3
+      },
+      {
+        "indication": "hypertension",
+        "limit": 3
+      }
     ],
     "return_schema": {
       "oneOf": [
@@ -38,28 +52,97 @@
           "items": {
             "type": "object",
             "properties": {
-              "brand_name": {"type": ["string", "null"]},
-              "generic_name": {"type": ["string", "null"]},
-              "manufacturer": {"type": ["string", "null"]},
-              "route": {"type": ["string", "null"]},
-              "pharm_class": {"type": ["string", "null"]},
-              "boxed_warning": {"type": ["string", "null"]},
-              "indications_and_usage": {"type": ["string", "null"]},
-              "dosage_and_administration": {"type": ["string", "null"]},
-              "contraindications": {"type": ["string", "null"]},
-              "warnings_and_precautions": {"type": ["string", "null"]},
-              "drug_interactions": {"type": ["string", "null"]},
-              "spl_id": {"type": ["string", "null"]}
+              "brand_name": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "generic_name": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "manufacturer": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "route": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "pharm_class": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "boxed_warning": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "indications_and_usage": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "dosage_and_administration": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "contraindications": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "warnings_and_precautions": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "drug_interactions": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "spl_id": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              }
             }
           }
         },
         {
           "type": "object",
-          "properties": {"error": {"type": "string"}},
-          "required": ["error"]
+          "properties": {
+            "error": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "error"
+          ]
         }
       ]
-    }
+    },
+    "optional_api_keys": [
+      "FDA_API_KEY"
+    ]
   },
   {
     "name": "FDA_get_drug_label",
@@ -72,7 +155,9 @@
           "description": "Brand or generic drug name (e.g., 'warfarin', 'Eliquis', 'apixaban', 'atorvastatin', 'metformin')"
         }
       },
-      "required": ["drug_name"]
+      "required": [
+        "drug_name"
+      ]
     },
     "fields": {
       "endpoint": "https://api.fda.gov/drug/label.json",
@@ -80,8 +165,12 @@
     },
     "type": "FDALabelTool",
     "test_examples": [
-      {"drug_name": "warfarin"},
-      {"drug_name": "metformin"}
+      {
+        "drug_name": "warfarin"
+      },
+      {
+        "drug_name": "metformin"
+      }
     ],
     "return_schema": {
       "oneOf": [
@@ -89,33 +178,132 @@
           "type": "object",
           "description": "Complete FDA drug label with all clinical sections",
           "properties": {
-            "brand_name": {"type": ["string", "null"]},
-            "generic_name": {"type": ["string", "null"]},
-            "manufacturer": {"type": ["string", "null"]},
-            "route": {"type": ["string", "null"]},
-            "pharm_class": {"type": ["string", "null"]},
-            "rxcui": {"type": ["array", "null"]},
-            "boxed_warning": {"type": ["string", "null"]},
-            "indications_and_usage": {"type": ["string", "null"]},
-            "dosage_and_administration": {"type": ["string", "null"]},
-            "dosage_forms_and_strengths": {"type": ["string", "null"]},
-            "contraindications": {"type": ["string", "null"]},
-            "warnings_and_precautions": {"type": ["string", "null"]},
-            "adverse_reactions": {"type": ["string", "null"]},
-            "drug_interactions": {"type": ["string", "null"]},
-            "use_in_specific_populations": {"type": ["string", "null"]},
-            "clinical_pharmacology": {"type": ["string", "null"]},
-            "mechanism_of_action": {"type": ["string", "null"]},
-            "spl_id": {"type": ["string", "null"]}
+            "brand_name": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "generic_name": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "manufacturer": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "route": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "pharm_class": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "rxcui": {
+              "type": [
+                "array",
+                "null"
+              ]
+            },
+            "boxed_warning": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "indications_and_usage": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "dosage_and_administration": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "dosage_forms_and_strengths": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "contraindications": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "warnings_and_precautions": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "adverse_reactions": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "drug_interactions": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "use_in_specific_populations": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "clinical_pharmacology": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "mechanism_of_action": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "spl_id": {
+              "type": [
+                "string",
+                "null"
+              ]
+            }
           }
         },
         {
           "type": "object",
-          "properties": {"error": {"type": "string"}},
-          "required": ["error"]
+          "properties": {
+            "error": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "error"
+          ]
         }
       ]
-    }
+    },
+    "optional_api_keys": [
+      "FDA_API_KEY"
+    ]
   },
   {
     "name": "FDA_list_drug_classes",
@@ -129,7 +317,9 @@
           "default": 20
         }
       },
-      "required": ["limit"]
+      "required": [
+        "limit"
+      ]
     },
     "fields": {
       "endpoint": "https://api.fda.gov/drug/label.json",
@@ -137,7 +327,9 @@
     },
     "type": "FDALabelTool",
     "test_examples": [
-      {"limit": 20}
+      {
+        "limit": 20
+      }
     ],
     "return_schema": {
       "oneOf": [
@@ -147,17 +339,30 @@
           "items": {
             "type": "object",
             "properties": {
-              "drug_class": {"type": "string"},
-              "count": {"type": "integer"}
+              "drug_class": {
+                "type": "string"
+              },
+              "count": {
+                "type": "integer"
+              }
             }
           }
         },
         {
           "type": "object",
-          "properties": {"error": {"type": "string"}},
-          "required": ["error"]
+          "properties": {
+            "error": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "error"
+          ]
         }
       ]
-    }
+    },
+    "optional_api_keys": [
+      "FDA_API_KEY"
+    ]
   }
 ]

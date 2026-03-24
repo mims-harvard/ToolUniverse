@@ -362,9 +362,7 @@
           "description": "Alias for id \u2014 ontology term ID (e.g. HP:0001903)"
         }
       },
-      "required": [
-        "id"
-      ]
+      "required": []
     },
     "examples": [
       {

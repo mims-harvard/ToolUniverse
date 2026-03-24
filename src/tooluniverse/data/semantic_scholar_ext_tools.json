@@ -15,16 +15,24 @@
           "default": "paperId,title,abstract,year,citationCount,referenceCount,openAccessPdf,journal,publicationTypes,externalIds,authors,publicationDate,fieldsOfStudy"
         }
       },
-      "required": ["paper_id"]
+      "required": [
+        "paper_id"
+      ]
     },
     "fields": {
       "endpoint": "https://api.semanticscholar.org/graph/v1/paper/{paper_id}"
     },
     "type": "BaseRESTTool",
     "test_examples": [
-      {"paper_id": "DOI:10.1126/science.1225829"},
-      {"paper_id": "PMID:22745249"},
-      {"paper_id": "68d962effe5520777791bd6ec8ffa4b963ba4f38"}
+      {
+        "paper_id": "DOI:10.1126/science.1225829"
+      },
+      {
+        "paper_id": "PMID:22745249"
+      },
+      {
+        "paper_id": "68d962effe5520777791bd6ec8ffa4b963ba4f38"
+      }
     ],
     "return_schema": {
       "oneOf": [
@@ -41,72 +49,152 @@
               "description": "Paper title"
             },
             "abstract": {
-              "type": ["string", "null"],
+              "type": [
+                "string",
+                "null"
+              ],
               "description": "Paper abstract"
             },
             "year": {
-              "type": ["integer", "null"],
+              "type": [
+                "integer",
+                "null"
+              ],
               "description": "Publication year"
             },
             "citationCount": {
-              "type": ["integer", "null"],
+              "type": [
+                "integer",
+                "null"
+              ],
               "description": "Number of citations"
             },
             "referenceCount": {
-              "type": ["integer", "null"],
+              "type": [
+                "integer",
+                "null"
+              ],
               "description": "Number of references"
             },
             "journal": {
-              "type": ["object", "null"],
+              "type": [
+                "object",
+                "null"
+              ],
               "description": "Journal information",
               "properties": {
-                "name": {"type": "string"},
-                "pages": {"type": ["string", "null"]},
-                "volume": {"type": ["string", "null"]}
+                "name": {
+                  "type": "string"
+                },
+                "pages": {
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                },
+                "volume": {
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                }
               }
             },
             "publicationTypes": {
-              "type": ["array", "null"],
+              "type": [
+                "array",
+                "null"
+              ],
               "description": "Publication types (e.g., JournalArticle, Review, Conference)",
-              "items": {"type": "string"}
+              "items": {
+                "type": "string"
+              }
             },
             "openAccessPdf": {
-              "type": ["object", "null"],
+              "type": [
+                "object",
+                "null"
+              ],
               "description": "Open access PDF link if available",
               "properties": {
-                "url": {"type": "string"},
-                "status": {"type": "string"}
+                "url": {
+                  "type": "string"
+                },
+                "status": {
+                  "type": "string"
+                }
               }
             },
             "externalIds": {
-              "type": ["object", "null"],
+              "type": [
+                "object",
+                "null"
+              ],
               "description": "External identifiers (DOI, PubMed, ArXiv, MAG, CorpusId)",
               "properties": {
-                "DOI": {"type": ["string", "null"]},
-                "PubMed": {"type": ["string", "null"]},
-                "ArXiv": {"type": ["string", "null"]},
-                "CorpusId": {"type": ["integer", "null"]}
+                "DOI": {
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                },
+                "PubMed": {
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                },
+                "ArXiv": {
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                },
+                "CorpusId": {
+                  "type": [
+                    "integer",
+                    "null"
+                  ]
+                }
               }
             },
             "authors": {
-              "type": ["array", "null"],
+              "type": [
+                "array",
+                "null"
+              ],
               "description": "Author list",
               "items": {
                 "type": "object",
                 "properties": {
-                  "authorId": {"type": ["string", "null"]},
-                  "name": {"type": "string"}
+                  "authorId": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "name": {
+                    "type": "string"
+                  }
                 }
               }
             },
             "publicationDate": {
-              "type": ["string", "null"],
+              "type": [
+                "string",
+                "null"
+              ],
               "description": "Publication date in YYYY-MM-DD format"
             },
             "fieldsOfStudy": {
-              "type": ["array", "null"],
+              "type": [
+                "array",
+                "null"
+              ],
               "description": "Fields of study (e.g., Biology, Medicine, Computer Science)",
-              "items": {"type": "string"}
+              "items": {
+                "type": "string"
+              }
             }
           }
         },
@@ -118,10 +206,15 @@
               "description": "Error message"
             }
           },
-          "required": ["error"]
+          "required": [
+            "error"
+          ]
         }
       ]
-    }
+    },
+    "optional_api_keys": [
+      "SEMANTIC_SCHOLAR_API_KEY"
+    ]
   },
   {
     "name": "SemanticScholar_search_authors",
@@ -144,16 +237,25 @@
           "default": "name,hIndex,citationCount,paperCount,affiliations"
         }
       },
-      "required": ["query"]
+      "required": [
+        "query"
+      ]
     },
     "fields": {
       "endpoint": "https://api.semanticscholar.org/graph/v1/author/search"
     },
     "type": "BaseRESTTool",
     "test_examples": [
-      {"query": "Jennifer Doudna"},
-      {"query": "Oren Etzioni", "limit": 3},
-      {"query": "Yoshua Bengio"}
+      {
+        "query": "Jennifer Doudna"
+      },
+      {
+        "query": "Oren Etzioni",
+        "limit": 3
+      },
+      {
+        "query": "Yoshua Bengio"
+      }
     ],
     "return_schema": {
       "oneOf": [
@@ -162,7 +264,10 @@
           "description": "Author search results from Semantic Scholar",
           "properties": {
             "total": {
-              "type": ["integer", "null"],
+              "type": [
+                "integer",
+                "null"
+              ],
               "description": "Total number of matching authors"
             },
             "data": {
@@ -172,7 +277,10 @@
                 "type": "object",
                 "properties": {
                   "authorId": {
-                    "type": ["string", "null"],
+                    "type": [
+                      "string",
+                      "null"
+                    ],
                     "description": "Semantic Scholar author ID. Use with SemanticScholar_get_author."
                   },
                   "name": {
@@ -180,21 +288,35 @@
                     "description": "Author display name"
                   },
                   "hIndex": {
-                    "type": ["integer", "null"],
+                    "type": [
+                      "integer",
+                      "null"
+                    ],
                     "description": "h-index"
                   },
                   "citationCount": {
-                    "type": ["integer", "null"],
+                    "type": [
+                      "integer",
+                      "null"
+                    ],
                     "description": "Total citation count"
                   },
                   "paperCount": {
-                    "type": ["integer", "null"],
+                    "type": [
+                      "integer",
+                      "null"
+                    ],
                     "description": "Total number of papers"
                   },
                   "affiliations": {
-                    "type": ["array", "null"],
+                    "type": [
+                      "array",
+                      "null"
+                    ],
                     "description": "Current affiliations",
-                    "items": {"type": "string"}
+                    "items": {
+                      "type": "string"
+                    }
                   }
                 }
               }
@@ -209,10 +331,15 @@
               "description": "Error message"
             }
           },
-          "required": ["error"]
+          "required": [
+            "error"
+          ]
         }
       ]
-    }
+    },
+    "optional_api_keys": [
+      "SEMANTIC_SCHOLAR_API_KEY"
+    ]
   },
   {
     "name": "SemanticScholar_get_author",
@@ -230,15 +357,22 @@
           "default": "name,hIndex,citationCount,paperCount,affiliations,homepage,papers.title,papers.year,papers.citationCount,papers.paperId"
         }
       },
-      "required": ["author_id"]
+      "required": [
+        "author_id"
+      ]
     },
     "fields": {
       "endpoint": "https://api.semanticscholar.org/graph/v1/author/{author_id}"
     },
     "type": "BaseRESTTool",
     "test_examples": [
-      {"author_id": "1741101"},
-      {"author_id": "1741101", "fields": "name,hIndex,citationCount,paperCount,affiliations"}
+      {
+        "author_id": "1741101"
+      },
+      {
+        "author_id": "1741101",
+        "fields": "name,hIndex,citationCount,paperCount,affiliations"
+      }
     ],
     "return_schema": {
       "oneOf": [
@@ -247,7 +381,10 @@
           "description": "Detailed author profile from Semantic Scholar",
           "properties": {
             "authorId": {
-              "type": ["string", "null"],
+              "type": [
+                "string",
+                "null"
+              ],
               "description": "Author ID"
             },
             "name": {
@@ -255,36 +392,76 @@
               "description": "Author name"
             },
             "hIndex": {
-              "type": ["integer", "null"],
+              "type": [
+                "integer",
+                "null"
+              ],
               "description": "h-index"
             },
             "citationCount": {
-              "type": ["integer", "null"],
+              "type": [
+                "integer",
+                "null"
+              ],
               "description": "Total citations across all papers"
             },
             "paperCount": {
-              "type": ["integer", "null"],
+              "type": [
+                "integer",
+                "null"
+              ],
               "description": "Total number of papers"
             },
             "affiliations": {
-              "type": ["array", "null"],
+              "type": [
+                "array",
+                "null"
+              ],
               "description": "Current affiliations",
-              "items": {"type": "string"}
+              "items": {
+                "type": "string"
+              }
             },
             "homepage": {
-              "type": ["string", "null"],
+              "type": [
+                "string",
+                "null"
+              ],
               "description": "Author's homepage URL"
             },
             "papers": {
-              "type": ["array", "null"],
+              "type": [
+                "array",
+                "null"
+              ],
               "description": "Author's papers",
               "items": {
                 "type": "object",
                 "properties": {
-                  "paperId": {"type": ["string", "null"]},
-                  "title": {"type": ["string", "null"]},
-                  "year": {"type": ["integer", "null"]},
-                  "citationCount": {"type": ["integer", "null"]}
+                  "paperId": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "title": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "year": {
+                    "type": [
+                      "integer",
+                      "null"
+                    ]
+                  },
+                  "citationCount": {
+                    "type": [
+                      "integer",
+                      "null"
+                    ]
+                  }
                 }
               }
             }
@@ -298,10 +475,15 @@
               "description": "Error message"
             }
           },
-          "required": ["error"]
+          "required": [
+            "error"
+          ]
         }
       ]
-    }
+    },
+    "optional_api_keys": [
+      "SEMANTIC_SCHOLAR_API_KEY"
+    ]
   },
   {
     "name": "SemanticScholar_get_recommendations",
@@ -324,22 +506,32 @@
           "default": "title,year,citationCount,abstract,authors,externalIds"
         }
       },
-      "required": ["paper_id"]
+      "required": [
+        "paper_id"
+      ]
     },
     "fields": {
       "endpoint": "https://api.semanticscholar.org/recommendations/v1/papers/forpaper/{paper_id}"
     },
     "type": "BaseRESTTool",
     "test_examples": [
-      {"paper_id": "68d962effe5520777791bd6ec8ffa4b963ba4f38", "limit": 5},
-      {"paper_id": "204e3073870fae3d05bcbc2f6a8e263d9b72e776", "limit": 3}
+      {
+        "paper_id": "68d962effe5520777791bd6ec8ffa4b963ba4f38",
+        "limit": 5
+      },
+      {
+        "paper_id": "204e3073870fae3d05bcbc2f6a8e263d9b72e776",
+        "limit": 3
+      }
     ],
     "return_schema": {
       "oneOf": [
         {
           "type": "object",
           "description": "Paper recommendations from Semantic Scholar",
-          "required": ["recommendedPapers"],
+          "required": [
+            "recommendedPapers"
+          ],
           "properties": {
             "recommendedPapers": {
               "type": "array",
@@ -348,40 +540,78 @@
                 "type": "object",
                 "properties": {
                   "paperId": {
-                    "type": ["string", "null"],
+                    "type": [
+                      "string",
+                      "null"
+                    ],
                     "description": "Semantic Scholar paper ID"
                   },
                   "title": {
-                    "type": ["string", "null"],
+                    "type": [
+                      "string",
+                      "null"
+                    ],
                     "description": "Paper title"
                   },
                   "year": {
-                    "type": ["integer", "null"],
+                    "type": [
+                      "integer",
+                      "null"
+                    ],
                     "description": "Publication year"
                   },
                   "citationCount": {
-                    "type": ["integer", "null"],
+                    "type": [
+                      "integer",
+                      "null"
+                    ],
                     "description": "Number of citations"
                   },
                   "abstract": {
-                    "type": ["string", "null"],
+                    "type": [
+                      "string",
+                      "null"
+                    ],
                     "description": "Paper abstract"
                   },
                   "authors": {
-                    "type": ["array", "null"],
+                    "type": [
+                      "array",
+                      "null"
+                    ],
                     "items": {
                       "type": "object",
                       "properties": {
-                        "authorId": {"type": ["string", "null"]},
-                        "name": {"type": "string"}
+                        "authorId": {
+                          "type": [
+                            "string",
+                            "null"
+                          ]
+                        },
+                        "name": {
+                          "type": "string"
+                        }
                       }
                     }
                   },
                   "externalIds": {
-                    "type": ["object", "null"],
+                    "type": [
+                      "object",
+                      "null"
+                    ],
                     "properties": {
-                      "DOI": {"type": ["string", "null"]},
-                      "PubMed": {"type": ["string", "null"]}
+                      "DOI": {
+                        "type": [
+                          "string",
+                          "null"
+                        ]
+                      },
+                      "PubMed": {
+                        "type": [
+                          "string",
+                          "null"
+                        ]
+                      }
                     }
                   }
                 }
@@ -397,9 +627,14 @@
               "description": "Error message"
             }
           },
-          "required": ["error"]
+          "required": [
+            "error"
+          ]
         }
       ]
-    }
+    },
+    "optional_api_keys": [
+      "SEMANTIC_SCHOLAR_API_KEY"
+    ]
   }
 ]

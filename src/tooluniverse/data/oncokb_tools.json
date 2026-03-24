@@ -75,6 +75,9 @@
         "variant": "V600E",
         "tumor_type": "MEL"
       }
+    ],
+    "required_api_keys": [
+      "ONCOKB_API_TOKEN"
     ]
   },
   {
@@ -134,6 +137,9 @@
       {
         "gene": "TP53"
       }
+    ],
+    "required_api_keys": [
+      "ONCOKB_API_TOKEN"
     ]
   },
   {
@@ -178,6 +184,9 @@
     },
     "test_examples": [
       {}
+    ],
+    "required_api_keys": [
+      "ONCOKB_API_TOKEN"
     ]
   },
   {
@@ -221,6 +230,9 @@
     },
     "test_examples": [
       {}
+    ],
+    "required_api_keys": [
+      "ONCOKB_API_TOKEN"
     ]
   },
   {
@@ -284,6 +296,9 @@
         "gene": "ERBB2",
         "copy_number_type": "AMPLIFICATION"
       }
+    ],
+    "required_api_keys": [
+      "ONCOKB_API_TOKEN"
     ]
   }
 ]
