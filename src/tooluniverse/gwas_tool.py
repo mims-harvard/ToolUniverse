@@ -71,10 +71,10 @@ class GWASRESTTool(BaseTool):
         a study-based resolution. The /v2/associations endpoint ignores the
         disease_trait query parameter, so we must resolve to an EFO ID.
         """
-        # Primary: GWAS Catalog efoTraits endpoint
+        # Primary: GWAS Catalog efoTraits endpoint (v1)
         try:
             resp = requests.get(
-                f"{self.base_url}/v2/efoTraits/search/findByTrait",
+                f"{self.base_url}/efoTraits/search/findByEfoTrait",
                 params={"trait": disease_trait},
                 timeout=15,
             )

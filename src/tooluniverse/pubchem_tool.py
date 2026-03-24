@@ -149,7 +149,7 @@ class PubChemRESTTool(BaseTool):
 
         if out_fmt == "JSON":
             try:
-                return resp.json()
+                return {"status": "success", "data": resp.json()}
             except ValueError:
                 ct = resp.headers.get("content-type", "")
                 return {
