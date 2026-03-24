@@ -496,7 +496,7 @@ class OrphanetTool(BaseTool):
             return {"status": "error", "error": "Missing required parameter: name"}
 
         exact = arguments.get("exact", False)
-        lang = normalize_lang(arguments.get("lang", "en"))
+        lang = normalize_lang(arguments.get("lang") or arguments.get("language", "en"))
         try:
             limit = int(arguments.get("limit", 20))
         except (TypeError, ValueError):

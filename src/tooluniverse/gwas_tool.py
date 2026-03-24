@@ -110,17 +110,17 @@ class GWASRESTTool(BaseTool):
     def _resolve_trait_or_error(
         self, disease_trait: Optional[str], efo_id: Optional[str]
     ) -> Dict[str, Any]:
-        """Resolve disease_trait to efo_id if needed, returning result dict.
+        """Resolve disease_trait to efo_id if needed.
 
-        Returns {"efo_id": <str>} on success, or {"error": <dict>} if
+        Returns {"efo_id": <str>} on success, or {"error": <dict>} when
         resolution fails and would produce an unfiltered query.
+        Callers check ``"error" in result`` and return ``result["error"]``.
         """
         if disease_trait and not efo_id:
             resolved = self._resolve_trait_to_efo_id(disease_trait)
             if resolved:
                 return {"efo_id": resolved}
             return {
-                "status": "error",
                 "error": {
                     "status": "error",
                     "error": (
