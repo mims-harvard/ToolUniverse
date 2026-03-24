@@ -185,6 +185,9 @@ class iPTMnetTool(BaseTool):
         for isoform_id, sites in data.items():
             for site in sites:
                 ptm = site.get("ptm_type")
+                # Skip protein-level interaction entries that lack a specific modification site
+                if not ptm and not site.get("site") and not site.get("residue"):
+                    continue
                 if ptm_type_filter and ptm and ptm.lower() != ptm_type_filter.lower():
                     continue
                 enzymes = [
