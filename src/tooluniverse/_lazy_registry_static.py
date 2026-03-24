@@ -105,6 +105,7 @@ STATIC_LAZY_REGISTRY = {
     "DynaMut2Tool": "dynamut2_tool",
     "DynamicPackageDiscovery": "package_discovery_tool",
     "iPTMnetTool": "iptmnet_tool",
+    "ESMFoldTool": "esmfold_tool",
     "EBIProteinsCoordinatesTool": "ebi_proteins_coordinates_tool",
     "EBIProteinsEpitopeTool": "ebi_proteins_epitope_tool",
     "EBIProteinsExtTool": "ebi_proteins_ext_tool",

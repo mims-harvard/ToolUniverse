@@ -979,6 +979,8 @@ default_tool_files = {
     "dynamut2": os.path.join(current_dir, "data", "dynamut2_tools.json"),
     # iPTMnet - Post-translational modification network database
     "iptmnet": os.path.join(current_dir, "data", "iptmnet_tools.json"),
+    # ESMFold - Protein structure prediction from sequence (Meta ESM-2)
+    "esmfold": os.path.join(current_dir, "data", "esmfold_tools.json"),
     # SIDER - Drug side effects from drug labels (MedDRA-coded, with frequencies)
     "sider": os.path.join(current_dir, "data", "sider_tools.json"),
     # OpenFDA Drug Approvals - FDA drug approval history, products, and submissions
