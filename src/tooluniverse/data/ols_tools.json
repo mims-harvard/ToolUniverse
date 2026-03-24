@@ -196,11 +196,13 @@
         "ontology_id": {
           "type": "string",
           "description": "The ID of the ontology to retrieve"
+        },
+        "ontology": {
+          "type": "string",
+          "description": "Alias for ontology_id. The ontology abbreviation (e.g. mondo, hp, go, ordo)."
         }
       },
-      "required": [
-        "ontology_id"
-      ]
+      "required": []
     },
     "examples": [
       {

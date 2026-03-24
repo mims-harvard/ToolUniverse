@@ -257,11 +257,12 @@ class OLSTool(BaseTool):
         return formatted
 
     def _handle_get_ontology_info(self, arguments: Dict[str, Any]) -> Dict[str, Any]:
-        ontology_id = arguments.get("ontology_id")
+        # Feature-120A-003: accept 'ontology' alias for consistency with other OLS tools
+        ontology_id = arguments.get("ontology_id") or arguments.get("ontology")
         if not ontology_id:
             return {
                 "status": "error",
-                "error": "`ontology_id` parameter is required for `get_ontology_info`.",
+                "error": "`ontology_id` (or `ontology`) is required. E.g. 'mondo', 'hp', 'go'.",
             }
 
         data = self._get_json(f"/api/v2/ontologies/{ontology_id}")
@@ -280,8 +281,10 @@ class OLSTool(BaseTool):
             params["search"] = search
 
         data = self._get_json("/api/v2/ontologies", params=params)
-        embedded = data.get("_embedded", {})
-        ontologies = embedded.get("ontologies", [])
+        # Feature-120A-001: OLS v4 returns ontologies in top-level 'elements', not '_embedded'
+        ontologies = data.get(
+            "elements", data.get("_embedded", {}).get("ontologies", [])
+        )
 
         validated: List[Dict[str, Any]] = []
         for item in ontologies:
@@ -294,19 +297,14 @@ class OLSTool(BaseTool):
             except ValidationError:
                 continue
 
-        page_info = data.get("page", {})
-        # page_info might be an integer or a dict depending on API response
-        if not isinstance(page_info, dict):
-            page_info = {}
-
         return {
             "status": "success",
             "results": validated or ontologies,
             "pagination": {
-                "page": page_info.get("number", page),
-                "size": page_info.get("size", size),
-                "total_pages": page_info.get("totalPages", 0),
-                "total_items": page_info.get("totalElements", len(ontologies)),
+                "page": page,
+                "size": size,
+                "total_pages": data.get("totalPages", 0),
+                "total_items": data.get("totalElements", len(ontologies)),
             },
             "search": search,
         }
@@ -414,6 +412,8 @@ class OLSTool(BaseTool):
         return formatted
 
     def _handle_find_similar_terms(self, arguments: Dict[str, Any]) -> Dict[str, Any]:
+        # Feature-120A-002: /llm_similar does not exist in OLS v4; use text search instead.
+        # Resolve the term to get its label, then search within the ontology.
         term_iri = _expand_short_term_id(
             arguments.get("term_iri") or arguments.get("term_id", "")
         )
@@ -421,21 +421,45 @@ class OLSTool(BaseTool):
         if not term_iri or not ontology:
             return {
                 "status": "error",
-                "error": "`term_iri` and `ontology` parameters are required for `find_similar_terms`.",
+                "error": "`term_iri` (or `term_id`) and `ontology` are required for `find_similar_terms`.",
             }
 
         size = int(arguments.get("size", 10))
-        encoded = url_encode_iri(term_iri)
 
-        params = {"page": 0, "size": size}
-        data = self._get_json(
-            f"/api/v2/ontologies/{ontology}/classes/{encoded}/llm_similar",
-            params=params,
-        )
-        formatted = self._format_term_collection(data, size)
-        formatted["term_iri"] = term_iri
-        formatted["ontology"] = ontology
-        return formatted
+        # Step 1: get the term's label to use as search query
+        label = ""
+        try:
+            encoded = url_encode_iri(term_iri)
+            term_data = self._get_json(
+                f"/api/v2/ontologies/{ontology}/classes/{encoded}"
+            )
+            label = term_data.get("label", "")
+        except Exception:
+            pass
+
+        if not label:
+            return {
+                "status": "error",
+                "error": f"Could not retrieve label for term '{term_iri}' in ontology '{ontology}'. Verify the term ID is correct.",
+            }
+
+        # Step 2: search within the ontology for terms with similar labels
+        params = {"q": label, "ontology": ontology, "type": "class", "rows": size + 1}
+        data = self._get_json("/api/search", params=params)
+        docs = data.get("response", {}).get("docs", [])
+
+        # Exclude the query term itself
+        similar = [d for d in docs if d.get("iri") != term_iri][:size]
+
+        return {
+            "status": "success",
+            "term_iri": term_iri,
+            "source_label": label,
+            "ontology": ontology,
+            "similar_terms": similar,
+            "total": len(similar),
+            "note": "Results via text search (OLS v4 semantic similarity endpoint unavailable).",
+        }
 
     def _get_json(
         self, path: str, params: Optional[Dict[str, Any]] = None
