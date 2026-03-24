@@ -44,15 +44,18 @@ class ProteomeXchangeTool(BaseTool):
             return self._dispatch(arguments)
         except requests.exceptions.Timeout:
             return {
-                "error": f"ProteomeXchange API request timed out after {self.timeout} seconds"
+                "status": "error",
+                "error": f"ProteomeXchange API request timed out after {self.timeout} seconds",
             }
         except requests.exceptions.ConnectionError:
             return {
-                "error": "Failed to connect to ProteomeXchange API. Check network connectivity."
+                "status": "error",
+                "error": "Failed to connect to ProteomeXchange API. Check network connectivity.",
             }
         except requests.exceptions.HTTPError as e:
             return {
-                "error": f"ProteomeXchange API HTTP error: {e.response.status_code}"
+                "status": "error",
+                "error": f"ProteomeXchange API HTTP error: {e.response.status_code}",
             }
         except Exception as e:
             return {

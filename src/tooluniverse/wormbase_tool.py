@@ -43,11 +43,13 @@ class WormBaseTool(BaseTool):
             return self._dispatch(arguments)
         except requests.exceptions.Timeout:
             return {
-                "error": f"WormBase API request timed out after {self.timeout} seconds"
+                "status": "error",
+                "error": f"WormBase API request timed out after {self.timeout} seconds",
             }
         except requests.exceptions.ConnectionError:
             return {
-                "error": "Failed to connect to WormBase API. Check network connectivity."
+                "status": "error",
+                "error": "Failed to connect to WormBase API. Check network connectivity.",
             }
         except requests.exceptions.HTTPError as e:
             return {
@@ -79,7 +81,8 @@ class WormBaseTool(BaseTool):
         gene_id = arguments.get("gene_id", "")
         if not gene_id:
             return {
-                "error": "gene_id parameter is required (e.g., 'WBGene00006763' for unc-26)"
+                "status": "error",
+                "error": "gene_id parameter is required (e.g., 'WBGene00006763' for unc-26)",
             }
 
         url = f"{WORMBASE_BASE_URL}/widget/gene/{gene_id}/overview"
@@ -158,7 +161,8 @@ class WormBaseTool(BaseTool):
         gene_id = arguments.get("gene_id", "")
         if not gene_id:
             return {
-                "error": "gene_id parameter is required (e.g., 'WBGene00006763' for unc-26)"
+                "status": "error",
+                "error": "gene_id parameter is required (e.g., 'WBGene00006763' for unc-26)",
             }
 
         url = f"{WORMBASE_BASE_URL}/widget/gene/{gene_id}/phenotype"
@@ -241,7 +245,8 @@ class WormBaseTool(BaseTool):
         gene_id = arguments.get("gene_id", "")
         if not gene_id:
             return {
-                "error": "gene_id parameter is required (e.g., 'WBGene00006763' for unc-26)"
+                "status": "error",
+                "error": "gene_id parameter is required (e.g., 'WBGene00006763' for unc-26)",
             }
 
         url = f"{WORMBASE_BASE_URL}/widget/gene/{gene_id}/expression"

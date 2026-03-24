@@ -43,8 +43,9 @@ class EnsemblPhenotypeTool(BaseTool):
             return self._dispatch(arguments)
         except requests.exceptions.Timeout:
             return {
+                "status": "error",
                 "error": f"Ensembl REST API request timed out after {self.timeout}s. "
-                "Try a smaller region or a less-studied gene."
+                "Try a smaller region or a less-studied gene.",
             }
         except requests.exceptions.ConnectionError:
             return {"status": "error", "error": "Failed to connect to Ensembl REST API"}
@@ -52,11 +53,13 @@ class EnsemblPhenotypeTool(BaseTool):
             status = e.response.status_code if e.response else "unknown"
             if status == 400:
                 return {
-                    "error": "Bad request: check gene name, region format, or variant ID"
+                    "status": "error",
+                    "error": "Bad request: check gene name, region format, or variant ID",
                 }
             if status == 404:
                 return {
-                    "error": "Not found: the gene, region, or variant was not found in Ensembl"
+                    "status": "error",
+                    "error": "Not found: the gene, region, or variant was not found in Ensembl",
                 }
             return {
                 "status": "error",

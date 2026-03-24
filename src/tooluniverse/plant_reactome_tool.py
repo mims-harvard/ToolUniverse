@@ -44,11 +44,13 @@ class PlantReactomeTool(BaseTool):
             return self._query(arguments)
         except requests.exceptions.Timeout:
             return {
-                "error": f"Plant Reactome API request timed out after {self.timeout} seconds"
+                "status": "error",
+                "error": f"Plant Reactome API request timed out after {self.timeout} seconds",
             }
         except requests.exceptions.ConnectionError:
             return {
-                "error": "Failed to connect to Plant Reactome API. Check network connectivity."
+                "status": "error",
+                "error": "Failed to connect to Plant Reactome API. Check network connectivity.",
             }
         except requests.exceptions.HTTPError as e:
             return {

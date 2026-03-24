@@ -43,11 +43,13 @@ class NextstrainTool(BaseTool):
             return self._dispatch(arguments)
         except requests.exceptions.Timeout:
             return {
-                "error": f"Nextstrain API request timed out after {self.timeout} seconds"
+                "status": "error",
+                "error": f"Nextstrain API request timed out after {self.timeout} seconds",
             }
         except requests.exceptions.ConnectionError:
             return {
-                "error": "Failed to connect to Nextstrain API. Check network connectivity."
+                "status": "error",
+                "error": "Failed to connect to Nextstrain API. Check network connectivity.",
             }
         except requests.exceptions.HTTPError as e:
             return {
@@ -127,7 +129,8 @@ class NextstrainTool(BaseTool):
         dataset = arguments.get("dataset", "")
         if not dataset:
             return {
-                "error": "dataset parameter is required (e.g., 'zika', 'ebola', 'flu/seasonal/h3n2/ha/2y')"
+                "status": "error",
+                "error": "dataset parameter is required (e.g., 'zika', 'ebola', 'flu/seasonal/h3n2/ha/2y')",
             }
 
         url = f"{NEXTSTRAIN_BASE_URL}/getDataset"

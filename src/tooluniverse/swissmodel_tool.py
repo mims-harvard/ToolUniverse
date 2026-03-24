@@ -43,11 +43,13 @@ class SwissModelTool(BaseTool):
             return self._dispatch(arguments)
         except requests.exceptions.Timeout:
             return {
-                "error": f"SWISS-MODEL API request timed out after {self.timeout} seconds"
+                "status": "error",
+                "error": f"SWISS-MODEL API request timed out after {self.timeout} seconds",
             }
         except requests.exceptions.ConnectionError:
             return {
-                "error": "Failed to connect to SWISS-MODEL API. Check network connectivity."
+                "status": "error",
+                "error": "Failed to connect to SWISS-MODEL API. Check network connectivity.",
             }
         except requests.exceptions.HTTPError as e:
             return {
@@ -77,7 +79,8 @@ class SwissModelTool(BaseTool):
         uniprot_id = arguments.get("uniprot_id", "")
         if not uniprot_id:
             return {
-                "error": "uniprot_id parameter is required (e.g., 'P04637' for human p53)"
+                "status": "error",
+                "error": "uniprot_id parameter is required (e.g., 'P04637' for human p53)",
             }
 
         url = f"{SWISSMODEL_BASE_URL}/uniprot/{uniprot_id}.json"
@@ -147,7 +150,8 @@ class SwissModelTool(BaseTool):
         uniprot_id = arguments.get("uniprot_id", "")
         if not uniprot_id:
             return {
-                "error": "uniprot_id parameter is required (e.g., 'P04637' for human p53)"
+                "status": "error",
+                "error": "uniprot_id parameter is required (e.g., 'P04637' for human p53)",
             }
 
         url = f"{SWISSMODEL_BASE_URL}/uniprot/{uniprot_id}.json"

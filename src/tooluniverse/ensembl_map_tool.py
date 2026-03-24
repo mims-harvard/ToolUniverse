@@ -80,7 +80,8 @@ class EnsemblMapTool(BaseTool):
 
         if not all([source_asm, chrom, start, end, target_asm]):
             return {
-                "error": "source_assembly, chromosome, start, end, and target_assembly are all required."
+                "status": "error",
+                "error": "source_assembly, chromosome, start, end, and target_assembly are all required.",
             }
 
         url = f"{ENSEMBL_BASE_URL}/map/{species}/{source_asm}/{chrom}:{start}..{end}/{target_asm}"

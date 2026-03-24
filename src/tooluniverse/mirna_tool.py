@@ -193,7 +193,8 @@ class miRNAGetTool(BaseTool):
             code = e.response.status_code if e.response is not None else "unknown"
             if code == 404:
                 return {
-                    "error": f"RNA entry not found: {arguments.get('rnacentral_id', '')}"
+                    "status": "error",
+                    "error": f"RNA entry not found: {arguments.get('rnacentral_id', '')}",
                 }
             return {"status": "error", "error": f"RNAcentral API HTTP error: {code}"}
         except Exception as e:

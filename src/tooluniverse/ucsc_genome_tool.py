@@ -43,15 +43,18 @@ class UCSCGenomeTool(BaseTool):
             return self._dispatch(arguments)
         except requests.exceptions.Timeout:
             return {
-                "error": f"UCSC Genome Browser API request timed out after {self.timeout} seconds"
+                "status": "error",
+                "error": f"UCSC Genome Browser API request timed out after {self.timeout} seconds",
             }
         except requests.exceptions.ConnectionError:
             return {
-                "error": "Failed to connect to UCSC Genome Browser API. Check network connectivity."
+                "status": "error",
+                "error": "Failed to connect to UCSC Genome Browser API. Check network connectivity.",
             }
         except requests.exceptions.HTTPError as e:
             return {
-                "error": f"UCSC Genome Browser API HTTP error: {e.response.status_code}"
+                "status": "error",
+                "error": f"UCSC Genome Browser API HTTP error: {e.response.status_code}",
             }
         except Exception as e:
             return {
@@ -80,7 +83,8 @@ class UCSCGenomeTool(BaseTool):
 
         if not search_term:
             return {
-                "error": "search_term parameter is required (e.g., 'TP53', 'BRCA1')"
+                "status": "error",
+                "error": "search_term parameter is required (e.g., 'TP53', 'BRCA1')",
             }
 
         url = f"{UCSC_BASE_URL}/search?search={search_term};genome={genome}"
@@ -130,7 +134,8 @@ class UCSCGenomeTool(BaseTool):
 
         if not genome or not chrom or start is None or end is None:
             return {
-                "error": "genome, chrom, start, and end parameters are all required"
+                "status": "error",
+                "error": "genome, chrom, start, and end parameters are all required",
             }
 
         if end <= start:
@@ -138,7 +143,8 @@ class UCSCGenomeTool(BaseTool):
 
         if end - start > 100000:
             return {
-                "error": "Maximum sequence length is 100,000 bp. Please reduce the range."
+                "status": "error",
+                "error": "Maximum sequence length is 100,000 bp. Please reduce the range.",
             }
 
         url = f"{UCSC_BASE_URL}/getData/sequence?genome={genome};chrom={chrom};start={start};end={end}"
@@ -177,7 +183,8 @@ class UCSCGenomeTool(BaseTool):
 
         if not genome or not track or not chrom or start is None or end is None:
             return {
-                "error": "genome, track, chrom, start, and end parameters are all required"
+                "status": "error",
+                "error": "genome, track, chrom, start, and end parameters are all required",
             }
 
         url = (

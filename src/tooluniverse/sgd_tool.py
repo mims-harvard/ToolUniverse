@@ -47,7 +47,8 @@ class SGDTool(BaseTool):
             }
         except requests.exceptions.ConnectionError:
             return {
-                "error": "Failed to connect to SGD API. Check network connectivity."
+                "status": "error",
+                "error": "Failed to connect to SGD API. Check network connectivity.",
             }
         except requests.exceptions.HTTPError as e:
             return {
@@ -74,7 +75,8 @@ class SGDTool(BaseTool):
             return self._search(arguments)
         else:
             return {
-                "error": f"Unknown endpoint_type/query_mode: {self.endpoint_type}/{self.query_mode}"
+                "status": "error",
+                "error": f"Unknown endpoint_type/query_mode: {self.endpoint_type}/{self.query_mode}",
             }
 
     def _locus_overview(self, arguments: Dict[str, Any]) -> Dict[str, Any]:
@@ -82,7 +84,8 @@ class SGDTool(BaseTool):
         sgd_id = arguments.get("sgd_id", "")
         if not sgd_id:
             return {
-                "error": "sgd_id parameter is required (e.g., S000003219 or S000000259)"
+                "status": "error",
+                "error": "sgd_id parameter is required (e.g., S000003219 or S000000259)",
             }
 
         url = f"{SGD_BASE_URL}/locus/{sgd_id}"

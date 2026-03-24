@@ -231,7 +231,8 @@ class CIViCTool(BaseTool):
                 )
                 if not gene_name:
                     return {
-                        "error": "gene_id or gene_name is required for civic_get_variants_by_gene"
+                        "status": "error",
+                        "error": "gene_id or gene_name is required for civic_get_variants_by_gene",
                     }
                 gene_id = self._lookup_gene_id(gene_name)
                 if gene_id is None:
@@ -294,6 +295,7 @@ class CIViCTool(BaseTool):
                         f"evidence ID, or civic_get_variant with the variant ID."
                     )
                 return {
+                    "status": "error",
                     "error": f"Unsupported parameter(s) for civic_search_evidence_items: {', '.join(legacy_unsupported)}. "
                     "Supported filters: molecular_profile (string, e.g. 'BRAF V600E'), "
                     "therapy, disease, status, evidence_type (PREDICTIVE, DIAGNOSTIC, "
@@ -545,6 +547,7 @@ class CIViCTool(BaseTool):
             # Check for GraphQL errors
             if "errors" in data:
                 return {
+                    "status": "error",
                     "error": "GraphQL query errors",
                     "errors": data["errors"],
                     "query": arguments,

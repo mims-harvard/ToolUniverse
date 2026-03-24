@@ -173,6 +173,7 @@ class ReactomeRESTTool(BaseTool):
         # 5. Check HTTP status code
         if resp.status_code != 200:
             return {
+                "status": "error",
                 "error": f"Reactome API returned HTTP {resp.status_code}",
                 "detail": resp.text,
                 "url": url,
@@ -226,6 +227,7 @@ class ReactomeRESTTool(BaseTool):
                     return resp.text.strip()
 
             return {
+                "status": "error",
                 "error": "Unable to parse Reactome returned response.",
                 "content": resp.text[:500],
                 "content_type": content_type,

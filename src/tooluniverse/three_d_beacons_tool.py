@@ -51,7 +51,8 @@ class ThreeDBeaconsTool(BaseTool):
             code = e.response.status_code if e.response is not None else "unknown"
             if code == 404:
                 return {
-                    "error": f"No structures found for protein: {arguments.get('accession', '')}"
+                    "status": "error",
+                    "error": f"No structures found for protein: {arguments.get('accession', '')}",
                 }
             return {"status": "error", "error": f"3D Beacons API HTTP error: {code}"}
         except Exception as e:
@@ -74,7 +75,8 @@ class ThreeDBeaconsTool(BaseTool):
         accession = arguments.get("accession", "")
         if not accession:
             return {
-                "error": "accession parameter is required (UniProt accession, e.g., 'P04637')"
+                "status": "error",
+                "error": "accession parameter is required (UniProt accession, e.g., 'P04637')",
             }
 
         url = f"{BEACONS_BASE_URL}/uniprot/summary/{accession}.json"
@@ -112,7 +114,8 @@ class ThreeDBeaconsTool(BaseTool):
         accession = arguments.get("accession", "")
         if not accession:
             return {
-                "error": "accession parameter is required (UniProt accession, e.g., 'P04637')"
+                "status": "error",
+                "error": "accession parameter is required (UniProt accession, e.g., 'P04637')",
             }
 
         category_filter = arguments.get("category", None)

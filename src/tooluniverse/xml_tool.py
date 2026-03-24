@@ -171,7 +171,8 @@ class XMLDatasetTool(BaseTool):
             return self._filter(arguments)
         else:
             return {
-                "error": "Provide either 'query' for search or 'condition' for filtering"
+                "status": "error",
+                "error": "Provide either 'query' for search or 'condition' for filtering",
             }
 
     def _search(self, arguments: Dict[str, Any]) -> Dict[str, Any]:
@@ -288,7 +289,8 @@ class XMLDatasetTool(BaseTool):
         if all_records and field not in all_records[0]:
             available_fields = sorted(all_records[0].keys())
             return {
-                "error": f"Field '{field}' not found. Available: {available_fields}"
+                "status": "error",
+                "error": f"Field '{field}' not found. Available: {available_fields}",
             }
 
         filtered_records = []
@@ -296,7 +298,8 @@ class XMLDatasetTool(BaseTool):
 
         if not filter_func:
             return {
-                "error": f"Unknown condition '{condition}'. Supported: contains, starts_with, ends_with, exact, not_empty, has_attribute"
+                "status": "error",
+                "error": f"Unknown condition '{condition}'. Supported: contains, starts_with, ends_with, exact, not_empty, has_attribute",
             }
 
         total_matches = 0

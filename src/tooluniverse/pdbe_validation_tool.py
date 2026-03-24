@@ -49,7 +49,8 @@ class PDBeValidationTool(BaseTool):
         except requests.exceptions.HTTPError as e:
             status = e.response.status_code if e.response is not None else "unknown"
             return {
-                "error": f"PDBe API HTTP {status}: structure may not exist or have validation data"
+                "status": "error",
+                "error": f"PDBe API HTTP {status}: structure may not exist or have validation data",
             }
         except Exception as e:
             return {"status": "error", "error": f"Unexpected error: {str(e)}"}

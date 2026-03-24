@@ -57,7 +57,8 @@ class AllenBrainTool(BaseTool):
 
         except requests.exceptions.Timeout:
             return {
-                "error": f"Allen Brain Atlas API request timed out after {self.timeout} seconds"
+                "status": "error",
+                "error": f"Allen Brain Atlas API request timed out after {self.timeout} seconds",
             }
         except requests.exceptions.ConnectionError:
             return {

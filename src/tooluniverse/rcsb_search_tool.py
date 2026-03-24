@@ -327,6 +327,7 @@ class RCSBSearchTool(BaseTool):
         # Validate parameters
         if not query:
             return {
+                "status": "error",
                 "error": (
                     "Missing required parameter: query. "
                     "Provide either a PDB ID (e.g., '1ABC'), "
@@ -340,6 +341,7 @@ class RCSBSearchTool(BaseTool):
             # Structure-based search using PDB ID
             if not self._validate_pdb_id(query):
                 return {
+                    "status": "error",
                     "error": (
                         f"Invalid PDB ID format: '{query}'. "
                         "PDB ID must be 4 alphanumeric characters "
@@ -356,6 +358,7 @@ class RCSBSearchTool(BaseTool):
             # Sequence-based search
             if not self._validate_sequence(query):
                 return {
+                    "status": "error",
                     "error": (
                         f"Invalid protein sequence: '{query[:50]}...'. "
                         "Sequence must be at least 10 amino acids long "
@@ -374,6 +377,7 @@ class RCSBSearchTool(BaseTool):
             # Text-based search (by name, keyword, etc.)
             if not query or not query.strip():
                 return {
+                    "status": "error",
                     "error": (
                         "Invalid search text. "
                         "Provide a non-empty search term "
@@ -386,6 +390,7 @@ class RCSBSearchTool(BaseTool):
 
         else:
             return {
+                "status": "error",
                 "error": (
                     f"Invalid search_type: '{search_type}'. "
                     "Must be 'sequence', 'structure', or 'text'."
@@ -414,6 +419,7 @@ class RCSBSearchTool(BaseTool):
 
         except requests.exceptions.Timeout:
             return {
+                "status": "error",
                 "error": (
                     "Request timeout. The RCSB PDB Search API "
                     "did not respond in time. Please try again later."
@@ -434,6 +440,7 @@ class RCSBSearchTool(BaseTool):
 
             if e.response.status_code == 400:
                 return {
+                    "status": "error",
                     "error": (
                         f"Invalid request to RCSB PDB Search API: "
                         f"{error_detail}. "
@@ -458,6 +465,7 @@ class RCSBSearchTool(BaseTool):
                 return {"status": "error", "error": error_msg}
             else:
                 return {
+                    "status": "error",
                     "error": (
                         f"RCSB PDB Search API error "
                         f"(HTTP {e.response.status_code}): {error_detail}"
@@ -465,12 +473,14 @@ class RCSBSearchTool(BaseTool):
                 }
         except requests.exceptions.RequestException as e:
             return {
+                "status": "error",
                 "error": (
                     f"Network error while connecting to RCSB PDB Search API: {str(e)}"
                 ),
             }
         except Exception as e:
             return {
+                "status": "error",
                 "error": f"Unexpected error during search: {str(e)}",
             }
 
@@ -523,6 +533,7 @@ class RCSBSearchTool(BaseTool):
 
         except Exception as e:
             return {
+                "status": "error",
                 "error": f"Error parsing search results: {str(e)}",
                 "raw_response": str(response_data)[:500],
             }

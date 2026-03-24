@@ -71,7 +71,8 @@ class IdentifiersOrgTool(BaseRESTTool):
         compact_id = arguments.get("compact_id", "").strip()
         if not compact_id:
             return {
-                "error": "compact_id parameter is required (e.g., 'uniprot:P04637')"
+                "status": "error",
+                "error": "compact_id parameter is required (e.g., 'uniprot:P04637')",
             }
 
         # Use the compact_id directly in the URL path (no URL encoding of colon)

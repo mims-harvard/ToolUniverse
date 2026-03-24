@@ -82,8 +82,9 @@ class EOLTool(BaseTool):
             return {"status": "error", "error": "EOL API HTTP error: %s" % e.code}
         except URLError as e:
             return {
+                "status": "error",
                 "error": "Failed to connect to Encyclopedia of Life API: %s"
-                % str(e.reason)
+                % str(e.reason),
             }
         except Exception as e:
             return {

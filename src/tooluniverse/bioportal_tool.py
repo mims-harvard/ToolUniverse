@@ -54,7 +54,8 @@ class BioPortalTool(BaseTool):
             }
         except requests.exceptions.ConnectionError:
             return {
-                "error": "Failed to connect to BioPortal API (data.bioontology.org). The server may be blocking connections from your network or IP address."
+                "status": "error",
+                "error": "Failed to connect to BioPortal API (data.bioontology.org). The server may be blocking connections from your network or IP address.",
             }
         except requests.exceptions.HTTPError as e:
             return {

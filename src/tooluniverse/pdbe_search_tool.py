@@ -44,11 +44,13 @@ class PDBeSearchTool(BaseTool):
             return self._dispatch(arguments)
         except requests.exceptions.Timeout:
             return {
-                "error": f"PDBe Search API request timed out after {self.timeout} seconds"
+                "status": "error",
+                "error": f"PDBe Search API request timed out after {self.timeout} seconds",
             }
         except requests.exceptions.ConnectionError:
             return {
-                "error": "Failed to connect to PDBe Search API. Check network connectivity."
+                "status": "error",
+                "error": "Failed to connect to PDBe Search API. Check network connectivity.",
             }
         except requests.exceptions.HTTPError as e:
             return {
@@ -80,7 +82,8 @@ class PDBeSearchTool(BaseTool):
         query = arguments.get("query", "")
         if not query:
             return {
-                "error": "query parameter is required (e.g., 'insulin', 'kinase', 'BRCA1')"
+                "status": "error",
+                "error": "query parameter is required (e.g., 'insulin', 'kinase', 'BRCA1')",
             }
 
         limit = min(arguments.get("limit", 10), 50)
@@ -129,7 +132,8 @@ class PDBeSearchTool(BaseTool):
         compound_id = arguments.get("compound_id", "")
         if not compound_id:
             return {
-                "error": "compound_id parameter is required (e.g., 'ATP', 'HEM', 'NAG')"
+                "status": "error",
+                "error": "compound_id parameter is required (e.g., 'ATP', 'HEM', 'NAG')",
             }
 
         url = f"{PDBE_API_URL}/compound/summary/{compound_id}"
@@ -190,7 +194,8 @@ class PDBeSearchTool(BaseTool):
 
         if not organism:
             return {
-                "error": "organism parameter is required (e.g., 'Homo sapiens', 'Escherichia coli')"
+                "status": "error",
+                "error": "organism parameter is required (e.g., 'Homo sapiens', 'Escherichia coli')",
             }
 
         # Build Solr query with organism filter

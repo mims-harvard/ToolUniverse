@@ -75,7 +75,8 @@ class EnsemblInfoTool(BaseTool):
         species = arguments.get("species", "")
         if not species:
             return {
-                "error": "species parameter is required (e.g., 'homo_sapiens', 'mus_musculus')"
+                "status": "error",
+                "error": "species parameter is required (e.g., 'homo_sapiens', 'mus_musculus')",
             }
 
         url = f"{ENSEMBL_REST_BASE_URL}/info/assembly/{species}"

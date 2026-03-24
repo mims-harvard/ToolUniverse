@@ -53,7 +53,8 @@ class PDBeLigandsTool(BaseTool):
             if status == 404:
                 pdb_id = arguments.get("pdb_id", "unknown")
                 return {
-                    "error": f"PDB entry '{pdb_id}' not found. Provide a valid 4-character PDB ID (e.g., '4hhb', '3ert')."
+                    "status": "error",
+                    "error": f"PDB entry '{pdb_id}' not found. Provide a valid 4-character PDB ID (e.g., '4hhb', '3ert').",
                 }
             return {"status": "error", "error": f"PDBe API HTTP {status}"}
         except Exception as e:
@@ -73,7 +74,8 @@ class PDBeLigandsTool(BaseTool):
         pdb_id = arguments.get("pdb_id", "")
         if not pdb_id:
             return {
-                "error": "pdb_id is required (4-character PDB ID, e.g., '4hhb', '3ert', '1m17')."
+                "status": "error",
+                "error": "pdb_id is required (4-character PDB ID, e.g., '4hhb', '3ert', '1m17').",
             }
 
         pdb_id = pdb_id.lower().strip()
@@ -130,7 +132,8 @@ class PDBeLigandsTool(BaseTool):
         pdb_id = arguments.get("pdb_id", "")
         if not pdb_id:
             return {
-                "error": "pdb_id is required (4-character PDB ID, e.g., '4hhb', '3ert')."
+                "status": "error",
+                "error": "pdb_id is required (4-character PDB ID, e.g., '4hhb', '3ert').",
             }
 
         chain_id = arguments.get("chain_id", None)

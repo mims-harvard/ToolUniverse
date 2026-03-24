@@ -48,7 +48,8 @@ class BgeeTool(BaseTool):
             }
         except requests.exceptions.ConnectionError:
             return {
-                "error": "Failed to connect to Bgee API. Check network connectivity."
+                "status": "error",
+                "error": "Failed to connect to Bgee API. Check network connectivity.",
             }
         except requests.exceptions.HTTPError as e:
             return {
@@ -133,11 +134,13 @@ class BgeeTool(BaseTool):
         species_id = arguments.get("species_id", "")
         if not gene_id:
             return {
-                "error": "gene_id parameter is required (Ensembl gene ID, e.g., ENSG00000141510)"
+                "status": "error",
+                "error": "gene_id parameter is required (Ensembl gene ID, e.g., ENSG00000141510)",
             }
         if not species_id:
             return {
-                "error": "species_id parameter is required (NCBI taxon ID, e.g., 9606 for human)"
+                "status": "error",
+                "error": "species_id parameter is required (NCBI taxon ID, e.g., 9606 for human)",
             }
 
         params = {

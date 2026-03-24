@@ -98,7 +98,8 @@ class PfamTool(BaseTool):
         query = arguments.get("query", "")
         if not query:
             return {
-                "error": "query parameter is required (e.g., 'kinase', 'zinc finger')"
+                "status": "error",
+                "error": "query parameter is required (e.g., 'kinase', 'zinc finger')",
             }
 
         max_results = min(arguments.get("max_results", 20), 100)
@@ -303,7 +304,8 @@ class PfamTool(BaseTool):
         accession = arguments.get("accession", "")
         if not accession:
             return {
-                "error": "accession parameter is required (UniProt accession, e.g., 'P04637')"
+                "status": "error",
+                "error": "accession parameter is required (UniProt accession, e.g., 'P04637')",
             }
 
         url = f"{INTERPRO_BASE_URL}/entry/pfam/protein/uniprot/{accession}"

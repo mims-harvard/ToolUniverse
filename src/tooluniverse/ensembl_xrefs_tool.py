@@ -53,7 +53,8 @@ class EnsemblXrefsTool(BaseTool):
             status = e.response.status_code if e.response is not None else "unknown"
             if status == 404:
                 return {
-                    "error": "Ensembl ID not found. Provide a valid Ensembl stable ID."
+                    "status": "error",
+                    "error": "Ensembl ID not found. Provide a valid Ensembl stable ID.",
                 }
             return {"status": "error", "error": f"Ensembl REST API HTTP {status}"}
         except Exception as e:
@@ -75,7 +76,8 @@ class EnsemblXrefsTool(BaseTool):
 
         if not ensembl_id:
             return {
-                "error": "ensembl_id is required (e.g., 'ENSG00000141510', 'ENST00000269305')."
+                "status": "error",
+                "error": "ensembl_id is required (e.g., 'ENSG00000141510', 'ENST00000269305').",
             }
 
         url = f"{ENSEMBL_REST_BASE}/xrefs/id/{ensembl_id}"

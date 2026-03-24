@@ -53,7 +53,8 @@ class UniProtLocationsTool(BaseTool):
             }
         except requests.exceptions.HTTPError as e:
             return {
-                "error": f"UniProt Locations API HTTP error: {e.response.status_code}"
+                "status": "error",
+                "error": f"UniProt Locations API HTTP error: {e.response.status_code}",
             }
         except Exception as e:
             return {"status": "error", "error": f"Unexpected error: {str(e)}"}
@@ -131,7 +132,8 @@ class UniProtLocationsTool(BaseTool):
         location_id = arguments.get("location_id", "")
         if not location_id:
             return {
-                "error": "location_id parameter is required (e.g., 'SL-0091' for cytosol)"
+                "status": "error",
+                "error": "location_id parameter is required (e.g., 'SL-0091' for cytosol)",
             }
 
         # Normalize ID
@@ -158,7 +160,8 @@ class UniProtLocationsTool(BaseTool):
         query = arguments.get("query", "")
         if not query:
             return {
-                "error": "query parameter is required (e.g., 'nucleus', 'membrane', 'mitochondria')"
+                "status": "error",
+                "error": "query parameter is required (e.g., 'nucleus', 'membrane', 'mitochondria')",
             }
 
         size = min(arguments.get("size") or 10, 50)

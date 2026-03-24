@@ -122,6 +122,7 @@ class NICEWebScrapingTool(BaseTool):
             script_tag = soup.find("script", {"id": "__NEXT_DATA__"})
             if not script_tag:
                 return {
+                    "status": "error",
                     "error": "No search results found",
                     "suggestion": "Try different search terms or check if the NICE website is accessible",
                 }
@@ -139,12 +140,14 @@ class NICEWebScrapingTool(BaseTool):
                 )
             except (json.JSONDecodeError, KeyError) as e:
                 return {
+                    "status": "error",
                     "error": f"Failed to parse search results: {str(e)}",
                     "source": "NICE",
                 }
 
             if not documents:
                 return {
+                    "status": "error",
                     "error": "No NICE guidelines found",
                     "suggestion": "Try different search terms or check if the NICE website is accessible",
                 }
@@ -224,6 +227,7 @@ class NICEWebScrapingTool(BaseTool):
 
             if not results:
                 return {
+                    "status": "error",
                     "error": "No NICE guidelines found",
                     "suggestion": "Try different search terms or check if the NICE website is accessible",
                 }
@@ -232,6 +236,7 @@ class NICEWebScrapingTool(BaseTool):
 
         except requests.exceptions.RequestException as e:
             return {
+                "status": "error",
                 "error": f"Failed to search NICE guidelines: {str(e)}",
                 "source": "NICE",
             }
@@ -404,6 +409,7 @@ class PubMedGuidelinesTool(BaseTool):
             }
         except Exception as e:
             return {
+                "status": "error",
                 "error": f"Error processing PubMed response: {str(e)}",
                 "source": "PubMed",
             }
@@ -537,11 +543,13 @@ class EuropePMCGuidelinesTool(BaseTool):
 
         except requests.exceptions.RequestException as e:
             return {
+                "status": "error",
                 "error": f"Failed to search Europe PMC: {str(e)}",
                 "source": "Europe PMC",
             }
         except Exception as e:
             return {
+                "status": "error",
                 "error": f"Error processing Europe PMC response: {str(e)}",
                 "source": "Europe PMC",
             }
@@ -771,16 +779,19 @@ class TRIPDatabaseTool(BaseTool):
 
         except requests.exceptions.RequestException as e:
             return {
+                "status": "error",
                 "error": f"Failed to search TRIP Database: {str(e)}",
                 "source": "TRIP Database",
             }
         except ET.ParseError as e:
             return {
+                "status": "error",
                 "error": f"Failed to parse TRIP Database response: {str(e)}",
                 "source": "TRIP Database",
             }
         except Exception as e:
             return {
+                "status": "error",
                 "error": f"Error processing TRIP Database response: {str(e)}",
                 "source": "TRIP Database",
             }
@@ -1205,11 +1216,13 @@ class WHOGuidelinesTool(BaseTool):
 
         except requests.exceptions.RequestException as e:
             return {
+                "status": "error",
                 "error": f"Failed to access WHO guidelines: {str(e)}",
                 "source": "WHO",
             }
         except Exception as e:
             return {
+                "status": "error",
                 "error": f"Error processing WHO guidelines: {str(e)}",
                 "source": "WHO",
             }
@@ -1398,11 +1411,13 @@ class OpenAlexGuidelinesTool(BaseTool):
 
         except requests.exceptions.RequestException as e:
             return {
+                "status": "error",
                 "error": f"Failed to search OpenAlex: {str(e)}",
                 "source": "OpenAlex",
             }
         except Exception as e:
             return {
+                "status": "error",
                 "error": f"Error processing OpenAlex response: {str(e)}",
                 "source": "OpenAlex",
             }
@@ -1858,6 +1873,7 @@ class GINGuidelinesTool(BaseTool):
             }
         except Exception as e:
             return {
+                "status": "error",
                 "error": f"Error processing GIN guidelines: {str(e)}",
                 "source": "GIN",
             }
@@ -1971,6 +1987,7 @@ class CMAGuidelinesTool(BaseTool):
             }
         except Exception as e:
             return {
+                "status": "error",
                 "error": f"Error searching Canadian guidelines: {str(e)}",
                 "source": "CMA",
             }

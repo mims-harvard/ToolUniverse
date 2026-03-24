@@ -43,11 +43,13 @@ class ENAPortalTool(BaseTool):
             return self._dispatch(arguments)
         except requests.exceptions.Timeout:
             return {
-                "error": f"ENA Portal API request timed out after {self.timeout} seconds"
+                "status": "error",
+                "error": f"ENA Portal API request timed out after {self.timeout} seconds",
             }
         except requests.exceptions.ConnectionError:
             return {
-                "error": "Failed to connect to ENA Portal API. Check network connectivity."
+                "status": "error",
+                "error": "Failed to connect to ENA Portal API. Check network connectivity.",
             }
         except requests.exceptions.HTTPError as e:
             return {
@@ -79,7 +81,8 @@ class ENAPortalTool(BaseTool):
         query = arguments.get("query", "")
         if not query:
             return {
-                "error": "query parameter is required (e.g., 'description=\"cancer\"' or 'tax_tree(9606)')"
+                "status": "error",
+                "error": "query parameter is required (e.g., 'description=\"cancer\"' or 'tax_tree(9606)')",
             }
 
         limit = min(arguments.get("limit", 10), 100)
@@ -128,7 +131,8 @@ class ENAPortalTool(BaseTool):
         query = arguments.get("query", "")
         if not query:
             return {
-                "error": "query parameter is required (e.g., 'tax_tree(9606)' or 'description=\"liver\"')"
+                "status": "error",
+                "error": "query parameter is required (e.g., 'tax_tree(9606)' or 'description=\"liver\"')",
             }
 
         limit = min(arguments.get("limit", 10), 100)

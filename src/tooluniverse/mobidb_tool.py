@@ -55,7 +55,8 @@ class MobiDBTool(BaseTool):
             status = e.response.status_code if e.response is not None else "unknown"
             if status == 404:
                 return {
-                    "error": "Protein not found in MobiDB. Check the UniProt accession."
+                    "status": "error",
+                    "error": "Protein not found in MobiDB. Check the UniProt accession.",
                 }
             return {"status": "error", "error": f"MobiDB API HTTP {status}"}
         except Exception as e:
@@ -75,7 +76,8 @@ class MobiDBTool(BaseTool):
         accession = arguments.get("accession", "")
         if not accession:
             return {
-                "error": "accession is required (UniProt ID, e.g., 'P04637' for TP53)."
+                "status": "error",
+                "error": "accession is required (UniProt ID, e.g., 'P04637' for TP53).",
             }
 
         url = MOBIDB_BASE_URL
@@ -137,7 +139,8 @@ class MobiDBTool(BaseTool):
         accession = arguments.get("accession", "")
         if not accession:
             return {
-                "error": "accession is required (UniProt ID, e.g., 'P04637' for TP53)."
+                "status": "error",
+                "error": "accession is required (UniProt ID, e.g., 'P04637' for TP53).",
             }
 
         url = MOBIDB_BASE_URL

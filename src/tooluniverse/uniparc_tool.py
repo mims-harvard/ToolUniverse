@@ -53,7 +53,8 @@ class UniParcTool(BaseTool):
             status = e.response.status_code if e.response is not None else "unknown"
             if status == 404:
                 return {
-                    "error": "Entry not found in UniParc. Check the UPI identifier."
+                    "status": "error",
+                    "error": "Entry not found in UniParc. Check the UPI identifier.",
                 }
             if status == 400:
                 return {"status": "error", "error": "Bad request. Check query syntax."}
@@ -144,7 +145,8 @@ class UniParcTool(BaseTool):
         query = arguments.get("query", "")
         if not query:
             return {
-                "error": "query is required (e.g., 'gene:TP53 AND organism_id:9606')."
+                "status": "error",
+                "error": "query is required (e.g., 'gene:TP53 AND organism_id:9606').",
             }
 
         size = min(arguments.get("size", 5), 10)

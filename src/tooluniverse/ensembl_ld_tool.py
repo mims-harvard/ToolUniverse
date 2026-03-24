@@ -46,11 +46,13 @@ class EnsemblLDTool(BaseTool):
             return self._dispatch(arguments)
         except requests.exceptions.Timeout:
             return {
-                "error": f"Ensembl LD API request timed out after {self.timeout} seconds"
+                "status": "error",
+                "error": f"Ensembl LD API request timed out after {self.timeout} seconds",
             }
         except requests.exceptions.ConnectionError:
             return {
-                "error": "Failed to connect to Ensembl REST API. Check network connectivity."
+                "status": "error",
+                "error": "Failed to connect to Ensembl REST API. Check network connectivity.",
             }
         except requests.exceptions.HTTPError as e:
             status = e.response.status_code if e.response else "unknown"
@@ -90,7 +92,8 @@ class EnsemblLDTool(BaseTool):
             }
         if not population:
             return {
-                "error": "population parameter is required (e.g., '1000GENOMES:phase_3:CEU')"
+                "status": "error",
+                "error": "population parameter is required (e.g., '1000GENOMES:phase_3:CEU')",
             }
 
         url = f"{ENSEMBL_BASE_URL}/ld/human/{variant_id}/{population}"

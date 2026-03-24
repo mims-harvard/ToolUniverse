@@ -59,7 +59,8 @@ class DiseaseOntologyTool(BaseTool):
                     "error": f"DOID not found in Disease Ontology",
                 }
             return {
-                "error": f"Disease Ontology API HTTP error: {e.response.status_code}"
+                "status": "error",
+                "error": f"Disease Ontology API HTTP error: {e.response.status_code}",
             }
         except Exception as e:
             return {

@@ -50,7 +50,8 @@ class CellxGeneDiscoveryTool(BaseTool):
             code = e.response.status_code if e.response is not None else "unknown"
             if code == 404:
                 return {
-                    "error": f"Collection/dataset not found: {arguments.get('collection_id', '')}"
+                    "status": "error",
+                    "error": f"Collection/dataset not found: {arguments.get('collection_id', '')}",
                 }
             return {
                 "status": "error",
@@ -187,7 +188,8 @@ class CellxGeneDiscoveryTool(BaseTool):
 
         if not any([tissue, disease, organism, cell_type]):
             return {
-                "error": "At least one search parameter required: tissue, disease, organism, or cell_type"
+                "status": "error",
+                "error": "At least one search parameter required: tissue, disease, organism, or cell_type",
             }
 
         # Fetch full dataset index and filter

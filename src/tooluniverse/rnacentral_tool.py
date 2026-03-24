@@ -68,6 +68,7 @@ class RNAcentralSearchTool:
             }
         except Exception as e:
             return {
+                "status": "error",
                 "error": str(e),
                 "source": "RNAcentral",
                 "endpoint": "rna",
@@ -116,6 +117,7 @@ class RNAcentralGetTool:
             }
         except Exception as e:
             return {
+                "status": "error",
                 "error": str(e),
                 "source": "RNAcentral",
                 "endpoint": "rna/{accession}",

@@ -52,7 +52,8 @@ class DfamTool(BaseTool):
             status = e.response.status_code if e.response is not None else "unknown"
             if status == 404:
                 return {
-                    "error": "Resource not found in Dfam. Check the accession or query."
+                    "status": "error",
+                    "error": "Resource not found in Dfam. Check the accession or query.",
                 }
             return {"status": "error", "error": f"Dfam API HTTP {status}"}
         except Exception as e:
@@ -175,7 +176,8 @@ class DfamTool(BaseTool):
 
         if not chrom or start is None or end is None:
             return {
-                "error": "chrom, start, and end are required (e.g., chrom='chr1', start=10000, end=50000)."
+                "status": "error",
+                "error": "chrom, start, and end are required (e.g., chrom='chr1', start=10000, end=50000).",
             }
 
         # Dfam API expects lowercase boolean strings

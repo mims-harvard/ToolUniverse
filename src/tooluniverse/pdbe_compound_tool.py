@@ -55,7 +55,8 @@ class PDBECompoundTool(BaseTool):
             status = e.response.status_code if e.response is not None else "unknown"
             if status == 404:
                 return {
-                    "error": "Compound not found in PDBe. Check the 3-letter compound code (e.g., ATP, HEM, NAG)."
+                    "status": "error",
+                    "error": "Compound not found in PDBe. Check the 3-letter compound code (e.g., ATP, HEM, NAG).",
                 }
             return {"status": "error", "error": f"PDBe Compound API HTTP {status}"}
         except Exception as e:
@@ -75,7 +76,8 @@ class PDBECompoundTool(BaseTool):
         comp_id = arguments.get("comp_id", "")
         if not comp_id:
             return {
-                "error": "comp_id is required (PDB chemical component ID, e.g., 'ATP', 'HEM', 'NAG', 'CFF')."
+                "status": "error",
+                "error": "comp_id is required (PDB chemical component ID, e.g., 'ATP', 'HEM', 'NAG', 'CFF').",
             }
 
         comp_id = comp_id.upper()
@@ -153,7 +155,8 @@ class PDBECompoundTool(BaseTool):
         comp_id = arguments.get("comp_id", "")
         if not comp_id:
             return {
-                "error": "comp_id is required (PDB chemical component ID, e.g., 'ATP', 'HEM', 'NAG')."
+                "status": "error",
+                "error": "comp_id is required (PDB chemical component ID, e.g., 'ATP', 'HEM', 'NAG').",
             }
 
         comp_id = comp_id.upper()

@@ -52,7 +52,8 @@ class EBIProteinsCoordinatesTool(BaseTool):
             status = e.response.status_code if e.response is not None else "unknown"
             if status == 404:
                 return {
-                    "error": "Protein not found. Provide a valid UniProt accession (e.g., 'P04637' for TP53)."
+                    "status": "error",
+                    "error": "Protein not found. Provide a valid UniProt accession (e.g., 'P04637' for TP53).",
                 }
             if status == 400:
                 return {
@@ -75,7 +76,8 @@ class EBIProteinsCoordinatesTool(BaseTool):
         accession = arguments.get("accession", "")
         if not accession:
             return {
-                "error": "accession is required (UniProt accession, e.g., 'P04637' for TP53, 'P00533' for EGFR)."
+                "status": "error",
+                "error": "accession is required (UniProt accession, e.g., 'P04637' for TP53, 'P00533' for EGFR).",
             }
 
         accession = accession.strip()

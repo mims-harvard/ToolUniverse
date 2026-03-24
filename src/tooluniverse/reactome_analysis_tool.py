@@ -42,7 +42,8 @@ class ReactomeAnalysisTool(BaseTool):
             return self._query(arguments)
         except requests.exceptions.Timeout:
             return {
-                "error": f"Reactome Analysis request timed out after {self.timeout} seconds"
+                "status": "error",
+                "error": f"Reactome Analysis request timed out after {self.timeout} seconds",
             }
         except requests.exceptions.ConnectionError:
             return {
@@ -73,7 +74,8 @@ class ReactomeAnalysisTool(BaseTool):
         identifiers = arguments.get("identifiers", "")
         if not identifiers:
             return {
-                "error": "identifiers parameter required (newline-separated gene/protein IDs)"
+                "status": "error",
+                "error": "identifiers parameter required (newline-separated gene/protein IDs)",
             }
 
         # Ensure identifiers is newline-separated
@@ -112,7 +114,8 @@ class ReactomeAnalysisTool(BaseTool):
         identifiers = arguments.get("identifiers", "")
         if not identifiers:
             return {
-                "error": "identifiers parameter required (newline-separated gene/protein IDs)"
+                "status": "error",
+                "error": "identifiers parameter required (newline-separated gene/protein IDs)",
             }
 
         if isinstance(identifiers, list):

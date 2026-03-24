@@ -41,7 +41,8 @@ class PubChemBioAssayTool(BaseTool):
             return self._query(arguments)
         except requests.exceptions.Timeout:
             return {
-                "error": f"PubChem BioAssay request timed out after {self.timeout} seconds"
+                "status": "error",
+                "error": f"PubChem BioAssay request timed out after {self.timeout} seconds",
             }
         except requests.exceptions.ConnectionError:
             return {"status": "error", "error": "Failed to connect to PubChem API."}

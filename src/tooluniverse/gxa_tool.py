@@ -50,7 +50,8 @@ class GxATool(BaseTool):
             code = e.response.status_code if e.response is not None else "unknown"
             if code == 404:
                 return {
-                    "error": f"Experiment not found: {arguments.get('experiment_accession', '')}"
+                    "status": "error",
+                    "error": f"Experiment not found: {arguments.get('experiment_accession', '')}",
                 }
             return {
                 "status": "error",

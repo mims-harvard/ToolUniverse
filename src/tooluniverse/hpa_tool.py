@@ -46,6 +46,7 @@ class HPASearchApiTool(BaseTool):
                 }
             if resp.status_code != 200:
                 return {
+                    "status": "error",
                     "error": f"HPA API request failed, HTTP {resp.status_code}",
                     "detail": resp.text,
                 }
@@ -66,6 +67,7 @@ class HPASearchApiTool(BaseTool):
             return {"status": "error", "error": f"HPA API request failed: {str(e)}"}
         except ValueError as e:
             return {
+                "status": "error",
                 "error": f"Failed to parse HPA response data: {str(e)}",
                 "content": resp.text,
             }
@@ -95,6 +97,7 @@ class HPAJsonApiTool(BaseTool):
                 }
             if resp.status_code != 200:
                 return {
+                    "status": "error",
                     "error": f"HPA JSON API request failed, HTTP {resp.status_code}",
                     "detail": resp.text,
                 }
@@ -108,6 +111,7 @@ class HPAJsonApiTool(BaseTool):
             }
         except ValueError as e:
             return {
+                "status": "error",
                 "error": f"Failed to parse HPA JSON response: {str(e)}",
                 "content": resp.text,
             }
@@ -1075,7 +1079,8 @@ class HPAGetRnaExpressionByTissueTool(HPAJsonApiTool):
                 "muscle",
             ]
             return {
-                "error": f"Parameter 'tissue_names' is required and must be a list. Example: {example_tissues}"
+                "status": "error",
+                "error": f"Parameter 'tissue_names' is required and must be a list. Example: {example_tissues}",
             }
 
         data = self._make_api_request(ensembl_id)

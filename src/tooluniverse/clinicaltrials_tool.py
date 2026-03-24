@@ -43,11 +43,13 @@ class CTGovAPITool(BaseRESTTool):
             return self._query(arguments)
         except requests.exceptions.Timeout:
             return {
-                "error": f"ClinicalTrials.gov request timed out after {self.timeout}s"
+                "status": "error",
+                "error": f"ClinicalTrials.gov request timed out after {self.timeout}s",
             }
         except requests.exceptions.ConnectionError:
             return {
-                "error": "Failed to connect to ClinicalTrials.gov. Check network connectivity."
+                "status": "error",
+                "error": "Failed to connect to ClinicalTrials.gov. Check network connectivity.",
             }
         except requests.exceptions.HTTPError as e:
             return {
@@ -328,7 +330,8 @@ class CTGovAPITool(BaseRESTTool):
         field = arguments.get("field", "")
         if not field:
             return {
-                "error": "field parameter is required (e.g., 'Phase', 'OverallStatus')"
+                "status": "error",
+                "error": "field parameter is required (e.g., 'Phase', 'OverallStatus')",
             }
 
         # The endpoint returns ALL fields - we filter client-side
@@ -352,7 +355,8 @@ class CTGovAPITool(BaseRESTTool):
                 :20
             ]
             return {
-                "error": f"Field '{field}' not found. Available fields include: {available}"
+                "status": "error",
+                "error": f"Field '{field}' not found. Available fields include: {available}",
             }
 
         field_obj = matching[0]

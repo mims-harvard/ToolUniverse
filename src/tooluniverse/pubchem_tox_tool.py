@@ -53,7 +53,8 @@ class PubChemToxTool(BaseTool):
             if code == 404:
                 cid = arguments.get("cid", arguments.get("compound_name", ""))
                 return {
-                    "error": f"No toxicity data found in PubChem for: {cid}. This heading may not exist for this compound."
+                    "status": "error",
+                    "error": f"No toxicity data found in PubChem for: {cid}. This heading may not exist for this compound.",
                 }
             return {"status": "error", "error": f"PubChem API HTTP error: {code}"}
         except ValueError as e:

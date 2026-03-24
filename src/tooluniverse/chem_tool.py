@@ -563,7 +563,8 @@ class ChEMBLTool(BaseTool):
             molecule_structures = molecule.get("molecule_structures")
             if not molecule_structures or not isinstance(molecule_structures, dict):
                 return {
-                    "error": "Molecule structures not found or invalid for the ChEMBL ID."
+                    "status": "error",
+                    "error": "Molecule structures not found or invalid for the ChEMBL ID.",
                 }
             smiles = molecule_structures.get("canonical_smiles")
             pref_name = molecule.get("pref_name")
@@ -724,6 +725,7 @@ class ChEMBLTool(BaseTool):
                             "Oligosaccharide",
                         ]:
                             return {
+                                "status": "error",
                                 "error": (
                                     f"The compound '{query}' was found in ChEMBL (ChEMBL ID: {chembl_id}) "
                                     f"but is a {molecule_type.lower()}, not a small molecule. "
@@ -735,18 +737,19 @@ class ChEMBLTool(BaseTool):
                                     f"BLAST_protein_search (for protein/antibody sequence similarity search, requires amino acid sequence), "
                                     f"or UniProt_search (for searching proteins in UniProt database). "
                                     f"For small molecule similarity search, use: PubChem_search_compounds_by_similarity (requires SMILES input)."
-                                )
+                                ),
                             }
                 except Exception:
                     pass
             return {
+                "status": "error",
                 "error": (
                     f"SMILES representation not found for the compound '{query}'. "
                     f"This tool requires SMILES structure for similarity search. "
                     f"If you have a SMILES string, you can use it directly as the query. "
                     f"Alternatively, consider using PubChem_search_compounds_by_similarity "
                     f"(requires SMILES input) for similarity search."
-                )
+                ),
             }
 
         results_list = []

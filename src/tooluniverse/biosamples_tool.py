@@ -43,11 +43,13 @@ class BioSamplesTool(BaseTool):
             return self._dispatch(arguments)
         except requests.exceptions.Timeout:
             return {
-                "error": f"BioSamples API request timed out after {self.timeout} seconds"
+                "status": "error",
+                "error": f"BioSamples API request timed out after {self.timeout} seconds",
             }
         except requests.exceptions.ConnectionError:
             return {
-                "error": "Failed to connect to BioSamples API. Check network connectivity."
+                "status": "error",
+                "error": "Failed to connect to BioSamples API. Check network connectivity.",
             }
         except requests.exceptions.HTTPError as e:
             return {
@@ -136,7 +138,8 @@ class BioSamplesTool(BaseTool):
         query = arguments.get("query", "")
         if not query:
             return {
-                "error": "query parameter is required (e.g., 'breast cancer', 'liver tissue')"
+                "status": "error",
+                "error": "query parameter is required (e.g., 'breast cancer', 'liver tissue')",
             }
 
         size = min(arguments.get("limit", 10), 50)
@@ -202,7 +205,8 @@ class BioSamplesTool(BaseTool):
         value = arguments.get("value", "")
         if not attribute or not value:
             return {
-                "error": "Both 'attribute' and 'value' parameters are required (e.g., attribute='organism', value='Homo sapiens')"
+                "status": "error",
+                "error": "Both 'attribute' and 'value' parameters are required (e.g., attribute='organism', value='Homo sapiens')",
             }
 
         size = min(arguments.get("limit", 10), 50)

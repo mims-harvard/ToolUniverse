@@ -66,7 +66,8 @@ class EBIProteinsEpitopeTool(BaseTool):
         accession = arguments.get("accession", "")
         if not accession:
             return {
-                "error": "accession parameter is required (UniProt accession, e.g., P04637)"
+                "status": "error",
+                "error": "accession parameter is required (UniProt accession, e.g., P04637)",
             }
 
         url = f"{EBI_PROTEINS_BASE_URL}/epitope/{accession}"

@@ -48,7 +48,8 @@ class CATHTool(BaseTool):
             }
         except requests.exceptions.ConnectionError:
             return {
-                "error": "Failed to connect to CATH API. Check network connectivity."
+                "status": "error",
+                "error": "Failed to connect to CATH API. Check network connectivity.",
             }
         except requests.exceptions.HTTPError as e:
             return {
@@ -75,7 +76,8 @@ class CATHTool(BaseTool):
         cath_id = arguments.get("superfamily_id", "")
         if not cath_id:
             return {
-                "error": "superfamily_id parameter is required (e.g. 2.40.50.140 for Nucleic acid-binding proteins)"
+                "status": "error",
+                "error": "superfamily_id parameter is required (e.g. 2.40.50.140 for Nucleic acid-binding proteins)",
             }
 
         url = f"{CATH_BASE_URL}/superfamily/{cath_id}"
@@ -117,7 +119,8 @@ class CATHTool(BaseTool):
         domain_id = arguments.get("domain_id", "")
         if not domain_id:
             return {
-                "error": "domain_id parameter is required (e.g. 1cukA01 for PDB 1CUK chain A domain 1)"
+                "status": "error",
+                "error": "domain_id parameter is required (e.g. 1cukA01 for PDB 1CUK chain A domain 1)",
             }
 
         url = f"{CATH_BASE_URL}/domain_summary/{domain_id}"

@@ -97,7 +97,8 @@ class RCSBGraphQLTool(BaseTool):
 
         if not pdb_ids:
             return {
-                "error": "pdb_id or pdb_ids parameter is required (e.g., '4HHB' or '4HHB,1TUP')"
+                "status": "error",
+                "error": "pdb_id or pdb_ids parameter is required (e.g., '4HHB' or '4HHB,1TUP')",
             }
 
         # Uppercase PDB IDs
@@ -204,7 +205,8 @@ class RCSBGraphQLTool(BaseTool):
         comp_id = arguments.get("comp_id", "")
         if not comp_id:
             return {
-                "error": "comp_id parameter is required (e.g., 'ATP', 'HEM', 'NAG')"
+                "status": "error",
+                "error": "comp_id parameter is required (e.g., 'ATP', 'HEM', 'NAG')",
             }
 
         comp_id = comp_id.upper().strip()
@@ -298,7 +300,8 @@ class RCSBGraphQLTool(BaseTool):
 
         if not entity_ids:
             return {
-                "error": "pdb_id or entity_ids parameter is required (e.g., pdb_id='4HHB' or entity_ids='4HHB_1,4HHB_2')"
+                "status": "error",
+                "error": "pdb_id or entity_ids parameter is required (e.g., pdb_id='4HHB' or entity_ids='4HHB_1,4HHB_2')",
             }
 
         ids_str = '", "'.join(entity_ids)

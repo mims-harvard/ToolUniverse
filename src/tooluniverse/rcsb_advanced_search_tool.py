@@ -155,7 +155,8 @@ class RCSBAdvancedSearchTool(BaseTool):
 
         if not nodes:
             return {
-                "error": "At least one search parameter is required (query, organism, max_resolution, experimental_method, polymer_description, or min_deposition_date)"
+                "status": "error",
+                "error": "At least one search parameter is required (query, organism, max_resolution, experimental_method, polymer_description, or min_deposition_date)",
             }
 
         if len(nodes) == 1:

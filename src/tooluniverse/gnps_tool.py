@@ -48,7 +48,8 @@ class GNPSTool(BaseTool):
             }
         except requests.exceptions.ConnectionError:
             return {
-                "error": "Failed to connect to GNPS API. Check network connectivity."
+                "status": "error",
+                "error": "Failed to connect to GNPS API. Check network connectivity.",
             }
         except requests.exceptions.HTTPError as e:
             return {
@@ -78,7 +79,8 @@ class GNPSTool(BaseTool):
         usi = arguments.get("usi", "")
         if not usi:
             return {
-                "error": "usi parameter is required (e.g., 'mzspec:GNPS:GNPS-LIBRARY:accession:CCMSLIB00005435737')"
+                "status": "error",
+                "error": "usi parameter is required (e.g., 'mzspec:GNPS:GNPS-LIBRARY:accession:CCMSLIB00005435737')",
             }
 
         params = {"usi1": usi}
@@ -92,7 +94,8 @@ class GNPSTool(BaseTool):
 
         if "error" in raw:
             return {
-                "error": f"GNPS USI error: {raw['error'].get('message', str(raw['error']))}"
+                "status": "error",
+                "error": f"GNPS USI error: {raw['error'].get('message', str(raw['error']))}",
             }
 
         # Process peaks - summarize to avoid huge responses
@@ -168,7 +171,8 @@ class GNPSTool(BaseTool):
         for s, name in [(spec1, "usi1"), (spec2, "usi2")]:
             if "error" in s:
                 return {
-                    "error": f"GNPS USI error for {name}: {s['error'].get('message', str(s['error']))}"
+                    "status": "error",
+                    "error": f"GNPS USI error for {name}: {s['error'].get('message', str(s['error']))}",
                 }
 
         result = {

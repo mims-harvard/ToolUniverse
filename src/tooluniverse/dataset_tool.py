@@ -103,7 +103,8 @@ class DatasetTool(BaseTool):
             return self._drugbank_search(query_params)
         else:
             return {
-                "error": "Invalid arguments: must provide either 'query' for search or 'field' for filtering"
+                "status": "error",
+                "error": "Invalid arguments: must provide either 'query' for search or 'field' for filtering",
             }
 
     # ==================== SEARCH FUNCTIONALITY ====================
@@ -263,18 +264,21 @@ class DatasetTool(BaseTool):
 
         if not field or not condition:
             return {
-                "error": "Both 'field' and 'condition' parameters are required for filtering"
+                "status": "error",
+                "error": "Both 'field' and 'condition' parameters are required for filtering",
             }
 
         if field not in self.dataset.columns:
             return {
-                "error": f"Field '{field}' not found in dataset. Available fields: {list(self.dataset.columns)}"
+                "status": "error",
+                "error": f"Field '{field}' not found in dataset. Available fields: {list(self.dataset.columns)}",
             }
 
         # Check if value is required for this condition
         if condition != "not_empty" and not value:
             return {
-                "error": f"'value' parameter is required for condition '{condition}'"
+                "status": "error",
+                "error": f"'value' parameter is required for condition '{condition}'",
             }
 
         filtered_data = self.dataset.copy()
@@ -303,7 +307,8 @@ class DatasetTool(BaseTool):
 
             else:
                 return {
-                    "error": f"Unknown condition '{condition}'. Supported: contains, starts_with, ends_with, exact, not_empty"
+                    "status": "error",
+                    "error": f"Unknown condition '{condition}'. Supported: contains, starts_with, ends_with, exact, not_empty",
                 }
 
             filtered_data = filtered_data[mask]

@@ -83,7 +83,8 @@ class KEGGExtTool(BaseTool):
         # Ensure proper KEGG format (org:id)
         if ":" not in gene_id:
             return {
-                "error": "gene_id must be in KEGG format 'organism:id' (e.g., 'hsa:7157')"
+                "status": "error",
+                "error": "gene_id must be in KEGG format 'organism:id' (e.g., 'hsa:7157')",
             }
 
         # Get pathway links
@@ -153,7 +154,8 @@ class KEGGExtTool(BaseTool):
         pathway_id = arguments.get("pathway_id", "")
         if not pathway_id:
             return {
-                "error": "pathway_id is required (e.g., 'hsa04115' for p53 signaling)"
+                "status": "error",
+                "error": "pathway_id is required (e.g., 'hsa04115' for p53 signaling)",
             }
 
         # Determine organism prefix from pathway ID
@@ -166,7 +168,8 @@ class KEGGExtTool(BaseTool):
 
         if not org:
             return {
-                "error": "Cannot determine organism from pathway_id. Use format like 'hsa04115'"
+                "status": "error",
+                "error": "Cannot determine organism from pathway_id. Use format like 'hsa04115'",
             }
 
         # Get gene links for pathway

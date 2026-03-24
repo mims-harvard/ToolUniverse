@@ -65,7 +65,8 @@ class EBIProteinsFeaturesTool(BaseTool):
         accession = arguments.get("accession", "")
         if not accession:
             return {
-                "error": "accession parameter is required (UniProt accession, e.g., P04637)"
+                "status": "error",
+                "error": "accession parameter is required (UniProt accession, e.g., P04637)",
             }
 
         url = f"{PROTEINS_API_BASE_URL}/features/{accession}"

@@ -43,12 +43,14 @@ class DOAJTool(BaseTool):
             data = resp.json()
         except requests.RequestException as e:
             return {
+                "status": "error",
                 "error": "Network/API error calling DOAJ",
                 "reason": str(e),
             }
         except ValueError:
             ct = resp.headers.get("content-type", "")
             return {
+                "status": "error",
                 "error": "Failed to decode DOAJ response as JSON",
                 "content_type": ct,
                 "response_snippet": resp.text[:200],

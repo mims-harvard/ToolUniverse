@@ -44,11 +44,13 @@ class UniChemTool(BaseTool):
             return self._dispatch(arguments)
         except requests.exceptions.Timeout:
             return {
-                "error": f"UniChem API request timed out after {self.timeout} seconds"
+                "status": "error",
+                "error": f"UniChem API request timed out after {self.timeout} seconds",
             }
         except requests.exceptions.ConnectionError:
             return {
-                "error": "Failed to connect to UniChem API. Check network connectivity."
+                "status": "error",
+                "error": "Failed to connect to UniChem API. Check network connectivity.",
             }
         except requests.exceptions.HTTPError as e:
             return {
@@ -81,7 +83,8 @@ class UniChemTool(BaseTool):
 
         if not compound:
             return {
-                "error": "compound parameter is required (e.g., InChIKey 'BSYNRYMUTXBXSQ-UHFFFAOYSA-N')"
+                "status": "error",
+                "error": "compound parameter is required (e.g., InChIKey 'BSYNRYMUTXBXSQ-UHFFFAOYSA-N')",
             }
 
         payload = {

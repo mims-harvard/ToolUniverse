@@ -53,7 +53,8 @@ class GenomeNexusTool(BaseTool):
             status = e.response.status_code if e.response is not None else "unknown"
             if status == 400:
                 return {
-                    "error": "Invalid variant format. Use GRCh37/hg19 HGVS notation (e.g., '7:g.140453136A>T')."
+                    "status": "error",
+                    "error": "Invalid variant format. Use GRCh37/hg19 HGVS notation (e.g., '7:g.140453136A>T').",
                 }
             if status == 404:
                 return {
@@ -94,9 +95,10 @@ class GenomeNexusTool(BaseTool):
 
         if not data.get("successfully_annotated", True):
             return {
+                "status": "error",
                 "error": data.get(
                     "errorMessage", f"Failed to annotate variant '{hgvsg}'"
-                )
+                ),
             }
 
         return self._format_annotation(data)
@@ -111,7 +113,8 @@ class GenomeNexusTool(BaseTool):
 
         if not all([chromosome, start, end, ref, alt]):
             return {
-                "error": "chromosome, start, end, reference_allele, and variant_allele are all required."
+                "status": "error",
+                "error": "chromosome, start, end, reference_allele, and variant_allele are all required.",
             }
 
         # Use the genomic format endpoint
@@ -124,10 +127,11 @@ class GenomeNexusTool(BaseTool):
 
         if not data.get("successfully_annotated", True):
             return {
+                "status": "error",
                 "error": data.get(
                     "errorMessage",
                     f"Failed to annotate mutation at {chromosome}:{start}",
-                )
+                ),
             }
 
         return self._format_annotation(data)
@@ -201,9 +205,10 @@ class GenomeNexusTool(BaseTool):
 
         if not data.get("successfully_annotated", True):
             return {
+                "status": "error",
                 "error": data.get(
                     "errorMessage", f"Failed to annotate variant '{hgvsg}'"
-                )
+                ),
             }
 
         # Extract gene symbol from annotation summary

@@ -118,10 +118,11 @@ class UniProtRESTTool(BaseTool):
             }
         except Exception as e:
             return {
+                "status": "error",
                 "error": (
                     f"Failed to extract UniProt fields using "
                     f"JSONPath '{extract_path}': {e}"
-                )
+                ),
             }
 
     def _handle_search(self, arguments: Dict[str, Any]) -> Any:
@@ -498,6 +499,7 @@ class UniProtRESTTool(BaseTool):
             resp = requests.get(url, timeout=self.timeout)
             if resp.status_code != 200:
                 return {
+                    "status": "error",
                     "error": (f"UniProt API returned status code: {resp.status_code}"),
                     "detail": resp.text,
                 }

@@ -114,7 +114,8 @@ class PubChemRESTTool(BaseTool):
             resp = requests.get(url, timeout=30)
         except requests.Timeout:
             return {
-                "error": "Request to PubChem PUG-REST timed out, try reducing query scope or retry later."
+                "status": "error",
+                "error": "Request to PubChem PUG-REST timed out, try reducing query scope or retry later.",
             }
         except Exception as e:
             return {
@@ -132,6 +133,7 @@ class PubChemRESTTool(BaseTool):
             except Exception:
                 pass
             return {
+                "status": "error",
                 "error": f"PubChem API returned HTTP {resp.status_code}",
                 "detail": error_detail,
             }
@@ -151,6 +153,7 @@ class PubChemRESTTool(BaseTool):
             except ValueError:
                 ct = resp.headers.get("content-type", "")
                 return {
+                    "status": "error",
                     "error": "Response content cannot be parsed as JSON.",
                     "content_type": ct,
                     "content": resp.text[:200],

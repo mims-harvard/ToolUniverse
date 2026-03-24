@@ -78,7 +78,8 @@ class MarkItDownTool(BaseTool):
 
             else:
                 return {
-                    "error": f"Unsupported URI scheme: {scheme}. Supported schemes: http, https, file, data"
+                    "status": "error",
+                    "error": f"Unsupported URI scheme: {scheme}. Supported schemes: http, https, file, data",
                 }
 
             # Build markitdown command

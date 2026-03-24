@@ -1172,7 +1172,8 @@ class CellosaurusGetCellLineInfoTool(BaseTool):
             # (Cellosaurus accessions start with CVCL_)
             if not accession.startswith("CVCL_"):
                 return {
-                    "error": ("Accession must start with 'CVCL_' (Cellosaurus format)")
+                    "status": "error",
+                    "error": ("Accession must start with 'CVCL_' (Cellosaurus format)"),
                 }
 
             # Validate format
@@ -1295,7 +1296,8 @@ class CellosaurusGetCellLineInfoTool(BaseTool):
 
                 if not cell_line_data:
                     return {
-                        "error": (f"No cell line data found for accession {accession}")
+                        "status": "error",
+                        "error": (f"No cell line data found for accession {accession}"),
                     }
 
                 # Apply field filtering if requested

@@ -51,7 +51,8 @@ class HarmonizomeTool(BaseTool):
             status = e.response.status_code if e.response is not None else "unknown"
             if status == 404:
                 return {
-                    "error": "Gene not found in Harmonizome. Check the gene symbol."
+                    "status": "error",
+                    "error": "Gene not found in Harmonizome. Check the gene symbol.",
                 }
             return {"status": "error", "error": f"Harmonizome API HTTP {status}"}
         except Exception as e:
@@ -83,7 +84,8 @@ class HarmonizomeTool(BaseTool):
         # Check if we got an error response
         if data.get("status") == 404 or "message" in data:
             return {
-                "error": f"Gene '{gene_symbol}' not found: {data.get('message', 'unknown')}"
+                "status": "error",
+                "error": f"Gene '{gene_symbol}' not found: {data.get('message', 'unknown')}",
             }
 
         proteins = []

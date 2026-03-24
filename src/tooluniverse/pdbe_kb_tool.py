@@ -231,7 +231,8 @@ class PDBe_KB_Tool(BaseTool):
         acc = arguments.get("uniprot_accession", "")
         if not acc:
             return {
-                "error": "uniprot_accession parameter is required (e.g., 'P04637' for TP53, 'P00533' for EGFR)."
+                "status": "error",
+                "error": "uniprot_accession parameter is required (e.g., 'P04637' for TP53, 'P00533' for EGFR).",
             }
 
         url = f"{PDBE_KB_BASE_URL}/uniprot/superposition/{acc}"

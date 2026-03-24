@@ -147,10 +147,11 @@ class GrepToolsTool(BaseTool):
                         }
                 else:
                     return {
+                        "status": "error",
                         "error": (
                             f"Invalid search_mode: {search_mode}. "
                             "Must be 'text' or 'regex'"
-                        )
+                        ),
                     }
 
                 if matched:
@@ -258,9 +259,10 @@ class ListToolsTool(BaseTool):
         ]
         if mode not in valid_modes:
             return {
+                "status": "error",
                 "error": (
                     f"Invalid mode: {mode}. Must be one of: {', '.join(valid_modes)}"
-                )
+                ),
             }
 
         categories = arguments.get("categories")
@@ -731,10 +733,11 @@ class GetToolInfoTool(BaseTool):
         detail_level = arguments.get("detail_level", "full")
         if detail_level not in ["description", "full"]:
             return {
+                "status": "error",
                 "error": (
                     f"Invalid detail_level: {detail_level}. "
                     "Must be 'description' or 'full'"
-                )
+                ),
             }
 
         # Normalize tool_names to list
@@ -821,6 +824,7 @@ class GetToolInfoTool(BaseTool):
             error_msg = f"Error getting tool info: {str(e)}"
             self.logger.error(f"{error_msg} (elapsed: {elapsed:.2f}s)", exc_info=True)
             return {
+                "status": "error",
                 "error": error_msg,
                 "error_type": type(e).__name__,
                 "elapsed_seconds": round(elapsed, 2),
@@ -831,6 +835,7 @@ class GetToolInfoTool(BaseTool):
             error_msg = "Tool info retrieval was interrupted"
             self.logger.warning(f"{error_msg} (elapsed: {elapsed:.2f}s)")
             return {
+                "status": "error",
                 "error": error_msg,
                 "error_type": "InterruptedError",
                 "elapsed_seconds": round(elapsed, 2),

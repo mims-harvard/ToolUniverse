@@ -93,6 +93,7 @@ class MGnifyStudiesTool:
             }
         except Exception as e:
             return {
+                "status": "error",
                 "error": str(e),
                 "source": "MGnify",
                 "endpoint": "studies",
@@ -168,6 +169,7 @@ class MGnifyAnalysesTool:
             }
         except Exception as e:
             return {
+                "status": "error",
                 "error": str(e),
                 "source": "MGnify",
                 "endpoint": "analyses",

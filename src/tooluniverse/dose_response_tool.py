@@ -90,11 +90,12 @@ class DoseResponseTool(BaseTool):
 
         if np.any(~np.isfinite(y)):
             return {
+                "status": "error",
                 "error": (
                     "Response values contain non-finite values (NaN or inf). "
                     "All responses must be finite real numbers. "
                     "Remove or correct the affected data points before fitting."
-                )
+                ),
             }
 
         # NaN comparison always returns False: NaN <= 0 = False, so NaN bypasses the
@@ -102,11 +103,12 @@ class DoseResponseTool(BaseTool):
         # "domain error" or NaN results.  Check isfinite BEFORE the <= 0 guard.
         if np.any(~np.isfinite(x)):
             return {
+                "status": "error",
                 "error": (
                     "Concentration values contain non-finite values (NaN or inf). "
                     "All concentrations must be finite positive numbers. "
                     "Remove or correct the affected data points before fitting."
-                )
+                ),
             }
 
         if np.any(x <= 0):
@@ -121,12 +123,13 @@ class DoseResponseTool(BaseTool):
         # zero dose range (no concentration gradient), not zero effect range.
         if len(np.unique(x)) < 2:
             return {
+                "status": "error",
                 "error": (
                     "All concentration values are identical (no dose range). "
                     "IC50 estimation requires at least 2 distinct concentration levels "
                     "to define the dose-response relationship. Use a dose series spanning "
                     "multiple orders of magnitude (e.g., 0.001–100 μM)."
-                )
+                ),
             }
 
         # Detect flat response data: if all responses are identical (or near-identical),
@@ -134,11 +137,12 @@ class DoseResponseTool(BaseTool):
         y_range = float(np.max(y) - np.min(y))
         if y_range < 1e-10:
             return {
+                "status": "error",
                 "error": (
                     "All response values are identical (flat data). "
                     "Cannot estimate IC50 — the dose-response relationship is not identifiable. "
                     "A sigmoidal model requires variation in response across concentrations."
-                )
+                ),
             }
 
         # Starting estimates:

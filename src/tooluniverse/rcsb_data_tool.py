@@ -212,7 +212,8 @@ class RCSBDataTool(BaseTool):
         entity_id = arguments.get("entity_id", "")
         if not pdb_id or not entity_id:
             return {
-                "error": "Both pdb_id and entity_id are required (e.g., pdb_id='4HHB', entity_id='3')"
+                "status": "error",
+                "error": "Both pdb_id and entity_id are required (e.g., pdb_id='4HHB', entity_id='3')",
             }
 
         url = f"{RCSB_DATA_BASE_URL}/nonpolymer_entity/{pdb_id}/{entity_id}"

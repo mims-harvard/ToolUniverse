@@ -48,7 +48,8 @@ class OMATool(BaseTool):
             }
         except requests.exceptions.ConnectionError:
             return {
-                "error": "Failed to connect to OMA API. Check network connectivity."
+                "status": "error",
+                "error": "Failed to connect to OMA API. Check network connectivity.",
             }
         except requests.exceptions.HTTPError as e:
             return {
@@ -79,7 +80,8 @@ class OMATool(BaseTool):
         protein_id = arguments.get("protein_id", "")
         if not protein_id:
             return {
-                "error": "protein_id parameter is required (UniProt accession e.g. P04637, or OMA ID e.g. HUMAN31534)"
+                "status": "error",
+                "error": "protein_id parameter is required (UniProt accession e.g. P04637, or OMA ID e.g. HUMAN31534)",
             }
 
         url = f"{OMA_BASE_URL}/protein/{protein_id}/"
@@ -121,7 +123,8 @@ class OMATool(BaseTool):
         protein_id = arguments.get("protein_id", "")
         if not protein_id:
             return {
-                "error": "protein_id parameter is required (UniProt accession e.g. P04637)"
+                "status": "error",
+                "error": "protein_id parameter is required (UniProt accession e.g. P04637)",
             }
 
         rel_type = arguments.get("rel_type")
@@ -215,7 +218,8 @@ class OMATool(BaseTool):
         group_id = arguments.get("group_id", "")
         if not group_id:
             return {
-                "error": "group_id parameter is required (numeric group ID, e.g. 1388790)"
+                "status": "error",
+                "error": "group_id parameter is required (numeric group ID, e.g. 1388790)",
             }
 
         url = f"{OMA_BASE_URL}/group/{group_id}/"

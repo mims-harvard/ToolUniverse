@@ -47,6 +47,7 @@ class PackageTool(BaseTool):
 
         except Exception as e:
             return {
+                "status": "error",
                 "error": f"Failed to get package information: {str(e)}",
                 "package_name": self.package_name,
             }
@@ -124,6 +125,7 @@ class PackageTool(BaseTool):
         """Get package information from local configuration"""
         if not self.local_info:
             return {
+                "status": "error",
                 "error": f"No local information available for package '{self.package_name}'",
                 "package_name": self.package_name,
             }

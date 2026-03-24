@@ -43,11 +43,13 @@ class EBITaxonomyTool(BaseTool):
             return self._query(arguments)
         except requests.exceptions.Timeout:
             return {
-                "error": f"EBI Taxonomy API request timed out after {self.timeout}s"
+                "status": "error",
+                "error": f"EBI Taxonomy API request timed out after {self.timeout}s",
             }
         except requests.exceptions.ConnectionError:
             return {
-                "error": "Failed to connect to EBI Taxonomy API. Check network connectivity."
+                "status": "error",
+                "error": "Failed to connect to EBI Taxonomy API. Check network connectivity.",
             }
         except requests.exceptions.HTTPError as e:
             return {

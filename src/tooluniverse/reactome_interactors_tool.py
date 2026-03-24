@@ -77,7 +77,8 @@ class ReactomeInteractorsTool(BaseTool):
         accession = arguments.get("accession", "")
         if not accession:
             return {
-                "error": "accession parameter is required (UniProt accession, e.g., P04637)"
+                "status": "error",
+                "error": "accession parameter is required (UniProt accession, e.g., P04637)",
             }
 
         page_size = arguments.get("page_size") or 20
@@ -128,7 +129,8 @@ class ReactomeInteractorsTool(BaseTool):
         entity_id = arguments.get("entity_id", "")
         if not entity_id:
             return {
-                "error": "entity_id parameter is required (Reactome stable ID, e.g., R-HSA-199420)"
+                "status": "error",
+                "error": "entity_id parameter is required (Reactome stable ID, e.g., R-HSA-199420)",
             }
 
         species = arguments.get("species") or 9606

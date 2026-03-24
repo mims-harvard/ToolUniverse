@@ -322,7 +322,8 @@ def search_openfda(
         or search_fields
     ):
         return {
-            "error": "You must provide at least one of 'search', 'count', or 'sort' parameters."
+            "status": "error",
+            "error": "You must provide at least one of 'search', 'count', or 'sort' parameters.",
         }
 
     # Set additional query parameters
@@ -742,6 +743,7 @@ def search_openfda(
             )
             suggestion = " ".join(suggestion_parts)
             return {
+                "status": "error",
                 "error": err,
                 "suggestion": suggestion,
                 "meta": {
@@ -1411,10 +1413,11 @@ class FDADrugLabelFieldValueTool(BaseTool):
 
         if field not in allowed_fields:
             return {
+                "status": "error",
                 "error": (
                     f"Invalid `field`: {field}. "
                     "Use one of the documented FDA drug label fields."
-                )
+                ),
             }
 
         return_fields = arguments.pop("return_fields", None)
@@ -1435,11 +1438,12 @@ class FDADrugLabelFieldValueTool(BaseTool):
             invalid = [rf for rf in return_fields if rf not in allowed_fields]
             if invalid:
                 return {
+                    "status": "error",
                     "error": (
                         "Invalid `return_fields` value(s): "
                         + ", ".join(invalid)
                         + ". Use only documented FDA drug label fields."
-                    )
+                    ),
                 }
 
         # Build openFDA search_fields mapping expected by search_openfda()

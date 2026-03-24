@@ -43,11 +43,13 @@ class MGnifyExpandedTool(BaseTool):
             return self._dispatch(arguments)
         except requests.exceptions.Timeout:
             return {
-                "error": f"MGnify API request timed out after {self.timeout} seconds"
+                "status": "error",
+                "error": f"MGnify API request timed out after {self.timeout} seconds",
             }
         except requests.exceptions.ConnectionError:
             return {
-                "error": "Failed to connect to MGnify API. Check network connectivity."
+                "status": "error",
+                "error": "Failed to connect to MGnify API. Check network connectivity.",
             }
         except requests.exceptions.HTTPError as e:
             return {
@@ -72,7 +74,8 @@ class MGnifyExpandedTool(BaseTool):
             return self._study_detail(arguments)
         else:
             return {
-                "error": f"Unknown endpoint_type/query_mode: {self.endpoint_type}/{self.query_mode}"
+                "status": "error",
+                "error": f"Unknown endpoint_type/query_mode: {self.endpoint_type}/{self.query_mode}",
             }
 
     def _genome_detail(self, arguments: Dict[str, Any]) -> Dict[str, Any]:
@@ -222,7 +225,8 @@ class MGnifyExpandedTool(BaseTool):
         study_accession = arguments.get("study_accession", "")
         if not study_accession:
             return {
-                "error": "study_accession parameter is required (e.g., MGYS00002008)"
+                "status": "error",
+                "error": "study_accession parameter is required (e.g., MGYS00002008)",
             }
 
         url = f"{MGNIFY_BASE_URL}/studies/{study_accession}"

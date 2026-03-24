@@ -44,11 +44,13 @@ class PANTHERTool(BaseTool):
             return self._dispatch(arguments)
         except requests.exceptions.Timeout:
             return {
-                "error": f"PANTHER API request timed out after {self.timeout} seconds"
+                "status": "error",
+                "error": f"PANTHER API request timed out after {self.timeout} seconds",
             }
         except requests.exceptions.ConnectionError:
             return {
-                "error": "Failed to connect to PANTHER API. Check network connectivity."
+                "status": "error",
+                "error": "Failed to connect to PANTHER API. Check network connectivity.",
             }
         except requests.exceptions.HTTPError as e:
             return {
@@ -170,7 +172,8 @@ class PANTHERTool(BaseTool):
 
         if not gene_list:
             return {
-                "error": "gene_list parameter is required (e.g., 'TP53,BRCA1,EGFR,KRAS')"
+                "status": "error",
+                "error": "gene_list parameter is required (e.g., 'TP53,BRCA1,EGFR,KRAS')",
             }
         if organism is None:
             organism = 9606

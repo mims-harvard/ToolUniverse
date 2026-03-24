@@ -120,6 +120,7 @@ class GWASRESTTool(BaseTool):
             if resolved:
                 return {"efo_id": resolved}
             return {
+                "status": "error",
                 "error": {
                     "status": "error",
                     "error": (
@@ -127,7 +128,7 @@ class GWASRESTTool(BaseTool):
                         "Try a more specific name, or provide efo_id directly "
                         "(e.g., 'EFO_0000305' for breast carcinoma)."
                     ),
-                }
+                },
             }
         return {"efo_id": efo_id}
 
@@ -418,7 +419,8 @@ class GWASVariantsForTrait(GWASRESTTool):
 
         if not disease_trait and not efo_id and not efo_trait:
             return {
-                "error": "Provide at least one of: disease_trait, efo_id (or efo_uri), efo_trait."
+                "status": "error",
+                "error": "Provide at least one of: disease_trait, efo_id (or efo_uri), efo_trait.",
             }
 
         params: Dict[str, Any] = {
@@ -462,7 +464,8 @@ class GWASAssociationsForTrait(GWASRESTTool):
 
         if not disease_trait and not efo_id and not efo_trait:
             return {
-                "error": "Provide at least one of: disease_trait, efo_id (or efo_uri), efo_trait."
+                "status": "error",
+                "error": "Provide at least one of: disease_trait, efo_id (or efo_uri), efo_trait.",
             }
 
         params: Dict[str, Any] = {
@@ -532,7 +535,8 @@ class GWASStudiesForTrait(GWASRESTTool):
         efo_trait = self._coerce_str(arguments.get("efo_trait"))
         if not disease_trait and not efo_id and not efo_trait:
             return {
-                "error": "Provide at least one of: disease_trait, efo_id (or efo_uri), efo_trait."
+                "status": "error",
+                "error": "Provide at least one of: disease_trait, efo_id (or efo_uri), efo_trait.",
             }
 
         params = {

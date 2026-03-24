@@ -155,18 +155,22 @@ class GeneOntologyTool(BaseTool):
         except requests.exceptions.HTTPError as e:
             if e.response.status_code == 404:
                 return {
-                    "error": "The requested resource was not found (404 Not Found)."
+                    "status": "error",
+                    "error": "The requested resource was not found (404 Not Found).",
                 }
             return {
+                "status": "error",
                 "error": f"GO API request failed with HTTP status: {e.response.status_code}",
                 "detail": e.response.text,
             }
         except requests.exceptions.RequestException as e:
             return {
-                "error": f"A network error occurred while requesting the GO API: {e}"
+                "status": "error",
+                "error": f"A network error occurred while requesting the GO API: {e}",
             }
         except ValueError:
             return {
+                "status": "error",
                 "error": "Failed to parse GO API response, which may not be valid JSON.",
                 "content": resp.text,
             }

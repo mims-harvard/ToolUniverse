@@ -108,7 +108,8 @@ class RheaTool(BaseTool):
         query = arguments.get("query", "")
         if not query:
             return {
-                "error": "query parameter is required (e.g., 'glucose', 'ATP', 'kinase')"
+                "status": "error",
+                "error": "query parameter is required (e.g., 'glucose', 'ATP', 'kinase')",
             }
 
         limit = arguments.get("limit", 20)
@@ -139,7 +140,8 @@ class RheaTool(BaseTool):
         ec_number = arguments.get("ec_number", "")
         if not ec_number:
             return {
-                "error": "ec_number parameter is required (e.g., 'EC:1.1.1.1', '3.5.1.50')"
+                "status": "error",
+                "error": "ec_number parameter is required (e.g., 'EC:1.1.1.1', '3.5.1.50')",
             }
 
         # Normalize EC number format
@@ -174,7 +176,8 @@ class RheaTool(BaseTool):
         chebi_id = arguments.get("chebi_id", "")
         if not chebi_id:
             return {
-                "error": "chebi_id parameter is required (e.g., 'CHEBI:17234' for glucose)"
+                "status": "error",
+                "error": "chebi_id parameter is required (e.g., 'CHEBI:17234' for glucose)",
             }
 
         # Normalize ChEBI ID format

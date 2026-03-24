@@ -60,11 +60,13 @@ class FoodDataCentralTool(BaseTool):
                 return {"status": "error", "error": f"Unknown operation: {operation}"}
         except requests.exceptions.Timeout:
             return {
-                "error": f"FoodData Central API request timed out after {self.timeout} seconds"
+                "status": "error",
+                "error": f"FoodData Central API request timed out after {self.timeout} seconds",
             }
         except requests.exceptions.ConnectionError:
             return {
-                "error": "Failed to connect to FoodData Central API. Check network connectivity."
+                "status": "error",
+                "error": "Failed to connect to FoodData Central API. Check network connectivity.",
             }
         except requests.exceptions.HTTPError as e:
             status_code = e.response.status_code if e.response else "unknown"
@@ -73,11 +75,13 @@ class FoodDataCentralTool(BaseTool):
                 detail = e.response.text[:200]
             if status_code == 403:
                 return {
-                    "error": "FoodData Central API key invalid or missing. Set FDC_API_KEY env variable."
+                    "status": "error",
+                    "error": "FoodData Central API key invalid or missing. Set FDC_API_KEY env variable.",
                 }
             elif status_code == 429:
                 return {
-                    "error": "FoodData Central rate limit exceeded (1000 req/hr). Try again later."
+                    "status": "error",
+                    "error": "FoodData Central rate limit exceeded (1000 req/hr). Try again later.",
                 }
             return {
                 "status": "error",

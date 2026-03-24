@@ -250,6 +250,7 @@ class ComposeTool(BaseTool):
                 if still_missing:
                     if self.fail_on_missing_tools:
                         return {
+                            "status": "error",
                             "error": f"Required tools not available: {', '.join(still_missing)}",
                             "missing_tools": list(still_missing),
                             "auto_loaded": list(successfully_loaded),
@@ -261,6 +262,7 @@ class ComposeTool(BaseTool):
             else:
                 if self.fail_on_missing_tools:
                     return {
+                        "status": "error",
                         "error": f"Required tools not available: {', '.join(missing_tools)}",
                         "missing_tools": list(missing_tools),
                         "auto_load_disabled": True,

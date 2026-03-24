@@ -62,7 +62,8 @@ class STITCHTool(BaseTool):
 
         if not identifiers:
             return {
-                "error": "identifiers parameter is required (chemical names or IDs)"
+                "status": "error",
+                "error": "identifiers parameter is required (chemical names or IDs)",
             }
 
         if isinstance(identifiers, str):
@@ -83,9 +84,10 @@ class STITCHTool(BaseTool):
             )
             if response.status_code == 404:
                 return {
+                    "status": "error",
                     "error": f"No interactions found for {identifiers} in STITCH. "
                     "Try using CID identifiers (e.g., 'CIDm00002244' for aspirin) "
-                    "or check compound names at http://stitch.embl.de/"
+                    "or check compound names at http://stitch.embl.de/",
                 }
             response.raise_for_status()
             return {"interactions": response.json()}
@@ -120,8 +122,9 @@ class STITCHTool(BaseTool):
             )
             if response.status_code == 404:
                 return {
+                    "status": "error",
                     "error": f"No interactors found for {identifiers} in STITCH. "
-                    "Try using CID identifiers or check compound names at http://stitch.embl.de/"
+                    "Try using CID identifiers or check compound names at http://stitch.embl.de/",
                 }
             response.raise_for_status()
             return {"interactors": response.json()}
@@ -149,8 +152,9 @@ class STITCHTool(BaseTool):
             )
             if response.status_code == 404:
                 return {
+                    "status": "error",
                     "error": f"Identifier '{identifier}' not found in STITCH. "
-                    "Try using CID identifiers or check at http://stitch.embl.de/"
+                    "Try using CID identifiers or check at http://stitch.embl.de/",
                 }
             response.raise_for_status()
             return {"matches": response.json()}

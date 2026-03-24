@@ -1294,6 +1294,7 @@ class FileSaveHook(OutputHook):
         except Exception as e:
             # Return error information instead of failing
             return {
+                "status": "error",
                 "error": f"Failed to save output to file: {str(e)}",
                 "original_output": str(result),
                 "tool_name": tool_name,

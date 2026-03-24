@@ -51,7 +51,8 @@ class EBIProteinsInteractionsTool(BaseTool):
             status = e.response.status_code if e.response is not None else "unknown"
             if status == 400:
                 return {
-                    "error": f"Invalid accession. Use a UniProt accession (e.g., P04637)."
+                    "status": "error",
+                    "error": f"Invalid accession. Use a UniProt accession (e.g., P04637).",
                 }
             return {"status": "error", "error": f"EBI Proteins API HTTP {status}"}
         except Exception as e:

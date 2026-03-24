@@ -37,12 +37,14 @@ class UnpaywallTool(BaseTool):
             )
         except requests.RequestException as e:
             return {
+                "status": "error",
                 "error": "Network error calling Unpaywall API",
                 "reason": str(e),
             }
 
         if response.status_code != 200:
             return {
+                "status": "error",
                 "error": f"Unpaywall API error {response.status_code}",
                 "reason": response.reason,
             }

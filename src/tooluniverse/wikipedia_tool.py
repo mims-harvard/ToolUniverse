@@ -85,11 +85,13 @@ class WikipediaSearchTool(BaseTool):
 
         except requests.RequestException as e:
             return {
+                "status": "error",
                 "error": "Network/API error calling Wikipedia",
                 "reason": str(e),
             }
         except (ValueError, KeyError) as e:
             return {
+                "status": "error",
                 "error": "Failed to parse Wikipedia API response",
                 "reason": str(e),
             }
@@ -203,11 +205,13 @@ class WikipediaContentTool(BaseTool):
 
         except requests.RequestException as e:
             return {
+                "status": "error",
                 "error": "Network/API error calling Wikipedia",
                 "reason": str(e),
             }
         except (ValueError, KeyError) as e:
             return {
+                "status": "error",
                 "error": "Failed to parse Wikipedia API response",
                 "reason": str(e),
             }

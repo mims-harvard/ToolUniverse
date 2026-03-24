@@ -1775,7 +1775,8 @@ class ToolUniverse:
             else:
                 # For invalid string modes, return error info instead of raising
                 return {
-                    "error": f"Invalid mode '{mode}'. Must be one of: 'config', 'type', 'list_name', 'list_spec'"
+                    "status": "error",
+                    "error": f"Invalid mode '{mode}'. Must be one of: 'config', 'type', 'list_name', 'list_spec'",
                 }
 
         # For list_name and list_spec modes, we can return early with just the data

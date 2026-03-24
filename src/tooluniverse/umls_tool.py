@@ -41,12 +41,13 @@ class UMLSRESTTool(BaseTool):
         api_key = self._get_api_key()
         if not api_key:
             return {
+                "status": "error",
                 "error": (
                     "UMLS API key required. "
                     "Please set UMLS_API_KEY environment variable. "
                     "Register for a free API key at: "
                     "https://uts.nlm.nih.gov/uts/"
-                )
+                ),
             }
 
         url = self._build_url(arguments)

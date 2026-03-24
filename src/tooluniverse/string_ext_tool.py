@@ -68,7 +68,8 @@ class STRINGExtTool(BaseTool):
         identifiers = arguments.get("identifiers", "")
         if not identifiers:
             return {
-                "error": "identifiers parameter is required (gene name or protein ID, e.g., 'TP53')"
+                "status": "error",
+                "error": "identifiers parameter is required (gene name or protein ID, e.g., 'TP53')",
             }
 
         species = arguments.get("species", 9606)
@@ -123,7 +124,8 @@ class STRINGExtTool(BaseTool):
         identifiers = arguments.get("identifiers", "")
         if not identifiers:
             return {
-                "error": "identifiers parameter is required (newline-separated gene names, e.g., 'BRCA1\\nTP53\\nEGFR')"
+                "status": "error",
+                "error": "identifiers parameter is required (newline-separated gene names, e.g., 'BRCA1\\nTP53\\nEGFR')",
             }
 
         species = arguments.get("species", 9606)

@@ -87,7 +87,8 @@ class MonarchV3Tool(BaseTool):
         entity_id = arguments.get("entity_id", "")
         if not entity_id:
             return {
-                "error": "entity_id parameter is required (e.g., HGNC:11998, MONDO:0005148, HP:0001250)"
+                "status": "error",
+                "error": "entity_id parameter is required (e.g., HGNC:11998, MONDO:0005148, HP:0001250)",
             }
 
         url = f"{MONARCH_BASE_URL}/entity/{entity_id}"
@@ -119,13 +120,15 @@ class MonarchV3Tool(BaseTool):
         subject = arguments.get("subject", "")
         if not subject:
             return {
-                "error": "subject parameter is required (e.g., HGNC:11998 or MONDO:0005148)"
+                "status": "error",
+                "error": "subject parameter is required (e.g., HGNC:11998 or MONDO:0005148)",
             }
 
         category = arguments.get("category", "")
         if not category:
             return {
-                "error": "category parameter is required. Options: biolink:GeneToPhenotypicFeatureAssociation, biolink:DiseaseToPhenotypicFeatureAssociation, biolink:CorrelatedGeneToDiseaseAssociation, biolink:CausalGeneToDiseaseAssociation, biolink:VariantToDiseaseAssociation, biolink:GeneToPathwayAssociation"
+                "status": "error",
+                "error": "category parameter is required. Options: biolink:GeneToPhenotypicFeatureAssociation, biolink:DiseaseToPhenotypicFeatureAssociation, biolink:CorrelatedGeneToDiseaseAssociation, biolink:CausalGeneToDiseaseAssociation, biolink:VariantToDiseaseAssociation, biolink:GeneToPathwayAssociation",
             }
 
         limit = arguments.get("limit") or 20
@@ -218,7 +221,8 @@ class MonarchV3Tool(BaseTool):
         query = arguments.get("query", "").strip()
         if not query:
             return {
-                "error": "query parameter is required (e.g., 'Alzheimer', 'breast cancer', 'diabetes')"
+                "status": "error",
+                "error": "query parameter is required (e.g., 'Alzheimer', 'breast cancer', 'diabetes')",
             }
 
         limit = arguments.get("limit") or 10
@@ -260,7 +264,8 @@ class MonarchV3Tool(BaseTool):
         disease_id = arguments.get("disease_id", "").strip()
         if not disease_id:
             return {
-                "error": "disease_id parameter is required (e.g., MONDO:0004975, MONDO:0005148)"
+                "status": "error",
+                "error": "disease_id parameter is required (e.g., MONDO:0004975, MONDO:0005148)",
             }
 
         url = f"{MONARCH_BASE_URL}/entity/{disease_id}"
@@ -272,7 +277,8 @@ class MonarchV3Tool(BaseTool):
         category = data.get("category", "")
         if category and "Disease" not in category:
             return {
-                "error": f"Entity {disease_id} is not a disease (category: {category})"
+                "status": "error",
+                "error": f"Entity {disease_id} is not a disease (category: {category})",
             }
 
         # Extract hierarchy
@@ -356,7 +362,8 @@ class MonarchV3Tool(BaseTool):
         disease_id = arguments.get("disease_id", "").strip()
         if not disease_id:
             return {
-                "error": "disease_id parameter is required (e.g., MONDO:0004975, MONDO:0005148)"
+                "status": "error",
+                "error": "disease_id parameter is required (e.g., MONDO:0004975, MONDO:0005148)",
             }
 
         limit = arguments.get("limit") or 20

@@ -62,11 +62,13 @@ class NeuroMorphoTool(BaseTool):
 
         except requests.exceptions.Timeout:
             return {
-                "error": f"NeuroMorpho API request timed out after {self.timeout} seconds"
+                "status": "error",
+                "error": f"NeuroMorpho API request timed out after {self.timeout} seconds",
             }
         except requests.exceptions.ConnectionError:
             return {
-                "error": "Failed to connect to NeuroMorpho API. Check network connectivity."
+                "status": "error",
+                "error": "Failed to connect to NeuroMorpho API. Check network connectivity.",
             }
         except requests.exceptions.HTTPError as e:
             status = e.response.status_code if e.response else "unknown"

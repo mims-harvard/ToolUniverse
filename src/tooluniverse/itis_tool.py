@@ -47,7 +47,8 @@ class ITISTool(BaseTool):
             }
         except requests.exceptions.ConnectionError:
             return {
-                "error": "Failed to connect to ITIS API. Check network connectivity."
+                "status": "error",
+                "error": "Failed to connect to ITIS API. Check network connectivity.",
             }
         except requests.exceptions.HTTPError as e:
             return {

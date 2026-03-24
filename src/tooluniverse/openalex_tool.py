@@ -21,7 +21,8 @@ class OpenAlexTool(BaseTool):
         search_keywords = arguments.get("search_keywords") or arguments.get("query")
         if not search_keywords or not str(search_keywords).strip():
             return {
-                "error": "`search_keywords` (or `query`) parameter is required and must be non-empty."
+                "status": "error",
+                "error": "`search_keywords` (or `query`) parameter is required and must be non-empty.",
             }
         max_results = arguments.get("max_results", arguments.get("limit", 10))
         year_from = arguments.get("year_from", None)

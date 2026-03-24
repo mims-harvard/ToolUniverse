@@ -42,11 +42,13 @@ class QuickGOTool(BaseTool):
             return self._query(arguments)
         except requests.exceptions.Timeout:
             return {
-                "error": f"QuickGO API request timed out after {self.timeout} seconds"
+                "status": "error",
+                "error": f"QuickGO API request timed out after {self.timeout} seconds",
             }
         except requests.exceptions.ConnectionError:
             return {
-                "error": "Failed to connect to QuickGO API. Check network connectivity."
+                "status": "error",
+                "error": "Failed to connect to QuickGO API. Check network connectivity.",
             }
         except requests.exceptions.HTTPError as e:
             return {
@@ -82,13 +84,14 @@ class QuickGOTool(BaseTool):
         # QuickGO requires "DB:Accession" format such as "UniProtKB:P04637".
         if ":" not in gene_product_id:
             return {
+                "status": "error",
                 "error": (
                     f"Invalid gene_product_id format: '{gene_product_id}'. "
                     "QuickGO requires accession format 'DB:Accession', "
                     "e.g. 'UniProtKB:P04637' for human TP53. "
                     "Use `tu run UniProt_search query=TP53` to find the UniProt accession "
                     "for your gene."
-                )
+                ),
             }
 
         url = f"{QUICKGO_BASE_URL}/annotation/search"

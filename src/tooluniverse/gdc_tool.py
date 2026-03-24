@@ -110,6 +110,7 @@ class GDCCasesTool:
             }
         except Exception as e:
             return {
+                "status": "error",
                 "error": str(e),
                 "source": "GDC",
                 "endpoint": "cases",
@@ -187,6 +188,7 @@ class GDCFilesTool:
             }
         except Exception as e:
             return {
+                "status": "error",
                 "error": str(e),
                 "source": "GDC",
                 "endpoint": "files",

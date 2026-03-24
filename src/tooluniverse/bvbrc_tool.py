@@ -44,11 +44,13 @@ class BVBRCTool(BaseTool):
             return self._query(arguments)
         except requests.exceptions.Timeout:
             return {
-                "error": f"BV-BRC API request timed out after {self.timeout} seconds"
+                "status": "error",
+                "error": f"BV-BRC API request timed out after {self.timeout} seconds",
             }
         except requests.exceptions.ConnectionError:
             return {
-                "error": "Failed to connect to BV-BRC API. Check network connectivity."
+                "status": "error",
+                "error": "Failed to connect to BV-BRC API. Check network connectivity.",
             }
         except requests.exceptions.HTTPError as e:
             return {
@@ -91,7 +93,8 @@ class BVBRCTool(BaseTool):
             return self._search_subsystems(arguments)
         else:
             return {
-                "error": f"Unknown data_type/action: {self.data_type}/{self.action}"
+                "status": "error",
+                "error": f"Unknown data_type/action: {self.data_type}/{self.action}",
             }
 
     def _build_query_string(
@@ -222,7 +225,8 @@ class BVBRCTool(BaseTool):
 
         if not conditions:
             return {
-                "error": "At least one of antibiotic, genome_id, or resistant_phenotype is required"
+                "status": "error",
+                "error": "At least one of antibiotic, genome_id, or resistant_phenotype is required",
             }
 
         limit = min(arguments.get("limit") or 25, 100)
@@ -333,7 +337,8 @@ class BVBRCTool(BaseTool):
 
         if not conditions:
             return {
-                "error": "At least one of taxon_id, protein_name, epitope_type, or organism is required"
+                "status": "error",
+                "error": "At least one of taxon_id, protein_name, epitope_type, or organism is required",
             }
 
         limit = min(arguments.get("limit") or 25, 100)
@@ -388,7 +393,8 @@ class BVBRCTool(BaseTool):
 
         if not conditions:
             return {
-                "error": "At least one of subtype, geographic_group, host_group, or collection_country is required"
+                "status": "error",
+                "error": "At least one of subtype, geographic_group, host_group, or collection_country is required",
             }
 
         limit = min(arguments.get("limit") or 25, 100)
@@ -442,7 +448,8 @@ class BVBRCTool(BaseTool):
 
         if not conditions:
             return {
-                "error": "At least one of gene, property, source, or taxon_id is required"
+                "status": "error",
+                "error": "At least one of gene, property, source, or taxon_id is required",
             }
 
         limit = min(arguments.get("limit") or 25, 100)
@@ -627,7 +634,8 @@ class BVBRCTool(BaseTool):
 
         if not conditions:
             return {
-                "error": "At least one of taxon_id, pathway_name, ec_number, or genome_id is required"
+                "status": "error",
+                "error": "At least one of taxon_id, pathway_name, ec_number, or genome_id is required",
             }
 
         limit = min(arguments.get("limit") or 25, 100)
@@ -684,7 +692,8 @@ class BVBRCTool(BaseTool):
 
         if not conditions:
             return {
-                "error": "At least one of taxon_id, superclass, subsystem_name, role_name, or genome_id is required"
+                "status": "error",
+                "error": "At least one of taxon_id, superclass, subsystem_name, role_name, or genome_id is required",
             }
 
         limit = min(arguments.get("limit") or 25, 100)

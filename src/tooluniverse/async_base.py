@@ -52,11 +52,12 @@ def _generate_async_return_schema() -> dict:
 def _format_async_error(name: str, exception: Exception) -> dict:
     """Convert an exception into the standard ToolUniverse error dict."""
     return {
+        "status": "error",
         "error": {
             "message": str(exception),
             "error_type": type(exception).__name__,
             "details": {"tool": name},
-        }
+        },
     }
 
 

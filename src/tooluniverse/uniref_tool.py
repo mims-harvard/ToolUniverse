@@ -69,7 +69,8 @@ class UniRefTool(BaseTool):
         cluster_id = arguments.get("cluster_id", "")
         if not cluster_id:
             return {
-                "error": "cluster_id parameter is required (e.g., 'UniRef90_P04637')"
+                "status": "error",
+                "error": "cluster_id parameter is required (e.g., 'UniRef90_P04637')",
             }
 
         cluster_id = cluster_id.strip()
@@ -129,7 +130,8 @@ class UniRefTool(BaseTool):
         query = arguments.get("query", "")
         if not query:
             return {
-                "error": "query parameter is required (e.g., 'p53', 'insulin', 'kinase Homo sapiens')"
+                "status": "error",
+                "error": "query parameter is required (e.g., 'p53', 'insulin', 'kinase Homo sapiens')",
             }
 
         cluster_type = arguments.get("cluster_type") or "UniRef90"

@@ -54,11 +54,13 @@ class EpiGraphDBTool(BaseRESTTool):
             }
         except requests.exceptions.ConnectionError:
             return {
-                "error": "Failed to connect to EpiGraphDB. Check network connectivity."
+                "status": "error",
+                "error": "Failed to connect to EpiGraphDB. Check network connectivity.",
             }
         except requests.exceptions.HTTPError as e:
             return {
-                "error": f"EpiGraphDB HTTP error: {e.response.status_code} - {e.response.text[:200]}"
+                "status": "error",
+                "error": f"EpiGraphDB HTTP error: {e.response.status_code} - {e.response.text[:200]}",
             }
         except Exception as e:
             return {
@@ -208,7 +210,8 @@ class EpiGraphDBTool(BaseRESTTool):
         trait = arguments.get("trait", "").strip()
         if not trait:
             return {
-                "error": "trait parameter is required (e.g., 'Body mass index', 'LDL cholesterol')"
+                "status": "error",
+                "error": "trait parameter is required (e.g., 'Body mass index', 'LDL cholesterol')",
             }
 
         pval_threshold = float(arguments.get("pval_threshold", 1e-4))
@@ -267,7 +270,8 @@ class EpiGraphDBTool(BaseRESTTool):
         trait = arguments.get("trait", "").strip()
         if not trait:
             return {
-                "error": "trait parameter is required (e.g., 'Body mass index', 'coronary artery disease')"
+                "status": "error",
+                "error": "trait parameter is required (e.g., 'Body mass index', 'coronary artery disease')",
             }
 
         params = {
@@ -316,7 +320,8 @@ class EpiGraphDBTool(BaseRESTTool):
         disease = arguments.get("disease", "").strip()
         if not disease:
             return {
-                "error": "disease parameter is required (e.g., 'type 2 diabetes', 'breast cancer')"
+                "status": "error",
+                "error": "disease parameter is required (e.g., 'type 2 diabetes', 'breast cancer')",
             }
 
         params = {
@@ -415,7 +420,8 @@ class EpiGraphDBTool(BaseRESTTool):
         gene_name = arguments.get("gene_name", "").strip()
         if not gene_name:
             return {
-                "error": "gene_name parameter is required (e.g., 'TP53', 'BRCA1', 'EGFR')"
+                "status": "error",
+                "error": "gene_name parameter is required (e.g., 'TP53', 'BRCA1', 'EGFR')",
             }
 
         params = {
@@ -463,7 +469,8 @@ class EpiGraphDBTool(BaseRESTTool):
         query = arguments.get("query", "").strip()
         if not query:
             return {
-                "error": "query parameter is required (e.g., 'body mass index', 'coronary heart disease')"
+                "status": "error",
+                "error": "query parameter is required (e.g., 'body mass index', 'coronary heart disease')",
             }
 
         top_n = min(int(arguments.get("top_n", 10)), 50)

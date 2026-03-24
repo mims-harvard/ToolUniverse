@@ -94,11 +94,12 @@ class ICDTool(BaseTool):
         access_token = self._get_access_token()
         if not access_token:
             return {
+                "status": "error",
                 "error": (
                     "ICD API authentication required. "
                     "Set ICD_CLIENT_ID and ICD_CLIENT_SECRET environment variables. "
                     "Register at: https://icd.who.int/icdapi"
-                )
+                ),
             }
 
         url = self._build_url(arguments)

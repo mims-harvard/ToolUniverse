@@ -58,11 +58,13 @@ class LipidMapsTool(BaseTool):
                 return {"status": "error", "error": f"Unknown context: {context}"}
         except requests.exceptions.Timeout:
             return {
-                "error": f"LIPID MAPS API request timed out after {self.timeout} seconds"
+                "status": "error",
+                "error": f"LIPID MAPS API request timed out after {self.timeout} seconds",
             }
         except requests.exceptions.ConnectionError:
             return {
-                "error": "Failed to connect to LIPID MAPS API. Check network connectivity."
+                "status": "error",
+                "error": "Failed to connect to LIPID MAPS API. Check network connectivity.",
             }
         except requests.exceptions.HTTPError as e:
             return {

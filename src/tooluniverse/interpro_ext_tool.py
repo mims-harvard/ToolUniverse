@@ -49,7 +49,8 @@ class InterProExtTool(BaseTool):
             code = e.response.status_code if e.response is not None else "unknown"
             if code == 404:
                 return {
-                    "error": f"Domain not found in InterPro: {arguments.get('domain_id', '')}"
+                    "status": "error",
+                    "error": f"Domain not found in InterPro: {arguments.get('domain_id', '')}",
                 }
             return {"status": "error", "error": f"InterPro API HTTP error: {code}"}
         except Exception as e:
@@ -70,7 +71,8 @@ class InterProExtTool(BaseTool):
         domain_id = arguments.get("domain_id", "")
         if not domain_id:
             return {
-                "error": "domain_id parameter is required (InterPro accession, e.g., IPR011615)"
+                "status": "error",
+                "error": "domain_id parameter is required (InterPro accession, e.g., IPR011615)",
             }
 
         page_size = min(int(arguments.get("page_size", 20)), 50)

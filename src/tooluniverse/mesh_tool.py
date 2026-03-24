@@ -50,7 +50,8 @@ class MeSHTool(BaseTool):
             }
         except requests.exceptions.ConnectionError:
             return {
-                "error": "Failed to connect to MeSH API. Check network connectivity."
+                "status": "error",
+                "error": "Failed to connect to MeSH API. Check network connectivity.",
             }
         except requests.exceptions.HTTPError as e:
             return {
@@ -127,7 +128,8 @@ class MeSHTool(BaseTool):
         descriptor_id = arguments.get("descriptor_id", "")
         if not descriptor_id:
             return {
-                "error": "descriptor_id parameter is required (e.g. D009369 for Neoplasms)"
+                "status": "error",
+                "error": "descriptor_id parameter is required (e.g. D009369 for Neoplasms)",
             }
 
         url = f"{MESH_BASE_URL}/{descriptor_id}.json"

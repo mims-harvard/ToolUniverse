@@ -81,6 +81,7 @@ class GBIFTool:
             }
         except Exception as e:
             return {
+                "status": "error",
                 "error": str(e),
                 "source": "GBIF",
                 "endpoint": "species/search",
@@ -159,6 +160,7 @@ class GBIFOccurrenceTool:
             }
         except Exception as e:
             return {
+                "status": "error",
                 "error": str(e),
                 "source": "GBIF",
                 "endpoint": "occurrence/search",

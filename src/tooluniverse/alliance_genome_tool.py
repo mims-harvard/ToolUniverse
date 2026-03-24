@@ -49,7 +49,8 @@ class AllianceGenomeTool(BaseTool):
             }
         except requests.exceptions.ConnectionError:
             return {
-                "error": "Failed to connect to Alliance API. Check network connectivity."
+                "status": "error",
+                "error": "Failed to connect to Alliance API. Check network connectivity.",
             }
         except requests.exceptions.HTTPError as e:
             return {
@@ -99,7 +100,8 @@ class AllianceGenomeTool(BaseTool):
         gene_id = arguments.get("gene_id", "")
         if not gene_id:
             return {
-                "error": "gene_id parameter is required (e.g., 'HGNC:6081', 'MGI:98834', 'FB:FBgn0003996')"
+                "status": "error",
+                "error": "gene_id parameter is required (e.g., 'HGNC:6081', 'MGI:98834', 'FB:FBgn0003996')",
             }
 
         url = f"{ALLIANCE_BASE}/gene/{gene_id}"
@@ -242,7 +244,8 @@ class AllianceGenomeTool(BaseTool):
         disease_id = arguments.get("disease_id", "")
         if not disease_id:
             return {
-                "error": "disease_id parameter is required (e.g., 'DOID:162' for cancer)"
+                "status": "error",
+                "error": "disease_id parameter is required (e.g., 'DOID:162' for cancer)",
             }
 
         limit = arguments.get("limit", 20)
@@ -294,7 +297,8 @@ class AllianceGenomeTool(BaseTool):
         disease_id = arguments.get("disease_id", "")
         if not disease_id:
             return {
-                "error": "disease_id parameter is required (e.g., 'DOID:162' for cancer)"
+                "status": "error",
+                "error": "disease_id parameter is required (e.g., 'DOID:162' for cancer)",
             }
 
         url = f"{ALLIANCE_BASE}/disease/{disease_id}"

@@ -112,6 +112,7 @@ class OBISTaxaTool:
             }
         except Exception as e:
             return {
+                "status": "error",
                 "error": str(e),
                 "source": "OBIS",
                 "endpoint": "occurrence",
@@ -178,6 +179,7 @@ class OBISOccurrenceTool:
             }
         except Exception as e:
             return {
+                "status": "error",
                 "error": str(e),
                 "source": "OBIS",
                 "endpoint": "occurrence",

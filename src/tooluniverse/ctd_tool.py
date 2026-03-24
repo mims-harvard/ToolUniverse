@@ -49,7 +49,8 @@ class CTDTool(BaseTool):
             }
         except requests.exceptions.ConnectionError:
             return {
-                "error": "Failed to connect to CTD API. Check network connectivity."
+                "status": "error",
+                "error": "Failed to connect to CTD API. Check network connectivity.",
             }
         except requests.exceptions.HTTPError as e:
             return {
@@ -108,6 +109,7 @@ class CTDTool(BaseTool):
             snippet = raw_text[:200]
             is_html = "text/html" in content_type or raw_text.lstrip().startswith("<")
             return {
+                "status": "error",
                 "error": "CTD API returned non-JSON response",
                 "content_type": content_type,
                 "response_snippet": snippet,

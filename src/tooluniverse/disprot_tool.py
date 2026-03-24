@@ -123,7 +123,8 @@ class DisProtTool(BaseTool):
         accession = arguments.get("accession", "")
         if not accession:
             return {
-                "error": "accession is required. Use DisProt ID (e.g., 'DP00086') or UniProt accession (e.g., 'P04637')."
+                "status": "error",
+                "error": "accession is required. Use DisProt ID (e.g., 'DP00086') or UniProt accession (e.g., 'P04637').",
             }
 
         # Determine whether it's a DisProt ID (DP*) or UniProt accession

@@ -90,6 +90,7 @@ class GTExExpressionTool:
         )
         if not gene_input:
             return {
+                "status": "error",
                 "error": "Provide gene_symbol (e.g., 'TP53') or ensembl_gene_id (e.g., 'ENSG00000141510').",
                 "success": False,
             }
@@ -136,6 +137,7 @@ class GTExExpressionTool:
             return result
         except Exception as e:
             return {
+                "status": "error",
                 "error": str(e),
                 "source": "GTEx",
                 "endpoint": "expression/clusteredMedianGeneExpression",

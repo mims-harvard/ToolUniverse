@@ -43,11 +43,13 @@ class PomBaseTool(BaseTool):
             return self._dispatch(arguments)
         except requests.exceptions.Timeout:
             return {
-                "error": f"PomBase API request timed out after {self.timeout} seconds"
+                "status": "error",
+                "error": f"PomBase API request timed out after {self.timeout} seconds",
             }
         except requests.exceptions.ConnectionError:
             return {
-                "error": "Failed to connect to PomBase API. Check network connectivity."
+                "status": "error",
+                "error": "Failed to connect to PomBase API. Check network connectivity.",
             }
         except requests.exceptions.HTTPError as e:
             return {
@@ -79,7 +81,8 @@ class PomBaseTool(BaseTool):
         gene_id = arguments.get("gene_id", "")
         if not gene_id:
             return {
-                "error": "gene_id parameter is required (e.g., 'SPBC11B10.09' for cdc2)"
+                "status": "error",
+                "error": "gene_id parameter is required (e.g., 'SPBC11B10.09' for cdc2)",
             }
 
         url = f"{POMBASE_BASE_URL}/gene/{gene_id}"
@@ -137,7 +140,8 @@ class PomBaseTool(BaseTool):
         query = arguments.get("query", "").lower()
         if not query:
             return {
-                "error": "query parameter is required (e.g., 'cdc2', 'kinase', 'pom1')"
+                "status": "error",
+                "error": "query parameter is required (e.g., 'cdc2', 'kinase', 'pom1')",
             }
 
         limit = min(arguments.get("limit", 10), 50)
@@ -191,7 +195,8 @@ class PomBaseTool(BaseTool):
         gene_id = arguments.get("gene_id", "")
         if not gene_id:
             return {
-                "error": "gene_id parameter is required (e.g., 'SPBC11B10.09' for cdc2)"
+                "status": "error",
+                "error": "gene_id parameter is required (e.g., 'SPBC11B10.09' for cdc2)",
             }
 
         # Get full gene data

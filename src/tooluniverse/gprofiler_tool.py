@@ -80,7 +80,8 @@ class GProfilerTool(BaseTool):
         genes = self._parse_gene_list(gene_list_str)
         if not genes:
             return {
-                "error": "gene_list is required. Provide comma-separated gene symbols (e.g., 'TP53,BRCA1,EGFR')."
+                "status": "error",
+                "error": "gene_list is required. Provide comma-separated gene symbols (e.g., 'TP53,BRCA1,EGFR').",
             }
 
         organism = arguments.get("organism", "hsapiens")
@@ -139,7 +140,8 @@ class GProfilerTool(BaseTool):
         genes = self._parse_gene_list(gene_list_str)
         if not genes:
             return {
-                "error": "gene_list is required. Provide comma-separated identifiers (e.g., 'TP53,BRCA1')."
+                "status": "error",
+                "error": "gene_list is required. Provide comma-separated identifiers (e.g., 'TP53,BRCA1').",
             }
 
         target = arguments.get("target_namespace", "ENSG")
@@ -184,7 +186,8 @@ class GProfilerTool(BaseTool):
         genes = self._parse_gene_list(gene_list_str)
         if not genes:
             return {
-                "error": "gene_list is required. Provide comma-separated gene symbols (e.g., 'TP53,BRCA1')."
+                "status": "error",
+                "error": "gene_list is required. Provide comma-separated gene symbols (e.g., 'TP53,BRCA1').",
             }
 
         source_organism = arguments.get("source_organism", "hsapiens")
@@ -227,7 +230,8 @@ class GProfilerTool(BaseTool):
         snp_list_str = arguments.get("snp_list", "")
         if not snp_list_str:
             return {
-                "error": "snp_list is required. Provide comma-separated rsIDs (e.g., 'rs11540652,rs429358,rs7903146')."
+                "status": "error",
+                "error": "snp_list is required. Provide comma-separated rsIDs (e.g., 'rs11540652,rs429358,rs7903146').",
             }
 
         snps = [s.strip() for s in snp_list_str.split(",") if s.strip()]

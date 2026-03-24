@@ -165,14 +165,16 @@ class PROSITETool(BaseTool):
         accession = arguments.get("accession", "").strip()
         if not accession:
             return {
-                "error": "accession parameter is required (e.g., PS00001, PS00028, PS51420)"
+                "status": "error",
+                "error": "accession parameter is required (e.g., PS00001, PS00028, PS51420)",
             }
 
         # Ensure accession has correct format
         acc_upper = accession.upper()
         if not acc_upper.startswith("PS"):
             return {
-                "error": f"Invalid PROSITE accession: {accession}. Must start with 'PS' (e.g., PS00001)"
+                "status": "error",
+                "error": f"Invalid PROSITE accession: {accession}. Must start with 'PS' (e.g., PS00001)",
             }
 
         # Fetch text format from ExPASy
@@ -189,7 +191,8 @@ class PROSITETool(BaseTool):
             "<html"
         ):
             return {
-                "error": f"PROSITE entry {acc_upper} not found (received HTML error page)"
+                "status": "error",
+                "error": f"PROSITE entry {acc_upper} not found (received HTML error page)",
             }
 
         # Parse text format
@@ -214,7 +217,8 @@ class PROSITETool(BaseTool):
         query = arguments.get("query", "").strip()
         if not query:
             return {
-                "error": "query parameter is required (e.g., 'zinc finger', 'kinase', 'glycosylation')"
+                "status": "error",
+                "error": "query parameter is required (e.g., 'zinc finger', 'kinase', 'glycosylation')",
             }
 
         limit = arguments.get("limit", 10)
@@ -277,7 +281,8 @@ class PROSITETool(BaseTool):
         seq_clean = sequence.upper().replace(" ", "").replace("\n", "")
         if not all(c in valid_aa for c in seq_clean):
             return {
-                "error": "Invalid protein sequence. Must contain only standard amino acid letters."
+                "status": "error",
+                "error": "Invalid protein sequence. Must contain only standard amino acid letters.",
             }
 
         skip = arguments.get("skip_frequent", True)

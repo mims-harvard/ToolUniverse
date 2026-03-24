@@ -51,7 +51,8 @@ class MyDiseaseTool(BaseTool):
             code = e.response.status_code if e.response is not None else "unknown"
             if code == 404:
                 return {
-                    "error": f"Disease not found: {arguments.get('disease_id', arguments.get('query', ''))}"
+                    "status": "error",
+                    "error": f"Disease not found: {arguments.get('disease_id', arguments.get('query', ''))}",
                 }
             return {
                 "status": "error",
@@ -205,7 +206,8 @@ class MyDiseaseTool(BaseTool):
         query = arguments.get("query", "")
         if not query:
             return {
-                "error": "query parameter is required (e.g., 'breast cancer', 'melanoma')"
+                "status": "error",
+                "error": "query parameter is required (e.g., 'breast cancer', 'melanoma')",
             }
 
         size = min(arguments.get("size", 10), 100)

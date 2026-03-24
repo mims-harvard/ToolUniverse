@@ -67,6 +67,7 @@ class NCBIBlastTool(BaseTool):
 
         except Exception as e:
             return {
+                "status": "error",
                 "error": f"Failed to parse BLAST results: {str(e)}",
                 "raw_xml": (
                     blast_xml[:1000] + "..." if len(blast_xml) > 1000 else blast_xml

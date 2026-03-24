@@ -44,15 +44,18 @@ class EnsemblVEPTool(BaseTool):
             return self._query(arguments)
         except requests.exceptions.Timeout:
             return {
-                "error": f"Ensembl API request timed out after {self.timeout} seconds"
+                "status": "error",
+                "error": f"Ensembl API request timed out after {self.timeout} seconds",
             }
         except requests.exceptions.ConnectionError:
             return {
-                "error": "Failed to connect to Ensembl REST API. Check network connectivity."
+                "status": "error",
+                "error": "Failed to connect to Ensembl REST API. Check network connectivity.",
             }
         except requests.exceptions.HTTPError as e:
             return {
-                "error": f"Ensembl API HTTP error: {e.response.status_code} - {e.response.text[:200]}"
+                "status": "error",
+                "error": f"Ensembl API HTTP error: {e.response.status_code} - {e.response.text[:200]}",
             }
         except Exception as e:
             return {

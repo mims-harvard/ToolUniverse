@@ -50,7 +50,8 @@ class InterProEntryTool(BaseTool):
             code = e.response.status_code if e.response is not None else "unknown"
             if code == 404:
                 return {
-                    "error": f"Not found: {arguments.get('accession', arguments.get('query', ''))}"
+                    "status": "error",
+                    "error": f"Not found: {arguments.get('accession', arguments.get('query', ''))}",
                 }
             return {"status": "error", "error": f"InterPro API HTTP error: {code}"}
         except Exception as e:
@@ -73,7 +74,8 @@ class InterProEntryTool(BaseTool):
         accession = arguments.get("accession", "")
         if not accession:
             return {
-                "error": "accession parameter is required (UniProt accession, e.g., 'P04637')"
+                "status": "error",
+                "error": "accession parameter is required (UniProt accession, e.g., 'P04637')",
             }
 
         url = f"{INTERPRO_BASE_URL}/entry/interpro/protein/uniprot/{accession}"
@@ -126,7 +128,8 @@ class InterProEntryTool(BaseTool):
         query = arguments.get("query", "")
         if not query:
             return {
-                "error": "query parameter is required (e.g., 'zinc finger', 'kinase', 'p53')"
+                "status": "error",
+                "error": "query parameter is required (e.g., 'zinc finger', 'kinase', 'p53')",
             }
 
         entry_type = arguments.get("entry_type", None)

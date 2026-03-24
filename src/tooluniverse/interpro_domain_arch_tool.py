@@ -80,7 +80,8 @@ class InterProDomainArchTool(BaseTool):
         accession = arguments.get("accession", "")
         if not accession:
             return {
-                "error": "accession parameter is required (UniProt accession, e.g., 'P04637')"
+                "status": "error",
+                "error": "accession parameter is required (UniProt accession, e.g., 'P04637')",
             }
 
         url = f"{INTERPRO_BASE_URL}/entry/pfam/protein/uniprot/{accession}"

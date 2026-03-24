@@ -44,7 +44,8 @@ class EnsemblOverlapTool(BaseTool):
             return self._query(arguments)
         except requests.exceptions.Timeout:
             return {
-                "error": f"Ensembl API timed out after {self.timeout}s. Try a smaller region."
+                "status": "error",
+                "error": f"Ensembl API timed out after {self.timeout}s. Try a smaller region.",
             }
         except requests.exceptions.ConnectionError:
             return {"status": "error", "error": "Failed to connect to Ensembl REST API"}
@@ -52,11 +53,13 @@ class EnsemblOverlapTool(BaseTool):
             status = e.response.status_code if e.response is not None else "unknown"
             if status == 400:
                 return {
-                    "error": "Bad request. Check region format (e.g., '17:7661779-7687546') and feature types."
+                    "status": "error",
+                    "error": "Bad request. Check region format (e.g., '17:7661779-7687546') and feature types.",
                 }
             if status == 404:
                 return {
-                    "error": "Region or gene not found. Verify species and coordinates."
+                    "status": "error",
+                    "error": "Region or gene not found. Verify species and coordinates.",
                 }
             return {"status": "error", "error": f"Ensembl REST API HTTP {status}"}
         except Exception as e:
@@ -79,7 +82,8 @@ class EnsemblOverlapTool(BaseTool):
 
         if not region:
             return {
-                "error": "region is required (format: 'chr:start-end', e.g., '17:7661779-7687546')."
+                "status": "error",
+                "error": "region is required (format: 'chr:start-end', e.g., '17:7661779-7687546').",
             }
 
         url = f"{ENSEMBL_REST_BASE}/overlap/region/{species}/{region}"
@@ -157,7 +161,8 @@ class EnsemblOverlapTool(BaseTool):
 
         if not gene_id:
             return {
-                "error": "gene_id is required (Ensembl gene ID, e.g., 'ENSG00000141510' for TP53)."
+                "status": "error",
+                "error": "gene_id is required (Ensembl gene ID, e.g., 'ENSG00000141510' for TP53).",
             }
 
         features = [f.strip() for f in feature_types.split(",")]

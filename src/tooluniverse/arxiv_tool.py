@@ -107,6 +107,7 @@ class ArXivTool(BaseTool):
     def _search(self, query, limit, sort_by, sort_order, date_from=None, date_to=None):
         if sort_by not in self._VALID_SORT_BY:
             return {
+                "status": "error",
                 "error": f"Invalid sort_by: '{sort_by}'. Valid options: {', '.join(sorted(self._VALID_SORT_BY))}",
             }
 
@@ -144,12 +145,14 @@ class ArXivTool(BaseTool):
             )
         except requests.RequestException as e:
             return {
+                "status": "error",
                 "error": "Network error calling arXiv API",
                 "reason": str(e),
             }
 
         if response.status_code != 200:
             return {
+                "status": "error",
                 "error": f"arXiv API error {response.status_code}",
                 "reason": response.reason,
             }
@@ -159,6 +162,7 @@ class ArXivTool(BaseTool):
             root = ET.fromstring(response.text)
         except ET.ParseError as e:
             return {
+                "status": "error",
                 "error": "Failed to parse arXiv response",
                 "reason": str(e),
             }

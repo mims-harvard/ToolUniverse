@@ -108,6 +108,7 @@ class RxNormTool(BaseTool):
 
             if not rxcuis:
                 return {
+                    "status": "error",
                     "error": f"No RXCUI found for drug name: {drug_name}",
                     "drug_name": drug_name,
                 }
@@ -122,11 +123,13 @@ class RxNormTool(BaseTool):
 
         except requests.exceptions.RequestException as e:
             return {
+                "status": "error",
                 "error": f"Failed to query RxNorm API for RXCUI: {str(e)}",
                 "drug_name": drug_name,
             }
         except Exception as e:
             return {
+                "status": "error",
                 "error": f"Unexpected error while querying RXCUI: {str(e)}",
                 "drug_name": drug_name,
             }
@@ -288,6 +291,7 @@ class RxNormTool(BaseTool):
             if processed_name and processed_name != drug_name:
                 error_msg += f" (also tried preprocessed name: '{processed_name}')"
             return {
+                "status": "error",
                 "error": error_msg,
                 "drug_name": drug_name,
                 "processed_name": processed_name

@@ -48,11 +48,13 @@ class EnsemblArchiveTool(BaseTool):
             code = e.response.status_code if e.response is not None else "unknown"
             if code == 400:
                 return {
-                    "error": f"Invalid Ensembl ID format: {arguments.get('ensembl_id', '')}"
+                    "status": "error",
+                    "error": f"Invalid Ensembl ID format: {arguments.get('ensembl_id', '')}",
                 }
             if code == 404:
                 return {
-                    "error": f"Ensembl ID not found: {arguments.get('ensembl_id', '')}"
+                    "status": "error",
+                    "error": f"Ensembl ID not found: {arguments.get('ensembl_id', '')}",
                 }
             return {"status": "error", "error": f"Ensembl REST API HTTP error: {code}"}
         except Exception as e:
@@ -75,7 +77,8 @@ class EnsemblArchiveTool(BaseTool):
         ensembl_id = arguments.get("ensembl_id", "")
         if not ensembl_id:
             return {
-                "error": "ensembl_id is required (e.g., 'ENSG00000141510' for TP53)"
+                "status": "error",
+                "error": "ensembl_id is required (e.g., 'ENSG00000141510' for TP53)",
             }
 
         url = f"{ENSEMBL_BASE_URL}/archive/id/{ensembl_id}"
@@ -112,7 +115,8 @@ class EnsemblArchiveTool(BaseTool):
         ids_str = arguments.get("ensembl_ids", "")
         if not ids_str:
             return {
-                "error": "ensembl_ids is required (comma-separated, e.g., 'ENSG00000141510,ENSG00000012048')"
+                "status": "error",
+                "error": "ensembl_ids is required (comma-separated, e.g., 'ENSG00000141510,ENSG00000012048')",
             }
 
         ids = [i.strip() for i in ids_str.split(",") if i.strip()]

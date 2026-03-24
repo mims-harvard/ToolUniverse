@@ -60,6 +60,7 @@ class SearchSPLTool(BaseTool):
 
         if resp.status_code != 200:
             return {
+                "status": "error",
                 "error": f"DailyMed API access failed, HTTP {resp.status_code}",
                 "detail": resp.text,
             }
@@ -68,6 +69,7 @@ class SearchSPLTool(BaseTool):
             result = resp.json()
         except ValueError:
             return {
+                "status": "error",
                 "error": "Unable to parse DailyMed returned JSON.",
                 "content": resp.text,
             }
@@ -94,7 +96,8 @@ class GetSPLBySetIDTool(BaseTool):
         # DailyMed single SPL API only supports XML format
         if fmt not in ("xml",):
             return {
-                "error": "DailyMed single SPL API only supports 'xml' format, JSON is not supported."
+                "status": "error",
+                "error": "DailyMed single SPL API only supports 'xml' format, JSON is not supported.",
             }
 
         url = self.endpoint_template.format(setid=setid, fmt=fmt)
@@ -113,10 +116,12 @@ class GetSPLBySetIDTool(BaseTool):
             }
         elif resp.status_code == 415:
             return {
-                "error": f"DailyMed API does not support requested format. Set ID={setid} only supports XML format."
+                "status": "error",
+                "error": f"DailyMed API does not support requested format. Set ID={setid} only supports XML format.",
             }
         elif resp.status_code != 200:
             return {
+                "status": "error",
                 "error": f"DailyMed API access failed, HTTP {resp.status_code}",
                 "detail": resp.text,
             }

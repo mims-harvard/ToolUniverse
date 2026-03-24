@@ -52,6 +52,7 @@ class HALTool(BaseTool):
         except ValueError:
             ct = resp.headers.get("content-type", "")
             return {
+                "status": "error",
                 "error": "Failed to decode HAL response as JSON",
                 "content_type": ct,
                 "response_snippet": resp.text[:200],

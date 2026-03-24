@@ -136,7 +136,8 @@ class OmniPathTool(BaseTool):
         # Must have at least one protein filter
         if not any(arguments.get(k) for k in ["partners", "sources", "targets"]):
             return {
-                "error": "At least one of 'partners', 'sources', or 'targets' is required to query ligand-receptor interactions."
+                "status": "error",
+                "error": "At least one of 'partners', 'sources', or 'targets' is required to query ligand-receptor interactions.",
             }
 
         data = self._make_request("interactions/", params)
@@ -260,7 +261,8 @@ class OmniPathTool(BaseTool):
 
         if not any(arguments.get(k) for k in ["partners", "sources", "targets"]):
             return {
-                "error": "At least one of 'partners', 'sources', or 'targets' is required to query signaling interactions."
+                "status": "error",
+                "error": "At least one of 'partners', 'sources', or 'targets' is required to query signaling interactions.",
             }
 
         data = self._make_request("interactions/", params)
@@ -307,7 +309,8 @@ class OmniPathTool(BaseTool):
         proteins = arguments.get("proteins", "")
         if not proteins:
             return {
-                "error": "proteins parameter is required (UniProt accession(s), e.g., P01137)"
+                "status": "error",
+                "error": "proteins parameter is required (UniProt accession(s), e.g., P01137)",
             }
 
         params = {"proteins": proteins}
@@ -351,7 +354,8 @@ class OmniPathTool(BaseTool):
         proteins = arguments.get("proteins", "")
         if not proteins:
             return {
-                "error": "proteins parameter is required (UniProt accession(s) or gene symbol(s))"
+                "status": "error",
+                "error": "proteins parameter is required (UniProt accession(s) or gene symbol(s))",
             }
 
         databases = arguments.get("databases") or "CellPhoneDB,CellChatDB"

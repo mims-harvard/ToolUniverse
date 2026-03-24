@@ -118,7 +118,8 @@ class GOAPITool(BaseTool):
         gene_id = arguments.get("gene_id", "")
         if not gene_id:
             return {
-                "error": "gene_id parameter is required (e.g., HGNC:11998 or UniProtKB:P04637)"
+                "status": "error",
+                "error": "gene_id parameter is required (e.g., HGNC:11998 or UniProtKB:P04637)",
             }
 
         rows = arguments.get("rows") or 20

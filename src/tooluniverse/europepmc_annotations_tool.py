@@ -44,7 +44,8 @@ class EuroPMCAnnotationsTool(BaseTool):
             return self._dispatch(arguments)
         except requests.exceptions.Timeout:
             return {
-                "error": f"Europe PMC Annotations API timed out after {self.timeout}s"
+                "status": "error",
+                "error": f"Europe PMC Annotations API timed out after {self.timeout}s",
             }
         except requests.exceptions.ConnectionError:
             return {
@@ -166,7 +167,8 @@ class EuroPMCAnnotationsTool(BaseTool):
 
         if not article_ids:
             return {
-                "error": "article_ids is required (e.g., 'PMC:PMC4353746,PMC:PMC3531190')"
+                "status": "error",
+                "error": "article_ids is required (e.g., 'PMC:PMC4353746,PMC:PMC3531190')",
             }
         if not annotation_type:
             return {

@@ -45,7 +45,8 @@ class EnsemblRegulationTool(BaseTool):
             return self._dispatch(arguments)
         except requests.exceptions.Timeout:
             return {
-                "error": f"Ensembl REST API request timed out after {self.timeout}s"
+                "status": "error",
+                "error": f"Ensembl REST API request timed out after {self.timeout}s",
             }
         except requests.exceptions.ConnectionError:
             return {"status": "error", "error": "Failed to connect to Ensembl REST API"}

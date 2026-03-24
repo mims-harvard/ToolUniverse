@@ -50,7 +50,8 @@ class EnsemblSequenceTool(BaseTool):
             code = e.response.status_code if e.response is not None else "unknown"
             if code == 404:
                 return {
-                    "error": "Sequence not found. Check your ID or region coordinates."
+                    "status": "error",
+                    "error": "Sequence not found. Check your ID or region coordinates.",
                 }
             if code == 400:
                 body = ""
@@ -62,7 +63,8 @@ class EnsemblSequenceTool(BaseTool):
             return {"status": "error", "error": f"Ensembl API HTTP error: {code}"}
         except Exception as e:
             return {
-                "error": f"Unexpected error querying Ensembl Sequence API: {str(e)}"
+                "status": "error",
+                "error": f"Unexpected error querying Ensembl Sequence API: {str(e)}",
             }
 
     def _query(self, arguments: Dict[str, Any]) -> Dict[str, Any]:
@@ -80,7 +82,8 @@ class EnsemblSequenceTool(BaseTool):
         region = arguments.get("region", "")
         if not region:
             return {
-                "error": "region parameter is required (e.g., '17:7668421..7668520:1' or '17:7668421-7668520')"
+                "status": "error",
+                "error": "region parameter is required (e.g., '17:7668421..7668520:1' or '17:7668421-7668520')",
             }
 
         # Normalize region format: accept both 17:start-end and 17:start..end
@@ -121,7 +124,8 @@ class EnsemblSequenceTool(BaseTool):
         ensembl_id = arguments.get("ensembl_id", "")
         if not ensembl_id:
             return {
-                "error": "ensembl_id parameter is required (e.g., 'ENSP00000269305' for protein, 'ENST00000269305' for transcript)"
+                "status": "error",
+                "error": "ensembl_id parameter is required (e.g., 'ENSP00000269305' for protein, 'ENST00000269305' for transcript)",
             }
 
         seq_type = arguments.get("type", "protein")

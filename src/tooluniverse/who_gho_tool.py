@@ -409,6 +409,7 @@ class WHOGHOQueryTool(WHOGHORESTTool):
 
         if not indicators:
             return {
+                "status": "error",
                 "error": f"No indicators found for query: '{query}'",
                 "suggestion": "Try different keywords or check spelling",
             }
@@ -468,6 +469,7 @@ class WHOGHOQueryTool(WHOGHORESTTool):
 
         if not results:
             return {
+                "status": "error",
                 "error": f"No data found for query: '{query}'",
                 "matched_indicators": [
                     {"code": ind.get("IndicatorCode"), "name": ind.get("IndicatorName")}
@@ -522,6 +524,7 @@ class WHOGHOTopicTool(WHOGHORESTTool):
 
         if not indicators:
             return {
+                "status": "error",
                 "error": f"No indicators found for topic: '{topic}'",
                 "suggestion": "Try different keywords or check spelling",
             }
@@ -582,6 +585,7 @@ class WHOGHOStatisticTool(WHOGHORESTTool):
 
         if not indicators:
             return {
+                "status": "error",
                 "error": f"No indicators found matching: '{indicator_name}'",
                 "suggestion": "Try different keywords or check spelling",
             }
@@ -605,6 +609,7 @@ class WHOGHOStatisticTool(WHOGHORESTTool):
 
         if "error" in data_result:
             return {
+                "status": "error",
                 "error": data_result["error"],
                 "indicator_found": {
                     "code": indicator_code,
@@ -639,6 +644,7 @@ class WHOGHOStatisticTool(WHOGHORESTTool):
 
         if not values:
             return {
+                "status": "error",
                 "error": (
                     f"No data available for '{indicator_name}' in {country_code}"
                 ),

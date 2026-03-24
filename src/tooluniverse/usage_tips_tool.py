@@ -21,7 +21,7 @@ _TIPS = {
         "run() always returns a dict and never raises exceptions",
         "Check for errors: if 'error' in result: handle_error(result['error'])",
         "Use caching: tu.run({...}, use_cache=True)",
-        "CLI run: tu run UniProt_get_entry_by_accession '{\"accession\": \"P05067\"}'",
+        'CLI run: tu run UniProt_get_entry_by_accession \'{"accession": "P05067"}\'',
     ],
     "workspace": [
         "Workspace dir: .tooluniverse/ in the current directory",
@@ -73,6 +73,7 @@ class UsageTipsTool(BaseTool):
             return {"topic": "all", "tips": _TIPS, "available_topics": _ALL_TOPICS}
         if topic not in _TIPS:
             return {
-                "error": f"Unknown topic '{topic}'. Choose one of: {_ALL_TOPICS + ['all']}"
+                "status": "error",
+                "error": f"Unknown topic '{topic}'. Choose one of: {_ALL_TOPICS + ['all']}",
             }
         return {"topic": topic, "tips": _TIPS[topic], "available_topics": _ALL_TOPICS}

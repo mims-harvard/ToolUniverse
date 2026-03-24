@@ -36,6 +36,7 @@ class LOINCTool(BaseTool):
             }
         except Exception as e:
             return {
+                "status": "error",
                 "error": f"Unexpected error while querying LOINC: {e}",
                 "endpoint": endpoint,
             }
@@ -51,6 +52,7 @@ class LOINCTool(BaseTool):
         """Parse the Clinical Tables response: [total_count, codes, extra_info, data]."""
         if not isinstance(api_response, list) or len(api_response) < 4:
             return {
+                "status": "error",
                 "error": "Invalid API response format",
                 "raw_response": api_response,
             }
@@ -179,6 +181,7 @@ class LOINCTool(BaseTool):
 
         if parsed.get("count", 0) == 0:
             return {
+                "status": "error",
                 "error": f"No LOINC answer codes found for: {loinc_code}",
                 "loinc_code": loinc_code,
             }

@@ -303,6 +303,7 @@ class MedlinePlusRESTTool(BaseTool):
             resp = requests.get(url, timeout=self.timeout)
             if resp.status_code != 200:
                 return {
+                    "status": "error",
                     "error": f"MedlinePlus returned non-200 status code: {resp.status_code}",
                     "detail": resp.text,
                 }
