@@ -212,7 +212,15 @@ class DailyMedSPLParserTool(BaseTool):
         else:
             return {"status": "error", "error": f"Unknown operation: {operation}"}
 
-        return self._with_data_payload(operation_result)
+        result = self._with_data_payload(operation_result)
+        if result.get("status") == "success":
+            result["metadata"] = {
+                "source": "DailyMed",
+                "setid": setid,
+                "drug_name": arguments.get("drug_name"),
+                "operation": operation,
+            }
+        return result
 
     def _with_data_payload(self, result: Dict[str, Any]) -> Dict[str, Any]:
         """Ensure successful operation responses include a standardized data wrapper."""

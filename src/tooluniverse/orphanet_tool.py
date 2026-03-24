@@ -59,6 +59,11 @@ class OrphanetTool(BaseTool):
 
     def run(self, arguments: Dict[str, Any]) -> Dict[str, Any]:
         """Execute Orphanet API call based on operation type."""
+        # Normalize orpha_code aliases
+        if not arguments.get("orpha_code"):
+            alias = arguments.get("orphacode") or arguments.get("orpha_id")
+            if alias:
+                arguments = dict(arguments, orpha_code=alias)
         operation = arguments.get("operation", "")
         # Auto-fill operation from tool config const if not provided by user
         if not operation:

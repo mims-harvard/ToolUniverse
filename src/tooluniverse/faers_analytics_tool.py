@@ -30,6 +30,9 @@ class FAERSAnalyticsTool(BaseTool):
 
     def run(self, arguments: Dict[str, Any]) -> Dict[str, Any]:
         """Route to analytics operation."""
+        # Normalize aliases
+        if not arguments.get("adverse_event") and arguments.get("reaction"):
+            arguments = dict(arguments, adverse_event=arguments["reaction"])
         operation = arguments.get("operation")
         # Auto-fill operation from tool config const if not provided by user
         if not operation:

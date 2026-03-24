@@ -176,7 +176,7 @@
   },
   {
     "name": "OpenTargets_target_disease_evidence",
-    "description": "Explore IntOGen somatic driver evidence for a target-disease association. IMPORTANT: IntOGen only covers somatic tumor driver mutations — this tool returns empty data ({}) for non-cancer diseases (e.g., type 2 diabetes, hypertension). Empty results are expected and normal when querying non-oncology phenotypes. For non-cancer diseases or to query other data sources, use OpenTargets_get_evidence_by_datasource instead. Input is disease efoId (e.g., EFO_0000384 for Crohn's disease) and target ensemblId (e.g., ENSG00000141510 for TP53).",
+    "description": "Explore IntOGen somatic driver evidence for a target-disease association. IMPORTANT: IntOGen only covers somatic tumor driver mutations \u2014 this tool returns empty data ({}) for non-cancer diseases (e.g., type 2 diabetes, hypertension). Empty results are expected and normal when querying non-oncology phenotypes. For non-cancer diseases or to query other data sources, use OpenTargets_get_evidence_by_datasource instead. Input is disease efoId (e.g., EFO_0000384 for Crohn's disease) and target ensemblId (e.g., ENSG00000141510 for TP53).",
     "label": [
       "Target",
       "Disease",
@@ -264,7 +264,9 @@
         },
         "datasourceIds": {
           "type": "array",
-          "items": {"type": "string"},
+          "items": {
+            "type": "string"
+          },
           "description": "List of datasource IDs to filter evidence. Examples: ['chembl', 'europepmc'], ['eva', 'clinvar'], ['intogen', 'cancer_gene_census']. Omit or pass empty array for all sources."
         },
         "size": {
@@ -284,13 +286,17 @@
       {
         "efoId": "EFO_0000384",
         "ensemblId": "ENSG00000141510",
-        "datasourceIds": ["europepmc"],
+        "datasourceIds": [
+          "europepmc"
+        ],
         "size": 10
       },
       {
         "efoId": "EFO_0000389",
         "ensemblId": "ENSG00000157764",
-        "datasourceIds": ["chembl"],
+        "datasourceIds": [
+          "chembl"
+        ],
         "size": 5
       }
     ],
@@ -303,21 +309,35 @@
             "disease": {
               "type": "object",
               "properties": {
-                "id": {"type": "string"},
-                "name": {"type": "string"},
+                "id": {
+                  "type": "string"
+                },
+                "name": {
+                  "type": "string"
+                },
                 "evidences": {
                   "type": "object",
                   "properties": {
-                    "count": {"type": "integer"},
+                    "count": {
+                      "type": "integer"
+                    },
                     "rows": {
                       "type": "array",
                       "items": {
                         "type": "object",
                         "properties": {
-                          "datasourceId": {"type": "string"},
-                          "datatypeId": {"type": "string"},
-                          "score": {"type": "number"},
-                          "literature": {"type": "array"}
+                          "datasourceId": {
+                            "type": "string"
+                          },
+                          "datatypeId": {
+                            "type": "string"
+                          },
+                          "score": {
+                            "type": "number"
+                          },
+                          "literature": {
+                            "type": "array"
+                          }
                         }
                       }
                     }
@@ -2179,7 +2199,10 @@
     "test_examples": [
       {
         "ensemblId": "ENSG00000141510",
-        "page": {"index": 0, "size": 10}
+        "page": {
+          "index": 0,
+          "size": 10
+        }
       }
     ],
     "return_schema": {
@@ -2726,7 +2749,10 @@
     "test_examples": [
       {
         "chemblId": "CHEMBL25",
-        "page": {"index": 0, "size": 10}
+        "page": {
+          "index": 0,
+          "size": 10
+        }
       }
     ],
     "return_schema": {
@@ -3593,7 +3619,10 @@
     "test_examples": [
       {
         "chemblId": "CHEMBL25",
-        "page": {"index": 0, "size": 10}
+        "page": {
+          "index": 0,
+          "size": 10
+        }
       }
     ],
     "return_schema": {
@@ -3608,21 +3637,41 @@
                 "drug": {
                   "type": "object",
                   "properties": {
-                    "id": {"type": "string"},
-                    "name": {"type": "string"},
+                    "id": {
+                      "type": "string"
+                    },
+                    "name": {
+                      "type": "string"
+                    },
                     "pharmacogenomics": {
                       "type": "array",
                       "items": {
                         "type": "object",
                         "properties": {
-                          "datasourceId": {"type": "string"},
-                          "evidenceLevel": {"type": "string"},
-                          "genotype": {"type": "string"},
-                          "genotypeAnnotationText": {"type": "string"},
-                          "pgxCategory": {"type": "string"},
-                          "phenotypeText": {"type": "string"},
-                          "variantRsId": {"type": "string"},
-                          "isDirectTarget": {"type": "boolean"}
+                          "datasourceId": {
+                            "type": "string"
+                          },
+                          "evidenceLevel": {
+                            "type": "string"
+                          },
+                          "genotype": {
+                            "type": "string"
+                          },
+                          "genotypeAnnotationText": {
+                            "type": "string"
+                          },
+                          "pgxCategory": {
+                            "type": "string"
+                          },
+                          "phenotypeText": {
+                            "type": "string"
+                          },
+                          "variantRsId": {
+                            "type": "string"
+                          },
+                          "isDirectTarget": {
+                            "type": "boolean"
+                          }
                         }
                       }
                     }
@@ -3631,7 +3680,9 @@
               }
             }
           },
-          "required": ["data"]
+          "required": [
+            "data"
+          ]
         },
         {
           "type": "null",
@@ -3960,7 +4011,10 @@
       {
         "queryString": "gene:TP53",
         "entityNames": [],
-        "page": {"index": 0, "size": 10}
+        "page": {
+          "index": 0,
+          "size": 10
+        }
       }
     ],
     "return_schema": {
@@ -4127,7 +4181,9 @@
     "type": "OpenTarget",
     "test_examples": [
       {
-        "goIds": ["GO:0005515"]
+        "goIds": [
+          "GO:0005515"
+        ]
       }
     ],
     "return_schema": {

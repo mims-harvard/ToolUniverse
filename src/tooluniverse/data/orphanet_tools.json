@@ -96,11 +96,23 @@
           "type": "string",
           "description": "Language code (default: en)",
           "default": "en"
+        },
+        "orphacode": {
+          "type": [
+            "integer",
+            "string"
+          ],
+          "description": "Alias for orpha_code (the Orphanet disease code)."
+        },
+        "orpha_id": {
+          "type": [
+            "integer",
+            "string"
+          ],
+          "description": "Alias for orpha_code (the Orphanet disease code)."
         }
       },
-      "required": [
-        "orpha_code"
-      ]
+      "required": []
     },
     "return_schema": {
       "type": "object",
@@ -158,11 +170,23 @@
             "integer"
           ],
           "description": "Orphanet ORPHA code for the disease"
+        },
+        "orphacode": {
+          "type": [
+            "integer",
+            "string"
+          ],
+          "description": "Alias for orpha_code (the Orphanet disease code)."
+        },
+        "orpha_id": {
+          "type": [
+            "integer",
+            "string"
+          ],
+          "description": "Alias for orpha_code (the Orphanet disease code)."
         }
       },
-      "required": [
-        "orpha_code"
-      ]
+      "required": []
     },
     "return_schema": {
       "type": "object",
@@ -229,11 +253,23 @@
           "type": "string",
           "description": "Language code (default: en)",
           "default": "en"
+        },
+        "orphacode": {
+          "type": [
+            "integer",
+            "string"
+          ],
+          "description": "Alias for orpha_code (the Orphanet disease code)."
+        },
+        "orpha_id": {
+          "type": [
+            "integer",
+            "string"
+          ],
+          "description": "Alias for orpha_code (the Orphanet disease code)."
         }
       },
-      "required": [
-        "orpha_code"
-      ]
+      "required": []
     },
     "return_schema": {
       "type": "object",
@@ -350,6 +386,13 @@
             "integer"
           ],
           "description": "Alias for orpha_code. Orphanet ORPHA code (e.g., 558 for Marfan)"
+        },
+        "orphacode": {
+          "type": [
+            "integer",
+            "string"
+          ],
+          "description": "Alias for orpha_code (the Orphanet disease code)."
         }
       },
       "required": []
@@ -426,11 +469,23 @@
             "integer"
           ],
           "description": "Orphanet ORPHA code (e.g., 558 for Marfan, 586 for Cystic Fibrosis)"
+        },
+        "orphacode": {
+          "type": [
+            "integer",
+            "string"
+          ],
+          "description": "Alias for orpha_code (the Orphanet disease code)."
+        },
+        "orpha_id": {
+          "type": [
+            "integer",
+            "string"
+          ],
+          "description": "Alias for orpha_code (the Orphanet disease code)."
         }
       },
-      "required": [
-        "orpha_code"
-      ]
+      "required": []
     },
     "return_schema": {
       "type": "object",
@@ -507,11 +562,23 @@
             "integer"
           ],
           "description": "Orphanet ORPHA code (e.g., 558 for Marfan, 399 for Huntington)"
+        },
+        "orphacode": {
+          "type": [
+            "integer",
+            "string"
+          ],
+          "description": "Alias for orpha_code (the Orphanet disease code)."
+        },
+        "orpha_id": {
+          "type": [
+            "integer",
+            "string"
+          ],
+          "description": "Alias for orpha_code (the Orphanet disease code)."
         }
       },
-      "required": [
-        "orpha_code"
-      ]
+      "required": []
     },
     "return_schema": {
       "type": "object",
@@ -684,11 +751,23 @@
           "type": "string",
           "description": "Language code (default: en)",
           "default": "en"
+        },
+        "orphacode": {
+          "type": [
+            "integer",
+            "string"
+          ],
+          "description": "Alias for orpha_code (the Orphanet disease code)."
+        },
+        "orpha_id": {
+          "type": [
+            "integer",
+            "string"
+          ],
+          "description": "Alias for orpha_code (the Orphanet disease code)."
         }
       },
-      "required": [
-        "orpha_code"
-      ]
+      "required": []
     },
     "return_schema": {
       "type": "object",

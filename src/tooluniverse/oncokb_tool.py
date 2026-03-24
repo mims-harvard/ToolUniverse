@@ -108,6 +108,9 @@ class OncoKBTool(BaseTool):
         # Accept gene_symbol as alias for gene (consistent with other tools)
         if not arguments.get("gene") and arguments.get("gene_symbol"):
             arguments = dict(arguments, gene=arguments["gene_symbol"])
+        # Accept alteration as alias for variant
+        if not arguments.get("variant") and arguments.get("alteration"):
+            arguments = dict(arguments, variant=arguments["alteration"])
 
         if operation == "annotate_variant":
             return self._annotate_variant(arguments)

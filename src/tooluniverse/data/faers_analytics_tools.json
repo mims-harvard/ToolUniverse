@@ -21,6 +21,10 @@
         "adverse_event": {
           "type": "string",
           "description": "MedDRA Preferred Term (e.g., 'Hepatotoxicity', 'Myopathy')"
+        },
+        "reaction": {
+          "type": "string",
+          "description": "Alias for adverse_event. MedDRA Preferred Term for the adverse drug reaction."
         }
       }
     },
@@ -149,6 +153,10 @@
         "adverse_event": {
           "type": "string",
           "description": "MedDRA Preferred Term to compare"
+        },
+        "reaction": {
+          "type": "string",
+          "description": "Alias for adverse_event. MedDRA Preferred Term for the adverse drug reaction."
         }
       }
     },
@@ -184,6 +192,10 @@
         "adverse_event": {
           "type": "string",
           "description": "MedDRA Preferred Term (optional, omit for all events)"
+        },
+        "reaction": {
+          "type": "string",
+          "description": "Alias for adverse_event. MedDRA Preferred Term for the adverse drug reaction."
         }
       }
     },
