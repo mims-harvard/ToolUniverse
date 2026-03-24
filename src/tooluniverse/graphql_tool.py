@@ -48,9 +48,12 @@ def remove_none_and_empty_values(json_obj):
 
 def execute_query(endpoint_url, query, variables=None):
     response = requests.post(
-        endpoint_url, json={"query": query, "variables": variables}
+        endpoint_url, json={"query": query, "variables": variables}, timeout=30
     )
     try:
+        if not response.ok:
+            print(f"HTTP {response.status_code} from API: {response.text[:200]}")
+            return None
         result = response.json()
         result = remove_none_and_empty_values(result)
         # Check if the response contains errors

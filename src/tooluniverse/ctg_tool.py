@@ -496,7 +496,11 @@ class ClinicalTrialsSearchTool(ClinicalTrialsTool):
             and len(response["studies"]) > 0
         ):
             response = self._simplify_output(response)
-            return {"status": "success", **response}
+            return {
+                "status": "success",
+                "data": response,
+                "metadata": {"source": "ClinicalTrials.gov API v2"},
+            }
 
         return {
             "status": "error",
