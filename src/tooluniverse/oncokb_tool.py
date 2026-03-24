@@ -159,6 +159,7 @@ class OncoKBTool(BaseTool):
         # Demo API silently returns geneExist=False for genes outside its limited set.
         if self.use_demo and not data.get("geneExist", True):
             metadata["note"] = self._demo_gene_note(gene)
+            data = dict(data, warning=self._demo_gene_note(gene))
         return {"status": "success", "data": data, "metadata": metadata}
 
     def _get_gene_info(self, arguments: Dict[str, Any]) -> Dict[str, Any]:
@@ -319,4 +320,5 @@ class OncoKBTool(BaseTool):
         }
         if self.use_demo and not data.get("geneExist", True):
             metadata["note"] = self._demo_gene_note(gene)
+            data = dict(data, warning=self._demo_gene_note(gene))
         return {"status": "success", "data": data, "metadata": metadata}
