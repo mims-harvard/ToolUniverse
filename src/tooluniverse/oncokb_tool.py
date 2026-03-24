@@ -60,11 +60,18 @@ class OncoKBTool(BaseTool):
         return headers
 
     def _demo_gene_note(self, gene: str) -> str:
-        """Return demo-mode warning for an unsupported gene."""
         return (
             f"Demo mode: {gene} is not in the demo dataset (limited to BRAF, TP53, ROS1). "
             "Set ONCOKB_API_TOKEN for full coverage. Get a token at https://www.oncokb.org/apiAccess"
         )
+
+    def _apply_demo_gene_warning(
+        self, data: Dict[str, Any], metadata: Dict[str, Any], gene: str
+    ) -> None:
+        """Mutate data and metadata in-place with demo-mode warning when gene is absent."""
+        note = self._demo_gene_note(gene)
+        metadata["note"] = note
+        data["warning"] = note
 
     def _make_request(self, endpoint: str, params: Dict[str, Any]) -> Dict[str, Any]:
         """Make a GET request to the OncoKB API with standard error handling."""
@@ -158,8 +165,7 @@ class OncoKBTool(BaseTool):
         }
         # Demo API silently returns geneExist=False for genes outside its limited set.
         if self.use_demo and not data.get("geneExist", True):
-            metadata["note"] = self._demo_gene_note(gene)
-            data = dict(data, warning=self._demo_gene_note(gene))
+            self._apply_demo_gene_warning(data, metadata, gene)
         return {"status": "success", "data": data, "metadata": metadata}
 
     def _get_gene_info(self, arguments: Dict[str, Any]) -> Dict[str, Any]:
@@ -319,6 +325,5 @@ class OncoKBTool(BaseTool):
             "copy_number_type": cna_type,
         }
         if self.use_demo and not data.get("geneExist", True):
-            metadata["note"] = self._demo_gene_note(gene)
-            data = dict(data, warning=self._demo_gene_note(gene))
+            self._apply_demo_gene_warning(data, metadata, gene)
         return {"status": "success", "data": data, "metadata": metadata}

@@ -91,6 +91,10 @@ class APPRISTool(BaseTool):
 
         return {"status": "success", "data": data}
 
+    @staticmethod
+    def _filter_principal_isoforms(records: list) -> list:
+        return [r for r in records if r.get("type") == "principal_isoform"]
+
     def _get_isoforms(self, arguments: Dict[str, Any]) -> Dict[str, Any]:
         gene_id = (arguments.get("gene_id") or "").strip()
         if not gene_id:
@@ -101,9 +105,7 @@ class APPRISTool(BaseTool):
         if result.get("status") == "error":
             return result
 
-        records = result["data"]
-        isoforms = [r for r in records if r.get("type") == "principal_isoform"]
-
+        isoforms = self._filter_principal_isoforms(result["data"])
         return {
             "status": "success",
             "data": isoforms,
@@ -124,35 +126,28 @@ class APPRISTool(BaseTool):
         if result.get("status") == "error":
             return result
 
-        records = result["data"]
-        isoforms = [r for r in records if r.get("type") == "principal_isoform"]
+        isoforms = self._filter_principal_isoforms(result["data"])
 
-        # Find the PRINCIPAL isoform (highest reliability)
-        principal = None
-        priority_order = [
-            "PRINCIPAL:1",
-            "PRINCIPAL:2",
-            "PRINCIPAL:3",
-            "PRINCIPAL:4",
-            "PRINCIPAL:5",
-        ]
-
-        for priority in priority_order:
-            for iso in isoforms:
-                if iso.get("reliability") == priority:
-                    principal = iso
-                    break
-            if principal:
-                break
+        priority_order = [f"PRINCIPAL:{i}" for i in range(1, 6)]
+        principal = next(
+            (
+                iso
+                for p in priority_order
+                for iso in isoforms
+                if iso.get("reliability") == p
+            ),
+            None,
+        )
 
         if not principal and isoforms:
-            # Fall back to first with "Possible Principal Isoform" or any
-            for iso in isoforms:
-                if "Principal" in (iso.get("annotation") or ""):
-                    principal = iso
-                    break
-            if not principal:
-                principal = isoforms[0]
+            principal = next(
+                (
+                    iso
+                    for iso in isoforms
+                    if "Principal" in (iso.get("annotation") or "")
+                ),
+                isoforms[0],
+            )
 
         if not principal:
             return {

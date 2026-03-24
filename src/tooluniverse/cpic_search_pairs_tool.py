@@ -101,7 +101,7 @@ class CPICGetRecommendationsTool(BaseTool):
             }
             # Some guidelines use dosing algorithms rather than discrete recommendations.
             # Guideline 100425 (warfarin) is the main example — it returns 0 rows here.
-            if len(data) == 0:
+            if not data:
                 result["note"] = (
                     f"No discrete recommendations found for guideline {guideline_id}. "
                     "Some guidelines (e.g. warfarin, guideline 100425) use a dosing "
