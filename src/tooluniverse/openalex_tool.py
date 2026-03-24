@@ -128,7 +128,10 @@ class OpenAlexTool(BaseTool):
             return papers
 
         except requests.exceptions.RequestException as e:
-            return f"Error retrieving data from OpenAlex: {e}"
+            return {
+                "status": "error",
+                "error": f"Error retrieving data from OpenAlex: {e}",
+            }
 
     def _extract_paper_info(self, work):
         """
@@ -296,7 +299,10 @@ class OpenAlexTool(BaseTool):
             return papers
 
         except requests.exceptions.RequestException as e:
-            return f"Error retrieving papers by author {author_name}: {e}"
+            return {
+                "status": "error",
+                "error": f"Error retrieving papers by author {author_name}: {e}",
+            }
 
 
 @register_tool("OpenAlexRESTTool")
