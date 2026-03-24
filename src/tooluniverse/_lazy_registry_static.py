@@ -218,6 +218,7 @@ STATIC_LAZY_REGISTRY = {
     "GPCRdbTool": "gpcrdb_tool",
     "GProfilerTool": "gprofiler_tool",
     "GTDBTool": "gtdb_tool",
+    "IGSRTool": "igsr_tool",
     "GTExEQTLTool": "gtex_tool",
     "GTExExpressionTool": "gtex_tool",
     "GTExV2Tool": "gtex_v2_tool",
