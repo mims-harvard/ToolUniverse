@@ -997,6 +997,12 @@ default_tool_files = {
     "protvar": os.path.join(current_dir, "data", "protvar_tools.json"),
     # AOPWiki - Adverse Outcome Pathways: toxicology causal chains (MIE -> KE -> AO)
     "aopwiki": os.path.join(current_dir, "data", "aopwiki_tools.json"),
+    # MaveDB - Multiplexed Assays of Variant Effect (deep mutational scanning)
+    "mavedb": os.path.join(current_dir, "data", "mavedb_tools.json"),
+    # ClinGen Allele Registry - Canonical allele identifiers and cross-references
+    "clingen_allele": os.path.join(current_dir, "data", "clingen_allele_tools.json"),
+    # SIGNOR - Causal signaling network relationships
+    "signor": os.path.join(current_dir, "data", "signor_tools.json"),
 }
 
 # Auto-load any user-provided tools from ~/.tooluniverse/user_tools/

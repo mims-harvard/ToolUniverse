@@ -1,0 +1,152 @@
+[
+  {
+    "name": "SIGNOR_get_interactions",
+    "description": "Get causal signaling interactions for a protein or entity from the SIGNOR database. Returns upstream regulators and downstream targets with the type of effect (up/down-regulation), mechanism (phosphorylation, ubiquitination, transcriptional regulation, etc.), affected residue, and supporting literature. Use UniProt IDs (e.g., P04637 for TP53) or SIGNOR entity IDs.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "entity_id": {
+          "type": "string",
+          "description": "Entity identifier - typically a UniProt accession (e.g., 'P04637' for TP53, 'Q00987' for MDM2, 'P38398' for BRCA1). Can also be a SIGNOR complex/pathway ID."
+        },
+        "organism": {
+          "type": "integer",
+          "description": "NCBI taxonomy ID. 9606 for human, 10090 for mouse.",
+          "default": 9606
+        },
+        "limit": {
+          "type": "integer",
+          "description": "Maximum number of interactions to return.",
+          "default": 50
+        }
+      },
+      "required": ["entity_id"]
+    },
+    "fields": {
+      "operation": "get_interactions"
+    },
+    "type": "SIGNORTool",
+    "test_examples": [
+      {
+        "entity_id": "P04637"
+      },
+      {
+        "entity_id": "Q00987",
+        "limit": 10
+      }
+    ],
+    "return_schema": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "source_entity": {"type": "string"},
+          "source_type": {"type": "string"},
+          "source_id": {"type": "string"},
+          "target_entity": {"type": "string"},
+          "target_type": {"type": "string"},
+          "target_id": {"type": "string"},
+          "effect": {"type": "string"},
+          "mechanism": {"type": "string"},
+          "residue": {"type": ["string", "null"]},
+          "pmid": {"type": ["string", "null"]},
+          "direct": {"type": "boolean"},
+          "score": {"type": ["number", "null"]},
+          "signor_id": {"type": "string"}
+        }
+      }
+    }
+  },
+  {
+    "name": "SIGNOR_list_pathways",
+    "description": "List curated signaling pathways in the SIGNOR database. Optionally filter by keyword to find pathways related to diseases (Alzheimer, AML), biological processes (apoptosis, autophagy), or signaling (MAPK, PI3K). Returns pathway IDs that can be used with SIGNOR_get_pathway.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "query": {
+          "type": "string",
+          "description": "Optional keyword to filter pathways by name or description (e.g., 'cancer', 'apoptosis', 'AML'). Leave empty to list all pathways.",
+          "default": ""
+        }
+      },
+      "required": []
+    },
+    "fields": {
+      "operation": "list_pathways"
+    },
+    "type": "SIGNORTool",
+    "test_examples": [
+      {
+        "query": "apoptosis"
+      },
+      {
+        "query": ""
+      }
+    ],
+    "return_schema": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "pathway_id": {"type": "string"},
+          "name": {"type": "string"},
+          "description": {"type": ["string", "null"]},
+          "curator": {"type": ["string", "null"]}
+        }
+      }
+    }
+  },
+  {
+    "name": "SIGNOR_get_pathway",
+    "description": "Get all signaling interactions in a specific SIGNOR curated pathway. Returns the network of causal relationships with effects, mechanisms, and literature references. Use pathway IDs from SIGNOR_list_pathways (e.g., 'SIGNOR-AD' for Alzheimer, 'SIGNOR-C' for cancer-related).",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "pathway_id": {
+          "type": "string",
+          "description": "SIGNOR pathway identifier (e.g., 'SIGNOR-AD' for Alzheimer, 'SIGNOR-AML' for Acute Myeloid Leukemia, 'SIGNOR-AMPK' for AMPK signaling). Get IDs from SIGNOR_list_pathways."
+        },
+        "limit": {
+          "type": "integer",
+          "description": "Maximum number of interactions to return.",
+          "default": 100
+        }
+      },
+      "required": ["pathway_id"]
+    },
+    "fields": {
+      "operation": "get_pathway"
+    },
+    "type": "SIGNORTool",
+    "test_examples": [
+      {
+        "pathway_id": "SIGNOR-AD"
+      },
+      {
+        "pathway_id": "SIGNOR-AMPK",
+        "limit": 20
+      }
+    ],
+    "return_schema": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "source_entity": {"type": "string"},
+          "source_type": {"type": "string"},
+          "source_id": {"type": "string"},
+          "target_entity": {"type": "string"},
+          "target_type": {"type": "string"},
+          "target_id": {"type": "string"},
+          "effect": {"type": "string"},
+          "mechanism": {"type": "string"},
+          "residue": {"type": ["string", "null"]},
+          "pmid": {"type": ["string", "null"]},
+          "direct": {"type": "boolean"},
+          "score": {"type": ["number", "null"]},
+          "signor_id": {"type": "string"}
+        }
+      }
+    }
+  }
+]
