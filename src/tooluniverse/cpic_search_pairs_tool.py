@@ -94,14 +94,21 @@ class CPICGetRecommendationsTool(BaseTool):
             r = requests.get(url, params=params, timeout=30)
             r.raise_for_status()
             data = r.json()
-            return {
-                "status": "success",
-                "data": {
-                    "guideline_id": guideline_id,
-                    "recommendations": data,
-                    "count": len(data),
-                },
+            result: Dict[str, Any] = {
+                "guideline_id": guideline_id,
+                "recommendations": data,
+                "count": len(data),
             }
+            # Some guidelines use dosing algorithms rather than discrete recommendations.
+            # Guideline 100425 (warfarin) is the main example — it returns 0 rows here.
+            if len(data) == 0:
+                result["note"] = (
+                    f"No discrete recommendations found for guideline {guideline_id}. "
+                    "Some guidelines (e.g. warfarin, guideline 100425) use a dosing "
+                    "algorithm rather than a recommendation table. "
+                    "See https://cpicpgx.org/guidelines/ for the full guideline document."
+                )
+            return {"status": "success", "data": result}
         except requests.exceptions.RequestException as e:
             return {"status": "error", "error": f"CPIC API error: {e}"}
 
