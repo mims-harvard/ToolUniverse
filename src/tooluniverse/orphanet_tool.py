@@ -611,7 +611,7 @@ class OrphanetTool(BaseTool):
                 "status": "success",
                 "data": {
                     "orpha_code": orpha_code,
-                    "preferred_term": results.get("Preferred term", ""),
+                    "preferred_term": disorder.get("Preferred term", ""),
                     "phenotypes": phenotypes,
                     "phenotype_count": len(phenotypes),
                 },
@@ -949,18 +949,15 @@ class OrphanetTool(BaseTool):
 
         mappings = {}
 
-        systems_to_query = []
-        if coding_system == "all":
-            systems_to_query = ["ICD10", "ICD11", "OMIM", "SNOMED-CT"]
-        elif coding_system == "icd10":
-            systems_to_query = ["ICD10"]
-        elif coding_system == "icd11":
-            systems_to_query = ["ICD11"]
-        elif coding_system == "omim":
-            systems_to_query = ["OMIM"]
-        elif coding_system == "snomed":
-            systems_to_query = ["SNOMED-CT"]
-        else:
+        coding_system_map = {
+            "all": ["ICD10", "ICD11", "OMIM", "SNOMED-CT"],
+            "icd10": ["ICD10"],
+            "icd11": ["ICD11"],
+            "omim": ["OMIM"],
+            "snomed": ["SNOMED-CT"],
+        }
+        systems_to_query = coding_system_map.get(coding_system)
+        if systems_to_query is None:
             return {
                 "status": "error",
                 "error": f"Unknown coding_system: {coding_system}. Supported: all, icd10, icd11, omim, snomed",

@@ -8,7 +8,7 @@ Website: https://opig.stats.ox.ac.uk/webapps/sabdab-sabpred/sabdab
 """
 
 import requests
-from typing import Dict, Any, Optional, List
+from typing import Dict, Any
 from .base_tool import BaseTool
 from .tool_registry import register_tool
 
@@ -78,23 +78,18 @@ class SAbDabTool(BaseTool):
                 },
             )
 
-            # SAbDab may return HTML, handle gracefully
+            # SAbDab search endpoint returns HTML, not JSON
             if "json" in response.headers.get("Content-Type", ""):
                 data = response.json()
                 structures = data if isinstance(data, list) else data.get("results", [])
             else:
-                # Provide guidance for web-only access
                 return {
-                    "status": "success",
-                    "data": {
-                        "message": "SAbDab search requires web interface",
-                        "search_url": f"{SABDAB_BASE_URL}/search/?q={query}",
-                        "suggestion": "Visit the URL above to search SAbDab",
-                    },
-                    "metadata": {
-                        "source": "SAbDab",
-                        "note": "Web interface required for full search",
-                    },
+                    "status": "error",
+                    "error": (
+                        "SAbDab search does not provide a JSON API. "
+                        f"Use SAbDab_get_structure with a known PDB ID instead, "
+                        f"or browse https://opig.stats.ox.ac.uk/webapps/sabdab-sabpred/sabdab/search/?q={query}"
+                    ),
                 }
 
             return {
@@ -151,22 +146,19 @@ class SAbDabTool(BaseTool):
             metadata = {"pdb_id": pdb_id}
 
             # Parse REMARK 5 lines which contain SAbDab annotations
+            remarks = []
             for line in pdb_content.split("\n"):
                 if line.startswith("REMARK   5 PAIRED_"):
-                    # Extract chain pairing info
-                    parts = line.split()
-                    for i, part in enumerate(parts):
+                    for part in line.split():
                         if "=" in part:
                             key, val = part.split("=")
                             metadata[key.lower()] = val
                 elif line.startswith("REMARK   5 "):
-                    # Store other remarks
                     remark = line[15:].strip()
-                    if remark and "remarks" not in metadata:
-                        metadata["remarks"] = []
-                    if remark and remark not in str(metadata.get("remarks", [])):
-                        if "remarks" in metadata:
-                            metadata["remarks"].append(remark)
+                    if remark and remark not in str(remarks):
+                        remarks.append(remark)
+            if remarks:
+                metadata["remarks"] = remarks
 
             return {
                 "status": "success",

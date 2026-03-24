@@ -8,7 +8,7 @@ API Documentation: https://api.pharmgkb.org/v1/
 """
 
 import requests
-from typing import Dict, Any, List
+from typing import Dict, Any
 from .base_tool import BaseTool
 from .tool_registry import register_tool
 from .http_utils import request_with_retry
@@ -111,9 +111,6 @@ class PharmGKBTool(BaseTool):
         if not query:
             return self._error("query parameter is required")
 
-        params = {"name": query, "view": "base"}
-
-        # PharmGKB uses specific endpoints for filtered searches
         params = {"view": "base"}
         if entity_type == "Gene":
             params["symbol"] = query
@@ -183,14 +180,18 @@ class PharmGKBTool(BaseTool):
         gene_id = arguments.get("gene_id")
         if gene_id:
             return self._error(
-                f"PharmGKB does not support gene-based clinical annotation lookup. "
-                f"Use PharmGKB_search_genes to find gene '{gene_id}' and obtain "
-                f"annotation IDs, then use annotation_id parameter."
+                f"PharmGKB does not expose a gene-to-annotation-ID index via its API. "
+                f"To find clinical annotations for '{gene_id}', browse "
+                f"https://www.pharmgkb.org/gene/{gene_id}/clinicalAnnotation "
+                f"and copy the numeric annotation_id from the URL, then call this tool "
+                f"with annotation_id=<id>. For drug-gene guidelines, use "
+                f"CPIC_get_guidelines or CPIC_search_gene_drug_pairs instead."
             )
 
         return self._error(
-            "annotation_id is required. Use PharmGKB_search_genes or "
-            "PharmGKB_search_drugs to find relevant annotation IDs."
+            "annotation_id is required (e.g., '1447954390'). "
+            "Browse https://www.pharmgkb.org/clinicalAnnotation to find annotation IDs, "
+            "or use CPIC_get_guidelines for drug-gene dosing recommendations."
         )
 
     def _get_dosing_guidelines(self, arguments: Dict[str, Any]) -> Dict[str, Any]:

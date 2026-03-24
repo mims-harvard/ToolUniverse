@@ -9,7 +9,7 @@ No authentication required.
 """
 
 import requests
-from typing import Dict, Any, Optional, List
+from typing import Dict, Any
 from .base_tool import BaseTool
 from .tool_registry import register_tool
 
@@ -115,7 +115,6 @@ class GPCRdbTool(BaseTool):
         Without family, returns list of protein families.
         """
         family = arguments.get("family", "")
-        arguments.get("species", "human")
 
         try:
             if family:
@@ -233,7 +232,7 @@ class GPCRdbTool(BaseTool):
 
         try:
             response = requests.get(
-                f"{GPCRDB_API_URL}/ligands/protein/{protein}/",
+                f"{GPCRDB_API_URL}/ligands/{protein}/",
                 timeout=self.timeout,
                 headers={
                     "Accept": "application/json",

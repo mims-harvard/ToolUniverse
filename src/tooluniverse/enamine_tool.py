@@ -7,8 +7,10 @@ blocks, and screening libraries for drug discovery.
 Website: https://enamine.net/
 """
 
+import urllib.parse
+
 import requests
-from typing import Dict, Any, Optional, List
+from typing import Dict, Any
 from .base_tool import BaseTool
 from .tool_registry import register_tool
 
@@ -106,15 +108,17 @@ class EnamineTool(BaseTool):
                     "metadata": {"source": "Enamine"},
                 }
 
-            # Return search guidance
+            # API unavailable — return search URL with explicit note
+            api_status = response.status_code
             return {
                 "status": "success",
                 "data": {
                     "query": query,
                     "catalog": catalog,
                     "results": [],
+                    "api_available": False,
                     "search_url": f"{ENAMINE_BASE_URL}/compound-search/quick?q={query}",
-                    "note": "Visit search_url to search Enamine catalog. REAL database contains 37B+ make-on-demand compounds.",
+                    "note": f"Enamine API returned HTTP {api_status}. Visit search_url to search manually. REAL database contains 37B+ make-on-demand compounds.",
                 },
                 "metadata": {"source": "Enamine"},
             }
@@ -221,8 +225,6 @@ class EnamineTool(BaseTool):
                 }
 
             # Return search guidance
-            import urllib.parse
-
             encoded_smiles = urllib.parse.quote(smiles)
             return {
                 "status": "success",

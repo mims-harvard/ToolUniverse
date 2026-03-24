@@ -166,7 +166,7 @@ class OLSTool(BaseTool):
         try:
             return handler(arguments)
         except requests.RequestException as exc:
-            return {"error": "OLS API request failed.", "details": str(exc)}
+            return {"error": str(exc)}
         except ValidationError as exc:
             return {
                 "error": "Failed to validate OLS response.",
@@ -370,6 +370,13 @@ class OLSTool(BaseTool):
         url = f"{self.base_url}{path}"
         try:
             response = self.session.get(url, params=params, timeout=self.timeout)
+            if response.status_code == 503:
+                raise requests.RequestException(
+                    "EBI OLS4 service is temporarily unavailable (HTTP 503). "
+                    "Try again later. Alternatives: search HPO phenotypes via "
+                    "Orphanet_get_phenotypes, or look up disease terms via "
+                    "Orphanet_search_by_name or EuropePMC."
+                )
             response.raise_for_status()
             return response.json()
         except requests.Timeout as e:
@@ -377,7 +384,6 @@ class OLSTool(BaseTool):
                 f"OLS API request timed out after {self.timeout}s: {url}"
             ) from e
         except requests.RequestException as e:
-            # Re-raise with more context
             raise requests.RequestException(
                 f"OLS API request failed for {url}: {str(e)}"
             ) from e
@@ -450,9 +456,7 @@ class OLSTool(BaseTool):
             label = next(
                 (val for val in label if isinstance(val, str) and val.strip()), ""
             )
-        elif isinstance(label, str):
-            label = label
-        else:
+        elif not isinstance(label, str):
             label = ""
 
         # Prefer CURIE if present (more human-friendly), otherwise fall back to shortForm.
