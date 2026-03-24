@@ -8,7 +8,11 @@
       "properties": {
         "disease_trait": {
           "type": "string",
-          "description": "Disease or trait name for text-based search (e.g., 'diabetes', 'coronary artery disease', 'breast cancer'). WARNING: free-text search is broad and may return many unrelated associations. Prefer efo_id for precise filtering."
+          "description": "Disease or trait name for text-based search (e.g., 'diabetes', 'coronary artery disease', 'breast cancer'). NOTE: GWAS associations are indexed by trait/disease, not by gene or drug name — passing a gene symbol or drug name here will fail. Use efo_id for precise filtering."
+        },
+        "query": {
+          "type": "string",
+          "description": "Alias for disease_trait. Disease or trait name (e.g., 'type 2 diabetes'). NOTE: gene symbols and drug names are not valid GWAS trait queries."
         },
         "efo_uri": {
           "type": "string",

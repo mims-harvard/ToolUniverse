@@ -7,8 +7,89 @@ can pass plain gene symbols (e.g., 'CYP2D6') instead of 'eq.CYP2D6'.
 
 from typing import Any, Dict
 
+import requests
+
 from .base_rest_tool import BaseRESTTool
+from .base_tool import BaseTool
 from .tool_registry import register_tool
+
+_CPIC_API = "https://api.cpicpgx.org/v1"
+
+
+def _resolve_drug_to_guideline_id(drug_name: str) -> int | None:
+    """Look up CPIC guideline ID for a drug name via CPIC API."""
+    try:
+        r = requests.get(
+            f"{_CPIC_API}/drug",
+            params={"select": "name,guidelineid", "name": f"ilike.*{drug_name}*"},
+            timeout=15,
+        )
+        r.raise_for_status()
+        rows = r.json()
+        if rows and rows[0].get("guidelineid"):
+            return rows[0]["guidelineid"]
+    except Exception:
+        pass
+    return None
+
+
+@register_tool("CPICGetRecommendationsTool")
+class CPICGetRecommendationsTool(BaseTool):
+    """
+    Get CPIC dosing recommendations by guideline_id, or auto-resolve from drug name.
+
+    Accepts either a numeric guideline_id directly, or a drug name that is
+    resolved to a guideline_id via the CPIC /drug endpoint.
+    """
+
+    def run(self, arguments: Dict[str, Any]) -> Dict[str, Any]:
+        guideline_id = arguments.get("guideline_id")
+
+        if guideline_id is None:
+            drug = arguments.get("drug") or arguments.get("drug_name")
+            if not drug:
+                return {
+                    "status": "error",
+                    "error": (
+                        "Either guideline_id or drug name is required. "
+                        "Use CPIC_list_guidelines to browse available guidelines."
+                    ),
+                }
+            guideline_id = _resolve_drug_to_guideline_id(drug)
+            if guideline_id is None:
+                return {
+                    "status": "error",
+                    "error": (
+                        f"No CPIC guideline found for drug '{drug}'. "
+                        "Use CPIC_list_guidelines to find valid guideline IDs."
+                    ),
+                }
+
+        limit = arguments.get("limit", 50) or 50
+        offset = arguments.get("offset", 0) or 0
+
+        try:
+            url = f"{_CPIC_API}/recommendation"
+            params = {
+                "select": "*,drug(name)",
+                "guidelineid": f"eq.{guideline_id}",
+                "limit": limit,
+                "offset": offset,
+            }
+            r = requests.get(url, params=params, timeout=30)
+            r.raise_for_status()
+            data = r.json()
+            return {
+                "status": "success",
+                "data": {
+                    "guideline_id": guideline_id,
+                    "recommendations": data,
+                    "count": len(data),
+                },
+            }
+        except requests.exceptions.RequestException as e:
+            return {"status": "error", "error": f"CPIC API error: {e}"}
+
 
 # PostgREST filter operator prefixes
 _POSTGREST_OPS = (

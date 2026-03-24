@@ -49,6 +49,7 @@ STATIC_LAZY_REGISTRY = {
     "CIViCTool": "civic_tool",
     "CMAGuidelinesTool": "unified_guideline_tools",
     "COSMICTool": "cosmic_tool",
+    "CPICGetRecommendationsTool": "cpic_search_pairs_tool",
     "CPICSearchPairsTool": "cpic_search_pairs_tool",
     "CTDTool": "ctd_tool",
     "CTFPHCListGuidelinesTool": "unified_guideline_tools",

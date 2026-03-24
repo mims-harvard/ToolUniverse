@@ -434,13 +434,21 @@
   },
   {
     "name": "CPIC_get_recommendations",
-    "description": "Get drug dosing recommendations from a specific CPIC pharmacogenomic guideline. Returns clinically actionable recommendations that link genotype/phenotype to drug prescribing actions. Each recommendation includes the classification strength (Strong, Moderate, Optional, No recommendation), the drug recommendation text, allele status context, and clinical implications. Use CPIC_list_guidelines first to obtain valid guideline IDs. Key guideline IDs: 100421 (HLA-B/abacavir), 100416 (CYP2D6,OPRM1,COMT/opioids-codeine), 100414 (CYP2D6,CYP2C19/tricyclic-antidepressants), 100415 (CYP2D6/tamoxifen), 100412 (CYP2C9,HLA-B/phenytoin). Note: warfarin (guideline 100425, CYP2C9/VKORC1) uses a dosing calculator algorithm and returns 0 recommendation rows from this endpoint \u2014 refer to the CPIC website or PharmGKB for warfarin dosing.",
+    "description": "Get drug dosing recommendations from a CPIC pharmacogenomic guideline. Returns clinically actionable recommendations linking genotype/phenotype to prescribing actions (classification strength, recommendation text, allele status). Accepts drug name (e.g. 'codeine', 'abacavir') for auto-resolution to guideline_id, or provide guideline_id directly. Key guideline IDs: 100421 (HLA-B/abacavir), 100416 (CYP2D6,OPRM1,COMT/opioids-codeine), 100414 (CYP2D6,CYP2C19/tricyclic-antidepressants), 100415 (CYP2D6/tamoxifen), 100412 (CYP2C9,HLA-B/phenytoin). Note: warfarin (guideline 100425) uses a dosing calculator and returns 0 rows from this endpoint.",
     "parameter": {
       "type": "object",
       "properties": {
         "guideline_id": {
           "type": "integer",
-          "description": "CPIC guideline numeric ID (e.g., 100421 for HLA-B/abacavir, 100416 for CYP2D6/opioids-codeine, 100414 for CYP2D6/tricyclic-antidepressants). Obtain IDs from CPIC_list_guidelines."
+          "description": "CPIC guideline numeric ID. Alternative to drug/drug_name. Use CPIC_list_guidelines to browse IDs."
+        },
+        "drug": {
+          "type": "string",
+          "description": "Drug name to auto-resolve guideline_id (e.g., 'codeine', 'abacavir', 'tamoxifen')."
+        },
+        "drug_name": {
+          "type": "string",
+          "description": "Alias for drug."
         },
         "limit": {
           "type": [
@@ -457,24 +465,17 @@
           "description": "Number of recommendations to skip for pagination (default 0)"
         }
       },
-      "required": [
-        "guideline_id"
-      ]
+      "required": []
     },
-    "fields": {
-      "endpoint": "https://api.cpicpgx.org/v1/recommendation?select=*,drug(name)&guidelineid=eq.{guideline_id}"
-    },
-    "type": "BaseRESTTool",
+    "type": "CPICGetRecommendationsTool",
     "test_examples": [
       {
-        "guideline_id": 100421,
-        "limit": 10,
-        "offset": 0
+        "drug": "codeine",
+        "limit": 10
       },
       {
-        "guideline_id": 100414,
-        "limit": 10,
-        "offset": 0
+        "guideline_id": 100421,
+        "limit": 10
       }
     ],
     "return_schema": {
