@@ -192,21 +192,14 @@ class OncoKBTool(BaseTool):
                 None,
             )
             if not gene_data:
-                return {
-                    "status": "success",
-                    "data": {},
-                    "metadata": {
-                        "source": "OncoKB",
-                        "api_mode": "demo",
-                        "gene": gene,
-                        "warning": (
-                            f"Gene not found in demo data: {gene}. "
-                            "Demo mode only covers a limited set of cancer genes. "
-                            "Set ONCOKB_API_TOKEN for full coverage. "
-                            "Get a token at https://www.oncokb.org/apiAccess"
-                        ),
-                    },
+                data: Dict[str, Any] = {}
+                metadata: Dict[str, Any] = {
+                    "source": "OncoKB",
+                    "api_mode": "demo",
+                    "gene": gene,
                 }
+                self._apply_demo_gene_warning(data, metadata, gene)
+                return {"status": "success", "data": data, "metadata": metadata}
             return {
                 "status": "success",
                 "data": gene_data,

@@ -1083,12 +1083,7 @@ class KEGGExtTool(BaseTool):
         e.g., all pathways linked to a given gene, or all drugs for a disease.
         """
         # Normalize parameter aliases
-        source = (
-            arguments.get("source")
-            or arguments.get("entry_id")
-            or arguments.get("source_db")
-            or ""
-        )
+        source = arguments.get("source") or arguments.get("entry_id") or ""
         target = arguments.get("target") or arguments.get("target_db") or ""
         if not source or not target:
             return {

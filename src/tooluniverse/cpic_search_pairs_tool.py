@@ -124,7 +124,8 @@ class CPICListGuidelinesTool(BaseTool):
 
     def run(self, arguments: Dict[str, Any]) -> Dict[str, Any]:
         gene = (arguments.get("gene") or arguments.get("gene_symbol") or "").upper()
-        drug = (arguments.get("drug") or arguments.get("drug_name") or "").lower()
+        original_drug = arguments.get("drug") or arguments.get("drug_name") or ""
+        drug = original_drug.lower()
 
         try:
             r = requests.get(
@@ -158,7 +159,7 @@ class CPICListGuidelinesTool(BaseTool):
             "metadata": {
                 "total": len(data),
                 "gene_filter": gene or None,
-                "drug_filter": drug or None,
+                "drug_filter": original_drug or None,
             },
         }
 
