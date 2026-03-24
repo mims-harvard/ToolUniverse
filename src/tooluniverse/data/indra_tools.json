@@ -1,0 +1,220 @@
+[
+  {
+    "name": "INDRA_get_statements",
+    "description": "Get literature-mined biological statements for a gene, protein, or chemical from INDRA DB. Returns mechanistic relationships (Activation, Inhibition, Phosphorylation, Complex, etc.) with supporting evidence from PubMed articles. INDRA aggregates knowledge from 30+ NLP readers across millions of publications. Use 'agent' for the entity name (e.g., 'TP53', 'EGFR', 'gefitinib'). Optionally filter by statement 'type' (Activation, Inhibition, Phosphorylation, etc.) or specify 'agent2' for pairwise interactions.",
+    "type": "INDRADBTool",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "operation": {
+          "type": "string",
+          "const": "get_statements",
+          "description": "Operation type (fixed: get_statements)"
+        },
+        "agent": {
+          "type": "string",
+          "description": "Gene symbol, protein name, or chemical name (e.g., 'TP53', 'EGFR', 'gefitinib', 'BRAF')"
+        },
+        "type": {
+          "type": "string",
+          "description": "Filter by statement type: Activation, Inhibition, Phosphorylation, Dephosphorylation, Ubiquitination, Complex, IncreaseAmount, DecreaseAmount, Translocation, Autophosphorylation"
+        },
+        "agent2": {
+          "type": "string",
+          "description": "Second agent for pairwise queries (e.g., agent='BRAF' agent2='MAP2K1')"
+        },
+        "limit": {
+          "type": "integer",
+          "description": "Maximum statements to return (default: 10)",
+          "default": 10
+        },
+        "ev_limit": {
+          "type": "integer",
+          "description": "Maximum evidence items per statement (default: 2)",
+          "default": 2
+        }
+      },
+      "required": ["agent"]
+    },
+    "return_schema": {
+      "type": "object",
+      "properties": {
+        "status": {
+          "type": "string"
+        },
+        "data": {
+          "type": "object",
+          "properties": {
+            "agent": {
+              "type": "string"
+            },
+            "type_filter": {
+              "type": ["string", "null"]
+            },
+            "statements": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "hash": {
+                    "type": "string"
+                  },
+                  "type": {
+                    "type": "string"
+                  },
+                  "subject": {
+                    "type": "string"
+                  },
+                  "object": {
+                    "type": "string"
+                  },
+                  "evidence": {
+                    "type": "array"
+                  }
+                }
+              }
+            },
+            "statements_returned": {
+              "type": "integer"
+            },
+            "total_evidence": {
+              "type": "integer"
+            }
+          }
+        }
+      }
+    },
+    "test_examples": [
+      {
+        "agent": "TP53",
+        "limit": 5,
+        "ev_limit": 1
+      },
+      {
+        "agent": "EGFR",
+        "type": "Inhibition",
+        "limit": 3
+      }
+    ]
+  },
+  {
+    "name": "INDRA_get_evidence_count",
+    "description": "Get the total number of literature evidence items in INDRA DB for a gene, protein, or chemical without fetching full statements. Useful for quickly assessing how much is known about an entity in the literature. Optionally filter by statement type.",
+    "type": "INDRADBTool",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "operation": {
+          "type": "string",
+          "const": "get_evidence_count",
+          "description": "Operation type (fixed: get_evidence_count)"
+        },
+        "agent": {
+          "type": "string",
+          "description": "Gene symbol, protein name, or chemical name (e.g., 'TP53', 'EGFR')"
+        },
+        "type": {
+          "type": "string",
+          "description": "Optional: filter by statement type (e.g., 'Activation', 'Inhibition', 'Phosphorylation')"
+        }
+      },
+      "required": ["agent"]
+    },
+    "return_schema": {
+      "type": "object",
+      "properties": {
+        "status": {
+          "type": "string"
+        },
+        "data": {
+          "type": "object",
+          "properties": {
+            "agent": {
+              "type": "string"
+            },
+            "type_filter": {
+              "type": ["string", "null"]
+            },
+            "total_evidence": {
+              "type": "integer"
+            },
+            "statements_returned": {
+              "type": "integer"
+            }
+          }
+        }
+      }
+    },
+    "test_examples": [
+      {
+        "agent": "TP53"
+      },
+      {
+        "agent": "EGFR",
+        "type": "Inhibition"
+      }
+    ]
+  },
+  {
+    "name": "INDRA_get_statement_by_hash",
+    "description": "Get a specific INDRA statement by its hash with full evidence details. Use statement hashes returned by INDRA_get_statements to retrieve comprehensive evidence for a specific biological relationship.",
+    "type": "INDRADBTool",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "operation": {
+          "type": "string",
+          "const": "get_statement_by_hash",
+          "description": "Operation type (fixed: get_statement_by_hash)"
+        },
+        "hash": {
+          "type": "string",
+          "description": "Statement hash from INDRA_get_statements results"
+        },
+        "ev_limit": {
+          "type": "integer",
+          "description": "Maximum evidence items to return (default: 10)",
+          "default": 10
+        }
+      },
+      "required": ["hash"]
+    },
+    "return_schema": {
+      "type": "object",
+      "properties": {
+        "status": {
+          "type": "string"
+        },
+        "data": {
+          "type": "object",
+          "properties": {
+            "hash": {
+              "type": "string"
+            },
+            "type": {
+              "type": "string"
+            },
+            "total_evidence": {
+              "type": "integer"
+            },
+            "subject": {
+              "type": "object"
+            },
+            "object": {
+              "type": "object"
+            },
+            "evidence": {
+              "type": "array"
+            }
+          }
+        }
+      }
+    },
+    "test_examples": [
+      {
+        "hash": "-35357180905875939",
+        "ev_limit": 3
+      }
+    ]
+  }
+]
