@@ -1,0 +1,95 @@
+[
+  {
+    "name": "Mutalyzer_normalize_variant",
+    "description": "Validate and normalize an HGVS variant description using Mutalyzer. Returns the corrected/normalized HGVS notation, predicted protein effect, RNA description, and gene symbol. Essential for clinical variant interpretation - ensures HGVS nomenclature compliance and predicts amino acid changes. Accepts coding DNA (c.), genomic (g.), protein (p.), or RNA (r.) variant descriptions. Example: 'NM_003002.4:c.274G>T' normalizes to a SDHD missense variant with protein prediction p.(Asp92Tyr).",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "variant": {
+          "type": "string",
+          "description": "HGVS variant description. Examples: 'NM_003002.4:c.274G>T' (SDHD missense), 'NM_000546.6:c.215C>G' (TP53 p.Pro72Arg), 'NM_000059.4:c.7397C>T' (BRCA2). Format: reference:coordinate_system.change"
+        }
+      },
+      "required": [
+        "variant"
+      ]
+    },
+    "fields": {
+      "endpoint_type": "normalize"
+    },
+    "type": "MutalyzerTool",
+    "test_examples": [
+      {
+        "variant": "NM_003002.4:c.274G>T"
+      },
+      {
+        "variant": "NM_000546.6:c.215C>G"
+      }
+    ],
+    "return_schema": {
+      "type": "object"
+    }
+  },
+  {
+    "name": "Mutalyzer_back_translate",
+    "description": "Convert a protein-level HGVS variant to possible DNA-level variant descriptions using Mutalyzer. Given a protein change like NP_002993.1:p.Asp92Tyr, returns the corresponding coding DNA change(s) like NM_003002.4:c.(274G>T). Useful for finding the DNA-level representation of a known amino acid change, accounting for codon degeneracy.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "variant": {
+          "type": "string",
+          "description": "Protein-level HGVS variant description. Examples: 'NP_002993.1:p.Asp92Tyr' (SDHD), 'NP_000537.3:p.Pro72Arg' (TP53), 'NP_000050.2:p.Tyr32Cys' (BRCA2). Format: NP_accession:p.AminoAcidChange"
+        }
+      },
+      "required": [
+        "variant"
+      ]
+    },
+    "fields": {
+      "endpoint_type": "back_translate"
+    },
+    "type": "MutalyzerTool",
+    "test_examples": [
+      {
+        "variant": "NP_002993.1:p.Asp92Tyr"
+      },
+      {
+        "variant": "NP_000537.3:p.Pro72Arg"
+      }
+    ],
+    "return_schema": {
+      "type": "object"
+    }
+  },
+  {
+    "name": "Mutalyzer_parse_hgvs",
+    "description": "Parse an HGVS variant description into a structured model using Mutalyzer. Returns the reference sequence ID, coordinate system (c./g./p./r.), variant type (substitution, deletion, insertion, etc.), and exact positions. Useful for programmatically extracting components of HGVS notation without regex parsing.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "variant": {
+          "type": "string",
+          "description": "HGVS variant description to parse. Examples: 'NM_003002.4:c.274G>T', 'NC_000017.11:g.7674220C>G', 'NM_000546.6:c.215C>G'. Supports coding (c.), genomic (g.), protein (p.), and RNA (r.) coordinates."
+        }
+      },
+      "required": [
+        "variant"
+      ]
+    },
+    "fields": {
+      "endpoint_type": "description_to_model"
+    },
+    "type": "MutalyzerTool",
+    "test_examples": [
+      {
+        "variant": "NM_003002.4:c.274G>T"
+      },
+      {
+        "variant": "NM_000546.6:c.215C>G"
+      }
+    ],
+    "return_schema": {
+      "type": "object"
+    }
+  }
+]

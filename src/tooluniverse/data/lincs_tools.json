@@ -1,0 +1,84 @@
+[
+  {
+    "name": "LINCS_search_signatures",
+    "description": "Search LINCS (Library of Integrated Network-Based Cellular Signatures) for drug perturbation gene expression signatures. Find L1000 and other assay signatures by drug/compound name, optionally filtered by cell line. Returns signature IDs, doses, time points, tissue, disease context, and PubChem IDs. LINCS contains 1.5M+ signatures from 431+ libraries covering thousands of drugs across hundreds of cell lines. Example: searching 'vorinostat' returns HDAC inhibitor signatures across multiple cell lines and doses.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "drug_name": {
+          "type": "string",
+          "description": "Drug or perturbagen name to search for. Case-sensitive, use lowercase for best results. Examples: 'vorinostat', 'imatinib', 'dexamethasone', 'trichostatin-a'."
+        },
+        "cell_line": {
+          "type": "string",
+          "description": "Optional cell line filter. Examples: 'MCF7', 'A549', 'HepG2', 'PC3'. Leave empty to search all cell lines."
+        },
+        "limit": {
+          "type": "integer",
+          "description": "Maximum number of signatures to return (1-100). Default: 20."
+        }
+      },
+      "required": [
+        "drug_name"
+      ]
+    },
+    "fields": {
+      "endpoint_type": "search_signatures"
+    },
+    "type": "LINCSSignatureTool",
+    "test_examples": [
+      {
+        "drug_name": "vorinostat",
+        "limit": 5
+      },
+      {
+        "drug_name": "imatinib",
+        "limit": 5
+      }
+    ],
+    "return_schema": {
+      "type": "array",
+      "items": {
+        "type": "object"
+      }
+    }
+  },
+  {
+    "name": "LINCS_list_libraries",
+    "description": "List available LINCS signature libraries with metadata. LINCS SigCom contains 431+ libraries covering L1000 gene expression, kinase profiling, cell growth inhibition, proteomics, and other assay types. Optionally filter by keyword (e.g., 'L1000', 'kinase', 'proteomics'). Returns library IDs, dataset identifiers, assay types, organisms, and descriptions.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "keyword": {
+          "type": "string",
+          "description": "Optional keyword to filter libraries (case-insensitive). Examples: 'L1000', 'kinase', 'proteomics', 'RNA-seq', 'CRISPR'. Leave empty to list all."
+        },
+        "limit": {
+          "type": "integer",
+          "description": "Maximum number of libraries to return (1-100). Default: 50."
+        }
+      },
+      "required": []
+    },
+    "fields": {
+      "endpoint_type": "list_libraries"
+    },
+    "type": "LINCSSignatureTool",
+    "test_examples": [
+      {
+        "keyword": "L1000",
+        "limit": 5
+      },
+      {
+        "keyword": "kinase",
+        "limit": 5
+      }
+    ],
+    "return_schema": {
+      "type": "array",
+      "items": {
+        "type": "object"
+      }
+    }
+  }
+]
