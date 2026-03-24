@@ -57,16 +57,13 @@ class RCSBSearchTool(BaseTool):
         - Includes identity_cutoff (optional, 0-1)
         - Includes sequence_type ("protein")
         """
-        # Convert identity_cutoff to evalue_cutoff if needed
-        # Lower identity_cutoff means higher similarity requirement
-        # We use a reasonable evalue_cutoff based on identity
-        evalue_cutoff = 0.1  # Default evalue cutoff
+        # Map identity_cutoff to evalue_cutoff: higher identity requires stricter evalue
         if identity_cutoff > 0.9:
-            evalue_cutoff = 0.001  # High similarity
+            evalue_cutoff = 0.001
         elif identity_cutoff > 0.7:
-            evalue_cutoff = 0.01  # Medium-high similarity
+            evalue_cutoff = 0.01
         else:
-            evalue_cutoff = 0.1  # Lower similarity
+            evalue_cutoff = 0.1
 
         return {
             "query": {
@@ -375,17 +372,8 @@ class RCSBSearchTool(BaseTool):
 
         elif search_type == "text":
             # Text-based search (by name, keyword, etc.)
-            if not query or not query.strip():
-                return {
-                    "status": "error",
-                    "error": (
-                        "Invalid search text. "
-                        "Provide a non-empty search term "
-                        "(e.g., drug name, protein name, keyword)."
-                    ),
-                }
-
-            api_query = self._build_text_query(query.strip(), max_results)
+            # Note: empty query is already rejected above
+            api_query = self._build_text_query(query, max_results)
             query_type = "text"
 
         else:
@@ -404,7 +392,7 @@ class RCSBSearchTool(BaseTool):
                 json=api_query,
                 headers={"Content-Type": "application/json"},
                 timeout=self.timeout,
-            )  # noqa: E501
+            )
             response.raise_for_status()
 
             # Handle HTTP 204 No Content (empty result set)
@@ -503,14 +491,17 @@ class RCSBSearchTool(BaseTool):
                         f"similarity threshold >= {similarity_threshold}."
                     )
                 return {
-                    "query": query,
-                    "search_type": query_type,
-                    "similarity_threshold": (
-                        similarity_threshold if query_type != "text" else None
-                    ),
-                    "total_found": total_found,
-                    "results": [],
-                    "message": message,
+                    "status": "success",
+                    "data": {
+                        "query": query,
+                        "search_type": query_type,
+                        "similarity_threshold": (
+                            similarity_threshold if query_type != "text" else None
+                        ),
+                        "total_found": total_found,
+                        "results": [],
+                        "message": message,
+                    },
                 }
 
             # Feature-79B-003: Enrich text search results with metadata
@@ -529,7 +520,7 @@ class RCSBSearchTool(BaseTool):
             if query_type != "text":
                 result_dict["similarity_threshold"] = similarity_threshold
 
-            return result_dict
+            return {"status": "success", "data": result_dict}
 
         except Exception as e:
             return {

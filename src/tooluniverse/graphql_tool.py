@@ -79,10 +79,13 @@ class GraphQLTool(BaseTool):
     def run(self, arguments):
         arguments = copy.deepcopy(arguments)
         if "size" in self.parameters and "size" not in arguments:
-            arguments["size"] = 5
-        return execute_query(
+            arguments["size"] = self.default_size
+        result = execute_query(
             endpoint_url=self.endpoint_url, query=self.query_schema, variables=arguments
         )
+        if result is None:
+            return {"status": "error", "error": "No data returned from API"}
+        return {"status": "success", "data": result.get("data", result)}
 
 
 @register_tool("OpenTarget")
@@ -92,11 +95,10 @@ class OpentargetTool(GraphQLTool):
         super().__init__(tool_config, endpoint_url)
 
     def run(self, arguments):
-        # First try without modifying '-'
         result = super().run(arguments)
 
-        # If no results, try with '-' replaced by ' '
-        if result is None:
+        # If no results, retry with '-' replaced by ' '
+        if result.get("status") != "success":
             if "drugName" in arguments and isinstance(arguments["drugName"], str):
                 arguments["drugName"] = arguments["drugName"].split("-")[0]
             modified_arguments = copy.deepcopy(arguments)
@@ -104,7 +106,6 @@ class OpentargetTool(GraphQLTool):
                 if isinstance(arg_value, str) and "-" in arg_value:
                     modified_arguments[each_arg] = arg_value.replace("-", " ")
             result = super().run(modified_arguments)
-            return result
 
         return result
 
@@ -126,30 +127,35 @@ class OpentargetToolDrugNameMatch(GraphQLTool):
             print(
                 "No results found for the drug brand name. Trying with the generic name."
             )
-            name_arguments = {}
-            for each_args in self.possible_drug_name_args:
-                if each_args in arguments:
-                    name_arguments["drug_name"] = arguments[each_args]
+            # Find which drug name argument was provided
+            matched_arg = None
+            for arg_name in self.possible_drug_name_args:
+                if arg_name in arguments:
+                    matched_arg = arg_name
                     break
-            if len(name_arguments) == 0:
+            if matched_arg is None:
                 print("No drug name found in the arguments.")
-                return None
-            drug_name_results = self.drug_generic_tool.run(name_arguments)
+                return {"status": "error", "error": "No drug name found in arguments"}
+            drug_name_results = self.drug_generic_tool.run(
+                {"drug_name": arguments[matched_arg]}
+            )
             if (
                 drug_name_results is not None
                 and "openfda.generic_name" in drug_name_results
             ):
-                arguments[each_args] = drug_name_results["openfda.generic_name"]
+                arguments[matched_arg] = drug_name_results["openfda.generic_name"]
                 print(
                     "Found generic name. Trying with the generic name: ",
-                    arguments[each_args],
+                    arguments[matched_arg],
                 )
                 results = execute_query(
                     endpoint_url=self.endpoint_url,
                     query=self.query_schema,
                     variables=arguments,
                 )
-        return results
+        if results is None:
+            return {"status": "error", "error": "No data returned from API"}
+        return {"status": "success", "data": results.get("data", results)}
 
 
 @register_tool("OpenTargetGenetics")
@@ -236,8 +242,11 @@ class DiseaseTargetScoreTool(GraphQLTool):
             page_index += 1
 
         return {
-            "disease_info": disease_info,
-            "datasource": datasource_id,
-            "total_targets_with_scores": len(results),
-            "target_scores": results,
+            "status": "success",
+            "data": {
+                "disease_info": disease_info,
+                "datasource": datasource_id,
+                "total_targets_with_scores": len(results),
+                "target_scores": results,
+            },
         }

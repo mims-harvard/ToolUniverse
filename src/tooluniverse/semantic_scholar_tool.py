@@ -52,12 +52,25 @@ class SemanticScholarTool(BaseTool):
         sort = arguments.get("sort")
         include_abstract = bool(arguments.get("include_abstract", False))
         if not query:
-            return [{"error": "`query` parameter is required.", "retryable": False}]
+            return {"status": "error", "error": "`query` parameter is required."}
         if limit <= 0:
-            return []
-        return self._search(
+            return {"status": "success", "data": [], "metadata": {"total": 0}}
+        papers = self._search(
             query, limit, year=year, sort=sort, include_abstract=include_abstract
         )
+        # Check if _search returned an error list
+        if papers and isinstance(papers[0], dict) and "error" in papers[0]:
+            err = papers[0]
+            return {
+                "status": "error",
+                "error": err.get("error", "Unknown error"),
+                "retryable": err.get("retryable", False),
+            }
+        return {
+            "status": "success",
+            "data": papers,
+            "metadata": {"total": len(papers), "query": query},
+        }
 
     def _enforce_rate_limit(self, has_api_key: bool) -> None:
         # Keep anonymous usage below 1 req/sec to reduce 429s.
