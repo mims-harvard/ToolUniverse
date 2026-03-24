@@ -239,7 +239,13 @@ class EpigenomicsTool(BaseTool):
             "status": "released",
         }
 
-        biosample = arguments.get("biosample_term_name")
+        biosample = (
+            arguments.get("biosample_term_name")
+            or arguments.get("biosample")
+            or arguments.get("biosample_term")
+            or arguments.get("cell_type")
+            or arguments.get("tissue")
+        )
         if biosample:
             params["biosample_ontology.term_name"] = biosample
 
@@ -291,7 +297,13 @@ class EpigenomicsTool(BaseTool):
             "status": "released",
         }
 
-        biosample = arguments.get("biosample_term_name")
+        biosample = (
+            arguments.get("biosample_term_name")
+            or arguments.get("biosample")
+            or arguments.get("biosample_term")
+            or arguments.get("cell_type")
+            or arguments.get("tissue")
+        )
         if biosample:
             params["biosample_ontology.term_name"] = biosample
 
@@ -343,7 +355,13 @@ class EpigenomicsTool(BaseTool):
             "status": "released",
         }
 
-        biosample = arguments.get("biosample_term_name")
+        biosample = (
+            arguments.get("biosample_term_name")
+            or arguments.get("biosample")
+            or arguments.get("biosample_term")
+            or arguments.get("cell_type")
+            or arguments.get("tissue")
+        )
         if biosample:
             params["biosample_ontology.term_name"] = biosample
 
@@ -396,7 +414,13 @@ class EpigenomicsTool(BaseTool):
             "status": "released",
         }
 
-        biosample = arguments.get("biosample_term_name")
+        biosample = (
+            arguments.get("biosample_term_name")
+            or arguments.get("biosample")
+            or arguments.get("biosample_term")
+            or arguments.get("cell_type")
+            or arguments.get("tissue")
+        )
         if biosample:
             params["biosample_ontology.term_name"] = biosample
 
