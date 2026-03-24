@@ -172,7 +172,7 @@ class MonarchV3Tool(BaseTool):
 
     def _search(self, arguments: Dict[str, Any]) -> Dict[str, Any]:
         """Search Monarch knowledge graph for entities by name/keyword."""
-        query = arguments.get("query", "")
+        query = arguments.get("query") or arguments.get("q", "")
         if not query:
             return {"status": "error", "error": "query parameter is required"}
 

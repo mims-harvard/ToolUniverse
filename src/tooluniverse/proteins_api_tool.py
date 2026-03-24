@@ -448,6 +448,17 @@ class ProteinsAPIRESTTool(BaseTool):
             response.raise_for_status()
             data = response.json()
 
+            # Cap features per entry to avoid 25MB+ responses for heavily-annotated proteins
+            if tool_name == "proteins_api_get_variants" and isinstance(data, list):
+                max_variants = int(arguments.get("max_variants", 200))
+                for entry in data:
+                    if isinstance(entry, dict) and "features" in entry:
+                        features = entry["features"]
+                        if len(features) > max_variants:
+                            entry["features"] = features[:max_variants]
+                            entry["features_truncated"] = True
+                            entry["total_features"] = len(features)
+
             response_data = {
                 "status": "success",
                 "data": data,

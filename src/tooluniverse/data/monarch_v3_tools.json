@@ -89,11 +89,13 @@
         "category": {
           "type": "string",
           "description": "Filter by entity category. Options: 'biolink:Gene', 'biolink:Disease', 'biolink:PhenotypicFeature', 'biolink:NamedThing'. Default: all categories."
+        },
+        "q": {
+          "type": "string",
+          "description": "Alias for query parameter."
         }
       },
-      "required": [
-        "query"
-      ]
+      "required": []
     },
     "fields": {
       "endpoint": "search"
@@ -110,7 +112,7 @@
       }
     ],
     "return_schema": {
-      "type": "object"
+      "type": "array"
     }
   },
   {
