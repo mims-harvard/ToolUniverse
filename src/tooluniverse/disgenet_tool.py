@@ -15,7 +15,7 @@ from .base_tool import BaseTool
 from .tool_registry import register_tool
 
 # Base URL for DisGeNET API
-DISGENET_API_URL = "https://www.disgenet.org/api"
+DISGENET_API_URL = "https://api.disgenet.com/api/v1"
 
 
 @register_tool("DisGeNETTool")
