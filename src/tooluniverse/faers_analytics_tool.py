@@ -35,6 +35,20 @@ class FAERSAnalyticsTool(BaseTool):
             arguments = dict(arguments, adverse_event=arguments["reaction"])
         if not arguments.get("stratify_by") and arguments.get("demographic"):
             arguments = dict(arguments, stratify_by=arguments["demographic"])
+        # Normalize drug_name aliases: 'drug' → 'drug_name'
+        if not arguments.get("drug_name") and arguments.get("drug"):
+            arguments = dict(arguments, drug_name=arguments["drug"])
+        # Normalize seriousness_type alias: 'event_type' → 'seriousness_type'
+        if not arguments.get("seriousness_type") and arguments.get("event_type"):
+            arguments = dict(arguments, seriousness_type=arguments["event_type"])
+        # Normalize compare_drugs alias: 'drugs' list → 'drug1', 'drug2'
+        if arguments.get("drugs") and not arguments.get("drug1"):
+            drugs_list = arguments["drugs"]
+            if isinstance(drugs_list, list) and len(drugs_list) >= 2:
+                arguments = dict(arguments, drug1=drugs_list[0], drug2=drugs_list[1])
+        # Normalize stratify_by: 'age_group' → 'age'
+        if arguments.get("stratify_by") == "age_group":
+            arguments = dict(arguments, stratify_by="age")
         operation = arguments.get("operation")
         # Auto-fill operation from tool config const if not provided by user
         if not operation:

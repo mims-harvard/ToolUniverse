@@ -360,6 +360,10 @@
         "term_id": {
           "type": "string",
           "description": "Alias for id \u2014 ontology term ID (e.g. HP:0001903)"
+        },
+        "term_iri": {
+          "type": "string",
+          "description": "Alias for id. Full IRI or short-form ID (e.g., GO:0008150, EFO:0003971). Same as id."
         }
       },
       "required": []

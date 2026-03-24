@@ -395,7 +395,7 @@ class DailyMedSPLParserTool(BaseTool):
                         )
                         for para in paragraphs:
                             text_content = "".join(para.itertext()).strip()
-                            if text_content and len(text_content) > 10:
+                            if text_content and len(text_content) > 2:
                                 contraindications.append(
                                     {
                                         "type": "contraindication",

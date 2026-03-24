@@ -45,6 +45,13 @@
           "minimum": 1,
           "maximum": 100,
           "description": "Maximum number of results to return (1-100)."
+        },
+        "biosample_term": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Alias for biosample_term_name. Biosample tissue or cell line (e.g., \"breast epithelium\", \"liver\", \"K562\")."
         }
       },
       "additionalProperties": false

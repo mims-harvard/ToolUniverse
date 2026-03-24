@@ -300,7 +300,10 @@ class OLSTool(BaseTool):
         }
 
     def _handle_get_term_info(self, arguments: Dict[str, Any]) -> Dict[str, Any]:
-        identifier = arguments.get("id") or arguments.get("term_id")
+        # Feature-111A-003: term_iri alias for id (consistent with sibling OLS tools)
+        identifier = (
+            arguments.get("id") or arguments.get("term_id") or arguments.get("term_iri")
+        )
         if not identifier:
             return {
                 "status": "error",
