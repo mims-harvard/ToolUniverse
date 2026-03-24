@@ -310,7 +310,10 @@
                 "description": "PGx testing recommendation"
               },
               "drug": {
-                "type": ["object", "null"],
+                "type": [
+                  "object",
+                  "null"
+                ],
                 "description": "Embedded drug info from CPIC drug table",
                 "properties": {
                   "name": {
@@ -343,7 +346,8 @@
     "parameter": {
       "type": "object",
       "properties": {},
-      "required": []
+      "required": [],
+      "additionalProperties": false
     },
     "fields": {
       "endpoint": "https://api.cpicpgx.org/v1/guideline"
@@ -424,7 +428,7 @@
   },
   {
     "name": "CPIC_get_recommendations",
-    "description": "Get drug dosing recommendations from a specific CPIC pharmacogenomic guideline. Returns clinically actionable recommendations that link genotype/phenotype to drug prescribing actions. Each recommendation includes the classification strength (Strong, Moderate, Optional, No recommendation), the drug recommendation text, allele status context, and clinical implications. Use CPIC_list_guidelines first to obtain valid guideline IDs. Key guideline IDs: 100421 (HLA-B/abacavir), 100416 (CYP2D6,OPRM1,COMT/opioids-codeine), 100414 (CYP2D6,CYP2C19/tricyclic-antidepressants), 100415 (CYP2D6/tamoxifen), 100412 (CYP2C9,HLA-B/phenytoin). Note: warfarin (guideline 100425, CYP2C9/VKORC1) uses a dosing calculator algorithm and returns 0 recommendation rows from this endpoint — refer to the CPIC website or PharmGKB for warfarin dosing.",
+    "description": "Get drug dosing recommendations from a specific CPIC pharmacogenomic guideline. Returns clinically actionable recommendations that link genotype/phenotype to drug prescribing actions. Each recommendation includes the classification strength (Strong, Moderate, Optional, No recommendation), the drug recommendation text, allele status context, and clinical implications. Use CPIC_list_guidelines first to obtain valid guideline IDs. Key guideline IDs: 100421 (HLA-B/abacavir), 100416 (CYP2D6,OPRM1,COMT/opioids-codeine), 100414 (CYP2D6,CYP2C19/tricyclic-antidepressants), 100415 (CYP2D6/tamoxifen), 100412 (CYP2C9,HLA-B/phenytoin). Note: warfarin (guideline 100425, CYP2C9/VKORC1) uses a dosing calculator algorithm and returns 0 recommendation rows from this endpoint \u2014 refer to the CPIC website or PharmGKB for warfarin dosing.",
     "parameter": {
       "type": "object",
       "properties": {
@@ -573,9 +577,14 @@
             "null"
           ],
           "description": "Maximum number of results to return (default 50)"
+        },
+        "gene_symbol": {
+          "type": "string",
+          "description": "Gene symbol alias (e.g., 'CYP2D6', 'VKORC1') \u2014 alternative to genesymbol"
         }
       },
-      "required": []
+      "required": [],
+      "additionalProperties": false
     },
     "fields": {
       "endpoint": "https://api.cpicpgx.org/v1/pair?select=genesymbol,drugid,cpiclevel,guidelineid,usedforrecommendation,clinpgxlevel,pgxtesting"

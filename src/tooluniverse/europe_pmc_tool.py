@@ -352,24 +352,7 @@ class EuropePMCTool(BaseTool):
         require_has_ft = bool(arguments.get("require_has_ft", False))
         fulltext_terms = arguments.get("fulltext_terms")
         if not query:
-            return [
-                {
-                    "title": "Error",
-                    "abstract": None,
-                    "authors": [],
-                    "journal": None,
-                    "year": None,
-                    "doi": None,
-                    "doi_url": None,
-                    "url": None,
-                    "citations": 0,
-                    "open_access": False,
-                    "keywords": [],
-                    "source": "Europe PMC",
-                    "error": "`query` parameter is required.",
-                    "retryable": False,
-                }
-            ]
+            return {"status": "error", "error": "`query` parameter is required."}
         if isinstance(fulltext_terms, list) and [
             t for t in fulltext_terms if isinstance(t, str) and t.strip()
         ]:
@@ -386,12 +369,21 @@ class EuropePMCTool(BaseTool):
             query = f"({query}) AND ({clause})"
         if require_has_ft:
             query = f"({query}) AND HAS_FT:Y"
-        return self._search(
+        articles = self._search(
             query,
             limit,
             enrich_missing_abstract=enrich_missing_abstract,
             extract_terms_from_fulltext=extract_terms_from_fulltext,
         )
+        return {
+            "status": "success",
+            "data": articles,
+            "metadata": {
+                "count": len(articles),
+                "query": query,
+                "source": "Europe PMC",
+            },
+        }
 
     def _local_name(self, tag: str) -> str:
         return tag.rsplit("}", 1)[-1] if "}" in tag else tag

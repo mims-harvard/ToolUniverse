@@ -104,7 +104,7 @@ class OrphanetTool(BaseTool):
         if not query:
             return {"status": "error", "error": "Missing required parameter: query"}
 
-        lang = normalize_lang(arguments.get("lang", "en"))
+        lang = normalize_lang(arguments.get("lang") or arguments.get("language", "en"))
         try:
             limit = int(arguments.get("limit", 20))
         except (TypeError, ValueError):

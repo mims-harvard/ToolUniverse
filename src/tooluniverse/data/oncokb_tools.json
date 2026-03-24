@@ -76,7 +76,7 @@
         "tumor_type": "MEL"
       }
     ],
-    "required_api_keys": [
+    "optional_api_keys": [
       "ONCOKB_API_TOKEN"
     ]
   },
@@ -94,7 +94,7 @@
         },
         "gene": {
           "type": "string",
-          "description": "Gene symbol (e.g., BRAF, TP53, EGFR, KRAS)"
+          "description": "Gene symbol (e.g., BRAF, TP53, ROS1). Without ONCOKB_API_TOKEN only BRAF, TP53, and ROS1 are available (demo mode)."
         }
       },
       "required": [
@@ -138,7 +138,7 @@
         "gene": "TP53"
       }
     ],
-    "required_api_keys": [
+    "optional_api_keys": [
       "ONCOKB_API_TOKEN"
     ]
   },
@@ -185,7 +185,7 @@
     "test_examples": [
       {}
     ],
-    "required_api_keys": [
+    "optional_api_keys": [
       "ONCOKB_API_TOKEN"
     ]
   },
@@ -231,7 +231,7 @@
     "test_examples": [
       {}
     ],
-    "required_api_keys": [
+    "optional_api_keys": [
       "ONCOKB_API_TOKEN"
     ]
   },
@@ -297,7 +297,7 @@
         "copy_number_type": "AMPLIFICATION"
       }
     ],
-    "required_api_keys": [
+    "optional_api_keys": [
       "ONCOKB_API_TOKEN"
     ]
   }

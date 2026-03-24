@@ -102,7 +102,10 @@
                 "description": "Study accession ID"
               },
               "pubmed_id": {
-                "type": ["string", "integer"],
+                "type": [
+                  "string",
+                  "integer"
+                ],
                 "description": "PubMed reference (can be string or integer)"
               },
               "first_author": {
@@ -349,7 +352,10 @@
                 "description": "URL to full summary statistics"
               },
               "pubmed_id": {
-                "type": ["string", "integer"],
+                "type": [
+                  "string",
+                  "integer"
+                ],
                 "description": "PubMed reference (can be string or integer)"
               },
               "terms_of_license": {
@@ -612,7 +618,10 @@
           "description": "Study accession ID"
         },
         "pubmed_id": {
-          "type": ["string", "integer"],
+          "type": [
+            "string",
+            "integer"
+          ],
           "description": "PubMed reference (can be string or integer)"
         },
         "first_author": {
@@ -791,7 +800,10 @@
           "description": "URL to full summary statistics"
         },
         "pubmed_id": {
-          "type": ["string", "integer"],
+          "type": [
+            "string",
+            "integer"
+          ],
           "description": "PubMed reference (can be string or integer)"
         },
         "terms_of_license": {
@@ -946,10 +958,26 @@
         }
       },
       "oneOf": [
-        {"required": ["disease_trait"]},
-        {"required": ["efo_uri"]},
-        {"required": ["efo_id"]},
-        {"required": ["efo_trait"]}
+        {
+          "required": [
+            "disease_trait"
+          ]
+        },
+        {
+          "required": [
+            "efo_uri"
+          ]
+        },
+        {
+          "required": [
+            "efo_id"
+          ]
+        },
+        {
+          "required": [
+            "efo_trait"
+          ]
+        }
       ]
     },
     "label": [
@@ -983,7 +1011,10 @@
               "locations": {
                 "type": "array",
                 "items": {
-                  "type": ["object", "string"]
+                  "type": [
+                    "object",
+                    "string"
+                  ]
                 },
                 "description": "Array of location objects or location strings"
               },
@@ -1101,10 +1132,26 @@
         }
       },
       "oneOf": [
-        {"required": ["disease_trait"]},
-        {"required": ["efo_uri"]},
-        {"required": ["efo_id"]},
-        {"required": ["efo_trait"]}
+        {
+          "required": [
+            "disease_trait"
+          ]
+        },
+        {
+          "required": [
+            "efo_uri"
+          ]
+        },
+        {
+          "required": [
+            "efo_id"
+          ]
+        },
+        {
+          "required": [
+            "efo_trait"
+          ]
+        }
       ]
     },
     "label": [
@@ -1160,7 +1207,10 @@
                 "description": "Study accession ID"
               },
               "pubmed_id": {
-                "type": ["string", "integer"],
+                "type": [
+                  "string",
+                  "integer"
+                ],
                 "description": "PubMed reference (can be string or integer)"
               },
               "first_author": {
@@ -1343,7 +1393,10 @@
                 "description": "Study accession ID"
               },
               "pubmed_id": {
-                "type": ["string", "integer"],
+                "type": [
+                  "string",
+                  "integer"
+                ],
                 "description": "PubMed reference (can be string or integer)"
               },
               "first_author": {
@@ -1488,10 +1541,26 @@
         }
       },
       "oneOf": [
-        {"required": ["disease_trait"]},
-        {"required": ["efo_uri"]},
-        {"required": ["efo_id"]},
-        {"required": ["efo_trait"]}
+        {
+          "required": [
+            "disease_trait"
+          ]
+        },
+        {
+          "required": [
+            "efo_uri"
+          ]
+        },
+        {
+          "required": [
+            "efo_id"
+          ]
+        },
+        {
+          "required": [
+            "efo_trait"
+          ]
+        }
       ]
     },
     "label": [
@@ -1597,7 +1666,10 @@
                 "description": "URL to full summary statistics"
               },
               "pubmed_id": {
-                "type": ["string", "integer"],
+                "type": [
+                  "string",
+                  "integer"
+                ],
                 "description": "PubMed reference (can be string or integer)"
               },
               "terms_of_license": {
@@ -1660,10 +1732,6 @@
     "parameter": {
       "type": "object",
       "properties": {
-        "mapped_gene": {
-          "type": "string",
-          "description": "Gene name or symbol"
-        },
         "size": {
           "type": "integer",
           "description": "Number of results to return per page"
@@ -1671,10 +1739,14 @@
         "page": {
           "type": "integer",
           "description": "Page number for pagination"
+        },
+        "gene_symbol": {
+          "type": "string",
+          "description": "Gene name or symbol (e.g., 'BRCA1', 'TP53', 'GBA')"
         }
       },
       "required": [
-        "mapped_gene"
+        "gene_symbol"
       ]
     },
     "label": [
@@ -1874,7 +1946,10 @@
                 "description": "Study accession ID"
               },
               "pubmed_id": {
-                "type": ["string", "integer"],
+                "type": [
+                  "string",
+                  "integer"
+                ],
                 "description": "PubMed reference (can be string or integer)"
               },
               "first_author": {

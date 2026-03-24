@@ -576,9 +576,13 @@ class GWASSNPsForGene(GWASRESTTool):
 
     def run(self, arguments: Dict[str, Any]) -> Dict[str, Any]:
         """Get SNPs for a gene."""
-        gene = arguments.get("mapped_gene") or arguments.get("gene")
+        gene = (
+            arguments.get("gene_symbol")
+            or arguments.get("mapped_gene")
+            or arguments.get("gene")
+        )
         if not gene:
-            return {"status": "error", "error": "mapped_gene is required"}
+            return {"status": "error", "error": "gene_symbol is required"}
 
         params = {
             "geneName": gene,
