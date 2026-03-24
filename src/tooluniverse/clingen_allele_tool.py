@@ -63,9 +63,12 @@ class ClinGenAlleleTool(BaseTool):
 
     def _get_allele(self, params: Dict[str, Any]) -> Dict[str, Any]:
         """Get detailed information for a canonical allele by CA ID."""
-        ca_id = params.get("ca_id", "")
+        ca_id = params.get("ca_id") or params.get("allele_id", "")
         if not ca_id:
-            return {"status": "error", "error": "ca_id parameter is required"}
+            return {
+                "status": "error",
+                "error": "ca_id (or allele_id) parameter is required",
+            }
 
         url = f"{CLINGEN_REG_BASE}/allele/{ca_id}"
         resp = self.session.get(url, timeout=30)

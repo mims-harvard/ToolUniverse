@@ -87,11 +87,11 @@ class ELMTool(BaseTool):
 
     def _get_instances(self, arguments: Dict[str, Any]) -> Dict[str, Any]:
         """Get experimentally validated motif instances for a protein."""
-        uniprot_id = arguments.get("uniprot_id")
+        uniprot_id = arguments.get("uniprot_id") or arguments.get("uniprot_acc")
         if not uniprot_id:
             return {
                 "status": "error",
-                "error": "Missing required parameter: uniprot_id",
+                "error": "Missing required parameter: uniprot_id (or uniprot_acc)",
             }
 
         motif_type = arguments.get("motif_type")

@@ -74,11 +74,15 @@
       "type": "object",
       "properties": {
         "ca_id": {
-          "type": "string",
+          "type": ["string", "null"],
           "description": "ClinGen canonical allele identifier (e.g., 'CA000387'). Obtain from ClinGenAllele_lookup_hgvs or ClinVar."
+        },
+        "allele_id": {
+          "type": ["string", "null"],
+          "description": "Alias for ca_id. ClinGen canonical allele identifier (e.g., 'CA000387')."
         }
       },
-      "required": ["ca_id"]
+      "required": []
     },
     "fields": {
       "operation": "get_allele"

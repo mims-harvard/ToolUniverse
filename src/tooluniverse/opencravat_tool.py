@@ -45,10 +45,10 @@ class OpenCRAVATTool(BaseTool):
 
     def _annotate_variant(self, arguments: Dict[str, Any]) -> Dict[str, Any]:
         """Annotate a single variant with multiple annotation sources."""
-        chrom = arguments.get("chrom", "")
-        pos = arguments.get("pos")
-        ref_base = arguments.get("ref_base", "")
-        alt_base = arguments.get("alt_base", "")
+        chrom = arguments.get("chrom") or arguments.get("chromosome", "")
+        pos = arguments.get("pos") or arguments.get("position")
+        ref_base = arguments.get("ref_base") or arguments.get("ref", "")
+        alt_base = arguments.get("alt_base") or arguments.get("alt", "")
         annotators = arguments.get("annotators")
 
         if not all([chrom, pos, ref_base, alt_base]):

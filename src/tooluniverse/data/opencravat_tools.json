@@ -6,27 +6,43 @@
             "type": "object",
             "properties": {
                 "chrom": {
-                    "type": "string",
+                    "type": ["string", "null"],
                     "description": "Chromosome (e.g., 'chr17', 'chr7', '17'). 'chr' prefix added automatically if missing."
                 },
+                "chromosome": {
+                    "type": ["string", "null"],
+                    "description": "Alias for chrom. Chromosome (e.g., 'chr17', 'chr7', '17')."
+                },
                 "pos": {
-                    "type": "integer",
+                    "type": ["integer", "null"],
                     "description": "Genomic position (1-based, GRCh38 coordinates)"
                 },
+                "position": {
+                    "type": ["integer", "null"],
+                    "description": "Alias for pos. Genomic position (1-based, GRCh38 coordinates)."
+                },
                 "ref_base": {
-                    "type": "string",
+                    "type": ["string", "null"],
                     "description": "Reference allele (e.g., 'C', 'A', 'G', 'T')"
                 },
+                "ref": {
+                    "type": ["string", "null"],
+                    "description": "Alias for ref_base. Reference allele."
+                },
                 "alt_base": {
-                    "type": "string",
+                    "type": ["string", "null"],
                     "description": "Alternate allele (e.g., 'T', 'A', 'G', 'C')"
+                },
+                "alt": {
+                    "type": ["string", "null"],
+                    "description": "Alias for alt_base. Alternate allele."
                 },
                 "annotators": {
                     "type": ["string", "null"],
                     "description": "Comma-separated annotator names (e.g., 'clinvar,gnomad3,sift,polyphen2,revel,alphamissense'). If omitted, returns only basic variant annotation (gene, consequence). Common annotators: clinvar, gnomad3, sift, polyphen2, cadd_exome, revel, alphamissense, spliceai, dann, fathmm, gerp, phastcons, dbsnp, mutation_assessor, provean, vest, primateai, lrt."
                 }
             },
-            "required": ["chrom", "pos", "ref_base", "alt_base"]
+            "required": []
         },
         "fields": {
             "operation": "annotate_variant"

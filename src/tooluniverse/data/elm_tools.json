@@ -12,8 +12,12 @@
           "description": "Operation type"
         },
         "uniprot_id": {
-          "type": "string",
+          "type": ["string", "null"],
           "description": "UniProt accession, e.g., P04637 (TP53), P00533 (EGFR), P38398 (BRCA1), P42336 (PIK3CA)"
+        },
+        "uniprot_acc": {
+          "type": ["string", "null"],
+          "description": "Alias for uniprot_id. UniProt accession, e.g., P04637 (TP53)"
         },
         "motif_type": {
           "type": ["string", "null"],
@@ -21,7 +25,7 @@
           "description": "Filter by motif functional type. CLV=cleavage sites, DEG=degradation motifs, DOC=docking sites, LIG=ligand binding, MOD=modification sites, TRG=targeting signals. Omit for all types."
         }
       },
-      "required": ["operation", "uniprot_id"]
+      "required": ["operation"]
     },
     "return_schema": {
       "type": "array",
