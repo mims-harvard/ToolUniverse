@@ -133,9 +133,11 @@ class BioGRIDRESTTool(BaseTool):
 
     def run(self, arguments: Dict[str, Any]) -> Dict[str, Any]:
         """Execute the tool with given arguments."""
-        # Normalize chemical_name (singular) → chemical_names (list)
+        # Normalize singular aliases to expected list parameters
         if not arguments.get("chemical_names") and arguments.get("chemical_name"):
             arguments = dict(arguments, chemical_names=[arguments["chemical_name"]])
+        if not arguments.get("gene_names") and arguments.get("gene_name"):
+            arguments = dict(arguments, gene_names=[arguments["gene_name"]])
         for param in self.required:
             if param not in arguments:
                 error_msg = f"Missing required parameter: {param}"

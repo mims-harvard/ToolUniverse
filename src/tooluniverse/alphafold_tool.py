@@ -125,12 +125,19 @@ class AlphaFoldRESTTool(BaseTool):
 
     def run(self, arguments: Dict[str, Any]):
         """Execute the tool with provided arguments."""
+        # Normalize uniprot_id / uniprot_accession → qualifier
+        if "qualifier" not in arguments:
+            for alias in ("uniprot_id", "uniprot_accession", "accession"):
+                if arguments.get(alias):
+                    arguments = dict(arguments, qualifier=arguments[alias])
+                    break
+
         # Validate required params
         missing = [k for k in self.required if k not in arguments]
         if missing:
             return {
                 "status": "error",
-                "error": f"Missing required parameter(s): {', '.join(missing)}",
+                "error": f"Missing required parameter(s): {', '.join(missing)}. Tip: pass qualifier=<UniProt accession>, e.g. 'P69905'.",
             }
 
         # Build URL

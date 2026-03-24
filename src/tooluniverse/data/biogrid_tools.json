@@ -14,6 +14,10 @@
           "description": "List of gene names or protein identifiers (e.g., ['TP53', 'BRCA1', 'MYC']). Accepts official gene symbols.",
           "minItems": 1
         },
+        "gene_name": {
+          "type": "string",
+          "description": "Alias for gene_names: single gene symbol (e.g., 'TP53'). Converted to gene_names list automatically."
+        },
         "organism": {
           "type": "string",
           "description": "Organism name (e.g., 'Homo sapiens', 'Mus musculus') or NCBI taxonomy ID (e.g., '9606' for human, '10090' for mouse). Default: 9606 (human)",
@@ -53,9 +57,7 @@
           ]
         }
       },
-      "required": [
-        "gene_names"
-      ]
+      "required": []
     },
     "required_api_keys": [
       "BIOGRID_ACCESS_KEY"

@@ -184,7 +184,23 @@
       "properties": {
         "identifier": {
           "type": "string",
-          "description": "IntAct identifier, UniProt ID, or gene name"
+          "description": "IntAct identifier, UniProt ID, or gene name. Aliases: uniprot_id, protein_id, gene_symbol, gene_name."
+        },
+        "uniprot_id": {
+          "type": "string",
+          "description": "Alias for identifier: UniProt accession (e.g., 'P04637')."
+        },
+        "protein_id": {
+          "type": "string",
+          "description": "Alias for identifier: protein identifier."
+        },
+        "gene_symbol": {
+          "type": "string",
+          "description": "Alias for identifier: gene symbol (e.g., 'BRCA1')."
+        },
+        "gene_name": {
+          "type": "string",
+          "description": "Alias for identifier: gene name."
         },
         "depth": {
           "type": "integer",
@@ -202,17 +218,32 @@
           "default": "json"
         }
       },
-      "required": [
-        "identifier"
-      ]
+      "required": []
     },
     "fields": {
       "endpoint": "https://www.ebi.ac.uk/intact/ws/interaction/network/{identifier}",
       "return_format": "JSON"
     },
     "return_schema": {
-      "type": "array",
-      "description": "Interaction network data with nodes and edges"
+      "oneOf": [
+        {
+          "type": "object",
+          "properties": {
+            "status": {"type": "string", "enum": ["success"]},
+            "data": {"type": "array"},
+            "count": {"type": "integer"},
+            "hitCount": {"type": "integer"},
+            "interaction_ids": {"type": "array", "items": {"type": "string"}}
+          }
+        },
+        {
+          "type": "object",
+          "properties": {
+            "status": {"type": "string", "enum": ["error"]},
+            "error": {"type": "string"}
+          }
+        }
+      ]
     },
     "test_examples": [
       {

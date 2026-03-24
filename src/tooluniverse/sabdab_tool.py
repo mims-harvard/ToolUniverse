@@ -78,30 +78,33 @@ class SAbDabTool(BaseTool):
                 },
             )
 
-            # SAbDab search endpoint returns HTML, not JSON
+            # SAbDab search endpoint returns HTML, not JSON — return browse URL
             if "json" in response.headers.get("Content-Type", ""):
                 data = response.json()
                 structures = data if isinstance(data, list) else data.get("results", [])
-            else:
                 return {
-                    "status": "error",
-                    "error": (
-                        "SAbDab search does not provide a JSON API. "
-                        f"Use SAbDab_get_structure with a known PDB ID instead, "
-                        f"or browse https://opig.stats.ox.ac.uk/webapps/sabdab-sabpred/sabdab/search/?q={query}"
-                    ),
+                    "status": "success",
+                    "data": {
+                        "structures": structures,
+                        "count": len(structures),
+                        "query": query,
+                    },
+                    "metadata": {"source": "SAbDab"},
                 }
 
+            browse_url = f"https://opig.stats.ox.ac.uk/webapps/sabdab-sabpred/sabdab/search/?q={query}"
             return {
                 "status": "success",
                 "data": {
-                    "structures": structures,
-                    "count": len(structures),
                     "query": query,
+                    "browse_url": browse_url,
+                    "note": (
+                        "SAbDab search does not expose a JSON API. "
+                        "Open browse_url to view matching antibody structures, "
+                        "or use SAbDab_get_structure with a known PDB ID for structured data."
+                    ),
                 },
-                "metadata": {
-                    "source": "SAbDab",
-                },
+                "metadata": {"source": "SAbDab"},
             }
 
         except requests.exceptions.RequestException as e:
