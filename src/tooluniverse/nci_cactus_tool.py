@@ -81,7 +81,6 @@ class NCICACTUSTool(BaseTool):
                 }
             resp.raise_for_status()
             text = resp.text.strip()
-            # For multi-line results (e.g. names, cas), return as list
             lines = [line.strip() for line in text.splitlines() if line.strip()]
             value = lines if len(lines) > 1 else (lines[0] if lines else "")
             return {
@@ -120,7 +119,6 @@ class NCICACTUSTool(BaseTool):
             }
 
     def _resolve_multiple(self, identifier: str) -> Dict[str, Any]:
-        """Resolve common representations in one call."""
         targets: List[str] = [
             "smiles",
             "iupac_name",

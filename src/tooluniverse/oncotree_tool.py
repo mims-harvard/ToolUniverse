@@ -84,17 +84,31 @@ class OncoTreeSearchTool(OncoTreeBaseTool):
                 "retryable": False,
             }
 
-        params = {"exactMatch": str(exact_match).lower(), "version": version}
-        results = self._get(
-            f"/tumorTypes/search/{field}/{requests.utils.quote(query)}", params
-        )
-
-        if not isinstance(results, list):
-            return {
-                "status": "error",
-                "error": "Unexpected response from OncoTree API",
-                "retryable": False,
-            }
+        if field in ("tissue", "main_type"):
+            all_types = self._get("/tumorTypes", {"version": version})
+            if not isinstance(all_types, list):
+                return {
+                    "status": "error",
+                    "error": "Unexpected response from OncoTree API",
+                    "retryable": False,
+                }
+            attr = "tissue" if field == "tissue" else "mainType"
+            q_lower = query.lower()
+            if exact_match:
+                raw = [t for t in all_types if (t.get(attr) or "").lower() == q_lower]
+            else:
+                raw = [t for t in all_types if q_lower in (t.get(attr) or "").lower()]
+        else:
+            params = {"exactMatch": str(exact_match).lower(), "version": version}
+            raw = self._get(
+                f"/tumorTypes/search/{field}/{requests.utils.quote(query)}", params
+            )
+            if not isinstance(raw, list):
+                return {
+                    "status": "error",
+                    "error": "Unexpected response from OncoTree API",
+                    "retryable": False,
+                }
 
         items = [
             {
@@ -106,7 +120,7 @@ class OncoTreeSearchTool(OncoTreeBaseTool):
                 "level": t.get("level"),
                 "external_references": t.get("externalReferences", {}),
             }
-            for t in results
+            for t in raw
         ]
 
         return {

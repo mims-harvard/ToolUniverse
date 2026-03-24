@@ -321,6 +321,10 @@ default_tool_files = {
     "gencc": os.path.join(current_dir, "data", "gencc_tools.json"),
     # DisGeNET - Gene-Disease Associations
     "disgenet": os.path.join(current_dir, "data", "disgenet_tools.json"),
+    # Bioregistry - Meta-registry for biological databases
+    "bioregistry": os.path.join(current_dir, "data", "bioregistry_tools.json"),
+    # INDRA DB - Literature-mined biological statements
+    "indra": os.path.join(current_dir, "data", "indra_tools.json"),
     # BindingDB - Protein-Ligand Binding Affinities
     "bindingdb": os.path.join(current_dir, "data", "bindingdb_tools.json"),
     # GPCRdb - G Protein-Coupled Receptor Database
@@ -403,6 +407,10 @@ default_tool_files = {
     "ncbi_datasets": os.path.join(current_dir, "data", "ncbi_datasets_tools.json"),
     # Mutalyzer - HGVS variant nomenclature validation, normalization, protein prediction
     "mutalyzer": os.path.join(current_dir, "data", "mutalyzer_tools.json"),
+    # NCBI Variation Services - SPDI/HGVS conversion, variant normalization, rsID lookup
+    "ncbi_variation": os.path.join(current_dir, "data", "ncbi_variation_tools.json"),
+    # MODOMICS - RNA modification database (chemical structures, masses, biosynthesis)
+    "modomics": os.path.join(current_dir, "data", "modomics_tools.json"),
     # LINCS SigCom - Drug perturbation gene expression signatures
     "lincs": os.path.join(current_dir, "data", "lincs_tools.json"),
     # EBI Taxonomy - Taxonomic classification, lineage, name resolution
