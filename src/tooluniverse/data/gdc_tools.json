@@ -567,5 +567,77 @@
       ],
       "estimated_execution_time": "< 5 seconds"
     }
+  },
+  {
+    "name": "GDC_get_survival",
+    "type": "GDCSurvivalTool",
+    "description": "Get Kaplan-Meier survival data for a GDC/TCGA cancer cohort. Returns time-to-event data with censoring status and survival estimates for each patient. Filter by project and optionally by gene mutation status. Use for overall survival analysis of TCGA cancer types.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "project_id": {
+          "type": "string",
+          "description": "GDC project identifier (e.g., 'TCGA-BRCA', 'TCGA-LUAD', 'TCGA-GBM')"
+        },
+        "gene_symbol": {
+          "type": "string",
+          "description": "Optional: gene symbol to filter cases with mutations in this gene (e.g., 'TP53', 'KRAS')"
+        }
+      },
+      "required": ["project_id"]
+    },
+    "return_schema": {
+      "type": "object",
+      "properties": {
+        "project_id": {"type": "string"},
+        "gene_symbol": {"type": ["string", "null"]},
+        "total_donors": {"type": "integer"},
+        "alive_censored": {"type": "integer"},
+        "deceased": {"type": "integer"},
+        "max_follow_up_days": {"type": "number"},
+        "median_follow_up_days": {"type": "number"},
+        "donors": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "time": {"type": "number"},
+              "censored": {"type": "boolean"},
+              "survivalEstimate": {"type": "number"},
+              "id": {"type": "string"},
+              "submitter_id": {"type": "string"}
+            }
+          }
+        }
+      }
+    },
+    "test_examples": [
+      {
+        "project_id": "TCGA-BRCA"
+      },
+      {
+        "project_id": "TCGA-LUAD"
+      },
+      {
+        "project_id": "TCGA-BRCA",
+        "gene_symbol": "TP53"
+      }
+    ],
+    "label": [
+      "GDC",
+      "Survival",
+      "Kaplan-Meier",
+      "TCGA"
+    ],
+    "metadata": {
+      "tags": [
+        "survival_analysis",
+        "kaplan_meier",
+        "overall_survival",
+        "oncogenomics",
+        "prognosis"
+      ],
+      "estimated_execution_time": "< 5 seconds"
+    }
   }
 ]

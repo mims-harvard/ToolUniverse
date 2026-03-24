@@ -207,6 +207,7 @@ STATIC_LAZY_REGISTRY = {
     "GDCMutationFrequencyTool": "gdc_tool",
     "GDCProjectsTool": "gdc_tool",
     "GDCSSMTool": "gdc_tool",
+    "GDCSurvivalTool": "gdc_tool",
     "GEOGetDatasetInfo": "geo_tool",
     "GEOGetSampleInfo": "geo_tool",
     "GEORESTTool": "geo_tool",

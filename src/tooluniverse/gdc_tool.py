@@ -848,3 +848,125 @@ class GDCClinicalDataTool:
             }
         except Exception as e:
             return {"status": "error", "error": str(e)}
+
+
+@register_tool(
+    "GDCSurvivalTool",
+    config={
+        "name": "GDC_get_survival",
+        "type": "GDCSurvivalTool",
+        "description": (
+            "Get Kaplan-Meier survival data for a GDC/TCGA cancer cohort. "
+            "Returns time-to-event data with censoring status and survival estimates "
+            "for each patient. Filter by project and optionally by gene mutation status. "
+            "Use for overall survival analysis of TCGA cancer types."
+        ),
+        "parameter": {
+            "type": "object",
+            "properties": {
+                "project_id": {
+                    "type": "string",
+                    "description": "GDC project identifier (e.g., 'TCGA-BRCA', 'TCGA-LUAD', 'TCGA-GBM')",
+                },
+                "gene_symbol": {
+                    "type": "string",
+                    "description": "Optional: gene symbol to filter cases with mutations in this gene (e.g., 'TP53', 'KRAS')",
+                },
+            },
+            "required": ["project_id"],
+        },
+        "settings": {"base_url": "https://api.gdc.cancer.gov", "timeout": 30},
+    },
+)
+class GDCSurvivalTool:
+    """Get Kaplan-Meier survival data for GDC/TCGA cohorts."""
+
+    def __init__(self, tool_config=None):
+        self.tool_config = tool_config or {}
+
+    def run(self, arguments: Dict[str, Any]):
+        base = self.tool_config.get("settings", {}).get(
+            "base_url", "https://api.gdc.cancer.gov"
+        )
+        timeout = int(self.tool_config.get("settings", {}).get("timeout", 30))
+
+        project_id = arguments.get("project_id")
+        if not project_id:
+            return {"status": "error", "error": "project_id parameter is required"}
+
+        # Build filter for project
+        conditions = [
+            {
+                "op": "=",
+                "content": {
+                    "field": "project.project_id",
+                    "value": project_id,
+                },
+            }
+        ]
+
+        gene_symbol = arguments.get("gene_symbol")
+        if gene_symbol:
+            conditions.append(
+                {
+                    "op": "in",
+                    "content": {
+                        "field": "gene.symbol",
+                        "value": [gene_symbol],
+                    },
+                }
+            )
+
+        if len(conditions) == 1:
+            filters = conditions[0]
+        else:
+            filters = {"op": "and", "content": conditions}
+
+        query = {"filters": json.dumps(filters)}
+        url = f"{base}/analysis/survival?{urlencode(query)}"
+
+        try:
+            raw = _http_get(
+                url, headers={"Accept": "application/json"}, timeout=timeout
+            )
+            results = raw.get("results", [])
+            if not results:
+                return {
+                    "status": "success",
+                    "data": {
+                        "project_id": project_id,
+                        "gene_symbol": gene_symbol,
+                        "total_donors": 0,
+                        "donors": [],
+                    },
+                }
+
+            donors = results[0].get("donors", [])
+            # Summarize survival statistics
+            alive_count = sum(1 for d in donors if d.get("censored"))
+            dead_count = len(donors) - alive_count
+            times = [d.get("time", 0) for d in donors]
+            max_time = max(times) if times else 0
+            median_time = sorted(times)[len(times) // 2] if times else 0
+
+            return {
+                "status": "success",
+                "data": {
+                    "project_id": project_id,
+                    "gene_symbol": gene_symbol,
+                    "total_donors": len(donors),
+                    "alive_censored": alive_count,
+                    "deceased": dead_count,
+                    "max_follow_up_days": max_time,
+                    "median_follow_up_days": median_time,
+                    "donors": donors[:50],
+                    "note": (
+                        f"Showing first 50 of {len(donors)} donors. "
+                        "Each donor has: time (days), censored (true=alive), survivalEstimate (KM estimate)."
+                        if len(donors) > 50
+                        else None
+                    ),
+                },
+            }
+        except Exception as e:
+            return {"status": "error", "error": str(e)}
