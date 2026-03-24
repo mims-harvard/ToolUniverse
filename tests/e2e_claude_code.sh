@@ -27,8 +27,7 @@ assert "hooks config exists" "[ -f $HOME/.claude/tooluniverse-hooks.json ]"
 assert "hooks JSON valid" "python3 -c 'import json; json.load(open(\"$HOME/.claude/tooluniverse-hooks.json\"))'"
 
 # --- Skills ---
-assert "setup-tooluniverse skill installed" "[ -d $HOME/.claude/skills/setup-tooluniverse ]"
-assert "30+ skills present" '[ $(ls -d $HOME/.claude/skills/tooluniverse-* 2>/dev/null | wc -l) -ge 30 ]'
+assert "tooluniverse router skill installed" "[ -d $HOME/.claude/skills/tooluniverse ]"
 
 # --- Rules ---
 assert "tooluniverse rules exist" "[ -f $HOME/.claude/rules/tooluniverse.md ]"
