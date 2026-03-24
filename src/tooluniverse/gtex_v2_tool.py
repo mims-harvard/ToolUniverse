@@ -25,13 +25,15 @@ def _resolve_gencode_id(gene_input: str, timeout: int = 30) -> str:
     If already versioned (contains '.'), returns as-is.
     Otherwise queries /reference/gene with gencodeVersion=v26 (used by gtex_v8).
     """
-    if not gene_input or "." in gene_input:
+    if not gene_input:
         return gene_input
+    # Strip version suffix so versioned IDs (e.g. ENSG00000012048.23) resolve to correct v26 ID
+    base_id = gene_input.split(".")[0] if "." in gene_input else gene_input
     url = f"{GTEX_BASE_URL}/reference/gene"
     try:
         resp = requests.get(
             url,
-            params={"geneId": gene_input, "gencodeVersion": "v26"},
+            params={"geneId": base_id, "gencodeVersion": "v26"},
             timeout=timeout,
         )
         if resp.status_code == 200:

@@ -190,13 +190,17 @@ class GTExEQTLTool:
         timeout = int(self.tool_config.get("settings", {}).get("timeout", 30))
 
         # Resolve gene symbol or unversioned Ensembl ID to versioned GENCODE ID
-        gene_input = arguments.get("gene_symbol") or arguments.get("ensembl_gene_id")
+        gene_input = (
+            arguments.get("gene_symbol")
+            or arguments.get("ensembl_gene_id")
+            or arguments.get("gene")
+        )
         if not gene_input:
             return {
                 "status": "error",
                 "error": (
-                    "Provide 'gene_symbol' (e.g. 'VKORC1') or 'ensembl_gene_id' "
-                    "(e.g. 'ENSG00000197708') to query eQTLs."
+                    "Provide 'gene_symbol' (e.g. 'VKORC1'), 'ensembl_gene_id' "
+                    "(e.g. 'ENSG00000197708'), or 'gene' to query eQTLs."
                 ),
             }
         gencode_id = _resolve_gene_id(gene_input, base, timeout)

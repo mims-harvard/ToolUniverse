@@ -26,6 +26,20 @@ def url_encode_iri(iri: str) -> str:
     return urllib.parse.quote(urllib.parse.quote(iri, safe=""), safe="")
 
 
+def _expand_short_term_id(term_id: str) -> str:
+    """Convert short ontology IDs (e.g. GO:0006338) to full OBO IRIs.
+
+    Handles standard OBO ontologies (GO, HP, MONDO, CHEBI, etc.).
+    EFO and other non-OBO ontologies keep their original form.
+    """
+    if not term_id or term_id.startswith("http"):
+        return term_id
+    if ":" in term_id:
+        prefix, local = term_id.split(":", 1)
+        return f"http://purl.obolibrary.org/obo/{prefix}_{local}"
+    return term_id
+
+
 class OntologyInfo(BaseModel):
     """Description of a single ontology entry in OLS."""
 
@@ -312,7 +326,9 @@ class OLSTool(BaseTool):
         return term.model_dump(by_alias=True, mode="json")
 
     def _handle_get_term_children(self, arguments: Dict[str, Any]) -> Dict[str, Any]:
-        term_iri = arguments.get("term_iri")
+        term_iri = _expand_short_term_id(
+            arguments.get("term_iri") or arguments.get("term_id", "")
+        )
         ontology = arguments.get("ontology")
         if not term_iri or not ontology:
             return {
@@ -340,7 +356,9 @@ class OLSTool(BaseTool):
         return formatted
 
     def _handle_get_term_ancestors(self, arguments: Dict[str, Any]) -> Dict[str, Any]:
-        term_iri = arguments.get("term_iri")
+        term_iri = _expand_short_term_id(
+            arguments.get("term_iri") or arguments.get("term_id", "")
+        )
         ontology = arguments.get("ontology")
         if not term_iri or not ontology:
             return {
@@ -368,7 +386,9 @@ class OLSTool(BaseTool):
         return formatted
 
     def _handle_find_similar_terms(self, arguments: Dict[str, Any]) -> Dict[str, Any]:
-        term_iri = arguments.get("term_iri")
+        term_iri = _expand_short_term_id(
+            arguments.get("term_iri") or arguments.get("term_id", "")
+        )
         ontology = arguments.get("ontology")
         if not term_iri or not ontology:
             return {
