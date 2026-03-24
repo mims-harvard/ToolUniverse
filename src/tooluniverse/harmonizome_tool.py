@@ -64,6 +64,10 @@ class HarmonizomeTool(BaseTool):
             return self._get_gene(arguments)
         elif self.endpoint == "list_datasets":
             return self._list_datasets(arguments)
+        elif self.endpoint == "get_dataset":
+            return self._get_dataset(arguments)
+        elif self.endpoint == "search_genes":
+            return self._search_genes(arguments)
         else:
             return {"status": "error", "error": f"Unknown endpoint: {self.endpoint}"}
 
@@ -136,5 +140,87 @@ class HarmonizomeTool(BaseTool):
             "metadata": {
                 "source": "Harmonizome (maayanlab.cloud/Harmonizome)",
                 "total_datasets": len(datasets),
+            },
+        }
+
+    def _get_dataset(self, arguments: Dict[str, Any]) -> Dict[str, Any]:
+        """Get detailed information about a specific Harmonizome dataset."""
+        dataset_name = arguments.get("dataset_name", "")
+        if not dataset_name:
+            return {
+                "status": "error",
+                "error": "dataset_name is required (e.g., 'CTD Gene-Disease Associations'). Use Harmonizome_list_datasets to find names.",
+            }
+
+        # URL-encode: spaces become + in Harmonizome API
+        encoded_name = dataset_name.replace(" ", "+")
+        url = f"{HARMONIZOME_BASE_URL}/dataset/{encoded_name}"
+        response = requests.get(url, timeout=self.timeout)
+        response.raise_for_status()
+        data = response.json()
+
+        if "message" in data:
+            return {
+                "status": "error",
+                "error": f"Dataset not found: {data.get('message', dataset_name)}",
+            }
+
+        # Extract gene set names (can be large, limit to first 50)
+        gene_sets_raw = data.get("geneSets", [])
+        gene_set_limit = arguments.get("gene_set_limit") or 50
+        gene_sets = [
+            {"name": gs.get("name", "").split("/")[0]}
+            for gs in gene_sets_raw[:gene_set_limit]
+        ]
+
+        return {
+            "status": "success",
+            "data": {
+                "name": data.get("name"),
+                "description": data.get("description"),
+                "association": data.get("association"),
+                "measurement": data.get("measurement"),
+                "attribute_type": data.get("attributeType"),
+                "attribute_group": data.get("attributeGroup"),
+                "dataset_group": data.get("datasetGroup"),
+                "pubmed_ids": data.get("pubMedIds", []),
+                "gene_sets": gene_sets,
+                "total_gene_sets": len(gene_sets_raw),
+            },
+            "metadata": {
+                "source": "Harmonizome (maayanlab.cloud/Harmonizome)",
+                "dataset_name": dataset_name,
+            },
+        }
+
+    def _search_genes(self, arguments: Dict[str, Any]) -> Dict[str, Any]:
+        """Search for genes by keyword in Harmonizome."""
+        query = arguments.get("query", "")
+        if not query:
+            return {
+                "status": "error",
+                "error": "query is required (e.g., 'kinase', 'tumor suppressor')",
+            }
+
+        limit = arguments.get("limit") or 20
+        url = f"{HARMONIZOME_BASE_URL}/gene"
+        params = {"search": query}
+
+        response = requests.get(url, params=params, timeout=self.timeout)
+        response.raise_for_status()
+        data = response.json()
+
+        entities = data.get("entities", [])
+        genes = [
+            {"symbol": e.get("symbol"), "href": e.get("href")} for e in entities[:limit]
+        ]
+
+        return {
+            "status": "success",
+            "data": genes,
+            "metadata": {
+                "source": "Harmonizome (maayanlab.cloud/Harmonizome)",
+                "query": query,
+                "total_results": data.get("count", len(genes)),
             },
         }
