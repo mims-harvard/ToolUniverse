@@ -116,7 +116,8 @@ class GTExV2Tool(BaseTool):
 
     def _get_median_gene_expression(self, arguments: Dict[str, Any]) -> Dict[str, Any]:
         """Get median gene expression across tissues."""
-        gencode_ids = arguments.get("gencode_id")
+        # Accept gene_id as alias for gencode_id
+        gencode_ids = arguments.get("gencode_id") or arguments.get("gene_id")
         if not gencode_ids:
             return {
                 "status": "error",
@@ -160,6 +161,17 @@ class GTExV2Tool(BaseTool):
                 "data": results,
                 "paging_info": data.get("paging_info", {}),
                 "num_results": len(results),
+            }
+        elif response.status_code == 422 and tissue_ids:
+            return {
+                "status": "error",
+                "error": (
+                    f"GTEx API rejected tissue IDs (HTTP 422). Tissue IDs are case-sensitive. "
+                    f"Provided: {tissue_ids}. "
+                    "Use exact GTEx tissue IDs, e.g. 'Brain_Frontal_Cortex_BA9' (not 'Ba9'), "
+                    "'Brain_Anterior_cingulate_cortex_BA24'. "
+                    "Omit tissue_site_detail_id to get all tissues, then pick valid IDs from the response."
+                ),
             }
         else:
             return {

@@ -198,9 +198,11 @@ class GWASAssociationSearch(GWASRESTTool):
         params = {}
 
         # Handle various search parameters
-        # Feature-94A-001: accept 'query' as alias for 'disease_trait'
+        # accept 'query' and 'trait' as aliases for 'disease_trait'
         disease_trait = self._coerce_str(
-            arguments.get("disease_trait") or arguments.get("query")
+            arguments.get("disease_trait")
+            or arguments.get("query")
+            or arguments.get("trait")
         )
 
         # Prefer efo_id filtering. If user provided efo_uri, normalize to efo_id.

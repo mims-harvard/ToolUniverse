@@ -1832,4 +1832,24 @@ class OpenFDADrugEventsTool(BaseRESTTool):
                 parts.append(f'patient.reaction.reactionmeddrapt:"{reaction}"')
             args["search"] = " AND ".join(parts)
 
-        return super().run(args)
+        result = super().run(args)
+        # OpenFDA returns 404 when no records match the query (not a server error).
+        # Convert to an actionable no-results message.
+        if result.get("status") == "error" and result.get("status_code") == 404:
+            query_desc = drug_name or args.get("search", "")
+            reaction_hint = (
+                " MedDRA terms are case-sensitive and use British spelling "
+                "(e.g., 'Anaphylactic reaction' not 'anaphylaxis', "
+                "'Haemorrhage' not 'hemorrhage')."
+                if reaction
+                else ""
+            )
+            return {
+                "status": "success",
+                "data": {"results": [], "total": 0},
+                "metadata": {
+                    "query": args.get("search"),
+                    "note": f"No FAERS reports found for '{query_desc}'.{reaction_hint}",
+                },
+            }
+        return result

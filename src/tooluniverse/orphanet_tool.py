@@ -642,14 +642,8 @@ class OrphanetTool(BaseTool):
         except requests.exceptions.HTTPError as e:
             if e.response.status_code == 404:
                 return {
-                    "status": "success",
-                    "data": {
-                        "orpha_code": orpha_code,
-                        "preferred_term": "",
-                        "phenotypes": [],
-                        "phenotype_count": 0,
-                    },
-                    "metadata": {"note": "No phenotype data found"},
+                    "status": "error",
+                    "error": f"Disease ORPHA:{orpha_code} not found. Use Orphanet_search_diseases to find a valid ORPHA code.",
                 }
             return {"status": "error", "error": f"HTTP error: {e.response.status_code}"}
         except requests.exceptions.RequestException as e:
