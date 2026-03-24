@@ -3,42 +3,70 @@ name: tu-llm
 description: LLM-powered tool discovery that reasons about which ToolUniverse tools to combine for complex, multi-step scientific queries. Uses Claude CLI (primary) with Ollama fallback.
 ---
 
-# LLM Tool Finder
+# LLM Tool Planner
 
-Use an LLM to reason about which ToolUniverse tools best answer a complex query. Unlike embedding search (`find_tools`), this finder understands multi-step workflows and selects tool *combinations*.
+Use Claude CLI as a planning subagent to reason about which ToolUniverse tools to combine, then execute the full task end-to-end. Claude CLI reads all 1,200+ tool descriptions via your Max subscription (zero API cost), returns a tool plan as text, and the main session acts on it.
 
-## When to Use
+## Architecture
 
-- Query spans multiple databases ("find drugs targeting BRCA1 and check their clinical trial status")
-- Embedding search returned irrelevant tools
-- User needs a curated tool pipeline, not a ranked list
+```
+User task --> /tu-llm
+  |
+  +--> execute_tool("Tool_Finder_LLM", {description, limit})
+  |      |
+  |      +--> Claude CLI (claude --print) reasons over 1,200+ tools
+  |      +--> Returns: tool names + execution order + reasoning
+  |
+  +--> Plan flows back as string into main context
+  |
+  +--> Main session executes the plan:
+         1. get_tool_info(tool) for each tool in plan
+         2. execute_tool(tool, args) in planned order
+         3. Synthesize results into final deliverable
+```
 
 ## Workflow
 
-1. Call `execute_tool("Tool_Finder_LLM", {"description": "<user's query>", "limit": 10})`
-2. Parse the returned tool list
-3. For each tool: call `get_tool_info(tool_name)` to get the full schema
-4. Present results as a numbered table: tool name, description, why it was selected
-5. If the user wants to proceed, execute tools in the suggested order
+### Step 1: Get the tool plan
+
+Call Tool_Finder_LLM with the user's full task description. Use a high limit to capture all relevant tools:
+
+```
+execute_tool("Tool_Finder_LLM", {"description": "<full task description>", "limit": 15})
+```
+
+The response is a JSON list of tools with relevance scores and reasoning. This is your execution plan.
+
+### Step 2: Inspect each tool
+
+For every tool in the plan, call `get_tool_info(tool_name)` to get the exact parameter schema. NEVER guess parameters.
+
+### Step 3: Execute tools in order
+
+Call `execute_tool(tool_name, {args})` for each tool following the plan's suggested order. Capture all outputs.
+
+### Step 4: Synthesize
+
+Combine all tool outputs into the final deliverable the user requested. This could be a research report, literature review, drug analysis, or any multi-source synthesis.
+
+## When to Use
+
+- Task requires data from multiple databases combined into a single output
+- Embedding search (`find_tools`) returned irrelevant tools
+- User needs a complete deliverable, not just tool results
+- Complex multi-hop queries spanning literature, protein, drug, clinical, or genomic databases
 
 ## Backend
 
-- **Primary**: Claude Code CLI (`claude --print`) — subscription-free, 200K context, best reasoning
-- **Fallback**: Ollama (`deepseek-coder:6.7b`) — offline-capable, local GPU, ~11s latency
+- **Primary**: Claude Code CLI (`claude --print`) -- Max subscription, zero marginal cost
+- **Fallback**: Ollama (`deepseek-coder:6.7b`) -- offline-capable, local GPU
 
-The backend is selected automatically. Claude CLI is tried first; if unavailable (offline, rate-limited), Ollama is used.
+Selected automatically. Claude CLI is tried first; Ollama fires if CLI is unavailable.
 
-## Output Format
+## Rules
 
-Present results as:
-
-```
-Found N tools for: "<query>"
-
-| # | Tool | Why |
-|---|------|-----|
-| 1 | ToolName | Relevance reasoning |
-| ...
-```
-
-Then ask: "Run these tools now, or refine the search?"
+- ALWAYS call `get_tool_info` before `execute_tool` -- no exceptions
+- Execute the FULL plan autonomously -- do not stop to ask after each tool
+- If a tool fails, skip it and continue with the next tool in the plan
+- Synthesize ALL results into the user's requested deliverable format
+- The plan from Tool_Finder_LLM is advisory -- adapt if results suggest better tools mid-execution
