@@ -6,8 +6,7 @@
     "parameter": {
       "type": "object",
       "required": [
-        "drug_name",
-        "adverse_event"
+        "drug_name"
       ],
       "properties": {
         "operation": {
@@ -45,8 +44,7 @@
     "parameter": {
       "type": "object",
       "required": [
-        "drug_name",
-        "adverse_event"
+        "drug_name"
       ],
       "properties": {
         "operation": {
@@ -70,6 +68,10 @@
           ],
           "default": "sex",
           "description": "Demographic dimension to stratify by"
+        },
+        "reaction": {
+          "type": "string",
+          "description": "Alias for adverse_event. MedDRA Preferred Term for the adverse drug reaction (e.g., \"hemorrhage\", \"nausea\")."
         }
       }
     },
@@ -134,8 +136,7 @@
       "type": "object",
       "required": [
         "drug1",
-        "drug2",
-        "adverse_event"
+        "drug2"
       ],
       "properties": {
         "operation": {

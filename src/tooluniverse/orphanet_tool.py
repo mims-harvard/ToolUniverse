@@ -496,9 +496,12 @@ class OrphanetTool(BaseTool):
                 - exact: Whether to match exactly (default: False)
                 - lang: Language code (default: en)
         """
-        name = arguments.get("name", "")
+        name = arguments.get("name") or arguments.get("query", "")
         if not name:
-            return {"status": "error", "error": "Missing required parameter: name"}
+            return {
+                "status": "error",
+                "error": "Missing required parameter: name (or query)",
+            }
 
         exact = arguments.get("exact", False)
         lang = normalize_lang(arguments.get("lang") or arguments.get("language", "en"))

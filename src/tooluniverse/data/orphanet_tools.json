@@ -326,11 +326,13 @@
         "limit": {
           "type": "integer",
           "description": "Maximum number of results to return (default: 20, max: 200)"
+        },
+        "query": {
+          "type": "string",
+          "description": "Alias for name. Disease name to search for in Orphanet."
         }
       },
-      "required": [
-        "name"
-      ]
+      "required": []
     },
     "return_schema": {
       "type": "object",

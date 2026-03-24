@@ -22,11 +22,14 @@
         "tumor_type": {
           "type": "string",
           "description": "Optional OncoTree tumor type code (e.g., MEL for melanoma, LUAD for lung adenocarcinoma)"
+        },
+        "alteration": {
+          "type": "string",
+          "description": "Alias for variant. Protein change notation (e.g., \"V600E\", \"T790M\", \"G12D\")."
         }
       },
       "required": [
-        "gene",
-        "variant"
+        "gene"
       ]
     },
     "return_schema": {
@@ -98,7 +101,7 @@
         },
         "gene_symbol": {
           "type": "string",
-          "description": "Gene symbol alias — alternative to gene parameter"
+          "description": "Gene symbol alias \u2014 alternative to gene parameter"
         }
       },
       "required": []
