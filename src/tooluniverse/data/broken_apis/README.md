@@ -77,3 +77,4 @@ Review entries periodically:
 | `repodb_rest.json` | RepoDB Drug Repurposing Database | 2026-02 | Open Targets, ChEMBL, ClinicalTrials.gov |
 | `scop2_rest.json` | SCOP2 (Structural Classification of Proteins 2) | 2026-02 | CATH, InterPro, PDBe |
 | `decipher_api.json` | DECIPHER Rare Disease Variants API | 2026-02 | Orphanet (Orphadata + RDcode) + GenCC |
+| `phenoscanner_api.json` | PhenoScanner V2 genotype-phenotype associations | 2024-03 | GWAS Catalog REST API (PhenoScannerTool workaround) |

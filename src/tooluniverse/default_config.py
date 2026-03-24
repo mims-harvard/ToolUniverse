@@ -286,6 +286,7 @@ default_tool_files = {
     ),
     # PharmGKB - Pharmacogenomics
     "pharmgkb": os.path.join(current_dir, "data", "pharmgkb_tools.json"),
+    "phenoscanner": os.path.join(current_dir, "data", "phenoscanner_tools.json"),
     # DisGeNET - Gene-Disease Associations
     # DGIdb - Drug Gene Interactions
     "dgidb": os.path.join(current_dir, "data", "dgidb_tools.json"),
@@ -1053,6 +1054,8 @@ default_tool_files = {
     "hubmap": os.path.join(current_dir, "data", "hubmap_tools.json"),
     # SRA - NCBI Sequence Read Archive (sequencing experiments search)
     "sra": os.path.join(current_dir, "data", "sra_tools.json"),
+    # ImmPort - NIAID immunology database (vaccine trials, flow cytometry, clinical immunology)
+    "immport": os.path.join(current_dir, "data", "immport_tools.json"),
     # ClinGen Allele Registry - Canonical allele identifiers and cross-references
     "clingen_allele": os.path.join(current_dir, "data", "clingen_allele_tools.json"),
     # SIGNOR - Causal signaling network relationships
@@ -1075,6 +1078,8 @@ default_tool_files = {
     ),
     # KEGG ID Conversion & Cross-database Links
     "kegg_conv_link": os.path.join(current_dir, "data", "kegg_conv_link_tools.json"),
+    # TCDB - Transporter Classification Database (membrane transporter lookup/search)
+    "tcdb": os.path.join(current_dir, "data", "tcdb_tools.json"),
 }
 
 # Auto-load any user-provided tools from ~/.tooluniverse/user_tools/

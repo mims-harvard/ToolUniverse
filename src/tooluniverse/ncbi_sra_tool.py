@@ -31,7 +31,7 @@ class NCBISRATool(NCBIEUtilsTool):
 
     def run(self, arguments: Dict[str, Any]) -> Dict[str, Any]:
         """Execute the SRA tool with given arguments."""
-        operation = arguments.get("operation")
+        operation = arguments.get("operation") or self.get_schema_const_operation()
         if not operation:
             return {"status": "error", "error": "Missing required parameter: operation"}
 
