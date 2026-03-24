@@ -267,7 +267,7 @@ See `ANALYSIS_PROCEDURES.md` for detailed step-by-step flows and edge case handl
 ### Gene Annotation Tools
 - `MyGene_query_genes` - Gene query
 - `MyGene_batch_query` - Batch gene query
-- `HGNC_get_gene_info` - Gene symbol, aliases, IDs
+- `HGNC_fetch_gene_by_symbol` - Gene symbol, aliases, IDs
 - `GO_get_annotations_for_gene` - GO annotations
 
 ### Sequencing Data Retrieval Tools (SRA)

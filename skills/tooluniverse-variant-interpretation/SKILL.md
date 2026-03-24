@@ -42,12 +42,9 @@ Phase 6: ACMG CLASSIFICATION      → Evidence codes, classification, recommenda
 
 ## Phase 1: Variant Identity
 
-Tools: `myvariant_query`, `Ensembl_get_variant_info`, `NCBI_gene_search`, `VariantValidator_gene2transcripts`, `VariantValidator_validate_variant`
+Tools: `MyVariant_query_variants`, `EnsemblVar_get_variant_consequences`, `NCBIGene_search`, `VariantValidator_validate_variant`
 
-**VariantValidator_gene2transcripts**: Look up MANE Select and MANE Plus Clinical transcripts for a gene. Use this to identify the correct canonical transcript before variant annotation.
-- Parameters: `gene_symbol` (e.g. "TP53"), `transcript_set` ("mane" | "refseq" | "ensembl" | "all"), `genome_build` ("GRCh38" default)
-- Returns: Array of `{current_symbol, transcripts: [{reference, annotations: {mane_select, mane_plus_clinical}}]}`
-- Aliases: `gene` and `gene_name` also accepted for `gene_symbol`
+**VariantValidator transcript lookup** (no standalone tool — use `VariantValidator_validate_variant` with `select_transcripts="all"` or call REST API `https://rest.variantvalidator.org/VariantValidator/tools/gene2transcripts/{GENE}` directly via `requests`). Returns MANE Select and MANE Plus Clinical transcripts.
 
 **VariantValidator_validate_variant**: Validate HGVS variant descriptions and get normalized notation with genomic/transcript/protein consequences.
 - Parameters: `genome_build` ("GRCh37" | "GRCh38"), `variant_description` (HGVS, e.g. "NM_007294.4:c.5266dup"), `select_transcripts` (transcript or "all")
@@ -57,7 +54,7 @@ Capture: HGVS notation (c. and p.), gene symbol, canonical transcript (MANE Sele
 
 ## Phase 2: Clinical Databases
 
-Tools: `clinvar_search`, `gnomad_search`, `OMIM_search`, `OMIM_get_entry`, `ClinGen_search_gene_validity`, `ClinGen_search_dosage_sensitivity`, `ClinGen_search_actionability`, `COSMIC_search_mutations`, `COSMIC_get_mutations_by_gene`, `DisGeNET_search_gene`, `DisGeNET_get_vda`, `SpliceAI_predict_splice`, `SpliceAI_get_max_delta`
+Tools: `clinvar_search_variants`, `gnomad_search_variants`, `OMIM_search`, `OMIM_get_entry`, `ClinGen_search_gene_validity`, `ClinGen_search_dosage_sensitivity`, `ClinGen_search_actionability`, `COSMIC_search_mutations`, `COSMIC_get_mutations_by_gene`, `DisGeNET_search_gene`, `DisGeNET_get_vda`, `SpliceAI_predict_splice`, `SpliceAI_get_max_delta`
 
 Use SpliceAI for: intronic variants near splice sites, synonymous variants, exonic variants near splice junctions.
 
@@ -71,7 +68,7 @@ Tools: `ChIPAtlas_enrichment_analysis`, `ChIPAtlas_get_peak_data`, `ENCODE_searc
 
 ## Phase 3: Computational Predictions
 
-Tools: `CADD_get_variant_score` (PHRED 0-99), `AlphaMissense_get_variant_score` (0-1, needs UniProt ID), `EVE_get_variant_score` (0-1), `myvariant_query` (SIFT/PolyPhen), `Ensembl_get_variant_info` (VEP)
+Tools: `CADD_get_variant_score` (PHRED 0-99), `AlphaMissense_get_variant_score` (0-1, needs UniProt ID), `EVE_get_variant_score` (0-1), `MyVariant_query_variants` (SIFT/PolyPhen), `EnsemblVar_get_variant_consequences` (VEP)
 
 Consensus: Run CADD (all variants) + AlphaMissense + EVE (missense). 2+ concordant damaging = strong PP3; 2+ concordant benign = strong BP4.
 
@@ -79,7 +76,7 @@ See `ACMG_CLASSIFICATION.md` for thresholds.
 
 ## Phase 4: Structural Analysis (VUS/Novel Missense)
 
-Tools: `PDB_search_by_uniprot`, `NvidiaNIM_alphafold2`, `alphafold_get_prediction`, `InterPro_get_protein_domains`, `UniProt_get_protein_function`
+Tools: `PDBe_get_uniprot_mappings`, `NvidiaNIM_alphafold2`, `alphafold_get_prediction`, `InterPro_get_protein_domains`, `UniProt_get_function_by_accession`
 
 Workflow: Get structure -> map residue -> assess domain/functional site -> predict destabilization.
 
@@ -91,7 +88,7 @@ Confirms gene expression in disease-relevant tissues. Supports PP4 if highly res
 
 ## Phase 5: Literature Evidence
 
-Tools: `PubMed_search_articles`, `EuropePMC_search_articles`, `BioRxiv_search_preprints`, `MedRxiv_search_preprints`, `openalex_search_works`, `SemanticScholar_search_papers`
+Tools: `PubMed_search_articles`, `EuropePMC_search_articles`, `BioRxiv_list_recent_preprints`, `MedRxiv_get_preprint`, `openalex_search_works`, `SemanticScholar_search_papers`
 
 Always flag preprints as NOT peer-reviewed.
 
