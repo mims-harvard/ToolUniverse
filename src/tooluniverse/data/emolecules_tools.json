@@ -1,7 +1,7 @@
 [
   {
     "name": "eMolecules_search",
-    "description": "Search eMolecules vendor aggregator by keyword or compound name. eMolecules aggregates compounds from 200+ suppliers with pricing and availability information.",
+    "description": "Generate an eMolecules search URL for a compound name or keyword. eMolecules aggregates 200+ suppliers. Returns a search_url to browse results — no API access to vendor data.",
     "type": "EMoleculesTool",
     "parameter": {
       "type": "object",
@@ -43,7 +43,7 @@
   },
   {
     "name": "eMolecules_search_smiles",
-    "description": "Search eMolecules by chemical structure (SMILES). Supports exact match, substructure, and similarity search. Returns compounds from multiple vendors with pricing.",
+    "description": "Generate an eMolecules structure search URL for a SMILES string. Supports exact, substructure, and similarity search types. Returns a search_url to browse matching compounds — no API access to vendor data.",
     "type": "EMoleculesTool",
     "parameter": {
       "type": "object",
@@ -91,7 +91,7 @@
   },
   {
     "name": "eMolecules_get_vendors",
-    "description": "Get list of chemical suppliers for a compound by SMILES. Returns vendor names, pricing, and availability. Essential for compound sourcing and cost comparison.",
+    "description": "Generate an eMolecules vendor search URL for a compound by SMILES. Returns a search_url to browse 200+ supplier listings — no API access to vendor pricing data.",
     "type": "EMoleculesTool",
     "parameter": {
       "type": "object",
@@ -128,7 +128,7 @@
   },
   {
     "name": "eMolecules_get_compound",
-    "description": "Get compound details by eMolecules ID. Returns structure, vendors, pricing, and availability information.",
+    "description": "Get compound details by eMolecules ID. Returns a URL linking to the compound page with vendor, pricing, and availability information.",
     "type": "EMoleculesTool",
     "parameter": {
       "type": "object",
