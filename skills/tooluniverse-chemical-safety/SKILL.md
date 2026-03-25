@@ -99,6 +99,8 @@ See **phase-procedures-detailed.md** for complete tool parameters, decision logi
 - `ChEMBL_get_molecule` (if ChEMBL ID available)
 
 ### Phase 1: Predictive Toxicology
+> **Dependency**: ADMET-AI tools require `pip install tooluniverse[ml]`. If unavailable, skip to Phase 3 and use CTD + PubChemTox as alternatives.
+
 - `ADMETAI_predict_toxicity` (`smiles`: list[str]) - AMES, DILI, ClinTox, LD50, hERG, etc.
 - `ADMETAI_predict_stress_response` (`smiles`: list[str])
 - `ADMETAI_predict_nuclear_receptor_activity` (`smiles`: list[str])
@@ -107,18 +109,32 @@ See **phase-procedures-detailed.md** for complete tool parameters, decision logi
 - `ADMETAI_predict_BBB_penetrance` / `_bioavailability` / `_clearance_distribution` / `_CYP_interactions` / `_physicochemical_properties` / `_solubility_lipophilicity_hydration` (all take `smiles`: list[str])
 
 ### Phase 3: Toxicogenomics
-- `CTD_get_chemical_gene_interactions` (`input_terms`: str)
-- `CTD_get_chemical_diseases` (`input_terms`: str)
+- `CTD_get_chemical_gene_interactions` (`input_terms`: str) — chemical name, returns gene interactions across species
+- `CTD_get_chemical_diseases` (`input_terms`: str) — chemical-disease associations with evidence type
 
-### Phase 4: Regulatory Safety
-- `FDA_get_boxed_warning_info_by_drug_name` / `_contraindications_` / `_adverse_reactions_` / `_warnings_` / `_nonclinical_toxicology_` / `_carcinogenic_mutagenic_fertility_` (all take `drug_name`: str)
+### Phase 3.5: PubChem Toxicity Data
+- `PubChemTox_get_toxicity_values` (`cid`: int) — LD50, LC50, NOAEL reference values
+- `PubChemTox_get_ghs_classification` (`cid`: int) — GHS hazard classification and pictograms
+- `PubChemTox_get_carcinogen_classification` (`cid`: int) — NTP/IARC carcinogenicity assessments
+- `PubChemTox_get_acute_effects` (`cid`: int) — acute toxicity by route/species
+- `PubChemTox_get_toxicity_summary` (`cid`: int) — integrated toxicity overview
 
-### Phase 5: Drug Safety
+### Phase 3.6: Adverse Outcome Pathways
+- `AOPWiki_list_aops` (`keyword`: str) — search for relevant AOPs by chemical/mechanism
+- `AOPWiki_get_aop` (`aop_id`: int) — full AOP detail: MIE, key events, adverse outcome
+
+### Phase 4: Regulatory Safety (for pharmaceuticals only)
+> **Environmental chemicals**: Skip Phases 4-5 (no FDA labels/DrugBank). Use CTD + PubChemTox + AOPWiki instead.
+
+- `FDA_get_boxed_warning_info_by_drug_name` / `_contraindications_` / `_adverse_reactions_` / `_warnings_` (all take `drug_name`: str)
+
+### Phase 5: Drug Safety (for pharmaceuticals only)
 - `drugbank_get_safety_by_drug_name_or_drugbank_id` (`query`, `case_sensitive`, `exact_match`, `limit` - all 4 required)
 
 ### Phase 6: Chemical-Protein Interactions
-- `STITCH_resolve_identifier` (`identifier`: str, `species`: 9606)
-- `STITCH_get_chemical_protein_interactions` (`identifiers`: list[str], `species`: int, `required_score`: int)
+- `STITCH_get_chemical_protein_interactions` (`identifiers`: list[str], `species`: int)
+- **Fallback** (if STITCH fails for industrial chemicals): `STRING_get_interaction_partners` for key target genes (e.g., ESR1 for endocrine disruptors)
+- `DGIdb_get_drug_gene_interactions` (`genes`: list[str]) — for target druggability context
 
 ### Phase 7: Structural Alerts
 - `ChEMBL_search_compound_structural_alerts` (`molecule_chembl_id`: str)
