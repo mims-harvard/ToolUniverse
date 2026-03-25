@@ -130,13 +130,13 @@ Create `[INDICATION]_trial_feasibility_report.md` with all 14 sections. See `REP
 - `drugbank_get_indications_by_drug_name_or_drugbank_id` - Approved indications
 - `drugbank_get_pharmacology_by_drug_name_or_drugbank_id` - Mechanism
 - `FDA_OrangeBook_search_drugs` - Generic availability
-- `FDA_get_drug_approval_history` - Approval details
+- `OpenFDA_get_approval_history` - Approval details
 - `search_clinical_trials` - Historical control data
 
 ### PATH 4: Endpoint Selection
 - `search_clinical_trials` - Precedent trials, endpoints used
 - `PubMed_search_articles` - FDA acceptance history, endpoint validation
-- `FDA_get_drug_approval_history` - Approved endpoints by indication
+- `OpenFDA_get_approval_history` - Approved endpoints by indication
 
 ### PATH 5: Safety Endpoints & Monitoring
 - `drugbank_get_pharmacology_by_drug_name_or_drugbank_id` - Mechanism toxicity
@@ -147,7 +147,7 @@ Create `[INDICATION]_trial_feasibility_report.md` with all 14 sections. See `REP
 - `PubMed_search_articles` - DLT definitions, monitoring strategies
 
 ### PATH 6: Regulatory Pathway
-- `FDA_get_drug_approval_history` - Precedent approvals
+- `OpenFDA_get_approval_history` - Precedent approvals
 - `PubMed_search_articles` - Breakthrough designations, FDA guidance
 - `search_clinical_trials` - Regulatory precedents (accelerated approval)
 
