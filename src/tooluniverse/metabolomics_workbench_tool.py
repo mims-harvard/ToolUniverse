@@ -42,6 +42,13 @@ class MetabolomicsWorkbenchTool(BaseTool):
 
     def run(self, arguments: Dict[str, Any]) -> Dict[str, Any]:
         """Execute the Metabolomics Workbench API call."""
+        # Resolve compound_name/name aliases to input_value
+        if "input_value" not in arguments:
+            for alias in ("compound_name", "name"):
+                if alias in arguments:
+                    arguments["input_value"] = arguments.pop(alias)
+                    break
+
         context = self.context
 
         try:

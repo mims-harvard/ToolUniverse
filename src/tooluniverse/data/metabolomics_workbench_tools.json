@@ -53,7 +53,11 @@
             "properties": {
                 "input_value": {
                     "type": "string",
-                    "description": "Compound/metabolite name to search (e.g., 'Glucose', 'Cholesterol', 'Palmitic acid')."
+                    "description": "Compound/metabolite name to search (e.g., 'Glucose', 'Cholesterol', 'Palmitic acid'). Aliases: compound_name, name."
+                },
+                "compound_name": {
+                    "type": "string",
+                    "description": "Alias for input_value."
                 },
                 "output_item": {
                     "type": "string",
@@ -61,9 +65,7 @@
                     "default": "all"
                 }
             },
-            "required": [
-                "input_value"
-            ]
+            "required": []
         },
         "fields": {
             "context": "refmet",
