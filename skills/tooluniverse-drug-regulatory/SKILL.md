@@ -57,7 +57,20 @@ Phase 5: Label Parsing             -- DailyMed_parse_adverse_reactions, DailyMed
   |
   v
 Phase 6: Clinical Trials           -- search_clinical_trials
+  |
+  v
+Phase 7: Pharmacovigilance         -- FAERS_count_reactions_by_drug_event (param: medicinalproduct)
+  |
+  v
+Phase 8: Literature & Approval     -- PubMed_search_articles, OpenFDA_get_approval_history, RxNorm_get_drug_names
 ```
+
+> **Supplementary tools** (not in core phases but useful):
+> - `OpenFDA_get_approval_history` — full FDA submission/approval history (requires `operation` param)
+> - `FAERS_count_reactions_by_drug_event` — top adverse events by report count (param: `medicinalproduct`, ALL CAPS)
+> - `RxNorm_get_drug_names` — resolve drug to RXCUI and brand names
+> - `drugbank_vocab_search` — DrugBank ID, CAS, UNII lookup
+> - `PubMed_search_articles` — regulatory and clinical literature
 
 ---
 
