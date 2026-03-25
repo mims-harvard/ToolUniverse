@@ -55,8 +55,8 @@
 | `drugbank_get_drug_basic_info_by_drug_name_or_id` | `query`, `case_sensitive`, `exact_match`, `limit` (ALL 4) | Drug info | Drug details |
 | `drugbank_get_targets_by_drug_name_or_drugbank_id` | `query`, `case_sensitive`, `exact_match`, `limit` (ALL 4) | Drug targets | ICI targets |
 | `drugbank_get_pharmacology_by_drug_name_or_drugbank_id` | `query`, `case_sensitive`, `exact_match`, `limit` (ALL 4) | Pharmacology | Drug pharmacology |
-| `clinical_trials_search` | `action='search_studies'`, `condition`, `intervention`, `limit` | `{total_count, studies}` | Active ICI trials |
-| `PubMed_search_articles` | `query`, `max_results` | List of dicts | Literature evidence |
+| `search_clinical_trials` | `condition`, `intervention`, `query_term`, `pageSize` | `{total_count, studies}` | Active ICI trials |
+| `PubMed_search_articles` | `query`, `limit` | `{status, data, metadata}` | Literature evidence |
 
 ### Phase 9: Resistance Risk Assessment
 | Tool | Parameters | Response | Purpose |

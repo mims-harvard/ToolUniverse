@@ -110,7 +110,7 @@ Phase 11: Clinical Recommendations
 ## Phase 8: Clinical Evidence & ICI Options
 
 1. Query FDA indications for ICI drugs via `FDA_get_indications_by_drug_name`
-2. Search clinical trials via `clinical_trials_search` or `search_clinical_trials`
+2. Search clinical trials via `search_clinical_trials` (params: `condition`, `intervention`, `query_term`)
 3. Search PubMed for biomarker-specific response data
 4. Get drug mechanisms via `OpenTargets_get_drug_mechanisms_of_action_by_chemblId`
 
