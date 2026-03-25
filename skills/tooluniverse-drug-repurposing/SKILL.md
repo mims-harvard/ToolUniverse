@@ -52,11 +52,16 @@ tu.load_tools()
 
 # Step 1: Get disease targets
 disease_info = tu.tools.OpenTargets_get_disease_id_description_by_name(diseaseName="rheumatoid arthritis")
-targets = tu.tools.OpenTargets_get_associated_targets_by_disease_efoId(efoId=disease_info['data']['id'], limit=10)
+# Response nests ID at data.search.hits[0].id
+disease_id = disease_info['data']['search']['hits'][0]['id']
+targets = tu.tools.OpenTargets_get_associated_targets_by_disease_efoId(efoId=disease_id, limit=10)
 
 # Step 2: Find drugs for each target
-for target in targets['data'][:5]:
-    drugs = tu.tools.DGIdb_get_drug_gene_interactions(genes=[target['gene_symbol']])
+# Response nests targets at data.disease.associatedTargets.rows
+rows = targets['data']['disease']['associatedTargets']['rows']
+for target in rows[:5]:
+    gene = target['target']['approvedSymbol']
+    drugs = tu.tools.DGIdb_get_drug_gene_interactions(genes=[gene])
 ```
 
 ---
@@ -94,8 +99,11 @@ for target in targets['data'][:5]:
 - `STRING_get_network` - Protein interaction networks for target validation
 - `CTD_get_gene_diseases` - Curated gene-disease associations
 
-**Literature**:
-- `PubMed_search_articles` / `EuropePMC_search_articles` / `search_clinical_trials`
+**Literature & Clinical Trials**:
+- `PubMed_search_articles` / `EuropePMC_search_articles` - Literature search
+- `search_clinical_trials` - ClinicalTrials.gov search. Use `condition` for disease name. The `intervention` filter is strict and may miss trials — use `query_term` for broader drug-name matching as fallback.
+
+> **CNS diseases note**: For neurological indications (ALS, Alzheimer's, Parkinson's), prioritize BBB-penetrant candidates. Use ChEMBL molecular properties (MW < 500, PSA < 90) as BBB proxy since `ADMETAI_predict_BBB_penetrance` may require the `tooluniverse[ml]` extra. Consider route of administration (oral preferred for patients with swallowing difficulty) and sex-specific effects from preclinical models.
 
 ---
 
