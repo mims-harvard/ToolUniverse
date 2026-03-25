@@ -23,10 +23,21 @@ Comprehensive microbiome analysis using MGnify (EBI metagenomics), GTDB (genome 
 | **GTDB_search_genomes** | Search bacterial/archaeal genomes by taxonomy | None |
 | **GTDB_get_species** | Species cluster details from GTDB | None |
 | **GTDB_get_taxon_info** | Taxonomic rank info in GTDB hierarchy | None |
-| **ENAPortal_search_studies** | Find sequencing studies in ENA | None |
+| **GTDB_search_taxon** | Search taxa by partial name across all ranks | None |
+| **ENAPortal_search_studies** | Find sequencing studies in ENA. Query format: `description="keyword"` | None |
 | **ENAPortal_search_samples** | Find samples with environmental metadata | None |
 | **ols_search_terms** | Search ENVO ontology for biome/environment terms | None |
 | **EuropePMC_search_articles** | Find microbiome publications | None |
+| **PubMed_search_articles** | Literature search (different coverage than EuropePMC) | None |
+
+**For drug-microbiome studies**, also use:
+- `PubChem_get_CID_by_compound_name` / `PubChem_get_compound_properties_by_CID` — drug identity
+- `CTD_get_chemical_gene_interactions` — drug-gene interactions (e.g., metformin affects 1,175+ genes)
+- `kegg_search_pathway` / `kegg_get_pathway_info` — microbial metabolic pathways (butanoate, propanoate)
+- `ReactomeAnalysis_pathway_enrichment` — host pathway enrichment for drug-affected genes
+- `drugbank_vocab_search` — drug mechanism and targets
+
+> **MGnify tip**: Use concise single-keyword searches (e.g., "metformin") — multi-word queries may timeout. The MGnify API can be slow for broad searches.
 
 ## Quick Start
 
@@ -169,7 +180,7 @@ papers = tu.run_one_function({
 # Find sequencing data in ENA
 ena_studies = tu.run_one_function({
     'name': 'ENAPortal_search_studies',
-    'arguments': {'query': 'gut microbiome 16S', 'limit': 5}
+    'arguments': {'query': 'description="gut microbiome 16S"', 'limit': 5}
 })
 ```
 
