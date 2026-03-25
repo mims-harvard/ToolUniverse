@@ -68,14 +68,18 @@ This allows comparison to population distribution and percentile calculation.
 This skill uses ToolUniverse GWAS tools to query:
 
 1. **GWAS Catalog** (EMBL-EBI)
-   - Curated GWAS associations
-   - 5000+ studies, millions of variants
-   - Tools: `gwas_get_associations_for_trait`, `gwas_get_snp_by_id`
+   - Curated GWAS associations, 5000+ studies
+   - Tools: `gwas_search_associations` (param: `disease_trait`, `size`; also `gwas_get_associations_for_trait`), `gwas_get_snps_for_gene` (param: `gene_symbol`), `dbsnp_get_variant_by_rsid`
+   - Note: `disease_trait` search returns associations where the trait is one of potentially several linked EFO traits. For precise filtering, use EFO IDs via `efo_trait` param.
 
 2. **Open Targets Genetics**
-   - Integrated genetics platform
-   - Fine-mapped credible sets
-   - Tools: `OpenTargets_search_gwas_studies_by_disease`, `OpenTargets_get_variant_info`
+   - Integrated genetics platform with fine-mapped credible sets
+   - Tools: `OpenTargets_search_gwas_studies_by_disease`, `EnsemblVEP_annotate_hgvs` (for variant consequence/frequency)
+
+3. **Variant Annotation**
+   - `gnomad_search_variants` + `gnomad_get_variant` — population allele frequencies (ancestry-specific via VEP colocated_variants)
+   - `MyVariant_query_variants` — CADD, SIFT, PolyPhen, ClinVar, gnomAD in one call
+   - `gnomad_get_gene_constraints` — gene constraint metrics (pLI, oe_lof) for target prioritization
 
 ## Key Concepts
 
