@@ -60,7 +60,7 @@ Input → Phase 1: Enrichment → Phase 2: Protein Mapping → Phase 3: Keyword 
 **enrichr_gene_enrichment_analysis**:
 - **Input**:
   - `gene_list`: Array of gene symbols (e.g., ["TP53", "BRCA1", "EGFR"])
-  - `library`: Pathway database (e.g., "KEGG_2021_Human", "Reactome_2022")
+  - `libs`: Array of library names (e.g., ["KEGG_2021_Human", "Reactome_2022", "WikiPathways_2024_Human"])
 - **Output**: Array of enriched pathways with p-values, adjusted p-values, genes
 - **Use**: Statistical over-representation analysis
 
@@ -69,7 +69,7 @@ Input → Phase 1: Enrichment → Phase 2: Protein Mapping → Phase 3: Keyword 
 - **Output**: Interaction edges with combined scores, evidence types
 
 **STRING_functional_enrichment** (functional enrichment from PPI networks):
-- **Input**: `protein_ids` (array of gene symbols), `species` (9606), `category` ("KEGG", "GO", "Pfam")
+- **Input**: `protein_ids` (array of gene symbols), `species` (9606), `category` ("KEGG", "Process", "Component", "Function", "Reactome", "WikiPathways")
 - **Output**: Enriched functional categories with FDR values
 
 **intact_get_interactions** (detailed binary protein interactions):
@@ -106,9 +106,8 @@ Input → Phase 1: Enrichment → Phase 2: Protein Mapping → Phase 3: Keyword 
 
 **Reactome_map_uniprot_to_pathways**:
 - **Input**:
-  - `id`: UniProt accession (e.g., "P53350")
+  - `uniprot_id`: UniProt accession (e.g., "P53350")
 - **Output**: Array of Reactome pathways containing this protein
-- **Note**: Parameter is `id` (not `uniprot_id`)
 
 **Reactome_get_pathway_reactions**:
 - **Input**:
@@ -268,7 +267,7 @@ Input → Phase 1: Enrichment → Phase 2: Protein Mapping → Phase 3: Keyword 
 
 | Tool | Parameter | CORRECT Name | Common Mistake |
 |------|-----------|--------------|----------------|
-| Reactome_map_uniprot_to_pathways | `id` | ✅ `id` | ❌ `uniprot_id` |
+| Reactome_map_uniprot_to_pathways | `uniprot_id` | ✅ `uniprot_id` | ❌ `id` |
 | kegg_search_pathway | `keyword` | ✅ `keyword` | - |
 | WikiPathways_search | `query` | ✅ `query` | - |
 | pc_search_pathways | `action` + `keyword` | ✅ Both required | ❌ `action` optional |
