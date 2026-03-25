@@ -55,7 +55,7 @@ Phase 2: De novo prediction (ESMFold_predict_structure)
     |
 Phase 3: AlphaFold reference (alphafold_get_prediction + alphafold_get_summary)
     |
-Phase 4: Experimental structure comparison (RCSBAdvSearch_search_structures, RCSB_get_entry)
+Phase 4: Experimental structure comparison (RCSBAdvSearch_search_structures, RCSBData_get_entry)
     |
 Phase 5: Variant structural impact (ProtVar_map_variant + ProtVar_get_function) [if variant provided]
     |
@@ -77,7 +77,7 @@ Use it directly for `ESMFold_predict_structure`. Check length:
 
 ### If only protein name or UniProt ID is provided
 
-Retrieve sequence from `UniProt_get_entry`:
+Retrieve sequence from `UniProt_get_entry_by_accession`:
 - `accession`: UniProt accession
 - Extract the `sequence.value` field from the response
 
@@ -194,7 +194,7 @@ Retrieve sequence from `UniProt_get_entry`:
 - `limit`: number of results (default 10)
 - Returns: list of PDB entries with resolution, method, title
 
-**RCSB_get_entry** (details for a specific PDB ID):
+**RCSBData_get_entry** (details for a specific PDB ID):
 - `pdb_id`: 4-character PDB identifier
 - Returns: metadata including method, resolution, chains, ligands, release date
 
