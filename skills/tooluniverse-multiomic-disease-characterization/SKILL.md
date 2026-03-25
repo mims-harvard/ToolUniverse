@@ -70,27 +70,27 @@ Resolve disease to standard identifiers (MONDO/EFO) for all downstream queries.
 
 ### Phase 1: Genomics Layer
 Identify genetic variants, GWAS associations, and genetically implicated genes.
-- Tools: OpenTargets associated targets, evidence by datasource, GWAS Catalog, ClinVar
-- Get top 10-15 genes with genetic evidence scores
-- Track genes with Ensembl IDs for downstream phases
+- Tools: `gwas_search_associations` (use `efo_id` for precision, not free-text `disease_trait`), `gwas_get_snps_for_gene`, ClinVar, OpenTargets associated targets
+- `gnomad_get_gene_constraints` — gene constraint metrics (pLI, oe_lof) to interpret whether LoF variants are tolerated vs. haploinsufficient
+- Get top 10-15 genes with genetic evidence scores; track Ensembl IDs for downstream phases
 
 ### Phase 2: Transcriptomics Layer
 Identify differentially expressed genes, tissue-specific expression, and expression-based biomarkers.
-- Tools: Expression Atlas (differential + experiments), HPA (tissue expression), EuropePMC scores
+- `GTEx_get_expression_summary` — baseline expression across 54 tissues (accepts `gene_symbol` directly)
+- Tools: Expression Atlas, HPA (tissue expression), EuropePMC scores
 - Check expression in disease-relevant tissues for top genes from Phase 1
-- For cancer: check prognostic biomarkers via HPA
 
 ### Phase 3: Proteomics & Interaction Layer
 Map protein-protein interactions, identify hub genes, and characterize interaction networks.
-- Tools: STRING (partners, network, enrichment), IntAct, HumanBase (tissue-specific PPI)
-- Build PPI network from top 15-20 genes across previous layers
-- Identify hub genes by degree centrality (degree > mean + 1 SD)
+- `UniProt_get_function_by_accession` — protein function narrative (essential for mechanistic context)
+- Tools: `STRING_get_network` (param: `identifiers`, `species`=9606), `intact_get_interactions`, HumanBase
+- Build PPI network from top 15-20 genes; identify hub genes by degree centrality
 
 ### Phase 4: Pathway & Network Layer
 Identify enriched biological pathways and cross-pathway connections.
-- Tools: Enrichr (KEGG, Reactome, WikiPathways), ReactomeAnalysis, KEGG search
-- Run enrichment on combined gene list (top 20-30 genes)
-- **NOTE**: Enrichr `data` field is a JSON string that needs parsing
+- `ReactomeAnalysis_pathway_enrichment` — identifiers are **newline-separated** (`\n`), NOT space-separated
+- `enrichr_gene_enrichment_analysis` — param: `gene_list` (array), `libs` (array). NOTE: `data` field is a JSON string that needs parsing
+- `kegg_search_pathway` — pathway keyword search
 
 ### Phase 5: Gene Ontology & Functional Annotation
 Characterize biological processes, molecular functions, and cellular components.
@@ -99,9 +99,9 @@ Characterize biological processes, molecular functions, and cellular components.
 
 ### Phase 6: Therapeutic Landscape
 Map approved drugs, druggable targets, repurposing opportunities, and clinical trials.
-- Tools: OpenTargets drugs/tractability, clinical trials search, drug mechanisms
-- `size` parameter is REQUIRED for OpenTargets drug queries (use 100)
-- `query_term` is REQUIRED for clinical trials search
+- `DGIdb_get_drug_gene_interactions` — drug interactions by gene (param: `genes` as array). Often more comprehensive than OpenTargets for drug-gene data.
+- OpenTargets drugs/tractability (use **EFO IDs** like `EFO_0000384` for Crohn's, not MONDO — MONDO IDs may return null for drug queries)
+- `search_clinical_trials` — `query_term` is REQUIRED
 
 ### Phase 7: Multi-Omics Integration
 Integrate findings across all layers. See `integration-scoring.md` for full details.
