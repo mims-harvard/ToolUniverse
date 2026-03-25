@@ -73,12 +73,12 @@ tu.tools.GtoPdb_get_disease(disease_id=gtopdb_id)
 
 ```python
 tu.tools.Reactome_get_diseases()
-tu.tools.Reactome_map_uniprot_to_pathways(id=uniprot_id)  # top genes
+tu.tools.Reactome_map_uniprot_to_pathways(uniprot_id=uniprot_id)  # top genes
 tu.tools.Reactome_get_pathway(stId=pathway_id)
 tu.tools.Reactome_get_pathway_reactions(stId=pathway_id)
 tu.tools.humanbase_ppi_analysis(gene_list=top_genes, tissue=relevant_tissue)
-tu.tools.gtex_get_expression_by_gene(gene=gene)  # top genes
-tu.tools.HPA_get_protein_expression(gene=gene)
+tu.tools.GTEx_get_expression_summary(gene_symbol=gene)  # top genes
+tu.tools.HPA_get_rna_expression_by_source(gene_name=gene)
 tu.tools.geo_search_datasets(query=disease_name)
 ```
 
