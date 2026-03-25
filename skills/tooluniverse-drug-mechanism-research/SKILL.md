@@ -70,7 +70,13 @@ Phase 5: Clinical Pharmacology (DailyMed label data, PK/PD, metabolism)
 Phase 6: Drug Interactions (DailyMed DDIs, contraindications)
   |
   v
-Phase 7: Literature Evidence (PubMed/EuropePMC mechanism studies)
+Phase 6.5: Safety Profile (FAERS adverse events, FDA warnings, black box)
+  |
+  v
+Phase 7: Clinical Trials (search_clinical_trials for outcomes data)
+  |
+  v
+Phase 7.5: Literature Evidence (PubMed/EuropePMC mechanism studies)
   |
   v
 Phase 8: Integration & Report (combine all evidence, confidence grading)
@@ -313,28 +319,30 @@ result = tu.tools.fda_pharmacogenomic_biomarkers(biomarker="CYP2D6", limit=100)
 
 ## Phase 5: Clinical Pharmacology
 
-### DailyMed label sections
+### DailyMed label sections (two-step process)
 
-**DailyMed_parse_clinical_pharmacology**: `drug_name` (string, REQUIRED).
-Returns `{status: "success", data: {pharmacology: [{type, content}]}}`.
-- Extracts the "Clinical Pharmacology" section from FDA-approved drug labels.
-- Contains mechanism of action, pharmacodynamics, pharmacokinetics.
+DailyMed parse tools require a `setid` (not `drug_name`). First search, then parse:
 
 ```python
-# Get clinical pharmacology for metformin
-result = tu.tools.DailyMed_parse_clinical_pharmacology(drug_name="metformin")
-for section in result["data"]["pharmacology"]:
-    if section["type"] == "pharmacology_text":
-        print(section["content"])
+# Step 1: Get setid via search
+spls = tu.tools.DailyMed_search_spls(drug_name="metformin")
+setid = spls["data"][0]["setid"]
+
+# Step 2: Parse specific sections using setid
+pharmacology = tu.tools.DailyMed_parse_clinical_pharmacology(
+    operation="parse_clinical_pharmacology", setid=setid)
+adverse = tu.tools.DailyMed_parse_adverse_reactions(
+    operation="parse_adverse_reactions", setid=setid)
+interactions = tu.tools.DailyMed_parse_drug_interactions(
+    operation="parse_drug_interactions", setid=setid)
 ```
 
-**DailyMed_parse_dosing**: `drug_name` (string, REQUIRED).
-Returns dosing and administration information from the label.
-
-**DailyMed_parse_adverse_reactions**: `drug_name` (string, REQUIRED).
-Returns adverse reactions section.
-
-**DailyMed_search_spls**: Search DailyMed SPL documents. Returns setids for detailed lookup.
+**Available parse tools** (all require `operation` + `setid`):
+- `DailyMed_parse_clinical_pharmacology` — MOA, PK/PD, metabolism
+- `DailyMed_parse_adverse_reactions` — adverse reaction tables
+- `DailyMed_parse_drug_interactions` — DDI information
+- `DailyMed_parse_contraindications` — contraindications
+- `DailyMed_parse_dosing` — dosing and administration
 
 **DailyMed_search_drug_classes**: Search by pharmacologic class.
 
