@@ -109,6 +109,7 @@ Query FAERS for top adverse events, seriousness distribution, outcomes, demograp
 ### Phase 2: Disproportionality Analysis (Signal Detection)
 **CRITICAL PHASE**. For each top adverse event (at least 15-20), calculate PRR, ROR, IC with 95% CI. Classify signal strength. Stratify strong signals by demographics.
 - **Tools**: `FAERS_calculate_disproportionality`, `FAERS_stratify_by_demographics`
+- **MedDRA term level note**: `FAERS_count_reactions_by_drug_event` filters by MedDRA Lowest Level Term (`reactionmeddraverse`) while `FAERS_calculate_disproportionality` uses Preferred Terms. Case counts can differ dramatically — always use disproportionality analysis as the primary signal metric, not raw counts.
 - **Signal criteria**: PRR >= 2.0 AND lower CI > 1.0 AND N >= 3
 - **Strength**: Strong (PRR >= 5), Moderate (PRR 3-5), Weak (PRR 2-3)
 - See `PHASE_DETAILS.md` for full signal classification table
