@@ -214,8 +214,19 @@ sc.tl.umap(adata)
 
 ## ToolUniverse Integration
 
-### Gene Annotation
+### Data Discovery (before analysis)
+- **CxGDisc_search_datasets**: Search CELLxGENE Discover for scRNA-seq datasets by disease, tissue, organism. Use broad disease terms (e.g., "breast cancer" not "triple-negative").
+- **GEO_search_rnaseq_datasets** / **geo_search_datasets**: Search GEO for scRNA-seq studies
+- **NCBI_SRA_search_runs**: Search SRA for sequencing runs (query="single cell RNA-seq [disease]")
+- **OmicsDI_search_datasets**: Cross-repository dataset search
+
+### Cell Type Markers
+- **CellMarker_search_by_cell_type**: Tissue-specific cell markers (use `CellMarker_list_cell_types` first — exact names required, e.g., "Regulatory T(Treg) cell" not "Regulatory T cell")
+- **CellMarker_search_cancer_markers**: Cancer-context markers with experimental evidence
+- **CellMarker_search_by_gene**: Reverse lookup — which cell types express a gene?
 - **HPA_search_genes_by_query**: Cell-type marker gene search
+
+### Gene Annotation
 - **MyGene_query_genes** / **MyGene_batch_query**: Gene ID conversion
 - **ensembl_lookup_gene**: Ensembl gene details
 - **UniProt_get_function_by_accession**: Protein function
@@ -229,6 +240,14 @@ sc.tl.umap(adata)
 - **PANTHER_enrichment**: GO enrichment (BP, MF, CC)
 - **STRING_functional_enrichment**: Network-based enrichment
 - **ReactomeAnalysis_pathway_enrichment**: Reactome pathways
+
+### Clinical Context (for tumor immunology)
+- **DGIdb_get_drug_gene_interactions**: Drug interactions for immune checkpoint targets (genes=["CD274"] for PD-L1)
+- **civic_search_evidence_items**: Clinical evidence for mutations/biomarkers
+- **TIMER2_immune_estimation**: TCGA immune infiltration correlation
+- **search_clinical_trials**: Clinical trial matching
+- **GTEx_get_expression_summary**: Normal tissue baseline expression
+- **PubMed_search_articles**: Literature context
 
 ---
 
