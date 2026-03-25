@@ -84,7 +84,7 @@ result = tu.tools.arrayexpress_search_experiments(
 )
 
 # BioStudies for multi-omics
-biostudies_result = tu.tools.biostudies_search_studies(
+biostudies_result = tu.tools.biostudies_search(
     query="[keywords]",
     limit=10
 )
@@ -96,7 +96,7 @@ For top results, retrieve full metadata:
 
 ```python
 # Get details for each relevant experiment
-details = tu.tools.arrayexpress_get_experiment_details(
+details = tu.tools.arrayexpress_get_experiment(
     accession=accession
 )
 
@@ -115,7 +115,7 @@ files = tu.tools.arrayexpress_get_experiment_files(
 
 ```python
 # Multi-omics study details
-study_details = tu.tools.biostudies_get_study_details(
+study_details = tu.tools.biostudies_get_study(
     accession=study_accession
 )
 
@@ -135,7 +135,7 @@ files = tu.tools.biostudies_get_study_files(
 | Primary | Fallback | Notes |
 |---------|----------|-------|
 | ArrayExpress search | BioStudies search | ArrayExpress empty |
-| arrayexpress_get_experiment_details | biostudies_get_study_details | E-GEOD may have BioStudies mirror |
+| arrayexpress_get_experiment | biostudies_get_study | E-GEOD may have BioStudies mirror |
 | arrayexpress_get_experiment_files | Note "Files unavailable" | Some studies restrict downloads |
 
 ---
@@ -358,17 +358,28 @@ User: "Find proteomics and transcriptomics studies for liver disease"
 | Tool | Purpose |
 |------|---------|
 | `arrayexpress_search_experiments` | Keyword/species search |
-| `arrayexpress_get_experiment_details` | Full metadata |
+| `arrayexpress_get_experiment` | Full metadata |
 | `arrayexpress_get_experiment_files` | Download links |
 | `arrayexpress_get_experiment_samples` | Sample annotations |
 
 **BioStudies (Multi-Omics)**
 | Tool | Purpose |
 |------|---------|
-| `biostudies_search_studies` | Multi-omics search |
-| `biostudies_get_study_details` | Study metadata |
+| `biostudies_search` | Multi-omics search |
+| `biostudies_get_study` | Study metadata |
 | `biostudies_get_study_files` | Data files |
-| `biostudies_get_study_sections` | Study structure |
+| `biostudies_get_study` (sections included in response) | Study structure |
+
+**Additional Data Sources** (expand beyond ArrayExpress/BioStudies for comprehensive retrieval):
+| Tool | Purpose | Coverage |
+|------|---------|----------|
+| `GEO_search_rnaseq_datasets` | GEO RNA-seq dataset search | Largest RNA-seq repository |
+| `geo_search_datasets` | Broader GEO search (all data types) | Microarray + RNA-seq |
+| `OmicsDI_search_datasets` | Cross-repository aggregation | GEO + ArrayExpress + PRIDE + MassIVE |
+| `GTEx_get_expression_summary` | Baseline tissue expression (param: `gene_symbol`) | 54 normal tissues |
+| `ENAPortal_search_studies` | Sequencing studies (param: `query` with `description="..."`) | ENA/SRA metadata |
+| `CxGDisc_search_datasets` | Single-cell datasets (needs exact disease ontology terms) | CELLxGENE Discover |
+| `PubMed_search_articles` | Dataset discovery via publications | Literature-linked datasets |
 
 ---
 

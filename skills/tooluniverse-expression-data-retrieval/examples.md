@@ -27,7 +27,7 @@ for exp in result["data"]["experiments"][:5]:
 # Get experiment metadata
 accession = "E-MTAB-5214"
 
-details = tu.tools.arrayexpress_get_experiment_details(
+details = tu.tools.arrayexpress_get_experiment(
     accession=accession
 )
 
@@ -68,7 +68,7 @@ print(f"Found {len(rnaseq_studies)} RNA-seq studies")
 
 ```python
 # Search BioStudies for proteomics
-result = tu.tools.biostudies_search_studies(
+result = tu.tools.biostudies_search(
     query="proteomics breast cancer",
     limit=10
 )
@@ -77,7 +77,7 @@ result = tu.tools.biostudies_search_studies(
 study_acc = result["data"]["studies"][0]["accession"]
 
 # Get detailed information
-details = tu.tools.biostudies_get_study_details(
+details = tu.tools.biostudies_get_study(
     accession=study_acc
 )
 
@@ -103,7 +103,7 @@ result = tu.tools.arrayexpress_search_experiments(
 # Get details for each
 experiments = []
 for exp in result["data"]["experiments"][:5]:
-    details = tu.tools.arrayexpress_get_experiment_details(
+    details = tu.tools.arrayexpress_get_experiment(
         accession=exp["accession"]
     )
     experiments.append({
