@@ -71,7 +71,7 @@ Returns PFM (position frequency matrix), species, TF class, UniProt IDs.
 
 Identify target genes from ChIP-seq experiments via Enrichr.
 
-**Tool: `Enrichr_enrich`**
+**Tool: `enrichr_gene_enrichment_analysis`**
 ```
 Parameters:
   gene_list  array   List of gene symbols (REQUIRED)
@@ -321,12 +321,16 @@ Performs GO, KEGG, Reactome enrichment on a gene set from the network.
 |------|---------------|-------|
 | `jaspar_search_matrices` | `search`, `limit`, `collection`, `species` | Search by TF name |
 | `jaspar_get_matrix` | `matrix_id` | Full PFM details for one matrix |
-| `Enrichr_enrich` | `gene_list` (array, REQUIRED), `library`, `top_n` | Many TF-related libraries |
+| `enrichr_gene_enrichment_analysis` | `gene_list` (array, REQUIRED), `library`, `top_n` | Many TF-related libraries |
 | `ENCODE_search_histone_experiments` | `target`, `tissue`, `limit` | Histone mark ChIP-seq |
 | `GTEx_query_eqtl` | `gene_symbol` (REQUIRED) | eQTLs across GTEx tissues |
 | `RegulomeDB_query_variant` | `rsid` | Regulatory variant scoring |
 | `STRING_get_interaction_partners` | `identifiers` (string, REQUIRED), `species`, `limit` | PPI with confidence scores |
-| `STRING_functional_enrichment` | `identifiers` (comma-separated), `species` | GO/KEGG/Reactome enrichment |
+| `STRING_functional_enrichment` | `protein_ids` (array), `species`, `category` | GO/KEGG/Reactome enrichment |
+| `OmniPath_get_signaling_interactions` | `proteins`, `datasets` ("dorothea") | **Best for TF-target networks**: curated directed TF-target interactions |
+| `ChIPAtlas_enrichment_analysis` | `gene_list`, `genome`, `antigen_class` | TF enrichment from 433K+ ChIP-seq experiments |
+| `DGIdb_get_drug_gene_interactions` | `genes` (array) | Druggability of network nodes |
+| `CTD_get_gene_diseases` | `input_terms` | Disease context for regulatory genes |
 | `intact_get_interaction_network` | `gene_symbol`, `limit` | Experimentally validated PPIs |
 | `BioGRID_get_interactions` | `gene_symbol`, `limit` | Physical + genetic interactions |
 | `EuropePMC_search_articles` | `query`, `limit` | Full-text literature search |
@@ -341,7 +345,7 @@ Performs GO, KEGG, Reactome enrichment on a gene set from the network.
 
 3. **STRING identifiers param**: Use `identifiers` as a **string** (NOT an array). For multiple proteins, use `STRING_get_network` with array `identifiers`.
 
-4. **Enrichr direction**: `Enrichr_enrich` takes a gene SET and finds enriched TFs/pathways. To find targets of a TF, use `"TRRUST_Transcription_Factors_2019"` library with known target genes, or consult ENCODE ChIP-seq data directly.
+4. **Enrichr direction**: `enrichr_gene_enrichment_analysis` takes a gene SET and finds enriched TFs/pathways. To find targets of a TF, use `"TRRUST_Transcription_Factors_2019"` library with known target genes, or consult ENCODE ChIP-seq data directly.
 
 5. **Enrichr `gene_list` is required**: Must be a JSON array of strings, not a single string.
 
@@ -359,18 +363,18 @@ Performs GO, KEGG, Reactome enrichment on a gene set from the network.
 
 ### Pattern 1: "What does TF X regulate?"
 1. `jaspar_search_matrices` -- Get motif info for TF X
-2. `Enrichr_enrich` with `TRRUST_Transcription_Factors_2019` library -- Use known targets
+2. `enrichr_gene_enrichment_analysis` with `TRRUST_Transcription_Factors_2019` library -- Use known targets
 3. `STRING_get_interaction_partners` -- Find interacting proteins
 4. `EuropePMC_search_articles` -- Literature on TF X targets
 
 ### Pattern 2: "What regulates gene Y?"
-1. `Enrichr_enrich` with gene Y's co-regulated genes + `ENCODE_TF_ChIP-seq_2015` library
+1. `enrichr_gene_enrichment_analysis` with gene Y's co-regulated genes + `ENCODE_TF_ChIP-seq_2015` library
 2. `GTEx_query_eqtl` -- Find eQTLs affecting gene Y expression
 3. `ENCODE_search_histone_experiments` -- Chromatin context at gene Y locus
 4. `RegulomeDB_query_variant` -- Annotate regulatory variants near gene Y
 
 ### Pattern 3: "Build a regulatory network around gene set Z"
-1. `Enrichr_enrich` with gene set Z + multiple TF libraries
+1. `enrichr_gene_enrichment_analysis` with gene set Z + multiple TF libraries
 2. `STRING_get_interaction_partners` for hub genes
 3. `STRING_functional_enrichment` -- Pathway context
 4. `BioGRID_get_interactions` -- Experimental validation
@@ -380,7 +384,7 @@ Performs GO, KEGG, Reactome enrichment on a gene set from the network.
 1. `GTEx_query_eqtl` -- Tissue-specific eQTLs for gene X
 2. `ENCODE_search_histone_experiments` with specific tissue -- Active regulatory marks
 3. `RegulomeDB_query_variant` -- Tissue-specific regulatory scores for eQTL SNPs
-4. `Enrichr_enrich` -- Identify TFs active in that tissue
+4. `enrichr_gene_enrichment_analysis` -- Identify TFs active in that tissue
 
 ### Pattern 5: "Is variant rs##### regulatory?"
 1. `RegulomeDB_query_variant` -- Regulatory score and overlapping features
