@@ -79,6 +79,26 @@ Input -> Phase 1: Gene ID resolution -> Phase 2: Nucleotide retrieval
 1. `NCBIGene_search(term="TP53[Symbol] AND Homo sapiens[Organism]")` -> "7157"
 2. `NCBIDatasets_get_orthologs(gene_id="7157", page_size=10)` -> mouse Trp53, rat Tp53, etc.
 
+## Phase 5: Domain Architecture and Homology
+
+**InterPro_get_entries_for_protein**: `accession` (UniProt ID). Returns InterPro domain/family/superfamily entries with positions.
+
+**Pfam_get_protein_annotations**: `accession` (UniProt ID). Returns Pfam domain hits with exact residue coordinates and E-values.
+
+**BLAST_protein_search**: `sequence` (amino acid string), `database` (default "swissprot"), `limit`. Returns homologs with alignment scores, identity, E-values.
+
+**EnsemblCompara_get_orthologues**: `gene` (gene symbol, e.g., "CFTR"), `species` (e.g., "human"). User-friendly alternative to NCBIDatasets_get_orthologs — accepts gene symbols directly.
+
+## Phase 6: Variant and Clinical Context
+
+**EnsemblVEP_annotate_hgvs**: `hgvs_notation` (e.g., "NM_000492.4:c.1521_1523del"). Returns consequence, protein impact, genomic coordinates.
+
+**ClinVar_search_variants**: `gene` (gene symbol). Returns variant count and IDs for clinical significance lookup.
+
+**PubMed_search_articles**: `query`, `limit`. Literature context for gene/variant findings.
+
+---
+
 ## Tool Parameter Quick Reference
 
 | Tool | Correct Param | Common Mistake |
