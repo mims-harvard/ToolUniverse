@@ -75,9 +75,15 @@ Apply for intronic (non-splice), promoter, UTR, or intergenic variants near dise
 
 Tools: `ChIPAtlas_enrichment_analysis`, `ChIPAtlas_get_peak_data`, `ENCODE_search_experiments`, `ENCODE_get_experiment`
 
+## Phase 2.9: Short-Circuit Check
+
+Before full ACMG classification, check if the variant already has an expert panel classification in ClinVar. Use `MyVariant_query_variants` with the rsID or HGVS notation — the `clinvar` field in the response includes clinical significance, review status, and RCV records. If an expert panel has already classified the variant as Pathogenic or Benign, note this prominently and focus on confirming/contextualizing rather than de novo classification.
+
 ## Phase 3: Computational Predictions
 
-Tools: `CADD_get_variant_score` (PHRED 0-99), `AlphaMissense_get_variant_score` (0-1, needs UniProt ID), `EVE_get_variant_score` (0-1), `MyVariant_query_variants` (SIFT/PolyPhen), `EnsemblVar_get_variant_consequences` (VEP)
+**Primary approach:** `MyVariant_query_variants` with `fields=dbnsfp,clinvar,cadd,gnomad_genome` retrieves 15+ predictor scores (SIFT, PolyPhen, CADD, REVEL, AlphaMissense, MetaRNN, FATHMM, GERP, PhyloP, etc.) in a single call. This is usually sufficient.
+
+**Individual tools** (when specific scores are needed): `CADD_get_variant_score` (PHRED 0-99), `AlphaMissense_get_variant_score` (0-1, needs UniProt ID), `EVE_get_variant_score` (0-1), `EnsemblVEP_annotate_hgvs` (VEP with colocated variants, HGMD cross-references, and ancestry-specific gnomAD frequencies)
 
 Consensus: Run CADD (all variants) + AlphaMissense + EVE (missense). 2+ concordant damaging = strong PP3; 2+ concordant benign = strong BP4.
 
@@ -85,9 +91,11 @@ See `ACMG_CLASSIFICATION.md` for thresholds.
 
 ## Phase 4: Structural Analysis (VUS/Novel Missense)
 
-Tools: `PDBe_get_uniprot_mappings`, `NvidiaNIM_alphafold2`, `alphafold_get_prediction`, `InterPro_get_protein_domains`, `UniProt_get_function_by_accession`
+Tools: `PDBe_get_uniprot_mappings`, `NvidiaNIM_alphafold2`, `alphafold_get_prediction` (param: `qualifier`, e.g., UniProt accession), `InterPro_get_protein_domains`, `UniProt_get_function_by_accession`
 
 Workflow: Get structure -> map residue -> assess domain/functional site -> predict destabilization.
+
+> **AlphaFold size limitation**: Very large proteins (>2,700 aa, e.g., BRCA2 at 3,418 aa) may not have AlphaFold predictions via the standard API. Fall back to published structural studies or `PDBe_get_uniprot_mappings` for experimental structures.
 
 ## Phase 4.5: Expression Context
 
