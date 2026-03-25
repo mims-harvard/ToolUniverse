@@ -160,9 +160,9 @@ tu.tools.OpenTargets_target_disease_evidence(
 ### clinvar_search_variants
 **Purpose**: Search ClinVar for variants
 ```python
-tu.tools.clinvar_search_variants(condition="breast cancer", max_results=20)
+tu.tools.ClinVar_search_variants(condition="breast cancer", max_results=20)
 # OR
-tu.tools.clinvar_search_variants(gene="BRCA1", max_results=20)
+tu.tools.ClinVar_search_variants(gene="BRCA1", max_results=20)
 # Returns: variant IDs, count
 ```
 
@@ -494,14 +494,14 @@ tu.tools.openalex_search_works(query="Alzheimer disease biomarker", limit=50)
 ### europe_pmc_search_abstracts
 **Purpose**: Search Europe PMC literature
 ```python
-tu.tools.europe_pmc_search_abstracts(query="Parkinson disease mechanism", limit=50)
+tu.tools.EuropePMC_search_articles(query="Parkinson disease mechanism", limit=50)
 # Returns: abstracts from Europe PMC
 ```
 
 ### semantic_scholar_search_papers
 **Purpose**: Search Semantic Scholar with citation networks
 ```python
-tu.tools.semantic_scholar_search_papers(query="cancer immunotherapy", limit=50)
+tu.tools.SemanticScholar_search_papers(query="cancer immunotherapy", limit=50)
 # Returns: papers with citation counts, influential citations
 ```
 

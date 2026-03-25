@@ -38,7 +38,7 @@ tu.tools.MedlinePlus_connect_lookup_by_code(cs=icd_oid, c=icd_code)
 ```python
 tu.tools.OpenTargets_get_associated_targets_by_disease_efoId(efoId=efo_id)
 tu.tools.OpenTargets_target_disease_evidence(efoId=efo_id, ensemblId=gene_id)  # top genes
-tu.tools.clinvar_search_variants(condition=disease_name, max_results=50)
+tu.tools.ClinVar_search_variants(condition=disease_name, max_results=50)
 tu.tools.clinvar_get_variant_details(variant_id=vid)  # top variants
 tu.tools.clinvar_get_clinical_significance(variant_id=vid)
 tu.tools.gwas_search_associations(disease_trait=disease_name, size=50)
@@ -96,8 +96,8 @@ tu.tools.PubMed_get_related(pmid=key_pmid)
 tu.tools.PubMed_get_cited_by(pmid=key_pmid)
 tu.tools.OpenTargets_get_publications_by_disease_efoId(efoId=efo_id)
 tu.tools.openalex_search_works(query=disease_name, limit=50)
-tu.tools.europe_pmc_search_abstracts(query=disease_name, limit=50)
-tu.tools.semantic_scholar_search_papers(query=disease_name, limit=50)
+tu.tools.EuropePMC_search_articles(query=disease_name, limit=50)
+tu.tools.SemanticScholar_search_papers(query=disease_name, limit=50)
 ```
 
 ---
