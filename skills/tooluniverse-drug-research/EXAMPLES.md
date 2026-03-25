@@ -43,7 +43,7 @@ pharmgkb_result = tu.tools.PharmGKB_search_drugs(query="metformin")
 | **PharmGKB ID** | PA450657 | [Link](https://www.pharmgkb.org/chemical/PA450657) |
 | **DailyMed** | Multiple | FDA approved |
 
-*Source: `PubChem_get_CID_by_compound_name`, `ChEMBL_search_compounds`, `PharmGKB_search_drugs`*
+*Source: `PubChem_get_CID_by_compound_name`, `ChEMBL_search_drugs`, `PharmGKB_search_drugs`*
 ```
 
 ### Step 3: Chemical Properties

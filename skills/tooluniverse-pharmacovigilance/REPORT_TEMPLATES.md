@@ -186,7 +186,7 @@ Every safety signal MUST include source:
 | Hypoglycemia with insulin | Reduce insulin dose |
 | Radiologic contrast | Hold 48h around procedure |
 
-*Source: DailyMed via `DailyMed_get_spl_by_set_id`*
+*Source: DailyMed via `DailyMed_search_spls`*
 ```
 
 ### Pharmacogenomics Output
@@ -203,7 +203,7 @@ Every safety signal MUST include source:
 
 **No CPIC/DPWG guidelines currently exist for metformin**
 
-*Source: PharmGKB via `PharmGKB_search_drug`*
+*Source: PharmGKB via `PharmGKB_search_drugs`*
 ```
 
 ### Clinical Trial Safety Output

@@ -7,7 +7,7 @@ Detailed procedures for each of the 6 research paths in the clinical trial desig
 ## PATH 1: Patient Population Sizing
 
 ### Steps
-1. **Disease prevalence lookup**: Use `OpenTargets_get_disease_id_description_by_name` then `OpenTargets_get_diseases_phenotypes`
+1. **Disease prevalence lookup**: Use `OpenTargets_get_disease_id_description_by_name` then `OpenTargets_get_diseases_phenotypes_by_target_ensembl`
 2. **Biomarker prevalence**: Use `ClinVar_search_variants` (gene + significance) and `gnomAD_search_gene_variants`
 3. **Literature epidemiology**: Use `PubMed_search_articles` for prevalence, incidence, geographic distribution
 4. **Enrollment feasibility**: Use `search_clinical_trials` to find past trials and enrollment rates

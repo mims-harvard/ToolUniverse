@@ -114,7 +114,7 @@ Complete reference of 225+ ToolUniverse tools for target research, organized by 
 | `drugbank_get_drug_name_and_description_by_target_name` | `target_name` | Drugs for target |
 | `GtoPdb_get_target` | `target_id` | GtoPdb target info |
 | `GtoPdb_get_targets` | `family_id` | List targets |
-| `GtoPdb_get_target_interactions` | `target_id` | Target-ligand interactions |
+| `GtoPdb_search_ligands` | `target_id` | Target-ligand interactions |
 | `GtoPdb_search_interactions` | `query` | Interaction search |
 
 ### STITCH

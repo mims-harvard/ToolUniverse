@@ -51,8 +51,8 @@ Every safety signal MUST include source tool, data period, PRR, case counts, and
 | `FAERS_filter_serious_events` | American spelling (e.g., "Hemorrhage") | MedDRA British spelling (e.g., "Haemorrhage") |
 | `FAERS_stratify_by_demographics` | Requiring `adverse_event` | `adverse_event` is optional (omit for all-event stratification) |
 | `DailyMed_search_spls` | `name` | `drug_name` |
-| `PharmGKB_search_drug` | `drug` | `query` |
-| `OpenFDA_get_drug_events` | `drug_name` | `search` |
+| `PharmGKB_search_drugs` | `drug` | `query` |
+| `OpenFDA_search_drug_events` | `drug_name` | `search` |
 
 ---
 
@@ -203,9 +203,9 @@ Save as `[DRUG]_safety_report.md`. See [REPORT_TEMPLATES.md](REPORT_TEMPLATES.md
 
 | Primary Tool | Fallback 1 | Fallback 2 |
 |--------------|------------|------------|
-| `FAERS_count_reactions_by_drug_event` | `OpenFDA_get_drug_events` | Literature search |
-| `DailyMed_get_spl_by_set_id` | `FDA_drug_label_search` | DailyMed website |
-| `PharmGKB_search_drug` | `CPIC_get_guidelines` | Literature search |
+| `FAERS_count_reactions_by_drug_event` | `OpenFDA_search_drug_events` | Literature search |
+| `DailyMed_search_spls` | `OpenFDA_search_drug_labels` | DailyMed website |
+| `PharmGKB_search_drugs` | `CPIC_list_guidelines` | Literature search |
 | `search_clinical_trials` | `ClinicalTrials.gov` API | PubMed for trial results |
 
 ---

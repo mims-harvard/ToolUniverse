@@ -8,13 +8,13 @@ Complete reference for 50+ tools used in drug research, organized by use case.
 
 | Use Case | Primary Tool | Fallback |
 |----------|--------------|----------|
-| Name → CID | `PubChem_get_CID_by_compound_name` | `ChEMBL_search_compounds` |
+| Name → CID | `PubChem_get_CID_by_compound_name` | `ChEMBL_search_drugs` |
 | SMILES → CID | `PubChem_get_CID_by_SMILES` | - |
 | Properties | `PubChem_get_compound_properties_by_CID` | ADMET-AI |
 | 2D Image | `PubChem_get_compound_2D_image_by_CID` | - |
 | Drug-likeness | `ADMETAI_predict_physicochemical_properties` | PubChem properties |
-| Targets | `ChEMBL_get_target_by_chemblid` | `DGIdb_get_drug_info` |
-| Bioactivity | `ChEMBL_get_bioactivity_by_chemblid` | `PubChem_get_bioactivity_summary_by_CID` |
+| Targets | `ChEMBL_get_target` | `DGIdb_get_drug_info` |
+| Bioactivity | `ChEMBL_get_activity` | `PubChem_get_bioactivity_summary_by_CID` |
 | Absorption | `ADMETAI_predict_bioavailability` | Literature |
 | BBB | `ADMETAI_predict_BBB_penetrance` | Literature |
 | CYP | `ADMETAI_predict_CYP_interactions` | PharmGKB |
@@ -59,11 +59,11 @@ Complete reference for 50+ tools used in drug research, organized by use case.
 ### ChEMBL Tools
 | Tool | Purpose | Key Output |
 |------|---------|------------|
-| `ChEMBL_search_compounds` | Name/structure search | ChEMBL ID, pref_name |
-| `ChEMBL_get_compound_by_chemblid` | Compound details | SMILES, properties, synonyms |
-| `ChEMBL_get_bioactivity_by_chemblid` | Activity data | IC50, Ki, EC50 values |
-| `ChEMBL_get_target_by_chemblid` | Protein targets | Target ChEMBL IDs, UniProt |
-| `ChEMBL_get_assays_by_chemblid` | Assay metadata | Assay types, organisms |
+| `ChEMBL_search_drugs` | Name/structure search | ChEMBL ID, pref_name |
+| `ChEMBL_get_molecule` | Compound details | SMILES, properties, synonyms |
+| `ChEMBL_get_activity` | Activity data | IC50, Ki, EC50 values |
+| `ChEMBL_get_target` | Protein targets | Target ChEMBL IDs, UniProt |
+| `ChEMBL_get_assays` | Assay metadata | Assay types, organisms |
 | `ChEMBL_search_targets` | Target search | Target ChEMBL IDs |
 
 ---
@@ -560,8 +560,8 @@ PubMed_get_cited_by (for key papers)
 
 | Primary | Fallback 1 | Fallback 2 |
 |---------|------------|------------|
-| `PubChem_get_CID_by_compound_name` | `ChEMBL_search_compounds` | Manual SMILES search |
-| `ChEMBL_get_bioactivity_by_chemblid` | `PubChem_get_bioactivity_summary_by_CID` | Literature search |
+| `PubChem_get_CID_by_compound_name` | `ChEMBL_search_drugs` | Manual SMILES search |
+| `ChEMBL_get_activity` | `PubChem_get_bioactivity_summary_by_CID` | Literature search |
 | `DailyMed_search_spls` | `PubChem_get_drug_label_info_by_CID` | FDA Orange Book |
 | `PharmGKB_get_dosing_guidelines` | Note "No guideline" | Literature search |
 | `FAERS_count_reactions_by_drug_event` | Note "FAERS unavailable" | Trial AE data |

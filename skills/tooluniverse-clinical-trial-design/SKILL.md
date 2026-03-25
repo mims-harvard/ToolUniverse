@@ -113,7 +113,7 @@ Create `[INDICATION]_trial_feasibility_report.md` with all 14 sections. See `REP
 
 ### PATH 1: Patient Population Sizing
 - `OpenTargets_get_disease_id_description_by_name` - Disease lookup
-- `OpenTargets_get_diseases_phenotypes` - Prevalence data
+- `OpenTargets_get_diseases_phenotypes_by_target_ensembl` - Prevalence data
 - `ClinVar_search_variants` - Biomarker mutation frequency
 - `gnomAD_search_gene_variants` - Population allele frequencies
 - `PubMed_search_articles` - Epidemiology literature

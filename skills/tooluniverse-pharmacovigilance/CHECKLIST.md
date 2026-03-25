@@ -85,8 +85,8 @@ Pre-delivery verification checklist for drug safety reports.
 ### Format Examples
 ```markdown
 *Source: FAERS via `FAERS_count_reactions_by_drug_event` (Q1 2020 - Q4 2025)*
-*Source: DailyMed via `DailyMed_get_spl_by_set_id` (setid: abc123)*
-*Source: PharmGKB via `PharmGKB_search_drug` (PA450360)*
+*Source: DailyMed via `DailyMed_search_spls` (setid: abc123)*
+*Source: PharmGKB via `PharmGKB_search_drugs` (PA450360)*
 *Source: ClinicalTrials.gov via `search_clinical_trials`*
 ```
 

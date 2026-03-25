@@ -720,7 +720,7 @@ result = tu.tools.OMIM_search(query="BRCA1")
 | Tool | Purpose | Key Parameters |
 |------|---------|----------------|
 | `PDBe_get_uniprot_mappings` | Find structures | `uniprot_id` |
-| `PDB_get_structure` | Download PDB | `pdb_id` |
+| `RCSBData_get_entry` | Download PDB | `pdb_id` |
 
 **Example - Get structure**:
 ```python

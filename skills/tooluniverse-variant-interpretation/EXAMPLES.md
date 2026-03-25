@@ -495,7 +495,7 @@
 | `clinvar_search_variants` | Classification | VCV000376642 (VUS) |
 | `gnomad_search_variants` | Population freq | 0 (absent) |
 | `MyVariant_query_variants` | Predictions | All damaging |
-| `PDB_get_structure` | Structure | 2OCJ |
+| `RCSBData_get_entry` | Structure | 2OCJ |
 | `PubMed_search_articles` | Literature | R175 studies |
 ```
 

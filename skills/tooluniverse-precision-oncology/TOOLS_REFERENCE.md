@@ -26,7 +26,7 @@ for v in variants:
 | Tool | Purpose | Key Parameters |
 |------|---------|----------------|
 | `ClinVar_search_variants` | Search variants | `query`, `gene` |
-| `ClinVar_get_variant_by_id` | Get variant details | `variant_id` |
+| `clinvar_get_variant_details` | Get variant details | `variant_id` |
 
 ### COSMIC - Somatic Cancer Mutations (NEW)
 
@@ -323,7 +323,7 @@ cells = tu.tools.DepMap_get_cell_lines(
 | Tool | Purpose | Key Parameters |
 |------|---------|----------------|
 | `DailyMed_search_spls` | Search FDA labels | `drug_name` |
-| `DailyMed_get_spl_by_set_id` | Get label details | `setid` |
+| `DailyMed_search_spls` | Get label details | `setid` |
 
 ---
 

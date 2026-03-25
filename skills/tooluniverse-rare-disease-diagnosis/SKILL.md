@@ -48,7 +48,7 @@ See [REPORT_TEMPLATE.md](REPORT_TEMPLATE.md) for the full template and example o
 | Tool | WRONG Parameter | CORRECT Parameter |
 |------|-----------------|-------------------|
 | `OpenTargets_get_associated_diseases_by_target_ensemblId` | `ensemblID` | `ensemblId` |
-| `ClinVar_get_variant_by_id` | `variant_id` | `id` |
+| `clinvar_get_variant_details` | `variant_id` | `id` |
 | `MyGene_query_genes` | `gene` | `q` |
 | `gnomAD_get_variant_frequencies` | `variant` | `variant_id` |
 
@@ -196,10 +196,10 @@ See [CHECKLIST.md](CHECKLIST.md) for the full interactive checklist.
 | Primary Tool | Fallback 1 | Fallback 2 |
 |--------------|------------|------------|
 | `get_joint_associated_diseases_by_HPO_ID_list` | `Orphanet_search_diseases` | PubMed phenotype search |
-| `ClinVar_get_variant` | `gnomAD_get_variant` | VEP annotation |
+| `clinvar_get_variant_details` | `gnomAD_get_variant` | VEP annotation |
 | `NvidiaNIM_alphafold2` | `alphafold_get_prediction` | UniProt features |
-| `GTEx_expression` | `HPA_expression` | Tissue-specific literature |
-| `gnomAD_get_variant` | `ExAC_frequencies` | 1000 Genomes |
+| `GTEx_get_expression_summary` | `HPA_search_genes_by_query` | Tissue-specific literature |
+| `gnomAD_get_variant` | `gnomad_get_variant` | 1000 Genomes |
 
 ---
 

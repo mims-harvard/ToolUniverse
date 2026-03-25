@@ -143,7 +143,7 @@ result = tu.tools.NvidiaNIM_esm2_650m(
 | Tool | Purpose | Key Parameters |
 |------|---------|----------------|
 | `PDBe_get_uniprot_mappings` | Find PDB structures | `uniprot_id` |
-| `PDB_get_structure` | Download PDB file | `pdb_id` |
+| `RCSBData_get_entry` | Download PDB file | `pdb_id` |
 | `alphafold_get_prediction` | Get AlphaFold DB structure | `accession` |
 
 **Example - Get target structure**:

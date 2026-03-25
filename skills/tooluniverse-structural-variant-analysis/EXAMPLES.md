@@ -181,7 +181,7 @@
 
 **ACMG Code**: **PP4** (Supporting) - Patient phenotype highly specific for NF1-related disorder
 
-*Source: `DECIPHER_search` (accessed 2026-02-09)*
+*Source: `ClinGen_search_dosage_sensitivity` (accessed 2026-02-09)*
 
 ---
 
@@ -444,7 +444,7 @@ No significant uncertainties affect the Pathogenic classification. NF1 haploinsu
 | ClinGen | `ClinGen_search_gene_validity` | NF1 - Neurofibromatosis 1 | Definitive |
 | OMIM | `OMIM_search` | NF1 | Gene #613113, Disease #162200 |
 | OMIM | `OMIM_get_entry` | 162200 | Neurofibromatosis type 1 details |
-| DECIPHER | `DECIPHER_search` | NF1 deletions | 87 patients, phenotype frequencies |
+| DECIPHER | `ClinGen_search_dosage_sensitivity` | NF1 deletions | 87 patients, phenotype frequencies |
 | DisGeNET | `DisGeNET_search_gene` | NF1 | Score 0.8 for neurofibromatosis |
 
 ### 10.3 Literature

@@ -451,14 +451,14 @@ Rate each link in the causal chain:
 | `OpenTargets_get_variant_credible_sets` | `variant_id` (chr_pos_ref_alt) | L2G and credible sets |
 | `MyGene_query_genes` | `query`, `species`, `fields`, `size` | Gene ID resolution |
 | `STRING_get_interaction_partners` | `protein_ids` (array), `species` (9606) | PPI network |
-| `STRING_get_functional_enrichment` | `protein_ids` (array), `species` (9606) | GO/KEGG/Reactome enrichment |
+| `STRING_functional_enrichment` | `protein_ids` (array), `species` (9606) | GO/KEGG/Reactome enrichment |
 | `ReactomeAnalysis_pathway_enrichment` | `identifiers` (space-separated STRING) | Pathway enrichment |
 | `UniProt_get_function_by_accession` | `accession` | Function annotation (returns list of strings) |
 | `PANTHER_enrichment` | `gene_list` (comma-separated), `organism` (9606), `annotation_dataset` | GO enrichment |
 | `OpenTargets_get_diseases_phenotypes_by_target_ensembl` | `ensemblId` | Gene-disease associations |
 | `OpenTargets_target_disease_evidence` | `ensemblId`, `efoId` | Specific gene-disease evidence |
 | `OpenTargets_search_gwas_studies_by_disease` | `diseaseIds` (array), `size` | GWAS studies from OT |
-| `OpenTargets_multi_entity_search` | `queryString` | Entity ID resolution |
+| `OpenTargets_get_disease_id_description_by_name` | `queryString` | Entity ID resolution |
 | `GenCC_search_gene` | `gene_symbol` | Curated gene-disease validity |
 | `DisGeNET_search_gene` | `gene` (symbol), `limit` | Scored gene-disease associations |
 

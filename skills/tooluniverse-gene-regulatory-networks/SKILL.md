@@ -339,7 +339,7 @@ Performs GO, KEGG, Reactome enrichment on a gene set from the network.
 
 ## Common Mistakes
 
-1. **JASPAR tool name**: Use `jaspar_search_matrices` (lowercase, plural), NOT `JASPAR_search_matrix`.
+1. **JASPAR tool name**: Use `jaspar_search_matrices` (lowercase, plural), NOT `jaspar_search_matrices`.
 
 2. **JASPAR search param**: The parameter is `search` (NOT `query` or `name`).
 

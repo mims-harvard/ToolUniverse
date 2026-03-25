@@ -84,7 +84,7 @@ Pre-delivery verification checklist for rare disease diagnostic reports.
 *Source: Orphanet via `Orphanet_558` (ORPHA:558)*
 *Source: OMIM via `OMIM_get_entry` (MIM:154700)*
 *Source: HPO via `HPO_search_terms` (HP:0001166)*
-*Source: ClinVar via `ClinVar_get_variant` (VCV000012345)*
+*Source: ClinVar via `clinvar_get_variant_details` (VCV000012345)*
 *Source: gnomAD via `gnomAD_get_variant_frequencies` (AF: 0.00001)*
 *Source: NVIDIA NIM via `NvidiaNIM_alphafold2` (pLDDT: 85.3)*
 ```

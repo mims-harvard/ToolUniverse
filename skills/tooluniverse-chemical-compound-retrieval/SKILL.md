@@ -314,9 +314,9 @@ User: "What proteins does gefitinib target?"
 **ChEMBL (Bioactivity Database)**
 | Tool | Purpose |
 |------|---------|
-| `ChEMBL_search_compounds` | Name/structure search |
-| `ChEMBL_get_compound_by_chemblid` | Compound details |
-| `ChEMBL_get_bioactivity_by_chemblid` | Activity data |
-| `ChEMBL_get_target_by_chemblid` | Protein targets |
+| `ChEMBL_search_drugs` | Name/structure search |
+| `ChEMBL_get_molecule` | Compound details |
+| `ChEMBL_get_activity` | Activity data |
+| `ChEMBL_get_target` | Protein targets |
 | `ChEMBL_search_targets` | Target search |
-| `ChEMBL_get_assays_by_chemblid` | Assay metadata |
+| `ChEMBL_get_assays` | Assay metadata |

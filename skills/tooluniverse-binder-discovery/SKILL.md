@@ -177,7 +177,7 @@ Always report pLDDT confidence scores (>=90 very high, 70-90 confident, <70 caut
 |--------|------|-----------|
 | ChEMBL | `ChEMBL_get_target_activities` | Curated, SAR-ready |
 | BindingDB | `BindingDB_get_ligands_by_uniprot` | Direct Ki/Kd, literature links |
-| GtoPdb | `GtoPdb_get_target_interactions` | Pharmacology focus (GPCRs, channels) |
+| GtoPdb | `GtoPdb_search_ligands` | Pharmacology focus (GPCRs, channels) |
 | PubChem | `PubChem_search_assays_by_target_gene` | HTS screens, novel scaffolds |
 | Open Targets | `OpenTargets_get_chemical_probes_by_target_ensemblID` | Validated probes |
 

@@ -103,7 +103,7 @@ For implementation pseudocode, see `ANALYSIS_PROCEDURES.md` Phase 2.
 | `ClinGen_search_dosage_sensitivity` | HI/TS scores (0-3, gold standard) |
 | `ClinGen_search_gene_validity` | Gene-disease validity level |
 | `gnomad_search_variants` | pLI scores for LoF intolerance |
-| `DECIPHER_search` | Developmental disorder cases |
+| `ClinGen_search_dosage_sensitivity` | Developmental disorder cases |
 | `OMIM_get_entry` | Inheritance pattern (AD suggests dosage sensitivity) |
 
 Key thresholds: ClinGen HI/TS score 3 = definitive dosage sensitivity. pLI >= 0.9 = likely haploinsufficient. See `CLASSIFICATION_GUIDE.md` for full score interpretation tables.
@@ -119,7 +119,7 @@ Key thresholds: ClinGen HI/TS score 3 = definitive dosage sensitivity. pLI >= 0.
 |------|---------|
 | `gnomad_search_variants` | Population SV frequencies |
 | `ClinVar_search_variants` | Known pathogenic/benign SVs |
-| `DECIPHER_search` | Patient SVs with phenotypes |
+| `ClinGen_search_dosage_sensitivity` | Patient SVs with phenotypes |
 
 Key thresholds: >=1% = BA1 (benign). 0.1-1% = BS1 (strong benign). <0.01% = PM2 (supporting pathogenic). Use >=70% reciprocal overlap to define "same" SV.
 
@@ -146,7 +146,7 @@ For detailed scoring breakdowns and implementation, see `CLASSIFICATION_GUIDE.md
 |------|---------|
 | `PubMed_search_articles` | Peer-reviewed literature |
 | `EuropePMC_search_articles` | European literature (additional coverage) |
-| `DECIPHER_search` | Patient case database |
+| `ClinGen_search_dosage_sensitivity` | Patient case database |
 
 Search strategies: gene-specific dosage sensitivity papers, SV-specific case reports, DECIPHER cohort phenotype analysis. See `ANALYSIS_PROCEDURES.md` Phase 6.
 
@@ -194,7 +194,7 @@ SV_analysis_[TYPE]_chr[CHR]_[START]_[END]_[GENES].md
 | `ClinGen_search_dosage_sensitivity` | HI/TS scores | **Required** |
 | `ClinGen_search_gene_validity` | Gene-disease validity | **Required** |
 | `ClinVar_search_variants` | Known pathogenic/benign SVs | **Required** |
-| `DECIPHER_search` | Patient cases, phenotypes | Highly recommended |
+| `ClinGen_search_dosage_sensitivity` | Patient cases, phenotypes | Highly recommended |
 | `ensembl_lookup_gene` | Gene coordinates, structure | **Required** |
 | `OMIM_search`, `OMIM_get_entry` | Gene-disease associations | **Required** |
 | `DisGeNET_search_gene` | Additional disease associations | Recommended |

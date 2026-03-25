@@ -133,7 +133,7 @@ Metformin is generally well-tolerated but carries a **boxed warning for lactic a
 | Hypoglycemia with insulin | May need insulin dose reduction |
 | Excessive alcohol | Avoid; potentiates lactic acidosis |
 
-*Source: DailyMed via `DailyMed_get_spl_by_set_id`*
+*Source: DailyMed via `DailyMed_search_spls`*
 
 ---
 
@@ -158,7 +158,7 @@ Metformin is generally well-tolerated but carries a **boxed warning for lactic a
 
 **Note**: No CPIC or DPWG guidelines for metformin PGx testing at this time.
 
-*Source: PharmGKB via `PharmGKB_search_drug`*
+*Source: PharmGKB via `PharmGKB_search_drugs`*
 
 ---
 

@@ -118,7 +118,7 @@ def assess_structure_quality(structure_result):
 
 | Tool | Purpose | Key Parameters |
 |------|---------|----------------|
-| `DrugBank_search` | Search drugs | `query` |
+| `drugbank_vocab_search` | Search drugs | `query` |
 | `DrugBank_get_drug` | Get drug details | `drugbank_id` |
 | `DrugBank_get_targets` | Get drug targets | `drugbank_id` |
 
@@ -440,7 +440,7 @@ def transfer_knowledge(tu, novel_pathogen, reference_pathogen):
 ### Drug Search
 | Primary | Fallback 1 | Fallback 2 |
 |---------|------------|------------|
-| `ChEMBL_search_drugs` | `DrugBank_search` | PubChem BioAssay |
+| `ChEMBL_search_drugs` | `drugbank_vocab_search` | PubChem BioAssay |
 
 ### Pathway Analysis (NEW)
 | Primary | Fallback 1 | Fallback 2 |

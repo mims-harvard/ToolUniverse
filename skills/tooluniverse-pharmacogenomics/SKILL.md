@@ -314,7 +314,7 @@ result = tu.tools.FAERS_filter_serious_events(
 | Mistake | Correction |
 |---|---|
 | Using wrong params with `CPIC_list_guidelines` | Supports `gene`, `gene_symbol`, `drug`, `drug_name` filters; use them to filter server-side |
-| Using `CPIC_search_pairs` | Tool does not exist; use `CPIC_search_gene_drug_pairs` |
+| Using `CPIC_search_gene_drug_pairs` | Tool does not exist; use `CPIC_search_gene_drug_pairs` |
 | Passing string to `guideline_id` in CPIC_get_recommendations | Must be integer (e.g., 100416 not "100416") -- OR use `drug="codeine"` for auto-resolution |
 | Using `pharmgkbid` in PharmGKB_get_dosing_guidelines | Use `clinpgxid` (e.g., "PA166251445") |
 | Passing gene/drug to PharmGKB_get_clinical_annotations | Requires `annotation_id`; discover IDs via `PharmGKB_search_variants(query=rsID)` |

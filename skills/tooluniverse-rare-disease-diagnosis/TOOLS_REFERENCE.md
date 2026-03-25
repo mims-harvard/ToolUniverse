@@ -233,7 +233,7 @@ actionability = tu.tools.ClinGen_search_actionability(gene="BRCA1")
 | Tool | Purpose | Key Parameters |
 |------|---------|----------------|
 | `ClinVar_search_variants` | Search variants | `query` |
-| `ClinVar_get_variant_by_id` | Get variant details | `id` (not `variant_id`) |
+| `clinvar_get_variant_details` | Get variant details | `id` (not `variant_id`) |
 | `ClinVar_get_variant_classifications` | Classification history | `id` |
 
 **Parameter Note**: Use `id` not `variant_id` for ClinVar lookups.
@@ -720,8 +720,8 @@ def analyze_vus_structure(tu, uniprot_id, variant_position):
 ### Variant Annotation
 | Primary | Fallback 1 | Fallback 2 |
 |---------|------------|------------|
-| `ClinVar_get_variant` | `gnomAD_get_variant` | Literature search |
-| `gnomAD_get_variant_frequencies` | `ExAC_frequencies` | 1000 Genomes |
+| `clinvar_get_variant_details` | `gnomAD_get_variant` | Literature search |
+| `gnomAD_get_variant_frequencies` | `gnomad_get_variant` | 1000 Genomes |
 
 ### Pathogenicity Prediction (ENHANCED)
 | Primary | Fallback 1 | Fallback 2 |
@@ -750,7 +750,7 @@ def analyze_vus_structure(tu, uniprot_id, variant_position):
 | Tool | Wrong | Correct |
 |------|-------|---------|
 | `MyGene_query_genes` | `gene="FBN1"` | `q="FBN1"` |
-| `ClinVar_get_variant_by_id` | `variant_id=123` | `id=123` |
+| `clinvar_get_variant_details` | `variant_id=123` | `id=123` |
 | `OpenTargets_*` | `ensemblID` | `ensemblId` (camelCase) |
 | `GTEx_get_median_gene_expression` | `ensembl_id` | `gencode_id` (versioned) |
 | `gnomAD_get_variant_frequencies` | `variant="c.123A>G"` | `variant_id="1-123-A-G"` |

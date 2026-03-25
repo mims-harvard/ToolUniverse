@@ -7,7 +7,7 @@
 | Tool | Purpose | Key Parameters |
 |------|---------|----------------|
 | `DailyMed_search_spls` | Search drug labels | `drug_name` |
-| `DailyMed_get_spl_by_set_id` | Get full label | `setid` |
+| `DailyMed_search_spls` | Get full label | `setid` |
 | `DailyMed_get_drug_interactions` | Drug interactions | `setid` |
 
 **Example - Resolve drug identity**:
@@ -62,7 +62,7 @@ details = tu.tools.FAERS_get_event_details(
 
 | Tool | Purpose | Key Parameters |
 |------|---------|----------------|
-| `OpenFDA_get_drug_events` | AE reports | `search` |
+| `OpenFDA_search_drug_events` | AE reports | `search` |
 | `OpenFDA_get_drug_recalls` | Drug recalls | `search` |
 | `OpenFDA_get_enforcement` | Enforcement actions | `search` |
 
@@ -96,7 +96,7 @@ def extract_safety_sections(tu, setid):
 
 | Tool | Purpose | Key Parameters |
 |------|---------|----------------|
-| `PharmGKB_search_drug` | Search drug annotations | `query` |
+| `PharmGKB_search_drugs` | Search drug annotations | `query` |
 | `PharmGKB_get_clinical_annotations` | Clinical PGx data | `drug_id` |
 | `PharmGKB_get_drug_labels` | PGx labeling | `drug_id` |
 | `PharmGKB_get_variants` | Relevant variants | `drug_id` |
@@ -116,7 +116,7 @@ annotations = tu.tools.PharmGKB_get_clinical_annotations(
 
 | Tool | Purpose | Key Parameters |
 |------|---------|----------------|
-| `CPIC_get_guidelines` | CPIC guidelines | `drug_name` or `gene` |
+| `CPIC_list_guidelines` | CPIC guidelines | `drug_name` or `gene` |
 | `CPIC_get_recommendations` | Dosing recommendations | `guideline_id` |
 
 ---
@@ -417,19 +417,19 @@ def detect_emerging_signals(tu, drug_name, threshold_prr=3.0):
 ### FAERS Alternatives
 | Primary | Fallback 1 | Fallback 2 |
 |---------|------------|------------|
-| `FAERS_count_reactions_by_drug_event` | `OpenFDA_get_drug_events` | PubMed safety literature |
+| `FAERS_count_reactions_by_drug_event` | `OpenFDA_search_drug_events` | PubMed safety literature |
 | `FAERS_get_event_details` | OpenFDA with filters | Manual FAERS query |
 
 ### Label Alternatives
 | Primary | Fallback 1 | Fallback 2 |
 |---------|------------|------------|
-| `DailyMed_get_spl_by_set_id` | `OpenFDA_get_drug_labels` | FDA website |
+| `DailyMed_search_spls` | `OpenFDA_get_drug_labels` | FDA website |
 | `DailyMed_search_spls` | `FDA_drug_search` | DrugBank |
 
 ### PGx Alternatives
 | Primary | Fallback 1 | Fallback 2 |
 |---------|------------|------------|
-| `PharmGKB_search_drug` | `CPIC_get_guidelines` | FDA PGx table |
+| `PharmGKB_search_drugs` | `CPIC_list_guidelines` | FDA PGx table |
 | `PharmGKB_get_clinical_annotations` | Literature search | FDA label PGx |
 
 ### Pathway Analysis (NEW)
@@ -470,8 +470,8 @@ mapping = tu.tools.AdverseEventICDMapper(
 |------|-------|---------|
 | `FAERS_count_reactions_by_drug_event` | `drug="metformin"` | `drug_name="metformin"` |
 | `DailyMed_search_spls` | `name="aspirin"` | `drug_name="aspirin"` |
-| `PharmGKB_search_drug` | `drug="warfarin"` | `query="warfarin"` |
-| `OpenFDA_get_drug_events` | `drug_name="X"` | `search="patient.drug.medicinalproduct:X"` |
+| `PharmGKB_search_drugs` | `drug="warfarin"` | `query="warfarin"` |
+| `OpenFDA_search_drug_events` | `drug_name="X"` | `search="patient.drug.medicinalproduct:X"` |
 
 ---
 

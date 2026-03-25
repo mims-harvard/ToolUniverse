@@ -280,7 +280,7 @@ ot_gwas = tu.tools.OpenTargets_search_gwas_studies_by_disease(
 
 ### ID Resolution for OpenTargets
 
-Use `ols_search_terms` or `OpenTargets_multi_entity_search` to find MONDO/EFO IDs:
+Use `ols_search_terms` or `OpenTargets_get_disease_id_description_by_name` to find MONDO/EFO IDs:
 
 ```python
 # Search OpenTargets for disease ID
@@ -333,7 +333,7 @@ Integrate all evidence to assess regulatory variant impact.
 | `ENCODE_search_histone_experiments` | `histone_mark`, `biosample_term_name`, `limit` | Histone ChIP-seq data |
 | `ENCODE_search_experiments` | `assay_title`, `target`, `organism`, `limit` | General ENCODE search |
 | `OpenTargets_search_gwas_studies_by_disease` | `diseaseIds` (array), `size` | GWAS studies from OT |
-| `OpenTargets_multi_entity_search` | `queryString` | Disease/gene ID resolution |
+| `OpenTargets_get_disease_id_description_by_name` | `queryString` | Disease/gene ID resolution |
 | `ols_search_terms` | `query`, `ontology`, `exact`, `rows` | Ontology term search |
 | `ols_get_term_info` | `term_id` | Ontology term details (ontology inferred from CURIE) |
 | `EnsemblVEP_annotate_rsid` | `variant_id` (NOT rsid) | VEP annotation for rsID |

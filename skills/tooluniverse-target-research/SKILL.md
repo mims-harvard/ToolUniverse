@@ -252,10 +252,10 @@ See [IMPLEMENTATION.md](IMPLEMENTATION.md) for collision-aware search code.
 
 | Primary Tool | Fallback 1 | Fallback 2 |
 |--------------|------------|------------|
-| `ChEMBL_get_target_activities` | `GtoPdb_get_target_ligands` | `OpenTargets drugs` |
+| `ChEMBL_get_target_activities` | `GtoPdb_search_ligands` | `OpenTargets drugs` |
 | `intact_get_interactions` | `STRING_get_protein_interactions` | `OpenTargets interactions` |
 | `GO_get_annotations_for_gene` | `OpenTargets GO` | `MyGene GO` |
-| `GTEx_get_median_gene_expression` | `HPA_get_rna_expression` | Document as unavailable |
+| `GTEx_get_median_gene_expression` | `HPA_get_rna_expression_by_source` | Document as unavailable |
 | `gnomad_get_gene_constraints` | `OpenTargets constraint` | - |
 | `DGIdb_get_drug_gene_interactions` | `OpenTargets drugs` | `GtoPdb` |
 

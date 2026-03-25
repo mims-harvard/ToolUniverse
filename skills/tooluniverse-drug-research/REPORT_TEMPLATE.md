@@ -185,7 +185,7 @@ Block citation at section end:
 ---
 **Data Sources for this section:**
 - PubChem: `PubChem_get_compound_properties_by_CID` (CID: 4091)
-- ChEMBL: `ChEMBL_get_bioactivity_by_chemblid` (CHEMBL1431)
+- ChEMBL: `ChEMBL_get_activity` (CHEMBL1431)
 - DGIdb: `DGIdb_get_drug_info` (metformin)
 ---
 ```

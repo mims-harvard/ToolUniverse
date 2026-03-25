@@ -672,10 +672,10 @@ def call_with_retry(tu, tool_name, params, max_retries=3):
 
 | Primary Tool | Fallback 1 | Fallback 2 | Failure Action |
 |--------------|------------|------------|----------------|
-| `ChEMBL_get_target_activities` | `GtoPdb_get_target_ligands` | `OpenTargets drugs` | Note in report |
+| `ChEMBL_get_target_activities` | `GtoPdb_search_ligands` | `OpenTargets drugs` | Note in report |
 | `intact_get_interactions` | `STRING_get_protein_interactions` | `OpenTargets interactions` | Note in report |
 | `GO_get_annotations_for_gene` | `OpenTargets GO` | `MyGene GO` | Note in report |
-| `GTEx_get_median_gene_expression` | `HPA_get_rna_expression` | Note as unavailable | Document in report |
+| `GTEx_get_median_gene_expression` | `HPA_get_rna_expression_by_source` | Note as unavailable | Document in report |
 | `gnomad_get_gene_constraints` | `OpenTargets constraint` | - | Note in report |
 | `DGIdb_get_drug_gene_interactions` | `OpenTargets drugs` | `GtoPdb` | Note in report |
 

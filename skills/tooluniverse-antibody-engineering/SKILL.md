@@ -70,7 +70,7 @@ Every optimization MUST include per-variant documentation with:
 | `iedb_search_epitopes` | Epitope identification | Immunogenicity |
 | `iedb_search_bcell` | B-cell epitope prediction | Immunogenicity |
 | `UniProt_get_entry_by_accession` | Target antigen information | Target |
-| `STRING_get_interactions` | Protein interaction network | Bispecifics |
+| `STRING_get_interaction_partners` | Protein interaction network | Bispecifics |
 | `PubMed_search_articles` | Literature precedents | Validation |
 
 **CRITICAL**: SOAP tools (IMGT, SAbDab, TheraSAbDab) require an `operation` parameter. See `QUICK_START.md` for correct usage.
@@ -298,10 +298,10 @@ See `REPORT_TEMPLATE.md` for the full report template.
 ### Structure & Target
 - `alphafold_get_prediction`: Structure prediction
 - `UniProt_get_entry_by_accession`: Target info
-- `PDB_get_structure`: Experimental structures
+- `RCSBData_get_entry`: Experimental structures
 
 ### Systems Biology (for Bispecifics)
-- `STRING_get_interactions`: Protein interactions
+- `STRING_get_interaction_partners`: Protein interactions
 - `STRING_get_enrichment`: Pathway analysis
 
 ---

@@ -143,9 +143,9 @@ For approved drugs, retrieve these DailyMed sections early (after getting set_id
 
 | Primary Tool | Fallback | Use When |
 |--------------|----------|----------|
-| `PubChem_get_CID_by_compound_name` | `ChEMBL_search_compounds` | Name not in PubChem |
+| `PubChem_get_CID_by_compound_name` | `ChEMBL_search_drugs` | Name not in PubChem |
 | `ChEMBL_get_molecule_targets` | **Use `ChEMBL_search_activities` instead** | Always avoid this tool |
-| `ChEMBL_get_bioactivity_by_chemblid` | `PubChem_get_bioactivity_summary_by_CID` | No ChEMBL ID |
+| `ChEMBL_get_activity` | `PubChem_get_bioactivity_summary_by_CID` | No ChEMBL ID |
 | `DailyMed_search_spls` | `PubChem_get_drug_label_info_by_CID` | DailyMed timeout |
 | `PharmGKB_search_drugs` | DailyMed PGx sections + PubMed | PharmGKB unavailable |
 | `PharmGKB_get_dosing_guidelines` | DailyMed pharmacogenomics section | PharmGKB API error |
@@ -158,15 +158,15 @@ For approved drugs, retrieve these DailyMed sections early (after getting set_id
 
 | Use Case | Primary Tool | Fallback | Evidence |
 |----------|--------------|----------|----------|
-| Name -> CID | `PubChem_get_CID_by_compound_name` | `ChEMBL_search_compounds` | T1 |
+| Name -> CID | `PubChem_get_CID_by_compound_name` | `ChEMBL_search_drugs` | T1 |
 | Properties | `PubChem_get_compound_properties_by_CID` | ADMET-AI physicochemical | T1/T2 |
-| FDA MOA | `DailyMed_get_spl_sections_by_setid` (mechanism_of_action) | - | T1 |
+| FDA MOA | `DailyMed_parse_clinical_pharmacology` (mechanism_of_action) | - | T1 |
 | Targets | `ChEMBL_search_activities` -> `ChEMBL_get_target` | `DGIdb_get_drug_info` | T1 |
 | ADMET | `ADMETAI_predict_*` (5 tools) | DailyMed PK sections | T2/T1 |
 | Trials | `search_clinical_trials` | - | T1 |
 | Trial outcomes | `extract_clinical_trial_outcomes` | - | T1 |
 | FAERS | `FAERS_count_reactions_by_drug_event` | Label adverse_reactions | T1 |
-| Dose mods | `DailyMed_get_spl_sections_by_setid` (dosage, warnings) | - | T1 |
+| Dose mods | `DailyMed_parse_clinical_pharmacology` (dosage, warnings) | - | T1 |
 | PGx | `PharmGKB_search_drugs` | DailyMed PGx + PubMed | T2/T1 |
 | Label | `DailyMed_search_spls` | `PubChem_get_drug_label_info_by_CID` | T1 |
 | Literature | `PubMed_search_articles` | `EuropePMC_search_articles` | Varies |
