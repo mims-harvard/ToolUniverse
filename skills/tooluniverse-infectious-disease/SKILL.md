@@ -56,10 +56,14 @@ Every finding must have inline source attribution:
 
 | Tool | WRONG Parameter | CORRECT Parameter |
 |------|-----------------|-------------------|
-| `NCBI_Taxonomy_search` | `name` | `query` |
+| `NCBIDatasets_get_taxonomy` | `name` | `tax_id` (integer) or use `BVBRC_search_taxonomy` for keyword search |
 | `UniProt_search` | `name` | `query` |
-| `ChEMBL_search_targets` | `target` | `query` |
+| `ChEMBL_search_targets` | `query`, `target` | `pref_name__contains` (substring match) |
 | `NvidiaNIM_diffdock` | `protein_file` | `protein` (content) |
+| `drugbank_full_search` | _(may fail)_ | Use `drugbank_vocab_search` as primary DrugBank lookup |
+
+> **PubMed tip**: Use `sort="relevance"` (default) not `sort="pub_date"` — date-sorted queries can return empty for narrow topics. Tool name: `PubMed_search_articles`.
+> **FDA labels**: Use `FDA_get_drug_label_info_by_field_value` with targeted `return_fields` to avoid oversized responses from `OpenFDA_search_drug_labels`.
 
 ---
 
