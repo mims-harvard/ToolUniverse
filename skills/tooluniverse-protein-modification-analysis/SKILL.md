@@ -161,7 +161,7 @@ For each modification type, table of:
 - Returns: PTM-dependent PPI records — interacting protein, PTM site, modification type, interaction effect (enables/disrupts), source
 
 **STRING_get_interaction_partners** (supplemental general PPI context):
-- `protein_ids`: list of gene symbols or STRING IDs
+- `identifiers`: gene symbol or STRING ID (string, not array)
 - `species`: 9606 for human
 - `required_score`: 700 for high confidence
 - Returns: interaction network with confidence scores
