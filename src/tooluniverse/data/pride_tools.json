@@ -21,7 +21,8 @@
       ]
     },
     "fields": {
-      "endpoint": "https://www.ebi.ac.uk/pride/ws/archive/v2/projects?query={query}&pageSize={page_size}",
+      "endpoint": "https://www.ebi.ac.uk/pride/ws/archive/v2/projects?query={query}",
+      "params": {"pageSize": "20"},
       "return_format": "JSON"
     },
     "return_schema": {

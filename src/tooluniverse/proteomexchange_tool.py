@@ -198,20 +198,41 @@ class ProteomeXchangeTool(BaseTool):
         else:
             raw_list = []
 
+        import re
+
+        def _strip_html(val):
+            """Strip HTML tags from API response values."""
+            if isinstance(val, str):
+                return re.sub(r"<[^>]+>", "", val).strip()
+            return val
+
+        # Client-side keyword filter (API ignores keyword param)
+        query_lower = query.lower() if query else ""
+
         datasets = []
-        for ds in raw_list[:limit]:
+        for ds in raw_list:
             if not isinstance(ds, dict):
                 continue
+            # ProteomeCentral uses "Dataset Identifier", "Title", "Species" (HTML-wrapped)
+            acc = _strip_html(ds.get("Dataset Identifier") or ds.get("identifier", ""))
+            title = _strip_html(ds.get("Title") or ds.get("title", ""))
+            species = _strip_html(ds.get("Species") or str(ds.get("species", "")))
+            contact = _strip_html(ds.get("LabHead") or ds.get("contact", ""))
+
+            # Client-side keyword filtering since API ignores keyword param
+            if query_lower and query_lower not in (title + " " + species).lower():
+                continue
+
             datasets.append(
                 {
-                    "accession": ds.get("identifier", ""),
-                    "title": ds.get("title", "")
-                    if isinstance(ds.get("title"), str)
-                    else "",
-                    "species": ds.get("species", []),
-                    "contact": ds.get("contact", ""),
+                    "accession": acc,
+                    "title": title,
+                    "species": species,
+                    "contact": contact,
                 }
             )
+            if len(datasets) >= limit:
+                break
 
         return {
             "status": "success",
