@@ -319,4 +319,4 @@ User: "What proteins does gefitinib target?"
 | `ChEMBL_get_activity` | Activity data |
 | `ChEMBL_get_target` | Protein targets |
 | `ChEMBL_search_targets` | Target search |
-| `ChEMBL_get_assays` | Assay metadata |
+| `ChEMBL_search_assays` | Assay metadata |
