@@ -139,7 +139,26 @@ Neighborhood enrichment analysis (squidpy) tests whether cell types/domains are 
 Cell type deconvolution maps single-cell annotations to spatial spots. Methods: Cell2location (recommended for Visium), Tangram, SPOTlight. Produces cell type fraction estimates per spot.
 
 ### Phase 7: Spatial Cell Communication
-Combine spatial proximity with ligand-receptor databases (OmniPath). Score interactions by co-expression of L-R pairs in proximal cells. Map hotspots where interaction scores peak.
+
+Combine spatial proximity with ligand-receptor databases. Key ToolUniverse tools:
+- `OmniPath_get_ligand_receptor_interactions` — 14,000+ L-R pairs from CellPhoneDB, CellChatDB, etc. Use `partners` param for specific genes.
+- `OmniPath_get_intercell_roles` — classify proteins as ligand/receptor/ECM. Use `proteins` param.
+- `OmniPath_get_cell_communication_annotations` — CellPhoneDB/CellChatDB pathway annotations. Use `proteins` param.
+- `OmniPath_get_signaling_interactions` — intracellular signaling downstream of receptors.
+
+Score interactions by co-expression of L-R pairs in proximal cells. Map hotspots where interaction scores peak.
+
+### Phase 7.5: Data Discovery & Gene Context (ToolUniverse API tools)
+
+For dataset discovery and gene annotation (API-based, no local computation needed):
+- `geo_search_datasets` / `OmicsDI_search_datasets` / `NCBI_SRA_search_runs` — find spatial TX datasets
+- `UniProt_get_function_by_accession` — protein function for stroma/immune markers
+- `STRING_get_network` — protein interaction networks for key markers
+- `kegg_search_pathway` / `kegg_get_pathway_info` — relevant metabolic/signaling pathways
+- `DGIdb_get_drug_gene_interactions` — druggable targets in the spatial context
+- `PubMed_search_articles` — literature for spatial biology context
+
+> **API tools vs. local computation**: Phases 1-2 (data import, QC) and Phases 3-6 (clustering, SVGs, neighborhoods, deconvolution) require local Python with squidpy/scanpy. Phase 7 L-R databases and Phase 7.5 gene context use ToolUniverse API tools.
 
 ### Phase 8: Report Generation
 See [report_template.md](report_template.md) for full example output.
