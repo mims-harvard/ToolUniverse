@@ -356,6 +356,24 @@ tooluniverse-protein-interactions/
 └── KNOWN_ISSUES.md            # ToolUniverse limitations
 ```
 
+## Extended Analysis Tools
+
+For research questions that go beyond network topology (e.g., druggable nodes, synthetic lethality, clinical context), these ToolUniverse tools complement the core PPI workflow:
+
+**Signaling Pathways:**
+- `OmniPath_get_signaling_interactions` — directed, signed PPI (stimulation/inhibition). Essential for mapping signaling cascades.
+- `Reactome_map_uniprot_to_pathways` — map proteins to Reactome pathways (param: `uniprot_id`)
+- `ReactomeAnalysis_pathway_enrichment` — pathway enrichment for gene sets
+
+**Druggability & Clinical Context:**
+- `DGIdb_get_drug_gene_interactions` — drug interactions for network hub proteins (param: `genes` as array)
+- `DGIdb_get_gene_druggability` — druggability categories
+- `gnomad_get_gene_constraints` — gene essentiality metrics (pLI, oe_lof) for target prioritization
+- `civic_search_evidence_items` — clinical evidence for mutations in network proteins
+- `UniProt_get_function_by_accession` — protein function annotation for key hubs
+
+---
+
 ## Tool-Specific Notes (Updated)
 
 ### IntAct Interaction Data
