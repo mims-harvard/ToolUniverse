@@ -317,19 +317,17 @@ Returns eQTL associations from the EBI eQTL Catalogue (complementary to GTEx).
 
 ### GTEx median gene expression
 
-**GTEx_get_median_gene_expression**: `gene_symbol` (string). Returns median TPM across all GTEx tissues.
-`{status: "success", data: [{median, tissueSiteDetailId, ontologyId, datasetId, gencodeId, geneSymbol, unit}]}`.
+> **Recommended**: Use `GTEx_get_expression_summary` (accepts `gene_symbol` directly and auto-resolves GENCODE versions). `GTEx_get_median_gene_expression` requires `operation` + exact versioned `gencode_id` (e.g., ENSG00000012048.23) and may fail if the version doesn't match the GTEx release.
+
+**GTEx_get_expression_summary**: `gene_symbol` (string). Returns median TPM across all GTEx tissues. Most reliable for gene-symbol-based queries.
 
 ```python
-# Get tissue expression profile for BRCA1
-result = tu.tools.GTEx_get_median_gene_expression(gene_symbol="BRCA1")
-# Sort by median TPM to find highest-expressing tissues
+# Get tissue expression profile for BRCA1 (recommended approach)
+result = tu.tools.GTEx_get_expression_summary(gene_symbol="BRCA1")
 tissues = sorted(result["data"], key=lambda x: x["median"], reverse=True)
 ```
 
-### GTEx expression summary (clustered)
-
-**GTEx_get_expression_summary**: `gene_symbol` (string). Returns clustered median expression.
+**GTEx_get_median_gene_expression**: Requires `operation="get_median_gene_expression"` + `gencode_id` (versioned, e.g., "ENSG00000012048.23"). Use only when you need GTEx v2 API features like tissue filtering.
 `{status: "success", data: {geneExpression: [...]}}`.
 
 ### GTEx tissue sites
