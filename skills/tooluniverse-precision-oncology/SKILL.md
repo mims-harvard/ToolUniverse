@@ -79,7 +79,8 @@ Phase 6: Report Synthesis -> Executive summary + prioritized recommendations
 - `CELLxGENE_get_expression_data` / `CELLxGENE_get_cell_metadata` - Cell-type expression
 
 ### Phase 3: Treatment Options
-- `OpenTargets_get_associated_drugs_by_target_ensemblID` - Approved drugs
+- `OpenTargets_get_associated_drugs_by_target_ensemblID` - Approved drugs (param: `ensemblId`, camelCase)
+- `DGIdb_get_drug_gene_interactions` - Drug-gene interactions (param: `genes` as array, e.g., `["EGFR"]`). Comprehensive; covers inhibitors, antibodies, and investigational agents.
 - `DailyMed_search_spls` - FDA label details
 - `ChEMBL_get_drug_mechanisms_of_action_by_chemblId` - Drug mechanism
 
@@ -89,16 +90,25 @@ Phase 6: Report Synthesis -> Executive summary + prioritized recommendations
 - `intact_get_interaction_network` - Protein interactions
 
 ### Phase 4: Resistance Analysis
-- `civic_search_evidence_items` - Resistance evidence (clinical_significance="Resistance")
-- `PubMed_search_articles` - Resistance literature
+- `civic_search_evidence_items` - Search by known resistance mutations individually (e.g., `molecular_profile="EGFR C797S"`, `molecular_profile="MET Amplification"`). The `significance` field in results indicates Resistance/Sensitivity — filter on it after retrieval.
+- `PubMed_search_articles` - Resistance literature (e.g., "osimertinib resistance C797S combination therapy")
 - `NvidiaNIM_alphafold2` / `NvidiaNIM_diffdock` - Structure-based analysis
 
 ### Phase 5: Clinical Trials
 - `search_clinical_trials` - Find trials (param: `condition`, NOT `disease`)
 - `get_clinical_trial_eligibility_criteria` - Eligibility details
 
-### Phase 5.5: Literature
-- `PubMed_search_articles` - Published evidence
+### Phase 5.5: Safety & Pharmacogenomics
+- `FAERS_search_adverse_event_reports` - Real-world adverse events (param: `medicinalproduct`). Check for serious AEs, death rates, common toxicities.
+- `FAERS_count_death_related_by_drug` - Mortality signal for a drug
+- `FDA_get_warnings_and_cautions_by_drug_name` - FDA label safety info
+- `CPIC_list_guidelines` - Check for relevant PGx guidelines (e.g., DPYD for fluoropyrimidines in chemo regimens, UGT1A1 for irinotecan). No CPIC guidelines exist for EGFR TKIs.
+- `fda_pharmacogenomic_biomarkers` - FDA-labeled PGx biomarkers for the drug
+
+> **OncoKB demo mode**: Without `ONCOKB_API_TOKEN` env var, OncoKB only covers BRAF, TP53, ROS1. For other genes (EGFR, KRAS, ALK, etc.), set the API key or use CIViC as the primary evidence source.
+
+### Phase 6: Literature
+- `PubMed_search_articles` - Published evidence (use `limit`, `mindate`, `maxdate` for date filtering)
 - `BioRxiv_list_recent_preprints` / `MedRxiv_get_preprint` - Preprints (flag as NOT peer-reviewed)
 - `openalex_search_works` - Citation analysis
 
