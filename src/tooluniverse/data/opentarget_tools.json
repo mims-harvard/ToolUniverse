@@ -3873,7 +3873,7 @@
         "chemblId"
       ]
     },
-    "query_schema": "\n  query drugLinkedTargets($chemblId: String!) {\n    drug(chemblId: $chemblId) {\n      id\n      name\n      drugAndClinicalCandidates {\n        count\n        rows {\n          drug { id name }\n          maxClinicalStage\n          target { id approvedSymbol }\n        }\n      }\n    }\n  }\n  ",
+    "query_schema": "\n  query drugLinkedTargets($chemblId: String!) {\n    drug(chemblId: $chemblId) {\n      id\n      name\n      mechanismsOfAction {\n        rows {\n          actionType\n          targets {\n            id\n            approvedSymbol\n          }\n        }\n      }\n    }\n  }\n  ",
     "label": [
       "Drug",
       "Target",
