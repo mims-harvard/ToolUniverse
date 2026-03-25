@@ -291,7 +291,7 @@ def enrich_essential_genes(gene_scores, top_n=100, databases=['KEGG_2021_Human',
 
     top_genes = gene_scores.head(top_n).index.tolist()
     result = tu.run_one_function({
-        "name": "Enrichr_submit_genelist",
+        "name": "enrichr_gene_enrichment_analysis",
         "arguments": {"gene_list": top_genes, "description": "CRISPR_screen_essential_genes"}
     })
     if 'data' not in result or 'userListId' not in result['data']:
@@ -336,7 +336,7 @@ def prioritize_drug_targets(gene_scores, expression_data=None, mutation_data=Non
     druggability_scores = {}
     for gene in candidates.index[:20]:
         result = tu.run_one_function({
-            "name": "DGIdb_query_gene", "arguments": {"gene_symbol": gene}
+            "name": "DGIdb_get_drug_gene_interactions", "arguments": {"genes": [gene]}
         })
         if 'data' in result and 'matchedTerms' in result['data']:
             matches = result['data']['matchedTerms']
@@ -373,7 +373,7 @@ def find_drugs_for_targets(target_genes, max_per_gene=5):
     drug_results = {}
     for gene in target_genes[:10]:
         result = tu.run_one_function({
-            "name": "DGIdb_query_gene", "arguments": {"gene_symbol": gene}
+            "name": "DGIdb_get_drug_gene_interactions", "arguments": {"genes": [gene]}
         })
         if 'data' in result and 'matchedTerms' in result['data']:
             matches = result['data']['matchedTerms']

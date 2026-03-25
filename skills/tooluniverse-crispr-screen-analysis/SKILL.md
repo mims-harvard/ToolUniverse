@@ -88,20 +88,26 @@ Generate markdown report with:
 ## ToolUniverse Tool Integration
 
 **Key Tools Used**:
-- `PubMed_search_articles` - Literature search for gene essentiality
-- `Enrichr_submit_genelist` - Pathway enrichment submission
-- `Enrichr_get_results` - Retrieve enrichment results
-- `DGIdb_query_gene` - Drug-gene interactions and druggability
+- `PubMed_search_articles` - Literature search for gene essentiality and drug resistance
+- `ReactomeAnalysis_pathway_enrichment` - Pathway enrichment (param: `identifiers` newline-separated, `page_size`)
+- `enrichr_gene_enrichment_analysis` - Enrichr enrichment (param: `gene_list` array, `libs` array)
+- `DGIdb_get_drug_gene_interactions` - Drug-gene interactions (param: `genes` as array)
+- `DGIdb_get_gene_druggability` - Druggability categories
 - `STRING_get_network` - Protein interaction networks
-- `KEGG_get_pathway` - Pathway visualization
+- `kegg_search_pathway` - Pathway search by keyword
+- `kegg_get_pathway_info` - Pathway details by ID
 
-**Expression Integration**:
-- `GEO_get_dataset` - Download expression data
-- `ArrayExpress_get_experiment` - Alternative expression source
+**Cancer Context** (essential for drug resistance screens):
+- `civic_search_evidence_items` - Clinical evidence for drug resistance/sensitivity
+- `COSMIC_get_mutations_by_gene` - Somatic mutation landscape
+- `cBioPortal_get_mutations` - Mutations in specific cancer cohorts
+- `ChEMBL_search_targets` - Structural druggability assessment
 
-**Variant Integration**:
-- `ClinVar_query_gene` - Known pathogenic variants
-- `gnomAD_get_gene` - Population allele frequencies
+**Expression & Variant Integration**:
+- `GEO_search_rnaseq_datasets` / `geo_search_datasets` - Expression datasets
+- `clinvar_search_variants` - Known pathogenic variants
+- `gnomad_get_gene_constraints` - Gene constraint metrics (pLI, oe_lof)
+- `UniProt_get_function_by_accession` - Protein function for hit validation
 
 ---
 
