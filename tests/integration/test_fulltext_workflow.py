@@ -128,10 +128,12 @@ def test_europe_pmc_search_to_snippets_workflow(monkeypatch):
         }
     )
 
-    # Verify search results
-    assert isinstance(results, list)
-    assert len(results) == 1
-    article = results[0]
+    # Verify search results (tools now return {status, data, metadata} envelope)
+    assert results["status"] == "success"
+    data = results["data"]
+    assert isinstance(data, list)
+    assert len(data) == 1
+    article = data[0]
 
     # Verify metadata
     assert article["title"] == "Evolution of antibiotic resistance in A. baumannii"
@@ -200,8 +202,10 @@ def test_europe_pmc_manual_snippet_extraction_workflow(monkeypatch):
     # Step 1: Search (without auto-snippets)
     search_results = search_tool.run({"query": "CRISPR", "limit": 5})
 
-    assert len(search_results) == 1
-    article = search_results[0]
+    assert search_results["status"] == "success"
+    data = search_results["data"]
+    assert len(data) == 1
+    article = data[0]
     assert article["open_access"] is True
     assert "fulltext_xml_url" in article
 
@@ -282,8 +286,10 @@ SHAP values revealed that features X and Y had the highest importance.
         {"query": "machine learning interpretability", "limit": 5}
     )
 
-    assert len(search_results) == 1
-    paper = search_results[0]
+    assert search_results["status"] == "success"
+    data = search_results["data"]
+    assert len(data) == 1
+    paper = data[0]
     assert paper["title"] == "Machine Learning Interpretability with SHAP"
     assert paper["open_access_pdf_url"] == "https://example.com/paper.pdf"
 
@@ -355,9 +361,15 @@ The attention mechanism showed improved performance with layer normalization app
         {"query": "attention mechanisms", "limit": 5, "sort_by": "relevance"}
     )
 
-    assert isinstance(search_results, list)
-    assert len(search_results) == 1
-    paper = search_results[0]
+    # ArXiv tool may return bare list or {status, data} envelope
+    if isinstance(search_results, dict):
+        assert search_results["status"] == "success"
+        search_data = search_results["data"]
+    else:
+        search_data = search_results
+    assert isinstance(search_data, list)
+    assert len(search_data) == 1
+    paper = search_data[0]
     assert "Attention" in paper["title"]
     assert "2301.12345" in paper["url"]
 
@@ -433,8 +445,10 @@ def test_cross_database_verification_workflow(monkeypatch):
     )
 
     # Verify comprehensive data collection
-    assert len(results) == 1
-    article = results[0]
+    assert results["status"] == "success"
+    data = results["data"]
+    assert len(data) == 1
+    article = data[0]
 
     # Verify all expected terms found
     if "fulltext_snippets" in article:
