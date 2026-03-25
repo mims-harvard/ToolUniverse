@@ -304,7 +304,7 @@ RFSGSGSGTDFTLTISSLQPEDFATYYCQQSYSTPLTFGQGTKVEIK
 | IMGT_search_genes | IGHV, IGKV (Homo sapiens) | Germline candidates |
 | IMGT_get_sequence | IGHV1-69*01, IGKV1-39*01 | Framework sequences |
 | TheraSAbDab_search_by_target | PD-L1 | 3 approved antibodies |
-| AlphaFold_get_prediction | VH:VL complexes | Structure models |
+| alphafold_get_prediction | VH:VL complexes | Structure models |
 | iedb_search_epitopes | Sequence scanning | T-cell epitopes |
 ```
 

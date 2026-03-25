@@ -66,10 +66,10 @@ Every optimization MUST include per-variant documentation with:
 | `IMGT_get_sequence` | Human framework sequences | Humanization |
 | `SAbDab_search_structures` | Antibody structure precedents | Structure |
 | `TheraSAbDab_search_by_target` | Clinical antibody benchmarks | Validation |
-| `AlphaFold_get_prediction` | Structure modeling | Structure |
+| `alphafold_get_prediction` | Structure modeling | Structure |
 | `iedb_search_epitopes` | Epitope identification | Immunogenicity |
 | `iedb_search_bcell` | B-cell epitope prediction | Immunogenicity |
-| `UniProt_get_protein_by_accession` | Target antigen information | Target |
+| `UniProt_get_entry_by_accession` | Target antigen information | Target |
 | `STRING_get_interactions` | Protein interaction network | Bispecifics |
 | `PubMed_search_articles` | Literature precedents | Validation |
 
@@ -143,7 +143,7 @@ Phase 8: Final Report & Recommendations
 1. Annotate CDRs using IMGT numbering (CDR-H1: 27-38, CDR-H2: 56-65, CDR-H3: 105-117)
 2. Identify closest human germline genes via `IMGT_search_genes`
 3. Search clinical precedents via `TheraSAbDab_search_by_target`
-4. Get target antigen info via `UniProt_get_protein_by_accession`
+4. Get target antigen info via `UniProt_get_entry_by_accession`
 
 **Output**: Sequence information table, CDR annotation, target info, clinical precedent list.
 
@@ -174,7 +174,7 @@ See `WORKFLOW_DETAILS.md` Phase 2 for code examples.
 **Goal**: Predict structure, analyze CDR conformations, map epitope.
 
 **Key steps**:
-1. Predict Fv structure via `AlphaFold_get_prediction` (VH:VL)
+1. Predict Fv structure via `alphafold_get_prediction` (VH:VL)
 2. Assess pLDDT scores by region (framework, CDRs, interface)
 3. Classify CDR canonical structures and calculate RMSD
 4. Search known epitopes via `iedb_search_epitopes`
@@ -296,8 +296,8 @@ See `REPORT_TEMPLATE.md` for the full report template.
 - `iedb_get_epitope_references`: Citations
 
 ### Structure & Target
-- `AlphaFold_get_prediction`: Structure prediction
-- `UniProt_get_protein_by_accession`: Target info
+- `alphafold_get_prediction`: Structure prediction
+- `UniProt_get_entry_by_accession`: Target info
 - `PDB_get_structure`: Experimental structures
 
 ### Systems Biology (for Bispecifics)

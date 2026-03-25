@@ -191,7 +191,7 @@ def predict_antibody_structure(tu, vh_sequence, vl_sequence):
 
     fv_sequence = vh_sequence + ":" + vl_sequence
 
-    prediction = tu.tools.AlphaFold_get_prediction(
+    prediction = tu.tools.alphafold_get_prediction(
         sequence=fv_sequence,
         return_format='pdb'
     )
@@ -245,7 +245,7 @@ def analyze_cdr_conformation(structure):
 def map_epitope(tu, target_protein, antibody_structure):
     """Identify epitope on target protein."""
 
-    target_info = tu.tools.UniProt_get_protein_by_accession(
+    target_info = tu.tools.UniProt_get_entry_by_accession(
         accession=target_protein
     )
 

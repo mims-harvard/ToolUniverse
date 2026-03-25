@@ -238,8 +238,8 @@ python python_implementation.py
 - This is a data/API availability issue, not a code issue
 
 ⚠️ **Missing Tools**: Some tools from original skill are not available:
-- `AlphaFold_get_prediction` - Structure modeling not available
-- `UniProt_get_protein_by_accession` - Target info not available
+- `alphafold_get_prediction` - Structure modeling not available
+- `UniProt_get_entry_by_accession` - Target info not available
 - These block certain workflow phases but core humanization still works
 
 ⚠️ **IEDB Search Specificity**: IEDB may return non-specific results
@@ -376,8 +376,8 @@ The working pipeline performs 5-step analysis:
 
 ### Tools Not Available
 These tools from the original skill are not in ToolUniverse:
-- `AlphaFold_get_prediction` - Blocks structure modeling phase
-- `UniProt_get_protein_by_accession` - Blocks target characterization
+- `alphafold_get_prediction` - Blocks structure modeling phase
+- `UniProt_get_entry_by_accession` - Blocks target characterization
 - `PubMed_search_articles` - Available as `PubMed_search_articles`
 
 ### Missing Implementations
