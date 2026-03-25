@@ -95,8 +95,8 @@ Resolve user input to canonical identifiers before querying PGx databases.
 | 100416 | CYP2D6, OPRM1, COMT | Opioids (Codeine, Tramadol, Hydrocodone) | PA166251454 |
 | 100421 | HLA-B | Abacavir | PA166251444 |
 | 100422 | HLA-B | Allopurinol | PA166251446 |
-| 100425 | CYP2C9, VKORC1, CYP4F2, RS12777823 | Warfarin | PA166251465 |
-| 104243 | CYP2D6 | Atomoxetine, SSRIs | PA166251459 |
+| 100425 | CYP2C9, VKORC1, CYP4F2 | Warfarin | PA166251465 |
+| 104243 | CYP2D6 | Atomoxetine | PA166251459 |
 
 ---
 
