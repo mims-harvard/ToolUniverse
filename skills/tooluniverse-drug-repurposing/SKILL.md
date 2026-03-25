@@ -47,7 +47,7 @@ See: PROCEDURES.md for detailed step-by-step procedures and code patterns.
 
 ```python
 from tooluniverse import ToolUniverse
-tu = ToolUniverse(use_cache=True)
+tu = ToolUniverse()
 tu.load_tools()
 
 # Step 1: Get disease targets
