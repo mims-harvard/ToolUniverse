@@ -1,7 +1,7 @@
 """
 ToolUniverse Tools
 
-Type-safe Python interface to 2232 scientific tools.
+Type-safe Python interface to 2234 scientific tools.
 Each tool is in its own module for minimal import overhead.
 
 Usage:
@@ -1976,6 +1976,8 @@ from .SwissTargetPrediction_predict import SwissTargetPrediction_predict
 from .SynBioHub_get_collections import SynBioHub_get_collections
 from .SynBioHub_get_part import SynBioHub_get_part
 from .SynBioHub_search_parts import SynBioHub_search_parts
+from .T3DB_get_toxin import T3DB_get_toxin
+from .T3DB_search_toxins import T3DB_search_toxins
 from .TCDB_get_transporter import TCDB_get_transporter
 from .TCDB_search_by_substrate import TCDB_search_by_substrate
 from .TCDB_search_family import TCDB_search_family
@@ -4302,6 +4304,8 @@ __all__ = [
     "SynBioHub_get_collections",
     "SynBioHub_get_part",
     "SynBioHub_search_parts",
+    "T3DB_get_toxin",
+    "T3DB_search_toxins",
     "TCDB_get_transporter",
     "TCDB_search_by_substrate",
     "TCDB_search_family",

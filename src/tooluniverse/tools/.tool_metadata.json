@@ -1554,6 +1554,8 @@
   "SynBioHub_get_collections": "510e3908f893be4f1bf33669d80d6a6f",
   "SynBioHub_get_part": "d4c2363cad0e41d910953843da9be2f6",
   "SynBioHub_search_parts": "88555d2360930e03d696c258bc9d4c8a",
+  "T3DB_get_toxin": "688c4eaf16f2807a93876cffedf6c563",
+  "T3DB_search_toxins": "336218d10d8ca49350fe1afd7c310733",
   "TCDB_get_transporter": "0d686215ca8ba4136e79d38dba5d1e92",
   "TCDB_search_by_substrate": "7b20b4560834bd31de1dd1ddd9add74b",
   "TCDB_search_family": "6134343a88bc61078cef94bb9c09396a",
