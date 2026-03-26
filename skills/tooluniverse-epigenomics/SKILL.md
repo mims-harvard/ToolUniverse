@@ -329,6 +329,35 @@ See `TOOLS_REFERENCE.md` for full parameter details and return schemas.
 | Adipose Subcutaneous | Adipose_Subcutaneous |
 | Muscle Skeletal | Muscle_Skeletal |
 
+## Reasoning Framework for Result Interpretation
+
+### Evidence Grading
+
+| Grade | Criteria | Example |
+|-------|----------|---------|
+| **Strong** | padj < 0.01 AND abs(delta-beta) >= 0.2, replicated across cohorts | DMP with padj = 1e-8, delta-beta = 0.35 in two independent datasets |
+| **Moderate** | padj < 0.05 AND abs(delta-beta) >= 0.1 | DMP with padj = 0.02, delta-beta = 0.15 |
+| **Weak** | padj < 0.05 but abs(delta-beta) < 0.1 | Statistically significant but biologically marginal change |
+| **Insufficient** | padj >= 0.05 or no biological replication | Sub-threshold after FDR correction |
+
+### Interpretation Guidance
+
+- **Methylation delta-beta cutoffs**: A delta-beta (mean beta difference between groups) of 0.1 (10%) is a common minimum threshold for biological relevance on 450K/EPIC arrays. Delta-beta >= 0.2 is considered a strong effect. Statistical significance alone (small p-value) without meaningful delta-beta often reflects technical noise in large-sample studies.
+- **ChIP-seq peak quality**: Assess peaks by q-value (< 0.01 for high confidence), signal-to-noise ratio, and IDR (irreproducible discovery rate < 0.05 across replicates). Peaks with FE (fold enrichment) < 2 should be treated cautiously. Broad marks (H3K27me3, H3K36me3) have wider peaks than sharp marks (H3K4me3, CTCF).
+- **ATAC-seq accessibility interpretation**: Nucleosome-free regions (NFR, < 150 bp fragments) indicate active regulatory elements. Peaks at promoters (TSS +/- 2kb) suggest active transcription. Distal peaks often mark enhancers. Peak width and fragment size distribution are quality indicators -- a clear NFR peak with nucleosomal periodicity indicates good library quality.
+- **Multiple testing**: Always apply FDR correction (Benjamini-Hochberg) when testing thousands of CpG sites or peaks. Report both nominal and adjusted p-values.
+- **Genome build consistency**: Verify all data uses the same build (hg19 vs hg38) before overlapping methylation sites with ChIP-seq peaks or regulatory annotations.
+
+### Synthesis Questions
+
+1. Do differentially methylated positions (DMPs) meeting both statistical and effect-size thresholds cluster in regulatory regions (promoters, enhancers), or are they scattered across the genome?
+2. For ChIP-seq data, do peaks replicate across biological replicates (IDR analysis), and do they overlap with expected genomic features for the histone mark (e.g., H3K4me3 at promoters)?
+3. When integrating methylation and accessibility data, do hypomethylated regions correspond to ATAC-seq open chromatin peaks, supporting a consistent regulatory model?
+4. Are age-related or condition-related CpG changes enriched in known epigenetic clock CpGs, or do they represent novel associations?
+5. Does the observed methylation change at a locus correlate with expression change of the nearest gene, or is the CpG in a region with no clear regulatory function?
+
+---
+
 ## Limitations
 
 - No native pybedtools: uses pure Python interval operations

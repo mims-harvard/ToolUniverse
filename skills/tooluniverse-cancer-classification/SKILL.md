@@ -136,6 +136,33 @@ if detail["status"] == "success":
     OncoKB_annotate_variant(gene="IDH1", variant="R132H", tumor_type="GB")
 ```
 
+## Reasoning Framework for Result Interpretation
+
+### Evidence Grading
+
+| Grade | Criteria | Example |
+|-------|----------|---------|
+| **Confirmed** | Exact OncoTree code validated via `OncoTree_get_type`, UMLS + NCI cross-refs present | LUAD: validated, UMLS C0152013, NCI C3512 |
+| **Probable** | OncoTree search returns match, but code not yet validated or missing cross-refs | Search for "cholangiocarcinoma" returns CHOL with partial external refs |
+| **Ambiguous** | Multiple OncoTree codes match the description at different hierarchy levels | "Breast cancer" matches BRCA (invasive), BREAST (tissue), IBC (inflammatory) |
+| **Unresolved** | No OncoTree match; tumor type too rare or novel for the ontology | Ultra-rare sarcoma subtype not in OncoTree |
+
+### Interpretation Guidance
+
+- **OncoTree code confidence**: Always validate candidate codes with `OncoTree_get_type` before downstream use. Some common acronyms (e.g., "GBM") are NOT valid OncoTree codes (correct code is "GB"). A validated code with UMLS and NCI cross-references is highest confidence.
+- **UMLS/NCI cross-reference priority**: For standardized reporting, NCI Thesaurus codes are preferred for cancer-specific contexts (used by caDSR, GDC). UMLS CUIs are broader (cross-disease) and useful for literature mining. When both are available, report both; when only one exists, NCI is preferred for oncology workflows.
+- **Tissue hierarchy interpretation**: OncoTree levels represent specificity: Level 1 = tissue of origin (e.g., "Lung"), Level 2 = main cancer type (e.g., "Non-Small Cell Lung Cancer"), Level 3+ = histological subtypes (e.g., "Lung Adenocarcinoma"). For OncoKB variant annotation, use the most specific (deepest) level that accurately describes the tumor. For cohort-level analysis (e.g., TCGA), the Level 2-3 code is typically appropriate.
+- **OncoKB tumor type impact**: Providing a tumor type code to OncoKB can change the therapeutic level (e.g., EGFR L858R is Level 1 in LUAD but Level 3B pan-cancer). Always use the validated OncoTree code for the patient's specific tumor type.
+- **Deprecated or renamed codes**: OncoTree evolves across versions. The `history` field in `OncoTree_get_type` response shows prior names. Always use the current code.
+
+### Synthesis Questions
+
+1. Does the chosen OncoTree code represent the most specific histological subtype, or could a more precise code provide better therapeutic annotation in OncoKB?
+2. When the free-text tumor description maps to multiple OncoTree codes, which hierarchy level best balances specificity and coverage for the analysis goal (variant annotation vs cohort selection)?
+3. Are the UMLS/NCI cross-references consistent with external classifications (WHO, ICD-O), or are there discrepancies that need resolution?
+
+---
+
 ## Fallback Chains
 
 | Primary | Fallback | When |

@@ -136,6 +136,35 @@ epitopes = query_epitope_database(top_clones)
 
 ---
 
+## Reasoning Framework for Result Interpretation
+
+### Evidence Grading
+
+| Grade | Criteria | Example |
+|-------|----------|---------|
+| **Strong** | Clonal expansion > 1% frequency, convergent recombination confirmed, epitope match in IEDB/VDJdb | CDR3 at 5% frequency with 3 nucleotide variants encoding same amino acid, IEDB hit |
+| **Moderate** | Expanded clone (0.1-1%), V(D)J bias significant (chi-sq p < 0.01), partial epitope match | Clone at 0.5% with TRBV20-1 bias, similar CDR3 motif in VDJdb |
+| **Weak** | Low-frequency expansion (0.01-0.1%), single timepoint only, no epitope database match | Moderately expanded clone without convergence or known specificity |
+| **Insufficient** | Below detection threshold, sequencing depth < 10,000 clonotypes, no replication | Singleton clonotypes that may be PCR/sequencing artifacts |
+
+### Interpretation Guidance
+
+- **Clonality metrics**: Shannon diversity measures overall repertoire complexity (higher = more diverse, typical range 5-12 for healthy blood). Gini coefficient ranges from 0 (perfectly even) to 1 (single dominant clone); values > 0.3 suggest clonal expansion. Clonality (1 - Pielou's evenness) > 0.2 indicates moderate clonal dominance; > 0.5 suggests strong oligoclonal expansion (common in active infection or tumor-infiltrating lymphocytes).
+- **V(D)J usage significance**: Biased V or J gene usage (chi-square p < 0.01 vs expected uniform distribution) may indicate antigen-driven selection. However, baseline V gene usage is not uniform even in healthy repertoires due to genomic proximity and recombination efficiency. Compare against healthy donor reference distributions rather than uniform expectation when possible.
+- **CDR3 convergence meaning**: Convergent recombination (same CDR3 amino acid from different nucleotide sequences) is strong evidence of antigen-driven selection because independent recombination events converged on the same receptor. Public clonotypes (shared across individuals) further strengthen this inference. A convergence ratio > 2 (nucleotide variants per amino acid sequence) for expanded clones is noteworthy.
+- **Sequencing depth**: Rarefaction curves that plateau indicate sufficient depth. If the curve is still rising, richness and diversity estimates are underestimates. Minimum recommended depth: 50,000-100,000 total reads for bulk TCR-seq.
+- **Longitudinal tracking**: Persistent clones across timepoints with stable or increasing frequency indicate antigen-driven maintenance. Transient expansions that disappear may reflect acute responses.
+
+### Synthesis Questions
+
+1. Does the observed clonal expansion pattern (Gini coefficient, top-clone frequency) match the expected immune context (e.g., post-vaccination expansion, tumor-infiltrating lymphocyte oligoclonality)?
+2. Are convergent CDR3 sequences found across multiple individuals in the cohort, suggesting a public response to a shared antigen?
+3. Do expanded clonotypes show biased V gene usage consistent with known antigen-specific repertoire features (e.g., TRBV20-1 enrichment in CMV-specific responses)?
+4. Is the sequencing depth sufficient (rarefaction plateau reached) to reliably estimate diversity metrics and detect low-frequency expanded clones?
+5. For longitudinal data, do clonal dynamics (expansion, contraction, persistence) correlate with clinical outcomes or treatment response?
+
+---
+
 ## References
 
 - Dash P, et al. (2017) Quantifiable predictive features define epitope-specific T cell receptor repertoires. Nature

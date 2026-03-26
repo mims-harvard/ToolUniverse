@@ -165,6 +165,35 @@ These tools are especially useful when you have external IDs (Entrez Gene, UniPr
 - **Clinical variants**: Use `tooluniverse-cancer-variant-interpretation` for CIViC/ClinVar
 - **Drug safety**: Use `tooluniverse-adverse-event-detection` for FAERS data
 
+## Reasoning Framework for Result Interpretation
+
+### Evidence Grading
+
+| Grade | Criteria | Example |
+|-------|----------|---------|
+| **Strong** | KEGG disease entry with curated gene list, drug with confirmed target, pathway mechanistically linked | H00031 (breast cancer) with BRCA1/BRCA2 genes, D09996 (vemurafenib) targeting BRAF |
+| **Moderate** | Disease-gene link in KEGG but no drug-target validation, or network entry without variant data | KEGG disease entry lists gene, but drug targets are inferred from pathway membership |
+| **Weak** | Keyword search hit only, no curated disease-gene-drug relationship in KEGG | Drug found by name search but not linked to the disease in KEGG network |
+| **Insufficient** | No KEGG entries found, or only cross-database ID conversion available | Rare disease not curated in KEGG Disease |
+
+### Interpretation Guidance
+
+- **KEGG pathway significance**: KEGG pathways are manually curated maps of molecular interactions. A gene appearing in a KEGG disease pathway has been editorially reviewed as relevant to that disease mechanism. However, KEGG coverage is not exhaustive -- absence from KEGG does not mean absence of involvement. Cross-reference with Reactome or WikiPathways for broader coverage.
+- **Disease-drug network interpretation**: KEGG Network entries (N-codes) link diseases, genes, and drugs in mechanistic triangles. A drug targeting a gene in a disease network has a curated rationale for therapeutic relevance. The network structure distinguishes direct targets (drug binds gene product) from pathway-level connections (drug affects pathway containing the gene). Prioritize direct target relationships for drug repurposing hypotheses.
+- **Variant impact assessment**: KEGG Variant entries are curated for clinical significance (often cancer driver mutations). A variant listed in KEGG with a linked drug entry indicates an established pharmacogenomic or precision oncology relationship (e.g., BRAF V600E linked to vemurafenib). Variants not in KEGG may still be clinically relevant -- cross-reference with ClinVar and CIViC.
+- **ID conversion caveat**: KEGG uses its own gene ID namespace (e.g., hsa:7157 for TP53). Always use `KEGG_convert_ids` to map from external IDs (NCBI Gene, UniProt) before querying KEGG-specific tools. Failed conversions may indicate the gene is not in KEGG's curated set.
+- **Drug entry completeness**: KEGG Drug entries vary in detail. Approved drugs typically have full target, pathway, and metabolism information. Investigational compounds may have partial entries. Check the drug's "Target" and "Pathway" fields for completeness before drawing conclusions.
+
+### Synthesis Questions
+
+1. Does the KEGG disease entry list the gene of interest with a direct mechanistic role, or is the gene only peripherally connected through a shared pathway?
+2. For drug-target relationships, is the target confirmed by KEGG Network (direct link), or inferred from pathway co-membership?
+3. Are there KEGG variant entries linking specific mutations to drug response, supporting precision medicine applications?
+4. Does the KEGG disease-gene-drug network for the condition align with evidence from other curated sources (CIViC, OncoKB, DrugBank)?
+5. If KEGG has limited entries for the query, which complementary databases (Reactome, WikiPathways, CTD) should be consulted to fill gaps?
+
+---
+
 ## Output
 
 Markdown report with:

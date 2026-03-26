@@ -266,6 +266,35 @@ sc.tl.umap(adata)
 
 ---
 
+## Reasoning Framework for Result Interpretation
+
+### Evidence Grading
+
+| Grade | Criteria | Example |
+|-------|----------|---------|
+| **High confidence** | Marker padj < 0.01, log2FC > 1, expressed in > 25% of cluster cells | CD3D as T-cell marker with padj = 1e-50, log2FC = 3.2, pct = 0.85 |
+| **Moderate confidence** | padj < 0.05, log2FC > 0.5, or expressed in 10-25% of cluster | FOXP3 in Treg cluster with padj = 0.001, pct = 0.18 |
+| **Low confidence** | padj < 0.05 but log2FC < 0.5 or low pct_diff between clusters | Ubiquitously expressed gene with marginal enrichment |
+| **Unreliable** | Fewer than 20 cells in cluster, or QC metrics suggest doublets | Cluster with mean nGenes > 6000 and high doublet score |
+
+### Interpretation Guidance
+
+- **QC metric thresholds**: Standard filters are nGenes > 200 (remove empty droplets), nGenes < 5000-6000 (remove doublets), pct_counts_mt < 20% (remove dying cells). These thresholds are tissue-dependent: immune cells tolerate stricter nGene filters; neurons may have higher mitochondrial content naturally. Always visualize distributions before setting cutoffs.
+- **Cluster resolution guidance**: Leiden resolution 0.3-0.5 yields broad cell types (T cells, B cells, myeloid). Resolution 0.8-1.2 resolves subtypes (CD4 naive, CD4 memory, Treg). Resolution > 2.0 risks over-clustering (splitting biologically homogeneous populations). Validate by checking that each cluster has distinct marker genes.
+- **Marker gene confidence levels**: A strong marker is highly specific (high pct_diff between cluster and rest) and highly expressed (high log2FC). Genes expressed in many clusters with small fold changes are poor markers. Cross-reference with known markers from CellMarker or HPA databases.
+- **Pseudo-bulk vs single-cell DE**: For comparing conditions (treatment vs control), pseudo-bulk DE (aggregate by sample, then DESeq2) is more statistically valid than single-cell DE, which inflates significance due to non-independence of cells from the same sample.
+- **Batch effects**: If samples cluster by batch rather than biology on UMAP, apply Harmony or other correction before biological interpretation.
+
+### Synthesis Questions
+
+1. Do the identified clusters correspond to known cell types based on canonical markers, or do some clusters lack clear biological identity (potentially doublets or low-quality cells)?
+2. At the chosen clustering resolution, are there clusters that merge when resolution is lowered, suggesting they may be a single cell type split by technical noise?
+3. For differential expression between conditions, are the results consistent between single-cell and pseudo-bulk approaches, and do the top DE genes have known biological relevance?
+4. Do QC-flagged cells (high mito, extreme gene counts) concentrate in specific clusters, and does removing them change the clustering structure?
+5. If batch correction was applied, do post-correction clusters still maintain expected cell-type-specific marker expression?
+
+---
+
 ## Troubleshooting
 
 | Issue | Solution |

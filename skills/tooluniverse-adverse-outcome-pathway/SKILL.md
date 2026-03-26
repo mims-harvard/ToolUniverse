@@ -133,6 +133,35 @@ carcinogen = PubChemTox_get_carcinogen_classification(cid=9153)
 iarc = [c for c in carcinogen["data"]["classifications"] if "IARC" in c.get("source", "")]
 ```
 
+## Reasoning Framework for Result Interpretation
+
+### Evidence Grading
+
+| Grade | Criteria | Example |
+|-------|----------|---------|
+| **Strong** | AOP in OECD-endorsed status, compound listed as stressor, CTD + AOPWiki concordant | AOP 58 (AhR → liver tumor) endorsed, benzo[a]pyrene confirmed stressor |
+| **Moderate** | AOP under review or well-documented, compound class match but not individually listed | AOP links PPARalpha activation to liver effects; query compound is a fibrate analog |
+| **Weak** | AOP in development, compound not listed but shares MIE target via CTD gene overlap | CTD shows gene target overlap with AOP key event genes, but no direct stressor listing |
+| **Insufficient** | No AOP found, no CTD gene-disease link, hazard data sparse | Novel compound with no toxicological database entries |
+
+### Interpretation Guidance
+
+- **AOP weight-of-evidence assessment**: OECD-endorsed AOPs have undergone expert review and represent the highest confidence mechanistic pathways. AOPs "under development" in AOPWiki may have incomplete key event relationships. Evaluate each AOP by: (1) biological plausibility of key event relationships, (2) empirical support (dose-response concordance), (3) essentiality of key events (blocking KE prevents AO).
+- **Key event relationship (KER) strength**: Strong KERs have dose-response and temporal concordance between upstream and downstream key events. Moderate KERs have correlative evidence. Weak KERs are based on plausibility alone. The weakest KER in the chain determines the overall AOP confidence for that pathway.
+- **Stressor potency interpretation**: LD50 values indicate acute toxicity (lower = more toxic). GHS categories: Cat 1 (LD50 <= 5 mg/kg, fatal), Cat 2 (5-50, fatal), Cat 3 (50-300, toxic), Cat 4 (300-2000, harmful), Cat 5 (2000-5000, may be harmful). IARC Group 1 = confirmed carcinogen, 2A = probable, 2B = possible, 3 = not classifiable. Always report route of exposure and species for LD50 values.
+- **CTD integration**: CTD "direct evidence" (curated marker/mechanism) is stronger than "inferred" associations. When CTD gene targets overlap with AOP key event genes, this supports the mechanistic link between the compound and the adverse outcome.
+- **Regulatory context**: For risk assessment, combine hazard identification (IARC, GHS) with exposure assessment. A potent carcinogen at negligible exposure may pose lower risk than a moderate toxicant at high exposure.
+
+### Synthesis Questions
+
+1. Is the query compound explicitly listed as a stressor in the identified AOP, or is the link inferred from shared molecular targets (CTD gene overlap)?
+2. Do the key event relationships in the AOP chain have sufficient empirical support (dose-response concordance, temporal sequence), or are there weak links that reduce confidence?
+3. Are the hazard data (LD50, GHS, IARC) consistent across sources, and do they support the severity implied by the AOP adverse outcome?
+4. Does the CTD gene-disease evidence corroborate the AOP's predicted adverse outcome, or are there discrepancies suggesting alternative pathways?
+5. For regulatory decision-making, is the combined weight of evidence (AOP mechanism + hazard quantification + exposure context) sufficient to support a risk classification?
+
+---
+
 ## Fallback Chains
 
 | Primary | Fallback | When |

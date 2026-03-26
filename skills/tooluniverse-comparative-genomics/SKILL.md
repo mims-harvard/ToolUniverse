@@ -528,6 +528,35 @@ Output: Does the mouse ortholog phenotype match the human disease? Suitable mode
 
 ---
 
+## Reasoning Framework for Result Interpretation
+
+### Evidence Grading
+
+| Grade | Criteria | Example |
+|-------|----------|---------|
+| **High confidence** | 1:1 ortholog in Ensembl Compara, confirmed by reciprocal best BLAST hit, conserved synteny | Human BRCA1 to mouse Brca1: one2one, same chromosomal context |
+| **Moderate confidence** | 1:many ortholog, or ortholog confirmed by one method only | Human TP53 to zebrafish tp53: one2one but distant divergence |
+| **Low confidence** | many:many relationship, or sequence similarity only (no Compara entry) | Gene family expansion with unclear functional equivalence |
+| **Uncertain** | BLAST hit only (E < 1e-5) without Compara orthology call, or low identity (< 30%) | Distant homolog detected by BLAST in invertebrate, no synteny data |
+
+### Interpretation Guidance
+
+- **Orthology confidence levels**: 1:1 orthologs are the strongest evidence for functional equivalence across species. 1:many orthologs (gene duplicated in target) may have subfunctionalized or neofunctionalized -- do not assume both copies retain the ancestral function. many:many relationships require careful analysis of each paralog pair.
+- **Conservation score interpretation (PhastCons)**: PhastCons scores range 0-1; scores > 0.5 indicate evolutionary constraint. Coding exons typically score > 0.8. Non-coding regions with PhastCons > 0.5 are candidate regulatory elements. PhastCons is based on a phylogenetic hidden Markov model and captures conservation across a multi-species alignment.
+- **Conservation score interpretation (GERP)**: GERP RS (rejected substitution) scores > 2 indicate strong constraint; > 4 indicates extreme constraint. Negative GERP scores suggest faster-than-neutral evolution (possible positive selection). GERP is per-position and complements PhastCons by providing a continuous constraint measure.
+- **Annotation bias caveat**: Well-studied organisms (human, mouse) have richer GO annotations. Absence of a GO term in a less-studied ortholog does not imply loss of function -- it may reflect incomplete annotation. Focus on shared terms for conservation claims.
+- **Homology type priority**: For model organism selection, rank by: 1:1 ortholog > 1:many with dominant copy > many:many > sequence similarity only. Phenotype recapitulation in Monarch strengthens the case for a good disease model.
+
+### Synthesis Questions
+
+1. Is the ortholog relationship 1:1 across the species of interest, or has gene duplication created paralogs that may have diverged in function?
+2. Do the orthologs share conserved GO annotations (especially Biological Process), or are there lineage-specific functional annotations that suggest divergence?
+3. For disease gene studies, does the model organism ortholog recapitulate relevant human phenotypes (via Monarch), supporting its use as a disease model?
+4. Are non-coding regulatory regions around the gene also conserved (PhastCons/GERP), suggesting conservation of gene regulation in addition to protein function?
+5. If no ortholog is found, is the gene truly lineage-specific, or might the search have missed a highly divergent homolog detectable only by sensitive sequence methods?
+
+---
+
 ## Limitations & Known Issues
 
 ### Tool-Specific

@@ -191,6 +191,35 @@ Step 4 -- Cross-reference with population data for stratification analysis.
 
 ---
 
+## Reasoning Framework for Result Interpretation
+
+### Evidence Grading
+
+| Grade | Criteria | Example |
+|-------|----------|---------|
+| **Strong** | AF difference > 0.2 across superpopulations, GWAS p < 5e-8, replicated in multiple cohorts | rs7903146 (TCF7L2) with AF = 0.30 EUR vs 0.05 EAS, GWAS p = 1e-40 |
+| **Moderate** | AF difference 0.05-0.2, GWAS p < 5e-8 in one ancestry, nominal in others | Variant with AF = 0.15 AFR vs 0.08 EUR, GWAS p < 5e-8 in EUR only |
+| **Weak** | AF difference < 0.05, GWAS p < 5e-8 but single study, no cross-ancestry replication | Common variant with similar AF across populations, significant in one cohort |
+| **Population-specific** | Variant common (AF > 0.01) in one superpopulation, rare (AF < 0.01) in others | Sickle cell variant (rs334) AF ~0.10 in AFR, < 0.001 elsewhere |
+
+### Interpretation Guidance
+
+- **Allele frequency interpretation by ancestry**: Allele frequencies vary across superpopulations (AFR, AMR, EAS, EUR, SAS) due to genetic drift, selection, and demographic history. AFR populations have the highest genetic diversity and longest haplotypes broken by recombination. Disease-risk alleles may be common in one ancestry and rare in another, leading to differential genetic risk across populations.
+- **Fst significance thresholds**: Fst measures population differentiation (0 = no differentiation, 1 = complete fixation of different alleles). Global Fst for human populations averages ~0.12. Locus-specific Fst > 0.3 suggests strong differentiation (possible selection). Fst > 0.5 is extreme and rare in humans outside known selection targets (e.g., SLC24A5 for skin pigmentation). Compare locus Fst against genome-wide distribution to identify outliers.
+- **LD interpretation**: Linkage disequilibrium (LD) patterns differ by ancestry. AFR populations have shorter LD blocks due to older demographic history, requiring denser genotyping for fine-mapping. EUR and EAS populations have longer LD blocks. When a GWAS hit is in LD with multiple variants, the causal variant is more likely to be resolved in AFR-ancestry data. Report r-squared values: r2 > 0.8 = strong LD, 0.2-0.8 = moderate, < 0.2 = weak.
+- **Population stratification**: Uncontrolled population structure in GWAS inflates false positives. The 1000 Genomes superpopulation labels provide a framework for stratified analysis. Mixed-ancestry samples (e.g., AMR) require local ancestry deconvolution for accurate interpretation.
+- **Sample size context**: 1000 Genomes has ~2500 samples across 26 populations. Population-specific allele frequencies have limited precision for smaller populations (N < 100). For rare variants (AF < 0.01), larger resources like gnomAD provide more reliable estimates.
+
+### Synthesis Questions
+
+1. Does the allele frequency of the variant of interest differ meaningfully (> 5%) across superpopulations, and could this explain differential disease prevalence or GWAS effect sizes?
+2. Is the GWAS association replicated across ancestries, or is it population-specific, potentially due to LD structure differences or population-specific selection?
+3. For fine-mapping, does the LD pattern in AFR populations narrow the association signal compared to EUR, helping identify the likely causal variant?
+4. Are the population labels and sample sizes in the 1000 Genomes dataset adequate for the analysis, or is the target population underrepresented?
+5. Could population stratification (uncontrolled ancestry differences between cases and controls) explain the observed association, rather than a true genetic effect?
+
+---
+
 ## Tool Parameter Quick Reference
 
 | Tool | Key Parameters | Notes |

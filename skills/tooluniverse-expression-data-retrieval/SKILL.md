@@ -280,6 +280,33 @@ Include assessment rationale:
 
 ---
 
+## Reasoning Framework for Result Interpretation
+
+### Evidence Grading
+
+| Grade | Criteria | Example |
+|-------|----------|---------|
+| **High confidence** | >= 3 bio replicates, complete metadata, processed + raw data, recent platform | E-MTAB RNA-seq with 4 replicates, full annotations, FASTQ + counts |
+| **Moderate confidence** | 2-3 replicates, partial metadata, data accessible | E-GEOD microarray with 2 replicates, some missing annotations |
+| **Low confidence** | No replicates, sparse metadata, or outdated platform | Single-sample microarray from 2005 with no condition labels |
+| **Use with caution** | Pre-print only, missing raw data, or conflicting metadata | Study with sample swap indicators or retracted publication |
+
+### Interpretation Guidance
+
+- **Dataset quality assessment**: Prioritize experiments with >= 3 biological replicates per condition, complete sample annotations (condition, tissue, sex, age), and both raw and processed data available. Single-replicate experiments can inform but should not be sole evidence.
+- **Platform comparison**: RNA-seq provides wider dynamic range and detects novel transcripts; microarray is limited to probe-designed genes but has extensive legacy data. When combining datasets across platforms, batch correction is essential. Prefer RNA-seq for low-abundance transcripts and splice variant analysis.
+- **Metadata completeness scoring**: Rate each dataset on 5 axes -- (1) sample annotations present, (2) experimental design documented, (3) processing pipeline described, (4) raw data deposited, (5) associated publication. Score 0-5; datasets scoring <= 2 warrant caution in downstream analysis.
+- **Cross-platform validation**: When the same gene/condition appears in both RNA-seq and microarray datasets, concordant results increase confidence. Discordant results may reflect platform bias, batch effects, or biological variability.
+- **GEO vs ArrayExpress**: GEO has broader coverage (especially older studies); ArrayExpress enforces stricter metadata standards. BioStudies captures multi-omics designs. Search both for comprehensive retrieval.
+
+### Synthesis Questions
+
+1. Does the dataset have sufficient biological replication and metadata to support the intended downstream analysis (e.g., differential expression, co-expression networks)?
+2. Are there batch effects or confounding variables (e.g., all treatment samples processed on one date) that could compromise the results?
+3. If multiple datasets cover the same condition, do they show concordant expression patterns, and can they be meaningfully integrated despite platform or cohort differences?
+
+---
+
 ## Completeness Checklist
 
 Every dataset report MUST include:

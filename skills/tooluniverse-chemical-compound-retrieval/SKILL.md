@@ -265,6 +265,33 @@ Every compound profile MUST include these sections (even if "unavailable"):
 
 ---
 
+## Reasoning Framework for Result Interpretation
+
+### Evidence Grading
+
+| Grade | Criteria | Example |
+|-------|----------|---------|
+| **Confirmed identity** | PubChem CID + ChEMBL ID cross-match, InChI/SMILES agree, reviewed in DrugBank or ChEMBL | Aspirin: CID 2244, CHEMBL25, consistent SMILES across databases |
+| **Probable identity** | PubChem CID found, ChEMBL partial match, minor stereochemistry ambiguity | Natural product with CID but ChEMBL entry lacking full stereochem |
+| **Uncertain identity** | Only one database has entry, or name resolves to multiple CIDs | "Vitamin E" returning alpha- and gamma-tocopherol CIDs |
+| **Unverified** | No cross-reference, single-source data only | Novel compound with PubChem SID only, no CID assigned |
+
+### Interpretation Guidance
+
+- **Compound identity confidence**: Always cross-reference PubChem CID with ChEMBL ID. If InChI strings match across databases, identity is confirmed. Discrepancies in SMILES may reflect salt forms, stereoisomers, or tautomers -- flag these for the user.
+- **Data source priority for bioactivity**: ChEMBL > PubChem BioAssay for curated bioactivity data. ChEMBL entries are manually curated from medicinal chemistry literature with standardized activity units. PubChem BioAssay aggregates HTS results with variable quality. For drug-target interactions, ChEMBL IC50/Ki values are more reliable than PubChem confirmatory assay flags.
+- **Cross-reference validation**: A compound profile is most reliable when 3+ databases agree on structure and activity (PubChem + ChEMBL + DrugBank for approved drugs). Single-source bioactivity claims, especially from a single assay, should be flagged as preliminary.
+- **Lipinski assessment**: Ro5 violations do not disqualify a compound but reduce oral bioavailability likelihood. Many approved drugs (e.g., cyclosporine) violate Ro5. Report violations as context, not as pass/fail.
+- **Bioactivity values**: IC50/Ki < 100 nM = potent; 100 nM - 1 uM = moderate; > 10 uM = weak. Activity type matters: IC50 is assay-dependent; Ki is more comparable across assays.
+
+### Synthesis Questions
+
+1. Does the compound identity resolve unambiguously across PubChem and ChEMBL, or are there stereochemical or salt-form variants that could affect interpretation?
+2. Is the bioactivity data from ChEMBL based on multiple independent publications, or does it rely on a single study?
+3. For drug candidates, do the molecular properties (MW, LogP, PSA) fall within drug-like space, and are there structural alerts (PAINS, reactive groups) that warrant caution?
+
+---
+
 ## Common Use Cases
 
 ### Drug Property Check

@@ -414,6 +414,34 @@ BixBench expects specific formats:
 
 ---
 
+## Reasoning Framework for Result Interpretation
+
+### Evidence Grading
+
+| Grade | Criteria | Example |
+|-------|----------|---------|
+| **Strong** | p < 0.001, large effect size (Cohen's d > 0.8), N >= 30 per group | Dunnett's test p < 0.001 with d = 1.2 between treatment and control |
+| **Moderate** | p < 0.05, medium effect (0.5 <= d < 0.8), adequate replication | ANOVA F-test p = 0.01 with partial eta-squared = 0.10 |
+| **Weak** | p < 0.05 but small effect (0.2 <= d < 0.5) or low N | t-test p = 0.04 with d = 0.3, N = 8 per group |
+| **Insufficient** | p >= 0.05 or N < 5 per group | Non-significant Dunnett's comparison with 3 replicates |
+
+### Interpretation Guidance
+
+- **Dunnett's test**: Controls family-wise error rate for many-vs-one comparisons. A non-significant result means the treatment group is statistically equivalent to control at the chosen alpha, not that there is no difference. Report adjusted p-values.
+- **ANOVA p-values**: A significant omnibus F-test indicates at least one group differs; always follow up with post-hoc tests (Tukey, Dunnett's) to identify which groups. Report eta-squared for effect magnitude.
+- **Cohen's d thresholds**: Small (0.2), medium (0.5), large (0.8). For morphometry, d > 0.5 typically indicates biologically meaningful size or shape differences. Always pair with raw mean differences and units.
+- **Morphometry measurements**: Area is scale-dependent (report units: pixels or calibrated). Circularity near 1.0 = round colony (healthy growth); values < 0.5 suggest irregular morphology (swarming, stress). Roundness and circularity are distinct metrics and should not be interchanged.
+- **Power analysis**: Post-hoc power < 0.80 for a detected effect suggests the study was underpowered; interpret non-significant results cautiously.
+
+### Synthesis Questions
+
+1. Do effect sizes (Cohen's d) align with the biological magnitude of the observed morphometric differences, or is statistical significance driven primarily by large sample size?
+2. Are the assumptions underlying the statistical test met (normality via Shapiro-Wilk, homoscedasticity), and if violated, do non-parametric alternatives yield consistent conclusions?
+3. For multi-group comparisons, do the Dunnett's-adjusted p-values change the interpretation relative to unadjusted pairwise tests, and are there groups near the significance boundary that warrant further investigation?
+4. Does the regression model (polynomial vs. spline) provide a biologically plausible fit, or is overfitting inflating R-squared without meaningful predictive value?
+
+---
+
 ## Completeness Checklist
 
 Before returning your answer, verify:
