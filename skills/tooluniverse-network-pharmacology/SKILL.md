@@ -145,7 +145,7 @@ Apply when users:
 - Literature evidence (PubMed, EuropePMC)
 - ADMET predictions if SMILES available
 - Pharmacogenomics data
-- Tools: `search_clinical_trials`, `clinical_trials_get_details`, `PubMed_search_articles`, `EuropePMC_search_articles`, `ADMETAI_predict_toxicity`, `PharmGKB_get_drug_details`
+- Tools: `search_clinical_trials`, `get_clinical_trial_descriptions`, `PubMed_search_articles`, `EuropePMC_search_articles`, `ADMETAI_predict_toxicity`, `PharmGKB_get_drug_details`
 
 ### Phase 8: Report Generation
 - Compute Network Pharmacology Score from components

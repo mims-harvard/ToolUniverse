@@ -119,8 +119,8 @@ Phase 10: Report Synthesis
 | Tool | Key Parameters | Notes |
 |------|---------------|-------|
 | `search_clinical_trials` | `query_term` (REQ), `condition`, `intervention`, `pageSize` | Main search |
-| `clinical_trials_search` | `action="search_studies"` (REQ), `condition`, `intervention`, `limit` | Alternative search |
-| `clinical_trials_get_details` | `action="get_study_details"` (REQ), `nct_id` (REQ) | Full trial details |
+| `search_clinical_trials` | `action="search_studies"` (REQ), `condition`, `intervention`, `limit` | Alternative search |
+| `get_clinical_trial_descriptions` | `action="get_study_details"` (REQ), `nct_id` (REQ) | Full trial details |
 
 ### Batch Trial Detail Tools (all take `nct_ids` array)
 
@@ -169,7 +169,7 @@ EGFR=19, BRAF=5, ALK=1, ABL1=4, KRAS=30, TP53=45, ERBB2=20, NTRK1=197, NTRK2=560
 
 1. **DrugBank tools**: ALL 4 parameters (`query`, `case_sensitive`, `exact_match`, `limit`) are REQUIRED
 2. **`search_clinical_trials`**: `query_term` is REQUIRED even for disease-only searches
-3. **`clinical_trials_search`**: `action` must be exactly `"search_studies"`
+3. **`search_clinical_trials`**: `action` must be exactly `"search_studies"`
 4. **CIViC `civic_search_variants`**: Does NOT filter by query - returns alphabetically
 5. **CIViC `civic_get_variants_by_gene`**: Takes CIViC gene ID (integer), NOT gene symbol
 6. **Batch clinical trial tools**: Accept arrays of NCT IDs, process in batches of 10
@@ -199,7 +199,7 @@ For detailed scoring logic, see [SCORING_CRITERIA.md](./SCORING_CRITERIA.md).
 - `MyGene_query_genes` per gene, `OpenTargets` disease search, `ols_search_efo_terms`, `fda_pharmacogenomic_biomarkers`
 
 **Group 2** (Phase 2 - simultaneous):
-- `search_clinical_trials` by disease, biomarker, and intervention; `clinical_trials_search` alternative
+- `search_clinical_trials` by disease, biomarker, and intervention; `search_clinical_trials` alternative
 
 **Group 3** (Phase 3 - simultaneous):
 - All batch detail tools (eligibility, interventions, locations, status, descriptions)
