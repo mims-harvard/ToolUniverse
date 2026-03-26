@@ -164,7 +164,7 @@ Scoring: See `SCORING_REFERENCE.md` for PGx risk score (0-10 points).
 
 ## Phase 8: Clinical Trial Matching
 
-1. **Biomarker-driven trials**: `clinical_trials_search` with condition + intervention
+1. **Biomarker-driven trials**: `search_clinical_trials` with condition + intervention
 2. **Precision medicine trials**: `search_clinical_trials` for basket/umbrella trials
 
 ## Phase 9: Integrated Scoring & Recommendations

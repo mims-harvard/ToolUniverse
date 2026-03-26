@@ -102,7 +102,7 @@ Predict communication from spatial patterns. Check ligand-receptor pairs across 
 
 ### Phase 5: Disease & Therapeutic Context
 Connect to disease mechanisms, identify druggable targets, find clinical trials.
-- Tools: `OpenTargets_get_associated_targets_by_disease_efoId`, `OpenTargets_get_target_tractability_by_ensemblID`, `OpenTargets_get_associated_drugs_by_target_ensemblID`, `clinical_trials_search`, `DGIdb_get_gene_druggability`, `civic_search_genes`
+- Tools: `OpenTargets_get_associated_targets_by_disease_efoId`, `OpenTargets_get_target_tractability_by_ensemblID`, `OpenTargets_get_associated_drugs_by_target_ensemblID`, `search_clinical_trials`, `DGIdb_get_gene_druggability`, `civic_search_genes`
 
 ### Phase 6: Multi-Modal Integration
 Integrate protein/RNA/metabolite data. Compare spatial RNA with protein detection.
@@ -124,7 +124,7 @@ Use HuBMAP tools to find published spatial biology reference datasets for compar
 |------|---------|----------------|
 | `HuBMAP_search_datasets` | Search published spatial datasets by organ/assay/keyword | `organ` (code: "LK"=Kidney, "BR"=Brain, "LU"=Lung, etc.), `dataset_type` ("RNAseq", "CODEX", "MALDI"), `query`, `limit` |
 | `HuBMAP_list_organs` | List all available organs with codes and UBERON IDs | (no required params) |
-| `HuBMAP_Dataverse_get_dataset` | Get detailed metadata for a specific HuBMAP dataset | `hubmap_id` (e.g. "HBM626.FHJD.938") |
+| `HuBMAP_get_dataset` | Get detailed metadata for a specific HuBMAP dataset | `hubmap_id` (e.g. "HBM626.FHJD.938") |
 
 **When to use**: Phase 0 (find reference datasets for the tissue), Phase 8 (cross-reference findings with published HuBMAP atlas data).
 

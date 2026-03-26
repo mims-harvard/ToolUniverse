@@ -115,21 +115,21 @@ Create `[INDICATION]_trial_feasibility_report.md` with all 14 sections. See `REP
 - `OpenTargets_get_disease_id_description_by_name` - Disease lookup
 - `OpenTargets_get_diseases_phenotypes_by_target_ensembl` - Prevalence data
 - `ClinVar_search_variants` - Biomarker mutation frequency
-- `gnomAD_search_gene_variants` - Population allele frequencies
+- `gnomad_search_variants` - Population allele frequencies
 - `PubMed_search_articles` - Epidemiology literature
 - `search_clinical_trials` - Enrollment feasibility from past trials
 
 ### PATH 2: Biomarker Prevalence & Testing
 - `ClinVar_get_variant_details` - Variant pathogenicity
 - `COSMIC_search_mutations` - Cancer-specific mutation frequencies
-- `gnomAD_get_variant_details` - Population genetics
+- `gnomad_get_variant` - Population genetics
 - `PubMed_search_articles` - CDx test performance, guidelines
 
 ### PATH 3: Comparator Selection
 - `drugbank_get_drug_basic_info_by_drug_name_or_id` - Drug info
 - `drugbank_get_indications_by_drug_name_or_drugbank_id` - Approved indications
 - `drugbank_get_pharmacology_by_drug_name_or_drugbank_id` - Mechanism
-- `FDA_OrangeBook_search_drugs` - Generic availability
+- `FDA_OrangeBook_search_drug` - Generic availability
 - `OpenFDA_get_approval_history` - Approval details
 - `search_clinical_trials` - Historical control data
 
@@ -180,7 +180,7 @@ trials = tu.tools.search_clinical_trials(
 )
 
 # Step 4: Standard of care comparator
-soc = tu.tools.FDA_OrangeBook_search_drugs(ingredient="osimertinib")
+soc = tu.tools.FDA_OrangeBook_search_drug(ingredient="osimertinib")
 
 # Compile into feasibility report...
 ```
