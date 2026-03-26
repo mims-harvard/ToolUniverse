@@ -551,6 +551,7 @@ STATIC_LAZY_REGISTRY = {
     "XMLDatasetTool": "xml_tool",
     "XMLTool": "xml_tool",
     "RGDTool": "rgd_tool",
+    "T3DBTool": "t3db_tool",
     "XenbaseTool": "xenbase_tool",
     "ZINCTool": "zinc_tool",
     "ZenodoRESTTool": "zenodo_tool",

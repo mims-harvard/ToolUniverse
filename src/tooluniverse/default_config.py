@@ -1095,6 +1095,8 @@ default_tool_files = {
     "xenbase": os.path.join(current_dir, "data", "xenbase_tools.json"),
     # RGD - Rat Genome Database (gene info, disease/phenotype annotations, orthologs)
     "rgd": os.path.join(current_dir, "data", "rgd_tools.json"),
+    # T3DB - Toxin and Toxin-Target Database (toxin info, targets, health effects)
+    "t3db": os.path.join(current_dir, "data", "t3db_tools.json"),
 }
 
 # Auto-load any user-provided tools from ~/.tooluniverse/user_tools/

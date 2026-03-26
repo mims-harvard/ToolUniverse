@@ -184,6 +184,71 @@ STRING_get_network(identifiers="PTEN\rPDCD4\rTPM1\rRECK\rSPRY1", species=9606)
 
 ## Limitations
 
+### Computational Procedure: TargetScan Predicted Targets (Download-and-Process)
+
+TargetScan provides the best computational miRNA target predictions but has no REST API. Download and process locally:
+
+```python
+# Step 1: Download TargetScan predicted targets (one-time, ~10MB zipped)
+# URL: https://www.targetscan.org/vert_80/vert_80_data_download/Summary_Counts.default_predictions.txt.zip
+import pandas as pd
+import zipfile, io, requests
+
+url = "https://www.targetscan.org/vert_80/vert_80_data_download/Summary_Counts.default_predictions.txt.zip"
+resp = requests.get(url, timeout=60)
+with zipfile.ZipFile(io.BytesIO(resp.content)) as z:
+    fname = z.namelist()[0]
+    df = pd.read_csv(z.open(fname), sep='\t')
+
+# Step 2: Query for a specific miRNA family
+mirna = "miR-21-5p"  # or "miR-21/590-5p" (TargetScan uses family names)
+targets = df[df['miRNA Family'].str.contains("miR-21", case=False, na=False)]
+
+# Step 3: Rank by cumulative weighted context++ score
+targets_ranked = targets.sort_values('Cumulative weighted context++ score', ascending=True)
+print(f"Top 20 predicted targets of {mirna}:")
+for _, row in targets_ranked.head(20).iterrows():
+    print(f"  {row['Target Gene']:10s} score={row['Cumulative weighted context++ score']:.3f}  "
+          f"sites={row['Total num conserved sites']}")
+```
+
+**Interpretation**: More negative context++ score = stronger predicted repression. Conserved sites (>1) are higher confidence.
+
+### Computational Procedure: miRTarBase Validated Targets (Download-and-Process)
+
+miRTarBase has Cloudflare protection blocking programmatic access. Use the R/Bioconductor data package or bulk download:
+
+```python
+# Option 1: Download from miRTarBase bulk export (requires browser download first)
+# Go to: https://mirtarbase.cuhk.edu.cn/~miRTarBase/miRTarBase_2025/
+# Download: hsa_MTI.xlsx (human miRNA-target interactions)
+
+# Option 2: Use the GitHub data dump
+# https://github.com/jorainer/mirtarbase — R package with cached data
+
+# Once you have the file:
+import pandas as pd
+mti = pd.read_excel("hsa_MTI.xlsx")  # or read_csv if TSV
+
+# Filter for your miRNA
+mir21_targets = mti[mti['miRNA'].str.contains('hsa-miR-21', case=False, na=False)]
+print(f"miR-21 validated targets: {len(mir21_targets)}")
+
+# Filter by evidence strength
+strong = mir21_targets[mir21_targets['Support Type'].str.contains(
+    'Luciferase|Reporter|Western|CLIP', case=False, na=False
+)]
+print(f"  Strong evidence (reporter/CLIP): {len(strong)}")
+for _, row in strong.head(10).iterrows():
+    print(f"    {row['Target Gene']:10s} — {row['Support Type']}")
+```
+
+**When download is not available**: Use the built-in reference table in Phase 1 for well-studied miRNAs, or search PubMed for validated targets.
+
+---
+
+## Limitations
+
 - **miRNA target prediction is noisy** — even the best algorithms have >50% false positive rates; always prioritize experimentally validated targets
 - **lncRNA function is poorly characterized** — only ~5% of annotated lncRNAs have known functions
 - **Expression measurement varies** — miRNA-seq, RNA-seq, and microarray capture different ncRNA classes; check the assay type
