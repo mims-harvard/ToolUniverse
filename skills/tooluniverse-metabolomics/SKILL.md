@@ -283,6 +283,34 @@ The Metabolomics Research skill provides comprehensive metabolomics analysis thr
 - Comprehensive metabolomics research reports
 - Multi-database metabolomics queries
 
+## Reasoning Framework
+
+### Evidence Grading (Metabolite Identification Confidence)
+
+| Level | Description | Criteria |
+|-------|-------------|----------|
+| **L1 - Confirmed** | Matched to authenticated standard | HMDB ID + retention time + MS/MS match to reference standard |
+| **L2 - Probable** | Putative annotation via spectral library | HMDB match by exact mass + MS/MS similarity (cosine > 0.7), no standard |
+| **L3 - Tentative** | Class-level identification | Matched by exact mass and molecular formula only; structural isomers unresolved |
+| **L4 - Unknown** | Unidentified feature | Detected m/z with no database match; PubChem fallback may provide candidates |
+
+### Interpretation Guidance
+
+**Metabolite identification**: HMDB IDs provide the strongest annotation when paired with experimental validation. A PubChem-only match (fallback) indicates the metabolite is chemically characterized but may lack biological context (pathways, disease associations). Always report the identification confidence level.
+
+**Pathway enrichment**: When multiple metabolites map to the same KEGG or HMDB pathway, enrichment is meaningful only if the input list is unbiased (not pre-selected for that pathway). Report the number of hits vs. pathway size. A pathway with 3/5 metabolites detected is more informative than one with 3/500.
+
+**Biomarker discovery criteria**: A candidate biomarker should show: (1) consistent direction of change across samples (fold-change > 1.5), (2) statistical significance (FDR-adjusted p < 0.05), (3) biological plausibility (known role in disease pathway), and (4) reproducibility in an independent cohort. Single-study HMDB associations are hypothesis-generating, not confirmatory.
+
+### Synthesis Questions
+
+A complete metabolomics report should answer:
+1. What is the identification confidence level for each metabolite (L1-L4)?
+2. Which biological pathways are enriched among the identified metabolites?
+3. Do any metabolites meet biomarker criteria (fold-change, significance, plausibility)?
+4. Are there relevant metabolomics studies (MTBLS/ST) for the disease or condition of interest?
+5. What cross-database evidence supports the biological relevance of key findings (HMDB pathways, PubChem bioactivity)?
+
 **Limitations:**
 - HMDB may not have all metabolites (fallback to PubChem)
 - Some studies require authentication or are not public

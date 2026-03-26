@@ -210,6 +210,36 @@ Key biome lineages for common research areas:
 | GTDB genome | GCA_000016605.1 | GTDB_get_genome |
 | ENVO term | ENVO:00002041 | ols_get_term_info (biome) |
 
+## Reasoning Framework
+
+### Evidence Grading
+
+| Tier | Description | Example |
+|------|-------------|---------|
+| **T1** | Replicated finding across multiple cohorts with consistent effect | Reduced Faecalibacterium in IBD (>10 independent studies) |
+| **T2** | Single well-powered study (n > 100) with appropriate controls | Metformin-associated Akkermansia enrichment in a controlled trial |
+| **T3** | Pilot study or observational association, small sample size | Taxonomic shift in n=15 case-control, no validation cohort |
+| **T4** | Computational prediction or single-sample observation | Novel MAG with predicted function, no culture confirmation |
+
+### Interpretation Guidance
+
+**Alpha diversity**: Shannon index measures within-sample richness and evenness. Higher Shannon (>3.0 for gut) suggests a healthy, stable community. Reduced alpha diversity is associated with dysbiosis (e.g., IBD, antibiotic use). Compare to study-matched controls, not absolute thresholds, as diversity varies by body site and sequencing depth.
+
+**Beta diversity**: Differences between samples (e.g., Bray-Curtis, UniFrac). Significant clustering by condition (PERMANOVA p < 0.05, R-squared > 0.05) indicates the condition explains meaningful variation in community composition. Low R-squared (<0.02) even with significant p-value suggests the effect is real but small relative to inter-individual variation.
+
+**Taxonomic composition**: Relative abundance at phylum level (Firmicutes/Bacteroidetes ratio) is a coarse indicator; genus- or species-level resolution is preferred. A taxon present at >1% relative abundance in multiple samples is reliably detected. Taxa at <0.1% may be noise or sequencing artifacts. GTDB taxonomy may reclassify NCBI names (e.g., Firmicutes split into multiple phyla).
+
+**Functional profiling**: GO terms and InterPro domains from MGnify reflect the metabolic potential (not necessarily activity) of the community. Enrichment of specific pathways (e.g., butyrate production, LPS biosynthesis) should be interpreted alongside taxonomic data to identify which organisms contribute the functions.
+
+### Synthesis Questions
+
+A complete microbiome report should answer:
+1. How does alpha diversity compare between conditions, and is the difference significant?
+2. Does beta diversity analysis show condition-driven clustering (PERMANOVA)?
+3. Which taxa are differentially abundant, and are they known commensals or pathobionts?
+4. What functional pathways are enriched, and which taxa likely drive them?
+5. How do findings compare to published studies for the same biome/condition (literature context)?
+
 ## Tips
 
 - MGnify study accessions start with `MGYS`, analyses with `MGYA`, genomes with `MGYG`

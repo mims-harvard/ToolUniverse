@@ -248,6 +248,36 @@ organs = tu.tools.HuBMAP_list_organs()
 
 ---
 
+## Reasoning Framework
+
+### Evidence Grading
+
+| Tier | Description | Example |
+|------|-------------|---------|
+| **T1** | Validated by orthogonal method (IHC, smFISH, known anatomy) | Spatial domain matches histology-confirmed tumor margin |
+| **T2** | Statistically significant, biologically consistent | SVG with Moran's I > 0.3 and FDR < 0.01 in expected tissue region |
+| **T3** | Computationally identified, awaiting validation | Novel spatial domain from clustering with no histological correlate |
+| **T4** | Exploratory or artifact-prone | Low-UMI edge spots, domains driven by batch effects |
+
+### Interpretation Guidance
+
+**Spatial domains**: Domains represent regions of coherent gene expression, often corresponding to tissue architecture (tumor core, stroma, immune infiltrate, necrosis). A domain is biologically meaningful when its marker genes align with known cell type signatures. Domains at tissue boundaries (e.g., tumor-stroma interface) are particularly informative for microenvironment studies.
+
+**Cell-cell proximity significance**: Neighborhood enrichment z-scores > 2 indicate cell types co-localize more than expected by chance. Negative z-scores indicate spatial avoidance. Interpret in biological context: immune cell enrichment near tumor cells may indicate active immune response or immunosuppressive niche depending on the cell types involved (e.g., CD8+ T cells vs. Tregs).
+
+**Spatially variable genes (SVGs)**: Moran's I > 0.3 with FDR < 0.05 indicates strong spatial patterning. Classify SVGs by pattern: gradients (morphogen signaling, e.g., WNT along crypt-villus axis), hotspots (focal expression in immune aggregates), boundary genes (enriched at domain interfaces, e.g., epithelial-mesenchymal transition markers). SVGs with known spatial biology roles (e.g., tissue polarity genes) are higher confidence than novel candidates.
+
+### Synthesis Questions
+
+A complete spatial transcriptomics report should answer:
+1. What spatial domains were identified, and do they correspond to known tissue architecture?
+2. Which genes show significant spatial variability, and what pattern types do they exhibit?
+3. Are specific cell type pairs enriched or depleted in spatial proximity?
+4. What ligand-receptor interactions are active at domain boundaries or cell-cell interfaces?
+5. How do spatial findings compare to bulk or single-cell data from the same tissue type?
+
+---
+
 ## Limitations
 
 - **Resolution**: Visium spots contain multiple cells (not single-cell)

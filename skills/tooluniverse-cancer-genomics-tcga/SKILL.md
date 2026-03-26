@@ -265,6 +265,36 @@ result = tu.tools.OncoKB_annotate_variant(
 
 ---
 
+## Reasoning Framework
+
+### Evidence Grading
+
+| Tier | Description | Example |
+|------|-------------|---------|
+| **T1** | FDA-recognized biomarker with approved therapy | BRAF V600E in melanoma (vemurafenib) |
+| **T2** | Well-powered clinical study, standard-of-care relevance | KRAS G12C in NSCLC (sotorasib), OncoKB Level 2 |
+| **T3** | Preclinical/small cohort evidence, biological plausibility | Recurrent hotspot in TCGA but no approved therapy |
+| **T4** | Computational prediction or variant of unknown significance | Low-frequency mutation, no functional data |
+
+### Interpretation Guidance
+
+**Mutation frequency**: A gene mutated in >10% of a TCGA cohort is likely a driver candidate (e.g., TP53 in 36% of all TCGA). Mutations at <1% frequency are typically passengers unless they occur at known hotspots. Always cross-reference with OncoKB oncogenicity annotation.
+
+**Survival analysis (Kaplan-Meier)**: A log-rank p-value < 0.05 suggests the gene mutation is associated with differential survival. Hazard ratio (HR) > 1 indicates worse prognosis for the mutated group. Interpret cautiously: TCGA cohorts are retrospective and not treatment-stratified. Small subgroups (n < 20) produce unreliable survival estimates.
+
+**Copy number variation**: Focal amplifications (narrow peaks) of oncogenes (EGFR, MYC, ERBB2) are more likely functionally relevant than broad arm-level events. Homozygous deletions of tumor suppressors (CDKN2A, PTEN, RB1) are strong loss-of-function signals. DUP count from Progenetix reflects sample frequency, not copy number magnitude.
+
+### Synthesis Questions
+
+A complete cancer genomics report should answer:
+1. What are the most frequently mutated genes in this cancer type, and which are known drivers?
+2. Does mutation status of the queried gene associate with survival (p < 0.05)?
+3. Are recurrent CNV events (amplifications or deletions) present at known oncogene/tumor suppressor loci?
+4. What is the OncoKB clinical actionability level for identified variants?
+5. How does the mutation landscape compare across TCGA cancer types (pan-cancer context)?
+
+---
+
 ## Limitations
 
 - `GDC_get_survival` with `gene_symbol` splits on mutation presence only; no multi-gene or stage-based stratification.

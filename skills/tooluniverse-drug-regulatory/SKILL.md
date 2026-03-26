@@ -307,6 +307,36 @@ trials = tu.tools.search_clinical_trials(
 
 ---
 
+## Reasoning Framework
+
+### Evidence Grading
+
+| Tier | Description | Example |
+|------|-------------|---------|
+| **T1** | FDA-approved with full NDA, post-market safety established | Atorvastatin (NDA020702), decades of real-world data |
+| **T2** | FDA-approved but limited post-market data (new NDA or 505(b)(2)) | Recently approved novel entity, <5 years on market |
+| **T3** | ANDA-approved generic or biosimilar, therapeutic equivalence demonstrated | Generic atorvastatin (ANDA, TE code AB) |
+| **T4** | Investigational or foreign-only, no FDA approval | Clinical trial phase compound, not in Orange Book |
+
+### Interpretation Guidance
+
+**Approval pathways**: A 505(b)(1) NDA is a full new drug application with complete safety/efficacy data from the sponsor. A 505(b)(2) NDA relies partly on published literature or FDA findings for an already-approved drug (common for reformulations, new routes). An ANDA (Abbreviated NDA) is the generic pathway requiring only bioequivalence to the reference listed drug.
+
+**Orange Book patent and exclusivity**: NCE (New Chemical Entity) exclusivity gives 5 years of data protection. ODE (Orphan Drug Exclusivity) gives 7 years. PED (Pediatric) adds 6 months to existing patents/exclusivity. A TE code of "AB" means the generic is therapeutically equivalent and substitutable. No TE code or "BX" means substitutability is not established.
+
+**DailyMed label sections**: The "Adverse Reactions" section distinguishes clinical trial rates (controlled) from post-marketing reports (uncontrolled, signal-only). "Contraindications" are absolute; "Warnings and Precautions" are conditional risks. "Clinical Pharmacology" provides PK parameters (Cmax, AUC, half-life) essential for drug interaction and dosing assessment.
+
+### Synthesis Questions
+
+A complete drug regulatory report should answer:
+1. What is the current FDA approval status and pathway (NDA vs ANDA vs 505(b)(2))?
+2. Are generic equivalents available, and what is their therapeutic equivalence rating?
+3. When do key patents and exclusivities expire (or have they already)?
+4. What drug class does this belong to (ATC, EPC, MoA), and what are peer drugs in the class?
+5. What are the most clinically significant adverse reactions and contraindications from the label?
+
+---
+
 ## Limitations
 
 - `FDA_OrangeBook_get_patent_info` does not return specific patent numbers or expiration dates via API.

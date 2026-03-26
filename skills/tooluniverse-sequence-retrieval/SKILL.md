@@ -398,6 +398,36 @@ User: "Compare E. coli K-12 and O157:H7 genomes"
 
 ---
 
+## Reasoning Framework
+
+### Evidence Grading (Sequence Quality)
+
+| Tier | Description | Accession Type |
+|------|-------------|----------------|
+| **T1** | RefSeq reference, NCBI-curated, regularly updated | NC_, NM_, NP_ (curation ●●●●) |
+| **T2** | RefSeq predicted, computationally derived with some validation | XM_, XP_, XR_ (curation ●●●○) |
+| **T3** | GenBank validated submission, peer-reviewed publication | U*, M*, CP* with publication (curation ●●○○) |
+| **T4** | GenBank direct submission or third-party annotation | Direct submissions, TPA_ (curation ●○○○) |
+
+### Interpretation Guidance
+
+**Sequence quality assessment**: Always prefer RefSeq (NC_, NM_) over GenBank for reference use. Check sequence version (e.g., NC_000913.3 vs .2) as annotations improve across versions. For protein-coding genes, verify the CDS count and gene annotation completeness. Sequences with "PREDICTED" in the definition line have not been experimentally validated.
+
+**Accession type guidance**: RefSeq accessions are NCBI-only and cannot be queried via ENA. GenBank accessions (U*, M*, CP*) are mirrored in ENA/EMBL and can be retrieved from either database. When a user provides a gene name without specifying type, default to RefSeq mRNA (NM_) for human/model organisms and the most complete genome assembly for microbial queries.
+
+**Cross-database reconciliation**: The same sequence may have different accessions across databases (e.g., GenBank U00096 = RefSeq NC_000913 for E. coli K-12). Always report both when available. BioProject (PRJNA*) and BioSample (SAMN*) accessions link sequences to their experimental context. Discrepancies between GenBank and RefSeq annotations (gene count, CDS boundaries) typically indicate RefSeq curation has corrected submission errors.
+
+### Synthesis Questions
+
+A complete sequence retrieval report should answer:
+1. What is the highest-quality (most curated) accession available for this sequence?
+2. Are there alternative accessions in other databases (RefSeq, GenBank, ENA)?
+3. What is the sequence length, GC content, and annotation completeness?
+4. Is the sequence from the expected organism and strain?
+5. What download format is most appropriate for the user's downstream analysis (FASTA for alignment, GenBank for annotation)?
+
+---
+
 ## Search Parameters Reference
 
 **NCBI_search_nucleotide**
