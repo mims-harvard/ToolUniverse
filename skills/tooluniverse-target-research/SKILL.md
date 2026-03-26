@@ -291,6 +291,32 @@ Initial file structure:
 
 ---
 
+## Synthesis: Target Assessment Framework
+
+After completing all 9 PATHs, synthesize findings into a GO/NO-GO recommendation in the Executive Summary:
+
+### Target Validation Scorecard
+
+| Dimension | Strong (3) | Moderate (2) | Weak (1) | None (0) |
+|-----------|-----------|-------------|---------|---------|
+| **Genetic evidence** | GWAS + rare variant + functional | GWAS only or rare variant only | Expression change only | No genetic link |
+| **Disease association** | OpenTargets score > 0.7 | Score 0.3-0.7 | Score < 0.3 | Not in OpenTargets |
+| **Druggability** | Approved drug exists for this target | Tractable (known binding site, chemical probes) | Predicted tractable (structural pocket) | Undruggable (no known approach) |
+| **Safety** | Mouse KO viable, no safety flags | Mouse KO viable with phenotype | Essential gene (lethal KO) | Known toxicity target |
+| **Selectivity** | Disease-specific expression/mutation | Enriched in disease tissue | Ubiquitous expression | Expressed in critical organs |
+| **Structural data** | High-res crystal structure with ligand | AlphaFold confident (pLDDT > 80) | Low-res or homology model | No structural info |
+
+**Total score** (max 18): **15-18** = strong target, **10-14** = promising (needs validation), **5-9** = speculative, **<5** = deprioritize.
+
+### Key Interpretation Rules
+
+- **Genetic evidence is the strongest predictor** of successful drug development (Nelson et al. 2015: 2x higher success rate with genetic support)
+- **Essential genes make poor drug targets** — if mouse KO is lethal, the therapeutic window is narrow
+- **Expression specificity matters** — ubiquitous targets cause off-target toxicity
+- **Existing chemical matter de-risks** — if ChEMBL/BindingDB has compounds with IC50 < 1μM, the target is tractable
+
+---
+
 ## Quick Reference: Tool Parameters
 
 | Tool | Parameter | Notes |

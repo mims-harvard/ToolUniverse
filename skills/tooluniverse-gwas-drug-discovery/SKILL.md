@@ -148,6 +148,57 @@ drugs = tu.tools.DGIdb_get_drug_gene_interactions(genes=["TCF7L2"])
 | OpenTargets disease drugs | `OpenTargets_get_associated_drugs_by_disease_efoId` may return HTTP 400 | Fall back to `DGIdb_get_drug_gene_interactions` per gene |
 | GWAS study search param | `gwas_search_studies(disease_trait=...)` | Use `efo_trait=...` for studies (disease_trait works for associations only) |
 
+## Interpretation: From GWAS Hit to Drug Target
+
+### GWAS Signal Strength Assessment
+
+| Signal Quality | Criteria | Drug Discovery Value |
+|---------------|---------|---------------------|
+| **Gold standard** | Genome-wide significant (p < 5e-8), replicated across ancestries, L2G > 0.5, eQTL colocalized | Highest priority — genetic causality established |
+| **Strong** | Genome-wide significant, L2G > 0.3, biological plausibility | High priority — pursue with functional validation |
+| **Moderate** | Suggestive (p < 1e-5), or significant but no fine-mapping | Medium — needs additional evidence before investment |
+| **Weak** | Single study, no replication, low L2G, no functional support | Low — hypothesis generating only |
+
+### Target Prioritization Decision Tree
+
+After identifying GWAS-linked genes, rank them by answering:
+
+1. **Is the gene druggable?** (DGIdb category: kinase/GPCR/ion channel = yes; transcription factor/scaffold = harder)
+   - If approved drug exists → **REPURPOSING** opportunity (fastest path)
+   - If druggable but no drug → **NOVEL TARGET** (standard drug discovery)
+   - If not druggable → consider antisense/PROTAC/genetic medicine
+
+2. **Is the genetic direction clear?**
+   - LOF variants increase disease risk → need an AGONIST or gene therapy
+   - GOF variants increase disease risk → need an INHIBITOR (typical small molecule)
+   - Direction unclear → need functional studies before drug design
+
+3. **What's the effect size?** (Odds ratio from GWAS)
+   - OR > 2.0: strong effect, likely penetrant → Mendelian-like, high confidence
+   - OR 1.2-2.0: moderate, common in complex disease → validate with independent data
+   - OR < 1.2: small effect → may not be clinically meaningful alone
+
+4. **Is there clinical precedent?**
+   - Drug for same target approved for ANY disease → safety data exists → lower risk
+   - Drug in clinical trials → partial de-risking
+   - No precedent → full de novo development risk
+
+### Evidence Integration Table
+
+For the final report, score each GWAS-to-target candidate:
+
+| Criterion | Score 3 | Score 2 | Score 1 |
+|-----------|---------|---------|---------|
+| GWAS signal | Replicated, multi-ancestry | Single study, significant | Suggestive only |
+| L2G / fine-mapping | L2G > 0.5, credible set < 5 variants | L2G 0.2-0.5 | L2G < 0.2 or no fine-mapping |
+| Druggability | Approved drug or probe exists | Tractable (binding site known) | Not classically druggable |
+| Direction of effect | Clear LOF/GOF with consistent direction | Ambiguous | Unknown |
+| Safety | pLI < 0.5, not expressed in heart/brain | pLI 0.5-0.9 | pLI > 0.9 (essential gene) |
+
+**Max score 15**: 12-15 = priority target; 8-11 = worth investigating; <8 = deprioritize.
+
+---
+
 ## Troubleshooting
 
 | Problem | Solution |

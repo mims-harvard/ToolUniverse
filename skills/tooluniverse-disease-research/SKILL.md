@@ -148,6 +148,46 @@ Every piece of data MUST include its source:
 
 ---
 
+## Evidence Grading & Interpretation
+
+Every finding in the report should be graded:
+
+| Grade | Criteria | Example |
+|-------|---------|---------|
+| **T1 (Strong)** | Replicated genetic evidence (GWAS, rare variants), FDA-approved therapy | BRCA1 → breast cancer; trastuzumab for HER2+ |
+| **T2 (Moderate)** | Single genetic study, phase II+ trial data, strong biological evidence | FOXO3 → longevity (centenarian studies) |
+| **T3 (Association)** | Observational data, gene expression changes, pathway membership | IL-6 elevated in Alzheimer's CSF |
+| **T4 (Computational)** | Network proximity, text mining, predicted associations | DisGeNET text-mined gene-disease link |
+
+### Synthesis Questions (answer in Executive Summary)
+
+After collecting data from all 10 dimensions, the report MUST answer:
+
+1. **What causes this disease?** Summarize the genetic architecture (monogenic vs polygenic, key loci, penetrance)
+2. **What are the therapeutic options?** Ranked by evidence level and approval status
+3. **What biomarkers exist?** For diagnosis, prognosis, and treatment selection
+4. **What's the unmet need?** What aspects lack effective treatment or understanding?
+5. **What are the active research frontiers?** Based on clinical trials and recent publications
+
+### Interpreting Cross-Database Concordance
+
+When multiple databases provide different data for the same disease:
+- **OpenTargets + DisGeNET + OMIM agree on a gene**: T1 evidence — high confidence
+- **Only OpenTargets reports an association**: Check the datasource scores — genetic_association > literature > animal_model
+- **DisGeNET score > 0.5 but not in OpenTargets**: May be text-mined; verify with PubMed
+- **Gene in GWAS but not OMIM**: Likely a complex disease susceptibility locus, not Mendelian
+
+### Handling Conflicting Data
+
+| Conflict | Resolution |
+|----------|-----------|
+| Different prevalence estimates across sources | Report range; note the most recent/largest study |
+| Drug approved in one country but not another | Note regulatory status per region |
+| Gene-disease association in one DB but absent in another | Grade by evidence type; text-mining alone is T4 |
+| Clinical trial results contradict label indications | The trial result is newer evidence; note both |
+
+---
+
 ## Final Report Quality Checklist
 
 - [ ] All 10 sections have content (or marked "No data available")
