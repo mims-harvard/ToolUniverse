@@ -39,7 +39,7 @@ including instruments, publications, species, and post-translational modificatio
 2. **MassIVE has richer metadata** -- includes summaries, keywords, modifications, and contacts
 3. **Search both repositories** -- ProteomeXchange for breadth, MassIVE for detail
 4. **Species uses NCBI taxonomy IDs** -- human = 9606, mouse = 10090, rat = 10116
-5. **Accession formats**: PXD (ProteomeXchange), MSV (MassIVE) -- both accepted by MassIVE_Dataverse_get_dataset
+5. **Accession formats**: PXD (ProteomeXchange), MSV (MassIVE) -- both accepted by MassIVE_get_dataset
 
 ---
 
@@ -79,8 +79,8 @@ Query (keyword / species / accession)
 ### Decision Logic
 
 - **Accession provided** (e.g., `PXD000001`, `MSV000079514`):
-  - PXD accession: call `ProteomeXchange_Dataverse_get_dataset` and optionally `MassIVE_Dataverse_get_dataset`
-  - MSV accession: call `MassIVE_Dataverse_get_dataset`
+  - PXD accession: call `ProteomeXchange_get_dataset` and optionally `MassIVE_get_dataset`
+  - MSV accession: call `MassIVE_get_dataset`
   - Skip Phase 1, go directly to Phase 2
 - **Species name provided** (e.g., "human", "mouse"):
   - Map to NCBI taxonomy ID: human=9606, mouse=10090, rat=10116, yeast=559292, zebrafish=7955, fly=7227, worm=6239, arabidopsis=3702
@@ -135,11 +135,11 @@ Query (keyword / species / accession)
 
 ### Tools
 
-**MassIVE_Dataverse_get_dataset**:
+**MassIVE_get_dataset**:
 - `accession`: Dataset accession -- accepts both MSV and PXD formats (e.g., `"MSV000079514"`, `"PXD003971"`)
 - Returns: Object with `accessions`, `title`, `summary`, `species`, `instruments`, `keywords`, `contacts`, `publications`, `modifications`
 
-**ProteomeXchange_Dataverse_get_dataset**:
+**ProteomeXchange_get_dataset**:
 - `px_id`: ProteomeXchange identifier in PXD format (e.g., `"PXD000001"`)
 - Returns: `{data: {px_id, title, species, identifiers, instruments, publications, file_count}, metadata: {...}}`
 
@@ -147,7 +147,7 @@ Query (keyword / species / accession)
 
 1. For each promising dataset from Phase 1, call the appropriate detail tool
 2. Extract key metadata: title, species, instruments, publications (PubMed/DOI), modifications
-3. For PXD accessions: prefer `ProteomeXchange_Dataverse_get_dataset` for file count; use `MassIVE_Dataverse_get_dataset` for richer summary/keywords
+3. For PXD accessions: prefer `ProteomeXchange_get_dataset` for file count; use `MassIVE_get_dataset` for richer summary/keywords
 
 ### Key Fields to Extract
 
@@ -202,16 +202,16 @@ Found N datasets matching [criteria].
 |------|-----------|-------|
 | `MassIVE_search_datasets` | `page_size` | Integer, max 100. Default 10 |
 | `MassIVE_search_datasets` | `species` | NCBI taxonomy ID as **string** (e.g., `"9606"` not `9606`) |
-| `MassIVE_Dataverse_get_dataset` | `accession` | Accepts both MSV and PXD formats |
+| `MassIVE_get_dataset` | `accession` | Accepts both MSV and PXD formats |
 | `ProteomeXchange_search_datasets` | `query` | Optional keyword or accession filter |
 | `ProteomeXchange_search_datasets` | `limit` | Integer, 1-50 |
-| `ProteomeXchange_Dataverse_get_dataset` | `px_id` | PXD format only (e.g., `"PXD000001"`) |
+| `ProteomeXchange_get_dataset` | `px_id` | PXD format only (e.g., `"PXD000001"`) |
 
 **Response Format Notes**:
 - **MassIVE_search_datasets**: Returns direct array of dataset objects (no wrapper)
-- **MassIVE_Dataverse_get_dataset**: Returns direct object (no wrapper)
+- **MassIVE_get_dataset**: Returns direct object (no wrapper)
 - **ProteomeXchange_search_datasets**: Returns `{data: [...], metadata: {...}}`
-- **ProteomeXchange_Dataverse_get_dataset**: Returns `{data: {...}, metadata: {...}}`
+- **ProteomeXchange_get_dataset**: Returns `{data: {...}, metadata: {...}}`
 
 ---
 
@@ -221,7 +221,7 @@ Found N datasets matching [criteria].
 |-----------|----------|
 | MassIVE search returns empty | Use ProteomeXchange search (broader coverage) |
 | ProteomeXchange search returns empty | Try broader/simpler query terms |
-| MassIVE_Dataverse_get_dataset fails for PXD accession | Use ProteomeXchange_Dataverse_get_dataset instead |
+| MassIVE_get_dataset fails for PXD accession | Use ProteomeXchange_get_dataset instead |
 | Species taxonomy ID unknown | Search ProteomeXchange by keyword (organism name) |
 | No keyword search results | Try individual terms instead of multi-word queries |
 

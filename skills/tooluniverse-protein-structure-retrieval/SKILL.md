@@ -140,10 +140,10 @@ similar = tu.tools.PDBeSIFTS_get_all_structures(
 summary = tu.tools.pdbe_get_entry_summary(pdb_id=pdb_id)
 
 # Molecular entities
-molecules = tu.tools.pdbe_get_molecules(pdb_id=pdb_id)
+molecules = tu.tools.pdbe_get_entry_molecules(pdb_id=pdb_id)
 
 # Binding sites
-binding_sites = tu.tools.pdbe_get_binding_sites(pdb_id=pdb_id)
+binding_sites = tu.tools.PDBe_KB_get_ligand_sites(pdb_id=pdb_id)
 ```
 
 ### 2.4 AlphaFold Predictions
@@ -163,7 +163,7 @@ if uniprot_id:
 | RCSB search | PDBe search | Regional availability |
 | get_protein_metadata | pdbe_get_entry_summary | Alternative source |
 | Experimental structure | AlphaFold prediction | No experimental structure |
-| get_protein_ligands | pdbe_get_binding_sites | Ligand info unavailable |
+| get_protein_ligands | PDBe_KB_get_ligand_sites | Ligand info unavailable |
 
 ---
 
@@ -398,16 +398,16 @@ User: "Structure of protein with UniProt P12345"
 | `RCSBData_get_entry` | Method details |
 | `PDBeValidation_get_quality_scores` | Quality metric |
 | `PDBe_KB_get_ligand_sites` | Bound molecules |
-| `download_pdb_structure_file` | Coordinate files |
+| `RCSBData_get_entry` | Coordinate files |
 | `PDBeSIFTS_get_all_structures` | Homologs |
 
 **PDBe (European PDB)**
 | Tool | Purpose |
 |------|---------|
 | `pdbe_get_entry_summary` | Overview |
-| `pdbe_get_molecules` | Molecular entities |
+| `pdbe_get_entry_molecules` | Molecular entities |
 | `pdbe_get_experiment_info` | Experimental data |
-| `pdbe_get_binding_sites` | Ligand pockets |
+| `PDBe_KB_get_ligand_sites` | Ligand pockets |
 
 **AlphaFold (Predictions)**
 | Tool | Purpose |
