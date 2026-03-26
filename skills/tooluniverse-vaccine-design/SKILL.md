@@ -34,8 +34,8 @@ Computational pipeline for designing peptide/subunit vaccine candidates through 
 |------|---------|
 | `IEDB_search_epitopes` | Search experimentally validated epitopes |
 | `IEDB_get_epitope` | Get detailed epitope data (assay results, MHC restriction) |
-| `IEDB_Ext_predict_binding` | Predict MHC-I/II binding affinity for peptides |
-| `IEDB_Ext_get_allele_frequencies` | HLA allele frequencies by population |
+| `iedb_search_mhc` | Predict MHC-I/II binding affinity for peptides |
+| `iedb_search_mhc` | HLA allele frequencies by population |
 | `UniProt_get_entry_by_accession` | Get antigen protein sequence |
 | `UniProt_search` | Find pathogen protein sequences |
 | `BVBRC_search_genome_features` | Search pathogen proteomes |
@@ -93,22 +93,27 @@ BVBRC_search_genome_features(keyword="surface protein", genome_id="[taxon_id]")
 **MHC-I epitopes** (CD8+ cytotoxic T cells — kill infected cells):
 
 ```python
-IEDB_Ext_predict_binding(
-    sequence="PROTEIN_SEQUENCE",
-    allele="HLA-A*02:01",
-    method="netmhcpan_el",  # recommended: NetMHCpan EL (eluted ligand)
-    length=9  # 8-11 for MHC-I
+# Search for known MHC-I epitopes from your pathogen
+iedb_search_mhc(
+    mhc_class="I",
+    qualitative_measure="Positive",
+    filters={"source_organism_iri": "eq.NCBITaxon:2697049"},  # SARS-CoV-2
+    select=["linear_sequence", "mhc_restriction", "qualitative_measure"],
+    limit=50
 )
+# NOTE: iedb_search_mhc queries EXPERIMENTALLY VALIDATED binding data from IEDB.
+# For computational prediction of novel peptides, use external tools (NetMHCpan, MHCflurry)
+# or the IEDB Analysis Resource (tools.iedb.org) directly.
 ```
 
 **MHC-II epitopes** (CD4+ helper T cells — activate B cells and CD8+ T cells):
 
 ```python
-IEDB_Ext_predict_binding(
-    sequence="PROTEIN_SEQUENCE",
-    allele="HLA-DRB1*01:01",
-    method="netmhciipan",
-    length=15  # 13-25 for MHC-II
+iedb_search_mhc(
+    mhc_class="II",
+    qualitative_measure="Positive",
+    filters={"source_organism_iri": "eq.NCBITaxon:2697049"},
+    limit=50
 )
 ```
 
@@ -145,8 +150,11 @@ alphafold_get_prediction(uniprot_id="[accession]")
 ### Phase 3: Population Coverage
 
 ```python
-# Get HLA frequencies for target population
-IEDB_Ext_get_allele_frequencies(population="[region]")
+# Search for epitopes restricted to common HLA alleles in target population
+# NOTE: No HLA frequency tool exists in ToolUniverse. For population coverage:
+# 1. Use IEDB Analysis Resource (tools.iedb.org/population) for population coverage calculation
+# 2. Use the HLA supertype strategy (see above) to ensure broad coverage
+# 3. Search PubMed for published HLA frequency data: PubMed_search_articles(query="HLA allele frequency [population]")
 ```
 
 **Population coverage targets**:

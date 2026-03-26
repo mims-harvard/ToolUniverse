@@ -20,9 +20,9 @@ Pipeline for investigating stem cell biology, iPSC characterization, organoid mo
 
 | Tool | Use For |
 |------|---------|
-| `CellxGene_search_datasets` | Find single-cell atlas data for stem cells/organoids |
-| `CellMarker_search_markers` | Cell type marker genes for identity verification |
-| `CellMarker_get_cell_type` | Detailed cell type marker profiles |
+| `CellxGene_search_datasets` | Find single-cell atlas data. **Requires `cellxgene-census` package (`pip install cellxgene-census`). May not be installed by default.** |
+| `CellMarker_search_by_cell_type` | Cell type marker genes. **Requires `operation="search_by_cell_type"`, `cell_name=` (NOT `cell_type=`)** |
+| `CellMarker_search_by_gene` | Which cell types express a gene. **Requires `operation="search_by_gene"`, `gene_symbol=`** |
 | `HCA_search_projects` | Human Cell Atlas organoid/development projects |
 | `GEO_search_rnaseq_datasets` | Find stem cell RNA-seq datasets |
 | `kegg_search_pathway` | Differentiation signaling pathways (WNT, Notch, Hedgehog) |
