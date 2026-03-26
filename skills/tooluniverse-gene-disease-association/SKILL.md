@@ -138,6 +138,9 @@ if mondo_id:
 
 ## Phase 2: DisGeNET Associations
 
+> **API KEY REQUIRED**: DisGeNET tools require `DISGENET_API_KEY` environment variable. Without it, all DisGeNET calls will fail. Register at https://www.disgenet.org/api/#/Authorization for a free academic key.
+> **Fallback if no key**: Skip this phase and rely on OpenTargets (Phase 3) + Monarch (Phase 4) which are free and cover much of the same data.
+
 ```python
 # --- Gene query: find associated diseases ---
 disgenet_diseases = tu.tools.DisGeNET_search_gene(
@@ -204,7 +207,7 @@ ot_evidence = tu.tools.OpenTargets_target_disease_evidence(
 # --- Gene query: cross-species gene-disease associations ---
 monarch_diseases = tu.tools.MonarchV3_get_associations(
     subject=hgnc_curie,   # e.g., "HGNC:1100" for BRCA1
-    category="biolink:GeneToDiseaseAssociation",
+    category="biolink:CausalGeneToDiseaseAssociation",
     limit=20
 )
 # Integrates OMIM, ClinVar, Orphanet, and model organism data
@@ -212,7 +215,7 @@ monarch_diseases = tu.tools.MonarchV3_get_associations(
 # --- Disease query: genes associated with disease ---
 monarch_genes = tu.tools.MonarchV3_get_associations(
     subject=mondo_id,     # e.g., "MONDO:0007254"
-    category="biolink:DiseaseToGeneAssociation",
+    category="biolink:CorrelatedGeneToDiseaseAssociation",
     limit=20
 )
 
@@ -232,6 +235,9 @@ entity = tu.tools.MonarchV3_get_entity(
 ---
 
 ## Phase 5: Mendelian Disease Evidence
+
+> **API KEY REQUIRED**: OMIM tools require `OMIM_API_KEY`. Register at https://omim.org/api for academic access.
+> **Fallback if no key**: Use Monarch Initiative (`biolink:CausalGeneToDiseaseAssociation` from Phase 4) which includes OMIM data without requiring a key. Also use GenCC (below) which is fully open.
 
 ```python
 # --- OMIM: authoritative Mendelian gene-disease mapping ---
@@ -283,6 +289,9 @@ orphanet_result = tu.tools.Orphanet_get_gene_diseases(
     gene_name=gene_symbol  # e.g., "BRCA1"
 )
 # Returns ORPHA codes, association types, genomic locus info
+# IMPORTANT: Orphanet searches by substring, so "BRCA1" also matches
+# genes with "BRCA1" in their full name (BAP1, BRCC3, BRAT1).
+# Always filter results by checking gene.symbol == gene_symbol exactly.
 ```
 
 **GenCC Classification Hierarchy** (most to least confident):
@@ -441,7 +450,7 @@ Note: Other tools may not handle renames; always verify with MyGene_query_genes
 | `OpenTargets_target_disease_evidence` | `ensemblId`, `efoId` | IntOGen somatic driver evidence; needs both IDs pre-resolved |
 | `MonarchV3_search` | `query`, `category`, `limit` | category: biolink:Gene, biolink:Disease |
 | `MonarchV3_get_entity` | `entity_id` (CURIE) | e.g., HGNC:1100, MONDO:0007254 |
-| `MonarchV3_get_associations` | `subject` (CURIE), `category`, `limit` | category: biolink:GeneToDiseaseAssociation, etc. |
+| `MonarchV3_get_associations` | `subject` (CURIE), `category`, `limit` | category: biolink:CausalGeneToDiseaseAssociation, etc. |
 | `MonarchV3_get_histopheno` | `entity_id` (disease CURIE) | Returns phenotype counts by body system |
 | `MonarchV3_get_mappings` | `entity_id`, `limit` | Cross-ontology ID mappings |
 | `MonarchV3_phenotype_similarity_search` | `phenotypes` (HPO array), `group`, `limit` | For phenotype-based disease matching |
