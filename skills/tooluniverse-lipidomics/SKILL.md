@@ -33,8 +33,8 @@ Integrated pipeline for lipid identification, classification, pathway mapping, a
 
 | Tool | Use For |
 |------|---------|
-| `LIPIDMAPS_search` | Lipid identification by name, abbreviation, or mass |
-| `LIPIDMAPS_get_compound` | Detailed lipid info (structure, classification, pathways) |
+| `LipidMaps_search_by_name` | Lipid identification by name, abbreviation, or mass |
+| `LipidMaps_get_compound_by_id` | Detailed lipid info (structure, classification, pathways) |
 | `HMDB_search` / `HMDB_get_metabolite` | Lipid metabolite details, disease associations |
 | `kegg_search_pathway` | Lipid metabolism pathways (keyword=`sphingolipid`, `glycerolipid`, etc.) |
 | `KEGG_get_pathway_genes` | Enzymes in lipid pathways |
@@ -68,7 +68,7 @@ Phase 4: Interpretation & Report
 ### Phase 0: Lipid Identity Resolution
 
 ```
-LIPIDMAPS_search(query="ceramide")  → LMSP ID, exact mass, classification
+LipidMaps_search_by_name(query="ceramide")  → LMSP ID, exact mass, classification
 HMDB_search(query="ceramide")       → HMDB ID, disease links
 PubChem_get_CID_by_compound_name(name="ceramide") → CID, SMILES
 ```

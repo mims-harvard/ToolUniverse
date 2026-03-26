@@ -45,7 +45,7 @@ Pipeline for investigating aging biology through genetics, gene expression, path
 | `ChEMBL_search_drugs` | Senolytic/geroprotector compound details |
 | `search_clinical_trials` | Clinical trials for senolytics |
 | `PubMed_search_articles` | Aging/senescence literature |
-| `DisGeNET_search_gene` | Gene-disease associations for aging genes |
+| `DisGeNET_search_gene` | Gene-disease associations for aging genes. **Param: `gene=` (NOT `query=`). Requires `DISGENET_API_KEY`.** |
 | `UniProt_get_function_by_accession` | Protein function for aging-related genes |
 | `HPO_search_terms` | Aging/progeria phenotype terms |
 
@@ -107,6 +107,10 @@ The 12 hallmarks of aging (Lopez-Otin et al., Cell 2023) provide the organizing 
 gwas_search_associations(query="longevity")
 gwas_search_associations(query="telomere length")
 OpenTargets_get_associated_targets_by_disease_efoId(efoId="EFO_0004847", limit=20)  # aging
+
+# NOTE: GWAS Catalog search may not find gene-specific longevity GWAS by gene name.
+# Better strategy: search by trait ("longevity", "lifespan") then filter results for your gene.
+# Also try: PubMed_search_articles(query="FOXO3 GWAS longevity centenarian") for published studies.
 ```
 
 ### Phase 3: Pathway Analysis
