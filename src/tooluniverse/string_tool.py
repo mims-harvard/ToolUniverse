@@ -132,4 +132,17 @@ class STRINGRESTTool(BaseTool):
                         r for r in data_list if r.get("category") == category_filter
                     ]
 
+        # Unwrap TSV parsed responses to avoid double-nesting
+        # _parse_tsv_response returns {"data": [...], "header": [...]}
+        # Without unwrapping, result would be {"data": {"data": [...], "header": [...]}}
+        if (
+            isinstance(api_response, dict)
+            and "data" in api_response
+            and "header" in api_response
+        ):
+            return {
+                "status": "success",
+                "data": api_response["data"],
+                "metadata": {"columns": api_response["header"]},
+            }
         return {"status": "success", "data": api_response}

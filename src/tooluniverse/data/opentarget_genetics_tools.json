@@ -1,1168 +1,1158 @@
 [
-  {
-    "name": "OpenTargets_get_variant_info",
-    "description": "Get detailed information about a genetic variant from Open Targets Platform, including genomic coordinates, rsIDs, allele frequencies across populations (gnomAD), functional consequence, transcript consequences, and HGVS notation. Useful for GWAS variant annotation and population genetics.",
-    "label": [
-      "GWAS",
-      "Variant",
-      "Genetics",
-      "Open Targets"
-    ],
-    "parameter": {
-      "type": "object",
-      "properties": {
-        "variantId": {
-          "type": "string",
-          "description": "Open Targets variant ID in format chr_position_ref_alt (e.g., '10_112998590_C_T' for rs7903146, '19_44908684_T_C' for rs429358). Use the search tool to find variant IDs from rsIDs."
-        }
-      },
-      "required": [
-        "variantId"
-      ]
-    },
-    "query_schema": "\nquery variantInfo($variantId: String!) {\n  variant(variantId: $variantId) {\n    id\n    rsIds\n    chromosome\n    position\n    referenceAllele\n    alternateAllele\n    hgvsId\n    variantDescription\n    mostSevereConsequence {\n      id\n      label\n    }\n    alleleFrequencies {\n      populationName\n      alleleFrequency\n    }\n  }\n}\n",
-    "type": "OpenTarget",
-    "test_examples": [
-      {
-        "variantId": "10_112998590_C_T"
-      },
-      {
-        "variantId": "19_44908684_T_C"
-      }
-    ],
-    "return_schema": {
-      "oneOf": [
-        {
-          "type": "object",
-          "properties": {
-            "data": {
-              "type": "object",
-              "properties": {
-                "variant": {
-                  "type": "object",
-                  "properties": {
-                    "id": {
-                      "type": "string",
-                      "description": "Variant identifier in chr_pos_ref_alt format"
-                    },
-                    "rsIds": {
-                      "type": "array",
-                      "items": {
-                        "type": "string"
-                      },
-                      "description": "dbSNP rs identifiers"
-                    },
-                    "chromosome": {
-                      "type": "string"
-                    },
-                    "position": {
-                      "type": "integer"
-                    },
-                    "referenceAllele": {
-                      "type": "string"
-                    },
-                    "alternateAllele": {
-                      "type": "string"
-                    },
-                    "hgvsId": {
-                      "type": [
-                        "string",
-                        "null"
-                      ],
-                      "description": "HGVS notation"
-                    },
-                    "variantDescription": {
-                      "type": "string",
-                      "description": "Human-readable variant description"
-                    },
-                    "mostSevereConsequence": {
-                      "type": "object",
-                      "properties": {
-                        "id": {
-                          "type": "string"
-                        },
-                        "label": {
-                          "type": "string"
-                        }
-                      }
-                    },
-                    "alleleFrequencies": {
-                      "type": "array",
-                      "items": {
-                        "type": "object",
-                        "properties": {
-                          "populationName": {
-                            "type": "string"
-                          },
-                          "alleleFrequency": {
-                            "type": "number"
-                          }
-                        }
-                      }
-                    }
-                  }
+    {
+        "name": "OpenTargets_get_variant_info",
+        "description": "Get detailed information about a genetic variant from Open Targets Platform, including genomic coordinates, rsIDs, allele frequencies across populations (gnomAD), functional consequence, transcript consequences, and HGVS notation. Useful for GWAS variant annotation and population genetics.",
+        "label": [
+            "GWAS",
+            "Variant",
+            "Genetics",
+            "Open Targets"
+        ],
+        "parameter": {
+            "type": "object",
+            "properties": {
+                "variantId": {
+                    "type": "string",
+                    "description": "Open Targets variant ID in format chr_position_ref_alt (e.g., '10_112998590_C_T' for rs7903146, '19_44908684_T_C' for rs429358). Use the search tool to find variant IDs from rsIDs."
                 }
-              }
-            }
-          },
-          "required": [
-            "data"
-          ]
+            },
+            "required": [
+                "variantId"
+            ]
         },
-        {
-          "type": "object",
-          "properties": {
-            "error": {
-              "type": "object"
+        "query_schema": "\nquery variantInfo($variantId: String!) {\n  variant(variantId: $variantId) {\n    id\n    rsIds\n    chromosome\n    position\n    referenceAllele\n    alternateAllele\n    hgvsId\n    variantDescription\n    mostSevereConsequence {\n      id\n      label\n    }\n    alleleFrequencies {\n      populationName\n      alleleFrequency\n    }\n  }\n}\n",
+        "type": "OpenTarget",
+        "test_examples": [
+            {
+                "variantId": "10_112998590_C_T"
+            },
+            {
+                "variantId": "19_44908684_T_C"
             }
-          },
-          "required": [
-            "error"
-          ]
-        }
-      ]
-    }
-  },
-  {
-    "name": "OpenTargets_get_variant_credible_sets",
-    "description": "Get GWAS credible sets (fine-mapped loci) associated with a genetic variant from Open Targets. Returns studies where this variant appears in a fine-mapped credible set, with locus-to-gene (L2G) predictions, p-values, effect sizes, and the fine-mapping method used. Essential for understanding which GWAS signals a variant is part of and which genes it likely affects.",
-    "label": [
-      "GWAS",
-      "Fine-mapping",
-      "Credible Set",
-      "Variant",
-      "Open Targets"
-    ],
-    "parameter": {
-      "type": "object",
-      "properties": {
-        "variantId": {
-          "type": "string",
-          "description": "Open Targets variant ID in format chr_position_ref_alt (e.g., '10_112998590_C_T' for rs7903146)"
-        },
-        "size": {
-          "type": "integer",
-          "description": "Number of credible sets to return (default 10)",
-          "default": 10
-        }
-      },
-      "required": [
-        "variantId"
-      ]
-    },
-    "query_schema": "\nquery variantCredibleSets($variantId: String!, $size: Int = 10, $index: Int = 0) {\n  variant(variantId: $variantId) {\n    id\n    rsIds\n    credibleSets(studyTypes: [gwas], page: {size: $size, index: $index}) {\n      count\n      rows {\n        studyLocusId\n        studyId\n        region\n        finemappingMethod\n        pValueMantissa\n        pValueExponent\n        beta\n        confidence\n        study {\n          id\n          traitFromSource\n          publicationFirstAuthor\n          pubmedId\n          diseases {\n            id\n            name\n          }\n        }\n        l2GPredictions {\n          rows {\n            target {\n              id\n              approvedSymbol\n            }\n            score\n          }\n        }\n      }\n    }\n  }\n}\n",
-    "type": "OpenTarget",
-    "test_examples": [
-      {
-        "variantId": "10_112998590_C_T",
-        "size": 5
-      }
-    ],
-    "return_schema": {
-      "oneOf": [
-        {
-          "type": "object",
-          "properties": {
-            "data": {
-              "type": "object",
-              "properties": {
-                "variant": {
-                  "type": "object",
-                  "properties": {
-                    "id": {
-                      "type": "string"
-                    },
-                    "rsIds": {
-                      "type": "array",
-                      "items": {
-                        "type": "string"
-                      }
-                    },
-                    "credibleSets": {
-                      "type": "object",
-                      "properties": {
-                        "count": {
-                          "type": "integer"
-                        },
-                        "rows": {
-                          "type": "array",
-                          "items": {
+        ],
+        "return_schema": {
+            "oneOf": [
+                {
+                    "type": "object",
+                    "properties": {
+                        "data": {
                             "type": "object",
                             "properties": {
-                              "studyLocusId": {
-                                "type": "string"
-                              },
-                              "studyId": {
-                                "type": "string"
-                              },
-                              "region": {
-                                "type": [
-                                  "string",
-                                  "null"
-                                ]
-                              },
-                              "finemappingMethod": {
-                                "type": [
-                                  "string",
-                                  "null"
-                                ]
-                              },
-                              "pValueMantissa": {
-                                "type": [
-                                  "number",
-                                  "null"
-                                ]
-                              },
-                              "pValueExponent": {
-                                "type": [
-                                  "integer",
-                                  "null"
-                                ]
-                              },
-                              "beta": {
-                                "type": [
-                                  "number",
-                                  "null"
-                                ]
-                              },
-                              "confidence": {
-                                "type": [
-                                  "string",
-                                  "null"
-                                ]
-                              },
-                              "study": {
-                                "type": "object",
-                                "properties": {
-                                  "id": {
-                                    "type": "string"
-                                  },
-                                  "traitFromSource": {
-                                    "type": [
-                                      "string",
-                                      "null"
-                                    ]
-                                  },
-                                  "publicationFirstAuthor": {
-                                    "type": [
-                                      "string",
-                                      "null"
-                                    ]
-                                  },
-                                  "pubmedId": {
-                                    "type": [
-                                      "string",
-                                      "null"
-                                    ]
-                                  },
-                                  "diseases": {
-                                    "type": "array",
-                                    "items": {
-                                      "type": "object",
-                                      "properties": {
+                                "variant": {
+                                    "type": "object",
+                                    "properties": {
                                         "id": {
-                                          "type": "string"
+                                            "type": "string",
+                                            "description": "Variant identifier in chr_pos_ref_alt format"
                                         },
-                                        "name": {
-                                          "type": "string"
-                                        }
-                                      }
-                                    }
-                                  }
-                                }
-                              },
-                              "l2GPredictions": {
-                                "type": "object",
-                                "properties": {
-                                  "rows": {
-                                    "type": "array",
-                                    "items": {
-                                      "type": "object",
-                                      "properties": {
-                                        "target": {
-                                          "type": "object",
-                                          "properties": {
-                                            "id": {
-                                              "type": "string"
+                                        "rsIds": {
+                                            "type": "array",
+                                            "items": {
+                                                "type": "string"
                                             },
-                                            "approvedSymbol": {
-                                              "type": "string"
+                                            "description": "dbSNP rs identifiers"
+                                        },
+                                        "chromosome": {
+                                            "type": "string"
+                                        },
+                                        "position": {
+                                            "type": "integer"
+                                        },
+                                        "referenceAllele": {
+                                            "type": "string"
+                                        },
+                                        "alternateAllele": {
+                                            "type": "string"
+                                        },
+                                        "hgvsId": {
+                                            "type": [
+                                                "string",
+                                                "null"
+                                            ],
+                                            "description": "HGVS notation"
+                                        },
+                                        "variantDescription": {
+                                            "type": "string",
+                                            "description": "Human-readable variant description"
+                                        },
+                                        "mostSevereConsequence": {
+                                            "type": "object",
+                                            "properties": {
+                                                "id": {
+                                                    "type": "string"
+                                                },
+                                                "label": {
+                                                    "type": "string"
+                                                }
                                             }
-                                          }
                                         },
-                                        "score": {
-                                          "type": "number"
+                                        "alleleFrequencies": {
+                                            "type": "array",
+                                            "items": {
+                                                "type": "object",
+                                                "properties": {
+                                                    "populationName": {
+                                                        "type": "string"
+                                                    },
+                                                    "alleleFrequency": {
+                                                        "type": "number"
+                                                    }
+                                                }
+                                            }
                                         }
-                                      }
                                     }
-                                  }
                                 }
-                              }
                             }
-                          }
                         }
-                      }
-                    }
-                  }
+                    },
+                    "required": [
+                        "data"
+                    ]
+                },
+                {
+                    "type": "object",
+                    "properties": {
+                        "error": {
+                            "type": "object"
+                        }
+                    },
+                    "required": [
+                        "error"
+                    ]
                 }
-              }
-            }
-          },
-          "required": [
-            "data"
-          ]
-        },
-        {
-          "type": "object",
-          "properties": {
-            "error": {
-              "type": "object"
-            }
-          },
-          "required": [
-            "error"
-          ]
+            ]
         }
-      ]
-    }
-  },
-  {
-    "name": "OpenTargets_get_gwas_study",
-    "description": "Get detailed metadata for a GWAS study from Open Targets Platform, including trait information, sample sizes, publication details, disease mappings, cohorts, LD population structure, and availability of summary statistics. Use GCST accession IDs.",
-    "label": [
-      "GWAS",
-      "Study",
-      "Genetics",
-      "Open Targets"
-    ],
-    "parameter": {
-      "type": "object",
-      "properties": {
-        "studyId": {
-          "type": "string",
-          "description": "GWAS study accession ID (e.g., 'GCST000392' for T1D Barrett et al., 'GCST90029024' for T2D Loh et al.)"
-        }
-      },
-      "required": [
-        "studyId"
-      ]
     },
-    "query_schema": "\nquery gwasStudy($studyId: String!) {\n  study(studyId: $studyId) {\n    id\n    studyType\n    traitFromSource\n    publicationFirstAuthor\n    publicationTitle\n    publicationDate\n    publicationJournal\n    pubmedId\n    nSamples\n    nCases\n    nControls\n    initialSampleSize\n    hasSumstats\n    summarystatsLocation\n    cohorts\n    diseases {\n      id\n      name\n    }\n    ldPopulationStructure {\n      ldPopulation\n      relativeSampleSize\n    }\n  }\n}\n",
-    "type": "OpenTarget",
-    "test_examples": [
-      {
-        "studyId": "GCST000392"
-      },
-      {
-        "studyId": "GCST90029024"
-      }
-    ],
-    "return_schema": {
-      "oneOf": [
-        {
-          "type": "object",
-          "properties": {
-            "data": {
-              "type": "object",
-              "properties": {
-                "study": {
-                  "type": "object",
-                  "properties": {
-                    "id": {
-                      "type": "string"
-                    },
-                    "studyType": {
-                      "type": [
-                        "string",
-                        "null"
-                      ]
-                    },
-                    "traitFromSource": {
-                      "type": [
-                        "string",
-                        "null"
-                      ]
-                    },
-                    "publicationFirstAuthor": {
-                      "type": [
-                        "string",
-                        "null"
-                      ]
-                    },
-                    "publicationTitle": {
-                      "type": [
-                        "string",
-                        "null"
-                      ]
-                    },
-                    "publicationDate": {
-                      "type": [
-                        "string",
-                        "null"
-                      ]
-                    },
-                    "publicationJournal": {
-                      "type": [
-                        "string",
-                        "null"
-                      ]
-                    },
-                    "pubmedId": {
-                      "type": [
-                        "string",
-                        "null"
-                      ]
-                    },
-                    "nSamples": {
-                      "type": [
-                        "integer",
-                        "null"
-                      ]
-                    },
-                    "nCases": {
-                      "type": [
-                        "integer",
-                        "null"
-                      ]
-                    },
-                    "nControls": {
-                      "type": [
-                        "integer",
-                        "null"
-                      ]
-                    },
-                    "initialSampleSize": {
-                      "type": [
-                        "string",
-                        "null"
-                      ]
-                    },
-                    "hasSumstats": {
-                      "type": [
-                        "boolean",
-                        "null"
-                      ]
-                    },
-                    "summarystatsLocation": {
-                      "type": [
-                        "string",
-                        "null"
-                      ]
-                    },
-                    "cohorts": {
-                      "type": [
-                        "array",
-                        "null"
-                      ],
-                      "items": {
-                        "type": "string"
-                      }
-                    },
-                    "diseases": {
-                      "type": "array",
-                      "items": {
-                        "type": "object",
-                        "properties": {
-                          "id": {
-                            "type": "string"
-                          },
-                          "name": {
-                            "type": "string"
-                          }
-                        }
-                      }
-                    },
-                    "ldPopulationStructure": {
-                      "type": [
-                        "array",
-                        "null"
-                      ],
-                      "items": {
-                        "type": "object",
-                        "properties": {
-                          "ldPopulation": {
-                            "type": "string"
-                          },
-                          "relativeSampleSize": {
-                            "type": "number"
-                          }
-                        }
-                      }
-                    }
-                  }
-                }
-              }
-            }
-          },
-          "required": [
-            "data"
-          ]
-        },
-        {
-          "type": "object",
-          "properties": {
-            "error": {
-              "type": "object"
-            }
-          },
-          "required": [
-            "error"
-          ]
-        }
-      ]
-    }
-  },
-  {
-    "name": "OpenTargets_search_gwas_studies_by_disease",
-    "description": "Search for GWAS studies associated with a disease or trait in Open Targets. Takes disease ontology IDs (EFO, MONDO) and returns matching GWAS studies with their metadata including sample sizes, traits, publications, and associated diseases. Use enableIndirect=true to include child disease terms.",
-    "label": [
-      "GWAS",
-      "Study",
-      "Disease",
-      "Search",
-      "Open Targets"
-    ],
-    "parameter": {
-      "type": "object",
-      "properties": {
-        "diseaseIds": {
-          "type": "array",
-          "items": {
-            "type": "string"
-          },
-          "description": "Disease ontology IDs (e.g., ['MONDO_0005148'] for type 2 diabetes, ['MONDO_0004975'] for Alzheimer disease)"
-        },
-        "enableIndirect": {
-          "type": "boolean",
-          "description": "Include studies for child disease terms (default true)",
-          "default": true
-        },
-        "size": {
-          "type": "integer",
-          "description": "Number of results per page (default 10)",
-          "default": 10
-        },
-        "index": {
-          "type": "integer",
-          "description": "Page index for pagination (0-based, default 0)",
-          "default": 0
-        },
-        "disease_name": {
-          "type": "string",
-          "description": "Disease or trait name for auto-resolution (e.g., 'type 2 diabetes'). Resolved to diseaseIds automatically."
-        },
-        "disease": {
-          "type": "string",
-          "description": "Alias for disease_name."
-        },
-        "trait": {
-          "type": "string",
-          "description": "Alias for disease_name."
-        }
-      },
-      "required": []
-    },
-    "query_schema": "\nquery searchStudies($diseaseIds: [String!], $enableIndirect: Boolean = true, $size: Int = 10, $index: Int = 0) {\n  studies(diseaseIds: $diseaseIds, enableIndirect: $enableIndirect, page: {size: $size, index: $index}) {\n    count\n    rows {\n      id\n      studyType\n      traitFromSource\n      publicationFirstAuthor\n      publicationTitle\n      publicationDate\n      pubmedId\n      nSamples\n      nCases\n      nControls\n      hasSumstats\n      diseases {\n        id\n        name\n      }\n    }\n  }\n}\n",
-    "type": "OpenTarget",
-    "test_examples": [
-      {
-        "diseaseIds": [
-          "MONDO_0005148"
+    {
+        "name": "OpenTargets_get_variant_credible_sets",
+        "description": "Get GWAS credible sets (fine-mapped loci) associated with a genetic variant from Open Targets. Returns studies where this variant appears in a fine-mapped credible set, with locus-to-gene (L2G) predictions, p-values, effect sizes, and the fine-mapping method used. Essential for understanding which GWAS signals a variant is part of and which genes it likely affects.",
+        "label": [
+            "GWAS",
+            "Fine-mapping",
+            "Credible Set",
+            "Variant",
+            "Open Targets"
         ],
-        "size": 5
-      },
-      {
-        "diseaseIds": [
-          "MONDO_0004975"
-        ],
-        "enableIndirect": true,
-        "size": 5
-      }
-    ],
-    "return_schema": {
-      "oneOf": [
-        {
-          "type": "object",
-          "properties": {
-            "data": {
-              "type": "object",
-              "properties": {
-                "studies": {
-                  "type": "object",
-                  "properties": {
-                    "count": {
-                      "type": "integer"
-                    },
-                    "rows": {
-                      "type": "array",
-                      "items": {
-                        "type": "object",
-                        "properties": {
-                          "id": {
-                            "type": "string"
-                          },
-                          "studyType": {
-                            "type": [
-                              "string",
-                              "null"
-                            ]
-                          },
-                          "traitFromSource": {
-                            "type": [
-                              "string",
-                              "null"
-                            ]
-                          },
-                          "publicationFirstAuthor": {
-                            "type": [
-                              "string",
-                              "null"
-                            ]
-                          },
-                          "publicationTitle": {
-                            "type": [
-                              "string",
-                              "null"
-                            ]
-                          },
-                          "publicationDate": {
-                            "type": [
-                              "string",
-                              "null"
-                            ]
-                          },
-                          "pubmedId": {
-                            "type": [
-                              "string",
-                              "null"
-                            ]
-                          },
-                          "nSamples": {
-                            "type": [
-                              "integer",
-                              "null"
-                            ]
-                          },
-                          "nCases": {
-                            "type": [
-                              "integer",
-                              "null"
-                            ]
-                          },
-                          "nControls": {
-                            "type": [
-                              "integer",
-                              "null"
-                            ]
-                          },
-                          "hasSumstats": {
-                            "type": [
-                              "boolean",
-                              "null"
-                            ]
-                          },
-                          "diseases": {
-                            "type": "array",
-                            "items": {
-                              "type": "object",
-                              "properties": {
-                                "id": {
-                                  "type": "string"
-                                },
-                                "name": {
-                                  "type": "string"
-                                }
-                              }
-                            }
-                          }
-                        }
-                      }
-                    }
-                  }
+        "parameter": {
+            "type": "object",
+            "properties": {
+                "variantId": {
+                    "type": "string",
+                    "description": "Open Targets variant ID in format chr_position_ref_alt (e.g., '10_112998590_C_T' for rs7903146)"
+                },
+                "size": {
+                    "type": "integer",
+                    "description": "Number of credible sets to return (default 10)",
+                    "default": 10
                 }
-              }
-            }
-          },
-          "required": [
-            "data"
-          ]
+            },
+            "required": [
+                "variantId"
+            ]
         },
-        {
-          "type": "object",
-          "properties": {
-            "error": {
-              "type": "object"
+        "query_schema": "\nquery variantCredibleSets($variantId: String!, $size: Int = 10, $index: Int = 0) {\n  variant(variantId: $variantId) {\n    id\n    rsIds\n    credibleSets(studyTypes: [gwas], page: {size: $size, index: $index}) {\n      count\n      rows {\n        studyLocusId\n        studyId\n        region\n        finemappingMethod\n        pValueMantissa\n        pValueExponent\n        beta\n        confidence\n        study {\n          id\n          traitFromSource\n          publicationFirstAuthor\n          pubmedId\n          diseases {\n            id\n            name\n          }\n        }\n        l2GPredictions {\n          rows {\n            target {\n              id\n              approvedSymbol\n            }\n            score\n          }\n        }\n      }\n    }\n  }\n}\n",
+        "type": "OpenTarget",
+        "test_examples": [
+            {
+                "variantId": "10_112998590_C_T",
+                "size": 5
             }
-          },
-          "required": [
-            "error"
-          ]
-        }
-      ]
-    }
-  },
-  {
-    "name": "OpenTargets_get_credible_set_detail",
-    "description": "Get detailed information about a specific GWAS credible set (fine-mapped locus) from Open Targets. Returns the lead variant, associated study, fine-mapping method, statistical significance, locus-to-gene (L2G) predictions mapping the signal to likely causal genes, and colocalization evidence with QTLs.",
-    "label": [
-      "GWAS",
-      "Credible Set",
-      "Fine-mapping",
-      "L2G",
-      "Open Targets"
-    ],
-    "parameter": {
-      "type": "object",
-      "properties": {
-        "studyLocusId": {
-          "type": "string",
-          "description": "Credible set identifier (studyLocusId), a 32-character hash (e.g., 'b758d8fb10924f5338cbad8d27c7dee8'). Obtain from variant credible sets or study credible sets queries."
-        }
-      },
-      "required": [
-        "studyLocusId"
-      ]
-    },
-    "query_schema": "\nquery credibleSetDetail($studyLocusId: String!) {\n  credibleSet(studyLocusId: $studyLocusId) {\n    studyLocusId\n    studyId\n    region\n    chromosome\n    position\n    finemappingMethod\n    pValueMantissa\n    pValueExponent\n    beta\n    standardError\n    confidence\n    credibleSetlog10BF\n    sampleSize\n    variant {\n      id\n      rsIds\n      chromosome\n      position\n      referenceAllele\n      alternateAllele\n      mostSevereConsequence {\n        id\n        label\n      }\n    }\n    study {\n      id\n      traitFromSource\n      publicationFirstAuthor\n      publicationTitle\n      pubmedId\n      nSamples\n      diseases {\n        id\n        name\n      }\n    }\n    l2GPredictions {\n      rows {\n        target {\n          id\n          approvedSymbol\n        }\n        score\n      }\n    }\n  }\n}\n",
-    "type": "OpenTarget",
-    "test_examples": [
-      {
-        "studyLocusId": "b758d8fb10924f5338cbad8d27c7dee8"
-      }
-    ],
-    "return_schema": {
-      "oneOf": [
-        {
-          "type": "object",
-          "properties": {
-            "data": {
-              "type": "object",
-              "properties": {
-                "credibleSet": {
-                  "type": "object",
-                  "properties": {
-                    "studyLocusId": {
-                      "type": "string"
-                    },
-                    "studyId": {
-                      "type": [
-                        "string",
-                        "null"
-                      ]
-                    },
-                    "region": {
-                      "type": [
-                        "string",
-                        "null"
-                      ]
-                    },
-                    "chromosome": {
-                      "type": [
-                        "string",
-                        "null"
-                      ]
-                    },
-                    "position": {
-                      "type": [
-                        "integer",
-                        "null"
-                      ]
-                    },
-                    "finemappingMethod": {
-                      "type": [
-                        "string",
-                        "null"
-                      ]
-                    },
-                    "pValueMantissa": {
-                      "type": [
-                        "number",
-                        "null"
-                      ]
-                    },
-                    "pValueExponent": {
-                      "type": [
-                        "integer",
-                        "null"
-                      ]
-                    },
-                    "beta": {
-                      "type": [
-                        "number",
-                        "null"
-                      ]
-                    },
-                    "standardError": {
-                      "type": [
-                        "number",
-                        "null"
-                      ]
-                    },
-                    "confidence": {
-                      "type": [
-                        "string",
-                        "null"
-                      ]
-                    },
-                    "credibleSetlog10BF": {
-                      "type": [
-                        "number",
-                        "null"
-                      ]
-                    },
-                    "sampleSize": {
-                      "type": [
-                        "integer",
-                        "null"
-                      ]
-                    },
-                    "variant": {
-                      "type": "object",
-                      "properties": {
-                        "id": {
-                          "type": "string"
-                        },
-                        "rsIds": {
-                          "type": "array",
-                          "items": {
-                            "type": "string"
-                          }
-                        },
-                        "chromosome": {
-                          "type": "string"
-                        },
-                        "position": {
-                          "type": "integer"
-                        },
-                        "referenceAllele": {
-                          "type": "string"
-                        },
-                        "alternateAllele": {
-                          "type": "string"
-                        },
-                        "mostSevereConsequence": {
-                          "type": "object",
-                          "properties": {
-                            "id": {
-                              "type": "string"
-                            },
-                            "label": {
-                              "type": "string"
-                            }
-                          }
-                        }
-                      }
-                    },
-                    "study": {
-                      "type": "object",
-                      "properties": {
-                        "id": {
-                          "type": "string"
-                        },
-                        "traitFromSource": {
-                          "type": [
-                            "string",
-                            "null"
-                          ]
-                        },
-                        "publicationFirstAuthor": {
-                          "type": [
-                            "string",
-                            "null"
-                          ]
-                        },
-                        "publicationTitle": {
-                          "type": [
-                            "string",
-                            "null"
-                          ]
-                        },
-                        "pubmedId": {
-                          "type": [
-                            "string",
-                            "null"
-                          ]
-                        },
-                        "nSamples": {
-                          "type": [
-                            "integer",
-                            "null"
-                          ]
-                        },
-                        "diseases": {
-                          "type": "array",
-                          "items": {
-                            "type": "object",
-                            "properties": {
-                              "id": {
-                                "type": "string"
-                              },
-                              "name": {
-                                "type": "string"
-                              }
-                            }
-                          }
-                        }
-                      }
-                    },
-                    "l2GPredictions": {
-                      "type": "object",
-                      "properties": {
-                        "rows": {
-                          "type": "array",
-                          "items": {
-                            "type": "object",
-                            "properties": {
-                              "target": {
-                                "type": "object",
-                                "properties": {
-                                  "id": {
-                                    "type": "string"
-                                  },
-                                  "approvedSymbol": {
-                                    "type": "string"
-                                  }
-                                }
-                              },
-                              "score": {
-                                "type": "number"
-                              }
-                            }
-                          }
-                        }
-                      }
-                    }
-                  }
-                }
-              }
-            }
-          },
-          "required": [
-            "data"
-          ]
-        },
-        {
-          "type": "object",
-          "properties": {
-            "error": {
-              "type": "object"
-            }
-          },
-          "required": [
-            "error"
-          ]
-        }
-      ]
-    }
-  },
-  {
-    "name": "OpenTargets_get_study_credible_sets",
-    "description": "Get all credible sets (fine-mapped GWAS loci) for a specific GWAS study from Open Targets. Returns the lead variants, fine-mapping details, p-values, effect sizes, and locus-to-gene (L2G) predictions for each locus in the study. Use this to explore all significant loci discovered in a GWAS.",
-    "label": [
-      "GWAS",
-      "Study",
-      "Credible Set",
-      "Loci",
-      "Open Targets"
-    ],
-    "parameter": {
-      "type": "object",
-      "properties": {
-        "studyIds": {
-          "type": "array",
-          "items": {
-            "type": "string"
-          },
-          "description": "GWAS study accession IDs (e.g., ['GCST000392'])"
-        },
-        "size": {
-          "type": "integer",
-          "description": "Number of credible sets to return (default 20)",
-          "default": 20
-        },
-        "index": {
-          "type": "integer",
-          "description": "Page index for pagination (0-based, default 0)",
-          "default": 0
-        }
-      },
-      "required": [
-        "studyIds"
-      ]
-    },
-    "query_schema": "\nquery studyCredibleSets($studyIds: [String!], $size: Int = 20, $index: Int = 0) {\n  credibleSets(studyIds: $studyIds, studyTypes: [gwas], page: {size: $size, index: $index}) {\n    count\n    rows {\n      studyLocusId\n      studyId\n      region\n      chromosome\n      position\n      finemappingMethod\n      pValueMantissa\n      pValueExponent\n      beta\n      confidence\n      variant {\n        id\n        rsIds\n      }\n      study {\n        traitFromSource\n        diseases {\n          id\n          name\n        }\n      }\n      l2GPredictions {\n        rows {\n          target {\n            id\n            approvedSymbol\n          }\n          score\n        }\n      }\n    }\n  }\n}\n",
-    "type": "OpenTarget",
-    "test_examples": [
-      {
-        "studyIds": [
-          "GCST000392"
         ],
-        "size": 10
-      }
-    ],
-    "return_schema": {
-      "oneOf": [
-        {
-          "type": "object",
-          "properties": {
-            "data": {
-              "type": "object",
-              "properties": {
-                "credibleSets": {
-                  "type": "object",
-                  "properties": {
-                    "count": {
-                      "type": "integer"
-                    },
-                    "rows": {
-                      "type": "array",
-                      "items": {
-                        "type": "object",
-                        "properties": {
-                          "studyLocusId": {
-                            "type": "string"
-                          },
-                          "studyId": {
-                            "type": "string"
-                          },
-                          "region": {
-                            "type": [
-                              "string",
-                              "null"
-                            ]
-                          },
-                          "chromosome": {
-                            "type": [
-                              "string",
-                              "null"
-                            ]
-                          },
-                          "position": {
-                            "type": [
-                              "integer",
-                              "null"
-                            ]
-                          },
-                          "finemappingMethod": {
-                            "type": [
-                              "string",
-                              "null"
-                            ]
-                          },
-                          "pValueMantissa": {
-                            "type": [
-                              "number",
-                              "null"
-                            ]
-                          },
-                          "pValueExponent": {
-                            "type": [
-                              "integer",
-                              "null"
-                            ]
-                          },
-                          "beta": {
-                            "type": [
-                              "number",
-                              "null"
-                            ]
-                          },
-                          "confidence": {
-                            "type": [
-                              "string",
-                              "null"
-                            ]
-                          },
-                          "variant": {
+        "return_schema": {
+            "oneOf": [
+                {
+                    "type": "object",
+                    "properties": {
+                        "data": {
                             "type": "object",
                             "properties": {
-                              "id": {
-                                "type": "string"
-                              },
-                              "rsIds": {
-                                "type": "array",
-                                "items": {
-                                  "type": "string"
-                                }
-                              }
-                            }
-                          },
-                          "study": {
-                            "type": "object",
-                            "properties": {
-                              "traitFromSource": {
-                                "type": [
-                                  "string",
-                                  "null"
-                                ]
-                              },
-                              "diseases": {
-                                "type": "array",
-                                "items": {
-                                  "type": "object",
-                                  "properties": {
-                                    "id": {
-                                      "type": "string"
-                                    },
-                                    "name": {
-                                      "type": "string"
-                                    }
-                                  }
-                                }
-                              }
-                            }
-                          },
-                          "l2GPredictions": {
-                            "type": "object",
-                            "properties": {
-                              "rows": {
-                                "type": "array",
-                                "items": {
-                                  "type": "object",
-                                  "properties": {
-                                    "target": {
-                                      "type": "object",
-                                      "properties": {
+                                "variant": {
+                                    "type": "object",
+                                    "properties": {
                                         "id": {
-                                          "type": "string"
+                                            "type": "string"
                                         },
-                                        "approvedSymbol": {
-                                          "type": "string"
+                                        "rsIds": {
+                                            "type": "array",
+                                            "items": {
+                                                "type": "string"
+                                            }
+                                        },
+                                        "credibleSets": {
+                                            "type": "object",
+                                            "properties": {
+                                                "count": {
+                                                    "type": "integer"
+                                                },
+                                                "rows": {
+                                                    "type": "array",
+                                                    "items": {
+                                                        "type": "object",
+                                                        "properties": {
+                                                            "studyLocusId": {
+                                                                "type": "string"
+                                                            },
+                                                            "studyId": {
+                                                                "type": "string"
+                                                            },
+                                                            "region": {
+                                                                "type": [
+                                                                    "string",
+                                                                    "null"
+                                                                ]
+                                                            },
+                                                            "finemappingMethod": {
+                                                                "type": [
+                                                                    "string",
+                                                                    "null"
+                                                                ]
+                                                            },
+                                                            "pValueMantissa": {
+                                                                "type": [
+                                                                    "number",
+                                                                    "null"
+                                                                ]
+                                                            },
+                                                            "pValueExponent": {
+                                                                "type": [
+                                                                    "integer",
+                                                                    "null"
+                                                                ]
+                                                            },
+                                                            "beta": {
+                                                                "type": [
+                                                                    "number",
+                                                                    "null"
+                                                                ]
+                                                            },
+                                                            "confidence": {
+                                                                "type": [
+                                                                    "string",
+                                                                    "null"
+                                                                ]
+                                                            },
+                                                            "study": {
+                                                                "type": "object",
+                                                                "properties": {
+                                                                    "id": {
+                                                                        "type": "string"
+                                                                    },
+                                                                    "traitFromSource": {
+                                                                        "type": [
+                                                                            "string",
+                                                                            "null"
+                                                                        ]
+                                                                    },
+                                                                    "publicationFirstAuthor": {
+                                                                        "type": [
+                                                                            "string",
+                                                                            "null"
+                                                                        ]
+                                                                    },
+                                                                    "pubmedId": {
+                                                                        "type": [
+                                                                            "string",
+                                                                            "null"
+                                                                        ]
+                                                                    },
+                                                                    "diseases": {
+                                                                        "type": "array",
+                                                                        "items": {
+                                                                            "type": "object",
+                                                                            "properties": {
+                                                                                "id": {
+                                                                                    "type": "string"
+                                                                                },
+                                                                                "name": {
+                                                                                    "type": "string"
+                                                                                }
+                                                                            }
+                                                                        }
+                                                                    }
+                                                                }
+                                                            },
+                                                            "l2GPredictions": {
+                                                                "type": "object",
+                                                                "properties": {
+                                                                    "rows": {
+                                                                        "type": "array",
+                                                                        "items": {
+                                                                            "type": "object",
+                                                                            "properties": {
+                                                                                "target": {
+                                                                                    "type": "object",
+                                                                                    "properties": {
+                                                                                        "id": {
+                                                                                            "type": "string"
+                                                                                        },
+                                                                                        "approvedSymbol": {
+                                                                                            "type": "string"
+                                                                                        }
+                                                                                    }
+                                                                                },
+                                                                                "score": {
+                                                                                    "type": "number"
+                                                                                }
+                                                                            }
+                                                                        }
+                                                                    }
+                                                                }
+                                                            }
+                                                        }
+                                                    }
+                                                }
+                                            }
                                         }
-                                      }
-                                    },
-                                    "score": {
-                                      "type": "number"
                                     }
-                                  }
                                 }
-                              }
                             }
-                          }
                         }
-                      }
-                    }
-                  }
+                    },
+                    "required": [
+                        "data"
+                    ]
+                },
+                {
+                    "type": "object",
+                    "properties": {
+                        "error": {
+                            "type": "object"
+                        }
+                    },
+                    "required": [
+                        "error"
+                    ]
                 }
-              }
-            }
-          },
-          "required": [
-            "data"
-          ]
-        },
-        {
-          "type": "object",
-          "properties": {
-            "error": {
-              "type": "object"
-            }
-          },
-          "required": [
-            "error"
-          ]
+            ]
         }
-      ]
+    },
+    {
+        "name": "OpenTargets_get_gwas_study",
+        "description": "Get detailed metadata for a GWAS study from Open Targets Platform, including trait information, sample sizes, publication details, disease mappings, cohorts, LD population structure, and availability of summary statistics. Use GCST accession IDs.",
+        "label": [
+            "GWAS",
+            "Study",
+            "Genetics",
+            "Open Targets"
+        ],
+        "parameter": {
+            "type": "object",
+            "properties": {
+                "studyId": {
+                    "type": "string",
+                    "description": "GWAS study accession ID (e.g., 'GCST000392' for T1D Barrett et al., 'GCST90029024' for T2D Loh et al.)"
+                }
+            },
+            "required": [
+                "studyId"
+            ]
+        },
+        "query_schema": "\nquery gwasStudy($studyId: String!) {\n  study(studyId: $studyId) {\n    id\n    studyType\n    traitFromSource\n    publicationFirstAuthor\n    publicationTitle\n    publicationDate\n    publicationJournal\n    pubmedId\n    nSamples\n    nCases\n    nControls\n    initialSampleSize\n    hasSumstats\n    summarystatsLocation\n    cohorts\n    diseases {\n      id\n      name\n    }\n    ldPopulationStructure {\n      ldPopulation\n      relativeSampleSize\n    }\n  }\n}\n",
+        "type": "OpenTarget",
+        "test_examples": [
+            {
+                "studyId": "GCST000392"
+            },
+            {
+                "studyId": "GCST90029024"
+            }
+        ],
+        "return_schema": {
+            "oneOf": [
+                {
+                    "type": "object",
+                    "properties": {
+                        "data": {
+                            "type": "object",
+                            "properties": {
+                                "study": {
+                                    "type": "object",
+                                    "properties": {
+                                        "id": {
+                                            "type": "string"
+                                        },
+                                        "studyType": {
+                                            "type": [
+                                                "string",
+                                                "null"
+                                            ]
+                                        },
+                                        "traitFromSource": {
+                                            "type": [
+                                                "string",
+                                                "null"
+                                            ]
+                                        },
+                                        "publicationFirstAuthor": {
+                                            "type": [
+                                                "string",
+                                                "null"
+                                            ]
+                                        },
+                                        "publicationTitle": {
+                                            "type": [
+                                                "string",
+                                                "null"
+                                            ]
+                                        },
+                                        "publicationDate": {
+                                            "type": [
+                                                "string",
+                                                "null"
+                                            ]
+                                        },
+                                        "publicationJournal": {
+                                            "type": [
+                                                "string",
+                                                "null"
+                                            ]
+                                        },
+                                        "pubmedId": {
+                                            "type": [
+                                                "string",
+                                                "null"
+                                            ]
+                                        },
+                                        "nSamples": {
+                                            "type": [
+                                                "integer",
+                                                "null"
+                                            ]
+                                        },
+                                        "nCases": {
+                                            "type": [
+                                                "integer",
+                                                "null"
+                                            ]
+                                        },
+                                        "nControls": {
+                                            "type": [
+                                                "integer",
+                                                "null"
+                                            ]
+                                        },
+                                        "initialSampleSize": {
+                                            "type": [
+                                                "string",
+                                                "null"
+                                            ]
+                                        },
+                                        "hasSumstats": {
+                                            "type": [
+                                                "boolean",
+                                                "null"
+                                            ]
+                                        },
+                                        "summarystatsLocation": {
+                                            "type": [
+                                                "string",
+                                                "null"
+                                            ]
+                                        },
+                                        "cohorts": {
+                                            "type": [
+                                                "array",
+                                                "null"
+                                            ],
+                                            "items": {
+                                                "type": "string"
+                                            }
+                                        },
+                                        "diseases": {
+                                            "type": "array",
+                                            "items": {
+                                                "type": "object",
+                                                "properties": {
+                                                    "id": {
+                                                        "type": "string"
+                                                    },
+                                                    "name": {
+                                                        "type": "string"
+                                                    }
+                                                }
+                                            }
+                                        },
+                                        "ldPopulationStructure": {
+                                            "type": [
+                                                "array",
+                                                "null"
+                                            ],
+                                            "items": {
+                                                "type": "object",
+                                                "properties": {
+                                                    "ldPopulation": {
+                                                        "type": "string"
+                                                    },
+                                                    "relativeSampleSize": {
+                                                        "type": "number"
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "required": [
+                        "data"
+                    ]
+                },
+                {
+                    "type": "object",
+                    "properties": {
+                        "error": {
+                            "type": "object"
+                        }
+                    },
+                    "required": [
+                        "error"
+                    ]
+                }
+            ]
+        }
+    },
+    {
+        "name": "OpenTargets_search_gwas_studies_by_disease",
+        "description": "Search for GWAS studies associated with a disease or trait in Open Targets. Takes disease ontology IDs (EFO, MONDO) and returns matching GWAS studies with their metadata including sample sizes, traits, publications, and associated diseases. Use enableIndirect=true to include child disease terms.",
+        "label": [
+            "GWAS",
+            "Study",
+            "Disease",
+            "Search",
+            "Open Targets"
+        ],
+        "parameter": {
+            "type": "object",
+            "properties": {
+                "diseaseIds": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    },
+                    "description": "Disease ontology IDs (e.g., ['MONDO_0005148'] for type 2 diabetes, ['MONDO_0004975'] for Alzheimer disease)"
+                },
+                "enableIndirect": {
+                    "type": "boolean",
+                    "description": "Include studies for child disease terms (default true)",
+                    "default": true
+                },
+                "disease_name": {
+                    "type": "string",
+                    "description": "Disease or trait name for auto-resolution (e.g., 'type 2 diabetes'). Resolved to diseaseIds automatically."
+                },
+                "disease": {
+                    "type": "string",
+                    "description": "Alias for disease_name."
+                },
+                "trait": {
+                    "type": "string",
+                    "description": "Alias for disease_name."
+                }
+            },
+            "required": []
+        },
+        "query_schema": "\nquery searchStudies($diseaseIds: [String!], $enableIndirect: Boolean = true) {\n  studies(diseaseIds: $diseaseIds, enableIndirect: $enableIndirect) {\n    count\n    rows {\n      id\n      traitFromSource\n      studyType\n      publicationFirstAuthor\n      publicationDate\n      nSamples\n      diseases {\n        id\n        name\n      }\n    }\n  }\n}\n",
+        "type": "OpenTarget",
+        "test_examples": [
+            {
+                "diseaseIds": [
+                    "MONDO_0005148"
+                ],
+                "size": 5
+            },
+            {
+                "diseaseIds": [
+                    "MONDO_0004975"
+                ],
+                "enableIndirect": true,
+                "size": 5
+            }
+        ],
+        "return_schema": {
+            "oneOf": [
+                {
+                    "type": "object",
+                    "properties": {
+                        "data": {
+                            "type": "object",
+                            "properties": {
+                                "studies": {
+                                    "type": "object",
+                                    "properties": {
+                                        "count": {
+                                            "type": "integer"
+                                        },
+                                        "rows": {
+                                            "type": "array",
+                                            "items": {
+                                                "type": "object",
+                                                "properties": {
+                                                    "id": {
+                                                        "type": "string"
+                                                    },
+                                                    "studyType": {
+                                                        "type": [
+                                                            "string",
+                                                            "null"
+                                                        ]
+                                                    },
+                                                    "traitFromSource": {
+                                                        "type": [
+                                                            "string",
+                                                            "null"
+                                                        ]
+                                                    },
+                                                    "publicationFirstAuthor": {
+                                                        "type": [
+                                                            "string",
+                                                            "null"
+                                                        ]
+                                                    },
+                                                    "publicationTitle": {
+                                                        "type": [
+                                                            "string",
+                                                            "null"
+                                                        ]
+                                                    },
+                                                    "publicationDate": {
+                                                        "type": [
+                                                            "string",
+                                                            "null"
+                                                        ]
+                                                    },
+                                                    "pubmedId": {
+                                                        "type": [
+                                                            "string",
+                                                            "null"
+                                                        ]
+                                                    },
+                                                    "nSamples": {
+                                                        "type": [
+                                                            "integer",
+                                                            "null"
+                                                        ]
+                                                    },
+                                                    "nCases": {
+                                                        "type": [
+                                                            "integer",
+                                                            "null"
+                                                        ]
+                                                    },
+                                                    "nControls": {
+                                                        "type": [
+                                                            "integer",
+                                                            "null"
+                                                        ]
+                                                    },
+                                                    "hasSumstats": {
+                                                        "type": [
+                                                            "boolean",
+                                                            "null"
+                                                        ]
+                                                    },
+                                                    "diseases": {
+                                                        "type": "array",
+                                                        "items": {
+                                                            "type": "object",
+                                                            "properties": {
+                                                                "id": {
+                                                                    "type": "string"
+                                                                },
+                                                                "name": {
+                                                                    "type": "string"
+                                                                }
+                                                            }
+                                                        }
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "required": [
+                        "data"
+                    ]
+                },
+                {
+                    "type": "object",
+                    "properties": {
+                        "error": {
+                            "type": "object"
+                        }
+                    },
+                    "required": [
+                        "error"
+                    ]
+                }
+            ]
+        }
+    },
+    {
+        "name": "OpenTargets_get_credible_set_detail",
+        "description": "Get detailed information about a specific GWAS credible set (fine-mapped locus) from Open Targets. Returns the lead variant, associated study, fine-mapping method, statistical significance, locus-to-gene (L2G) predictions mapping the signal to likely causal genes, and colocalization evidence with QTLs.",
+        "label": [
+            "GWAS",
+            "Credible Set",
+            "Fine-mapping",
+            "L2G",
+            "Open Targets"
+        ],
+        "parameter": {
+            "type": "object",
+            "properties": {
+                "studyLocusId": {
+                    "type": "string",
+                    "description": "Credible set identifier (studyLocusId), a 32-character hash (e.g., 'b758d8fb10924f5338cbad8d27c7dee8'). Obtain from variant credible sets or study credible sets queries."
+                }
+            },
+            "required": [
+                "studyLocusId"
+            ]
+        },
+        "query_schema": "\nquery credibleSetDetail($studyLocusId: String!) {\n  credibleSet(studyLocusId: $studyLocusId) {\n    studyLocusId\n    studyId\n    region\n    chromosome\n    position\n    finemappingMethod\n    pValueMantissa\n    pValueExponent\n    beta\n    standardError\n    confidence\n    credibleSetlog10BF\n    sampleSize\n    variant {\n      id\n      rsIds\n      chromosome\n      position\n      referenceAllele\n      alternateAllele\n      mostSevereConsequence {\n        id\n        label\n      }\n    }\n    study {\n      id\n      traitFromSource\n      publicationFirstAuthor\n      publicationTitle\n      pubmedId\n      nSamples\n      diseases {\n        id\n        name\n      }\n    }\n    l2GPredictions {\n      rows {\n        target {\n          id\n          approvedSymbol\n        }\n        score\n      }\n    }\n  }\n}\n",
+        "type": "OpenTarget",
+        "test_examples": [
+            {
+                "studyLocusId": "b758d8fb10924f5338cbad8d27c7dee8"
+            }
+        ],
+        "return_schema": {
+            "oneOf": [
+                {
+                    "type": "object",
+                    "properties": {
+                        "data": {
+                            "type": "object",
+                            "properties": {
+                                "credibleSet": {
+                                    "type": "object",
+                                    "properties": {
+                                        "studyLocusId": {
+                                            "type": "string"
+                                        },
+                                        "studyId": {
+                                            "type": [
+                                                "string",
+                                                "null"
+                                            ]
+                                        },
+                                        "region": {
+                                            "type": [
+                                                "string",
+                                                "null"
+                                            ]
+                                        },
+                                        "chromosome": {
+                                            "type": [
+                                                "string",
+                                                "null"
+                                            ]
+                                        },
+                                        "position": {
+                                            "type": [
+                                                "integer",
+                                                "null"
+                                            ]
+                                        },
+                                        "finemappingMethod": {
+                                            "type": [
+                                                "string",
+                                                "null"
+                                            ]
+                                        },
+                                        "pValueMantissa": {
+                                            "type": [
+                                                "number",
+                                                "null"
+                                            ]
+                                        },
+                                        "pValueExponent": {
+                                            "type": [
+                                                "integer",
+                                                "null"
+                                            ]
+                                        },
+                                        "beta": {
+                                            "type": [
+                                                "number",
+                                                "null"
+                                            ]
+                                        },
+                                        "standardError": {
+                                            "type": [
+                                                "number",
+                                                "null"
+                                            ]
+                                        },
+                                        "confidence": {
+                                            "type": [
+                                                "string",
+                                                "null"
+                                            ]
+                                        },
+                                        "credibleSetlog10BF": {
+                                            "type": [
+                                                "number",
+                                                "null"
+                                            ]
+                                        },
+                                        "sampleSize": {
+                                            "type": [
+                                                "integer",
+                                                "null"
+                                            ]
+                                        },
+                                        "variant": {
+                                            "type": "object",
+                                            "properties": {
+                                                "id": {
+                                                    "type": "string"
+                                                },
+                                                "rsIds": {
+                                                    "type": "array",
+                                                    "items": {
+                                                        "type": "string"
+                                                    }
+                                                },
+                                                "chromosome": {
+                                                    "type": "string"
+                                                },
+                                                "position": {
+                                                    "type": "integer"
+                                                },
+                                                "referenceAllele": {
+                                                    "type": "string"
+                                                },
+                                                "alternateAllele": {
+                                                    "type": "string"
+                                                },
+                                                "mostSevereConsequence": {
+                                                    "type": "object",
+                                                    "properties": {
+                                                        "id": {
+                                                            "type": "string"
+                                                        },
+                                                        "label": {
+                                                            "type": "string"
+                                                        }
+                                                    }
+                                                }
+                                            }
+                                        },
+                                        "study": {
+                                            "type": "object",
+                                            "properties": {
+                                                "id": {
+                                                    "type": "string"
+                                                },
+                                                "traitFromSource": {
+                                                    "type": [
+                                                        "string",
+                                                        "null"
+                                                    ]
+                                                },
+                                                "publicationFirstAuthor": {
+                                                    "type": [
+                                                        "string",
+                                                        "null"
+                                                    ]
+                                                },
+                                                "publicationTitle": {
+                                                    "type": [
+                                                        "string",
+                                                        "null"
+                                                    ]
+                                                },
+                                                "pubmedId": {
+                                                    "type": [
+                                                        "string",
+                                                        "null"
+                                                    ]
+                                                },
+                                                "nSamples": {
+                                                    "type": [
+                                                        "integer",
+                                                        "null"
+                                                    ]
+                                                },
+                                                "diseases": {
+                                                    "type": "array",
+                                                    "items": {
+                                                        "type": "object",
+                                                        "properties": {
+                                                            "id": {
+                                                                "type": "string"
+                                                            },
+                                                            "name": {
+                                                                "type": "string"
+                                                            }
+                                                        }
+                                                    }
+                                                }
+                                            }
+                                        },
+                                        "l2GPredictions": {
+                                            "type": "object",
+                                            "properties": {
+                                                "rows": {
+                                                    "type": "array",
+                                                    "items": {
+                                                        "type": "object",
+                                                        "properties": {
+                                                            "target": {
+                                                                "type": "object",
+                                                                "properties": {
+                                                                    "id": {
+                                                                        "type": "string"
+                                                                    },
+                                                                    "approvedSymbol": {
+                                                                        "type": "string"
+                                                                    }
+                                                                }
+                                                            },
+                                                            "score": {
+                                                                "type": "number"
+                                                            }
+                                                        }
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "required": [
+                        "data"
+                    ]
+                },
+                {
+                    "type": "object",
+                    "properties": {
+                        "error": {
+                            "type": "object"
+                        }
+                    },
+                    "required": [
+                        "error"
+                    ]
+                }
+            ]
+        }
+    },
+    {
+        "name": "OpenTargets_get_study_credible_sets",
+        "description": "Get all credible sets (fine-mapped GWAS loci) for a specific GWAS study from Open Targets. Returns the lead variants, fine-mapping details, p-values, effect sizes, and locus-to-gene (L2G) predictions for each locus in the study. Use this to explore all significant loci discovered in a GWAS.",
+        "label": [
+            "GWAS",
+            "Study",
+            "Credible Set",
+            "Loci",
+            "Open Targets"
+        ],
+        "parameter": {
+            "type": "object",
+            "properties": {
+                "studyIds": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    },
+                    "description": "GWAS study accession IDs (e.g., ['GCST000392'])"
+                },
+                "size": {
+                    "type": "integer",
+                    "description": "Number of credible sets to return (default 20)",
+                    "default": 20
+                },
+                "index": {
+                    "type": "integer",
+                    "description": "Page index for pagination (0-based, default 0)",
+                    "default": 0
+                }
+            },
+            "required": [
+                "studyIds"
+            ]
+        },
+        "query_schema": "\nquery studyCredibleSets($studyIds: [String!], $size: Int = 20, $index: Int = 0) {\n  credibleSets(studyIds: $studyIds, studyTypes: [gwas], page: {size: $size, index: $index}) {\n    count\n    rows {\n      studyLocusId\n      studyId\n      region\n      chromosome\n      position\n      finemappingMethod\n      pValueMantissa\n      pValueExponent\n      beta\n      confidence\n      variant {\n        id\n        rsIds\n      }\n      study {\n        traitFromSource\n        diseases {\n          id\n          name\n        }\n      }\n      l2GPredictions {\n        rows {\n          target {\n            id\n            approvedSymbol\n          }\n          score\n        }\n      }\n    }\n  }\n}\n",
+        "type": "OpenTarget",
+        "test_examples": [
+            {
+                "studyIds": [
+                    "GCST000392"
+                ],
+                "size": 10
+            }
+        ],
+        "return_schema": {
+            "oneOf": [
+                {
+                    "type": "object",
+                    "properties": {
+                        "data": {
+                            "type": "object",
+                            "properties": {
+                                "credibleSets": {
+                                    "type": "object",
+                                    "properties": {
+                                        "count": {
+                                            "type": "integer"
+                                        },
+                                        "rows": {
+                                            "type": "array",
+                                            "items": {
+                                                "type": "object",
+                                                "properties": {
+                                                    "studyLocusId": {
+                                                        "type": "string"
+                                                    },
+                                                    "studyId": {
+                                                        "type": "string"
+                                                    },
+                                                    "region": {
+                                                        "type": [
+                                                            "string",
+                                                            "null"
+                                                        ]
+                                                    },
+                                                    "chromosome": {
+                                                        "type": [
+                                                            "string",
+                                                            "null"
+                                                        ]
+                                                    },
+                                                    "position": {
+                                                        "type": [
+                                                            "integer",
+                                                            "null"
+                                                        ]
+                                                    },
+                                                    "finemappingMethod": {
+                                                        "type": [
+                                                            "string",
+                                                            "null"
+                                                        ]
+                                                    },
+                                                    "pValueMantissa": {
+                                                        "type": [
+                                                            "number",
+                                                            "null"
+                                                        ]
+                                                    },
+                                                    "pValueExponent": {
+                                                        "type": [
+                                                            "integer",
+                                                            "null"
+                                                        ]
+                                                    },
+                                                    "beta": {
+                                                        "type": [
+                                                            "number",
+                                                            "null"
+                                                        ]
+                                                    },
+                                                    "confidence": {
+                                                        "type": [
+                                                            "string",
+                                                            "null"
+                                                        ]
+                                                    },
+                                                    "variant": {
+                                                        "type": "object",
+                                                        "properties": {
+                                                            "id": {
+                                                                "type": "string"
+                                                            },
+                                                            "rsIds": {
+                                                                "type": "array",
+                                                                "items": {
+                                                                    "type": "string"
+                                                                }
+                                                            }
+                                                        }
+                                                    },
+                                                    "study": {
+                                                        "type": "object",
+                                                        "properties": {
+                                                            "traitFromSource": {
+                                                                "type": [
+                                                                    "string",
+                                                                    "null"
+                                                                ]
+                                                            },
+                                                            "diseases": {
+                                                                "type": "array",
+                                                                "items": {
+                                                                    "type": "object",
+                                                                    "properties": {
+                                                                        "id": {
+                                                                            "type": "string"
+                                                                        },
+                                                                        "name": {
+                                                                            "type": "string"
+                                                                        }
+                                                                    }
+                                                                }
+                                                            }
+                                                        }
+                                                    },
+                                                    "l2GPredictions": {
+                                                        "type": "object",
+                                                        "properties": {
+                                                            "rows": {
+                                                                "type": "array",
+                                                                "items": {
+                                                                    "type": "object",
+                                                                    "properties": {
+                                                                        "target": {
+                                                                            "type": "object",
+                                                                            "properties": {
+                                                                                "id": {
+                                                                                    "type": "string"
+                                                                                },
+                                                                                "approvedSymbol": {
+                                                                                    "type": "string"
+                                                                                }
+                                                                            }
+                                                                        },
+                                                                        "score": {
+                                                                            "type": "number"
+                                                                        }
+                                                                    }
+                                                                }
+                                                            }
+                                                        }
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "required": [
+                        "data"
+                    ]
+                },
+                {
+                    "type": "object",
+                    "properties": {
+                        "error": {
+                            "type": "object"
+                        }
+                    },
+                    "required": [
+                        "error"
+                    ]
+                }
+            ]
+        }
     }
-  }
 ]
