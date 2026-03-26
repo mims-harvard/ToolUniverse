@@ -245,6 +245,26 @@ Apply when user asks about:
 
 ---
 
+## Interpretation Framework
+
+| Evidence Grade | Criteria | Confidence |
+|----------------|----------|------------|
+| **A -- Strong** | GWAS p < 5e-8 + IEDB epitope data + FAERS safety signal (PRR > 2) | High -- multiple orthogonal sources |
+| **B -- Moderate** | GWAS or Orphanet genetics + pathway enrichment, but limited functional data | Medium -- directional evidence |
+| **C -- Preliminary** | Single-database hit only (e.g., PPI network or pathway membership alone) | Low -- requires experimental follow-up |
+
+**Interpreting immunology results:**
+- Cytokine interaction hits from IntAct/BioGRID should be weighted by experimental method: co-IP and two-hybrid provide direct evidence, while co-expression or text-mining associations are hypothesis-generating only.
+- FAERS disproportionality signals (PRR, ROR) indicate reporting bias, not causation -- a PRR > 2 with IC025 > 0 warrants clinical review but does not confirm a drug-adverse event relationship.
+- Immune cell subset estimates from TIMER2 are deconvolution-based approximations; validate with orthogonal methods (flow cytometry, IHC) before drawing mechanistic conclusions about infiltration changes.
+
+**Synthesis questions to address in the report:**
+1. Does the genetic evidence (GWAS + Orphanet) converge on the same pathway as the protein interaction data (IntAct/BioGRID)?
+2. For therapeutic antibody targets: do IEDB epitope data and SAbDab structural data support the proposed binding mechanism?
+3. Are the safety signals from FAERS consistent across demographic strata (age, sex), or driven by a specific subpopulation?
+
+---
+
 ## Key Immune Pathway IDs
 
 **Reactome** (use with `stId` param): R-HSA-168256 (Immune System root), R-HSA-1280218 (Adaptive), R-HSA-168249 (Innate), R-HSA-1280215 (Cytokine Signaling), R-HSA-913531 (Interferon), R-HSA-449147 (Interleukin), R-HSA-202403 (TCR), R-HSA-983705 (BCR), R-HSA-166658 (Complement).

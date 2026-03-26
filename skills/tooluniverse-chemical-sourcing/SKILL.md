@@ -230,6 +230,26 @@ Generate a final sourcing report:
 
 ---
 
+## Interpretation Framework
+
+| Evidence Grade | Criteria | Action |
+|----------------|----------|--------|
+| **A -- High confidence** | In-stock at 2+ vendors, purity >=98%, CoA available | Order directly |
+| **B -- Moderate confidence** | Single vendor or make-on-demand, purity >=95% | Request CoA, verify structure |
+| **C -- Low confidence** | No stock, purity unstated, or price outlier (>5x median) | Custom synthesis or analog search |
+
+**Interpreting vendor results:**
+- A 10x price difference between vendors for the same compound usually indicates different salt forms, purity grades, or packaging sizes rather than genuine cost differences -- always compare on a per-mg, same-purity basis.
+- Purity of >=95% is sufficient for primary screening; >=98% is recommended for dose-response and SAR studies; >=99% is needed for reference standards and pharmacokinetic work.
+- "In-stock" status in aggregator databases can be stale by weeks -- confirm real-time availability with the vendor before committing to a timeline.
+
+**Synthesis questions to address in the final report:**
+1. Do all vendor SMILES resolve to the same canonical structure (including stereochemistry and salt form)?
+2. Is the price-per-mg consistent with the compound's synthetic complexity, or does an outlier suggest a catalog error?
+3. For analogs: does the structural change fall outside the pharmacophore, preserving expected activity?
+
+---
+
 ## Limitations
 
 - **Pricing accuracy**: Database prices may be outdated; actual quotes from vendors are authoritative

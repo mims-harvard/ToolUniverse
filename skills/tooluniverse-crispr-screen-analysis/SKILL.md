@@ -142,6 +142,26 @@ report = generate_crispr_report(gene_scores, enrichment, drug_targets)
 
 ---
 
+## Interpretation Framework
+
+| Evidence Grade | Criteria | Validation Priority |
+|----------------|----------|---------------------|
+| **A -- Strong hit** | MAGeCK RRA p < 0.001, BAGEL BF > 5, >=3 sgRNAs with concordant LFC | Immediate validation (individual KO, growth assay) |
+| **B -- Moderate hit** | MAGeCK RRA p < 0.01, BAGEL BF 2-5, >=2 concordant sgRNAs | Secondary validation pool |
+| **C -- Weak/ambiguous** | p > 0.01, BF < 2, or discordant sgRNA effects | Deprioritize; check for copy-number bias or seed effects |
+
+**Interpreting screen results:**
+- A gene with mean LFC < -1.0 across replicates and >=3 concordant sgRNAs is a robust essentiality hit; single-sgRNA effects are more likely off-target and should be flagged.
+- Essential gene thresholds are context-dependent: core fitness genes (e.g., ribosomal, spliceosomal) should deplete in any screen and serve as positive controls -- their absence from the hit list indicates a QC problem.
+- Synthetic lethal hits (depleted in mutant but not wildtype) require delta-LFC > 1.5 and confirmation in an independent cell line before therapeutic target nomination.
+
+**Synthesis questions to address in the report:**
+1. Do the top hits cluster in known pathways (Reactome/KEGG), or are they scattered -- suggesting technical noise?
+2. Are known essential genes (Hart et al. reference set) correctly identified, confirming screen quality?
+3. For drug target candidates: does DGIdb show existing compounds, and does DepMap confirm the dependency across multiple cell lines?
+
+---
+
 ## References
 
 - Li W, et al. (2014) MAGeCK enables robust identification of essential genes from genome-scale CRISPR/Cas9 knockout screens. Genome Biology

@@ -243,6 +243,26 @@ Found N datasets matching [criteria].
 
 ---
 
+## Interpretation Framework
+
+| Quality Indicator | Good | Acceptable | Caution |
+|-------------------|------|------------|---------|
+| **Instrument** | Orbitrap Exploris/Eclipse, timsTOF | Q Exactive, TripleTOF 6600 | Older LTQ, ion trap only |
+| **Publication** | Peer-reviewed with PubMed ID | Preprint or DOI only | No associated publication |
+| **Metadata completeness** | Species + instrument + PTMs + summary | Species + instrument only | Title only, no annotations |
+
+**Interpreting dataset search results:**
+- Datasets with both MassIVE and ProteomeXchange accessions generally have richer metadata; MassIVE provides summaries and keywords while ProteomeXchange provides file counts -- cross-reference both for a complete picture.
+- Instrument type determines data quality ceiling: high-resolution instruments (Orbitrap, timsTOF) produce higher mass accuracy and more reliable quantification than older ion trap platforms.
+- A dataset lacking a peer-reviewed publication may still be valuable, but its experimental design and processing pipeline cannot be independently verified -- weight such datasets lower in meta-analyses.
+
+**Synthesis questions to address in the report:**
+1. Do multiple independent datasets for the same organism/condition show consistent protein identifications, or do discrepancies suggest batch effects?
+2. Is the instrument platform appropriate for the analysis type (e.g., DIA requires high-resolution; TMT requires MS3 or calibrated MS2)?
+3. Are the reported PTM types and species consistent with the user's research question, or is additional filtering needed?
+
+---
+
 ## Limitations
 
 - **MassIVE**: No keyword/text search -- only species-based filtering via `species` parameter

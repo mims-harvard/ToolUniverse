@@ -324,6 +324,26 @@ Phase 8: Evidence Integration
 
 ---
 
+## Interpretation Framework
+
+| Quality Metric | High Confidence | Acceptable | Caution |
+|----------------|-----------------|------------|---------|
+| **Resolution** | < 2.0 A (X-ray) or < 3.0 A (cryo-EM) | 2.0-2.5 A (X-ray) or 3.0-4.0 A (cryo-EM) | > 3.0 A (X-ray) or > 4.5 A (cryo-EM) |
+| **Validation (R-free)** | < 0.25 | 0.25-0.30 | > 0.30 or not reported |
+| **AlphaFold pLDDT** | > 90 (very high) | 70-90 (confident) | < 70 (low -- treat as disordered) |
+
+**Interpreting structural data:**
+- Cross-linking mass spectrometry distance constraints are reliable when the crosslinker-specific distance threshold is met (e.g., BS3 < 30 A Ca-Ca); violations above 1.5x the threshold suggest conformational heterogeneity or false-positive crosslinks.
+- Binding pocket druggability scores from ProteinsPlus (DoGSiteScorer) above 0.6 indicate a likely druggable site; scores below 0.4 suggest the pocket is too shallow or hydrophilic for conventional small-molecule binding.
+- Stoichiometry assignments from PDBePISA should be cross-validated with experimental methods (SEC-MALS, native MS); PISA assemblies are predictions based on buried surface area and may over-call oligomeric states for crystal contacts.
+
+**Synthesis questions to address in the report:**
+1. Does the binding site geometry remain consistent across multiple crystal forms and cryo-EM reconstructions, or is it sensitive to crystal packing?
+2. For regions modeled only by AlphaFold (pLDDT 70-90): are these regions functionally relevant, and would their flexibility affect drug binding?
+3. Do BindingDB affinity measurements correlate with the structural binding mode -- i.e., do tighter binders make more contacts in the co-crystal structure?
+
+---
+
 ## Limitations
 
 1. **BindingDB latency**: Queries for popular targets (EGFR, kinases) can take 60+ seconds
