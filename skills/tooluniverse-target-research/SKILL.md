@@ -156,7 +156,7 @@ Use 3-step structure search chain (do NOT rely solely on PDB text search):
 3. **Domain-based search** (for multi-domain proteins)
 4. **AlphaFold** (always check)
 
-**Tools**: `UniProt_get_entry_by_accession` (PDB xrefs), `get_protein_metadata_by_pdb_id`, `PDB_search_similar_structures`, `alphafold_get_prediction`, `InterPro_get_protein_domains`, `UniProt_get_ptm_processing_by_accession`
+**Tools**: `UniProt_get_entry_by_accession` (PDB xrefs), `RCSBData_get_entry`, `PDB_search_similar_structures`, `alphafold_get_prediction`, `InterPro_get_protein_domains`, `UniProt_get_ptm_processing_by_accession`
 
 **GPCR targets**: Also query `GPCRdb_get_structures` for active/inactive state data.
 
@@ -257,7 +257,7 @@ See [IMPLEMENTATION.md](IMPLEMENTATION.md) for collision-aware search code.
 | `GO_get_annotations_for_gene` | `OpenTargets GO` | `MyGene GO` |
 | `GTEx_get_median_gene_expression` | `HPA_get_rna_expression_by_source` | Document as unavailable |
 | `gnomad_get_gene_constraints` | `OpenTargets constraint` | - |
-| `DGIdb_get_drug_gene_interactions` | `OpenTargets drugs` | `GtoPdb` |
+| `DGIdb_get_drug_gene_interactions` | `OpenTargets drugs` | `GtoPdb_search_ligands` |
 
 **NEVER silently skip failed tools.** Always document failures and fallbacks in the report.
 

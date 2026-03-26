@@ -50,7 +50,7 @@ See [REPORT_TEMPLATE.md](REPORT_TEMPLATE.md) for the full template and example o
 | `OpenTargets_get_associated_drugs_by_target_ensemblID` | `ensemblID` | `ensemblId` |
 | `ClinVar_get_variant_details` | `variant_id` | `id` |
 | `MyGene_query_genes` | `gene` | `q` |
-| `gnomAD_get_variant_frequencies` | `variant` | `variant_id` |
+| `gnomad_get_variant` | `variant` | `variant_id` |
 
 ---
 
@@ -130,7 +130,7 @@ For detailed code examples and algorithms for each phase, see [DIAGNOSTIC_WORKFL
 ### Phase 4: Variant Interpretation (if provided)
 
 - **ClinVar**: `ClinVar_search_variants(query=hgvs)` for existing classifications
-- **gnomAD**: `gnomAD_get_variant_frequencies(variant_id=id)` for population frequency
+- **gnomAD**: `gnomad_get_variant(variant_id=id)` for population frequency
   - Ultra-rare (<0.00001), Rare (<0.0001), Low frequency (<0.01), Common (likely benign)
 - **Computational predictions** (for VUS):
   - CADD: `CADD_get_variant_score` - PHRED >=20 supports PP3
@@ -143,7 +143,7 @@ For detailed code examples and algorithms for each phase, see [DIAGNOSTIC_WORKFL
 ### Phase 5: Structure Analysis (for VUS)
 
 - Perform when: VUS, missense in critical domain, novel variant, or additional evidence needed
-- **AlphaFold2**: `NvidiaNIM_alphafold2(sequence=seq, algorithm="mmseqs2")` for structure prediction
+- **AlphaFold2**: `alphafold_get_prediction(sequence=seq, algorithm="mmseqs2")` for structure prediction
 - **Domain impact**: `InterPro_get_protein_domains(accession=uniprot_id)` to check functional domains
 - Assess pLDDT confidence at variant position, domain location, structural role
 
@@ -197,7 +197,7 @@ See [CHECKLIST.md](CHECKLIST.md) for the full interactive checklist.
 |--------------|------------|------------|
 | `get_joint_associated_diseases_by_HPO_ID_list` | `Orphanet_search_diseases` | PubMed phenotype search |
 | `ClinVar_get_variant_details` | `gnomAD_get_variant` | VEP annotation |
-| `NvidiaNIM_alphafold2` | `alphafold_get_prediction` | UniProt features |
+| `alphafold_get_prediction` | `alphafold_get_prediction` | UniProt features |
 | `GTEx_get_expression_summary` | `HPA_search_genes_by_query` | Tissue-specific literature |
 | `gnomAD_get_variant` | `gnomad_get_variant` | 1000 Genomes |
 
