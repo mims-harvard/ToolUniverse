@@ -120,6 +120,27 @@ Input -> Phase 1: Gene ID resolution -> Phase 2: Nucleotide retrieval
 - UniProt accession unknown -> NCBIDatasets_get_gene or UniProt_search for cross-refs
 - Ortholog search empty -> verify gene_id is numeric NCBI Gene ID
 
+## Interpretation Framework
+
+### Sequence Quality Assessment
+
+| Indicator | High Quality | Acceptable | Caution |
+|-----------|-------------|-----------|---------|
+| **RefSeq status** | NM_/NP_ (curated) | XM_/XP_ (predicted) | No RefSeq (GenBank only) |
+| **Sequence version** | Latest version (.N) | Previous version | Removed/replaced |
+| **Annotation** | Reviewed (UniProt Swiss-Prot) | Unreviewed (TrEMBL) | No annotation |
+| **Gene symbol** | HGNC approved | Alias/synonym | Locus tag only |
+
+### Synthesis Questions
+
+1. **Is this the correct sequence?** (verify organism, gene symbol, isoform)
+2. **Is it the canonical isoform?** (RefSeq MANE Select or UniProt canonical)
+3. **How well-annotated is it?** (SwissProt > TrEMBL > GenBank predicted)
+4. **Are there known variants?** (ClinVar pathogenic variants in this sequence)
+5. **What cross-references are available?** (Ensembl ↔ RefSeq ↔ UniProt mapping)
+
+---
+
 ## Limitations
 
 - NCBI_get_sequence returns full sequence as string; very large genomes may be slow

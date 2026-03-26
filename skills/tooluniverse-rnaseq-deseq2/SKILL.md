@@ -101,6 +101,36 @@ See [bixbench_examples.md](references/bixbench_examples.md) for all 10 patterns 
 
 See [troubleshooting.md](references/troubleshooting.md) for full debugging guide.
 
+## Interpretation Framework
+
+### DESeq2 Result Interpretation
+
+| Metric | Threshold | Interpretation |
+|--------|-----------|---------------|
+| **padj** | < 0.05 | Statistically significant after multiple testing correction |
+| **log2FoldChange** | > 1 or < -1 | Biologically meaningful fold change (2x up or down) |
+| **baseMean** | > 10 | Gene is expressed at detectable levels |
+| **lfcSE** | < 1.0 | Fold change estimate is precise |
+
+### Evidence Grading for DEGs
+
+| Grade | Criteria | Action |
+|-------|---------|--------|
+| **Strong DEG** | padj < 0.01, |LFC| > 1.5, baseMean > 100 | High-confidence; report and annotate |
+| **Moderate DEG** | padj < 0.05, |LFC| > 1.0, baseMean > 10 | Standard cutoff; include in enrichment |
+| **Weak DEG** | padj < 0.1 or |LFC| 0.5-1.0 | Suggestive; note but don't prioritize |
+| **Not significant** | padj >= 0.1 | Do not report as differentially expressed |
+
+### Synthesis Questions
+
+1. **How many DEGs and in which direction?** (up vs down ratio indicates biological response type)
+2. **What pathways are enriched?** (GO/KEGG enrichment of DEGs reveals mechanism)
+3. **Are the top DEGs biologically plausible?** (known markers for the condition?)
+4. **Is the fold change magnitude realistic?** (LFC > 5 is unusual; check for outlier-driven effects)
+5. **Are there batch effects?** (PCA should separate by condition, not by batch)
+
+---
+
 ## Known Limitations
 
 - **PyDESeq2 vs R DESeq2**: Numerical differences exist for very low dispersion genes (<1e-05). For exact R reproducibility, use rpy2.

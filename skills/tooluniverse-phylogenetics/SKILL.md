@@ -421,6 +421,38 @@ tooluniverse-phylogenetics/
 
 ---
 
+## Interpretation Framework
+
+### Phylogenetic Metric Interpretation
+
+| Metric | Good | Acceptable | Poor | Meaning |
+|--------|------|-----------|------|---------|
+| **Treeness** | > 0.8 | 0.5-0.8 | < 0.5 | Proportion of total tree distance from internal branches; low = star-like topology |
+| **RCV** | < 0.2 | 0.2-0.5 | > 0.5 | Relative composition variability; high = compositional bias |
+| **Treeness/RCV** | > 2.0 | 1.0-2.0 | < 1.0 | Combined signal quality; < 1 means noise exceeds signal |
+| **Bootstrap** | > 95% | 70-95% | < 70% | Node support; >70% is publishable, >95% is strong |
+| **Parsimony informative sites** | > 30% | 10-30% | < 10% | % of alignment positions useful for tree building |
+| **Robinson-Foulds distance** | 0 | 1-5 | > 10 | Topological difference between trees; 0 = identical |
+
+### Evidence Grading for Evolutionary Conclusions
+
+| Grade | Criteria | Example |
+|-------|---------|---------|
+| **T1** | Multiple genes, high bootstrap, consistent topology | Monophyly of mammals supported by 50+ genes |
+| **T2** | Single gene, high bootstrap OR multiple genes, moderate bootstrap | Gene tree with >90% bootstrap at key node |
+| **T3** | Moderate support, some topological conflict | 60-80% bootstrap, some gene tree discordance |
+| **T4** | Low support, single marker, alignment artifacts possible | <60% bootstrap, short alignment |
+
+### Synthesis Questions
+
+1. **Is the phylogenetic signal reliable?** (treeness/RCV > 1, sufficient informative sites)
+2. **Are key relationships well-supported?** (bootstrap >70% at nodes of interest)
+3. **Is there gene tree/species tree conflict?** (different genes give different topologies)
+4. **What evolutionary model best fits?** (compare tree lengths, rate variation)
+5. **Are there compositional biases?** (RCV > 0.5 suggests systematic error)
+
+---
+
 ## Completeness Checklist
 
 Before returning your answer, verify:

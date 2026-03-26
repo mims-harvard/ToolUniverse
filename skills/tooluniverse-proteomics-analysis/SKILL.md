@@ -64,6 +64,36 @@ See [PHASE_DETAILS.md](PHASE_DETAILS.md) for detailed procedures per phase.
 | Pathway enrichment | At least one method (GO, KEGG, or Reactome) |
 | Report | Summary, QC, DE results, pathways, visualizations |
 
+## Interpretation Framework
+
+### Differential Expression Interpretation
+
+| Metric | Strong | Moderate | Weak |
+|--------|--------|----------|------|
+| **padj** | < 0.01 | 0.01-0.05 | 0.05-0.1 |
+| **Fold change** | > 2.0 | 1.5-2.0 | 1.2-1.5 |
+| **Unique peptides** | > 5 | 2-5 | 1-2 (unreliable) |
+| **Missing rate** | < 20% | 20-50% | > 50% (imputation needed) |
+
+### Evidence Grading
+
+| Grade | Criteria |
+|-------|---------|
+| **T1** | Validated by orthogonal method (Western blot, PRM) + functional study |
+| **T2** | Significant DE (padj < 0.05, FC > 1.5) in 2+ biological replicates |
+| **T3** | Significant DE in 1 experiment, or significant but low FC |
+| **T4** | Identified but not quantified, or single peptide identification |
+
+### Synthesis Questions
+
+1. **How many proteins are differentially expressed?** (>500 DE proteins suggests global perturbation; <50 suggests targeted effect)
+2. **Are key pathway proteins concordantly regulated?** (all subunits of a complex changing = high confidence)
+3. **Do proteomics results correlate with transcriptomics?** (low correlation is common — post-translational regulation)
+4. **Are PTM changes driving the phenotype?** (check phosphoproteomics if available)
+5. **What is the coverage relative to the expected proteome?** (human: ~10K quantified is good; <3K is limited)
+
+---
+
 ## Limitations
 
 - **Platform-specific**: Optimized for MS-based proteomics (not Western blot quantification)
