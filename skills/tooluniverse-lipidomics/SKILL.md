@@ -69,11 +69,15 @@ Phase 4: Interpretation & Report
 
 ```
 LipidMaps_search_by_name(query="ceramide")  → LMSP ID, exact mass, classification
-HMDB_search(query="ceramide")       → HMDB ID, disease links
+HMDB_search(compound_name="ceramide")       → HMDB ID, disease links
 PubChem_get_CID_by_compound_name(name="ceramide") → CID, SMILES
 ```
 
-If user provides m/z value: calculate possible molecular formulas and search by exact mass in LIPID MAPS.
+**LIPID MAPS search tips**:
+- Generic names work well: "ceramide", "sphingomyelin", "phosphatidylcholine"
+- Species-level abbreviations like "Cer(d18:1/16:0)" may return 0 results — use the generic class name first, then filter by chain length from results
+- For exact mass search: use `LipidMaps_search_by_formula` with molecular formula (e.g., "C34H67NO3")
+- If name search fails, try PubChem: `PubChem_get_CID_by_compound_name(name="C16 Ceramide")` then cross-reference
 
 ### Phase 1: Structural Classification
 
@@ -119,8 +123,8 @@ For each lipid or lipid enzyme, check disease links:
 
 ```python
 CTD_get_gene_diseases(input_terms="SMPD1")  # sphingomyelinase → Niemann-Pick
-DisGeNET_search_gene(query="SMPD1")  # broader disease associations
-HMDB_get_metabolite(query="ceramide")  # metabolite-disease links
+DisGeNET_search_gene(gene="SMPD1")  # broader disease associations
+HMDB_get_metabolite(compound_name="ceramide")  # metabolite-disease links
 PubMed_search_articles(query="ceramide biomarker Alzheimer")  # clinical evidence
 ```
 

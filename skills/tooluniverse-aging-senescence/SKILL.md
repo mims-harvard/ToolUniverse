@@ -103,14 +103,21 @@ The 12 hallmarks of aging (Lopez-Otin et al., Cell 2023) provide the organizing 
 | 10q24 | TERT | Telomere maintenance | T1: GWAS for telomere length |
 
 ```python
-# Find GWAS associations for age-related traits
-gwas_search_associations(query="longevity")
-gwas_search_associations(query="telomere length")
+# Strategy 1 (BEST for gene-centric): Get all GWAS SNPs for the gene
+gwas_get_snps_for_gene(gene_symbol="FOXO3")  # Returns all associated SNPs at the locus
+
+# Strategy 2: Search by trait (returns studies, not gene-specific)
+gwas_search_associations(query="telomere length")  # Works for broad trait queries
+# WARNING: gwas_search_associations(query="longevity") may return 0 results —
+# "longevity" is not a standard EFO trait term. Try "lifespan" or specific diseases.
+
+# Strategy 3: OpenTargets aggregated genetic evidence
 OpenTargets_get_associated_targets_by_disease_efoId(efoId="EFO_0004847", limit=20)  # aging
 
-# NOTE: GWAS Catalog search may not find gene-specific longevity GWAS by gene name.
-# Better strategy: search by trait ("longevity", "lifespan") then filter results for your gene.
-# Also try: PubMed_search_articles(query="FOXO3 GWAS longevity centenarian") for published studies.
+# Strategy 4: Literature (essential for centenarian studies not in GWAS Catalog)
+PubMed_search_articles(query="FOXO3 GWAS longevity centenarian meta-analysis")
+# Many FOXO3 longevity studies (Willcox 2008, Flachsbart 2009) are in PubMed
+# but NOT in GWAS Catalog because they used targeted genotyping, not GWAS arrays.
 ```
 
 ### Phase 3: Pathway Analysis
