@@ -92,7 +92,7 @@ Phase 6: Report Synthesis -> Executive summary + prioritized recommendations
 ### Phase 4: Resistance Analysis
 - `civic_search_evidence_items` - Search by known resistance mutations individually (e.g., `molecular_profile="EGFR C797S"`, `molecular_profile="MET Amplification"`). The `significance` field in results indicates Resistance/Sensitivity — filter on it after retrieval.
 - `PubMed_search_articles` - Resistance literature (e.g., "osimertinib resistance C797S combination therapy")
-- `NvidiaNIM_alphafold2` / `get_diffdock_info` - Structure-based analysis
+- `alphafold_get_prediction` / `get_diffdock_info` - Structure-based analysis (AlphaFold for structure, DiffDock for docking)
 
 ### Phase 5: Clinical Trials
 - `search_clinical_trials` - Find trials (param: `condition`, NOT `disease`)

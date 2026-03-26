@@ -148,7 +148,7 @@ Step 2: CPIC_get_recommendations(guideline_id=100416, limit=50)
 **CPIC_list_guidelines**: `gene` (string, optional), `drug` (string, optional). Returns `{status, data: [{id, name, url, genes, clinpgxid}]}`. Returns all ~29 guidelines; supports built-in filtering by gene/drug.
 - Use this to discover `clinpgxid` values for PharmGKB_get_dosing_guidelines.
 
-> **Note**: `PharmGKB_get_clinical_annotations` is **not available** in this ToolUniverse instance. To discover PharmGKB annotation IDs, use `PharmGKB_search_variants(query=rsID)` to get the variant's PharmGKB page, or use `PharmGKB_get_clinical_annotations(annotation_id=...)` with a known ID from the PharmGKB website.
+> **Note**: `PharmGKB_get_clinical_annotations` requires an `annotation_id` (e.g., "1447954390"). To discover annotation IDs, use `PharmGKB_search_variants(query=rsID)` first, then extract annotation IDs from the results.
 
 ### Gotchas
 
@@ -294,7 +294,7 @@ result = tu.tools.FAERS_filter_serious_events(
 | PharmGKB_search_genes | `query` | `{status, data: [{id, symbol, name}]}` |
 | PharmGKB_search_drugs | `query` | `{status, data: [{id, name, types}]}` |
 | PharmGKB_search_variants | `query` (rsID) | `{status, data: [{id, symbol, clinicalSignificance}]}` |
-| ~~PharmGKB_get_clinical_annotations~~ | NOT AVAILABLE | Use PharmGKB_search_variants(query=rsID) instead |
+| PharmGKB_get_clinical_annotations | `annotation_id` (required) | `{status, data: {accessionId, allelePhenotypes, levelOfEvidence}}` |
 | PharmGKB_get_clinical_annotations | `annotation_id` | `{status, data: {allelePhenotypes, levelOfEvidence}}` |
 | PharmGKB_get_dosing_guidelines | `guideline_id` (clinpgxid string) | `{status, data: {name, level, literature}}` |
 | PharmGKB_get_gene_details | `gene_id` (accession) | `{status, data: {symbol, name, alleleType}}` |

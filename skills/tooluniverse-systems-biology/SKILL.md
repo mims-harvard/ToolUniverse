@@ -161,7 +161,7 @@ Input → Phase 1: Enrichment → Phase 2: Protein Mapping → Phase 3: Keyword 
 - **Coverage**: Community-curated, includes emerging pathways
 
 #### Pathway Commons Search
-**pc_search_pathways**:
+**PathwayCommons_search**:
 - **Input**:
   - `action`: "search_pathways"
   - `keyword`: Search term
@@ -270,7 +270,7 @@ Input → Phase 1: Enrichment → Phase 2: Protein Mapping → Phase 3: Keyword 
 | Reactome_map_uniprot_to_pathways | `uniprot_id` | ✅ `uniprot_id` | ❌ `id` |
 | kegg_search_pathway | `keyword` | ✅ `keyword` | - |
 | WikiPathways_search | `query` | ✅ `query` | - |
-| pc_search_pathways | `action` + `keyword` | ✅ Both required | ❌ `action` optional |
+| PathwayCommons_search | `action` + `keyword` | ✅ Both required | ❌ `action` optional |
 | enrichr_gene_enrichment_analysis | `gene_list` | ✅ `gene_list` | - |
 
 **Response Format Notes**:

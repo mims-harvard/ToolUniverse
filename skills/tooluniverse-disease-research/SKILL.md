@@ -34,11 +34,11 @@ Generate a comprehensive disease research report with full source citations. The
 
 | Dim | Section | Key Tools |
 |-----|---------|-----------|
-| 1 | Identity & Classification | OSL_get_efo_id, ols_search/get_efo_terms, umls_search, icd_search, snomed_search |
+| 1 | Identity & Classification | OSL_get_efo_id_by_disease_name, ols_search_efo_terms, ols_get_efo_term, umls_search_concepts, icd_search_codes, snomed_search_concepts |
 | 2 | Clinical Presentation | OpenTargets phenotypes, HPO lookup, MedlinePlus |
 | 3 | Genetic & Molecular Basis | OpenTargets targets, ClinVar variants, GWAS associations, gnomAD |
 | 4 | Treatment Landscape | OpenTargets drugs, clinical trials, GtoPdb |
-| 5 | Biological Pathways | Reactome pathways, HumanBase PPI, GTEx expression, HPA |
+| 5 | Biological Pathways | Reactome pathways, humanbase_ppi_analysis, GTEx expression, HPA |
 | 6 | Epidemiology & Literature | PubMed, OpenAlex, Europe PMC, Semantic Scholar |
 | 7 | Similar Diseases | OpenTargets similar entities |
 | 8 | Cancer-Specific (if applicable) | CIViC genes/variants/therapies |
