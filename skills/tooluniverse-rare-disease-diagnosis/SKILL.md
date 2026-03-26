@@ -196,10 +196,10 @@ See [CHECKLIST.md](CHECKLIST.md) for the full interactive checklist.
 | Primary Tool | Fallback 1 | Fallback 2 |
 |--------------|------------|------------|
 | `get_joint_associated_diseases_by_HPO_ID_list` | `Orphanet_search_diseases` | PubMed phenotype search |
-| `ClinVar_get_variant_details` | `gnomAD_get_variant` | VEP annotation |
+| `ClinVar_get_variant_details` | `gnomad_get_variant` | VEP annotation |
 | `alphafold_get_prediction` | `alphafold_get_prediction` | UniProt features |
 | `GTEx_get_expression_summary` | `HPA_search_genes_by_query` | Tissue-specific literature |
-| `gnomAD_get_variant` | `gnomad_get_variant` | 1000 Genomes |
+| `gnomad_get_variant` | `gnomad_get_variant` | 1000 Genomes |
 
 ---
 

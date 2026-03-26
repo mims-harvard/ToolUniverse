@@ -240,7 +240,7 @@ While this skill is primarily computational, ToolUniverse tools can provide data
 
 | Use Case | Tools |
 |----------|-------|
-| Clinical trial data | `clinical_trials_search` |
+| Clinical trial data | `search_clinical_trials` |
 | Drug safety outcomes | `FAERS_calculate_disproportionality` |
 | Gene-disease associations | `OpenTargets_target_disease_evidence` |
 | Biomarker data | `fda_pharmacogenomic_biomarkers` |

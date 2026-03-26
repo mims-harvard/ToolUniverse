@@ -262,7 +262,7 @@ For each modification type, table of:
 - `species`: NCBI taxonomy ID (e.g., `"9606"` for human)
 - Returns: Dataset list with accessions, titles, summaries, instruments, keywords
 
-**MassIVE_Dataverse_get_dataset**:
+**MassIVE_get_dataset**:
 - `accession`: Dataset accession (MSV or PXD format)
 - Returns: Full metadata including contacts, publications, modifications
 
@@ -270,7 +270,7 @@ For each modification type, table of:
 
 1. Search MassIVE for datasets related to the protein or PTM type: `MassIVE_search_datasets(species="9606")`
 2. Review titles/summaries for relevance to the protein or PTM type under study
-3. Get detailed metadata for relevant datasets: `MassIVE_Dataverse_get_dataset(accession="MSV...")`
+3. Get detailed metadata for relevant datasets: `MassIVE_get_dataset(accession="MSV...")`
 4. Report dataset accessions, publications, and instrument types for experimental context
 
 ### Decision Logic
@@ -320,7 +320,7 @@ Generate a comprehensive PTM analysis report covering:
 | `ELM_list_classes` | `operation` | `"list_classes"` (required, SOAP-style) |
 | `MassIVE_search_datasets` | `page_size` | Integer (max 100) |
 | `MassIVE_search_datasets` | `species` | NCBI taxonomy ID string (e.g., `"9606"`) |
-| `MassIVE_Dataverse_get_dataset` | `accession` | MSV or PXD format string |
+| `MassIVE_get_dataset` | `accession` | MSV or PXD format string |
 
 **Critical**: All iPTMnet and ELM tools require `operation` as the first parameter — these are SOAP-style tools.
 

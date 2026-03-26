@@ -116,7 +116,7 @@ Apply when user asks:
 | Tool | Purpose | Key Parameters |
 |------|---------|----------------|
 | `ProteomeXchange_search_datasets` | Search proteomics datasets | `query` |
-| `ProteomeXchange_Dataverse_get_dataset` | Get proteomics dataset details | `dataset_id` |
+| `ProteomeXchange_get_dataset` | Get proteomics dataset details | `dataset_id` |
 
 **ProteomeXchange notes:**
 - `title` is a plain string (not dict)
