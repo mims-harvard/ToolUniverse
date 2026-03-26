@@ -36,12 +36,12 @@ Pipeline for identifying, annotating, and interpreting non-coding RNAs and their
 | `miRBase_search_mirna` | Search miRNAs by name, accession, or sequence |
 | `miRBase_get_mirna` | Detailed miRNA info (sequence, genomic location, family) |
 | `miRBase_get_mature_mirna` | Mature miRNA sequences and annotations |
-| `miRBase_get_mirna_targets` | Experimentally validated and predicted miRNA targets |
-| `LNCipedia_search` | Search lncRNAs by name, gene symbol, or transcript ID |
-| `LNCipedia_get_transcript` | Detailed lncRNA transcript info (sequence, structure, conservation) |
-| `LNCipedia_get_gene` | lncRNA gene info with all transcript variants |
-| `LNCipedia_list_transcripts` | List all transcripts for a lncRNA gene |
-| `LNCipedia_get_sequence` | lncRNA sequence (FASTA format) |
+| `PubMed_search_articles` | Search for validated miRNA targets in literature (e.g., "miR-21 target validation") |
+| `LNCipedia_search_lncrna` | Search lncRNAs by name, gene symbol, or transcript ID |
+| `LNCipedia_get_lncrna` | Detailed lncRNA transcript info (sequence, structure, conservation) |
+| `LNCipedia_get_lncrna_xrefs` | lncRNA gene info with all transcript variants |
+| `LNCipedia_search_ncrna_by_type` | List all transcripts for a lncRNA gene |
+| `LNCipedia_get_lncrna_publications` | lncRNA sequence (FASTA format) |
 | `RNAcentral_search` | Search all ncRNA types across databases |
 | `RNAcentral_get_rna` | Detailed ncRNA annotations from 40+ databases |
 | `Rfam_get_family` | RNA family details (structure, alignment, species distribution) |
@@ -94,10 +94,18 @@ Phase 4: Functional Interpretation
 
 **For miRNAs** — the targets determine the biology:
 
-```python
-miRBase_get_mirna_targets(accession="MIMAT0000076")  # miR-21 targets
-# Returns validated targets with evidence type (reporter assay, Western blot, qPCR)
-```
+**NOTE**: There is no dedicated miRNA target lookup tool in ToolUniverse. To find miRNA targets:
+
+1. **Literature search** (most reliable): `PubMed_search_articles(query="miR-21 target validation luciferase")`
+2. **Cross-references**: `miRBase_get_mirna_xrefs(accession="MIMAT0000076")` — may link to external target databases
+3. **Known targets for well-studied miRNAs**: Use the reference table below, then validate via STRING/Reactome
+4. **For novel miRNAs**: Search PubMed for "[miRNA] target" and extract validated targets from papers
+
+Well-studied miRNA targets (for common oncomiRs/tumor suppressors):
+- **miR-21**: PTEN, PDCD4, TPM1, RECK, SPRY1, SPRY2, BTG2
+- **miR-155**: SOCS1, SHIP1, AID, TP53INP1
+- **miR-122**: SLC7A1, ADAM17 (also HCV IRES cofactor)
+- **let-7**: RAS, HMGA2, MYC, LIN28
 
 **Target interpretation framework**:
 
@@ -120,7 +128,7 @@ miRBase_get_mirna_targets(accession="MIMAT0000076")  # miR-21 targets
 ### Phase 2: Expression & Tissue Specificity
 
 ```python
-GTEx_get_median_gene_expression(gene="MIR21")  # miRNA host gene expression
+GTEx_get_median_gene_expression(gene_symbol="MIR21")  # miRNA host gene expression
 # Note: GTEx measures RNA-seq; miRNA expression may need miRNA-seq data from GEO
 ```
 
