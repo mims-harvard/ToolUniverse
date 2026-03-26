@@ -1093,6 +1093,8 @@ default_tool_files = {
     "gmrepo": os.path.join(current_dir, "data", "gmrepo_tools.json"),
     # Xenbase - Xenopus (frog) model organism database (via Alliance API)
     "xenbase": os.path.join(current_dir, "data", "xenbase_tools.json"),
+    # RGD - Rat Genome Database (gene info, disease/phenotype annotations, orthologs)
+    "rgd": os.path.join(current_dir, "data", "rgd_tools.json"),
 }
 
 # Auto-load any user-provided tools from ~/.tooluniverse/user_tools/

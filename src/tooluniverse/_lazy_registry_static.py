@@ -550,6 +550,7 @@ STATIC_LAZY_REGISTRY = {
     "WormBaseTool": "wormbase_tool",
     "XMLDatasetTool": "xml_tool",
     "XMLTool": "xml_tool",
+    "RGDTool": "rgd_tool",
     "XenbaseTool": "xenbase_tool",
     "ZINCTool": "zinc_tool",
     "ZenodoRESTTool": "zenodo_tool",
