@@ -137,13 +137,16 @@ class ENCODESearchTool:
         query: Dict[str, Any] = {"type": search_type, "format": "json"}
 
         # Map user-friendly param names to ENCODE API field names
+        # ENCODE API uses dot-notation for nested fields
         _param_map = {
             "organism": "replicates.library.biosample.donor.organism.scientific_name",
             "biosample_type": "biosample_ontology.classification",
-            # Feature-111A-001: biosample_term alias → biosample_term_name
-            "biosample_term": "biosample_term_name",
-            # biosample alias already in schema but map it explicitly
-            "biosample": "biosample_term_name",
+            # ENCODE API requires biosample_ontology.term_name, not biosample_term_name
+            "biosample_term": "biosample_ontology.term_name",
+            "biosample": "biosample_ontology.term_name",
+            "biosample_term_name": "biosample_ontology.term_name",
+            # ENCODE API requires target.label, not bare target
+            "target": "target.label",
         }
 
         # Add all provided arguments to query (remapping as needed)
