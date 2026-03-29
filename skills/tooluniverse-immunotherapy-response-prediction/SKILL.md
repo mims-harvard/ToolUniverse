@@ -7,6 +7,19 @@ description: Predict patient response to immune checkpoint inhibitors (ICIs) usi
 
 Predict patient response to immune checkpoint inhibitors (ICIs) using multi-biomarker integration. Transforms a patient tumor profile (cancer type + mutations + biomarkers) into a quantitative ICI Response Score with drug-specific recommendations, resistance risk assessment, and monitoring plan.
 
+## Reasoning Before Searching
+
+Not all tumors respond to checkpoint inhibitors. Reason through the biology before running tools:
+
+- **TMB (tumor mutational burden)**: More somatic mutations produce more neoantigens, which are recognized by T cells. High TMB (>=10 mut/Mb, FDA-approved threshold for pembrolizumab) generally predicts better response — but this varies by cancer type (e.g., RCC responds despite low TMB).
+- **MSI-H (microsatellite instability-high)**: Caused by defective DNA mismatch repair (MMR). MSI-H tumors have very high TMB and are pan-cancer approved for pembrolizumab. Check MLH1, MSH2, MSH6, PMS2 mutations.
+- **PD-L1 expression**: The direct target of pembrolizumab/atezolizumab. High PD-L1 (TPS >=50% or CPS >=10 depending on cancer) predicts response in some cancers (NSCLC) but not all (melanoma, where TMB is more predictive).
+- **Resistance factors** are equally important: STK11, KEAP1, JAK1/2 loss, B2M mutations can render an otherwise TMB-high tumor non-responsive.
+
+Before calling any tool, determine which biomarkers are available for this patient and which are unknown. This determines which phases can be scored with data vs. must use cancer-type priors. Do not default to "moderate" for unknowns — flag them explicitly as missing.
+
+**LOOK UP DON'T GUESS**: Never assume FDA approval for a biomarker-ICI combination — always verify with `fda_pharmacogenomic_biomarkers` or `FDA_get_indications_by_drug_name`. Cancer-specific thresholds differ from pan-cancer approvals.
+
 **KEY PRINCIPLES**:
 1. **Report-first approach** - Create report file FIRST, then populate progressively
 2. **Evidence-graded** - Every finding has an evidence tier (T1-T4)
@@ -19,6 +32,9 @@ Predict patient response to immune checkpoint inhibitors (ICIs) using multi-biom
 9. **English-first queries** - Always use English terms in tool calls
 
 ---
+
+## COMPUTE, DON'T DESCRIBE
+When analysis requires computation (statistics, data processing, scoring, enrichment), write and run Python code via Bash. Don't describe what you would do — execute it and report actual results. Use ToolUniverse tools to retrieve data, then Python (pandas, scipy, statsmodels, matplotlib) to analyze it.
 
 ## When to Use
 

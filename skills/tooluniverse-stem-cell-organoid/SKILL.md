@@ -7,6 +7,12 @@ description: Research stem cells, iPSCs, organoids, and cell differentiation usi
 
 Pipeline for investigating stem cell biology, iPSC characterization, organoid models, and cell differentiation using ToolUniverse tools.
 
+## Reasoning Strategy
+
+Stem cell differentiation follows developmental biology — to make any target cell type from iPSCs, the protocol must mimic the embryonic signaling pathway that generates that cell type in vivo. For neural induction: inhibit BMP and TGF-beta (dual SMAD inhibition). For cardiomyocytes: activate WNT then inhibit WNT. For pancreatic beta cells: activate Activin/Nodal → FGF → Notch inhibition → BMP in sequence. The order and timing of growth factors matters critically — adding BMP4 during neural induction will redirect cells toward mesoderm. Mouse and human stem cells differ in their signaling requirements (LIF/STAT3 for mouse naive pluripotency; FGF/ERK for human primed pluripotency), so protocols are not interchangeable. Organoids recapitulate some but not all organ features — always assess maturation state (fetal vs. adult gene expression) before drawing disease-relevance conclusions.
+
+**LOOK UP DON'T GUESS**: Do not assume which markers define a target cell type or which signaling pathway drives differentiation — query `CellMarker_search_by_cell_type` for markers and `kegg_search_pathway` for the relevant pathway. Do not assume organoid fidelity; look up published CellxGene or HCA atlas data for comparison.
+
 **Key principles**:
 1. **Marker-based identity** — stem cell identity is defined by marker expression profiles (OCT4, SOX2, NANOG for pluripotency)
 2. **Differentiation is a trajectory** — not a binary state; analyze intermediate progenitor stages
@@ -58,26 +64,9 @@ Phase 5: Report
 
 ### Phase 1: Cell Identity & Markers
 
-**Pluripotency markers** (must be co-expressed for true pluripotency):
+**Pluripotency markers** (must be co-expressed): OCT4 (POU5F1), SOX2, NANOG (essential); SSEA-4, TRA-1-60 (human surface markers). KLF4 and MYC are Yamanaka factors but also expressed in somatic cells — do not rely on them alone. Use `CellMarker_search_by_cell_type` to retrieve the full validated marker set for any target cell type.
 
-| Marker | Type | Essential? | Notes |
-|--------|------|-----------|-------|
-| OCT4 (POU5F1) | Transcription factor | Yes | Master regulator; loss = differentiation |
-| SOX2 | Transcription factor | Yes | Co-regulated with OCT4 |
-| NANOG | Transcription factor | Yes | Maintenance of naive pluripotency |
-| SSEA-4 | Surface marker | No | Human ESC/iPSC surface marker |
-| TRA-1-60 | Surface marker | No | Human-specific; good for FACS sorting |
-| KLF4 | Transcription factor | No | Yamanaka factor; also in some somatic cells |
-| MYC | Transcription factor | No | Yamanaka factor; oncogene caution |
-
-**Lineage markers for differentiation assessment**:
-
-| Lineage | Early Markers | Mature Markers |
-|---------|--------------|----------------|
-| Ectoderm | PAX6, SOX1, NESTIN | MAP2, TUBB3 (neurons); GFAP (astrocytes) |
-| Mesoderm | TBXT (Brachyury), MIXL1 | CD34, KDR (blood); ACTA2 (smooth muscle) |
-| Endoderm | SOX17, FOXA2 | ALB, HNF4A (liver); PDX1, NKX6.1 (pancreas) |
-| Trophectoderm | CDX2, KRT7 | CGA, CSH1 (placental) |
+**Lineage markers**: Ectoderm → PAX6/SOX1 (early), MAP2/TUBB3 (neurons); Mesoderm → TBXT/MIXL1 (early), CD34 (blood); Endoderm → SOX17/FOXA2 (early), PDX1/NKX6.1 (pancreas). Retrieve current marker lists from CellMarker rather than relying on memory.
 
 ### Phase 2: Differentiation Pathways
 

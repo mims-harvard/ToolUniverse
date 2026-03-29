@@ -11,6 +11,10 @@ Transform patient molecular profiles and clinical characteristics into prioritiz
 1. **Report-first approach** - Create report file FIRST, then populate progressively
 2. **Patient-centric** - Every recommendation considers the individual patient's profile
 3. **Molecular-first matching** - Prioritize trials targeting patient's specific biomarkers
+
+## Molecular Matching Priority
+
+Match patients to trials by molecular profile FIRST (specific mutations), then by disease stage, then by prior treatments. A patient with EGFR L858R should match to EGFR-targeted trials regardless of other factors.
 4. **Evidence-graded** - Every recommendation has an evidence tier (T1-T4)
 5. **Quantitative scoring** - Trial Match Score (0-100) for every trial
 6. **Eligibility-aware** - Parse and evaluate inclusion/exclusion criteria
@@ -19,7 +23,13 @@ Transform patient molecular profiles and clinical characteristics into prioritiz
 9. **Completeness checklist** - Mandatory section showing analysis coverage
 10. **English-first queries** - Always use English terms in tool calls. Respond in user's language
 
+## LOOK UP, DON'T GUESS
+When uncertain about any scientific fact, SEARCH databases first rather than reasoning from memory. A database-verified answer is always more reliable than a guess.
+
 ---
+
+## COMPUTE, DON'T DESCRIBE
+When analysis requires computation (statistics, data processing, scoring, enrichment), write and run Python code via Bash. Don't describe what you would do — execute it and report actual results. Use ToolUniverse tools to retrieve data, then Python (pandas, scipy, statsmodels, matplotlib) to analyze it.
 
 ## When to Use
 

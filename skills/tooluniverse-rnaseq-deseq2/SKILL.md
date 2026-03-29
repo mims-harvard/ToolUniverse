@@ -9,6 +9,19 @@ Differential expression analysis of RNA-seq count data using PyDESeq2, with enri
 
 **BixBench Coverage**: Validated on 53 BixBench questions across 15 computational biology projects.
 
+## Domain Reasoning
+
+DESeq2 assumes that most genes are NOT differentially expressed — this is its normalization assumption. If this assumption is violated (e.g., global transcriptional shutdown, where the majority of genes genuinely decrease), size factor normalization will inflate expression in the treatment group and produce artifactually upregulated genes. Always check the MA plot: the fold-change cloud should be centered on zero across all expression levels. A systematic upward or downward shift indicates a normalization problem, not biology.
+
+## LOOK UP DON'T GUESS
+
+- Gene identifiers and annotations: use ToolUniverse annotation tools (`MyGene_query_genes`, UniProt); do not recall gene function or pathway from memory.
+- Enriched pathways: run gseapy or equivalent on the actual DEG list; do not list expected pathways.
+- Design formula factors: inspect `metadata.columns` and `metadata[factor].unique()` from the actual data; do not assume metadata structure.
+- DEG thresholds: apply the values specified by the user (padj, log2FC, baseMean); do not substitute defaults without checking the question.
+
+---
+
 ## Core Principles
 
 1. **Data-first** - Load and validate count data and metadata BEFORE any analysis

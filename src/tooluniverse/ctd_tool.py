@@ -65,7 +65,14 @@ class CTDTool(BaseTool):
 
     def _query(self, arguments: Dict[str, Any]) -> Dict[str, Any]:
         """Execute a CTD batch query and return structured results."""
-        input_terms = arguments.get("input_terms", "")
+        input_terms = (
+            arguments.get("input_terms")
+            or arguments.get("query")
+            or arguments.get("gene_symbol")
+            or arguments.get("chemical_name")
+            or arguments.get("disease_name")
+            or ""
+        )
         if not input_terms:
             return {"status": "error", "error": "input_terms parameter is required"}
 
@@ -136,14 +143,10 @@ class CTDTool(BaseTool):
                 "for mitochondrial genes."
             )
 
-        if isinstance(data, list):
-            metadata["total_results"] = len(data)
-            return {"data": data, "metadata": metadata}
-        elif isinstance(data, dict):
-            metadata["total_results"] = 1
-            return {"data": data, "metadata": metadata}
-        else:
-            return {
-                "status": "error",
-                "error": f"Unexpected CTD response type: {type(data).__name__}",
-            }
+        if isinstance(data, (list, dict)):
+            metadata["total_results"] = len(data) if isinstance(data, list) else 1
+            return {"status": "success", "data": data, "metadata": metadata}
+        return {
+            "status": "error",
+            "error": f"Unexpected CTD response type: {type(data).__name__}",
+        }

@@ -71,7 +71,8 @@ class FoldseekTool(BaseRESTTool):
     def _submit_search(self, arguments: dict) -> dict:
         """Submit a PDB structure for similarity search and wait for results."""
         pdb_id = arguments.get("pdb_id", "").strip().upper()
-        sequence = arguments.get("sequence", "").strip()
+        # Accept 'query' as alias for 'sequence'
+        sequence = (arguments.get("sequence") or arguments.get("query") or "").strip()
         database = arguments.get("database", "afdb50")
         mode = arguments.get("mode", "tmalign")
         max_results = min(int(arguments.get("max_results", 10)), 50)
@@ -100,10 +101,14 @@ class FoldseekTool(BaseRESTTool):
                 timeout=self.timeout,
             )
         else:
-            # Submit amino acid sequence as form data (not file upload)
+            # Sequence must be in FASTA format for Foldseek
+            if not sequence.startswith(">"):
+                fasta_seq = f">query\n{sequence}"
+            else:
+                fasta_seq = sequence
             resp = requests.post(
                 f"{FOLDSEEK_BASE}/ticket",
-                data={**data, "q": sequence},
+                data={**data, "q": fasta_seq},
                 timeout=self.timeout,
             )
         if resp.status_code != 200:
@@ -139,6 +144,15 @@ class FoldseekTool(BaseRESTTool):
             if job_status == "COMPLETE":
                 break
             elif job_status == "ERROR":
+                if not pdb_id and sequence:
+                    return {
+                        "status": "error",
+                        "error": (
+                            "Foldseek sequence search failed. "
+                            "Foldseek requires a PDB structure for structure-based search. "
+                            "Provide a pdb_id instead of a raw sequence."
+                        ),
+                    }
                 return {
                     "status": "error",
                     "error": "Foldseek search failed on the server.",

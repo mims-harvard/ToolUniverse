@@ -16,7 +16,15 @@ AI-guided de novo protein design using RFdiffusion backbone generation, ProteinM
 6. **Actionable output** - Provide sequences ready for experimental testing
 7. **English-first queries** - Always use English terms in tool calls
 
+Therapeutic protein design starts with the target interaction. What binding surface do you need to cover? A small pocket = nanobody or peptide. A large flat surface = designed protein. Stability, immunogenicity, and manufacturability constrain the design space.
+
+## LOOK UP, DON'T GUESS
+When uncertain about any scientific fact, SEARCH databases first rather than reasoning from memory. A database-verified answer is always more reliable than a guess.
+
 ---
+
+## COMPUTE, DON'T DESCRIBE
+When analysis requires computation (statistics, data processing, scoring, enrichment), write and run Python code via Bash. Don't describe what you would do — execute it and report actual results. Use ToolUniverse tools to retrieve data, then Python (pandas, scipy, statsmodels, matplotlib) to analyze it.
 
 ## When to Use
 

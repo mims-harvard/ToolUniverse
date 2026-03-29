@@ -6,11 +6,20 @@
       "type": "object",
       "properties": {
         "smiles": {
-          "type": "array",
-          "items": {
-            "type": "string"
-          },
-          "description": "The list of SMILES strings."
+          "oneOf": [
+            {
+              "type": "array",
+              "items": {
+                "type": "string"
+              },
+              "description": "List of SMILES strings."
+            },
+            {
+              "type": "string",
+              "description": "Single SMILES string (will be wrapped in a list)."
+            }
+          ],
+          "description": "SMILES string(s) for the molecule(s). Accepts a single string or list of strings."
         }
       },
       "required": [
@@ -33,7 +42,9 @@
     ],
     "test_examples": [
       {
-        "smiles": ["CC(=O)OC1=CC=CC=C1C(=O)O"]
+        "smiles": [
+          "CC(=O)OC1=CC=CC=C1C(=O)O"
+        ]
       }
     ],
     "return_schema": {
@@ -130,11 +141,20 @@
       "type": "object",
       "properties": {
         "smiles": {
-          "type": "array",
-          "items": {
-            "type": "string"
-          },
-          "description": "The list of SMILES strings."
+          "oneOf": [
+            {
+              "type": "array",
+              "items": {
+                "type": "string"
+              },
+              "description": "List of SMILES strings."
+            },
+            {
+              "type": "string",
+              "description": "Single SMILES string (will be wrapped in a list)."
+            }
+          ],
+          "description": "SMILES string(s) for the molecule(s). Accepts a single string or list of strings."
         }
       },
       "required": [
@@ -157,7 +177,9 @@
     ],
     "test_examples": [
       {
-        "smiles": ["CC(=O)OC1=CC=CC=C1C(=O)O"]
+        "smiles": [
+          "CC(=O)OC1=CC=CC=C1C(=O)O"
+        ]
       }
     ],
     "return_schema": {
@@ -254,11 +276,20 @@
       "type": "object",
       "properties": {
         "smiles": {
-          "type": "array",
-          "items": {
-            "type": "string"
-          },
-          "description": "The list of SMILES strings."
+          "oneOf": [
+            {
+              "type": "array",
+              "items": {
+                "type": "string"
+              },
+              "description": "List of SMILES strings."
+            },
+            {
+              "type": "string",
+              "description": "Single SMILES string (will be wrapped in a list)."
+            }
+          ],
+          "description": "SMILES string(s) for the molecule(s). Accepts a single string or list of strings."
         }
       },
       "required": [
@@ -274,7 +305,9 @@
     ],
     "test_examples": [
       {
-        "smiles": ["CC(=O)OC1=CC=CC=C1C(=O)O"]
+        "smiles": [
+          "CC(=O)OC1=CC=CC=C1C(=O)O"
+        ]
       }
     ],
     "return_schema": {
@@ -371,11 +404,20 @@
       "type": "object",
       "properties": {
         "smiles": {
-          "type": "array",
-          "items": {
-            "type": "string"
-          },
-          "description": "The list of SMILES strings."
+          "oneOf": [
+            {
+              "type": "array",
+              "items": {
+                "type": "string"
+              },
+              "description": "List of SMILES strings."
+            },
+            {
+              "type": "string",
+              "description": "Single SMILES string (will be wrapped in a list)."
+            }
+          ],
+          "description": "SMILES string(s) for the molecule(s). Accepts a single string or list of strings."
         }
       },
       "required": [
@@ -397,7 +439,9 @@
     ],
     "test_examples": [
       {
-        "smiles": ["CC(=O)OC1=CC=CC=C1C(=O)O"]
+        "smiles": [
+          "CC(=O)OC1=CC=CC=C1C(=O)O"
+        ]
       }
     ],
     "return_schema": {
@@ -494,11 +538,20 @@
       "type": "object",
       "properties": {
         "smiles": {
-          "type": "array",
-          "items": {
-            "type": "string"
-          },
-          "description": "The list of SMILES strings."
+          "oneOf": [
+            {
+              "type": "array",
+              "items": {
+                "type": "string"
+              },
+              "description": "List of SMILES strings."
+            },
+            {
+              "type": "string",
+              "description": "Single SMILES string (will be wrapped in a list)."
+            }
+          ],
+          "description": "SMILES string(s) for the molecule(s). Accepts a single string or list of strings."
         }
       },
       "required": [
@@ -518,7 +571,9 @@
     ],
     "test_examples": [
       {
-        "smiles": ["CC(=O)OC1=CC=CC=C1C(=O)O"]
+        "smiles": [
+          "CC(=O)OC1=CC=CC=C1C(=O)O"
+        ]
       }
     ],
     "return_schema": {
@@ -615,11 +670,20 @@
       "type": "object",
       "properties": {
         "smiles": {
-          "type": "array",
-          "items": {
-            "type": "string"
-          },
-          "description": "The list of SMILES strings."
+          "oneOf": [
+            {
+              "type": "array",
+              "items": {
+                "type": "string"
+              },
+              "description": "List of SMILES strings."
+            },
+            {
+              "type": "string",
+              "description": "Single SMILES string (will be wrapped in a list)."
+            }
+          ],
+          "description": "SMILES string(s) for the molecule(s). Accepts a single string or list of strings."
         }
       },
       "required": [
@@ -639,7 +703,9 @@
     ],
     "test_examples": [
       {
-        "smiles": ["CC(=O)OC1=CC=CC=C1C(=O)O"]
+        "smiles": [
+          "CC(=O)OC1=CC=CC=C1C(=O)O"
+        ]
       }
     ],
     "return_schema": {
@@ -736,11 +802,20 @@
       "type": "object",
       "properties": {
         "smiles": {
-          "type": "array",
-          "items": {
-            "type": "string"
-          },
-          "description": "The list of SMILES strings."
+          "oneOf": [
+            {
+              "type": "array",
+              "items": {
+                "type": "string"
+              },
+              "description": "List of SMILES strings."
+            },
+            {
+              "type": "string",
+              "description": "Single SMILES string (will be wrapped in a list)."
+            }
+          ],
+          "description": "SMILES string(s) for the molecule(s). Accepts a single string or list of strings."
         }
       },
       "required": [
@@ -762,7 +837,9 @@
     ],
     "test_examples": [
       {
-        "smiles": ["CC(=O)OC1=CC=CC=C1C(=O)O"]
+        "smiles": [
+          "CC(=O)OC1=CC=CC=C1C(=O)O"
+        ]
       }
     ],
     "return_schema": {
@@ -859,11 +936,20 @@
       "type": "object",
       "properties": {
         "smiles": {
-          "type": "array",
-          "items": {
-            "type": "string"
-          },
-          "description": "The list of SMILES strings."
+          "oneOf": [
+            {
+              "type": "array",
+              "items": {
+                "type": "string"
+              },
+              "description": "List of SMILES strings."
+            },
+            {
+              "type": "string",
+              "description": "Single SMILES string (will be wrapped in a list)."
+            }
+          ],
+          "description": "SMILES string(s) for the molecule(s). Accepts a single string or list of strings."
         }
       },
       "required": [
@@ -883,7 +969,9 @@
     ],
     "test_examples": [
       {
-        "smiles": ["CC(=O)OC1=CC=CC=C1C(=O)O"]
+        "smiles": [
+          "CC(=O)OC1=CC=CC=C1C(=O)O"
+        ]
       }
     ],
     "return_schema": {
@@ -980,11 +1068,20 @@
       "type": "object",
       "properties": {
         "smiles": {
-          "type": "array",
-          "items": {
-            "type": "string"
-          },
-          "description": "The list of SMILES strings."
+          "oneOf": [
+            {
+              "type": "array",
+              "items": {
+                "type": "string"
+              },
+              "description": "List of SMILES strings."
+            },
+            {
+              "type": "string",
+              "description": "Single SMILES string (will be wrapped in a list)."
+            }
+          ],
+          "description": "SMILES string(s) for the molecule(s). Accepts a single string or list of strings."
         }
       },
       "required": [
@@ -1002,7 +1099,9 @@
     ],
     "test_examples": [
       {
-        "smiles": ["CC(=O)OC1=CC=CC=C1C(=O)O"]
+        "smiles": [
+          "CC(=O)OC1=CC=CC=C1C(=O)O"
+        ]
       }
     ],
     "return_schema": {

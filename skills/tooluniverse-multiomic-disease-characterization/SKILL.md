@@ -22,7 +22,15 @@ Characterize diseases across multiple molecular layers (genomics, transcriptomic
 12. **Completeness checklist** - Mandatory section showing analysis coverage
 13. **English-first queries** - Always use English terms in tool calls. Respond in user's language
 
+Multi-omics disease characterization asks: what molecular layers are dysregulated? Genomic mutations → transcriptomic changes → proteomic effects → metabolomic consequences. Concordance across layers strengthens the finding. Discordance reveals regulatory complexity.
+
+## LOOK UP, DON'T GUESS
+When uncertain about any scientific fact, SEARCH databases first rather than reasoning from memory. A database-verified answer is always more reliable than a guess.
+
 ---
+
+## COMPUTE, DON'T DESCRIBE
+When analysis requires computation (statistics, data processing, scoring, enrichment), write and run Python code via Bash. Don't describe what you would do — execute it and report actual results. Use ToolUniverse tools to retrieve data, then Python (pandas, scipy, statsmodels, matplotlib) to analyze it.
 
 ## When to Use This Skill
 

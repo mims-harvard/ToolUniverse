@@ -1,7 +1,7 @@
 """
 SemanticScholar_search_papers
 
-Search for papers on Semantic Scholar including abstracts. This tool queries the Semantic Scholar...
+Search for papers on Semantic Scholar including abstracts and AI-generated TLDR summaries. This t...
 """
 
 from typing import Any, Optional, Callable
@@ -20,7 +20,7 @@ def SemanticScholar_search_papers(
     validate: bool = True,
 ) -> Any:
     """
-    Search for papers on Semantic Scholar including abstracts. This tool queries the Semantic Scholar...
+    Search for papers on Semantic Scholar including abstracts and AI-generated TLDR summaries. This t...
 
     Parameters
     ----------

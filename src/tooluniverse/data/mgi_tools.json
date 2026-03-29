@@ -54,13 +54,9 @@
                     "type": ["string", "null"],
                     "description": "Gene name"
                   },
-                  "primary_key": {
+                  "gene_id": {
                     "type": ["string", "null"],
                     "description": "MGI identifier (e.g., 'MGI:98834')"
-                  },
-                  "name_key": {
-                    "type": ["string", "null"],
-                    "description": "Gene display name with species (e.g., 'Trp53 (Mmu)')"
                   },
                   "category": {
                     "type": ["string", "null"],

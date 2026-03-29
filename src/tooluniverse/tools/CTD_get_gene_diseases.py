@@ -9,7 +9,9 @@ from ._shared_client import get_shared_client
 
 
 def CTD_get_gene_diseases(
-    input_terms: str,
+    input_terms: Optional[str] = None,
+    query: Optional[str] = None,
+    gene_symbol: Optional[str] = None,
     *,
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
@@ -22,6 +24,10 @@ def CTD_get_gene_diseases(
     ----------
     input_terms : str
         Gene symbol or NCBI Gene ID. Examples: 'TP53', 'BRCA1', 'CYP1A1', '7157' (Gen...
+    query : str
+        Gene symbol or name to search (alias for input_terms, e.g. TP53)
+    gene_symbol : str
+        Gene symbol (alias for input_terms, e.g. TP53)
     stream_callback : Callable, optional
         Callback for streaming output
     use_cache : bool, default False
@@ -36,7 +42,15 @@ def CTD_get_gene_diseases(
     # Handle mutable defaults to avoid B006 linting error
 
     # Strip None values so optional parameters don't trigger schema validation errors
-    _args = {k: v for k, v in {"input_terms": input_terms}.items() if v is not None}
+    _args = {
+        k: v
+        for k, v in {
+            "input_terms": input_terms,
+            "query": query,
+            "gene_symbol": gene_symbol,
+        }.items()
+        if v is not None
+    }
     return get_shared_client().run_one_function(
         {
             "name": "CTD_get_gene_diseases",

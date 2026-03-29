@@ -16,9 +16,16 @@
           "minimum": 1,
           "maximum": 100,
           "description": "Maximum number of results to return (default: 25)."
+        },
+        "query": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Alias for keyword: search keyword for disease name (e.g., 'diabetes', 'leukemia')."
         }
       },
-      "required": ["keyword"]
+      "required": []
     },
     "fields": {
       "endpoint": "search_disease"
@@ -28,14 +35,29 @@
       "items": {
         "type": "object",
         "properties": {
-          "disease_id": {"type": "string", "description": "KEGG disease ID (e.g., H00001)"},
-          "name": {"type": "string", "description": "Disease name(s)"}
+          "disease_id": {
+            "type": "string",
+            "description": "KEGG disease ID (e.g., H00001)"
+          },
+          "name": {
+            "type": "string",
+            "description": "Disease name(s)"
+          }
         }
       }
     },
     "test_examples": [
-      {"keyword": "leukemia", "max_results": 5},
-      {"keyword": "diabetes", "max_results": 5}
+      {
+        "keyword": "leukemia",
+        "max_results": 5
+      },
+      {
+        "keyword": "diabetes",
+        "max_results": 5
+      }
+    ],
+    "aliases": [
+      "KEGG_search_diseases"
     ]
   },
   {
@@ -50,7 +72,9 @@
           "description": "KEGG disease ID in H##### format (e.g., 'H00001' for B-cell ALL, 'H00408' for type 1 diabetes, 'H00409' for type 2 diabetes, 'H00031' for breast cancer)."
         }
       },
-      "required": ["disease_id"]
+      "required": [
+        "disease_id"
+      ]
     },
     "fields": {
       "endpoint": "get_disease"
@@ -58,20 +82,66 @@
     "return_schema": {
       "type": "object",
       "properties": {
-        "disease_id": {"type": "string"},
-        "names": {"type": "array", "items": {"type": "string"}},
-        "category": {"type": ["string", "null"]},
-        "description": {"type": ["string", "null"]},
-        "genes": {"type": "array", "items": {"type": "string"}},
-        "pathways": {"type": "object", "additionalProperties": {"type": "string"}},
-        "drugs": {"type": "array", "items": {"type": "string"}},
-        "dblinks": {"type": "object", "additionalProperties": {"type": "string"}},
-        "references": {"type": "array", "items": {"type": "string"}}
+        "disease_id": {
+          "type": "string"
+        },
+        "names": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "category": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "description": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "genes": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "pathways": {
+          "type": "object",
+          "additionalProperties": {
+            "type": "string"
+          }
+        },
+        "drugs": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "dblinks": {
+          "type": "object",
+          "additionalProperties": {
+            "type": "string"
+          }
+        },
+        "references": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
       }
     },
     "test_examples": [
-      {"disease_id": "H00001"},
-      {"disease_id": "H00409"}
+      {
+        "disease_id": "H00001"
+      },
+      {
+        "disease_id": "H00409"
+      }
     ]
   },
   {
@@ -91,7 +161,9 @@
           "description": "KEGG organism code (default: 'hsa' for human). Other examples: 'mmu' (mouse)."
         }
       },
-      "required": ["disease_id"]
+      "required": [
+        "disease_id"
+      ]
     },
     "fields": {
       "endpoint": "get_disease_genes"
@@ -99,14 +171,27 @@
     "return_schema": {
       "type": "object",
       "properties": {
-        "disease_id": {"type": "string"},
-        "gene_count": {"type": "integer"},
-        "genes": {"type": "array", "items": {"type": "string"}}
+        "disease_id": {
+          "type": "string"
+        },
+        "gene_count": {
+          "type": "integer"
+        },
+        "genes": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
       }
     },
     "test_examples": [
-      {"disease_id": "H00001"},
-      {"disease_id": "H00031"}
+      {
+        "disease_id": "H00001"
+      },
+      {
+        "disease_id": "H00031"
+      }
     ]
   },
   {
@@ -128,7 +213,9 @@
           "description": "Maximum number of results to return (default: 25)."
         }
       },
-      "required": ["keyword"]
+      "required": [
+        "keyword"
+      ]
     },
     "fields": {
       "endpoint": "search_drug"
@@ -138,14 +225,26 @@
       "items": {
         "type": "object",
         "properties": {
-          "drug_id": {"type": "string", "description": "KEGG drug ID (e.g., D00109)"},
-          "name": {"type": "string", "description": "Drug name(s) including brand names"}
+          "drug_id": {
+            "type": "string",
+            "description": "KEGG drug ID (e.g., D00109)"
+          },
+          "name": {
+            "type": "string",
+            "description": "Drug name(s) including brand names"
+          }
         }
       }
     },
     "test_examples": [
-      {"keyword": "aspirin", "max_results": 5},
-      {"keyword": "imatinib", "max_results": 5}
+      {
+        "keyword": "aspirin",
+        "max_results": 5
+      },
+      {
+        "keyword": "imatinib",
+        "max_results": 5
+      }
     ]
   },
   {
@@ -160,7 +259,9 @@
           "description": "KEGG drug ID in D##### format (e.g., 'D00109' for aspirin, 'D01441' for imatinib, 'D04966' for metformin)."
         }
       },
-      "required": ["drug_id"]
+      "required": [
+        "drug_id"
+      ]
     },
     "fields": {
       "endpoint": "get_drug"
@@ -168,22 +269,80 @@
     "return_schema": {
       "type": "object",
       "properties": {
-        "drug_id": {"type": "string"},
-        "names": {"type": "array", "items": {"type": "string"}},
-        "formula": {"type": ["string", "null"]},
-        "exact_mass": {"type": ["number", "string", "null"]},
-        "mol_weight": {"type": ["number", "string", "null"]},
-        "targets": {"type": "array", "items": {"type": "string"}},
-        "pathways": {"type": "object", "additionalProperties": {"type": "string"}},
-        "diseases": {"type": "array", "items": {"type": "string"}},
-        "dblinks": {"type": "object", "additionalProperties": {"type": "string"}},
-        "efficacy": {"type": ["string", "null"]},
-        "product": {"type": "array", "items": {"type": "string"}}
+        "drug_id": {
+          "type": "string"
+        },
+        "names": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "formula": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "exact_mass": {
+          "type": [
+            "number",
+            "string",
+            "null"
+          ]
+        },
+        "mol_weight": {
+          "type": [
+            "number",
+            "string",
+            "null"
+          ]
+        },
+        "targets": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "pathways": {
+          "type": "object",
+          "additionalProperties": {
+            "type": "string"
+          }
+        },
+        "diseases": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "dblinks": {
+          "type": "object",
+          "additionalProperties": {
+            "type": "string"
+          }
+        },
+        "efficacy": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "product": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
       }
     },
     "test_examples": [
-      {"drug_id": "D00109"},
-      {"drug_id": "D01441"}
+      {
+        "drug_id": "D00109"
+      },
+      {
+        "drug_id": "D01441"
+      }
     ]
   },
   {
@@ -198,7 +357,9 @@
           "description": "KEGG drug ID (e.g., 'D00109' for aspirin, 'D01441' for imatinib)."
         }
       },
-      "required": ["drug_id"]
+      "required": [
+        "drug_id"
+      ]
     },
     "fields": {
       "endpoint": "get_drug_targets"
@@ -206,14 +367,27 @@
     "return_schema": {
       "type": "object",
       "properties": {
-        "drug_id": {"type": "string"},
-        "target_count": {"type": "integer"},
-        "targets": {"type": "array", "items": {"type": "string"}}
+        "drug_id": {
+          "type": "string"
+        },
+        "target_count": {
+          "type": "integer"
+        },
+        "targets": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
       }
     },
     "test_examples": [
-      {"drug_id": "D01441"},
-      {"drug_id": "D00109"}
+      {
+        "drug_id": "D01441"
+      },
+      {
+        "drug_id": "D00109"
+      }
     ]
   }
 ]

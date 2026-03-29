@@ -190,13 +190,13 @@
   {
     "type": "CBioPortalRESTTool",
     "name": "cBioPortal_get_genes",
-    "description": "Search for genes by keyword (gene symbol or alias)",
+    "description": "Search for genes by keyword or query (gene symbol or alias). Alias: cBioPortal_search.",
     "parameter": {
       "type": "object",
       "properties": {
-        "keyword": {"type": "string", "description": "Gene symbol or alias to search for"}
-      },
-      "required": ["keyword"]
+        "keyword": {"type": "string", "description": "Gene symbol or alias to search for (e.g., 'BRCA1', 'TP53')"},
+        "query": {"type": "string", "description": "Alias for keyword: gene symbol or alias to search for"}
+      }
     },
     "fields": {
       "endpoint": "https://www.cbioportal.org/api/genes?keyword={keyword}",
@@ -216,7 +216,8 @@
     "test_examples": [
       {"keyword": "BRCA2"},
       {"keyword": "TP53"}
-    ]
+    ],
+    "aliases": ["cBioPortal_search"]
   },
   {
     "type": "CBioPortalRESTTool",

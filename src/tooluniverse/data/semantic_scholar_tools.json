@@ -2,7 +2,7 @@
   {
     "type": "SemanticScholarTool",
     "name": "SemanticScholar_search_papers",
-    "description": "Search for papers on Semantic Scholar including abstracts. This tool queries the Semantic Scholar API using natural language keywords and returns papers with details such as title, abstract, publication year, journal (venue), and URL. Rate limits: 1 req/sec without API key, 100 req/sec with SEMANTIC_SCHOLAR_API_KEY environment variable set.",
+    "description": "Search for papers on Semantic Scholar including abstracts and AI-generated TLDR summaries. This tool queries the Semantic Scholar API using natural language keywords and returns papers with details such as title, abstract, TLDR summary, fields of study, publication year, journal (venue), and URL. Rate limits: 1 req/sec without API key, 100 req/sec with SEMANTIC_SCHOLAR_API_KEY environment variable set.",
     "optional_api_keys": [
       "SEMANTIC_SCHOLAR_API_KEY"
     ],
@@ -55,6 +55,13 @@
                 ],
                 "description": "Abstract of the paper"
               },
+              "tldr": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "AI-generated one-sentence TLDR summary of the paper"
+              },
               "journal": {
                 "type": [
                   "string",
@@ -103,6 +110,16 @@
                   "type": "string"
                 },
                 "description": "List of author names"
+              },
+              "fields_of_study": {
+                "type": [
+                  "array",
+                  "null"
+                ],
+                "description": "Fields of study (e.g., Biology, Medicine, Computer Science)",
+                "items": {
+                  "type": "string"
+                }
               },
               "citation_count": {
                 "type": [

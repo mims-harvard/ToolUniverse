@@ -120,6 +120,161 @@ Input -> Phase 1: Gene ID resolution -> Phase 2: Nucleotide retrieval
 - UniProt accession unknown -> NCBIDatasets_get_gene or UniProt_search for cross-refs
 - Ortholog search empty -> verify gene_id is numeric NCBI Gene ID
 
+## Sequence Analysis Reasoning (CRITICAL)
+
+**LOOK UP DON'T GUESS** -- always fetch sequences, coordinates, and domain boundaries from databases. Do not reconstruct them from memory.
+
+### When to Use Which Tool
+
+| Question Type | Tool Choice | Why |
+|--------------|------------|-----|
+| "Find similar sequences" | BLAST_protein_search | Homology search against databases; returns E-values and identity |
+| "What domains does this protein have?" | InterPro_get_entries_for_protein or Pfam_get_protein_annotations | Domain architecture with exact residue coordinates |
+| "Get the sequence of gene X" | NCBI_search_nucleotide -> NCBI_get_sequence | Nucleotide retrieval by gene name |
+| "Compare orthologs" | NCBIDatasets_get_orthologs or EnsemblCompara_get_orthologues | Cross-species gene comparison |
+| "What is the protein impact of variant X?" | EnsemblVEP_annotate_hgvs | Consequence prediction with protein coordinates |
+| "Align two sequences" | BLAST (pairwise) | Quick pairwise comparison with scoring |
+
+### Reading Frame Selection Strategy
+
+When translating a DNA sequence to protein:
+1. **Do NOT guess the reading frame** -- preferred: use `DNA_translate_reading_frames` tool; fallback: `translate_dna.py` which tries all 3 frames automatically
+2. The correct frame is the one with the LONGEST open reading frame (no premature stops)
+3. If the sequence starts with ATG, frame 1 is likely correct -- but verify
+4. If all 3 frames have early stop codons, the sequence may be: (a) non-coding, (b) reversed, or (c) contains sequencing errors. Try reverse complement first.
+
+### Protein Domain Interpretation
+
+When asked about protein function or structure:
+1. **Get domain architecture first**: `InterPro_get_entries_for_protein` returns all annotated domains with positions
+2. **Domain families indicate function**: Kinase domain = phosphorylation activity; SH2 domain = phosphotyrosine binding; zinc finger = DNA binding
+3. **Variants in conserved domains are more likely pathogenic** than those in linker regions
+4. **LOOK UP** domain boundaries from the database -- do not estimate positions from memory
+
+## Reasoning for Protein Feature Questions
+
+When asked "how many X residues in region Y of protein Z":
+
+1. **Identify the correct protein** — Gene names are ambiguous. GABAA has many subunits (GABRA1, GABRB2, GABRR1...). Read the question carefully for the specific subunit. Use `proteins_api_search` with gene name + "human" to find the right accession.
+
+2. **Find the region boundaries** — Use `proteins_api_get_features` with the accession to get annotated domains (TRANSMEM, DOMAIN, REGION). Don't guess positions — get them from the database.
+
+3. **Count residues in the region** — Fetch the sequence, extract the region, count. WRITE Python code for this — don't try to count manually.
+   - **Residue Counting Strategy**: `python3 skills/tooluniverse-sequence-analysis/scripts/sequence_tools.py --type count_region --accession P24046 --start 318 --end 440 --residue C`
+   - For residue counting questions, ALWAYS use the script or `sequence[start:end].count('C')`. Do NOT estimate or count from memory.
+
+4. **Account for multimers** — READ THE QUESTION for "homomeric", "pentamer", "tetramer", "dimer". If the question asks about a homomeric receptor (e.g., "homomeric GABAAρ1"), every subunit is identical. Count the residues in ONE subunit, then multiply:
+   - Homomeric pentamer (most ligand-gated ion channels like GABAA ρ1): × 5
+   - Homotetramer (many ion channels): × 4
+   - Homodimer: × 2
+   If the question says "in the TM3-TM4 linker domains" (plural), it means across all subunits in the complex.
+
+## Bundled Computation Scripts
+
+**Never manually count residues, compute GC%, or write reverse-complement logic inline.** Run these scripts instead — they are tested and handle edge cases.
+
+### biology_facts.py — Biology reference lookup
+
+**Script**: `skills/tooluniverse-sequence-analysis/scripts/biology_facts.py`
+
+Use this script to look up commonly-confused biology facts instead of relying on memory. It covers receptor types, ion channel stoichiometry, neurotransmitters, immune cell markers, and gene naming confusions.
+
+```
+python3 skills/tooluniverse-sequence-analysis/scripts/biology_facts.py --type receptor --name "GABAA"
+python3 skills/tooluniverse-sequence-analysis/scripts/biology_facts.py --type ion_channel --name "NMDA"
+python3 skills/tooluniverse-sequence-analysis/scripts/biology_facts.py --type gene_confusion --name "GABRA1"
+python3 skills/tooluniverse-sequence-analysis/scripts/biology_facts.py --type receptor  # list all entries
+```
+
+Types: `receptor` (stoichiometry, pharmacology), `ion_channel` (subunit arrangement), `neurotransmitter` (synthesis, receptors), `immune_cell` (markers, lineage), `gene_confusion` (commonly mixed-up genes like GABRA1 vs GABRR1).
+
+**Mandatory use**: any question about receptor type/stoichiometry, immune cell markers, or gene name disambiguation.
+
+### amino_acids.py — Codon table, amino acid properties, wobble pairing
+
+**Script**: `skills/tooluniverse-sequence-analysis/scripts/amino_acids.py`
+
+Use this script for any question about the genetic code, codon degeneracy, amino acid chemistry, codon usage bias, or tRNA wobble pairing. All outputs are JSON.
+
+```
+python3 skills/tooluniverse-sequence-analysis/scripts/amino_acids.py --type codon_table
+python3 skills/tooluniverse-sequence-analysis/scripts/amino_acids.py --type amino_acid --name "Cysteine"
+python3 skills/tooluniverse-sequence-analysis/scripts/amino_acids.py --type amino_acid --code C
+python3 skills/tooluniverse-sequence-analysis/scripts/amino_acids.py --type amino_acid --code TRP
+python3 skills/tooluniverse-sequence-analysis/scripts/amino_acids.py --type amino_acid            # list all 20
+python3 skills/tooluniverse-sequence-analysis/scripts/amino_acids.py --type count_codons --sequence "ATGCCCAAATTT..."
+python3 skills/tooluniverse-sequence-analysis/scripts/amino_acids.py --type wobble --anticodon "GAU"
+python3 skills/tooluniverse-sequence-analysis/scripts/amino_acids.py --type wobble --anticodon "IAU"
+```
+
+**Modes:**
+
+| `--type` | What it returns | Key fields |
+|----------|-----------------|-----------|
+| `codon_table` | All 64 codons grouped by amino acid | degeneracy, codons, human codon usage %, stop codon names, degeneracy distribution (1/2/3/4/6) |
+| `amino_acid` | Properties of one or all amino acids | name, one_letter, three_letter, mw_da, pKa_side_chain, polarity, charge_ph7, hydrophobicity_index (Kyte-Doolittle), backbone_pKa, codons, degeneracy, rare_codons_le15pct |
+| `count_codons` | Codon frequency analysis for a DNA sequence | codon_counts with AA annotation and human usage freq, amino_acid_composition, rare_codons_present |
+| `wobble` | Codons recognised by a given anticodon | recognised_codons (RNA+DNA form, AA), synonymous_only, wobble rule explanation |
+
+**When to use (mandatory):**
+- Any question about how many codons encode a given amino acid (degeneracy)
+- Any question about rare vs. common codons for protein expression optimisation
+- Any question about tRNA anticodon recognition / wobble base pairing
+- Any question about amino acid physical-chemical properties (MW, pKa, hydrophobicity, polarity, charge)
+- Any question about the names of stop codons (Amber/Ochre/Opal)
+- Before manually stating codon degeneracy — verify with `codon_table`
+
+**Wobble rules**: I pairs U/C/A (3 codons); G pairs U/C; U pairs A/G; C pairs G only; A pairs U only (rare). Use `--type wobble --anticodon "GAU"` to verify.
+
+**Amino acid lookup**: accepts full name (`--name "Cysteine"`), 1-letter (`--code C`), or 3-letter (`--code CYS`).
+
+### Codon-Anticodon Matching Reasoning (CRITICAL for tRNA problems)
+
+When solving "which codons does this tRNA recognize" or "which tRNA reads this codon":
+
+1. **Anticodon is written 3'->5'** but conventionally listed 5'->3'. The FIRST position of the anticodon (5' end) is the WOBBLE position and pairs with the THIRD position of the codon (3' end).
+2. **Anticodon-codon pairing is ANTIPARALLEL**: anticodon 5'-X-Y-Z-3' pairs with codon 3'-X'-Y'-Z'-5' (i.e., codon 5'-Z'-Y'-X'-3').
+3. **Wobble position rules** (anticodon 5' base -> codon 3' base it can pair with):
+   - C -> G only (1 codon)
+   - A -> U only (1 codon; rare in bacteria, common in mitochondria)
+   - U -> A or G (2 codons)
+   - G -> C or U (2 codons)
+   - I (inosine, deaminated A) -> U, C, or A (3 codons)
+4. **Minimum tRNA set**: Because I reads 3 bases and G/U each read 2, a 4-codon family (e.g., GCN = Ala) needs only 2 tRNAs: one with I at wobble position (reads 3 of 4 codons) and one with C or U at wobble (reads the remaining 1-2).
+5. **ALWAYS use the script**: `python3 skills/tooluniverse-sequence-analysis/scripts/amino_acids.py --type wobble --anticodon "IAU"` to verify rather than reasoning from memory.
+
+---
+
+### translate_dna.py — DNA to protein translation
+
+Preferred: use `DNA_translate_reading_frames` tool (via MCP/SDK) with `sequence` parameter. Fallback: run `translate_dna.py` directly.
+
+```
+python3 skills/tooluniverse-sequence-analysis/scripts/translate_dna.py "ATGCCC..."
+```
+Tries all 3 reading frames, picks longest ORF automatically.
+
+### sequence_tools.py — Residue counting, GC content, reverse complement, stats
+
+**Script**: `skills/tooluniverse-sequence-analysis/scripts/sequence_tools.py`
+
+**Preferred**: Use ToolUniverse tools (via MCP/SDK) instead of the script:
+- `Sequence_count_residues` tool -- Count residues in a sequence or region. Fallback: `sequence_tools.py --type count_residues` or `--type count_region`
+- `Sequence_gc_content` tool -- GC% of DNA. Fallback: `sequence_tools.py --type gc_content`
+- `Sequence_reverse_complement` tool -- DNA reverse complement. Fallback: `sequence_tools.py --type reverse_complement`
+- `Sequence_stats` tool -- Auto-detect type, length, MW. Fallback: `sequence_tools.py --type stats`
+
+**Fallback script modes** (use `--type`):
+- `count_residues`: Count residue in full sequence. `--sequence "ACDE..." --residue C`
+- `count_region`: Count in region (1-based inclusive). `--sequence "MAC..." --start 5 --end 20 --residue C` OR `--accession P24046 --start 318 --end 440 --residue C` (fetches from UniProt live)
+- `gc_content`: GC% of DNA. `--sequence "ATGCGATCG"`
+- `reverse_complement`: DNA reverse complement. `--sequence "ATGCGATCG"`
+- `stats`: Auto-detect DNA/RNA/Protein, compute length, MW for protein. `--sequence "ATGCG..."`
+
+ALWAYS use `count_region --accession` when the user gives a UniProt accession + region -- do not count manually.
+
+---
+
 ## Interpretation Framework
 
 ### Sequence Quality Assessment
@@ -137,14 +292,23 @@ Input -> Phase 1: Gene ID resolution -> Phase 2: Nucleotide retrieval
 2. **Is it the canonical isoform?** (RefSeq MANE Select or UniProt canonical)
 3. **How well-annotated is it?** (SwissProt > TrEMBL > GenBank predicted)
 4. **Are there known variants?** (ClinVar pathogenic variants in this sequence)
-5. **What cross-references are available?** (Ensembl ↔ RefSeq ↔ UniProt mapping)
 
 ---
 
+## Answer Formatting (CRITICAL)
+
+**TRIM YOUR ANSWER**: If the question asks "what protein", answer with JUST the protein name. Do not add parenthetical abbreviations, descriptions, or qualifications. Example: answer "Glucose-6-phosphate 1-dehydrogenase", NOT "Glucose-6-phosphate 1-dehydrogenase (G6PD, EC 1.1.1.49)". When identifying a protein from a sequence, use BLAST/UniProt and report the top hit name exactly as it appears in the database — no embellishment.
+
+## Peptide & Foldamer Structure
+
+- **Alpha-peptide helices**: alpha-helix (3.6 res/turn, i->i+4 H-bonds), 3_10-helix (3 res/turn, i->i+3), pi-helix (4.4 res/turn, i->i+5).
+- **Beta-peptide helices**: named by H-bond ring size. 14-helix (i->i+2, 14-membered rings), 12-helix, 10-helix, 8-helix.
+- **Beta-amino acid ring size determines helix type**: 4-membered cyclic constraint -> 10-helix; 5-membered (e.g., ACPC) -> 12-helix; 6-membered (e.g., ACHC) -> 14-helix. Acyclic beta3-residues default to 14-helix.
+- **Mixed alpha/beta foldamers (1:1 alternation)**: form 11-helix (i->i+3, 11-atom rings) or 14/15-helix (i->i+4, alternating 14- and 15-atom rings). Longer sequences prefer the 14/15-helix.
+- **Key rule**: the number in the helix name = number of atoms in the hydrogen-bonded ring.
+- **Cyclic beta-amino acids** (ACPC, ACHC) constrain backbone torsion angles, favoring specific helix types over acyclic residues.
+
 ## Limitations
 
-- NCBI_get_sequence returns full sequence as string; very large genomes may be slow
-- ensembl_get_sequence gene IDs + non-genomic type need multiple_sequences flag
-- NCBIDatasets_get_orthologs requires NCBI Gene ID (not symbol or Ensembl)
-- UniProt_get_sequence_by_accession returns only the canonical isoform
-- EnsemblSeq_get_region_sequence has practical size limits on regions
+- ensembl_get_sequence gene IDs + non-genomic type need `multiple_sequences=true`
+- NCBIDatasets_get_orthologs requires NCBI Gene ID (not symbol); UniProt returns canonical isoform only

@@ -7,6 +7,12 @@ description: Analyze HLA genes, MHC binding, epitope-MHC associations, and immun
 
 Pipeline for exploring HLA gene families, MHC-peptide binding, epitope associations, and their clinical implications in transplantation, vaccine development, and cancer immunotherapy. Bridges immunogenetic databases (IMGT, IEDB) with functional annotation (UniProt) and druggability data (DGIdb).
 
+## Reasoning Strategy
+
+HLA analysis is fundamentally about peptide presentation: the polymorphism of HLA molecules determines which peptides are displayed to T cells, which in turn governs disease susceptibility, transplant rejection, drug hypersensitivity, and vaccine immunogenicity. HLA type affects disease susceptibility for autoimmune conditions (HLA-B27 and ankylosing spondylitis), transplant rejection (HLA mismatch drives alloresponse), drug hypersensitivity (abacavir causes severe hypersensitivity reactions only in HLA-B*57:01 carriers), and vaccine design (epitopes must be presented by the recipient's HLA alleles to elicit a T-cell response). Class I and Class II HLA molecules have fundamentally different binding grooves, peptide lengths, and T-cell partners — never conflate them. The absence of an epitope from IEDB means it has not been tested, not that it cannot bind.
+
+**LOOK UP DON'T GUESS**: Never assume an allele's binding properties or population frequency — query IEDB for experimental binding data and IMGT for allele annotation. Do not guess which HLA alleles are common in a population; look up published frequency data via PubMed.
+
 **Guiding principles**:
 1. **HLA nomenclature precision** -- HLA allele names follow strict conventions (e.g., HLA-A*02:01); get the resolution level right
 2. **MHC class awareness** -- Class I (A, B, C) and Class II (DR, DQ, DP) have different binding properties and clinical roles
@@ -16,6 +22,9 @@ Pipeline for exploring HLA gene families, MHC-peptide binding, epitope associati
 6. **English-first queries** -- use English terms in all tool calls; respond in the user's language
 
 ---
+
+## COMPUTE, DON'T DESCRIBE
+When analysis requires computation (statistics, data processing, scoring, enrichment), write and run Python code via Bash. Don't describe what you would do — execute it and report actual results. Use ToolUniverse tools to retrieve data, then Python (pandas, scipy, statsmodels, matplotlib) to analyze it.
 
 ## When to Use
 
@@ -151,15 +160,6 @@ HLA nomenclature quick reference:
 
 **Important**: IEDB epitopes are experimentally validated, not predicted. The absence of an epitope does not mean it won't bind -- it may simply be untested.
 
-**Binding affinity interpretation** (for IC50 values from IEDB):
-
-| IC50 (nM) | Classification | Significance |
-|-----------|---------------|-------------|
-| < 50 | Strong binder | High likelihood of antigen presentation; good vaccine candidate |
-| 50-500 | Moderate binder | May be presented; worth investigating |
-| 500-5000 | Weak binder | Unlikely to be immunodominant; low priority |
-| > 5000 | Non-binder | Not relevant for this HLA allele |
-
 **Population coverage for vaccine design**: When selecting epitopes for a vaccine, check how common the restricting HLA allele is in the target population. An epitope restricted to HLA-A*02:01 covers ~50% of Europeans but <15% of some African populations. For broad population coverage, select epitopes across multiple HLA supertypes (A2, A3, B7, B44 cover >95% of most populations).
 
 ### Phase 4: Functional Annotation
@@ -211,18 +211,6 @@ Structure the report as:
 4. **Protein Features** -- structural domains, polymorphic sites
 5. **Clinical Relevance** -- transplant implications, drug associations, disease links
 6. **Evidence Summary** -- graded by source (IEDB experimental > computational prediction > literature mention)
-
----
-
-## Common Analysis Patterns
-
-| Pattern | Description | Key Phases |
-|---------|-------------|------------|
-| **Allele Deep-Dive** | Full profile of one HLA allele | 0, 1, 2, 4 |
-| **Pathogen Epitope Mapping** | Find all epitopes for a pathogen restricted by specific HLA | 0, 2, 3 |
-| **Transplant Compatibility** | HLA gene lookup and matching context | 0, 1, 5 |
-| **Pharmacogenomic HLA** | Drug hypersensitivity and HLA allele links | 0, 1, 5 |
-| **Vaccine Target Discovery** | Identify immunogenic epitopes across common HLA alleles | 0, 2, 3, 5 |
 
 ---
 

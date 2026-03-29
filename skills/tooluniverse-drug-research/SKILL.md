@@ -17,6 +17,23 @@ Comprehensive drug investigation using 50+ ToolUniverse tools across chemical da
 
 ---
 
+## LOOK UP, DON'T GUESS
+
+When asked about a drug, query ChEMBL/PubChem/DailyMed FIRST. Don't guess at mechanism, targets, or side effects — look them up. When you're not sure about a fact, your first instinct should be to SEARCH for it using tools, not to reason harder from memory.
+
+---
+
+## Drug Mechanism Reasoning
+
+When investigating a drug's mechanism of action, trace the full causal chain:
+1. **Target engagement** - Which protein(s) does the drug bind, and with what affinity/selectivity?
+2. **Molecular effect** - Does binding inhibit, activate, or modulate the target's function?
+3. **Pathway consequence** - Which signaling or metabolic pathway is altered downstream?
+4. **Cellular phenotype** - What changes occur at the cell level (proliferation, apoptosis, secretion)?
+5. **Physiological outcome** - How does the cellular effect translate to the therapeutic benefit in the patient?
+
+---
+
 ## Workflow Overview
 
 ### 1. Report-First Approach (MANDATORY)
@@ -208,6 +225,12 @@ Always maintain all section headers but adjust depth based on query focus and da
 - **Literature-only** -> Use literature-deep-research skill
 - **Single property lookup** -> Call tool directly
 - **Structure similarity search** -> Use `PubChem_search_compounds_by_similarity` directly
+
+---
+
+## Cross-Skill References
+
+For drug interaction checking, run: `python3 skills/tooluniverse-drug-drug-interaction/scripts/pharmacology_ref.py --type interaction --drug1 X --drug2 Y`
 
 ---
 

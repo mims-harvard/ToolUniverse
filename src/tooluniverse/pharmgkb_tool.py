@@ -127,11 +127,34 @@ class PharmGKBTool(BaseTool):
             f"{PHARMGKB_BASE_URL}/data/{entity_type.lower()}",
             params,
         )
-        if status_code == 404:
-            status_code, api_response, error = self._request_json(
-                f"{PHARMGKB_BASE_URL}/data/search",
-                {"query": query, "view": "base"},
+        if status_code == 404 and entity_type == "Variant":
+            # Gene name passed to variant search — try gene lookup as fallback
+            _, gene_resp, gene_err = self._request_json(
+                f"{PHARMGKB_BASE_URL}/data/gene",
+                {"symbol": query, "view": "base"},
             )
+            if not gene_err:
+                gene_data = gene_resp.get("data", [])
+                if gene_data:
+                    gene_id = gene_data[0].get("id", "")
+                    return {
+                        "status": "success",
+                        "data": [],
+                        "note": (
+                            f"'{query}' is a gene symbol, not a variant rsID. "
+                            f"PharmGKB gene found: {gene_id}. "
+                            f"Use PharmGKB_get_gene_details with gene_id='{gene_id}' "
+                            f"for gene-level pharmacogenomics data, or search with an rsID "
+                            f"(e.g., 'rs1065852') for a specific variant."
+                        ),
+                    }
+            return {
+                "status": "success",
+                "data": [],
+                "note": f"No variants found matching '{query}'. Use an rsID (e.g., 'rs1065852') to search for a specific variant.",
+            }
+        if status_code == 404:
+            return {"status": "success", "data": []}
 
         if error:
             return self._error(error)

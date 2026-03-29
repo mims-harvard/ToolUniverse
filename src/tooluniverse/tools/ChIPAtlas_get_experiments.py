@@ -9,7 +9,7 @@ from ._shared_client import get_shared_client
 
 
 def ChIPAtlas_get_experiments(
-    operation: str,
+    operation: Optional[str] = "get_experiment_list",
     genome: Optional[str] = None,
     antigen: Optional[str] = None,
     cell_type: Optional[str] = None,

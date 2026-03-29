@@ -1,5 +1,45 @@
 [
   {
+    "name": "SASBDB_search",
+    "description": "Search SASBDB small-angle scattering database by query term or UniProt accession. Accepts free-text queries (routes to all-entries listing with guidance) or UniProt IDs (returns matching entries directly). Use SASBDB_get_entry with a specific code for full details.",
+    "type": "SASBDBTextSearchTool",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "query": {
+          "type": "string",
+          "description": "Search query: UniProt accession (e.g., 'P02769' for BSA) or free-text term. Note: SASBDB has no full-text search API; UniProt accessions are resolved directly."
+        }
+      },
+      "required": ["query"]
+    },
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "object",
+          "properties": {
+            "status": {"type": "string", "enum": ["success"]},
+            "data": {"type": "array"},
+            "note": {"type": "string"}
+          },
+          "required": ["status", "data"]
+        },
+        {
+          "type": "object",
+          "properties": {
+            "status": {"type": "string", "enum": ["error"]},
+            "error": {"type": "string"}
+          },
+          "required": ["status", "error"]
+        }
+      ]
+    },
+    "test_examples": [
+      {"query": "P02769"},
+      {"query": "BSA"}
+    ]
+  },
+  {
     "name": "SASBDB_search_entries",
     "description": "Search SASBDB for small-angle scattering entries by molecular type (protein, rna, dna, heterocomplex, other) or list all entries. Returns entry codes and publication status.",
     "parameter": {

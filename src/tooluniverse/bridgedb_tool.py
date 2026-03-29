@@ -71,9 +71,25 @@ class BridgeDbTool(BaseTool):
         self.session = requests.Session()
         self.timeout = 30
 
+    def _infer_operation(self, arguments: Dict[str, Any]) -> str:
+        """Infer operation from tool name when not explicitly provided."""
+        tool_name = self.tool_config.get("name", "")
+        if "search" in tool_name.lower():
+            return "search"
+        if "xref" in tool_name.lower():
+            return "xrefs"
+        if "attribute" in tool_name.lower():
+            return "attributes"
+        return ""
+
     def run(self, arguments: Dict[str, Any]) -> Dict[str, Any]:
         """Execute the BridgeDb API tool with given arguments."""
-        operation = arguments.get("operation")
+        # Feature-81-aliases: support source_database/target_database aliases
+        if "source_database" in arguments and "source" not in arguments:
+            arguments["source"] = arguments.pop("source_database")
+        if "target_database" in arguments and "target_source" not in arguments:
+            arguments["target_source"] = arguments.pop("target_database")
+        operation = arguments.get("operation") or self._infer_operation(arguments)
         if not operation:
             return {"status": "error", "error": "Missing required parameter: operation"}
 

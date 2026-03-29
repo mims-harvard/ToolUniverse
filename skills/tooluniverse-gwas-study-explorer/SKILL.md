@@ -23,6 +23,17 @@ The GWAS Study Deep Dive & Meta-Analysis skill enables comprehensive comparison 
 
 ---
 
+## COMPUTE, DON'T DESCRIBE
+When analysis requires computation (statistics, data processing, scoring, enrichment), write and run Python code via Bash. Don't describe what you would do — execute it and report actual results. Use ToolUniverse tools to retrieve data, then Python (pandas, scipy, statsmodels, matplotlib) to analyze it.
+
+## Domain Reasoning: Comparing Studies for the Same Trait
+
+When comparing GWAS studies for the same trait, ask: do they replicate? The same lead SNPs appearing in independent studies is strong evidence of a true association. Different lead SNPs at the same locus may reflect LD differences between populations — they may tag the same causal variant. Different loci entirely may reflect different study designs, phenotype definitions, or population ancestry. Before concluding that a finding failed to replicate, check whether the SNP was even genotyped or imputed in the replication cohort.
+
+LOOK UP DON'T GUESS: effect sizes, p-values, allele frequencies, and LD structure for specific loci. Do not assume a SNP present in one study is present in another — use `gwas_get_associations_for_snp` to retrieve cross-study data. Do not infer LD blocks from genomic proximity; use credible sets from Open Targets for fine-mapping results.
+
+---
+
 ## Use Cases
 
 ### 1. Comprehensive Trait Analysis
@@ -246,33 +257,6 @@ The skill evaluates studies based on:
 
 ---
 
-## Scientific References
-
-### Key Publications
-
-1. **GWAS Best Practices**:
-   - Visscher et al. (2017). "10 Years of GWAS Discovery" *American Journal of Human Genetics* 101(1): 5-22
-   - PMID: 28686856
-   - DOI: 10.1016/j.ajhg.2017.06.005
-
-2. **Meta-Analysis Methods**:
-   - Evangelou & Ioannidis (2013). "Meta-analysis methods for genome-wide association studies and beyond" *Nature Reviews Genetics* 14: 379-389
-   - PMID: 23657481
-
-3. **Heterogeneity Interpretation**:
-   - Higgins et al. (2003). "Measuring inconsistency in meta-analyses" *BMJ* 327: 557-560
-   - PMID: 12958120
-
-4. **Multi-Ancestry GWAS**:
-   - Peterson et al. (2019). "Genome-wide Association Studies in Ancestrally Diverse Populations" *Nature Reviews Genetics* 20: 409-422
-   - PMID: 30926972
-
-5. **Replication Standards**:
-   - Chanock et al. (2007). "Replicating genotype-phenotype associations" *Nature* 447: 655-660
-   - PMID: 17554299
-
----
-
 ## Tools Used
 
 ### GWAS Catalog API
@@ -289,54 +273,9 @@ The skill evaluates studies based on:
 - `OpenTargets_get_study_credible_sets`: All credible sets for study
 - `OpenTargets_get_variant_info`: Variant annotation and allele frequencies
 
----
-
 ## Glossary
-
-**Association**: Statistical relationship between a genetic variant and a trait
 
 **Credible Set**: Set of variants likely to contain the causal variant (from fine-mapping)
 
-**Effect Size**: Magnitude of genetic association (beta coefficient or odds ratio)
-
-**Fine-Mapping**: Statistical method to identify causal variants within a locus
-
-**Genome-Wide Significance**: p < 5×10⁻⁸, accounting for ~1M independent tests
-
-**Heterogeneity (I²)**: Percentage of variance due to between-study differences
-
 **L2G (Locus-to-Gene)**: Score predicting which gene is affected by a GWAS locus
-
-**LD (Linkage Disequilibrium)**: Non-random association of alleles at different loci
-
-**Meta-Analysis**: Statistical combination of results from multiple studies
-
-**Replication**: Independent confirmation of an association in a new cohort
-
-**Summary Statistics**: Per-SNP statistics (p-value, beta, SE) from GWAS
-
-**Winner's Curse**: Overestimation of effect size in discovery studies
-
----
-
-## Next Steps
-
-After running this skill, consider:
-
-1. **Fine-Mapping**: Use credible sets from Open Targets to identify causal variants
-2. **Functional Follow-Up**: Investigate biological mechanisms of replicated loci
-3. **Genetic Risk Scores**: Calculate polygenic risk scores using validated loci
-4. **Drug Target Identification**: Use L2G scores to prioritize therapeutic targets
-5. **Cross-Trait Analysis**: Look for pleiotropy with related traits
-
----
-
-## Version History
-
-- **v1.0** (2026-02-13): Initial release with study comparison, meta-analysis, and replication assessment
-
----
-
-**Created by**: ToolUniverse GWAS Analysis Team
-**Last Updated**: 2026-02-13
 **License**: Open source (MIT)

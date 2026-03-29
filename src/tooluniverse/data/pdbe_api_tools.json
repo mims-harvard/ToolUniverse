@@ -45,7 +45,8 @@
       {
         "pdb_id": "1CRN"
       }
-    ]
+    ],
+    "aliases": ["PDBe_get_summary"]
   },
   {
     "type": "PDBeAPIRESTTool",

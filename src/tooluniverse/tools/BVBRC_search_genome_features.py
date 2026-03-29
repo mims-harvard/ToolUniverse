@@ -13,6 +13,7 @@ def BVBRC_search_genome_features(
     product: Optional[str | Any] = None,
     genome_id: Optional[str | Any] = None,
     limit: Optional[int | Any] = None,
+    keyword: Optional[str | Any] = None,
     *,
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
@@ -31,6 +32,8 @@ def BVBRC_search_genome_features(
         Restrict search to a specific genome. Example: '83332.12'.
     limit : int | Any
         Maximum number of results. Default: 10. Max: 100.
+    keyword : str | Any
+        Alias for product: gene product keyword to search (e.g., 'spike protein', 'be...
     stream_callback : Callable, optional
         Callback for streaming output
     use_cache : bool, default False
@@ -52,6 +55,7 @@ def BVBRC_search_genome_features(
             "product": product,
             "genome_id": genome_id,
             "limit": limit,
+            "keyword": keyword,
         }.items()
         if v is not None
     }

@@ -15,7 +15,15 @@ Pipeline for discovering and analyzing electron microscopy data across the full 
 5. **Cross-reference structures** -- connect EMDB maps to PDB entries and AlphaFold predictions for completeness
 6. **English-first queries** -- use English terms in tool calls
 
+EM resolution determines what you can see. TEM resolves individual protein complexes (~2nm). Cryo-EM achieves near-atomic resolution (<4Å) for large complexes. SEM shows surface topology. Choose the right EM modality for the question.
+
+## LOOK UP, DON'T GUESS
+When uncertain about any scientific fact, SEARCH databases first rather than reasoning from memory. A database-verified answer is always more reliable than a guess.
+
 ---
+
+## COMPUTE, DON'T DESCRIBE
+When analysis requires computation (statistics, data processing, scoring, enrichment), write and run Python code via Bash. Don't describe what you would do — execute it and report actual results. Use ToolUniverse tools to retrieve data, then Python (pandas, scipy, statsmodels, matplotlib) to analyze it.
 
 ## When to Use
 

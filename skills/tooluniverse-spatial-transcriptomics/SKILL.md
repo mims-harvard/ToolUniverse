@@ -7,6 +7,9 @@ description: Analyze spatial transcriptomics data to map gene expression in tiss
 
 Comprehensive analysis of spatially-resolved transcriptomics data to understand gene expression patterns in tissue architecture context. Combines expression profiling with spatial coordinates to reveal tissue organization, cell-cell interactions, and spatially variable genes.
 
+## LOOK UP, DON'T GUESS
+When uncertain about any scientific fact, SEARCH databases first rather than reasoning from memory. A database-verified answer is always more reliable than a guess.
+
 ## When to Use This Skill
 
 **Triggers**:
@@ -31,29 +34,21 @@ Comprehensive analysis of spatially-resolved transcriptomics data to understand 
 
 ## Core Capabilities
 
-| Capability | Description |
-|-----------|-------------|
-| **Data Import** | 10x Visium, MERFISH, seqFISH, Slide-seq, STARmap, Xenium formats |
-| **Quality Control** | Spot/cell QC, spatial alignment verification, tissue coverage |
-| **Normalization** | Spatial-aware normalization accounting for tissue heterogeneity |
-| **Spatial Clustering** | Identify spatial domains with similar expression profiles |
-| **Spatial Variable Genes** | Find genes with non-random spatial patterns |
-| **Neighborhood Analysis** | Cell-cell proximity, spatial neighborhoods, niche identification |
-| **Spatial Patterns** | Gradients, boundaries, hotspots, expression waves |
-| **Integration** | Merge with scRNA-seq for cell type mapping |
-| **Ligand-Receptor Spatial** | Map cell communication in tissue context |
-| **Visualization** | Spatial plots, heatmaps on tissue, 3D reconstruction |
-
----
+- **Data Import**: 10x Visium, MERFISH, seqFISH, Slide-seq, STARmap, Xenium formats
+- **Quality Control**: Spot/cell QC, spatial alignment verification, tissue coverage
+- **Normalization**: Spatial-aware normalization accounting for tissue heterogeneity
+- **Spatial Clustering**: Identify spatial domains with similar expression profiles
+- **Spatial Variable Genes**: Find genes with non-random spatial patterns
+- **Neighborhood Analysis**: Cell-cell proximity, spatial neighborhoods, niche identification
+- **Integration**: Merge with scRNA-seq for cell type mapping (Cell2location, Tangram, SPOTlight)
+- **Ligand-Receptor Spatial**: Map cell communication in tissue context via OmniPath
 
 ## Supported Platforms
 
-| Platform | Resolution | Genes | Notes |
-|----------|-----------|-------|-------|
-| **10x Visium** | 55um spots (~50 cells/spot) | Genome-wide | Most common, includes H&E image |
-| **MERFISH/seqFISH** | Single-cell | 100-10,000 (targeted) | Imaging-based, absolute coordinates |
-| **Slide-seq/V2** | 10um beads | Genome-wide | Higher resolution than Visium |
-| **Xenium** | Single-cell, subcellular | 300+ (targeted) | 10x single-cell spatial |
+- **10x Visium**: 55um spots (~50 cells/spot), genome-wide, includes H&E image — most common
+- **MERFISH/seqFISH**: Single-cell resolution, 100-10,000 targeted genes, imaging-based
+- **Slide-seq/V2**: 10um beads, genome-wide — higher resolution than Visium
+- **Xenium**: Single-cell/subcellular, 300+ targeted genes (10x platform)
 
 ---
 
@@ -167,12 +162,9 @@ See [report_template.md](report_template.md) for full example output.
 
 ## Integration with ToolUniverse Skills
 
-| Skill | Used For | Phase |
-|-------|----------|-------|
-| `tooluniverse-single-cell` | scRNA-seq reference for deconvolution | Phase 6 |
-| `tooluniverse-single-cell` (Phase 10) | L-R database for communication | Phase 7 |
-| `tooluniverse-gene-enrichment` | Pathway enrichment for spatial domains | Phase 3 |
-| `tooluniverse-multi-omics-integration` | Integrate with other omics | Phase 8 |
+- `tooluniverse-single-cell`: scRNA-seq reference for deconvolution (Phase 6) and L-R database (Phase 7)
+- `tooluniverse-gene-enrichment`: Pathway enrichment for spatial domain marker genes (Phase 3)
+- `tooluniverse-multi-omics-integration`: Integration with other omics layers (Phase 8)
 
 ## ToolUniverse Data Retrieval Tools
 
@@ -182,15 +174,11 @@ Use HuBMAP tools to discover published spatial biology datasets for reference, v
 
 > **Availability Note**: `HuBMAP_search_datasets`, `HuBMAP_list_organs`, and `HuBMAP_get_dataset` may not be registered in your ToolUniverse instance. Verify with `tu.list_tools()` before use. If unavailable, use **OmicsDI** (`OmicsDI_search_datasets(query="spatial transcriptomics kidney")`) or **CELLxGENE** (`CELLxGENE_get_cell_metadata`) as reliable alternatives for spatial dataset discovery.
 
-| Tool | Purpose | Key Parameters |
-|------|---------|----------------|
-| `HuBMAP_search_datasets` | Search HuBMAP published datasets by organ, assay, or keyword | `organ` (code, e.g. "LK"="Left Kidney", "BR"="Brain"), `dataset_type` (e.g. "RNAseq", "CODEX", "MALDI"), `query` (free text), `limit` (default 10) |
-| `HuBMAP_list_organs` | List all organs with codes and UBERON IDs | (no required params) |
-| `HuBMAP_get_dataset` | Get detailed metadata for a specific dataset | `hubmap_id` (e.g. "HBM626.FHJD.938") |
+- `HuBMAP_search_datasets`: Search published datasets by `organ` (code, e.g. "LK"=Left Kidney, "BR"=Brain), `dataset_type`, `query`, `limit`
+- `HuBMAP_list_organs`: List all organs with codes and UBERON IDs (no required params)
+- `HuBMAP_get_dataset`: Get detailed metadata for a specific `hubmap_id` (e.g. "HBM626.FHJD.938")
 
-**Organ codes**: LK=Left Kidney, RK=Right Kidney, LI=Large Intestine, SI=Small Intestine, HT=Heart, LV=Liver, LU=Lung, SP=Spleen, TH=Thymus, LY=Lymph Node, BL=Bladder, PA=Pancreas, SK=Skin, BR=Brain, BM=Bone Marrow, MU=Muscle.
-
-**Assay types**: RNAseq, CODEX, MALDI, snATACseq, LC-MS, scRNAseq-10xGenomics-v3, and more.
+Organ codes: LK/RK=Kidney, LI=Large Intestine, SI=Small Intestine, HT=Heart, LV=Liver, LU=Lung, SP=Spleen, BR=Brain, PA=Pancreas, SK=Skin.
 
 **When to use**:
 - Finding reference spatial datasets for a given organ/tissue
@@ -237,27 +225,33 @@ organs = tu.tools.HuBMAP_list_organs()
 
 ## Quantified Minimums
 
-| Component | Requirement |
-|-----------|-------------|
-| Spots/cells | At least 500 spatial locations |
-| QC | Filter low-quality spots, verify alignment |
-| Spatial clustering | At least one method (graph-based or spatial) |
-| Spatial genes | Moran's I or similar spatial test |
-| Visualization | Spatial plots on tissue images |
-| Report | Domains, spatial genes, visualizations |
+- At least 500 spatial locations after QC
+- Filter low-quality spots (min 200 genes, min 500 UMI, <20% MT) and verify alignment
+- At least one spatial clustering method (graph-based with spatial constraints)
+- Spatially variable genes tested with Moran's I or equivalent (FDR < 0.05)
+- Spatial plots on tissue images for all major findings
+- Report covers: domains, spatial genes, cell type maps, key interactions
 
 ---
 
 ## Reasoning Framework
 
+### Starting Point: What Is the Spatial Question?
+
+Spatial data adds location to expression. The key question: is the spatial pattern driven by cell type composition (trivial) or by spatially-regulated gene expression within the same cell type (interesting)? Deconvolution helps distinguish these.
+
+Before interpreting any spatially variable gene (SVG), ask:
+1. Does this gene simply mark a cell type that is spatially restricted? (e.g., a T-cell marker enriched in immune infiltrate zones — expected, not informative)
+2. Or is the gene differentially expressed within the same cell type depending on its spatial position? (e.g., a fibroblast gene upregulated at the tumor-stroma boundary — spatially regulated, biologically interesting)
+
+To distinguish these: (a) run deconvolution (Cell2location, Tangram) to get cell type fractions per spot; (b) regress SVG expression against cell type fraction; (c) if the spatial pattern persists after controlling for cell type composition, it reflects genuine spatial regulation. Always look up the gene's known biology before interpreting — check UniProt function and STRING interactions rather than guessing.
+
 ### Evidence Grading
 
-| Tier | Description | Example |
-|------|-------------|---------|
-| **T1** | Validated by orthogonal method (IHC, smFISH, known anatomy) | Spatial domain matches histology-confirmed tumor margin |
-| **T2** | Statistically significant, biologically consistent | SVG with Moran's I > 0.3 and FDR < 0.01 in expected tissue region |
-| **T3** | Computationally identified, awaiting validation | Novel spatial domain from clustering with no histological correlate |
-| **T4** | Exploratory or artifact-prone | Low-UMI edge spots, domains driven by batch effects |
+- **T1**: Validated by orthogonal method (IHC, smFISH, known anatomy) — e.g., spatial domain matches histology-confirmed tumor margin
+- **T2**: Statistically significant, biologically consistent — SVG with Moran's I > 0.3 and FDR < 0.01 in expected tissue region
+- **T3**: Computationally identified, awaiting validation — novel spatial domain from clustering with no histological correlate
+- **T4**: Exploratory or artifact-prone — low-UMI edge spots, domains driven by batch effects
 
 ### Interpretation Guidance
 
@@ -275,6 +269,36 @@ A complete spatial transcriptomics report should answer:
 3. Are specific cell type pairs enriched or depleted in spatial proximity?
 4. What ligand-receptor interactions are active at domain boundaries or cell-cell interfaces?
 5. How do spatial findings compare to bulk or single-cell data from the same tissue type?
+
+---
+
+## Programmatic Access (Beyond Tools)
+
+When ToolUniverse tools return metadata but you need the actual expression matrices:
+
+```python
+import scanpy as sc, pandas as pd, requests, io
+
+# Load h5ad (most common format for spatial/single-cell)
+adata = sc.read_h5ad("spatial_data.h5ad")
+
+# Load 10X Visium output directory
+adata = sc.read_visium("path/to/spaceranger_output/")
+
+# Download from GEO supplementary files
+geo_id = "GSE123456"
+# Check for h5ad or MTX in supplementary files
+url = f"https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc={geo_id}&targ=gsm&view=data"
+
+# Load 10X MTX format (matrix + barcodes + features)
+adata = sc.read_10x_mtx("filtered_feature_bc_matrix/", var_names="gene_symbols")
+
+# HuBMAP data portal
+# Search at https://portal.hubmapconsortium.org/search then download via globus or direct link
+# Human Cell Atlas: https://data.humancellatlas.org/ — download h5ad/loom files
+```
+
+See `tooluniverse-data-wrangling` skill for format cookbook and bulk download patterns.
 
 ---
 

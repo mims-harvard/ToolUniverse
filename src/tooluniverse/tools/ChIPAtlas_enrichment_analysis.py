@@ -9,7 +9,7 @@ from ._shared_client import get_shared_client
 
 
 def ChIPAtlas_enrichment_analysis(
-    operation: str,
+    operation: Optional[str] = "enrichment_analysis",
     bed_data: Optional[str] = None,
     motif: Optional[str] = None,
     gene_list: Optional[list[str] | str] = None,

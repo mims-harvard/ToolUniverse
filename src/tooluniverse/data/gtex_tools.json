@@ -89,6 +89,10 @@
           "type": "string",
           "description": "Alias for ensembl_gene_id. Ensembl gene ID (e.g., 'ENSG00000141510')."
         },
+        "gene_input": {
+          "type": "string",
+          "description": "Alias for gene_symbol. Gene symbol or Ensembl ID (e.g., 'TP53', 'ENSG00000141510')."
+        },
         "tissue_id": {
           "type": "string",
           "description": "GTEx tissue ID to filter eQTL results (e.g., 'Brain_Cortex', 'Whole_Blood', 'Liver'). Case-sensitive."

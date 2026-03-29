@@ -1,5 +1,52 @@
 [
   {
+    "name": "OncoKB_annotate_mutations",
+    "description": "Annotate a cancer mutation using OncoKB. Accepts query string like 'BRAF V600E' or separate gene/variant parameters. Returns oncogenicity, mutation effect, and FDA-approved therapies. Alias for OncoKB_annotate_variant with query-string parsing. Demo mode available for BRAF, TP53, ROS1.",
+    "type": "OncoKBTool",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "operation": {
+          "type": "string",
+          "const": "annotate_variant",
+          "description": "Operation type (fixed: annotate_variant)"
+        },
+        "query": {
+          "type": "string",
+          "description": "Mutation query string, e.g. 'BRAF V600E' or 'EGFR T790M'. Gene and variant separated by space."
+        },
+        "gene": {
+          "type": "string",
+          "description": "Gene symbol (e.g., BRAF, EGFR, TP53)"
+        },
+        "variant": {
+          "type": "string",
+          "description": "Protein change (e.g., V600E, T790M)"
+        },
+        "tumor_type": {
+          "type": "string",
+          "description": "Optional OncoTree tumor type code (e.g., MEL, LUAD)"
+        }
+      },
+      "required": []
+    },
+    "fields": {
+      "operation": "annotate_variant"
+    },
+    "return_schema": {
+      "type": "object",
+      "properties": {
+        "status": {"type": "string", "enum": ["success", "error"]},
+        "data": {"type": "object"},
+        "error": {"type": "string"}
+      }
+    },
+    "test_examples": [
+      {"query": "BRAF V600E"},
+      {"gene": "BRAF", "variant": "V600E"}
+    ]
+  },
+  {
     "name": "OncoKB_annotate_variant",
     "description": "Annotate a cancer variant for oncogenic potential and treatment implications using OncoKB. Returns evidence level, oncogenicity, mutation effect, and FDA-approved therapies. Requires ONCOKB_API_TOKEN env var (demo mode available for BRAF, TP53, ROS1). Example: BRAF V600E in melanoma.",
     "type": "OncoKBTool",

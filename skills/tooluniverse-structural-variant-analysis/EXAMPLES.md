@@ -72,7 +72,7 @@
 
 **Molecular Consequence**: Complete deletion of NF1 gene → haploinsufficiency → loss of RAS-GAP activity → RAS pathway hyperactivation → tumor predisposition
 
-*Sources: `Ensembl_lookup_gene`, `NCBIGene_search`, `OMIM_get_entry`*
+*Sources: `ensembl_lookup_gene`, `NCBIGene_search`, `OMIM_get_entry`*
 
 ### 2.2 Partially Disrupted Genes
 
@@ -431,7 +431,7 @@ No significant uncertainties affect the Pathogenic classification. NF1 haploinsu
 
 | Database | Tool | Query | Result |
 |----------|------|-------|--------|
-| Ensembl | `Ensembl_lookup_gene` | NF1 gene coordinates | chr17:31094927-31377677 confirmed |
+| Ensembl | `ensembl_lookup_gene` | NF1 gene coordinates | chr17:31094927-31377677 confirmed |
 | NCBI Gene | `NCBIGene_search` | NF1 function | GeneID: 4763, RAS-GAP function confirmed |
 | ClinVar | `ClinVar_search_variants` | chr17:31094927-31377677 DEL | 3 pathogenic matches found |
 | gnomAD | Browser query | NF1 LoF variants | 0 LoF in 152,312 alleles; pLI=1.00 |

@@ -3,9 +3,14 @@ name: tooluniverse-structural-variant-analysis
 description: Comprehensive structural variant (SV) analysis skill for clinical genomics. Classifies SVs (deletions, duplications, inversions, translocations), assesses pathogenicity using ACMG-adapted criteria, evaluates gene disruption and dosage sensitivity, and provides clinical interpretation with evidence grading. Use when analyzing CNVs, large deletions/duplications, chromosomal rearrangements, or any structural variants requiring clinical interpretation.
 ---
 
+## COMPUTE, DON'T DESCRIBE
+When analysis requires computation (statistics, data processing, scoring, enrichment), write and run Python code via Bash. Don't describe what you would do — execute it and report actual results. Use ToolUniverse tools to retrieve data, then Python (pandas, scipy, statsmodels, matplotlib) to analyze it.
+
 # Structural Variant Analysis Workflow
 
 Systematic analysis of structural variants (deletions, duplications, inversions, translocations, complex rearrangements) for clinical genomics interpretation using ACMG-adapted criteria.
+
+**LOOK UP DON'T GUESS** - Always retrieve ClinGen HI/TS scores, gnomAD frequencies, and ClinVar evidence from tools. Do not infer dosage sensitivity from gene function alone.
 
 **KEY PRINCIPLES**:
 1. **Report-first approach** - Create SV_analysis_report.md FIRST, then populate progressively
@@ -14,7 +19,7 @@ Systematic analysis of structural variants (deletions, duplications, inversions,
 4. **Dosage sensitivity critical** - Gene dosage effects drive SV pathogenicity
 5. **Breakpoint precision matters** - Exact gene disruption vs dosage-only effects
 6. **Population context essential** - gnomAD SVs for frequency assessment
-7. **English-first queries** - Always use English terms in tool calls (gene names, disease names), even if the user writes in another language. Only try original-language terms as a fallback. Respond in the user's language
+7. **English-first queries** - Always use English terms in tool calls. Respond in the user's language
 
 ---
 
@@ -28,6 +33,42 @@ Use this skill when users:
 - Want to assess gene dosage effects
 - Ask about chromosomal rearrangements
 - Have large-scale genomic alterations requiring interpretation
+
+---
+
+## SV Pathogenicity Reasoning (Start Here)
+
+Before any tool call, apply this reasoning to frame the analysis:
+
+**SV pathogenicity depends on what the SV disrupts. A deletion removing an entire gene is likely pathogenic if the gene is haploinsufficient. A duplication is pathogenic if the gene is dosage-sensitive. An inversion is pathogenic only if it disrupts a coding region or regulatory element at the breakpoint.**
+
+Work through these questions in order:
+
+**1. What type is the SV, and what disruption mechanism does it cause?**
+- **Deletion**: loss of one copy. Pathogenic if any contained gene is haploinsufficient (ClinGen HI score 3, pLI >= 0.9). A deletion of a dosage-insensitive gene in a gene-dense region may be benign even if large.
+- **Duplication**: gain of one copy. Pathogenic if any contained gene is dosage-sensitive (ClinGen TS score 3). Duplications can also disrupt gene regulation if tandem (disrupts reading frame at junction) or if they separate a gene from its enhancer.
+- **Inversion**: no copy number change. Pathogenic only at the breakpoints: if one breakpoint falls within an exon (truncation) or separates a gene from its regulatory element. Inversions entirely within gene-poor, regulatory-poor regions are often benign.
+- **Translocation**: pathogenic if a breakpoint disrupts a coding region or creates a pathogenic fusion gene. Balanced translocations in parents of affected children warrant special scrutiny.
+- **Complex rearrangements**: assess each segment and each breakpoint independently.
+
+**2. Is the disrupted gene dosage-sensitive?**
+- ClinGen HI score 3 = definitive haploinsufficiency (deletion of this gene is pathogenic)
+- ClinGen HI score 2 = likely haploinsufficient
+- pLI >= 0.9 = strong LoF intolerance (supporting haploinsufficiency)
+- ClinGen TS score 3 = definitive triplosensitivity (duplication is pathogenic)
+- If no ClinGen data: use OMIM inheritance (autosomal dominant = often dosage-sensitive) as weaker evidence
+
+**3. Does the population frequency contextualize the SV?**
+- >=1% frequency in gnomAD SV = BA1 (likely benign unless phenotype is extreme)
+- <0.01% = supports pathogenicity (PM2)
+- Present in unaffected parents = weak evidence against pathogenicity, but not conclusive
+
+**4. Is there clinical precedent?**
+- Identical SV in ClinVar as Pathogenic/Likely Pathogenic = strong evidence (PS1)
+- De novo occurrence = strong evidence for pathogenicity (PS2)
+- Phenotype match to known gene-disease association = supporting evidence (PP4)
+
+Document this reasoning before computing the final score.
 
 ---
 
@@ -78,14 +119,12 @@ For SV type definitions, scoring tables, and ACMG code details, see `CLASSIFICAT
 
 **Goal**: Annotate all genes affected by the SV.
 
-**Tools**:
-| Tool | Purpose |
-|------|---------|
-| `ensembl_lookup_gene` | Gene structure, coordinates, exons |
-| `NCBIGene_search` | Official symbol, aliases, description |
-| `Gene_Ontology_get_term_info` | Biological process, molecular function |
-| `OMIM_search`, `OMIM_get_entry` | Disease associations, inheritance |
-| `DisGeNET_search_gene` | Gene-disease association scores |
+Tools:
+- `ensembl_lookup_gene` - gene structure, coordinates, exons
+- `NCBIGene_search` - official symbol, aliases, description
+- `Gene_Ontology_get_term_info` - biological process, molecular function
+- `OMIM_search`, `OMIM_get_entry` - disease associations, inheritance
+- `DisGeNET_search_gene` - gene-disease association scores
 
 Classify genes as: **fully contained** (entire gene in SV), **partially disrupted** (breakpoint within gene), or **flanking** (within 1 Mb of breakpoints).
 
@@ -97,16 +136,13 @@ For implementation pseudocode, see `ANALYSIS_PROCEDURES.md` Phase 2.
 
 **Goal**: Determine if affected genes are dosage-sensitive.
 
-**Tools**:
-| Tool | Purpose |
-|------|---------|
-| `ClinGen_search_dosage_sensitivity` | HI/TS scores (0-3, gold standard) |
-| `ClinGen_search_gene_validity` | Gene-disease validity level |
-| `gnomad_search_variants` | pLI scores for LoF intolerance |
-| `ClinGen_search_dosage_sensitivity` | Developmental disorder cases |
-| `OMIM_get_entry` | Inheritance pattern (AD suggests dosage sensitivity) |
+Tools:
+- `ClinGen_search_dosage_sensitivity` - HI/TS scores (0-3, gold standard)
+- `ClinGen_search_gene_validity` - gene-disease validity level
+- `gnomad_search_variants` - pLI scores for LoF intolerance
+- `OMIM_get_entry` - inheritance pattern (AD suggests dosage sensitivity)
 
-Key thresholds: ClinGen HI/TS score 3 = definitive dosage sensitivity. pLI >= 0.9 = likely haploinsufficient. See `CLASSIFICATION_GUIDE.md` for full score interpretation tables.
+Interpret scores using the reasoning above. ClinGen HI/TS score 3 = definitive; score 2 = likely; score 1 = little evidence; score 0 = no evidence. Do not equate AD inheritance with haploinsufficiency without ClinGen support.
 
 ---
 
@@ -114,14 +150,12 @@ Key thresholds: ClinGen HI/TS score 3 = definitive dosage sensitivity. pLI >= 0.
 
 **Goal**: Determine if SV is common (likely benign) or rare (supports pathogenicity).
 
-**Tools**:
-| Tool | Purpose |
-|------|---------|
-| `gnomad_search_variants` | Population SV frequencies |
-| `ClinVar_search_variants` | Known pathogenic/benign SVs |
-| `ClinGen_search_dosage_sensitivity` | Patient SVs with phenotypes |
+Tools:
+- `gnomad_search_variants` - population SV frequencies
+- `ClinVar_search_variants` - known pathogenic/benign SVs
+- `ClinGen_search_dosage_sensitivity` - patient SVs with phenotypes
 
-Key thresholds: >=1% = BA1 (benign). 0.1-1% = BS1 (strong benign). <0.01% = PM2 (supporting pathogenic). Use >=70% reciprocal overlap to define "same" SV.
+Use >=70% reciprocal overlap to define "same" SV for comparison. A frequency >=1% triggers BA1 unless there is very strong clinical evidence to override.
 
 ---
 
@@ -141,26 +175,23 @@ For detailed scoring breakdowns and implementation, see `CLASSIFICATION_GUIDE.md
 
 **Goal**: Find case reports, functional studies, and clinical validation.
 
-**Tools**:
-| Tool | Purpose |
-|------|---------|
-| `PubMed_search_articles` | Peer-reviewed literature |
-| `EuropePMC_search_articles` | European literature (additional coverage) |
-| `ClinGen_search_dosage_sensitivity` | Patient case database |
+Tools:
+- `PubMed_search_articles` - peer-reviewed literature
+- `EuropePMC_search_articles` - additional coverage
+- `ClinGen_search_dosage_sensitivity` - patient case database
 
-Search strategies: gene-specific dosage sensitivity papers, SV-specific case reports, DECIPHER cohort phenotype analysis. See `ANALYSIS_PROCEDURES.md` Phase 6.
+Search strategies: gene-specific dosage sensitivity papers, SV-specific case reports, phenotype-gene associations. See `ANALYSIS_PROCEDURES.md` Phase 6.
 
 ---
 
 ## Phase 7: ACMG-Adapted Classification
 
-**Goal**: Apply ACMG/ClinGen criteria adapted for SVs.
+**Goal**: Apply ACMG/ClinGen criteria adapted for SVs and generate a final classification with explicit evidence summary.
 
-Key pathogenic codes: PVS1 (deletion of HI gene), PS1 (matches known pathogenic SV), PS2 (de novo), PM2 (absent from controls), PP4 (phenotype match).
-
-Key benign codes: BA1 (MAF >5%), BS1 (MAF >1%), BS3 (no functional effect).
-
-Classification rules: Pathogenic = PVS1+PS1 or 2 Strong. Likely Pathogenic = 1 Very Strong + 1 Moderate, or 3 Moderate. VUS = criteria not met. Likely Benign = 1 Strong + 1 Supporting. Benign = BA1, or 2 Strong benign.
+The LLM knows the ACMG criteria codes and combination rules. Apply them to the evidence gathered in Phases 1-6. Key points to verify with tool data:
+- PVS1 applies to deletions of genes with ClinGen HI score >= 2 or pLI >= 0.9
+- PS2 requires confirmed de novo status (check parental genotypes if available)
+- PM2 requires absence from population databases at >=70% reciprocal overlap
 
 For complete evidence code tables and classification algorithm, see `CLASSIFICATION_GUIDE.md`.
 
@@ -175,31 +206,17 @@ SV_analysis_[TYPE]_chr[CHR]_[START]_[END]_[GENES].md
 
 ---
 
-## Quantified Minimums
+## Required Tools Reference
 
-| Section | Requirement |
-|---------|-------------|
-| Gene content | All genes in SV region annotated |
-| Dosage sensitivity | ClinGen scores for all genes (if available) |
-| Population frequency | Check gnomAD SV + ClinVar + DGV |
-| Literature search | >=2 search strategies (PubMed + DECIPHER) |
-| ACMG codes | All applicable codes listed |
-
----
-
-## Tools Reference
-
-| Tool | Purpose | Required? |
-|------|---------|-----------|
-| `ClinGen_search_dosage_sensitivity` | HI/TS scores | **Required** |
-| `ClinGen_search_gene_validity` | Gene-disease validity | **Required** |
-| `ClinVar_search_variants` | Known pathogenic/benign SVs | **Required** |
-| `ClinGen_search_dosage_sensitivity` | Patient cases, phenotypes | Highly recommended |
-| `ensembl_lookup_gene` | Gene coordinates, structure | **Required** |
-| `OMIM_search`, `OMIM_get_entry` | Gene-disease associations | **Required** |
-| `DisGeNET_search_gene` | Additional disease associations | Recommended |
-| `PubMed_search_articles` | Literature evidence | Recommended |
-| `Gene_Ontology_get_term_info` | Gene function | Supporting |
+- `ClinGen_search_dosage_sensitivity` - HI/TS scores (required for all deletions/duplications)
+- `ClinGen_search_gene_validity` - gene-disease validity (required)
+- `ClinVar_search_variants` - known pathogenic/benign SVs (required)
+- `ensembl_lookup_gene` - gene coordinates, structure (required)
+- `OMIM_search`, `OMIM_get_entry` - gene-disease associations (required)
+- `gnomad_search_variants` - population frequency and pLI (required)
+- `DisGeNET_search_gene` - additional disease associations (recommended)
+- `PubMed_search_articles` - literature evidence (recommended)
+- `Gene_Ontology_get_term_info` - gene function (supporting)
 
 ---
 
@@ -218,7 +235,7 @@ Use this skill for **structural variants >=50 bp** requiring dosage sensitivity 
 ## Reference Files
 
 - `EXAMPLES.md` - Sample SV interpretations with worked examples
-- `CLASSIFICATION_GUIDE.md` - ACMG criteria tables, scoring system, evidence codes, special scenarios, clinical recommendations
+- `CLASSIFICATION_GUIDE.md` - ACMG criteria, scoring system, evidence codes, special scenarios, clinical recommendations
 - `REPORT_TEMPLATE.md` - Full report template with section structure and file naming
 - `ANALYSIS_PROCEDURES.md` - Detailed implementation pseudocode for each phase
 

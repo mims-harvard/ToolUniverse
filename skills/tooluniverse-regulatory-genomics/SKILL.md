@@ -11,6 +11,19 @@ description: >
 
 Systematic investigation of gene regulation through transcription factor binding, chromatin state, and regulatory element annotation. Integrates JASPAR (TF motifs), ENCODE (functional genomics experiments), RegulomeDB (regulatory variant scoring), and UCSC cCREs.
 
+## Domain Reasoning
+
+Regulatory element identification requires converging lines of evidence: sequence conservation alone is insufficient (many conserved sequences are not regulatory), chromatin accessibility is necessary but not sufficient (open chromatin can be structural), TF binding peaks require motif validation, and eQTL evidence ties the element to a transcriptional outcome. No single data type is sufficient. A high-confidence regulatory element requires at least two independent evidence types, and ideally all four.
+
+## LOOK UP DON'T GUESS
+
+- TF binding motifs: retrieve from `jaspar_search_matrices` and `jaspar_get_matrix`; do not describe motifs from memory.
+- Experimental ChIP-seq data: search `ENCODE_search_experiments`; do not assume a TF has been profiled in a given cell type.
+- cCRE annotations for a genomic region: call `UCSC_get_encode_cCREs` with exact coordinates; do not guess element types.
+- Regulatory impact of a variant: query `RegulomeDB_query_variant`; never estimate regulatory importance from position alone.
+
+---
+
 **KEY PRINCIPLES**:
 1. **English-first queries** - Use English gene/TF names in all tool calls; respond in user's language
 2. **Evidence layering** - Combine motif (JASPAR) + experimental (ENCODE ChIP-seq) + variant (RegulomeDB) evidence
@@ -18,6 +31,9 @@ Systematic investigation of gene regulation through transcription factor binding
 4. **Negative results documented** - Report when a TF has no ChIP-seq data in ENCODE
 
 ---
+
+## COMPUTE, DON'T DESCRIBE
+When analysis requires computation (statistics, data processing, scoring, enrichment), write and run Python code via Bash. Don't describe what you would do — execute it and report actual results. Use ToolUniverse tools to retrieve data, then Python (pandas, scipy, statsmodels, matplotlib) to analyze it.
 
 ## When to Use
 

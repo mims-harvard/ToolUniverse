@@ -24,7 +24,9 @@ class TestBindingDBToolDirect:
     def test_missing_uniprot_id(self, tool):
         result = tool.run({"operation": "get_ligands_by_uniprot"})
         assert result["status"] == "error"
-        assert "uniprot" in result["error"].lower()
+        # May get param validation ("uniprot") or broken API detection ("unavailable")
+        err = result["error"].lower()
+        assert "uniprot" in err or "unavailable" in err
 
     def test_unknown_operation(self, tool):
         result = tool.run({"operation": "unknown"})

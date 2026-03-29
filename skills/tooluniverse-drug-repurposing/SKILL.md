@@ -11,6 +11,18 @@ Systematically identify and evaluate drug repurposing candidates using multiple 
 
 ---
 
+## Reasoning Before Searching
+
+Start by asking: WHY might this drug work for a new disease? Three strategies:
+
+- **(a) Same target**: The drug's primary target is also involved in the new disease. This is the strongest hypothesis — use OpenTargets to check if the target has genetic evidence in both diseases before any other search.
+- **(b) Off-target activity**: The drug has secondary targets or off-target effects that are relevant to the new disease. Check ChEMBL bioactivity data for all known targets of the drug, not just its primary one.
+- **(c) Shared pathways**: The original indication and new disease share molecular pathways, even if the target itself is not genetically linked. Use Reactome and STRING to compare pathway overlap between diseases.
+
+Each strategy uses different tools and has different evidentiary weight. Identify which strategy applies FIRST, then choose the corresponding workflow below. Do not run all three strategies blindly — reason about which is most plausible given the drug's mechanism.
+
+**LOOK UP DON'T GUESS**: Never assume a drug hits a target, never assume a target is disease-relevant, never assume pathway overlap. Verify each link with tool calls.
+
 ## Core Strategies
 
 1. **Target-Based**: Disease targets -> Find drugs that modulate those targets

@@ -87,6 +87,9 @@
         "gene_symbol": "FBN1",
         "classification": "Definitive"
       }
+    ],
+    "aliases": [
+      "GenCC_search_gene_disease"
     ]
   },
   {

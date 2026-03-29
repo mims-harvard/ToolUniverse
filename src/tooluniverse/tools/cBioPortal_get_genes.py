@@ -1,7 +1,7 @@
 """
 cBioPortal_get_genes
 
-Search for genes by keyword (gene symbol or alias)
+Search for genes by keyword or query (gene symbol or alias). Alias: cBioPortal_search.
 """
 
 from typing import Any, Optional, Callable
@@ -9,19 +9,22 @@ from ._shared_client import get_shared_client
 
 
 def cBioPortal_get_genes(
-    keyword: str,
+    keyword: Optional[str] = None,
+    query: Optional[str] = None,
     *,
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
 ) -> list[Any]:
     """
-    Search for genes by keyword (gene symbol or alias)
+    Search for genes by keyword or query (gene symbol or alias). Alias: cBioPortal_search.
 
     Parameters
     ----------
     keyword : str
-        Gene symbol or alias to search for
+        Gene symbol or alias to search for (e.g., 'BRCA1', 'TP53')
+    query : str
+        Alias for keyword: gene symbol or alias to search for
     stream_callback : Callable, optional
         Callback for streaming output
     use_cache : bool, default False
@@ -36,7 +39,9 @@ def cBioPortal_get_genes(
     # Handle mutable defaults to avoid B006 linting error
 
     # Strip None values so optional parameters don't trigger schema validation errors
-    _args = {k: v for k, v in {"keyword": keyword}.items() if v is not None}
+    _args = {
+        k: v for k, v in {"keyword": keyword, "query": query}.items() if v is not None
+    }
     return get_shared_client().run_one_function(
         {
             "name": "cBioPortal_get_genes",

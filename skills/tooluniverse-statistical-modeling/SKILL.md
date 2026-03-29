@@ -7,6 +7,12 @@ description: Perform statistical modeling and regression analysis on biomedical 
 
 Comprehensive statistical modeling skill for fitting regression models, survival models, and mixed-effects models to biomedical data. Produces publication-quality statistical summaries with odds ratios, hazard ratios, confidence intervals, and p-values.
 
+## COMPUTE, DON'T DESCRIBE
+Write and run Python code (via Bash) for every statistical analysis. Never describe what you "would do" — do it. Use pandas for data wrangling, statsmodels for regression, scipy for tests, and matplotlib for plots. Execute the code and report actual numbers (β, p-value, CI, N).
+
+## LOOK UP, DON'T GUESS
+When uncertain about any scientific fact, SEARCH databases first rather than reasoning from memory.
+
 ## Features
 
 - **Linear Regression** - OLS for continuous outcomes with diagnostic tests
@@ -241,6 +247,54 @@ Before finalizing any statistical analysis:
 - [ ] **Results interpreted**: Plain-language interpretation
 - [ ] **Precision correct**: Numbers rounded appropriately
 
+## Bundled Scripts
+
+These ready-to-run scripts live in `skills/tooluniverse-statistical-modeling/scripts/`.
+Use them via the Bash tool for quick calculations that do not require a full dataset.
+
+### `stat_tests.py` — Basic statistical tests (pure stdlib, no scipy)
+
+Implements chi-square goodness-of-fit, Fisher's exact test, and simple linear regression
+without any external dependencies. All p-values are computed from first principles using
+the gamma function (chi-square) or hypergeometric enumeration (Fisher's).
+
+```
+# Chi-square goodness-of-fit
+python stat_tests.py --type chi_square --observed 100,50,25 --expected 87.5,50,37.5
+
+# Fisher's exact test (2×2 table)
+python stat_tests.py --type fisher_exact --a 10 --b 5 --c 3 --d 20
+python stat_tests.py --type fisher_exact --a 10 --b 5 --c 3 --d 20 --alternative greater
+
+# Simple linear regression (OLS)
+python stat_tests.py --type regression --x "1,2,3,4,5" --y "2.1,4.0,5.9,8.1,10.0"
+```
+
+Key formulas:
+- `chi_square`: χ² = Σ (O−E)²/E; p-value via upper regularized incomplete gamma Q(df/2, χ²/2)
+- `fisher_exact`: hypergeometric PMF; p-value = sum of probabilities ≤ P(observed)
+- `regression`: b1 = Sxy/Sxx; b0 = ȳ − b1x̄; R² = 1 − SSR/SST; SE and t-statistics included
+
+Output includes: full contingency/data table, step-by-step arithmetic, significance statement,
+and a round-trip verification for each test.
+
+When to use `stat_tests.py` vs `statsmodels`:
+- Use `stat_tests.py` when you need a quick sanity check with no imports, or when the
+  environment lacks scipy/statsmodels.
+- Use statsmodels when you need multivariate regression, logistic models, or survival analysis.
+
+### `format_statistical_output.py` — Format results for reporting
+
+Utility functions to format fitted statsmodels results as publication-ready tables.
+Import and call from analysis scripts; not a standalone CLI tool.
+
+### `model_diagnostics.py` — Automated model diagnostics
+
+Runs assumption checks (normality, heteroscedasticity, multicollinearity) on fitted models.
+Import and call from analysis scripts; not a standalone CLI tool.
+
+---
+
 ## File Structure
 
 ```
@@ -260,6 +314,7 @@ tooluniverse-statistical-modeling/
 |   +-- bixbench_patterns.md          # 15+ question patterns
 |   +-- troubleshooting.md            # Diagnostic issues
 +-- scripts/
+    +-- stat_tests.py                 # Chi-square, Fisher's exact, linear regression (stdlib)
     +-- format_statistical_output.py  # Format results for reporting
     +-- model_diagnostics.py          # Automated diagnostics
 ```

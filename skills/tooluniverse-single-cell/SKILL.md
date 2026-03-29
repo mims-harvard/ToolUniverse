@@ -9,6 +9,11 @@ Comprehensive single-cell RNA-seq analysis and expression matrix processing usin
 
 ---
 
+## LOOK UP, DON'T GUESS
+When uncertain about any scientific fact, SEARCH databases first (PubMed, UniProt, ChEMBL, ClinVar, etc.) rather than reasoning from memory. A database-verified answer is always more reliable than a guess.
+
+---
+
 ## When to Use This Skill
 
 Apply when users:

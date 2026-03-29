@@ -7,6 +7,19 @@ description: Comprehensive immune repertoire analysis for T-cell and B-cell rece
 
 Comprehensive skill for analyzing T-cell receptor (TCR) and B-cell receptor (BCR) repertoire sequencing data to characterize adaptive immune responses, clonal expansion, and antigen specificity.
 
+## Domain Reasoning
+
+Repertoire diversity reflects immune history. High clonality — a few clones dominating — indicates antigen-driven expansion, as seen in active infection, tumor-infiltrating lymphocytes, or chronic stimulation. Low diversity points to immunodeficiency or treatment-induced lymphopenia. Always compare observed metrics against healthy donor reference distributions before drawing conclusions; a Shannon entropy of 7 is unremarkable in a healthy adult but alarming post-chemotherapy.
+
+## LOOK UP DON'T GUESS
+
+- Clonotype frequency thresholds, CDR3 length ranges, and convergence ratios: query IEDB or VDJdb; do not assume values from memory.
+- Epitope specificities for expanded clones: search `iedb_search_tcell_assays` and `BVBRC_search_epitopes`; never infer antigen identity from CDR3 alone.
+- V gene family usage biases in healthy donors: retrieve published reference data or query ImmPort; do not assume baseline distributions are uniform.
+- Sequencing depth adequacy: compute rarefaction curves from the actual data; do not guess whether depth is sufficient.
+
+---
+
 ## Overview
 
 Adaptive immune receptor repertoire sequencing (AIRR-seq) enables comprehensive profiling of T-cell and B-cell populations through high-throughput sequencing of TCR and BCR variable regions. This skill provides an 8-phase workflow for:

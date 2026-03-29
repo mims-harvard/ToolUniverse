@@ -210,14 +210,17 @@ class XMLDatasetTool(BaseTool):
                     results.append(result_record)
 
         return {
-            "query": query,
-            "total_matches": total_matches,
-            "total_returned_results": len(results),
-            "results": results,
-            "search_parameters": {
-                "case_sensitive": case_sensitive,
-                "exact_match": exact_match,
-                "limit": limit,
+            "status": "success",
+            "data": {
+                "query": query,
+                "total_matches": total_matches,
+                "total_returned_results": len(results),
+                "results": results,
+                "search_parameters": {
+                    "case_sensitive": case_sensitive,
+                    "exact_match": exact_match,
+                    "limit": limit,
+                },
             },
         }
 
@@ -313,17 +316,22 @@ class XMLDatasetTool(BaseTool):
                     filtered_records.append(result_record)
 
         return {
-            "total_matches": total_matches,
-            "total_returned_results": len(filtered_records),
-            "results": filtered_records,
-            "applied_filter": self._get_filter_description(field, condition, value),
-            "filter_parameters": {
-                "field": field,
-                "condition": condition,
-                "value": (
-                    value if condition not in ["not_empty", "has_attribute"] else None
-                ),
-                "limit": limit,
+            "status": "success",
+            "data": {
+                "total_matches": total_matches,
+                "total_returned_results": len(filtered_records),
+                "results": filtered_records,
+                "applied_filter": self._get_filter_description(field, condition, value),
+                "filter_parameters": {
+                    "field": field,
+                    "condition": condition,
+                    "value": (
+                        value
+                        if condition not in ["not_empty", "has_attribute"]
+                        else None
+                    ),
+                    "limit": limit,
+                },
             },
         }
 

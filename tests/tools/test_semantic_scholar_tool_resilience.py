@@ -38,10 +38,11 @@ def test_semantic_scholar_returns_list_on_error(monkeypatch):
 
     result = tool.run({"query": "x", "limit": 1})
 
-    assert isinstance(result, list)
-    assert len(result) == 1
-    assert result[0]["title"] == "Error"
-    assert result[0]["retryable"] is True
+    # run() returns envelope dict with status/error keys
+    assert isinstance(result, dict)
+    assert result["status"] == "error"
+    assert "429" in result["error"]
+    assert result["retryable"] is True
 
 
 @pytest.mark.unit
@@ -89,9 +90,12 @@ def test_semantic_scholar_include_abstract_enriches_missing_abstract(monkeypatch
 
     result = tool.run({"query": "x", "limit": 1, "include_abstract": True})
 
-    assert isinstance(result, list)
-    assert len(result) == 1
-    assert result[0]["abstract"] == "Filled abstract."
-    assert result[0]["doi"] == "10.1000/example"
-    assert result[0]["doi_url"] == "https://doi.org/10.1000/example"
-    assert result[0]["open_access_pdf_url"] == "https://example.test/pdf"
+    # run() returns envelope dict with data list
+    assert isinstance(result, dict)
+    assert result["status"] == "success"
+    papers = result["data"]
+    assert len(papers) == 1
+    assert papers[0]["abstract"] == "Filled abstract."
+    assert papers[0]["doi"] == "10.1000/example"
+    assert papers[0]["doi_url"] == "https://doi.org/10.1000/example"
+    assert papers[0]["open_access_pdf_url"] == "https://example.test/pdf"

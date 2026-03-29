@@ -1,6 +1,8 @@
 # Skill: Gene Regulatory Network Analysis
 
-Analyze gene regulatory networks by integrating transcription factor binding motifs, target genes, regulatory elements, protein interactions, and expression QTLs using ToolUniverse tools.
+**GRN inference starts with: which TF regulates which gene?** Direct evidence (ChIP-seq binding) is stronger than indirect (co-expression correlation). A TF binding near a gene doesn't prove regulation — check if expression changes when the TF is perturbed. JASPAR provides binding motifs but motif presence in a promoter is only computational evidence (T3); ENCODE ChIP-seq data that places the TF at the locus in the relevant cell type is stronger (T1). eQTLs from GTEx show which variants affect expression but don't identify the upstream regulator — combine with TF motif disruption analysis for mechanistic insight.
+
+**LOOK UP DON'T GUESS**: never assume JASPAR matrix IDs, Enrichr library names, or GTEx tissue identifiers — always search JASPAR by TF name and verify library names before calling enrichr.
 
 ## When to Use
 
@@ -11,6 +13,9 @@ Activate this skill when the user asks about:
 - TF-target relationships and co-regulation
 - eQTL effects on gene regulation
 - Protein-protein interactions among regulatory factors
+
+## COMPUTE, DON'T DESCRIBE
+When analysis requires computation (statistics, data processing, scoring, enrichment), write and run Python code via Bash. Don't describe what you would do — execute it and report actual results. Use ToolUniverse tools to retrieve data, then Python (pandas, scipy, statsmodels, matplotlib) to analyze it.
 
 ## Workflow
 
@@ -39,25 +44,7 @@ Example:
 {"search": "TP53", "limit": 5}
 ```
 
-Response structure:
-```json
-{
-  "status": "success",
-  "data": {
-    "count": 5,
-    "results": [
-      {
-        "matrix_id": "MA0106.3",
-        "name": "TP53",
-        "collection": "CORE",
-        "base_id": "MA0106",
-        "version": "3",
-        "sequence_logo": "https://jaspar.elixir.no/static/logos/svg/MA0106.3.svg"
-      }
-    ]
-  }
-}
-```
+Returns `{status, data: {count, results: [{matrix_id, name, collection, base_id, version, sequence_logo}]}}`.
 
 **Tool: `jaspar_get_matrix`** (for detailed motif info)
 ```
@@ -94,27 +81,7 @@ Example (find which TFs bind your gene set):
 }
 ```
 
-Response structure:
-```json
-{
-  "status": "success",
-  "data": {
-    "library": "ENCODE_TF_ChIP-seq_2015",
-    "gene_count": 5,
-    "enriched_terms": [
-      {
-        "rank": 1,
-        "term": "EP300 HeLa-S3 hg19",
-        "p_value": 0.00028,
-        "combined_score": 337.16,
-        "overlapping_genes": ["MYC", "BRCA1", "TP53"],
-        "adjusted_p_value": 0.127,
-        "overlap_count": 4
-      }
-    ]
-  }
-}
-```
+Returns `{status, data: {library, gene_count, enriched_terms: [{rank, term, p_value, combined_score, overlapping_genes, adjusted_p_value}]}}`.
 
 **IMPORTANT**: Enrichr takes a gene list and tells you what TFs are enriched. To find targets OF a TF, use the TRRUST library or look up TF ChIP-seq targets directly.
 
@@ -142,24 +109,7 @@ Example:
 {"target": "H3K27ac", "tissue": "liver", "limit": 5}
 ```
 
-Response structure:
-```json
-{
-  "status": "success",
-  "data": {
-    "total": 3,
-    "experiments": [
-      {
-        "accession": "ENCSR458RRZ",
-        "histone_mark": "H3K27ac",
-        "biosample_summary": "Homo sapiens liver tissue male adult (32 years)",
-        "status": "released",
-        "lab": "Bing Ren, UCSD"
-      }
-    ]
-  }
-}
-```
+Returns `{status, data: {total, experiments: [{accession, histone_mark, biosample_summary, status, lab}]}}`.
 
 #### 3b: Expression QTLs (GTEx)
 
@@ -176,26 +126,7 @@ Example:
 {"gene_symbol": "TP53"}
 ```
 
-Response structure:
-```json
-{
-  "status": "success",
-  "data": {
-    "singleTissueEqtl": [
-      {
-        "snpId": "rs78378222",
-        "variantId": "chr17_7668434_T_G_b38",
-        "geneSymbol": "TP53",
-        "pValue": 2.05e-10,
-        "tissueSiteDetailId": "Skin_Not_Sun_Exposed_Suprapubic",
-        "nes": -0.581
-      }
-    ]
-  }
-}
-```
-
-**NOTE**: `nes` = normalized effect size. Negative = lower expression with alt allele.
+Returns `{status, data: {singleTissueEqtl: [{snpId, variantId, geneSymbol, pValue, tissueSiteDetailId, nes}]}}`. `nes` = normalized effect size; negative = lower expression with alt allele.
 
 #### 3c: Regulatory Variant Annotation (RegulomeDB)
 
@@ -225,24 +156,7 @@ Example:
 {"identifiers": "TP53", "species": 9606, "limit": 10}
 ```
 
-Response structure:
-```json
-{
-  "status": "success",
-  "data": [
-    {
-      "preferredName_A": "TP53",
-      "preferredName_B": "EP300",
-      "score": 0.999,
-      "escore": 0.999,
-      "dscore": 0.9,
-      "tscore": 0.998
-    }
-  ]
-}
-```
-
-Score components: `escore` (experimental), `dscore` (database), `tscore` (text-mining), `ascore` (coexpression), `nscore` (neighborhood), `fscore` (fusion), `pscore` (phylogenetic).
+Returns array of `{preferredName_A, preferredName_B, score, escore, dscore, tscore, ascore}`. Score components: `escore` (experimental), `dscore` (database), `tscore` (text-mining), `ascore` (coexpression).
 
 #### 4b: IntAct Interactions
 
@@ -313,30 +227,6 @@ Parameters:
 
 Performs GO, KEGG, Reactome enrichment on a gene set from the network.
 
----
-
-## Quick Reference: All Tools and Parameters
-
-| Tool | Key Parameters | Notes |
-|------|---------------|-------|
-| `jaspar_search_matrices` | `search`, `limit`, `collection`, `species` | Search by TF name |
-| `jaspar_get_matrix` | `matrix_id` | Full PFM details for one matrix |
-| `enrichr_gene_enrichment_analysis` | `gene_list` (array, REQUIRED), `library`, `top_n` | Many TF-related libraries |
-| `ENCODE_search_histone_experiments` | `target`, `tissue`, `limit` | Histone mark ChIP-seq |
-| `GTEx_query_eqtl` | `gene_symbol` (REQUIRED) | eQTLs across GTEx tissues |
-| `RegulomeDB_query_variant` | `rsid` | Regulatory variant scoring |
-| `STRING_get_interaction_partners` | `identifiers` (string, REQUIRED), `species`, `limit` | PPI with confidence scores |
-| `STRING_functional_enrichment` | `protein_ids` (array), `species`, `category` | GO/KEGG/Reactome enrichment |
-| `OmniPath_get_signaling_interactions` | `proteins`, `datasets` ("dorothea") | **Best for TF-target networks**: curated directed TF-target interactions |
-| `ChIPAtlas_enrichment_analysis` | `gene_list`, `genome`, `antigen_class` | TF enrichment from 433K+ ChIP-seq experiments |
-| `DGIdb_get_drug_gene_interactions` | `genes` (array) | Druggability of network nodes |
-| `CTD_get_gene_diseases` | `input_terms` | Disease context for regulatory genes |
-| `intact_get_interaction_network` | `gene_symbol`, `limit` | Experimentally validated PPIs |
-| `BioGRID_get_interactions` | `gene_symbol`, `limit` | Physical + genetic interactions |
-| `EuropePMC_search_articles` | `query`, `limit` | Full-text literature search |
-| `PubMed_search_articles` | `query`, `limit` | PubMed indexed articles |
-| `ols_search_terms` | `query`, `ontology`, `limit` | Ontology term lookup |
-
 ## Common Mistakes
 
 1. **JASPAR tool name**: Use `jaspar_search_matrices` (lowercase, plural), NOT `jaspar_get_matrix`.
@@ -394,7 +284,7 @@ Performs GO, KEGG, Reactome enrichment on a gene set from the network.
 
 ## Evidence Grading
 
-- **T1 (Regulatory)**: ENCODE ChIP-seq, JASPAR validated motifs, GTEx significant eQTLs
-- **T2 (Experimental)**: BioGRID/IntAct interactions, TRRUST curated relationships
-- **T3 (Computational)**: STRING predicted interactions, Enrichr statistical enrichment
-- **T4 (Annotation)**: Sequence Ontology terms, literature mentions
+- **T1**: ENCODE ChIP-seq, JASPAR validated motifs, GTEx significant eQTLs
+- **T2**: BioGRID/IntAct interactions, TRRUST curated relationships
+- **T3**: STRING predicted interactions, Enrichr statistical enrichment
+- **T4**: Sequence Ontology terms, literature mentions

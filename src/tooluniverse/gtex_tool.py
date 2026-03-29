@@ -195,6 +195,7 @@ class GTExEQTLTool:
             or arguments.get("ensembl_gene_id")
             or arguments.get("gene_id")  # alias: agents pass 'gene_id'
             or arguments.get("gene")
+            or arguments.get("gene_input")  # alias: legacy param name
         )
         if not gene_input:
             return {

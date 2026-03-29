@@ -11,6 +11,7 @@ from ._shared_client import get_shared_client
 def Foldseek_search_structure(
     pdb_id: Optional[str] = None,
     sequence: Optional[str] = None,
+    query: Optional[str] = None,
     database: Optional[str] = "afdb50",
     mode: Optional[str] = "3diaa",
     max_results: Optional[int] = 10,
@@ -28,6 +29,8 @@ def Foldseek_search_structure(
         PDB ID to search (e.g., '4HHB', '1CRN'). The structure will be fetched from R...
     sequence : str
         Amino acid sequence to search (alternative to pdb_id). For sequence-based str...
+    query : str
+        Amino acid sequence to search (alias for sequence).
     database : str
         Database to search against. Options: 'afdb50' (AlphaFold DB 50% clustered, de...
     mode : str
@@ -53,6 +56,7 @@ def Foldseek_search_structure(
         for k, v in {
             "pdb_id": pdb_id,
             "sequence": sequence,
+            "query": query,
             "database": database,
             "mode": mode,
             "max_results": max_results,

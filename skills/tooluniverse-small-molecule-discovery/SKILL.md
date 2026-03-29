@@ -12,6 +12,19 @@ description: >
 
 Systematic small molecule identification, characterization, and sourcing using PubChem, ChEMBL, BindingDB, ADMET-AI, SwissADME, eMolecules, and Enamine. Covers the full pipeline from compound name to structure, activity, ADMET properties, and commercial procurement.
 
+## Domain Reasoning
+
+Drug-likeness is not a binary property. Lipinski's Rule of 5 was derived from orally administered, passively absorbed drugs and has many well-known exceptions: natural products, macrocycles, PROTACs, and many approved drugs violate one or more rules. The relevant question is not "does this pass Ro5?" but "does this compound's physicochemical profile match the requirements of the target, the intended route of administration, and the therapeutic context?" Focus on the specific requirements, not rigid rules.
+
+## LOOK UP DON'T GUESS
+
+- Compound identity (CID, ChEMBL ID, SMILES): call `PubChem_get_CID_by_compound_name` and `ChEMBL_search_molecules`; do not assume IDs from memory.
+- ADMET properties: run `SwissADME_calculate_adme` or `ADMETAI_predict_*` on the actual SMILES; do not estimate logP, TPSA, or bioavailability.
+- Binding affinities against a target: query `ChEMBL_search_activities` or `BindingDB_get_ligands_by_uniprot`; never cite IC50 values from memory.
+- Commercial availability: check `eMolecules_search` or `Enamine_search_catalog`; do not assume availability.
+
+---
+
 **KEY PRINCIPLES**:
 1. **Resolve identity first** - Always get CID and ChEMBL ID before research
 2. **SMILES required for property prediction** - Extract canonical SMILES from PubChem early
@@ -20,6 +33,9 @@ Systematic small molecule identification, characterization, and sourcing using P
 5. **eMolecules/Enamine return URLs** - These tools generate search URLs, not direct data; note this to user
 
 ---
+
+## COMPUTE, DON'T DESCRIBE
+When analysis requires computation (statistics, data processing, scoring, enrichment), write and run Python code via Bash. Don't describe what you would do — execute it and report actual results. Use ToolUniverse tools to retrieve data, then Python (pandas, scipy, statsmodels, matplotlib) to analyze it.
 
 ## When to Use
 

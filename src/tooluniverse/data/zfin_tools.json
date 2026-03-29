@@ -833,5 +833,63 @@
         }
       ]
     }
+  },
+  {
+    "name": "ZFIN_search",
+    "description": "Search for zebrafish (Danio rerio) genes in ZFIN by keyword (gene symbol or name). Returns matching genes with their ZFIN IDs, symbols, and names. Use the returned gene_id with ZFIN_get_gene for full details. Example: query='tp53' returns zebrafish tumor protein p53.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "query": {
+          "type": "string",
+          "description": "Gene symbol or name to search for (e.g., 'tp53', 'sox9a', 'pax2a', 'fgf8a')"
+        },
+        "limit": {
+          "type": "integer",
+          "description": "Maximum number of results (default: 10)",
+          "default": 10
+        }
+      },
+      "required": ["query"]
+    },
+    "fields": {
+      "endpoint_type": "zfin_search"
+    },
+    "type": "AllianceGenomeTool",
+    "test_examples": [
+      {"query": "tp53"},
+      {"query": "sox9a"}
+    ],
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "object",
+          "properties": {
+            "status": {"type": "string"},
+            "data": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "symbol": {"type": "string"},
+                  "name": {"type": ["string", "null"]},
+                  "gene_id": {"type": "string"},
+                  "category": {"type": ["string", "null"]}
+                }
+              }
+            },
+            "metadata": {"type": "object"}
+          },
+          "required": ["status", "data"]
+        },
+        {
+          "type": "object",
+          "properties": {
+            "error": {"type": "string"}
+          },
+          "required": ["error"]
+        }
+      ]
+    }
   }
 ]

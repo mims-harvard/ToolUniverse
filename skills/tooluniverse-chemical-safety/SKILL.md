@@ -5,6 +5,10 @@ description: Comprehensive chemical safety and toxicology assessment integrating
 
 # Chemical Safety & Toxicology Assessment
 
+**Toxicity assessment**: identify the chemical, check known hazards (GHS, IARC), then look for ADMET predictions. Dose makes the poison — always consider exposure level, as a compound that is toxic at high doses may be safe at relevant exposures. Distinguish between acute toxicity (LD50, GHS category) and chronic hazards (carcinogenicity, endocrine disruption) — they require different risk management approaches. Computational predictions (ADMETAI) are T3 evidence and must be anchored by experimental data from PubChemTox or FDA labels wherever available. When evidence conflicts between prediction and experiment, always defer to the experimental finding.
+
+**LOOK UP DON'T GUESS**: never assume GHS categories, IARC classification, or CTD disease links — always call PubChemTox and CTD tools to retrieve current classifications before reporting.
+
 Comprehensive chemical safety analysis integrating predictive AI models, curated toxicogenomics databases, regulatory safety data, and chemical-biological interaction networks.
 
 ## When to Use This Skill
@@ -25,6 +29,9 @@ Comprehensive chemical safety analysis integrating predictive AI models, curated
 7. **Environmental Toxicology**: Chemical-disease associations for contaminants
 
 ---
+
+## COMPUTE, DON'T DESCRIBE
+When analysis requires computation (statistics, data processing, scoring, enrichment), write and run Python code via Bash. Don't describe what you would do — execute it and report actual results. Use ToolUniverse tools to retrieve data, then Python (pandas, scipy, statsmodels, matplotlib) to analyze it.
 
 ## KEY PRINCIPLES
 

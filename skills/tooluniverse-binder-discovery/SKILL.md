@@ -7,6 +7,8 @@ description: Discover novel small molecule binders for protein targets using str
 
 Systematic discovery of novel small molecule binders using 60+ ToolUniverse tools across druggability assessment, known ligand mining, similarity expansion, ADMET filtering, and synthesis feasibility.
 
+**LOOK UP DON'T GUESS** - Always retrieve actual data from tools before drawing conclusions. Do not assume druggability, binding sites, or compound properties based on target class alone.
+
 **KEY PRINCIPLES**:
 1. **Report-first approach** - Create report file FIRST, then populate progressively
 2. **Target validation FIRST** - Confirm druggability before compound searching
@@ -14,7 +16,24 @@ Systematic discovery of novel small molecule binders using 60+ ToolUniverse tool
 4. **ADMET-aware filtering** - Eliminate poor compounds early
 5. **Evidence grading** - Grade candidates by supporting evidence
 6. **Actionable output** - Provide prioritized candidates with rationale
-7. **English-first queries** - Always use English terms in tool calls, even if the user writes in another language. Only try original-language terms as a fallback. Respond in the user's language
+7. **English-first queries** - Always use English terms in tool calls. Respond in the user's language
+
+---
+
+## Binding Site Reasoning (Start Here)
+
+Before any tool call, reason about the target's structural biology:
+
+**Is the binding site a well-defined pocket (small molecule accessible) or a flat protein-protein interface (needs peptide/macrocycle)?** This determines your screening strategy.
+
+- **Enzymes with active sites** (proteases, kinases, ATPases): deep, well-defined pockets. Classic small molecule territory. Prioritize co-crystal structure search and known inhibitor scaffold analysis.
+- **GPCRs and ion channels**: transmembrane pockets. Structure often available; start with GPCRdb and GtoPdb for known pharmacology.
+- **Nuclear receptors**: deep hydrophobic pockets. Excellent small molecule tractability; ligand-based methods are well-powered.
+- **Protein-protein interfaces**: flat, large contact surface. Small molecules rarely compete effectively unless there is a "hot spot" cavity. Check whether any allosteric pockets exist before committing to small molecule strategy. Warn the user if no pocket is found.
+- **Intrinsically disordered regions**: essentially no small molecule approach. Redirect to peptide or degrader strategies.
+- **Scaffolding / adaptor proteins**: assess co-crystal structures for unexpected pockets before declaring undruggable.
+
+Use this reasoning to select phases and warn the user about challenges before executing a full workflow.
 
 ---
 
@@ -29,9 +48,7 @@ Systematic discovery of novel small molecule binders using 60+ ToolUniverse tool
    - Initialize with all section headers from the template (see REPORT_TEMPLATE.md)
    - Add placeholder text: `[Researching...]` in each section
 
-2. **Progressively update the report** - As you gather data:
-   - Update each section with findings immediately
-   - The user sees the report growing, not the search process
+2. **Progressively update the report** - As you gather data, update each section immediately.
 
 3. **Output separate data files**:
    - `[TARGET]_candidate_compounds.csv` - Prioritized compounds with SMILES, scores
@@ -41,68 +58,23 @@ Systematic discovery of novel small molecule binders using 60+ ToolUniverse tool
 
 Every piece of information MUST include its source:
 
-```markdown
-*Source: ChEMBL via `ChEMBL_get_target_activities` (CHEMBL203)*
-*Source: PDB via `get_protein_metadata_by_pdb_id` (1M17)*
-*Source: ADMET-AI via `ADMETAI_predict_toxicity`*
-*Source: NVIDIA NIM via `NvidiaNIM_alphafold2` (pLDDT: 90.94)*
-```
+Example: `*Source: ChEMBL via ChEMBL_get_target_activities (CHEMBL203)*`
 
 ---
 
 ## Workflow Overview
 
-```
-Phase 0: Tool Verification (check parameter names)
-    |
-Phase 1: Target Validation
-    |- 1.1 Resolve identifiers (UniProt, Ensembl, ChEMBL target ID)
-    |- 1.2 Assess druggability/tractability
-    |   +- 1.2a GPCRdb integration (for GPCR targets)
-    |   +- 1.2.5 Check therapeutic antibodies (Thera-SAbDab)
-    |- 1.3 Identify binding sites
-    +- 1.4 Predict structure (NvidiaNIM_alphafold2/esmfold)
-    |
-Phase 2: Known Ligand Mining
-    |- ChEMBL bioactivity data
-    |- GtoPdb interactions
-    |- Chemical probes (Open Targets)
-    |- BindingDB affinity data (Ki/IC50/Kd)
-    |- PubChem BioAssay HTS data (screening hits)
-    +- SAR analysis from known actives
-    |
-Phase 3: Structure Analysis
-    |- PDB structures with ligands
-    |- EMDB cryo-EM structures (for membrane targets)
-    |- Binding pocket analysis
-    +- Key interactions
-    |
-Phase 3.5: Docking Validation (get_diffdock_info/boltz2)
-    |- Dock reference inhibitor
-    +- Validate binding pocket geometry
-    |
-Phase 4: Compound Expansion
-    |- 4.1-4.3 Similarity/substructure search
-    +- 4.4 De novo generation (NvidiaNIM_genmol/NvidiaNIM_molmim)
-    |
-Phase 5: ADMET Filtering
-    |- Physicochemical properties (Lipinski, QED)
-    |- Bioavailability, toxicity, CYP interactions
-    +- Structural alerts (PAINS)
-    |
-Phase 6: Candidate Docking & Prioritization
-    |- Dock all candidates (get_diffdock_info/boltz2)
-    |- Score by docking (40%) + ADMET (30%) + similarity (20%) + novelty (10%)
-    |- Assess synthesis feasibility
-    +- Generate final ranked list (top 20)
-    |
-Phase 6.5: Literature Evidence
-    |- PubMed (peer-reviewed SAR studies)
-    |- EuropePMC preprints (source='PPR')
-    +- OpenAlex citation analysis
-    |
-Phase 7: Report Synthesis & Delivery
-```
+Phases in order:
+- **Phase 0**: Tool verification (check parameter names with `get_tool_info`)
+- **Phase 1**: Target validation — resolve IDs, assess druggability, identify binding sites, predict structure if needed
+- **Phase 2**: Known ligand mining — ChEMBL, BindingDB, GtoPdb, PubChem BioAssay, chemical probes; SAR analysis
+- **Phase 3**: Structure analysis — PDB co-crystals, EMDB (membrane targets), binding pocket characterization
+- **Phase 3.5**: Docking validation — dock reference inhibitor to validate pocket geometry
+- **Phase 4**: Compound expansion — similarity/substructure search (seeds: 3-5 diverse actives) + de novo generation
+- **Phase 5**: ADMET filtering — physicochemical, bioavailability, toxicity, CYP, structural alerts
+- **Phase 6**: Candidate docking and prioritization — score and rank top 20
+- **Phase 6.5**: Literature evidence — PubMed, EuropePMC, OpenAlex
+- **Phase 7**: Report synthesis and delivery
 
 ---
 
@@ -114,18 +86,10 @@ Phase 7: Report Synthesis & Delivery
 tool_info = tu.tools.get_tool_info(tool_name="ChEMBL_get_target_activities")
 ```
 
-### Known Parameter Corrections
-
-| Tool | WRONG Parameter | CORRECT Parameter |
-|------|-----------------|-------------------|
-| `OpenTargets_*` | `ensembl_id` | `ensemblId` (camelCase) |
-| `ChEMBL_get_target_activities` | `target_chembl_id` | `target_chembl_id__exact` |
-| `ChEMBL_search_similar_molecules` | `smiles` | `molecule` (accepts SMILES, ChEMBL ID, or name) |
-| `alphafold_get_prediction` | `uniprot` | `qualifier` |
-| `ADMETAI_*` | `smiles="..."` | `smiles=["..."]` (must be list) |
-| `NvidiaNIM_alphafold2` | `seq` | `sequence` |
-| `NvidiaNIM_genmol` | `smiles="C..."` | `smiles="C...[*{1-3}]..."` (must have mask) |
-| `NvidiaNIM_boltz2` | `sequence="..."` | `polymers=[{"molecule_type": "protein", "sequence": "..."}]` |
+Common parameter corrections (verify with `get_tool_info` if uncertain):
+- `OpenTargets_*`: `ensemblId` (camelCase); `ADMETAI_*`: `smiles` must be a list
+- `NvidiaNIM_alphafold2`: `sequence` not `seq`; `NvidiaNIM_genmol`: SMILES must contain `[*{min-max}]`
+- `NvidiaNIM_boltz2`: `polymers=[{"molecule_type": "protein", "sequence": "..."}]`
 
 ---
 
@@ -151,7 +115,7 @@ Use multi-source triangulation:
 - For GPCRs: `GPCRdb_get_protein` + `GPCRdb_get_ligands` + `GPCRdb_get_structures`
 - For antibody landscape: `TheraSAbDab_search_by_target(target=target_name)`
 
-**Decision Point**: If druggability < 2 stars, warn user about challenges.
+**Decision Point**: If no tractability data and binding site reasoning suggests PPI or disordered region, explicitly warn the user before proceeding.
 
 ### 1.3 Binding Site Analysis
 
@@ -165,36 +129,30 @@ Requires `NVIDIA_API_KEY`. Two options:
 - **AlphaFold2**: `NvidiaNIM_alphafold2(sequence, algorithm="mmseqs2")` - high accuracy, 5-15 min
 - **ESMFold**: `ESMFold_predict_structure(sequence)` - fast (~30s), max 1024 AA
 
-Always report pLDDT confidence scores (>=90 very high, 70-90 confident, <70 caution).
+pLDDT guidance: >=90 very high confidence, 70-90 confident, <70 use with caution. Low pLDDT in the putative binding region undermines docking reliability.
 
 ---
 
 ## Phase 2: Known Ligand Mining
 
-### Tools (in order of priority)
+Priority order for bioactivity data:
+1. `ChEMBL_get_target_activities` - curated, SAR-ready
+2. `BindingDB_get_ligands_by_uniprot` - direct Ki/Kd with literature links
+3. `GtoPdb_search_ligands` - pharmacology focus (GPCRs, channels)
+4. `PubChem_search_assays_by_target_gene` - HTS screens, novel scaffolds
+5. `OpenTargets_get_chemical_probes_by_target_ensemblID` - validated probes
 
-| Source | Tool | Strengths |
-|--------|------|-----------|
-| ChEMBL | `ChEMBL_get_target_activities` | Curated, SAR-ready |
-| BindingDB | `BindingDB_get_ligands_by_uniprot` | Direct Ki/Kd, literature links |
-| GtoPdb | `GtoPdb_search_ligands` | Pharmacology focus (GPCRs, channels) |
-| PubChem | `PubChem_search_assays_by_target_gene` | HTS screens, novel scaffolds |
-| Open Targets | `OpenTargets_get_chemical_probes_by_target_ensemblID` | Validated probes |
-
-### Key Steps
-
-1. Get all bioactivities: filter to IC50/Ki/Kd < 10 uM
-2. Get molecule details for top actives: `ChEMBL_get_molecule`
-3. Identify chemical probes and approved drugs
-4. Analyze SAR: common scaffolds, key modifications
-5. Check off-target selectivity: `BindingDB_get_targets_by_compound`
+Key steps:
+1. Filter to IC50/Ki/Kd < 10 uM; retrieve molecule details for top actives
+2. Identify chemical probes and approved drugs
+3. Analyze SAR: common scaffolds, key modifications
+4. Check off-target selectivity: `BindingDB_get_targets_by_compound`
 
 ---
 
 ## Phase 3: Structure Analysis
 
-### Tools
-
+Tools:
 - `PDB_search_similar_structures(query=uniprot, type="sequence")` - find PDB entries
 - `get_protein_metadata_by_pdb_id(pdb_id)` - resolution, method
 - `get_binding_affinity_by_pdb_id(pdb_id)` - co-crystal ligand affinities
@@ -204,12 +162,10 @@ Always report pLDDT confidence scores (>=90 very high, 70-90 confident, <70 caut
 
 ### Phase 3.5: Docking Validation (NVIDIA NIM)
 
-| Situation | Tool | Input |
-|-----------|------|-------|
-| Have PDB + SDF | `get_diffdock_info` | protein=PDB, ligand=SDF, num_poses=10 |
-| Have sequence + SMILES | `NvidiaNIM_boltz2` | polymers=[...], ligands=[...] |
+If PDB + SDF available: use `get_diffdock_info(protein=PDB, ligand=SDF, num_poses=10)`.
+If only sequence + SMILES: use `NvidiaNIM_boltz2(polymers=[...], ligands=[...])`.
 
-Dock a known reference inhibitor first to validate the binding pocket.
+Dock a known reference inhibitor first to validate the binding pocket geometry before running candidates.
 
 ---
 
@@ -218,7 +174,6 @@ Dock a known reference inhibitor first to validate the binding pocket.
 ### 4.1-4.3 Search-Based Expansion
 
 Use 3-5 diverse actives as seeds, similarity threshold 70-85%:
-
 - `ChEMBL_search_similar_molecules(molecule=SMILES, similarity=70)`
 - `PubChem_search_compounds_by_similarity(smiles, threshold=0.7)`
 - `ChEMBL_search_substructure(smiles=core_scaffold)`
@@ -230,7 +185,6 @@ Use 3-5 diverse actives as seeds, similarity threshold 70-85%:
 ```
 NvidiaNIM_genmol(smiles="...core...[*{3-8}]...tail...[*{1-3}]...", num_molecules=100, temperature=2.0, scoring="QED")
 ```
-Mask syntax: `[*{min-max}]` specifies atom count range.
 
 **MolMIM** - controlled analog generation:
 ```
@@ -241,43 +195,30 @@ NvidiaNIM_molmim(smi=reference_smiles, num_molecules=50, algorithm="CMA-ES")
 
 ## Phase 5: ADMET Filtering
 
-Apply filters sequentially (all take `smiles=[list]`):
+Apply sequentially (all tools accept `smiles=[list]`):
 
-| Step | Tool | Filter Criteria |
-|------|------|----------------|
-| Physicochemical | `ADMETAI_predict_physicochemical_properties` | Lipinski <= 1, QED > 0.3, MW 200-600 |
-| Bioavailability | `ADMETAI_predict_bioavailability` | Oral bioavailability > 0.3 |
-| Toxicity | `ADMETAI_predict_toxicity` | AMES < 0.5, hERG < 0.5, DILI < 0.5 |
-| CYP | `ADMETAI_predict_CYP_interactions` | Flag CYP3A4 inhibitors |
-| Alerts | `ChEMBL_search_compound_structural_alerts` | No PAINS |
+1. **Physicochemical**: `ADMETAI_predict_physicochemical_properties` - Lipinski violations <= 1, QED > 0.3, MW 200-600
+2. **Bioavailability**: `ADMETAI_predict_bioavailability` - oral bioavailability > 0.3
+3. **Toxicity**: `ADMETAI_predict_toxicity` - AMES < 0.5, hERG < 0.5, DILI < 0.5
+4. **CYP**: `ADMETAI_predict_CYP_interactions` - flag CYP3A4 inhibitors
+5. **Alerts**: `ChEMBL_search_compound_structural_alerts` - no PAINS
 
-Include a filter funnel table in the report showing pass/fail counts at each stage.
+Include a filter funnel summary in the report showing pass/fail counts at each stage.
 
 ---
 
 ## Phase 6: Candidate Docking & Prioritization
 
-### Scoring Framework
+Composite score: docking confidence (40%) + ADMET score (30%) + similarity to known active (20%) + novelty (10%, not in ChEMBL + novel scaffold bonus).
 
-| Dimension | Weight | Source |
-|-----------|--------|--------|
-| Docking confidence | 40% | get_diffdock_info/boltz2 |
-| ADMET score | 30% | ADMETAI predictions |
-| Similarity to known active | 20% | Tanimoto coefficient |
-| Novelty | 10% | Not in ChEMBL + novel scaffold bonus |
+Evidence tiers for candidates:
+- T1 (3 stars): Experimental IC50/Ki < 100 nM
+- T2 (2 stars): Docking within 5% of reference OR IC50 100-1000 nM
+- T3 (1 star): >80% similarity to T1 compound
+- T4 (0 stars): 70-80% similarity, scaffold match only
+- T5 (no stars): Generated molecule, ADMET-passed, no docking
 
-### Evidence Tiers
-
-| Tier | Criteria |
-|------|----------|
-| T0 (4 stars) | Docking score > reference inhibitor |
-| T1 (3 stars) | Experimental IC50/Ki < 100 nM |
-| T2 (2 stars) | Docking within 5% of reference OR IC50 100-1000 nM |
-| T3 (1 star) | >80% similarity to T1 compound |
-| T4 (0 stars) | 70-80% similarity, scaffold match |
-| T5 (empty) | Generated molecule, ADMET-passed, no docking |
-
-Deliver top 20 candidates with: Rank, ID, SMILES, Docking score, ADMET score, overall score, source, evidence tier.
+Deliver top 20 candidates with: Rank, ID, SMILES, docking score, ADMET score, overall score, source, evidence tier.
 
 ---
 
@@ -305,29 +246,42 @@ GPCR data:     GPCRdb_get_protein -> GtoPdb_get_targets
 
 ---
 
-## NVIDIA NIM Runtime Reference
+## Programmatic Access (Beyond Tools)
 
-| Tool | Runtime | Notes |
-|------|---------|-------|
-| `NvidiaNIM_alphafold2` | 5-15 min | Async, max ~2000 AA |
-| `ESMFold_predict_structure` | ~30 sec | Max 1024 AA |
-| `get_diffdock_info` | ~1-2 min | Per ligand |
-| `NvidiaNIM_boltz2` | ~2-5 min | End-to-end complex |
-| `NvidiaNIM_genmol` | ~1-3 min | Depends on num_molecules |
-| `NvidiaNIM_molmim` | ~1-2 min | Close analog generation |
+When ToolUniverse tools return limited compound sets, access chemical databases directly:
 
-Always check: `import os; nvidia_available = bool(os.environ.get("NVIDIA_API_KEY"))`
+```python
+import requests, pandas as pd
+
+# PubChem batch property retrieval (up to 100 CIDs per call)
+cids = "2244,5988,3672"
+url = f"https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/cid/{cids}/property/MolecularWeight,XLogP,TPSA,HBondDonorCount,HBondAcceptorCount/JSON"
+props = pd.DataFrame(requests.get(url).json()["PropertyTable"]["Properties"])
+
+# ChEMBL bioactivity bulk download for a target
+target_id = "CHEMBL203"  # EGFR
+url = f"https://www.ebi.ac.uk/chembl/api/data/activity.json?target_chembl_id={target_id}&pchembl_value__gte=5&limit=1000"
+activities = requests.get(url).json()["activities"]
+df = pd.DataFrame(activities)[["molecule_chembl_id", "canonical_smiles", "pchembl_value", "standard_type"]]
+
+# Lipinski Rule of 5 filtering (no RDKit needed)
+lipinski = props[(props["MolecularWeight"] <= 500) & (props["XLogP"] <= 5) &
+                 (props["HBondDonorCount"] <= 5) & (props["HBondAcceptorCount"] <= 10)]
+
+# SDF download from PubChem (for docking input)
+sdf_url = f"https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/cid/{cids}/SDF"
+sdf_content = requests.get(sdf_url).text
+```
+
+See `tooluniverse-data-wrangling` skill for format cookbook and pagination patterns.
 
 ---
 
-## Rate Limiting
+## NVIDIA NIM Runtime Notes
 
-| Database | Limit | Strategy |
-|----------|-------|----------|
-| ChEMBL | ~10 req/sec | Batch queries |
-| PubChem | ~5 req/sec | Batch endpoints |
-| ADMET-AI | No strict limit | Batch SMILES in lists |
-| NVIDIA NIM | API key quota | Cache results |
+AlphaFold2: 5-15 min (async, max ~2000 AA). ESMFold: ~30 sec (max 1024 AA). DiffDock: ~1-2 min/ligand. Boltz2: ~2-5 min. GenMol/MolMIM: ~1-3 min.
+
+Always check: `import os; nvidia_available = bool(os.environ.get("NVIDIA_API_KEY"))`
 
 For large expansions (>500 compounds): batch in chunks of 100, prioritize top candidates for docking.
 
@@ -335,12 +289,8 @@ For large expansions (>500 compounds): batch in chunks of 100, prioritize top ca
 
 ## Reference Files
 
-For detailed protocols, examples, and templates, see:
-
-| File | Contents |
-|------|----------|
-| [WORKFLOW_DETAILS.md](./WORKFLOW_DETAILS.md) | Phase-by-phase procedures, code patterns, screening protocols, fallback chain details |
-| [TOOLS_REFERENCE.md](./TOOLS_REFERENCE.md) | Complete tool reference with parameters, usage examples, and fallback chains |
-| [REPORT_TEMPLATE.md](./REPORT_TEMPLATE.md) | Report file template, evidence grading system, section formatting examples |
-| [EXAMPLES.md](./EXAMPLES.md) | End-to-end workflow examples (EGFR, novel target, lead optimization, NVIDIA NIM) |
-| [CHECKLIST.md](./CHECKLIST.md) | Pre-delivery verification checklist for report quality |
+- [WORKFLOW_DETAILS.md](./WORKFLOW_DETAILS.md) - Phase-by-phase procedures, code patterns, screening protocols
+- [TOOLS_REFERENCE.md](./TOOLS_REFERENCE.md) - Complete tool reference with parameters and fallback chains
+- [REPORT_TEMPLATE.md](./REPORT_TEMPLATE.md) - Report file template and evidence grading system
+- [EXAMPLES.md](./EXAMPLES.md) - End-to-end workflow examples (EGFR, novel target, lead optimization)
+- [CHECKLIST.md](./CHECKLIST.md) - Pre-delivery verification checklist

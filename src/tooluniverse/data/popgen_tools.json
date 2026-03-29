@@ -1,0 +1,251 @@
+[
+  {
+    "name": "PopGen_hwe_test",
+    "type": "PopGenTool",
+    "description": "Test Hardy-Weinberg equilibrium for a biallelic locus given observed genotype counts (AA, Aa, aa). Computes allele frequencies, expected genotype counts under HWE, chi-square statistic with 1 df, and p-value. Reports whether the locus is in HWE (p > 0.05) and, if not, whether heterozygote excess or deficit is observed. Useful for detecting selection, inbreeding, assortative mating, or genotyping error at individual loci.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "operation": {
+          "type": "string",
+          "enum": ["hwe_test"],
+          "description": "Operation type"
+        },
+        "obs_AA": {
+          "type": "integer",
+          "description": "Observed count of homozygous dominant (AA) genotypes"
+        },
+        "obs_Aa": {
+          "type": "integer",
+          "description": "Observed count of heterozygous (Aa) genotypes"
+        },
+        "obs_aa": {
+          "type": "integer",
+          "description": "Observed count of homozygous recessive (aa) genotypes"
+        }
+      },
+      "required": ["operation", "obs_AA", "obs_Aa", "obs_aa"]
+    },
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "object",
+          "properties": {
+            "data": {
+              "type": "object",
+              "properties": {
+                "chi2": {"type": "number"},
+                "p_value": {"type": "number"},
+                "in_HWE": {"type": "boolean"},
+                "allele_freq_A": {"type": "number"},
+                "allele_freq_a": {"type": "number"},
+                "exp_AA": {"type": "number"},
+                "exp_Aa": {"type": "number"},
+                "exp_aa": {"type": "number"},
+                "interpretation": {"type": "string"}
+              }
+            }
+          }
+        },
+        {
+          "type": "object",
+          "properties": {
+            "error": {"type": "string"}
+          },
+          "required": ["error"]
+        }
+      ]
+    },
+    "test_examples": [
+      {
+        "operation": "hwe_test",
+        "obs_AA": 735,
+        "obs_Aa": 300,
+        "obs_aa": 65
+      }
+    ]
+  },
+  {
+    "name": "PopGen_fst",
+    "type": "PopGenTool",
+    "description": "Calculate simplified Weir-Cockerham Fst between two populations given allele frequencies and sample sizes. Fst quantifies genetic differentiation: <0.05 little, 0.05-0.15 moderate, 0.15-0.25 great, >0.25 very great differentiation. Useful for measuring population structure and divergence at individual loci.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "operation": {
+          "type": "string",
+          "enum": ["fst"],
+          "description": "Operation type"
+        },
+        "p1": {
+          "type": "number",
+          "description": "Allele frequency in population 1 [0, 1]"
+        },
+        "p2": {
+          "type": "number",
+          "description": "Allele frequency in population 2 [0, 1]"
+        },
+        "n1": {
+          "type": "integer",
+          "description": "Sample size (number of individuals) for population 1"
+        },
+        "n2": {
+          "type": "integer",
+          "description": "Sample size (number of individuals) for population 2"
+        }
+      },
+      "required": ["operation", "p1", "p2", "n1", "n2"]
+    },
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "object",
+          "properties": {
+            "data": {
+              "type": "object",
+              "properties": {
+                "Fst": {"type": "number"},
+                "p_bar": {"type": "number"},
+                "interpretation": {"type": "string"}
+              }
+            }
+          }
+        },
+        {
+          "type": "object",
+          "properties": {
+            "error": {"type": "string"}
+          },
+          "required": ["error"]
+        }
+      ]
+    },
+    "test_examples": [
+      {
+        "operation": "fst",
+        "p1": 0.8,
+        "p2": 0.3,
+        "n1": 100,
+        "n2": 100
+      }
+    ]
+  },
+  {
+    "name": "PopGen_inbreeding",
+    "type": "PopGenTool",
+    "description": "Compute inbreeding coefficient F for a known pedigree type over one or more generations. Supports: self, full-sib, half-sib, first-cousin, double-first-cousin, uncle-niece, aunt-nephew, half-first-cousin, second-cousin. Uses the recurrence F_t = base_F + (1-base_F)*F_{t-1} for iterated inbreeding. Reports F per generation, cumulative F, and retained heterozygosity.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "operation": {
+          "type": "string",
+          "enum": ["inbreeding"],
+          "description": "Operation type"
+        },
+        "pedigree": {
+          "type": "string",
+          "description": "Pedigree type (e.g., 'half-sib', 'first-cousin', 'full-sib')"
+        },
+        "generations": {
+          "type": "integer",
+          "description": "Number of successive inbreeding generations (default 1)"
+        }
+      },
+      "required": ["operation", "pedigree"]
+    },
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "object",
+          "properties": {
+            "data": {
+              "type": "object",
+              "properties": {
+                "pedigree": {"type": "string"},
+                "cumulative_F": {"type": "number"},
+                "heterozygosity_retained": {"type": "number"},
+                "F_per_generation": {"type": "array"},
+                "interpretation": {"type": "string"}
+              }
+            }
+          }
+        },
+        {
+          "type": "object",
+          "properties": {
+            "error": {"type": "string"}
+          },
+          "required": ["error"]
+        }
+      ]
+    },
+    "test_examples": [
+      {
+        "operation": "inbreeding",
+        "pedigree": "half-sib",
+        "generations": 3
+      }
+    ]
+  },
+  {
+    "name": "PopGen_haplotype_count",
+    "type": "PopGenTool",
+    "description": "Estimate distinct haplotypes after recombination across generations for a region with multiple biallelic SNPs. Reports maximum theoretical haplotypes (2^n), expected crossovers per gamete, probability of at least one recombination event, and estimated haplotype diversity based on LD decay. Useful for understanding recombination impact on genetic variation.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "operation": {
+          "type": "string",
+          "enum": ["haplotype_count"],
+          "description": "Operation type"
+        },
+        "n_snps": {
+          "type": "integer",
+          "description": "Number of biallelic SNP loci in the region"
+        },
+        "generations": {
+          "type": "integer",
+          "description": "Number of generations of random mating (default 1)"
+        },
+        "recomb_rate": {
+          "type": "number",
+          "description": "Per-adjacent-interval recombination rate [0, 1] per generation (default 0.5)"
+        }
+      },
+      "required": ["operation", "n_snps"]
+    },
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "object",
+          "properties": {
+            "data": {
+              "type": "object",
+              "properties": {
+                "max_theoretical_haplotypes": {"type": "integer"},
+                "estimated_distinct_haplotypes": {"type": "integer"},
+                "p_at_least_one_recombination": {"type": "number"},
+                "interpretation": {"type": "string"}
+              }
+            }
+          }
+        },
+        {
+          "type": "object",
+          "properties": {
+            "error": {"type": "string"}
+          },
+          "required": ["error"]
+        }
+      ]
+    },
+    "test_examples": [
+      {
+        "operation": "haplotype_count",
+        "n_snps": 5,
+        "generations": 3,
+        "recomb_rate": 0.5
+      }
+    ]
+  }
+]

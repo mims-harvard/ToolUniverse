@@ -456,6 +456,27 @@ class ProteinsAPIRESTTool(BaseTool):
             response.raise_for_status()
             data = response.json()
 
+            # Feature-81B-fallback: if gene-name search returns empty,
+            # retry with protein= param (e.g. "insulin" is a protein name, not gene symbol)
+            if (
+                tool_name == "proteins_api_search"
+                and isinstance(data, list)
+                and len(data) == 0
+                and "gene" in params
+            ):
+                retry_params = dict(params)
+                retry_params.pop("gene")
+                retry_params["protein"] = arguments.get("query", "")
+                retry_resp = self.session.get(
+                    url, params=retry_params, timeout=self.timeout
+                )
+                if retry_resp.status_code == 200:
+                    retry_data = retry_resp.json()
+                    if isinstance(retry_data, list) and len(retry_data) > 0:
+                        data = retry_data
+                        # Update response for URL tracking
+                        response = retry_resp
+
             # Cap features per entry to avoid 25MB+ responses for heavily-annotated proteins
             if tool_name == "proteins_api_get_variants" and isinstance(data, list):
                 max_variants = int(arguments.get("max_variants", 200))

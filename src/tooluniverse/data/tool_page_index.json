@@ -1853,6 +1853,7 @@
   "UniRef_get_cluster": "fd95a4ae-07ba-531d-802d-051471d23dfc",
   "UniRef_search_clusters": "0f3fcfec-8ea3-5f5f-b077-39b201cf523c",
   "Unpaywall_check_oa_status": "e9ec7e53-4c59-5d56-9044-e9a7add2fdeb",
+  "Unpaywall_get_full_text_url": "",
   "get_webpage_title": "d1c6a58c-4126-5525-8ce4-ba61b00551ec",
   "get_webpage_text_from_url": "b3c18c48-874a-5354-a9d8-384e18d3c9e3",
   "USCensus_get_population": "4e51e832-8c75-5fd2-b13d-9b0251cf001e",

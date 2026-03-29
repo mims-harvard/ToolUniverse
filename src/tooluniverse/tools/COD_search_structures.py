@@ -9,6 +9,7 @@ from ._shared_client import get_shared_client
 
 
 def COD_search_structures(
+    query: Optional[str | Any] = None,
     text: Optional[str | Any] = None,
     formula: Optional[str | Any] = None,
     el1: Optional[str | Any] = None,
@@ -17,8 +18,10 @@ def COD_search_structures(
     nel: Optional[str | Any] = None,
     commonname: Optional[str | Any] = None,
     mineral: Optional[str | Any] = None,
+    spacegroup: Optional[str | Any] = None,
     sg: Optional[str | Any] = None,
     sgNumber: Optional[str | Any] = None,
+    max_results: Optional[int | Any] = None,
     results: Optional[int | Any] = None,
     *,
     stream_callback: Optional[Callable[[str], None]] = None,
@@ -30,6 +33,8 @@ def COD_search_structures(
 
     Parameters
     ----------
+    query : str | Any
+        Alias for 'text'. Free text search across titles, keywords, and compound name...
     text : str | Any
         Free text search across titles, keywords, and compound names. Examples: 'aspi...
     formula : str | Any
@@ -46,10 +51,14 @@ def COD_search_structures(
         Common/trivial name search (partial match). Examples: 'quartz', 'perovskite',...
     mineral : str | Any
         Mineral name search (partial match). Examples: 'calcite', 'feldspar', 'pyrite...
+    spacegroup : str | Any
+        Alias for 'sg'. Space group symbol (Hermann-Mauguin notation). Examples: 'P 2...
     sg : str | Any
         Space group symbol (Hermann-Mauguin notation). Examples: 'P 21/c', 'Fm -3 m',...
     sgNumber : str | Any
         Space group number (1-230). Examples: '225' (Fm-3m, FCC metals), '62' (Pnma, ...
+    max_results : int | Any
+        Alias for 'results'. Maximum number of results to return (default 100, use sm...
     results : int | Any
         Maximum number of results to return (default 100, use smaller values for spee...
     stream_callback : Callable, optional
@@ -69,6 +78,7 @@ def COD_search_structures(
     _args = {
         k: v
         for k, v in {
+            "query": query,
             "text": text,
             "formula": formula,
             "el1": el1,
@@ -77,8 +87,10 @@ def COD_search_structures(
             "nel": nel,
             "commonname": commonname,
             "mineral": mineral,
+            "spacegroup": spacegroup,
             "sg": sg,
             "sgNumber": sgNumber,
+            "max_results": max_results,
             "results": results,
         }.items()
         if v is not None

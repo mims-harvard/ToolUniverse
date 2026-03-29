@@ -8,7 +8,9 @@
       "properties": {
         "operation": {
           "type": "string",
-          "enum": ["search"],
+          "enum": [
+            "search"
+          ],
           "description": "Operation type"
         },
         "search_term": {
@@ -17,17 +19,30 @@
         },
         "role": {
           "type": "string",
-          "enum": ["Substrate", "Enzyme", "Substrate,Enzyme"],
+          "enum": [
+            "Substrate",
+            "Enzyme",
+            "Substrate,Enzyme"
+          ],
           "default": "Substrate",
           "description": "Filter by protein role. Substrate = proteins that are modified; Enzyme = proteins that modify others. Default: Substrate"
         },
         "ptm_type": {
-          "type": ["string", "null"],
+          "type": [
+            "string",
+            "null"
+          ],
           "description": "Filter by PTM type: Phosphorylation, Acetylation, Ubiquitination, Methylation, Sumoylation, N-Glycosylation, O-Glycosylation, S-Nitrosylation, etc. Case-sensitive. Omit to return all types."
         },
         "term_type": {
           "type": "string",
-          "enum": ["All", "UniProtID", "UniProtAC", "GeneName", "ProteinName"],
+          "enum": [
+            "All",
+            "UniProtID",
+            "UniProtAC",
+            "GeneName",
+            "ProteinName"
+          ],
           "default": "All",
           "description": "Type of search term. Default: All (searches across all fields)"
         },
@@ -37,27 +52,57 @@
           "maximum": 100,
           "default": 25,
           "description": "Maximum results to return (default: 25)"
+        },
+        "query": {
+          "type": "string",
+          "description": "Gene name, protein name, or keyword to search (alias for search_term)"
         }
       },
-      "required": ["operation", "search_term"]
+      "required": []
     },
     "return_schema": {
       "type": "array",
       "items": {
         "type": "object",
         "properties": {
-          "uniprot_id": {"type": "string", "description": "UniProt accession"},
-          "uniprot_ac": {"type": "string", "description": "UniProt entry name"},
-          "protein_name": {"type": "string"},
-          "gene_name": {"type": "string"},
-          "organism": {"type": "string"},
-          "substrate_role": {"type": "boolean"},
-          "substrate_num": {"type": "integer"},
-          "enzyme_role": {"type": "boolean"},
-          "enzyme_num": {"type": "integer"},
-          "ptm_dependent_ppi": {"type": "boolean"},
-          "ptm_sites": {"type": "integer"},
-          "isoforms": {"type": "integer"}
+          "uniprot_id": {
+            "type": "string",
+            "description": "UniProt accession"
+          },
+          "uniprot_ac": {
+            "type": "string",
+            "description": "UniProt entry name"
+          },
+          "protein_name": {
+            "type": "string"
+          },
+          "gene_name": {
+            "type": "string"
+          },
+          "organism": {
+            "type": "string"
+          },
+          "substrate_role": {
+            "type": "boolean"
+          },
+          "substrate_num": {
+            "type": "integer"
+          },
+          "enzyme_role": {
+            "type": "boolean"
+          },
+          "enzyme_num": {
+            "type": "integer"
+          },
+          "ptm_dependent_ppi": {
+            "type": "boolean"
+          },
+          "ptm_sites": {
+            "type": "integer"
+          },
+          "isoforms": {
+            "type": "integer"
+          }
         }
       }
     },
@@ -79,7 +124,9 @@
       "properties": {
         "operation": {
           "type": "string",
-          "enum": ["get_ptm_sites"],
+          "enum": [
+            "get_ptm_sites"
+          ],
           "description": "Operation type"
         },
         "uniprot_id": {
@@ -87,25 +134,73 @@
           "description": "UniProt accession, e.g., P04637 (TP53), P00533 (EGFR), P31749 (AKT1), Q16539 (MAPK14/p38)"
         },
         "ptm_type": {
-          "type": ["string", "null"],
+          "type": [
+            "string",
+            "null"
+          ],
           "description": "Filter by PTM type: Phosphorylation, Acetylation, Ubiquitination, Methylation, Sumoylation, N-Glycosylation, O-Glycosylation, S-Nitrosylation. Case-insensitive. Omit to return all types."
         }
       },
-      "required": ["operation", "uniprot_id"]
+      "required": [
+        "operation",
+        "uniprot_id"
+      ]
     },
     "return_schema": {
       "type": "array",
       "items": {
         "type": "object",
         "properties": {
-          "isoform": {"type": "string", "description": "UniProt isoform ID (e.g., P04637-1)"},
-          "residue": {"type": "string", "description": "Modified amino acid (K, S, T, Y, etc.)"},
-          "site": {"type": ["string", "null"], "description": "Site notation (e.g., S15, K120, Y1068)"},
-          "ptm_type": {"type": ["string", "null"], "description": "PTM type (Phosphorylation, Acetylation, etc.)"},
-          "score": {"type": ["integer", "null"], "description": "Confidence score (1=high)"},
-          "sources": {"type": "array", "items": {"type": "string"}, "description": "Source databases (PSP, UniProt, etc.)"},
-          "enzymes": {"type": "array", "items": {"type": "object"}, "description": "Catalytic enzymes"},
-          "pmids": {"type": "array", "items": {"type": "string"}, "description": "PubMed IDs"}
+          "isoform": {
+            "type": "string",
+            "description": "UniProt isoform ID (e.g., P04637-1)"
+          },
+          "residue": {
+            "type": "string",
+            "description": "Modified amino acid (K, S, T, Y, etc.)"
+          },
+          "site": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "description": "Site notation (e.g., S15, K120, Y1068)"
+          },
+          "ptm_type": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "description": "PTM type (Phosphorylation, Acetylation, etc.)"
+          },
+          "score": {
+            "type": [
+              "integer",
+              "null"
+            ],
+            "description": "Confidence score (1=high)"
+          },
+          "sources": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "Source databases (PSP, UniProt, etc.)"
+          },
+          "enzymes": {
+            "type": "array",
+            "items": {
+              "type": "object"
+            },
+            "description": "Catalytic enzymes"
+          },
+          "pmids": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "PubMed IDs"
+          }
         }
       }
     },
@@ -130,7 +225,9 @@
       "properties": {
         "operation": {
           "type": "string",
-          "enum": ["get_proteoforms"],
+          "enum": [
+            "get_proteoforms"
+          ],
           "description": "Operation type"
         },
         "uniprot_id": {
@@ -138,20 +235,50 @@
           "description": "UniProt accession, e.g., P04637 (TP53), P00533 (EGFR), P31749 (AKT1)"
         }
       },
-      "required": ["operation", "uniprot_id"]
+      "required": [
+        "operation",
+        "uniprot_id"
+      ]
     },
     "return_schema": {
       "type": "array",
       "items": {
         "type": "object",
         "properties": {
-          "pro_id": {"type": "string", "description": "PRO ontology ID (e.g., PR:000027764)"},
-          "label": {"type": "string", "description": "Human-readable proteoform label"},
-          "sites": {"type": "array", "items": {"type": "string"}, "description": "Modified sites (e.g., pS15, pT18)"},
-          "enzyme_pro_id": {"type": "string", "description": "PRO ID of the modifying enzyme"},
-          "enzyme_label": {"type": "string", "description": "Name of the modifying enzyme"},
-          "source": {"type": "string", "description": "Source database"},
-          "pmids": {"type": "array", "items": {"type": "string"}, "description": "PubMed IDs"}
+          "pro_id": {
+            "type": "string",
+            "description": "PRO ontology ID (e.g., PR:000027764)"
+          },
+          "label": {
+            "type": "string",
+            "description": "Human-readable proteoform label"
+          },
+          "sites": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "Modified sites (e.g., pS15, pT18)"
+          },
+          "enzyme_pro_id": {
+            "type": "string",
+            "description": "PRO ID of the modifying enzyme"
+          },
+          "enzyme_label": {
+            "type": "string",
+            "description": "Name of the modifying enzyme"
+          },
+          "source": {
+            "type": "string",
+            "description": "Source database"
+          },
+          "pmids": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "PubMed IDs"
+          }
         }
       }
     },
@@ -171,7 +298,9 @@
       "properties": {
         "operation": {
           "type": "string",
-          "enum": ["get_ptm_ppi"],
+          "enum": [
+            "get_ptm_ppi"
+          ],
           "description": "Operation type"
         },
         "uniprot_id": {
@@ -179,26 +308,62 @@
           "description": "UniProt accession, e.g., P04637 (TP53), P00533 (EGFR), P31749 (AKT1)"
         },
         "ptm_type": {
-          "type": ["string", "null"],
+          "type": [
+            "string",
+            "null"
+          ],
           "description": "Filter by PTM type: Phosphorylation, Acetylation, Ubiquitination, Methylation. Case-insensitive. Omit to return all types."
         }
       },
-      "required": ["operation", "uniprot_id"]
+      "required": [
+        "operation",
+        "uniprot_id"
+      ]
     },
     "return_schema": {
       "type": "array",
       "items": {
         "type": "object",
         "properties": {
-          "ptm_type": {"type": ["string", "null"], "description": "Type of modification"},
-          "substrate_uniprot_id": {"type": "string", "description": "UniProt ID of modified protein"},
-          "substrate_name": {"type": "string", "description": "Name of modified protein"},
-          "site": {"type": "string", "description": "Modified site (e.g., S15, Y1068)"},
-          "interactant_uniprot_id": {"type": "string", "description": "UniProt ID of interacting partner"},
-          "interactant_name": {"type": "string", "description": "Name of interacting partner"},
-          "association_type": {"type": "string", "description": "Effect on interaction: association or dissociation"},
-          "source": {"type": "string", "description": "Data source"},
-          "pmid": {"type": "string", "description": "PubMed ID"}
+          "ptm_type": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "description": "Type of modification"
+          },
+          "substrate_uniprot_id": {
+            "type": "string",
+            "description": "UniProt ID of modified protein"
+          },
+          "substrate_name": {
+            "type": "string",
+            "description": "Name of modified protein"
+          },
+          "site": {
+            "type": "string",
+            "description": "Modified site (e.g., S15, Y1068)"
+          },
+          "interactant_uniprot_id": {
+            "type": "string",
+            "description": "UniProt ID of interacting partner"
+          },
+          "interactant_name": {
+            "type": "string",
+            "description": "Name of interacting partner"
+          },
+          "association_type": {
+            "type": "string",
+            "description": "Effect on interaction: association or dissociation"
+          },
+          "source": {
+            "type": "string",
+            "description": "Data source"
+          },
+          "pmid": {
+            "type": "string",
+            "description": "PubMed ID"
+          }
         }
       }
     },

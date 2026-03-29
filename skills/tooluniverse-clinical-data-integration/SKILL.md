@@ -15,9 +15,17 @@ End-to-end drug safety review pipeline that integrates FDA label information, FA
 5. **Progressive reporting** -- create the report file early; update section by section
 6. **English-first queries** -- use English drug names in all tool calls; respond in the user's language
 
+Clinical data integration starts with data harmonization. Different hospitals code the same diagnosis differently (ICD-10 vs SNOMED). Before merging datasets, verify the coding system. Missing data is informative — a missing lab value may mean the test wasn't ordered (patient was stable) not that the result was normal.
+
+## LOOK UP, DON'T GUESS
+When uncertain about any scientific fact, SEARCH databases first rather than reasoning from memory. A database-verified answer is always more reliable than a guess.
+
 **Differentiation**: This skill emphasizes *regulatory-grade data integration* across the full drug lifecycle. For focused FAERS signal detection with quantitative scoring, see `tooluniverse-adverse-event-detection`. For general pharmacovigilance workflows, see `tooluniverse-pharmacovigilance`.
 
 ---
+
+## COMPUTE, DON'T DESCRIBE
+When analysis requires computation (statistics, data processing, scoring, enrichment), write and run Python code via Bash. Don't describe what you would do — execute it and report actual results. Use ToolUniverse tools to retrieve data, then Python (pandas, scipy, statsmodels, matplotlib) to analyze it.
 
 ## When to Use
 

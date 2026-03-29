@@ -13,6 +13,10 @@ triggers:
 
 # Drug Regulatory Research
 
+**Regulatory status depends on jurisdiction.** FDA approval does not equal EMA approval — check the specific market the user is asking about. Generic availability depends on BOTH patent expiry AND regulatory approval — a patent may have expired but no ANDA may yet be filed or approved. Exclusivity codes (NCE, ODE, PED) can block generics even after patent expiry; always check `FDA_OrangeBook_get_exclusivity` before concluding a generic can enter. A 505(b)(2) NDA is not a generic — it requires its own clinical data and gets its own exclusivity period.
+
+**LOOK UP DON'T GUESS**: never assume NDA numbers, exclusivity dates, or ATC codes — always call FDAGSRS, Orange Book, and RxClass tools to retrieve current data; regulatory status changes with new approvals and expirations.
+
 Regulatory intelligence for drugs: identify FDA substances, classify drugs by therapeutic
 category, check approval and generic status, retrieve label sections, and find clinical trials.
 
@@ -71,19 +75,6 @@ Phase 8: Literature & Approval     -- PubMed_search_articles, OpenFDA_get_approv
 > - `RxNorm_get_drug_names` — resolve drug to RXCUI and brand names
 > - `drugbank_vocab_search` — DrugBank ID, CAS, UNII lookup
 > - `PubMed_search_articles` — regulatory and clinical literature
-
----
-
-## Key Identifiers
-
-| Data Type | Format | Example |
-|-----------|--------|---------|
-| FDA substance | UNII (10 chars) | R16CO5Y76E (aspirin) |
-| RxNorm drug | RXCUI (numeric string) | "41493" (metformin) |
-| ATC code | Letter-digit hierarchy | A10BA02 (metformin) |
-| NDA application | NDA###### | NDA020402 |
-| ANDA application | ANDA###### | ANDA078516 |
-| DailyMed label | SPL Set ID (UUID) | 030d9bca-a934-6ef9-... |
 
 ---
 
@@ -216,29 +207,6 @@ trials = tu.tools.search_clinical_trials(
 
 ---
 
-## Tool Quick Reference
-
-| Tool | Key Params | Returns |
-|------|-----------|---------|
-| FDAGSRS_search_substances | `query`, `substance_class`, `limit` | UNII + substance class + cross-refs |
-| FDAGSRS_get_substance | `unii` | All names, references, structure |
-| FDAGSRS_get_structure | `unii` | SMILES, InChIKey, MW, stereochemistry |
-| RxClass_get_drug_classes | `drug_name` or `rxcui`, `rela_source` | ATC/EPC/MoA/VA classifications |
-| RxClass_find_classes | `query`, `class_type` | Class IDs + names |
-| RxClass_get_class_members | `class_id`, `rela_source`, `ttys` | Drug ingredients in class |
-| FDA_OrangeBook_search_drug | `brand_name`/`generic_name`/`application_number` | Products + NDA + TE codes |
-| FDA_OrangeBook_check_generic_availability | `brand_name` or `generic_name` | Generic status + count |
-| FDA_OrangeBook_get_exclusivity | `application_number` or `brand_name` | Exclusivity codes + dates |
-| FDA_OrangeBook_get_approval_history | `application_number` | Chronological approval events |
-| DailyMed_parse_adverse_reactions | `drug_name` or `setid` | AE table with frequencies |
-| DailyMed_parse_dosing | `drug_name` or `setid` | Dosage and administration |
-| DailyMed_parse_contraindications | `drug_name` or `setid` | Contraindications list |
-| DailyMed_parse_drug_interactions | `drug_name` or `setid` | DDI section |
-| DailyMed_parse_clinical_pharmacology | `drug_name` or `setid` | PK/PD data |
-| search_clinical_trials | `condition`, `intervention`, `pageSize`, `overall_status` | NCT studies |
-
----
-
 ## Example Workflows
 
 ### Workflow 1: Full Regulatory Profile for a Drug
@@ -294,29 +262,17 @@ trials = tu.tools.search_clinical_trials(
 
 ---
 
-## Common Mistakes to Avoid
+## Common Mistakes
 
-| Mistake | Correction |
-|---------|-----------|
-| Using lowercase for Orange Book `brand_name` | Use UPPERCASE (e.g., "LIPITOR" not "lipitor") |
-| Passing drug name to FDAGSRS_get_substance | Requires UNII code; use FDAGSRS_search_substances first |
-| Expecting full patent numbers from FDA_OrangeBook_get_patent_info | Only metadata available via API; full data needs Orange Book file download |
-| Using `FDAGSRS_get_structure` for biologics | Returns error; only works for chemical substances |
-| Not passing `ttys="IN"` to RxClass_get_class_members | May return branded products; "IN" restricts to active ingredients |
-| Using `overall_status` as string in search_clinical_trials | Must be array: `["RECRUITING"]` not `"RECRUITING"` |
+- Orange Book `brand_name` must be UPPERCASE (e.g., `"LIPITOR"`)
+- `FDAGSRS_get_substance` requires UNII, not drug name — call `FDAGSRS_search_substances` first
+- `FDAGSRS_get_structure` only works for chemical substances, not biologics
+- `RxClass_get_class_members`: pass `ttys="IN"` to restrict to active ingredients
+- `search_clinical_trials` `overall_status` must be an array: `["RECRUITING"]`
 
 ---
 
 ## Reasoning Framework
-
-### Evidence Grading
-
-| Tier | Description | Example |
-|------|-------------|---------|
-| **T1** | FDA-approved with full NDA, post-market safety established | Atorvastatin (NDA020702), decades of real-world data |
-| **T2** | FDA-approved but limited post-market data (new NDA or 505(b)(2)) | Recently approved novel entity, <5 years on market |
-| **T3** | ANDA-approved generic or biosimilar, therapeutic equivalence demonstrated | Generic atorvastatin (ANDA, TE code AB) |
-| **T4** | Investigational or foreign-only, no FDA approval | Clinical trial phase compound, not in Orange Book |
 
 ### Interpretation Guidance
 
@@ -335,13 +291,3 @@ A complete drug regulatory report should answer:
 4. What drug class does this belong to (ATC, EPC, MoA), and what are peer drugs in the class?
 5. What are the most clinically significant adverse reactions and contraindications from the label?
 
----
-
-## Limitations
-
-- `FDA_OrangeBook_get_patent_info` does not return specific patent numbers or expiration dates via API.
-- `FDAGSRS_get_structure` returns error for proteins, nucleic acids, polymers, and mixtures.
-- `DailyMed_parse_*` tools require valid drug name or SPL Set ID; some drugs have multiple labels.
-- `RxClass` covers FDA-marketed drugs only; experimental or foreign-only drugs may not appear.
-- `FDA_OrangeBook_*` covers FDA-approved drugs only; does not include OTC monograph products.
-- `search_clinical_trials` `total_count` may be None; check `len(studies)` instead.

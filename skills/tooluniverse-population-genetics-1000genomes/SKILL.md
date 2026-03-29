@@ -12,6 +12,9 @@ triggers:
   - patterns: ["population code", "population stratification", "ancestral population", "1000 Genomes sample", "continental ancestry", "superpopulation filter"]
 ---
 
+## COMPUTE, DON'T DESCRIBE
+When analysis requires computation (statistics, data processing, scoring, enrichment), write and run Python code via Bash. Don't describe what you would do — execute it and report actual results. Use ToolUniverse tools to retrieve data, then Python (pandas, scipy, statsmodels, matplotlib) to analyze it.
+
 # Population Genetics with 1000 Genomes (IGSR)
 
 Use IGSR tools to search 1000 Genomes populations and samples, explore data collections, and

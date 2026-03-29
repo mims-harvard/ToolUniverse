@@ -221,11 +221,17 @@
         "input_terms": {
           "type": "string",
           "description": "Gene symbol or NCBI Gene ID. Examples: 'TP53', 'BRCA1', 'CYP1A1', '7157' (Gene ID for TP53)."
+        },
+        "query": {
+          "type": "string",
+          "description": "Gene symbol or name to search (alias for input_terms, e.g. TP53)"
+        },
+        "gene_symbol": {
+          "type": "string",
+          "description": "Gene symbol (alias for input_terms, e.g. TP53)"
         }
       },
-      "required": [
-        "input_terms"
-      ]
+      "required": []
     },
     "fields": {
       "input_type": "gene",

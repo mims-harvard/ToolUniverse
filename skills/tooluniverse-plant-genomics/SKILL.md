@@ -7,6 +7,12 @@ description: Research plant genes, pathways, and species using PlantReactome, En
 
 Pipeline for investigating plant genes, metabolic pathways, species taxonomy, and comparative plant biology using ToolUniverse tools.
 
+## Reasoning Strategy
+
+Plant genomes are large (wheat is ~17 Gb, vs. 3 Gb for human) and often polyploid — wheat is hexaploid (AABBDD), meaning there are three homeologous copies of most genes. When comparing plant genes to Arabidopsis, always account for whole-genome duplications: a single Arabidopsis gene may have 2–4 paralogs in a crop species, all potentially with diverged functions. Gene families are massively expanded in plants relative to animals (e.g., receptor-like kinases, cytochrome P450s, transcription factors) — a BLAST hit does not mean functional equivalence. Arabidopsis thaliana is the primary model, but its small genome and rapid life cycle mean some features (wood formation, nitrogen fixation symbiosis, C4 photosynthesis) are absent and must be studied in other species.
+
+**LOOK UP DON'T GUESS**: Do not assume gene function by sequence similarity alone in polyploid species; look up functional validation evidence via UniProt (reviewed entries) or PlantReactome. Do not assume KEGG organism codes — use the table or query `kegg_search_pathway` with the species name to confirm availability.
+
 **Key principles**:
 1. **Plant-specific pathways** — photosynthesis, secondary metabolism, hormone signaling are unique to plants
 2. **PlantReactome as foundation** — curated plant pathway database with cross-species coverage (Oryza, Arabidopsis, Zea mays, etc.)
@@ -116,14 +122,7 @@ KEGG_get_pathway_genes(pathway_id="ath00941")
 
 ### Phase 4: Interpretation Framework
 
-### Evidence Grading
-
-| Grade | Criteria | Example |
-|-------|---------|---------|
-| **T1** | Mutant phenotype confirms function | Arabidopsis chs mutant lacks flavonoids |
-| **T2** | Expression/localization data supports role | Gene expressed in guard cells → stomatal function |
-| **T3** | Ortholog has validated function in model species | Rice ortholog of Arabidopsis FLC controls flowering |
-| **T4** | Computational annotation only (InterPro domain, GO term) | Predicted kinase by domain |
+**Evidence grading**: T1 = mutant phenotype confirms function; T2 = expression/localization data; T3 = ortholog has validated function in model species; T4 = computational annotation only (domain/GO term). Prioritize T1/T2 evidence; treat T3/T4 as hypotheses requiring further validation.
 
 ### Synthesis Questions
 

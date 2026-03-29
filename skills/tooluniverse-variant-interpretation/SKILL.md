@@ -25,6 +25,12 @@ Use this skill when users:
 
 ---
 
+## LOOK UP, DON'T GUESS
+
+When asked about a variant's significance, query ClinVar/gnomAD/CIViC FIRST. Never classify a variant without checking databases. When you're not sure about a fact, your first instinct should be to SEARCH for it using tools, not to reason harder from memory.
+
+---
+
 ## Workflow Overview
 
 ```
@@ -304,6 +310,12 @@ File naming: `{GENE}_{VARIANT}_interpretation_report.md`
 | Predictions | At least 3 computational predictors |
 | Literature search | At least 2 search strategies |
 | ACMG codes | All applicable codes listed |
+
+---
+
+## Cross-Skill References
+
+For amino acid properties at variant position, run: `python3 skills/tooluniverse-sequence-analysis/scripts/amino_acids.py --type amino_acid --code X`
 
 ---
 

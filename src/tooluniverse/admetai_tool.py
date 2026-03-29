@@ -109,6 +109,9 @@ class ADMETAITool(BaseTool):
             selected ADMET properties and their predicted values.
         """
         smiles = arguments.get("smiles", [])
+        # Accept single SMILES string, coerce to list
+        if isinstance(smiles, str):
+            smiles = [smiles]
         if not smiles:
             return {"status": "error", "error": "SMILES string cannot be empty."}
 

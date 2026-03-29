@@ -20,6 +20,9 @@ class RegulomeDBRESTTool(BaseTool):
         return url
 
     def run(self, arguments: Dict[str, Any]) -> Dict[str, Any]:
+        # Accept 'variant' as alias for 'rsid' (used by RegulomeDB_get_score)
+        if "rsid" not in arguments and arguments.get("variant"):
+            arguments = dict(arguments, rsid=arguments["variant"])
         try:
             url = self._build_url(arguments)
             response = self.session.get(url, timeout=self.timeout)

@@ -9,7 +9,8 @@ from ._shared_client import get_shared_client
 
 
 def COD_get_structure(
-    id: str,
+    cod_id: Optional[str] = None,
+    id: Optional[str] = None,
     *,
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
@@ -20,6 +21,8 @@ def COD_get_structure(
 
     Parameters
     ----------
+    cod_id : str
+        Alias for 'id'. COD structure entry ID (numeric string). Examples: '9008460' ...
     id : str
         COD structure entry ID (numeric string). Examples: '9008460' (Aluminum), '101...
     stream_callback : Callable, optional
@@ -36,7 +39,7 @@ def COD_get_structure(
     # Handle mutable defaults to avoid B006 linting error
 
     # Strip None values so optional parameters don't trigger schema validation errors
-    _args = {k: v for k, v in {"id": id}.items() if v is not None}
+    _args = {k: v for k, v in {"cod_id": cod_id, "id": id}.items() if v is not None}
     return get_shared_client().run_one_function(
         {
             "name": "COD_get_structure",

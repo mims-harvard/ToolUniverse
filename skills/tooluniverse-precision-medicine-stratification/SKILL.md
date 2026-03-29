@@ -7,6 +7,18 @@ description: Comprehensive patient stratification for precision medicine by inte
 
 Transform patient genomic and clinical profiles into actionable risk stratification, treatment recommendations, and personalized therapeutic strategies.
 
+## Reasoning Before Searching
+
+Stratification means splitting patients into groups that respond differently to a treatment or have different prognoses. Ask these questions before running any tools:
+
+1. **What molecular feature predicts response?** Candidates: somatic mutation (e.g., EGFR L858R), germline variant (e.g., BRCA1 LoF), expression level (e.g., HER2 overexpression), germline pharmacogenomic variant (e.g., CYP2C19 PM), or composite biomarker (e.g., TMB-H + MSI-H).
+2. **Is the predictive feature actionable?** Knowing it must change treatment — either the drug choice, dose, or monitoring plan. A variant with prognostic value but no therapeutic consequence is not a stratification biomarker.
+3. **What is the evidence level for the stratifier?** FDA-approved companion diagnostic (T1) vs. exploratory (T4) changes how much weight to place on the finding.
+
+Route to the correct Phase 3 path BEFORE running Phase 2 tools — cancer, metabolic, CVD, rare disease, and autoimmune pipelines require different stratifiers.
+
+**LOOK UP DON'T GUESS**: Never assume a variant is pathogenic, never assume a gene is relevant to a disease, never assign metabolizer status without PharmGKB or CPIC evidence.
+
 **KEY PRINCIPLES**:
 1. **Report-first** - Create report file FIRST, then populate progressively
 2. **Disease-specific logic** - Cancer vs metabolic vs rare disease pipelines diverge at Phase 3
@@ -24,6 +36,9 @@ Transform patient genomic and clinical profiles into actionable risk stratificat
 - `QUICK_START.md` - Sample prompts and output summary
 
 ---
+
+## COMPUTE, DON'T DESCRIBE
+When analysis requires computation (statistics, data processing, scoring, enrichment), write and run Python code via Bash. Don't describe what you would do — execute it and report actual results. Use ToolUniverse tools to retrieve data, then Python (pandas, scipy, statsmodels, matplotlib) to analyze it.
 
 ## When to Use
 

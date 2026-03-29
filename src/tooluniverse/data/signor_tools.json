@@ -18,9 +18,13 @@
           "type": "integer",
           "description": "Maximum number of interactions to return.",
           "default": 50
+        },
+        "protein": {
+          "type": "string",
+          "description": "Gene symbol or protein name (alias for entity_id; prefer UniProt accession like P04637 for TP53)"
         }
       },
-      "required": ["entity_id"]
+      "required": []
     },
     "fields": {
       "operation": "get_interactions"
@@ -40,19 +44,54 @@
       "items": {
         "type": "object",
         "properties": {
-          "source_entity": {"type": "string"},
-          "source_type": {"type": "string"},
-          "source_id": {"type": "string"},
-          "target_entity": {"type": "string"},
-          "target_type": {"type": "string"},
-          "target_id": {"type": "string"},
-          "effect": {"type": "string"},
-          "mechanism": {"type": "string"},
-          "residue": {"type": ["string", "null"]},
-          "pmid": {"type": ["string", "null"]},
-          "direct": {"type": "boolean"},
-          "score": {"type": ["number", "null"]},
-          "signor_id": {"type": "string"}
+          "source_entity": {
+            "type": "string"
+          },
+          "source_type": {
+            "type": "string"
+          },
+          "source_id": {
+            "type": "string"
+          },
+          "target_entity": {
+            "type": "string"
+          },
+          "target_type": {
+            "type": "string"
+          },
+          "target_id": {
+            "type": "string"
+          },
+          "effect": {
+            "type": "string"
+          },
+          "mechanism": {
+            "type": "string"
+          },
+          "residue": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "pmid": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "direct": {
+            "type": "boolean"
+          },
+          "score": {
+            "type": [
+              "number",
+              "null"
+            ]
+          },
+          "signor_id": {
+            "type": "string"
+          }
         }
       }
     }
@@ -88,10 +127,24 @@
       "items": {
         "type": "object",
         "properties": {
-          "pathway_id": {"type": "string"},
-          "name": {"type": "string"},
-          "description": {"type": ["string", "null"]},
-          "curator": {"type": ["string", "null"]}
+          "pathway_id": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          },
+          "description": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "curator": {
+            "type": [
+              "string",
+              "null"
+            ]
+          }
         }
       }
     }
@@ -112,7 +165,9 @@
           "default": 100
         }
       },
-      "required": ["pathway_id"]
+      "required": [
+        "pathway_id"
+      ]
     },
     "fields": {
       "operation": "get_pathway"
@@ -132,19 +187,54 @@
       "items": {
         "type": "object",
         "properties": {
-          "source_entity": {"type": "string"},
-          "source_type": {"type": "string"},
-          "source_id": {"type": "string"},
-          "target_entity": {"type": "string"},
-          "target_type": {"type": "string"},
-          "target_id": {"type": "string"},
-          "effect": {"type": "string"},
-          "mechanism": {"type": "string"},
-          "residue": {"type": ["string", "null"]},
-          "pmid": {"type": ["string", "null"]},
-          "direct": {"type": "boolean"},
-          "score": {"type": ["number", "null"]},
-          "signor_id": {"type": "string"}
+          "source_entity": {
+            "type": "string"
+          },
+          "source_type": {
+            "type": "string"
+          },
+          "source_id": {
+            "type": "string"
+          },
+          "target_entity": {
+            "type": "string"
+          },
+          "target_type": {
+            "type": "string"
+          },
+          "target_id": {
+            "type": "string"
+          },
+          "effect": {
+            "type": "string"
+          },
+          "mechanism": {
+            "type": "string"
+          },
+          "residue": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "pmid": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "direct": {
+            "type": "boolean"
+          },
+          "score": {
+            "type": [
+              "number",
+              "null"
+            ]
+          },
+          "signor_id": {
+            "type": "string"
+          }
         }
       }
     }

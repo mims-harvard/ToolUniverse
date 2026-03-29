@@ -18,6 +18,23 @@ from .tool_registry import register_tool
 
 ENA_PORTAL_BASE_URL = "https://www.ebi.ac.uk/ena/portal/api"
 
+# Patterns that indicate the user already wrote an ENA query expression
+_ENA_QUERY_OPERATORS = ("=", "(", "tax_id", "tax_tree", "AND", "OR", "NOT")
+
+
+def _normalize_ena_query(query: str) -> str:
+    """Convert a plain-text search string to valid ENA Portal query syntax.
+
+    If the query already contains ENA operators/field assignments it is
+    returned unchanged.  Otherwise it is wrapped as
+    ``description="<query>"`` which is the most permissive full-text field.
+    """
+    if any(op in query for op in _ENA_QUERY_OPERATORS):
+        return query
+    # Escape internal double-quotes and wrap
+    escaped = query.replace('"', '\\"')
+    return f'description="{escaped}"'
+
 
 @register_tool("ENAPortalTool")
 class ENAPortalTool(BaseTool):
@@ -78,12 +95,13 @@ class ENAPortalTool(BaseTool):
 
     def _search_studies(self, arguments: Dict[str, Any]) -> Dict[str, Any]:
         """Search ENA studies by text query or taxonomy."""
-        query = arguments.get("query", "")
-        if not query:
+        raw_query = arguments.get("query", "")
+        if not raw_query:
             return {
                 "status": "error",
                 "error": "query parameter is required (e.g., 'description=\"cancer\"' or 'tax_tree(9606)')",
             }
+        query = _normalize_ena_query(raw_query)
 
         limit = min(arguments.get("limit", 10), 100)
         fields = arguments.get(
@@ -129,12 +147,13 @@ class ENAPortalTool(BaseTool):
 
     def _search_samples(self, arguments: Dict[str, Any]) -> Dict[str, Any]:
         """Search ENA samples by text query or taxonomy."""
-        query = arguments.get("query", "")
-        if not query:
+        raw_query = arguments.get("query", "")
+        if not raw_query:
             return {
                 "status": "error",
                 "error": "query parameter is required (e.g., 'tax_tree(9606)' or 'description=\"liver\"')",
             }
+        query = _normalize_ena_query(raw_query)
 
         limit = min(arguments.get("limit", 10), 100)
         fields = arguments.get(

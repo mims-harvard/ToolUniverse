@@ -1,0 +1,8 @@
+{
+  "eval_id": 0,
+  "eval_name": "eval-terphenyl",
+  "prompt": "see evals.json",
+  "assertions": [
+    {"text": "Answer matches expected output", "type": "exact_match"}
+  ]
+}

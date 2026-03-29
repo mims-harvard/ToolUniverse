@@ -42,9 +42,22 @@ class iPTMnetTool(BaseTool):
         self.session = requests.Session()
         self.timeout = 30
 
+    def _infer_operation(self, arguments: Dict[str, Any]) -> str:
+        """Infer operation from tool name when not explicitly provided."""
+        tool_name = self.tool_config.get("name", "")
+        if "search" in tool_name.lower():
+            return "search"
+        if "ptm_sites" in tool_name.lower():
+            return "get_ptm_sites"
+        if "proteoform" in tool_name.lower():
+            return "get_proteoforms"
+        if "ptm_ppi" in tool_name.lower():
+            return "get_ptm_ppi"
+        return ""
+
     def run(self, arguments: Dict[str, Any]) -> Dict[str, Any]:
         """Execute the iPTMnet API tool with given arguments."""
-        operation = arguments.get("operation")
+        operation = arguments.get("operation") or self._infer_operation(arguments)
         if not operation:
             return {"status": "error", "error": "Missing required parameter: operation"}
 
@@ -89,11 +102,16 @@ class iPTMnetTool(BaseTool):
                 "status": "error",
                 "error": "iPTMnet returned HTTP {}".format(resp.status_code),
             }
-        return {"status": "ok", "data": resp.json()}
+        return {"status": "success", "data": resp.json()}
 
     def _search(self, arguments: Dict[str, Any]) -> Dict[str, Any]:
         """Search proteins by name/keyword with optional role and PTM type filters."""
-        search_term = arguments.get("search_term")
+        search_term = (
+            arguments.get("search_term")
+            or arguments.get("query")
+            or arguments.get("gene_symbol")
+            or arguments.get("protein")
+        )
         if not search_term:
             return {
                 "status": "error",

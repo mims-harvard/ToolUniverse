@@ -7,7 +7,9 @@
       "properties": {
         "operation": {
           "type": "string",
-          "enum": ["xrefs"],
+          "enum": [
+            "xrefs"
+          ],
           "description": "Operation type (fixed: xrefs)"
         },
         "identifier": {
@@ -18,6 +20,10 @@
           "type": "string",
           "description": "Source database name or system code. Common codes: Ch=HMDB, Ce=ChEBI, Ck=KEGG Compound, En=Ensembl, H=HGNC, S=UniProt, L=NCBI Gene, Cpc=PubChem-compound"
         },
+        "source_database": {
+          "type": "string",
+          "description": "Alias for source. Source database name or system code."
+        },
         "organism": {
           "type": "string",
           "description": "Organism name (default: Human). Options include: Human, Mouse, Rat, Yeast, Worm, Fruit fly, Zebra fish, Arabidopsis thaliana, and others."
@@ -25,9 +31,15 @@
         "target_source": {
           "type": "string",
           "description": "Optional: filter results to a specific target database. Use database name or system code."
+        },
+        "target_database": {
+          "type": "string",
+          "description": "Alias for target_source. Filter results to a specific target database."
         }
       },
-      "required": ["operation", "identifier", "source"]
+      "required": [
+        "identifier"
+      ]
     },
     "type": "BridgeDbTool",
     "test_examples": [
@@ -100,7 +112,9 @@
               "description": "Error message"
             }
           },
-          "required": ["error"]
+          "required": [
+            "error"
+          ]
         }
       ]
     }
@@ -113,7 +127,9 @@
       "properties": {
         "operation": {
           "type": "string",
-          "enum": ["search"],
+          "enum": [
+            "search"
+          ],
           "description": "Operation type (fixed: search)"
         },
         "query": {
@@ -125,7 +141,9 @@
           "description": "Organism name (default: Human). Options: Human, Mouse, Rat, Yeast, Worm, Fruit fly, Zebra fish, etc."
         }
       },
-      "required": ["operation", "query"]
+      "required": [
+        "query"
+      ]
     },
     "type": "BridgeDbTool",
     "test_examples": [
@@ -191,7 +209,9 @@
               "description": "Error message"
             }
           },
-          "required": ["error"]
+          "required": [
+            "error"
+          ]
         }
       ]
     }
@@ -204,7 +224,9 @@
       "properties": {
         "operation": {
           "type": "string",
-          "enum": ["attributes"],
+          "enum": [
+            "attributes"
+          ],
           "description": "Operation type (fixed: attributes)"
         },
         "identifier": {
@@ -220,7 +242,10 @@
           "description": "Organism name (default: Human). Options: Human, Mouse, Rat, Yeast, etc."
         }
       },
-      "required": ["operation", "identifier", "source"]
+      "required": [
+        "identifier",
+        "source"
+      ]
     },
     "type": "BridgeDbTool",
     "test_examples": [
@@ -263,23 +288,38 @@
               "description": "Key-value pairs of attributes. Common keys: Symbol, BrutoFormula, Monoisotopic Weight, InChI, InChIKey, Synonyms (array)",
               "properties": {
                 "Symbol": {
-                  "type": ["string", "null"],
+                  "type": [
+                    "string",
+                    "null"
+                  ],
                   "description": "Common symbol/name"
                 },
                 "BrutoFormula": {
-                  "type": ["string", "null"],
+                  "type": [
+                    "string",
+                    "null"
+                  ],
                   "description": "Molecular formula"
                 },
                 "InChI": {
-                  "type": ["string", "null"],
+                  "type": [
+                    "string",
+                    "null"
+                  ],
                   "description": "InChI chemical identifier"
                 },
                 "InChIKey": {
-                  "type": ["string", "null"],
+                  "type": [
+                    "string",
+                    "null"
+                  ],
                   "description": "InChIKey hash"
                 },
                 "Monoisotopic Weight": {
-                  "type": ["string", "null"],
+                  "type": [
+                    "string",
+                    "null"
+                  ],
                   "description": "Monoisotopic molecular weight"
                 },
                 "Synonyms": {
@@ -301,7 +341,9 @@
               "description": "Error message"
             }
           },
-          "required": ["error"]
+          "required": [
+            "error"
+          ]
         }
       ]
     }

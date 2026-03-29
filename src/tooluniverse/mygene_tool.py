@@ -73,7 +73,7 @@ class MyGeneTool(BaseTool):
                 f"{MYGENE_BASE_URL}/query", params=params, timeout=self.timeout
             )
             response.raise_for_status()
-            return response.json()
+            return {"status": "success", "data": response.json()}
         except requests.RequestException as e:
             return {
                 "status": "error",
@@ -101,7 +101,7 @@ class MyGeneTool(BaseTool):
                 f"{MYGENE_BASE_URL}/gene/{gene_id}", params=params, timeout=self.timeout
             )
             response.raise_for_status()
-            return response.json()
+            return {"status": "success", "data": response.json()}
         except requests.RequestException as e:
             return {
                 "status": "error",
@@ -142,7 +142,7 @@ class MyGeneTool(BaseTool):
                 f"{MYGENE_BASE_URL}/query", data=data, timeout=self.timeout
             )
             response.raise_for_status()
-            return {"results": response.json()}
+            return {"status": "success", "data": {"results": response.json()}}
         except requests.RequestException as e:
             return {
                 "status": "error",
@@ -199,7 +199,7 @@ class MyVariantTool(BaseTool):
                 f"{self.MYVARIANT_BASE_URL}/query", params=params, timeout=self.timeout
             )
             response.raise_for_status()
-            return response.json()
+            return {"status": "success", "data": response.json()}
         except requests.RequestException as e:
             return {
                 "status": "error",
@@ -230,7 +230,7 @@ class MyVariantTool(BaseTool):
                 timeout=self.timeout,
             )
             response.raise_for_status()
-            return response.json()
+            return {"status": "success", "data": response.json()}
         except requests.RequestException as e:
             return {
                 "status": "error",
@@ -287,7 +287,7 @@ class MyChemTool(BaseTool):
                 f"{self.MYCHEM_BASE_URL}/query", params=params, timeout=self.timeout
             )
             response.raise_for_status()
-            return response.json()
+            return {"status": "success", "data": response.json()}
         except requests.RequestException as e:
             return {
                 "status": "error",
@@ -318,7 +318,7 @@ class MyChemTool(BaseTool):
                 timeout=self.timeout,
             )
             response.raise_for_status()
-            return response.json()
+            return {"status": "success", "data": response.json()}
         except requests.RequestException as e:
             return {
                 "status": "error",

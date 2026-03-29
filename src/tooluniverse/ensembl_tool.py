@@ -48,6 +48,19 @@ class EnsemblRESTTool(BaseTool):
         return ENSEMBL_BASE_URL + url_path
 
     def run(self, arguments: dict):
+        # 0. Apply schema defaults and parameter aliases for path params
+        schema_props = self.tool_config.get("parameter", {}).get("properties", {})
+        arguments = dict(arguments)
+        # Inject schema defaults for any missing path parameters
+        for path_key in re.findall(r"\{([^{}]+)\}", self.endpoint_template):
+            if path_key not in arguments and path_key in schema_props:
+                default_val = schema_props[path_key].get("default")
+                if default_val is not None:
+                    arguments[path_key] = default_val
+        # Accept 'variant_id' as alias for 'id' (variation endpoints)
+        if "id" not in arguments and arguments.get("variant_id"):
+            arguments["id"] = arguments["variant_id"]
+
         # 1. Validate required parameters
         for required_param in self.required_params:
             if required_param not in arguments:

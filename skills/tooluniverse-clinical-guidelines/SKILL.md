@@ -1,399 +1,302 @@
 ---
 name: tooluniverse-clinical-guidelines
-description: Search and retrieve clinical practice guidelines across 12+ authoritative sources including NICE, WHO, ADA, AHA/ACC, NCCN, SIGN, CPIC, CMA, CTFPHC, GIN, MAGICapp, PubMed, EuropePMC, TRIP, and OpenAlex. Covers disease management, cardiology, oncology, diabetes, pharmacogenomics, and more. Use when users ask about clinical guidelines, treatment recommendations, standard of care, evidence-based medicine, or drug-gene dosing recommendations.
+description: Search and retrieve clinical practice guidelines across 12+ authoritative sources including NICE, WHO, ADA, AHA/ACC, NCCN, SIGN, CPIC, CMA, CTFPHC, GIN, MAGICapp, PubMed, EuropePMC, TRIP, and OpenAlex. Use when users ask about clinical guidelines, treatment recommendations, standard of care, evidence-based medicine, or drug-gene dosing recommendations.
 ---
 
 # Clinical Guidelines Search & Retrieval
 
-Search and retrieve evidence-based clinical practice guidelines from 12+ authoritative sources spanning 41 tools. Covers disease management guidelines, society recommendations, pharmacogenomics guidance, and patient resources.
+## Guideline Hierarchy
 
-**KEY PRINCIPLES**:
-1. **Multi-source search** — Search ≥3 databases in parallel for comprehensive coverage
-2. **Source-appropriate queries** — Match query style to each database's strengths
-3. **Condition + society specific** — When user names a disease or society, use targeted tools
-4. **English queries first** — Use English medical terms in all tool calls; respond in user's language
-5. **Cite sources** — Every guideline result must include source organization and URL
+Not all guidelines carry equal weight. Evaluate sources in this order:
 
----
+1. **NICE and WHO** — Evidence-graded, regularly updated, rigorous systematic review process. NICE guidelines include explicit recommendation strength (e.g., "offer" vs "consider").
+2. **Society guidelines (AHA, ADA, NCCN, SIGN)** — Expert-consensus panels within a specialty. May lag behind the latest evidence by 1-3 years. Strong within their domain but narrower scope.
+3. **Aggregator databases (GIN, TRIP, OpenAlex)** — Index guidelines from multiple societies. Good for breadth and discovery, but you must verify the original source.
+4. **Literature databases (PubMed, EuropePMC)** — Return guideline-related publications, not curated guideline text. Useful as a fallback, not a primary source.
 
-## When to Use
-
-Apply when user asks:
-- "What are the guidelines for [condition]?"
-- "What does [ADA/AHA/NCCN/NICE/WHO] say about [topic]?"
-- "Standard of care for [disease]?"
-- "Drug-gene interactions for [drug/gene]?" (pharmacogenomics)
-- "Screening recommendations for [condition]?"
-- "Is there a guideline for [clinical question]?"
-- "What do guidelines say about [treatment/drug]?"
-- "Clinical recommendations for [oncology topic]?"
+**Always check publication date.** A 2015 guideline may be superseded by a 2024 update. When presenting results, include the year prominently and note if newer guidance may exist.
 
 ---
 
-## Phase 0: Tool Verification (MANDATORY FIRST STEP)
+## COMPUTE, DON'T DESCRIBE
+When analysis requires computation (statistics, data processing, scoring, enrichment), write and run Python code via Bash. Don't describe what you would do — execute it and report actual results. Use ToolUniverse tools to retrieve data, then Python (pandas, scipy, statsmodels, matplotlib) to analyze it.
 
-Before searching, verify tools load:
+## Search Strategy
 
-```python
-from tooluniverse import ToolUniverse
-tu = ToolUniverse()
-tu.load_tools()
-assert hasattr(tu.tools, 'NICE_Clinical_Guidelines_Search')
-```
+### Step 1: Start Narrow, Then Broaden
 
-**Correct call pattern** (use either approach):
-```python
-# Option A: direct attribute access
-result = tu.tools.NICE_Clinical_Guidelines_Search(query='diabetes', limit=5)
+1. Search the **condition name + "guideline"** in NICE, TRIP, and GIN simultaneously (parallel calls).
+2. If the question targets a specialty, add the society tool: AHA for cardiology, ADA for diabetes, NCCN for oncology, CPIC for pharmacogenomics.
+3. If initial searches return nothing, broaden to the disease category (e.g., "heart failure" instead of "HFpEF with SGLT2 inhibitors").
+4. If society-specific tools fail, fall back to PubMed/EuropePMC with `[condition] guideline [year]`.
 
-# Option B: run_one_function
-result = tu.run_one_function({'name': 'NICE_Clinical_Guidelines_Search', 'arguments': {'query': 'diabetes', 'limit': 5}})
-```
+### Step 2: Search at Least 3 Sources
 
----
+Always query a minimum of 3 databases to catch guidelines that one source may miss. Prioritize: **NICE > GIN > TRIP > Society-specific > Literature databases**.
 
-## Phase 1: Identify Query Strategy
+### Step 3: Retrieve Full Text When Available
 
-Determine which tools to use based on the user's question:
-
-| Query type | Primary tools | Secondary tools |
-|-----------|---------------|-----------------|
-| General disease guideline | NICE, TRIP, GIN | PubMed, EuropePMC, CMA |
-| Cardiology | AHA_ACC_search_guidelines, AHA_list_guidelines | NICE, TRIP |
-| Oncology | NCCN_search_guidelines, NCCN_list_patient_guidelines | NICE, GIN |
-| Diabetes / endocrinology | ADA_search_standards, ADA_list_standards_sections | NICE, SIGN |
-| Pharmacogenomics | CPIC_get_gene_drug_pairs, CPIC_list_guidelines | CPIC_get_gene_info |
-| Canadian guidelines | CMA_Guidelines_Search, CTFPHC_search_guidelines | — |
-| Scottish/UK guidelines | SIGN_search_guidelines, NICE | CMA |
-| International guidelines | GIN_Guidelines_Search | OpenAlex, EuropePMC |
-| Living guidelines | MAGICapp_list_guidelines | GIN |
-| Full-text retrieval | NICE_Guideline_Full_Text, WHO_Guideline_Full_Text, AHA_ACC_get_guideline | — |
+After identifying relevant guidelines from search results, use full-text tools to get recommendation details before synthesizing.
 
 ---
 
-## Phase 2: Multi-Source Search
+## Diagnostic Test Selection Reasoning
 
-### 2.1 General Search (Use ≥3 databases)
+When a clinical question asks "which test should be ordered?" or "what is the most appropriate next diagnostic step?", apply this reasoning framework BEFORE searching guidelines.
 
-**NICE_Clinical_Guidelines_Search** ⭐ (Best general source)
-- Parameters: `query` (string, required), `limit` (integer, required)
-- Returns: **list** directly (NOT wrapped in dict) — `[{title, url, summary, content, date}, ...]`
-- Handle: `result = tu.tools.NICE_Clinical_Guidelines_Search(...); isinstance(result, list)`
-- Example: `NICE_Clinical_Guidelines_Search(query='type 2 diabetes management', limit=5)`
+### Step 1: What Is the Clinical Question Actually Asking?
 
-**GIN_Guidelines_Search** ⭐ (Best multi-society aggregator)
-- Parameters: `query` (string, required), `limit` (integer, required)
-- Returns: **list** directly — `[{title, url, description, source, organization}, ...]`
-- Example: `GIN_Guidelines_Search(query='colorectal cancer screening', limit=5)`
+Diagnostic tests serve different purposes. Identify which one the question demands:
+- **Screening**: Detect disease in an asymptomatic population. Prioritize SENSITIVITY (minimize false negatives). Example: ANA for SLE screening.
+- **Confirmation**: Confirm a suspected diagnosis. Prioritize SPECIFICITY (minimize false positives). Example: anti-dsDNA or anti-Smith for SLE confirmation.
+- **Differentiation**: Distinguish between two diagnoses that look similar. Choose the test that is POSITIVE in one and NEGATIVE in the other. Example: ASO titers to distinguish PSGN from SLE nephritis (both have low complement and hematuria, but only PSGN has elevated ASO).
+- **Staging/Prognosis**: Determine disease severity after diagnosis is established. Example: renal biopsy ISN/RPS class for lupus nephritis.
+- **Monitoring**: Track response to treatment. Example: anti-dsDNA titers and complement levels in SLE.
 
-**TRIP_Database_Guidelines_Search**
-- Parameters: `query` (string, required), `limit` (integer, required), `search_type` (string, required — **must be `'guidelines'`**)
-- Returns: **list** directly — `[{title, url, description, content, publication}, ...]`
-- Example: `TRIP_Database_Guidelines_Search(query='diabetes', limit=5, search_type='guidelines')`
+### Step 2: Match the Test to the Diagnostic Gap
 
-**WHO_Guidelines_Search** ⚠️ (Limited relevance)
-- Parameters: `query` (string, required), `limit` (integer, required)
-- Returns: **list** directly — `[{title, url, description, content, source}, ...]`
-- **LIMITATION**: Does not reliably filter by topic. May return unrelated recent WHO publications.
-- Use for broad international queries; do not rely on for specific disease searches.
-- Example: `WHO_Guidelines_Search(query='diabetes', limit=5)`
+Ask: "What piece of information am I MISSING that would change management?"
 
-**CMA_Guidelines_Search** (Canadian)
-- Parameters: `query` (string, required), `limit` (integer, required)
-- Returns: **list** directly — `[{title, url, description, content, date}, ...]`
-- Example: `CMA_Guidelines_Search(query='diabetes', limit=5)`
+### Step 3: Sensitivity vs Specificity Decision Matrix
 
-**SIGN_search_guidelines** (Scottish/UK)
-- Parameters: `query` (string, required — NOT `q`), `limit` (integer, optional)
-- Returns: **list** directly — `[{number, title, topic, published, url}, ...]`
-- Example: `SIGN_search_guidelines(query='diabetes', limit=5)`
+| Scenario | Prioritize | Reasoning |
+|----------|-----------|-----------|
+| Ruling OUT a dangerous condition | High sensitivity | A negative result reliably excludes the disease |
+| Confirming before invasive treatment | High specificity | A positive result reliably confirms the disease |
+| Differentiating two similar conditions | Test unique to one | Choose marker present in condition A but absent in condition B |
+| Emergency with life-threatening DDx | Fastest available test | Speed trumps perfect accuracy in acute settings |
 
-**CTFPHC_search_guidelines** (Canadian prevention)
-- Parameters: `query` (string, required — NOT `q`), `limit` (integer, optional)
-- Returns: **list** directly — `[{title, url, year}, ...]`
-- Example: `CTFPHC_search_guidelines(query='colorectal cancer', limit=5)`
+### Step 4: Common Test Selection Pitfalls
 
-**OpenAlex_Guidelines_Search**
-- Parameters: `query` (string, required), `limit` (integer, required), `year_from` (integer, **optional**), `year_to` (integer, **optional**)
-- Returns: **list** directly — `[{title, authors, institutions, year, doi}, ...]`
-- Example: `OpenAlex_Guidelines_Search(query='diabetes management', limit=5)` (year params optional)
-- With years: `OpenAlex_Guidelines_Search(query='diabetes management', limit=5, year_from=2020, year_to=2024)`
-
-**EuropePMC_Guidelines_Search**
-- Parameters: `query` (string, required), `limit` (integer, required)
-- Returns: **list** directly — `[{title, pmid, pmcid, doi, authors}, ...]`
-- Note: May return loosely relevant results; use for literature discovery not definitive guidelines
-- Example: `EuropePMC_Guidelines_Search(query='diabetes guideline', limit=5)`
-
-**PubMed_Guidelines_Search**
-- Parameters: `query` (string, required), `limit` (integer, required), `api_key` (string, **optional** — use `''` for anonymous)
-- Returns: **list** directly — `[{title, pmid, pmcid, doi}, ...]`
-- Example: `PubMed_Guidelines_Search(query='diabetes guideline', limit=5)` (api_key optional)
-
-### 2.2 Society-Specific Search
-
-**ADA Standards of Care (Diabetes)**
-
-`ADA_list_standards_sections()` — No parameters. Lists all 19 sections of ADA Standards of Care (2026).
-- Returns list of section titles with PMIDs
-
-`ADA_search_standards(query, limit)` — Search within ADA Standards.
-- Returns: list — `[{title, ...}]`
-- **Note**: Uses PubMed corporate author filter. Use broad medical terms, not specific phrases.
-- ✅ Works: `'glycemic targets'`, `'pharmacologic approaches'`, `'cardiovascular risk'`
-- ❌ May fail: very specific phrases like `'first-line medication metformin'`
-
-`ADA_get_standards_section(section_number)` — Get metadata for a specific section.
-- Returns dict with section abstract (not full PMC text)
-
-**AHA/ACC Cardiology**
-
-`AHA_ACC_search_guidelines(query, limit)` — Search AHA/ACC guidelines.
-- Returns: **list** directly — `[{title, ...}]`
-- Example: `AHA_ACC_search_guidelines(query='heart failure management', limit=5)`
-
-`AHA_list_guidelines(limit)` / `ACC_list_guidelines(limit)` — List recent guidelines.
-
-`AHA_ACC_get_guideline(pmid)` — Get full text of AHA/ACC guideline by PMID (via PMC).
-- Returns dict with full text
-- Example: `AHA_ACC_get_guideline(pmid='37952199')`
-
-**NCCN Oncology**
-
-`NCCN_list_patient_guidelines(limit)` — List all NCCN patient guideline resources (up to 74).
-- Returns: **list** directly — `[{cancer_type, url, category}, ...]`
-- ⚠️ Field is `cancer_type`, NOT `title`
-- Use `r[i]['cancer_type']` to get the cancer name, `r[i]['url']` for URL
-
-`NCCN_search_guidelines(query, limit)` — Search NCCN publications.
-- Returns: **list** directly — `[{title, ...}]`
-- Note: Returns PubMed abstracts of NCCN articles (JNCCN), not proprietary guideline text
-
-`NCCN_get_patient_guideline(url)` — Get full text of a patient guideline.
-- Parameter: `url` (string) — the full URL from NCCN_list_patient_guidelines
-- Example: `NCCN_get_patient_guideline(url='https://www.nccn.org/patientresources/patient-resources/guidelines-for-patients/guidelines-for-patients-details?patientGuidelineId=61')`
-- ⚠️ Do NOT pass an integer ID — pass the full URL string
-
-**MAGICapp Living Guidelines**
-
-`MAGICapp_list_guidelines(limit)` — List living guidelines.
-- Returns: **dict wrapped** — `r.get('data', [])` gives the list
-- ⚠️ Field is `name`, NOT `title`; use `item['name']` for guideline title
-- Use `item['guidelineId']` for follow-up calls
-
-`MAGICapp_get_guideline(guideline_id)` — Get full guideline details.
-`MAGICapp_get_recommendations(guideline_id)` — Get recommendations for a guideline.
-`MAGICapp_get_sections(guideline_id)` — Get sections.
-
-**NCI Resources** ⚠️ (Research tools catalog, NOT clinical guidelines)
-
-`NCI_search_cancer_resources(q, size)` — Search NCI Research Resources for Researchers (R4R).
-- ⚠️ **This is a catalog of bioinformatics tools, datasets, and lab instruments — NOT a clinical guidelines database**
-- Parameters: `q` (NOT `query`), `size` (NOT `limit` — use `size` for result count)
-- Returns: dict — `r.get('data', {}).get('results', [])` gives the list
-- Useful for: finding analysis tools, datasets, bioinformatics resources related to a cancer type
-- Example: `NCI_search_cancer_resources(q='colorectal cancer screening', size=5)`
-
-### 2.3 Pharmacogenomics Search (CPIC)
-
-**Recommended workflow for gene-drug queries:**
-
-```
-Step 1: CPIC_get_gene_info(genesymbol='GENE')          → gene overview
-Step 2: CPIC_get_gene_drug_pairs(genesymbol='GENE')    → all drug pairs + CPIC levels
-Step 3: CPIC_list_guidelines(limit=50)                 → find guideline_id for gene+drug
-Step 4: CPIC_get_recommendations(guideline_id=N)       → specific dosing recommendations
-Step 5: CPIC_get_alleles(genesymbol='GENE')            → allele definitions
-```
-
-All CPIC tools return **dict-wrapped**: use `r.get('data', [])` to access results.
-
-`CPIC_get_gene_info(genesymbol)` — Gene overview.
-- Example: `CPIC_get_gene_info(genesymbol='CYP2D6')`
-
-`CPIC_get_gene_drug_pairs(genesymbol, limit)` — All gene-drug interactions with CPIC levels.
-- Returns: `data` = list of `{genesymbol, drugid, cpiclevel, pgkbcalevel, usedforrecommendation, ...}`
-- `cpiclevel` A/B/C/D: A = strongest evidence
-
-`CPIC_list_guidelines(limit)` — All CPIC guidelines.
-- Returns: `data` = list of `{name: 'GENE and Drug', guidelineId, url, ...}`
-- Use to find the `guidelineId` for a specific gene+drug pair
-
-`CPIC_get_recommendations(guideline_id, limit)` — Get dosing recommendations.
-- ⚠️ **Parameter is `guideline_id` (integer), NOT `genesymbol`**
-- Workflow: first find guideline_id from `CPIC_list_guidelines`, then call this
-- Example: `CPIC_get_recommendations(guideline_id=100416, limit=20)`
-- Returns duplicate records per allele combination — deduplicate by phenotype before presenting
-
-`CPIC_get_alleles(genesymbol, limit)` — Allele definitions.
-- Use `clinicalfunctionalstatus` field (NOT `functionalstatus` which is always null)
-- Example: `CPIC_get_alleles(genesymbol='CYP2D6', limit=10)`
-
-`CPIC_get_drug_info(drugname)` — Drug details.
-- Example: `CPIC_get_drug_info(drugname='codeine')`
-
-`CPIC_search_gene_drug_pairs(genesymbol, limit)` — Search gene-drug pairs.
-- ⚠️ **Requires PostgREST filter syntax**: `genesymbol='eq.CYP2D6'` (not just `'CYP2D6'`)
-- Example: `CPIC_search_gene_drug_pairs(genesymbol='eq.CYP2D6', limit=5)`
-
-### 2.4 Full-Text Retrieval
-
-`NICE_Guideline_Full_Text(url)` — Get NICE guideline text.
-- Use URL from NICE_Clinical_Guidelines_Search results
-- Returns dict (may have empty data for some guidelines; try chapter URLs like `.../chapter/Recommendations`)
-
-`WHO_Guideline_Full_Text(url)` — Get WHO guideline text.
-- Note: Most WHO T2D content is in PDFs; tool may return PDF link not full text
-
-`AHA_ACC_get_guideline(pmid)` — Get AHA/ACC guideline text via PMC.
+1. **Ordering a test that is positive in BOTH conditions on the differential** — C3/C4 is low in both SLE and PSGN; it does not differentiate. Always ask: "Would this test result change my differential?"
+2. **Ordering a screening test when a confirmatory test is needed** — ANA is sensitive but not specific for SLE. If you already suspect SLE, order anti-dsDNA or anti-Smith (specific).
+3. **Skipping the simple test for the exotic one** — ASO titers are cheap and fast. Do not jump to renal biopsy before checking whether streptococcal infection explains the presentation.
+4. **Forgetting temporal context** — PSGN complement normalizes in 6-8 weeks; SLE complement stays persistently low. A single complement level is less useful than a trend.
+5. **Ignoring pre-test probability** — A test with 95% specificity still has a 50% false-positive rate if the pre-test probability is only 5%. Consider the clinical picture first.
 
 ---
 
-## Phase 3: Synthesize Results
+## Lab Test Interpretation Strategy
 
-### 3.1 Report Structure
+- Always consider **pre-test probability** before interpreting any result. A positive test in a low-prevalence population has a high false-positive rate regardless of test accuracy.
+- **SnNOut**: A highly **Se**nsitive test, when **N**egative, rules **Out** the disease. Use sensitive tests for screening.
+- **SpPIn**: A highly **Sp**ecific test, when **P**ositive, rules **In** the disease. Use specific tests for confirmation.
+- For **conflicting results** (e.g., one test positive, another negative): repeat the discordant test, order a different confirmatory test, or re-evaluate the clinical picture and pre-test probability.
+- **Likelihood ratios** trump sensitivity/specificity alone. LR+ >10 or LR- <0.1 meaningfully shift post-test probability.
+
+---
+
+## Surgical Decision Making
+
+- **Indications**: Determine whether surgery is necessary. Absolute indications (e.g., perforated viscus, acute limb ischemia) require immediate action; relative indications (e.g., symptomatic gallstones) allow shared decision-making.
+- **Timing**: Emergent (within minutes-hours, life/limb threat), urgent (within 24-72 hours, deterioration risk), elective (scheduled, optimized pre-operatively).
+- **Approach**: Choose the least invasive option that achieves the therapeutic goal. Laparoscopic before open, endovascular before surgical, unless contraindicated by anatomy or urgency.
+
+---
+
+## Applying Guidelines to Patients
+
+Guidelines give **population-level recommendations**. When presenting findings:
+
+1. **Cite the source explicitly** — "Per the 2024 ADA Standards of Care, Section 9..." not "guidelines recommend..."
+2. **Note patient-specific modifiers** — Comorbidities, drug interactions, renal/hepatic function, age, pregnancy, and patient preferences may all change the recommendation.
+3. **Flag when evidence is weak** — Grade D / expert consensus recommendations should be presented differently from Grade A / high-confidence ones.
+4. **Identify conflicts between guidelines** — When NICE and ADA disagree, present both positions and note the discrepancy.
+5. **State limitations** — If the patient's scenario falls outside the guideline's studied population, say so explicitly.
+
+---
+
+## Tool Workflow
+
+### General Guideline Search (Parallel Calls)
+
+| Tool | Key Parameters | Notes |
+|------|---------------|-------|
+| `NICE_Clinical_Guidelines_Search` | `query`, `limit` (both required) | Best general source; returns list directly |
+| `GIN_Guidelines_Search` | `query`, `limit` (both required) | Best multi-society aggregator |
+| `TRIP_Database_Guidelines_Search` | `query`, `limit`, `search_type='guidelines'` (all required) | Must include search_type |
+| `WHO_Guidelines_Search` | `query`, `limit` | Limited topic filtering; may return unrelated WHO docs |
+| `CMA_Guidelines_Search` | `query`, `limit` | Canadian guidelines |
+| `SIGN_search_guidelines` | `query` (NOT `q`), `limit` | Scottish/UK |
+| `CTFPHC_search_guidelines` | `query` (NOT `q`), `limit` | Canadian prevention |
+| `OpenAlex_Guidelines_Search` | `query`, `limit`, optional `year_from`/`year_to` | Academic publications |
+| `EuropePMC_Guidelines_Search` | `query`, `limit` | Loosely relevant; use for discovery |
+| `PubMed_Guidelines_Search` | `query`, `limit`, optional `api_key` | Literature fallback |
+
+All general search tools return **lists directly** — access as `result[0]['title']`.
+
+### Society-Specific Tools
+
+**ADA (Diabetes)**
+- `ADA_list_standards_sections()` — No params. Lists all sections of ADA Standards of Care.
+- `ADA_search_standards(query, limit)` — Use broad medical terms, not specific drug names.
+- `ADA_get_standards_section(section_number)` — Returns section abstract only.
+
+**AHA/ACC (Cardiology)**
+- `AHA_ACC_search_guidelines(query, limit)` — Search AHA/ACC guidelines.
+- `AHA_list_guidelines(limit)` / `ACC_list_guidelines(limit)` — List recent.
+- `AHA_ACC_get_guideline(pmid)` — Full text via PMC.
+
+**NCCN (Oncology)**
+- `NCCN_list_patient_guidelines(limit)` — Field is `cancer_type`, NOT `title`.
+- `NCCN_search_guidelines(query, limit)` — Returns JNCCN abstracts, not proprietary text.
+- `NCCN_get_patient_guideline(url)` — Pass full URL string, NOT an integer ID.
+
+**MAGICapp (Living Guidelines)**
+- `MAGICapp_list_guidelines(limit)` — Returns **dict**: use `r.get('data', [])`. Field is `name`, NOT `title`.
+- `MAGICapp_get_guideline(guideline_id)` / `MAGICapp_get_recommendations(guideline_id)` / `MAGICapp_get_sections(guideline_id)`
+
+**NCI** — Catalogs research tools/datasets, NOT clinical guidelines. Use `q` (not `query`), `size` (not `limit`). Access: `r.get('data',{}).get('results',[])`.
+
+### Pharmacogenomics (CPIC)
+
+All CPIC tools return **dict-wrapped**: use `r.get('data', [])`.
+
+**Workflow:**
+1. `CPIC_get_gene_info(genesymbol='CYP2D6')` — Gene overview
+2. `CPIC_get_gene_drug_pairs(genesymbol='CYP2D6')` — All drugs with CPIC levels (A=strongest)
+3. `CPIC_list_guidelines(limit=50)` — Find `guidelineId` for target gene+drug pair
+4. `CPIC_get_recommendations(guideline_id=N)` — Dosing recommendations (deduplicate by phenotype)
+5. `CPIC_get_alleles(genesymbol='CYP2D6')` — Use `clinicalfunctionalstatus` (NOT `functionalstatus`)
+
+**Gotchas:**
+- `CPIC_get_recommendations` takes `guideline_id` (integer), NOT `genesymbol`
+- `CPIC_search_gene_drug_pairs` requires PostgREST syntax: `genesymbol='eq.CYP2D6'`
+- Deduplicate recommendations by phenotype before presenting (many duplicate records per allele combo)
+
+### Full-Text Retrieval
+
+| Source | Tool | Input |
+|--------|------|-------|
+| NICE | `NICE_Guideline_Full_Text(url)` | URL from search results; try `.../chapter/Recommendations` |
+| WHO | `WHO_Guideline_Full_Text(url)` | May return PDF link, not full text |
+| AHA/ACC | `AHA_ACC_get_guideline(pmid)` | PMID from search results |
+| NCCN | `NCCN_get_patient_guideline(url)` | Full URL from list results |
+
+---
+
+## Evidence Grading Quick Reference
+
+| System | Strong | Moderate | Weak/Expert Opinion |
+|--------|--------|----------|-------------------|
+| ADA | Grade A | Grade B/C | Grade E (consensus) |
+| AHA/ACC | Class I | Class IIa/IIb | Class III |
+| SIGN | Strong | Conditional | Good practice point |
+| CPIC | Level A | Level B | Level C/D |
+| NICE | "Offer" (strong) | "Consider" (weaker) | Research recommendation |
+
+---
+
+## Fallback Strategy
+
+- NICE returns empty -> try TRIP or GIN
+- ADA returns 0 results -> broaden terms (`'pharmacologic approaches'` not `'metformin first-line'`)
+- WHO returns irrelevant results -> skip WHO, use GIN or EuropePMC
+- CPIC returns no recommendations -> present gene-drug pairs with CPIC levels as proxy
+- TRIP returns 403/gated PDFs -> note limited access, try alternative sources
+
+---
+
+## Synthesis Template
 
 ```
 # Clinical Guidelines: [Topic]
 
 ## Summary
-[2-3 sentence overview of what guidelines say]
+[2-3 sentences: what do the guidelines agree on? Where do they diverge?]
 
 ## Key Recommendations
+### [Source 1 — Organization, Year]
+- Recommendation text [Evidence grade]
+- URL
 
-### [Source 1: NICE/ADA/NCCN/etc.]
-[Key recommendations with evidence grade, URL]
+### [Source 2 — Organization, Year]
+- Recommendation text [Evidence grade]
 
-### [Source 2]
-[Key recommendations]
+## Patient-Specific Considerations
+[Comorbidities, interactions, or population factors that modify these recommendations]
 
 ## Pharmacogenomics (if applicable)
-[CPIC phenotype-to-recommendation table]
+[CPIC phenotype-to-dosing table, deduplicated]
 
 ## References
-[All URLs cited]
+[All source URLs]
 ```
-
-### 3.2 Evidence Grading
-
-- **Grade A** (ADA) / **Class I** (AHA) / **Strong** (SIGN) = high confidence
-- **Grade B/C** = moderate confidence; **Grade D** / **Consensus** = expert opinion
-- **CPIC Level A** = strongest PGx evidence; **B** = moderate; **C/D** = limited
-- Note recommendation year — guidelines vary in currency (SIGN 2025, ADA 2026, NICE Feb 2026)
-
-### 3.3 CPIC Recommendation Deduplication
-
-CPIC returns multiple records for the same phenotype (one per allele combination). Before presenting:
-```python
-seen_phenotypes = set()
-unique_recs = []
-for rec in recs:
-    phenotype = rec.get('phenotype') or rec.get('lookupkey', '')
-    if phenotype not in seen_phenotypes:
-        seen_phenotypes.add(phenotype)
-        unique_recs.append(rec)
-```
-
----
-
-## Phase 4: Decision Logic
-
-### General disease guideline:
-1. NICE (`query`, `limit`) — UK, high quality
-2. GIN (`query`, `limit`) — multi-society aggregator ⭐ best for breadth
-3. TRIP (`query`, `limit`, `search_type='guidelines'`)
-4. If cardiac → add AHA_ACC_search_guidelines
-5. If cancer → add NCCN_search_guidelines + NCCN_list_patient_guidelines
-6. If diabetes → add ADA_list_standards_sections + ADA_search_standards
-
-### Pharmacogenomics:
-1. `CPIC_get_gene_info(genesymbol)` → overview
-2. `CPIC_get_gene_drug_pairs(genesymbol)` → all drugs with CPIC levels
-3. `CPIC_list_guidelines(limit=50)` → find guideline_id for target gene+drug
-4. `CPIC_get_recommendations(guideline_id=N)` → specific recs (deduplicate by phenotype)
-
-### Full text retrieval:
-1. Find guideline URL/PMID from search results
-2. NICE URL → NICE_Guideline_Full_Text
-3. AHA/ACC PMID → AHA_ACC_get_guideline
-4. WHO URL → WHO_Guideline_Full_Text
-5. NCCN patient guideline URL → NCCN_get_patient_guideline
-
-### Fallback strategy:
-- If NICE returns empty → try TRIP or GIN
-- If ADA returns 0 results → broaden query terms (e.g., `'pharmacologic approaches'` instead of `'metformin first-line'`)
-- If WHO returns irrelevant results → skip WHO, use GIN or EuropePMC instead
-- If CPIC returns no recommendations → list gene-drug pairs with CPIC levels as a proxy
-
----
-
-## Critical Parameter Notes (Verified by Testing)
-
-| Tool | CORRECT | WRONG |
-|------|---------|-------|
-| NICE_Clinical_Guidelines_Search | `query='...'`, `limit=N` (both required) | ❌ `q='...'` |
-| TRIP_Database_Guidelines_Search | `search_type='guidelines'` required | ❌ omitting search_type |
-| OpenAlex_Guidelines_Search | `year_from`/`year_to` are **optional** | ❌ treating as required |
-| PubMed_Guidelines_Search | `api_key` is **optional** (omit or use `''`) | ❌ treating api_key as required |
-| GIN_Guidelines_Search | `limit=N` required | ❌ omitting limit |
-| CMA_Guidelines_Search | `limit=N` required | ❌ omitting limit |
-| SIGN_search_guidelines | `query='...'` (NOT `q`) | ❌ `q='...'` |
-| CTFPHC_search_guidelines | `query='...'` (NOT `q`) | ❌ `q='...'` |
-| NCI_search_cancer_resources | `q='...'`, `size=N` (NOT `limit`) | ❌ `query=...` or `limit=N` |
-| NCCN_list_patient_guidelines | field `cancer_type` (not `title`) | ❌ `.get('title')` |
-| NCCN_get_patient_guideline | `url='https://...'` (full URL string) | ❌ integer patientGuidelineId |
-| MAGICapp_list_guidelines | `r.get('data', [])` for list | ❌ accessing `r` directly as list |
-| MAGICapp_* items | field `name` (not `title`) | ❌ `.get('title')` |
-| CPIC_* tools | `r.get('data', [])` for list | ❌ accessing `r` directly |
-| CPIC_get_recommendations | `guideline_id=N` (integer) | ❌ `genesymbol='CYP2D6'` |
-| CPIC_search_gene_drug_pairs | `genesymbol='eq.CYP2D6'` (PostgREST) | ❌ `genesymbol='CYP2D6'` |
-| CPIC_get_alleles | use `clinicalfunctionalstatus` field | ❌ `functionalstatus` (always null) |
-| NCI_search_cancer_resources | `r.get('data',{}).get('results',[])` | ❌ `r.get('data', [])` |
-
----
-
-## Response Format Reference
-
-| Tool | Return type | Access pattern |
-|------|-------------|----------------|
-| NICE_Clinical_Guidelines_Search | **list** (raw) | `result[0]['title']` |
-| GIN_Guidelines_Search | **list** (raw) | `result[0]['title']` |
-| TRIP_Database_Guidelines_Search | **list** (raw) | `result[0]['title']` |
-| WHO_Guidelines_Search | **list** (raw) | `result[0]['title']` |
-| EuropePMC_Guidelines_Search | **list** (raw) | `result[0]['title']` |
-| PubMed_Guidelines_Search | **list** (raw) | `result[0]['title']` |
-| CMA_Guidelines_Search | **list** (raw) | `result[0]['title']` |
-| SIGN_search_guidelines | **list** (raw) | `result[0]['title']` |
-| CTFPHC_search_guidelines | **list** (raw) | `result[0]['title']` |
-| ADA_search_standards | **list** (raw) | `result[0]['title']` |
-| AHA_ACC_search_guidelines | **list** (raw) | `result[0]['title']` |
-| NCCN_search_guidelines | **list** (raw) | `result[0]['title']` |
-| NCCN_list_patient_guidelines | **list** (raw) | `result[0]['cancer_type']` |
-| OpenAlex_Guidelines_Search | **list** (raw) | `result[0]['title']` |
-| CPIC_list_guidelines | **dict** → `data` | `r.get('data', [])[0]['name']` |
-| CPIC_get_gene_drug_pairs | **dict** → `data` | `r.get('data', [])[0]['genesymbol']` |
-| CPIC_get_recommendations | **dict** → `data` | `r.get('data', [])[0]` |
-| CPIC_get_gene_info | **dict** → `data` | `r.get('data', {})` |
-| MAGICapp_list_guidelines | **dict** → `data` | `r.get('data', [])[0]['name']` |
-| NCI_search_cancer_resources | **dict** nested | `r.get('data',{}).get('results',[])[0]['title']` |
 
 ---
 
 ## Known Limitations
 
-- **WHO_Guidelines_Search**: Returns recently-published WHO docs regardless of query topic — results may be irrelevant for specific diseases. Supplement with GIN for international guidelines.
-- **NCI_search_cancer_resources**: Catalogs research tools/datasets, NOT clinical practice guidelines.
-- **NICE_Guideline_Full_Text**: Retrieves overview page only; recommendation sub-pages (`.../chapter/Recommendations`) may need direct URL
-- **SIGN**: No full-text tool; guideline text only available as PDFs
-- **ADA_get_standards_section**: Returns abstract only, not full PMC text
-- **CPIC_get_recommendations**: Returns many duplicate records per allele combination; deduplicate by phenotype
-- **NCCN_search_guidelines**: Returns PubMed/JNCCN abstracts, not proprietary NCCN guideline text
-- **TRIP content**: Some TRIP results link to PDF-gated URLs; content extraction may fail with 403
+- **WHO_Guidelines_Search**: Unreliable topic filtering; supplement with GIN for international guidelines.
+- **NCI_search_cancer_resources**: Research tool catalog, NOT clinical guidelines.
+- **NICE_Guideline_Full_Text**: Overview page only; sub-pages may need direct URL.
+- **SIGN**: No full-text tool; PDFs only.
+- **ADA_get_standards_section**: Abstract only, not full PMC text.
+- **NCCN_search_guidelines**: JNCCN abstracts, not proprietary NCCN guideline content.
 
-## Missing Sources (Potential Future Tools)
+---
 
-- **USPSTF** (US Preventive Services Task Force) — primary US screening recommendations
-- **ACG** (American College of Gastroenterology) — gastroenterology guidelines
-- **AGA** (American Gastroenterological Association)
-- **Cochrane Reviews** — systematic reviews on clinical interventions
-- **AHRQ** — Agency for Healthcare Research and Quality
+## Clinical MCQ Reasoning Framework
+
+### 1. Systematic Differential Diagnosis Protocol
+
+- List ALL findings (vital signs, labs, imaging, history)
+- For each answer choice, score how many findings it explains
+- The correct answer usually explains the MOST findings
+- Diagnose from the symptom cluster FIRST, then check if ancillary findings (imaging, incidental labs) are consistent or incidental
+- Don't anchor on the most dramatic finding -- consider the full picture
+
+### 2. Critical Clinical Decision Rules
+
+**Spine triage -- use TLICS scoring, not gestalt:**
+- TLICS dimensions: Morphology (compression=1, burst=2, translation/rotation=3, distraction=4) + PLC integrity (intact=0, suspected=2, injured=3) + Neurologic status (intact=0, root=2, cord complete=2, cord incomplete=3, cauda equina=3)
+- Neurologic deficit is the HIGHEST priority component -- always triaged first
+- When a named scoring system exists (TLICS, CURB-65, Wells, etc.), always apply it instead of intuitive severity ranking
+
+**Hemorrhagic shock -- fluid selection:**
+- IV crystalloid (NS or LR) is first-line for ALL classes
+- Class III-IV: add blood products, but crystalloid still comes first
+
+**Brown-Sequard -- lesion level determination:**
+- Lesion level = the HIGHEST level of ipsilateral motor/sensory loss, NOT the level where contralateral pain/temp loss begins
+- Contralateral pain/temp loss starts 1-2 segments BELOW the lesion (fibers ascend in Lissauer's tract before crossing)
+
+**Post-valve surgery monitoring:**
+- Mechanical valves: lifelong warfarin (INR 2.5-3.5 mitral, 2.0-3.0 aortic)
+- When answer choices include both "prescribe anticoagulant" and "monitor PT/INR": monitoring PT/INR is MORE specific because it implies ongoing anticoagulation management, not just prescribing
+- Verify pharmacological terminology in answer choices -- if a conceptually correct answer uses a non-existent drug class name, consider whether "none of the above" is more appropriate
+
+**Incidental findings:**
+- Do not let an incidental imaging finding override a coherent clinical syndrome. When the clinical picture fits one diagnosis and the imaging finding is commonly benign (e.g., vertebral hemangiomas found on 10-12% of CTs), prioritize the clinical syndrome.
+
+**Post-surgical complications:**
+- Always include perioperative MI in the differential for post-surgical hypoxemia, especially after major surgery with blood loss
+- Complications can present days to weeks post-op — do not assume only acute reactions
+
+### 3. Answer Verification Checklist
+
+- Does my answer explain ALL abnormal findings?
+- Is there an answer choice that explains findings my choice doesn't?
+- Am I choosing based on the most common condition, or the condition that best fits THIS patient?
+- Have I re-read the question stem for qualifiers like "most likely", "next best step", "initial"?
+- If I calculated a specific value (lesion level, score), is it actually among the choices? If not, consider "none of the above"
+- Are all pharmacological terms in my chosen answer real and correctly named?
+
+### 4. Treatment Protocol Verification
+
+- Before recommending a specific drug: check contraindications, drug interactions, and patient-specific factors (renal/hepatic function, age, pregnancy, allergies)
+- For infectious disease: verify the organism-drug sensitivity -- not all antibiotics work for all organisms. Geographic endemic patterns matter (e.g., Coccidioidomycosis in SW US, not Melioidosis)
+- For emergency medicine: follow ATLS/ACLS protocols step by step. Do not skip crystalloid resuscitation for pharmacologic interventions
+- For oncology: verify NCCN category and specific biomarker requirements before recommending targeted therapy
+- For cardiovascular risk: high-dose statin is first-line for established ASCVD -- do not discontinue metformin or other agents as a substitute for lipid management
+- For psychiatric pharmacotherapy: check herb-drug and supplement-drug interactions
+- For seizure management: distinguish dietary causes from drug interaction causes -- breakthrough seizures on ketogenic diet may require medication change, not diet adjustment
+- When multiple interventions are listed: verify the correct SEQUENCE (e.g., stabilize airway before pharmacotherapy, rule out reversible causes before chronic management)
+
+### 5. Pediatric Medicine Traps
+
+- Fluid calculations: use Holliday-Segar formula (100/50/20 mL/kg/day for first 10/next 10/each subsequent kg)
+- Dehydration correction: deficit volume = weight (kg) x % dehydration x 10 (mL)
+- Neonatal presentations: consider congenital vs acquired causes first
+- BSA-based dosing: verify BSA calculation (Mosteller: sqrt(height_cm x weight_kg / 3600)), then dose = mg/m2 x BSA. Always multiply by number of treatment days for total dose
+- Double-check arithmetic: pediatric dosing errors are the most common clinical MCQ trap (e.g., 25 mg/m2 x 0.8 m2 = 20 mg/day, NOT 43 mg)

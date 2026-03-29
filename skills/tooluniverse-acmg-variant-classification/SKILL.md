@@ -5,16 +5,29 @@ description: Systematic ACMG/AMP variant classification using ToolUniverse tools
 
 # ACMG/AMP Variant Classification
 
-Systematic application of the 28 ACMG/AMP criteria to classify germline variants into five tiers: Pathogenic, Likely Pathogenic, VUS, Likely Benign, or Benign. Each phase queries specific databases, then the classification algorithm combines criteria per Richards et al., 2015.
+## ACMG Reasoning
+
+Each criterion (PS, PM, PP for pathogenic; BS, BP for benign) contributes a weighted piece of evidence for or against pathogenicity. The classification is the COMBINATION of all activated criteria, not any single criterion. Do not overweight a single finding.
+
+The hierarchy is: PVS1 (very strong) > PS (strong) > PM (moderate) > PP (supporting). On the benign side: BA1 (stand-alone) > BS (strong) > BP (supporting). A frameshift in a LOF-intolerant gene (PVS1) plus a ClinVar expert-panel pathogenic entry (PS1) is pathogenic. A single PP criterion alone is not. The combination rule is what matters.
+
+Two common errors to avoid: (1) seeing a "Pathogenic" ClinVar entry and stopping — that is PP5 (supporting) unless it has expert-panel review, not automatic confirmation; (2) dismissing a variant because one predictor says "tolerated" — discordant predictors mean neither PP3 nor BP4 applies, which is neutral evidence, not benign evidence.
+
+Always apply criteria conservatively. When evidence is ambiguous, leave the criterion unmet. Cite the source for every criterion you activate so clinicians can audit the reasoning.
 
 **KEY PRINCIPLES**:
-1. **Criteria-driven** - Every classification must cite which ACMG criteria were activated and why
-2. **Conservative** - When evidence is ambiguous, do NOT upgrade a criterion; leave it unmet
-3. **Gene-aware** - Adjust thresholds based on gene mechanism (LOF vs. gain-of-function)
-4. **Population-calibrated** - Use ancestry-specific gnomAD frequencies, not just global AF
-5. **Transparent** - Show evidence for each criterion so clinicians can audit the reasoning
-6. **Source-referenced** - Every criterion activation must cite the database/tool source
-7. **English-first queries** - Always use English terms in tool calls. Respond in user's language
+1. **Criteria-driven** — cite which criteria were activated and why
+2. **Conservative** — do not upgrade a criterion when evidence is ambiguous
+3. **Gene-aware** — adjust thresholds based on gene mechanism (LOF vs. gain-of-function)
+4. **Population-calibrated** — use ancestry-specific gnomAD frequencies, not just global AF
+5. **Transparent** — show evidence for each criterion
+6. **Source-referenced** — every criterion activation must cite the database/tool source
+7. **English-first queries** — always use English terms in tool calls; respond in user's language
+
+---
+
+## LOOK UP, DON'T GUESS
+When uncertain about any scientific fact, SEARCH databases first (PubMed, UniProt, ChEMBL, ClinVar, etc.) rather than reasoning from memory. A database-verified answer is always more reliable than a guess.
 
 ---
 
@@ -28,7 +41,7 @@ Systematic application of the 28 ACMG/AMP criteria to classify germline variants
 
 ---
 
-## Tool Parameter Reference (CRITICAL)
+## Tool Parameter Reference
 
 | Tool | Key Parameters | Notes |
 |------|---------------|-------|
@@ -52,170 +65,122 @@ Systematic application of the 28 ACMG/AMP criteria to classify germline variants
 
 ## Phase 0: Variant Validation and Normalization
 
-**WHY**: ACMG classification requires an unambiguous variant on a specific transcript. Wrong HGVS or transcript cascades errors through all criteria. MANE Select is the community-agreed reference.
+Wrong HGVS or wrong transcript cascades errors through every downstream criterion. Validate first.
 
 1. **Get MANE Select transcript**: `VariantValidator_gene2transcripts(gene_symbol="BRCA2")`
 2. **Validate variant**: `VariantValidator_validate_variant(variant_description="NM_000059.4:c.5946delT", genome_build="GRCh38", select_transcripts="mane_select")`
-3. **Resolve gene IDs**: `MyGene_query_genes(query="BRCA2")` -- extract Ensembl ID, UniProt accession. Filter by `symbol == 'BRCA2'`.
+3. **Resolve gene IDs**: `MyGene_query_genes(query="BRCA2")` — extract Ensembl ID and UniProt accession. Filter results by `symbol == 'BRCA2'` (first hit may not match).
 4. **Record**: HGVS coding, HGVS protein, genomic coordinates, variant type (frameshift/missense/nonsense/splice/synonymous/in-frame indel).
 
-**Accepted inputs**: HGVS coding (NM_000059.4:c.5946delT), HGVS protein (BRCA2 p.Val600Glu), rsID (rs28897743), gene+change (BRCA1 c.68_69del), genomic coordinates.
+Accepted inputs: HGVS coding (NM_000059.4:c.5946delT), HGVS protein (BRCA2 p.Val600Glu), rsID (rs28897743), gene+change (BRCA1 c.68_69del), genomic coordinates.
 
 ---
 
-## Phase 1: Population Frequency Data
+## Phase 1: Population Frequency (BA1, BS1, BS2, PM2)
 
-**WHY**: Population AF is among the strongest evidence. A variant at >5% in any population is almost certainly benign (BA1). Absent from gnomAD supports pathogenicity (PM2). Ancestry-specific frequencies prevent misclassifying population-enriched benign variants.
+Population AF is among the strongest evidence in either direction. A variant at >5% in any population is almost certainly benign (BA1 — stand-alone, no further analysis needed). Absent from gnomAD supports pathogenicity (PM2, now usually applied as PM2_Supporting per ClinGen guidance).
 
-### Criteria: BA1, BS1, BS2, PM2
+Use ancestry-specific AF, not just global. A variant at 8% in East Asian populations but rare globally is benign in that ancestry context. For BS1, the threshold depends on disease prevalence and inheritance — the default is 1% for common diseases, 0.1% for rare.
 
-1. **gnomAD frequencies**: `gnomad_search_variants(query="rs28897743")` then `gnomad_get_variant(variant_id=...)` for per-ancestry AF.
-2. **MyVariant fallback**: `MyVariant_query_variants(query="rs28897743")` -- access `hit['gnomad_genome']['af']`.
-3. **Gene constraints**: `gnomad_get_gene_constraints(gene_symbol="BRCA2")` -- pLI, LOEUF, mis_z.
+```python
+gnomad_search_variants(query="rs28897743")          # get gnomAD variant ID
+gnomad_get_variant(variant_id="...")                 # per-ancestry frequencies
+gnomad_get_gene_constraints(gene_symbol="BRCA2")     # pLI, LOEUF, mis_z
+MyVariant_query_variants(query="rs28897743")          # fallback: gnomad_genome.af
+```
 
-| Criterion | Strength | Condition |
-|-----------|----------|-----------|
-| **BA1** | Stand-alone benign | AF >= 0.05 in ANY ancestry population |
-| **BS1** | Strong benign | AF above disease-specific cutoff (default 0.01 common, 0.001 rare) |
-| **BS2** | Strong benign | Observed in healthy homozygotes (recessive) or healthy adults (dominant with full penetrance) |
-| **PM2** | Supporting path | Absent or AF < 0.0001 in gnomAD. ClinGen recommends PM2_Supporting for most genes |
-
-**Nuances**: Use ancestry-specific AF, not just global. For BS1, threshold = `prevalence x max_allelic_contribution x max_genetic_contribution / penetrance`. If gnomAD unavailable, note gap and continue.
+If gnomAD data is unavailable, note the gap and continue — absence of data is not the same as evidence of absence.
 
 ---
 
-## Phase 2: Computational Predictions
+## Phase 2: Computational Predictions (PP3, BP4)
 
-**WHY**: No single predictor suffices, but concordance across REVEL, CADD, AlphaMissense, SIFT, PolyPhen provides supporting evidence. Applies only to missense variants.
+No single predictor is definitive. The reasoning is: concordance across multiple independent predictors provides supporting evidence. Discordance means neither PP3 nor BP4 applies — it is neutral, not benign.
 
-### Criteria: PP3, BP4
+PP3 (supporting pathogenic) applies when the majority of predictors agree damaging, or when REVEL >= 0.7 alone (sufficient per ClinGen guidance). BP4 (supporting benign) requires ALL predictors to agree benign, or REVEL < 0.15 or CADD < 15. These criteria apply only to missense variants.
 
-1. **MyVariant predictions**: `MyVariant_query_variants(query="...")` -- extract `cadd.phred`, `dbnsfp.revel_score`, `dbnsfp.alphamissense`, `cadd.sift`, `cadd.polyphen`.
-2. **VEP annotation**: `EnsemblVEP_annotate_hgvs(hgvs_notation="...")` -- consequence_terms, SIFT/PolyPhen, SpliceAI deltas.
+```python
+MyVariant_query_variants(query="...")        # REVEL, CADD PHRED, AlphaMissense, SIFT, PolyPhen
+EnsemblVEP_annotate_hgvs(hgvs_notation="...") # consequence, SpliceAI deltas
+```
 
-| Predictor | Damaging Threshold | Benign Threshold |
-|-----------|-------------------|-----------------|
-| REVEL | >= 0.7 | < 0.15 |
-| CADD PHRED | >= 25 | < 15 |
-| AlphaMissense | >= 0.564 | < 0.34 |
-| SIFT | < 0.05 | >= 0.05 |
-| PolyPhen | >= 0.85 | < 0.15 |
-
-| Criterion | Condition |
-|-----------|-----------|
-| **PP3** (Supporting path) | Majority predict damaging (>= 3/5 concordant). REVEL >= 0.7 alone suffices per ClinGen |
-| **BP4** (Supporting benign) | ALL predict benign/tolerated. REVEL < 0.15 or CADD < 15 |
-
-**Nuances**: Only for missense. Discordant predictions = neither PP3 nor BP4. For non-missense, use SpliceAI (Phase 5).
+For non-missense variants, skip PP3/BP4 and focus on SpliceAI scores in Phase 5.
 
 ---
 
-## Phase 3: Clinical Database Evidence
+## Phase 3: Clinical Database Evidence (PS1, PM5, PP5, BP6)
 
-**WHY**: ClinVar aggregates clinical lab classifications. Same amino acid change from different nucleotide (PS1) or different pathogenic missense at same residue (PM5) are strong/moderate evidence.
+ClinVar aggregates clinical lab classifications. The reasoning: if the same amino acid change (different nucleotide) is established pathogenic, that is strong evidence (PS1) because the mechanism is the amino acid change. If a different pathogenic missense occurs at the same residue, that is moderate evidence (PM5) — the residue is functionally important.
 
-### Criteria: PS1, PM5, PP5, BP6
+PP5 applies when ClinVar shows Pathogenic with >= 2-star review (criteria provided, multiple submitters). Weight by the number of concordant submitters. Conflicting ClinVar interpretations mean neither PP5 nor BP6 should be applied. ClinGen has proposed downweighting PP5/BP6 — treat them as supporting, not strong.
 
-1. **ClinVar**: `ClinVar_search_variants(query="BRCA2 c.5946delT")` then `ClinVar_get_variant_details(variant_id=...)`.
-2. **CIViC**: `civic_get_variants_by_gene(gene_id=19)` -- check same variant and same-residue variants.
-
-| Criterion | Condition |
-|-----------|-----------|
-| **PS1** (Strong path) | Same amino acid change as established pathogenic variant from DIFFERENT nucleotide change. Verify mechanism is amino acid (not splicing) |
-| **PM5** (Moderate path) | Different pathogenic missense at SAME residue (e.g., Arg248Trp pathogenic -> Arg248Gln gets PM5) |
-| **PP5** (Supporting path) | ClinVar Pathogenic with >= 2-star review. Weight by concordant submitter count |
-| **BP6** (Supporting benign) | ClinVar Benign/Likely Benign with concordant submitters |
-
-**Nuances**: Conflicting ClinVar interpretations = do NOT apply PP5/BP6. ClinGen has proposed downweighting PP5/BP6.
+```python
+ClinVar_search_variants(query="BRCA2 c.5946delT")
+ClinVar_get_variant_details(variant_id="...")
+civic_get_variants_by_gene(gene_id=19)   # BRCA2 CIViC ID is 19
+```
 
 ---
 
-## Phase 4: Functional Domain and Protein Analysis
+## Phase 4: Functional Domain and Protein Analysis (PM1, PP2, BP1)
 
-**WHY**: Variants in well-established functional domains with pathogenic variant enrichment are more likely pathogenic. Structural data helps assess variant impact.
+Variants in well-established functional domains with known pathogenic variant enrichment are more likely pathogenic. PM1 (moderate pathogenic) requires the variant to be in a hotspot domain with low benign variation — use InterPro domain architecture and UniProt active/binding sites to assess.
 
-### Criteria: PM1, PP2, BP1
+PP2 and BP1 are mutually exclusive. PP2 (supporting pathogenic) applies to missense in genes where missense is the known mechanism and benign missense rate is low (mis_z > 3.09). BP1 (supporting benign) applies to missense in genes where only truncating variants cause disease (LOF-only mechanism) — a missense in such a gene is unlikely to be pathogenic.
 
-1. **Protein function**: `UniProt_get_function_by_accession(accession="P51587")` -- active sites, binding sites.
-2. **Domain architecture**: `InterPro_get_entries_for_protein(accession="P51587")` -- map variant position to domains.
-3. **Structural context** (optional): `alphafold_get_prediction(qualifier="P51587")` -- high pLDDT (>90) = well-structured region.
-
-| Criterion | Condition |
-|-----------|-----------|
-| **PM1** (Moderate path) | In well-established functional domain AND domain is mutational hotspot with low benign variation |
-| **PP2** (Supporting path) | Missense in gene with low benign missense rate (mis_z > 3.09) where missense is known mechanism |
-| **BP1** (Supporting benign) | Missense in gene where ONLY truncating variants cause disease (LOF-only mechanism) |
-
-**PP2 and BP1 are mutually exclusive.**
+```python
+UniProt_get_function_by_accession(accession="P51587")        # active sites, binding sites
+InterPro_get_entries_for_protein(accession="P51587")          # domain architecture
+alphafold_get_prediction(qualifier="P51587")                   # pLDDT > 90 = structured region
+gnomad_get_gene_constraints(gene_symbol="BRCA2")              # mis_z for PP2/BP1
+```
 
 ---
 
-## Phase 5: Splice Impact Assessment
+## Phase 5: Splice Impact Assessment (PVS1)
 
-**WHY**: Splice-disrupting variants can cause exon skipping/intron retention leading to frameshifts. PVS1 is the strongest single pathogenic criterion.
+PVS1 is the strongest single pathogenic criterion. A null variant (nonsense/frameshift/canonical splice/initiation codon) in a gene where LOF is the established mechanism can activate PVS1, but the full strength depends on context.
 
-### Criteria: PVS1
+Apply PVS1 at full strength when: null variant + LOF is known mechanism + variant is not in the last exon or last 50bp of the penultimate exon + no rescue transcript exists. Downgrade to PVS1_Moderate if the variant is in the last exon or NMD escape is likely. Downgrade to PVS1_Supporting if a rescue transcript is possible or SpliceAI >= 0.5 but not a canonical splice site. Do NOT apply PVS1 if LOF mechanism is uncertain.
 
-1. **VEP consequence** (from Phase 2): look for `splice_donor_variant`, `splice_acceptor_variant`.
-2. **SpliceAI** (from VEP/MyVariant): delta >= 0.5 = strong; 0.2-0.5 = moderate; < 0.2 = unlikely.
-3. **Gene LOF mechanism**: pLI >= 0.9 OR LOEUF < 0.35 supports LOF intolerance.
-
-**PVS1 Decision Framework**:
-- Null variant (nonsense/frameshift/canonical splice/initiation codon) + LOF is known mechanism + not in last exon/last 50bp penultimate exon + no rescue transcript = **PVS1** (full)
-- Last exon / NMD escape likely = **PVS1_Moderate**
-- Rescue transcript possible = **PVS1_Supporting**
-- SpliceAI >= 0.5 but not canonical site = **PVS1_Supporting**
-- LOF mechanism uncertain = do NOT apply PVS1
+```python
+EnsemblVEP_annotate_hgvs(hgvs_notation="...")   # splice_donor_variant, splice_acceptor_variant
+MyVariant_query_variants(query="...")             # SpliceAI deltas
+gnomad_get_gene_constraints(gene_symbol="...")    # pLI >= 0.9 or LOEUF < 0.35 = LOF intolerant
+```
 
 ---
 
-## Phase 6: Literature and Functional Evidence
+## Phase 6: Literature and Functional Evidence (PS3, BS3, PP1, PP4)
 
-**WHY**: Published functional studies provide strong evidence. Well-designed assays showing LOF (PS3) or normal function (BS3) can shift classification decisively.
+Well-designed functional assays showing LOF (PS3) or normal function (BS3) can shift a classification decisively. PS3/BS3 can be downgraded (e.g., PS3_Supporting) for less rigorous assays. Not all functional assays qualify — ClinGen gene-specific guidance defines valid assays.
 
-### Criteria: PS3, BS3, PP1, PP4
+PP1 (co-segregation) upgrades to PP1_Strong at >= 7 informative meioses. PP4 applies when the patient's phenotype is highly specific for the gene's disease.
 
-1. **Functional studies**: `PubMed_search_articles(query="BRCA2 c.5946delT functional assay", limit=10)`
-2. **Segregation data**: `PubMed_search_articles(query="BRCA2 c.5946delT segregation family", limit=5)`
+```python
+PubMed_search_articles(query="BRCA2 c.5946delT functional assay", limit=10)
+PubMed_search_articles(query="BRCA2 c.5946delT segregation family", limit=5)
+```
 
-| Criterion | Condition |
-|-----------|-----------|
-| **PS3** (Strong path) | Well-established functional assay shows damaging effect. Downgrade to PS3_Supporting for less rigorous assays |
-| **BS3** (Strong benign) | Well-established assay shows no functional impact |
-| **PP1** (Supporting path) | Co-segregation in multiple affected family members. Upgrade to PP1_Strong at >= 7 meioses |
-| **PP4** (Supporting path) | Phenotype highly specific for the gene's disease |
+Criteria requiring clinical data (PS2, PS4, PM3, PM6, BS4, BP2, BP5) cannot be assessed automatically. Document as "Not Assessed" unless the user provides clinical context.
 
-**Nuances**: PubMed returns candidate papers; summarize findings from titles/abstracts. Not all functional assays qualify -- ClinGen gene-specific guidance defines valid assays.
-
-### Criteria Requiring Clinical Data (Not Automated)
-
-PS2 (de novo), PS4 (case-control prevalence), PM3 (in trans with pathogenic), PM6 (assumed de novo), BS4 (no segregation), BP2 (in trans/cis with pathogenic), BP5 (alternate explanation) -- document as "Not Assessed" unless user provides clinical context.
-
-PM4 (protein length change in non-repeat region) and BP3 (in-frame indel in repeat) can be partially assessed from variant type. BP7 (synonymous, no splice impact) assessable via SpliceAI.
+PM4 (protein length change in non-repeat region) and BP3 (in-frame indel in repeat) can be partially assessed from variant type. BP7 (synonymous, no splice impact) is assessable via SpliceAI < 0.1.
 
 ---
 
 ## Classification Algorithm
 
-Combine criteria at their **applied strength** (after upgrades/downgrades):
+Combine criteria at their applied strength (after upgrades/downgrades):
 
-### Pathogenic
-1. PVS1 + >= 1 Strong | 2. PVS1 + >= 2 Moderate | 3. PVS1 + 1 Moderate + 1 Supporting
-4. PVS1 + >= 2 Supporting | 5. >= 2 Strong | 6. 1 Strong + >= 3 Moderate
-7. 1 Strong + 2 Moderate + >= 2 Supporting | 8. 1 Strong + 1 Moderate + >= 4 Supporting
+**Pathogenic**: (1) PVS1 + ≥1 Strong; (2) PVS1 + ≥2 Moderate; (3) PVS1 + 1 Moderate + 1 Supporting; (4) PVS1 + ≥2 Supporting; (5) ≥2 Strong; (6) 1 Strong + ≥3 Moderate; (7) 1 Strong + 2 Moderate + ≥2 Supporting; (8) 1 Strong + 1 Moderate + ≥4 Supporting
 
-### Likely Pathogenic
-1. PVS1 + 1 Moderate | 2. 1 Strong + 1-2 Moderate | 3. 1 Strong + >= 2 Supporting
-4. >= 3 Moderate | 5. 2 Moderate + >= 2 Supporting | 6. 1 Moderate + >= 4 Supporting
+**Likely Pathogenic**: (1) PVS1 + 1 Moderate; (2) 1 Strong + 1-2 Moderate; (3) 1 Strong + ≥2 Supporting; (4) ≥3 Moderate; (5) 2 Moderate + ≥2 Supporting; (6) 1 Moderate + ≥4 Supporting
 
-### Benign
-1. BA1 (stand-alone) | 2. >= 2 Strong benign
+**Benign**: (1) BA1 stand-alone; (2) ≥2 Strong benign
 
-### Likely Benign
-1. 1 Strong benign + 1 Supporting benign | 2. >= 2 Supporting benign
+**Likely Benign**: (1) 1 Strong benign + 1 Supporting benign; (2) ≥2 Supporting benign
 
-### VUS
-Criteria do not meet any threshold above, OR pathogenic and benign evidence conflict.
+**VUS**: Criteria do not meet any threshold above, OR pathogenic and benign evidence conflict.
 
 ---
 
@@ -241,7 +206,7 @@ Criteria do not meet any threshold above, OR pathogenic and benign evidence conf
 
 ## Detailed Evidence
 - Population: gnomAD AF, ancestry max, homozygotes, gene constraints
-- Computational: predictor concordance table
+- Computational: predictor concordance
 - Clinical: ClinVar classification + review status, CIViC entries
 - Domain: InterPro domains, UniProt annotations
 - Splice: SpliceAI scores, canonical site status
@@ -256,41 +221,18 @@ Applied rule: [e.g., "PVS1 + PM2_Supporting = Likely Pathogenic (LP rule 1)"]
 
 ---
 
-## Quick Reference: Criteria to Tools
-
-| Criterion | Primary Tool | Fallback |
-|-----------|-------------|----------|
-| **PVS1** | `EnsemblVEP_annotate_hgvs` + `gnomad_get_gene_constraints` | `VariantValidator_validate_variant` |
-| **PS1** | `ClinVar_search_variants` + `civic_get_variants_by_gene` | `MyVariant_query_variants` |
-| **PS3** | `PubMed_search_articles` | Manual review |
-| **PM1** | `InterPro_get_entries_for_protein` + `UniProt_get_function_by_accession` | `alphafold_get_prediction` |
-| **PM2** | `gnomad_get_variant` | `MyVariant_query_variants` |
-| **PM5** | `ClinVar_search_variants` + `civic_get_variants_by_gene` | Same-residue search |
-| **PP2** | `gnomad_get_gene_constraints` | Literature |
-| **PP3** | `MyVariant_query_variants` (REVEL/CADD/SIFT/PolyPhen) | `EnsemblVEP_annotate_hgvs` |
-| **PP5** | `ClinVar_search_variants` | `ClinVar_get_variant_details` |
-| **BA1** | `gnomad_get_variant` (AF >= 5%) | `MyVariant_query_variants` |
-| **BS1** | `gnomad_get_variant` | `MyVariant_query_variants` |
-| **BS3** | `PubMed_search_articles` | Manual review |
-| **BP1** | Gene mechanism + `gnomad_get_gene_constraints` | Literature |
-| **BP4** | `MyVariant_query_variants` (all benign) | `EnsemblVEP_annotate_hgvs` |
-| **BP6** | `ClinVar_search_variants` | `ClinVar_get_variant_details` |
-| **BP7** | SpliceAI (< 0.1) + synonymous | `EnsemblVEP_annotate_hgvs` |
-
----
-
 ## Common Patterns
 
-**Pattern 1: Known pathogenic frameshift** -- "Classify BRCA2 c.5946delT"
-Phase 0 (validate) -> Phase 1 (gnomAD absent, PM2_Supporting) -> Phase 3 (ClinVar Pathogenic, PP5) -> Phase 4 (DNA repair domain, PM1) -> Phase 5 (frameshift + LOF gene, PVS1) -> Phase 6 (literature PS3)
+**Pattern 1: Known pathogenic frameshift** — "Classify BRCA2 c.5946delT"
+Phase 0 (validate) → Phase 1 (gnomAD absent, PM2_Supporting) → Phase 3 (ClinVar Pathogenic, PP5) → Phase 4 (DNA repair domain, PM1) → Phase 5 (frameshift + LOF gene, PVS1) → Phase 6 (literature PS3)
 Result: **Pathogenic** (PVS1 + PS3 + PM1 + PM2_Supporting + PP5)
 
-**Pattern 2: Missense VUS** -- "Is BRCA1 p.Arg1699Gln pathogenic?"
-Phase 0 -> Phase 1 (rare, PM2_Supporting) -> Phase 2 (REVEL 0.82, CADD 26, PP3) -> Phase 3 (ClinVar VUS) -> Phase 4 (BRCT domain, PM1) -> Phase 6 (reduced activity, PS3_Moderate)
+**Pattern 2: Missense VUS** — "Is BRCA1 p.Arg1699Gln pathogenic?"
+Phase 0 → Phase 1 (rare, PM2_Supporting) → Phase 2 (REVEL 0.82, CADD 26, PP3) → Phase 3 (ClinVar VUS) → Phase 4 (BRCT domain, PM1) → Phase 6 (reduced activity, PS3_Moderate)
 Result: **Likely Pathogenic** (PS3_Moderate + PM1 + PM2_Supporting + PP3)
 
-**Pattern 3: Common benign variant** -- "ACMG for rs1800497"
-Phase 1 (gnomAD AF=0.21, BA1) -> short-circuit. Result: **Benign** (BA1 stand-alone)
+**Pattern 3: Common benign variant** — "ACMG for rs1800497"
+Phase 1 (gnomAD AF=0.21, BA1) → short-circuit. Result: **Benign** (BA1 stand-alone)
 
-**Pattern 4: Deep-intronic variant** -- "Classify NM_000059.4:c.7977+100A>G"
-Phase 1 (check AF) -> Phase 5 (SpliceAI < 0.1) -> Result: **Likely Benign** or VUS depending on frequency
+**Pattern 4: Deep-intronic variant** — "Classify NM_000059.4:c.7977+100A>G"
+Phase 1 (check AF) → Phase 5 (SpliceAI < 0.1) → Result: **Likely Benign** or VUS depending on frequency

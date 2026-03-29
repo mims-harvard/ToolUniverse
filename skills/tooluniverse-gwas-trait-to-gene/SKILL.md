@@ -5,6 +5,10 @@ description: Discover genes associated with diseases and traits using GWAS data 
 
 # GWAS Trait-to-Gene Discovery
 
+**Nearest gene is often wrong.** Use L2G (locus-to-gene) scores from Open Targets which integrate eQTL, chromatin interaction, and distance data. L2G > 0.5 is a strong prediction; positional mapping alone should not be used to claim a causal gene. A single GWAS study with p < 5e-8 is suggestive — replication across independent cohorts is required for high confidence. GWAS hits are associations in the studied population; effect sizes and even the implicated gene can differ across ancestries due to differing LD patterns. Treat gene lists from GWAS as ranked candidates for validation, not confirmed causal genes.
+
+**LOOK UP DON'T GUESS**: never assume trait-to-gene mappings or L2G scores — always call `gwas_search_associations` and `OpenTargets_get_study_credible_sets` to retrieve current data; associations are updated as new GWAS are published.
+
 **Discover genes associated with diseases and traits using genome-wide association studies (GWAS)**
 
 ## Overview
@@ -205,6 +209,32 @@ The parameter was renamed from `mapped_gene` to `gene_symbol` for clarity. Use:
 ```python
 result = tu.tools.gwas_get_snps_for_gene(gene_symbol="TCF7L2")
 ```
+
+---
+
+## Programmatic Access (Beyond Tools)
+
+When ToolUniverse tools return limited results or you need the full GWAS Catalog:
+
+```python
+import requests, pandas as pd
+
+# Download full GWAS Catalog (all associations, ~37MB TSV)
+url = "https://www.ebi.ac.uk/gwas/api/search/downloads/alternative"
+df = pd.read_csv(url, sep="\t")
+# Filter locally by trait or gene
+hits = df[df["DISEASE/TRAIT"].str.contains("type 2 diabetes", case=False, na=False)]
+gene_hits = df[df["MAPPED_GENE"].str.contains("TCF7L2", na=False)]
+
+# Per-study associations via REST
+study_id = "GCST001234"
+assocs = requests.get(f"https://www.ebi.ac.uk/gwas/rest/api/studies/{study_id}/associations").json()
+
+# Summary statistics (when available)
+# Check study page for fullPvalueSet=true, then download from linked FTP
+```
+
+See `tooluniverse-data-wrangling` skill for pagination, bulk download, and format parsing patterns.
 
 ---
 

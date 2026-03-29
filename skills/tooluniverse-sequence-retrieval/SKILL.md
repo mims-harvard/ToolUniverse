@@ -7,82 +7,46 @@ description: Retrieves biological sequences (DNA, RNA, protein) from NCBI and EN
 
 Retrieve DNA, RNA, and protein sequences with proper disambiguation and cross-database handling.
 
-**IMPORTANT**: Always use English terms in tool calls (gene names, organism names, sequence descriptions), even if the user writes in another language. Only try original-language terms as a fallback if English returns no results. Respond in the user's language.
+**IMPORTANT**: Always use English terms in tool calls. Only try original-language terms as fallback. Respond in the user's language.
 
-## Workflow Overview
+**LOOK UP DON'T GUESS**: Never assume accession numbers or sequence versions. Always retrieve and verify from NCBI or ENA.
+
+## Domain Reasoning
+
+Sequence quality hierarchy: RefSeq (NM_/NP_ = curated) > RefSeq predicted (XM_/XP_) > GenBank (submitted). Prefer the MANE Select transcript for human canonical isoforms. Check version numbers -- annotations improve across versions.
+
+## Workflow
 
 ```
-Phase 0: Clarify (if needed)
-    ↓
-Phase 1: Disambiguate Gene/Organism
-    ↓
-Phase 2: Search & Retrieve (Internal)
-    ↓
-Phase 3: Report Sequence Profile
+Phase 0: Clarify (if needed) → Phase 1: Disambiguate Gene/Organism → Phase 2: Search & Retrieve → Phase 3: Report
 ```
 
 ---
 
 ## Phase 0: Clarification (When Needed)
 
-Ask the user ONLY if:
-- Gene name exists in multiple organisms (e.g., "BRCA1" → human or mouse?)
-- Sequence type unclear (mRNA, genomic, protein?)
-- Strain/isolate matters (e.g., E. coli → K-12, O157:H7, etc.)
-
-Skip clarification for:
-- Specific accession numbers (NC_*, NM_*, U*, etc.)
-- Clear organism + gene combinations
-- Complete genome requests with organism specified
+Ask ONLY if: gene exists in multiple organisms, sequence type unclear, or strain matters.
+Skip for: specific accessions, clear organism+gene combos, complete genome requests with organism.
 
 ---
 
 ## Phase 1: Gene/Organism Disambiguation
 
-### 1.1 Resolve Identifiers
-
-```python
-from tooluniverse import ToolUniverse
-tu = ToolUniverse()
-tu.load_tools()
-
-# Strategy depends on input type
-if user_provided_accession:
-    # Direct retrieval based on accession type
-    accession = user_provided_accession
-    
-elif user_provided_gene_and_organism:
-    # Search NCBI Nucleotide
-    result = tu.tools.NCBI_search_nucleotide(
-        operation="search",
-        organism=organism,
-        gene=gene,
-        limit=10
-    )
-```
-
-### 1.2 Accession Type Decision Tree
-
-**CRITICAL**: Accession prefix determines which tools to use.
+### Accession Type Decision Tree
 
 | Prefix | Type | Use With |
 |--------|------|----------|
-| NC_* | RefSeq chromosome | NCBI only |
-| NM_* | RefSeq mRNA | NCBI only |
-| NR_* | RefSeq ncRNA | NCBI only |
-| NP_* | RefSeq protein | NCBI only |
-| XM_* | RefSeq predicted mRNA | NCBI only |
-| U*, M*, K*, X* | GenBank | NCBI or ENA |
-| CP*, NZ_* | GenBank genome | NCBI or ENA |
+| NC_/NM_/NR_/NP_/XM_ | RefSeq | NCBI only |
+| U*/M*/K*/X*/CP*/NZ_ | GenBank | NCBI or ENA |
 | EMBL format | EMBL | ENA preferred |
 
-### 1.3 Identity Resolution Checklist
+**CRITICAL**: Never try ENA tools with RefSeq accessions -- they return 404.
 
-- [ ] Organism confirmed (scientific name)
-- [ ] Gene symbol/name identified
-- [ ] Sequence type determined (genomic/mRNA/protein)
-- [ ] Strain specified (if relevant)
-- [ ] Accession prefix identified → tool selection
+### Identity Checklist
+- Organism confirmed (scientific name)
+- Gene symbol/name identified
+- Sequence type determined (genomic/mRNA/protein)
+- Accession prefix identified for tool selection
 
 ---
 
@@ -90,58 +54,22 @@ elif user_provided_gene_and_organism:
 
 Retrieve silently. Do NOT narrate the search process.
 
-### 2.1 Search for Sequences
-
 ```python
 # Search NCBI Nucleotide
 result = tu.tools.NCBI_search_nucleotide(
-    operation="search",
-    organism=organism,
-    gene=gene,
-    strain=strain,  # Optional
-    keywords=keywords,  # Optional
-    seq_type=seq_type,  # complete_genome, mrna, refseq
-    limit=10
+    operation="search", organism=organism, gene=gene,
+    strain=strain, keywords=keywords, seq_type=seq_type, limit=10
 )
 
-# Get accession numbers from UIDs
-accessions = tu.tools.NCBI_fetch_accessions(
-    operation="fetch_accession",
-    uids=result["data"]["uids"]
-)
-```
+# Get accessions from UIDs
+accessions = tu.tools.NCBI_fetch_accessions(operation="fetch_accession", uids=result["data"]["uids"])
 
-### 2.2 Retrieve Sequence Data
+# Retrieve sequence (FASTA or GenBank format)
+sequence = tu.tools.NCBI_get_sequence(operation="fetch_sequence", accession=accession, format="fasta")
 
-```python
-# Get sequence in desired format
-sequence = tu.tools.NCBI_get_sequence(
-    operation="fetch_sequence",
-    accession=accession,
-    format="fasta"  # or "genbank"
-)
-
-# GenBank format for annotations
-annotations = tu.tools.NCBI_get_sequence(
-    operation="fetch_sequence",
-    accession=accession,
-    format="genbank"
-)
-```
-
-### 2.3 ENA Alternative (for GenBank/EMBL accessions)
-
-```python
-# Only for non-RefSeq accessions!
-if not accession.startswith(("NC_", "NM_", "NR_", "NP_", "XM_", "XR_")):
-    # ENA entry info
-    entry = tu.tools.ena_get_entry(accession=accession)
-    
-    # ENA FASTA
-    fasta = tu.tools.ena_get_sequence_fasta(accession=accession)
-    
-    # ENA summary
-    summary = tu.tools.ena_get_entry_summary(accession=accession)
+# ENA alternative (non-RefSeq accessions only)
+entry = tu.tools.ena_get_entry(accession=accession)
+fasta = tu.tools.ena_get_sequence_fasta(accession=accession)
 ```
 
 ### Fallback Chains
@@ -152,219 +80,46 @@ if not accession.startswith(("NC_", "NM_", "NR_", "NP_", "XM_", "XR_")):
 | ENA_get_entry | NCBI_get_sequence | ENA doesn't have RefSeq |
 | NCBI_search_nucleotide | Try broader keywords | No results |
 
-**Critical Rule**: Never try ENA tools with RefSeq accessions (NC_, NM_, etc.) - they will return 404 errors.
-
 ---
 
 ## Phase 3: Report Sequence Profile
 
-### Output Structure
+Present as a **Sequence Profile Report**. Hide search process. Include:
 
-Present as a **Sequence Profile Report**. Hide search process.
+1. **Search Summary**: query, database, result count
+2. **Primary Sequence**: accession, type (RefSeq/GenBank), organism, strain, length, molecule, topology, curation level
+3. **Sequence Preview**: first lines of FASTA (truncated)
+4. **Annotations Summary**: CDS/tRNA/rRNA/regulatory feature counts (from GenBank format)
+5. **Alternative Sequences**: ranked by relevance and curation, with ENA compatibility
+6. **Cross-Database References**: RefSeq, GenBank, ENA/EMBL, BioProject, BioSample
+7. **Download Options**: FASTA (for BLAST/alignment), GenBank (for annotation)
 
-```markdown
-# Sequence Profile: [Gene/Organism]
+### Curation Level Tiers
 
-**Search Summary**
-- Query: [gene] in [organism]
-- Database: NCBI Nucleotide
-- Results: [N] sequences found
-
----
-
-## Primary Sequence
-
-### [Accession]: [Definition/Title]
-
-| Attribute | Value |
-|-----------|-------|
-| **Accession** | [accession] |
-| **Type** | RefSeq / GenBank |
-| **Organism** | [scientific name] |
-| **Strain** | [strain if applicable] |
-| **Length** | [X,XXX bp / aa] |
-| **Molecule** | DNA / mRNA / Protein |
-| **Topology** | Linear / Circular |
-
-**Curation Level**: ●●● RefSeq (curated) / ●●○ GenBank (submitted) / ●○○ Third-party
-
-### Sequence Statistics
-| Statistic | Value |
-|-----------|-------|
-| **Length** | [X,XXX] bp |
-| **GC Content** | [XX.X]% |
-| **Genes** | [N] (if genome) |
-| **CDS** | [N] (if annotated) |
-
-### Sequence Preview
-```fasta
->[accession] [definition]
-ATGCGATCGATCGATCGATCGATCGATCGATCGATCGATCGATCGATCGATCG
-ATCGATCGATCGATCGATCGATCGATCGATCGATCGATCGATCGATCGATCGA
-... [truncated, full sequence in download]
-```
-
-### Annotations Summary (from GenBank format)
-| Feature | Count | Examples |
-|---------|-------|----------|
-| CDS | [N] | [gene names] |
-| tRNA | [N] | - |
-| rRNA | [N] | 16S, 23S |
-| Regulatory | [N] | promoters |
+| Tier | Prefix | Description |
+|------|--------|-------------|
+| RefSeq Reference (best) | NC_, NM_, NP_ | NCBI-curated, gold standard |
+| RefSeq Predicted | XM_, XP_, XR_ | Computationally predicted |
+| GenBank Validated | Various | Submitted, some curation |
+| GenBank Direct | Various | Direct submission |
+| Third Party | TPA_ | Third-party annotation |
 
 ---
 
-## Alternative Sequences
+## Reasoning Framework
 
-Ranked by relevance and curation level:
+**Sequence quality**: Prefer RefSeq over GenBank. Check version numbers. Sequences with "PREDICTED" in definition are not experimentally validated.
 
-| Accession | Type | Length | Description | ENA Compatible |
-|-----------|------|--------|-------------|----------------|
-| NC_000913.3 | RefSeq | 4.6 Mb | E. coli K-12 reference | ✗ |
-| U00096.3 | GenBank | 4.6 Mb | E. coli K-12 | ✓ |
-| CP001509.3 | GenBank | 4.6 Mb | E. coli DH10B | ✓ |
+**Accession guidance**: RefSeq = NCBI-only. GenBank = mirrored in ENA/EMBL. Default to RefSeq mRNA (NM_) for human/model organisms; most complete genome assembly for microbial queries.
 
----
+**Cross-database reconciliation**: Same sequence may have different accessions (e.g., GenBank U00096 = RefSeq NC_000913 for E. coli K-12). Always report both when available. Discrepancies between GenBank/RefSeq typically indicate RefSeq curation corrected submission errors.
 
-## Cross-Database References
-
-| Database | Accession | Link |
-|----------|-----------|------|
-| RefSeq | [NC_*] | [NCBI link] |
-| GenBank | [U*] | [NCBI link] |
-| ENA/EMBL | [same as GenBank] | [ENA link] |
-| BioProject | [PRJNA*] | [link] |
-| BioSample | [SAMN*] | [link] |
-
----
-
-## Download Options
-
-### Formats Available
-| Format | Description | Use Case |
-|--------|-------------|----------|
-| FASTA | Sequence only | BLAST, alignment |
-| GenBank | Sequence + annotations | Gene analysis |
-| GFF3 | Annotations only | Genome browsers |
-
-### Direct Commands
-```python
-# FASTA format
-tu.tools.NCBI_get_sequence(
-    operation="fetch_sequence",
-    accession="[accession]",
-    format="fasta"
-)
-
-# GenBank format (with annotations)
-tu.tools.NCBI_get_sequence(
-    operation="fetch_sequence",
-    accession="[accession]",
-    format="genbank"
-)
-```
-
----
-
-## Related Sequences
-
-### Other Strains/Isolates
-| Accession | Strain | Similarity | Notes |
-|-----------|--------|------------|-------|
-| [acc1] | [strain1] | 99.9% | [notes] |
-| [acc2] | [strain2] | 99.5% | [notes] |
-
-### Protein Products (if applicable)
-| Protein Accession | Product Name | Length |
-|-------------------|--------------|--------|
-| [NP_*] | [protein name] | [X] aa |
-
----
-
-Retrieved: [date]
-Database: NCBI Nucleotide
-```
-
----
-
-## Curation Level Tiers
-
-| Tier | Symbol | Accession Prefix | Description |
-|------|--------|------------------|-------------|
-| RefSeq Reference | ●●●● | NC_, NM_, NP_ | NCBI-curated, gold standard |
-| RefSeq Predicted | ●●●○ | XM_, XP_, XR_ | Computationally predicted |
-| GenBank Validated | ●●○○ | Various | Submitted, some curation |
-| GenBank Direct | ●○○○ | Various | Direct submission |
-| Third Party | ○○○○ | TPA_ | Third-party annotation |
-
-Include in report:
-```markdown
-**Curation Level**: ●●●● RefSeq Reference
-- Curated by NCBI RefSeq project
-- Regular updates and validation
-- Recommended for reference use
-```
-
----
-
-## Completeness Checklist
-
-Every sequence report MUST include:
-
-### Per Sequence (Required)
-- [ ] Accession number
-- [ ] Organism (scientific name)
-- [ ] Sequence type (DNA/RNA/protein)
-- [ ] Length
-- [ ] Curation level
-- [ ] Database source
-
-### Search Summary (Required)
-- [ ] Query parameters
-- [ ] Number of results
-- [ ] Ranking rationale
-
-### Include Even If Limited
-- [ ] Alternative sequences (or "Only one sequence found")
-- [ ] Cross-database references (or "No cross-references available")
-- [ ] Download instructions
-
----
-
-## Common Use Cases
-
-### Reference Genome
-User: "Get E. coli K-12 complete genome"
-```python
-result = tu.tools.NCBI_search_nucleotide(
-    operation="search",
-    organism="Escherichia coli",
-    strain="K-12",
-    seq_type="complete_genome",
-    limit=3
-)
-# Return NC_000913.3 (RefSeq reference)
-```
-
-### Gene Sequence
-User: "Find human BRCA1 mRNA"
-```python
-result = tu.tools.NCBI_search_nucleotide(
-    operation="search",
-    organism="Homo sapiens",
-    gene="BRCA1",
-    seq_type="mrna",
-    limit=10
-)
-```
-
-### Specific Accession
-User: "Get sequence for NC_045512.2"
-→ Direct retrieval with full metadata
-
-### Strain Comparison
-User: "Compare E. coli K-12 and O157:H7 genomes"
-→ Search both strains, provide comparison table
+### Synthesis Questions
+1. What is the highest-quality accession available?
+2. Are there alternative accessions in other databases?
+3. What is the annotation completeness?
+4. Is the sequence from the expected organism/strain?
+5. What download format suits the user's downstream analysis?
 
 ---
 
@@ -373,77 +128,21 @@ User: "Compare E. coli K-12 and O157:H7 genomes"
 | Error | Response |
 |-------|----------|
 | "No search criteria provided" | Add organism, gene, or keywords |
-| "ENA 404 error" | Accession is likely RefSeq → use NCBI only |
+| "ENA 404 error" | Likely RefSeq -- use NCBI only |
 | "No results found" | Broaden search, check spelling, try synonyms |
-| "Sequence too large" | Note size, provide download link instead of preview |
-| "API rate limit" | Tools auto-retry; if persistent, wait briefly |
+| "Sequence too large" | Note size, provide download link instead |
 
 ---
 
 ## Tool Reference
 
-**NCBI Tools (All Accessions)**
-| Tool | Purpose |
-|------|---------|
-| `NCBI_search_nucleotide` | Search by gene/organism |
-| `NCBI_fetch_accessions` | Convert UIDs to accessions |
-| `NCBI_get_sequence` | Retrieve sequence data |
-
-**ENA Tools (GenBank/EMBL Only)**
-| Tool | Purpose |
-|------|---------|
-| `ena_get_entry` | Entry metadata |
-| `ena_get_sequence_fasta` | FASTA sequence |
-| `ena_get_entry_summary` | Summary info |
-
----
-
-## Reasoning Framework
-
-### Evidence Grading (Sequence Quality)
-
-| Tier | Description | Accession Type |
-|------|-------------|----------------|
-| **T1** | RefSeq reference, NCBI-curated, regularly updated | NC_, NM_, NP_ (curation ●●●●) |
-| **T2** | RefSeq predicted, computationally derived with some validation | XM_, XP_, XR_ (curation ●●●○) |
-| **T3** | GenBank validated submission, peer-reviewed publication | U*, M*, CP* with publication (curation ●●○○) |
-| **T4** | GenBank direct submission or third-party annotation | Direct submissions, TPA_ (curation ●○○○) |
-
-### Interpretation Guidance
-
-**Sequence quality assessment**: Always prefer RefSeq (NC_, NM_) over GenBank for reference use. Check sequence version (e.g., NC_000913.3 vs .2) as annotations improve across versions. For protein-coding genes, verify the CDS count and gene annotation completeness. Sequences with "PREDICTED" in the definition line have not been experimentally validated.
-
-**Accession type guidance**: RefSeq accessions are NCBI-only and cannot be queried via ENA. GenBank accessions (U*, M*, CP*) are mirrored in ENA/EMBL and can be retrieved from either database. When a user provides a gene name without specifying type, default to RefSeq mRNA (NM_) for human/model organisms and the most complete genome assembly for microbial queries.
-
-**Cross-database reconciliation**: The same sequence may have different accessions across databases (e.g., GenBank U00096 = RefSeq NC_000913 for E. coli K-12). Always report both when available. BioProject (PRJNA*) and BioSample (SAMN*) accessions link sequences to their experimental context. Discrepancies between GenBank and RefSeq annotations (gene count, CDS boundaries) typically indicate RefSeq curation has corrected submission errors.
-
-### Synthesis Questions
-
-A complete sequence retrieval report should answer:
-1. What is the highest-quality (most curated) accession available for this sequence?
-2. Are there alternative accessions in other databases (RefSeq, GenBank, ENA)?
-3. What is the sequence length, GC content, and annotation completeness?
-4. Is the sequence from the expected organism and strain?
-5. What download format is most appropriate for the user's downstream analysis (FASTA for alignment, GenBank for annotation)?
+**NCBI Tools**: `NCBI_search_nucleotide` (search), `NCBI_fetch_accessions` (UID→accession), `NCBI_get_sequence` (retrieve)
+**ENA Tools (GenBank/EMBL only)**: `ena_get_entry` (metadata), `ena_get_sequence_fasta` (FASTA), `ena_get_entry_summary` (summary)
 
 ---
 
 ## Search Parameters Reference
 
-**NCBI_search_nucleotide**
-| Parameter | Description | Example |
-|-----------|-------------|---------|
-| `operation` | Always "search" | "search" |
-| `organism` | Scientific name | "Homo sapiens" |
-| `gene` | Gene symbol | "BRCA1" |
-| `strain` | Specific strain | "K-12" |
-| `keywords` | Free text | "complete genome" |
-| `seq_type` | Sequence type | "complete_genome", "mrna", "refseq" |
-| `limit` | Max results | 10 |
+**NCBI_search_nucleotide**: `operation`="search", `organism` (scientific name), `gene` (symbol), `strain`, `keywords`, `seq_type` (complete_genome/mrna/refseq), `limit`
 
-**NCBI_get_sequence**
-| Parameter | Description | Example |
-|-----------|-------------|---------|
-| `operation` | Always "fetch_sequence" | "fetch_sequence" |
-| `accession` | Accession number | "NC_000913.3" |
-| `format` | Output format | "fasta", "genbank" |
+**NCBI_get_sequence**: `operation`="fetch_sequence", `accession`, `format` (fasta/genbank)

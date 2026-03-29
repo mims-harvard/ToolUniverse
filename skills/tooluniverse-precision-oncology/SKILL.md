@@ -7,6 +7,38 @@ description: Provide actionable treatment recommendations for cancer patients ba
 
 Provide actionable treatment recommendations for cancer patients based on their molecular profile using CIViC, ClinVar, OpenTargets, ClinicalTrials.gov, and structure-based analysis.
 
+## Domain Reasoning
+
+Treatment selection follows a strict evidence hierarchy: FDA-approved for this specific mutation in this cancer type ranks highest, followed by approval for this mutation in any cancer (tumor-agnostic), then active clinical trials, and finally off-label use. Skipping this hierarchy to recommend off-label therapies when an approved option exists is a clinical error. Always check current NCCN guidelines and recent literature, as approvals change rapidly — a drug that was investigational last year may now be first-line.
+
+When looking up treatment for a specific mutation, search CIViC and OncoKB FIRST, not PubMed. These databases have curated evidence levels. PubMed is for when curated databases don't have the answer.
+
+## Treatment Selection Reasoning
+
+**Biomarker-to-drug logic** — When a biomarker is identified, the first-line targeted therapy follows established mappings. Always verify current approval status via OncoKB/CIViC, but use this as a starting framework:
+- **NSCLC**: EGFR exon 19 del / L858R → osimertinib (1L); ALK fusion → alectinib/lorlatinib; ROS1 fusion → crizotinib/entrectinib; KRAS G12C → sotorasib/adagrasib; MET exon 14 skip → capmatinib/tepotinib; RET fusion → selpercatinib; BRAF V600E → dabrafenib+trametinib; NTRK fusion → larotrectinib/entrectinib (tumor-agnostic)
+- **Breast**: HER2+ → trastuzumab+pertuzumab (1L), T-DXd (2L); HR+/HER2- → CDK4/6i (palbociclib/ribociclib) + AI; BRCA1/2 mut → olaparib/talazoparib; PIK3CA mut → alpelisib+fulvestrant
+- **Colorectal**: BRAF V600E → encorafenib+cetuximab; MSI-H/dMMR → pembrolizumab (tumor-agnostic); KRAS/NRAS wild-type → cetuximab/panitumumab (anti-EGFR)
+- **Melanoma**: BRAF V600E/K → dabrafenib+trametinib or encorafenib+binimetinib; wild-type → immunotherapy (nivolumab+ipilimumab)
+- **Tumor-agnostic**: MSI-H/dMMR → pembrolizumab; NTRK fusion → larotrectinib; TMB-H (>=10 mut/Mb) → pembrolizumab; RET fusion → selpercatinib
+
+**Resistance mechanism reasoning** — When a patient progresses on targeted therapy, distinguish primary resistance (never responded — check if the mutation was truly the driver, or if co-mutations like TP53/RB1 abrogate response) from acquired resistance (responded then progressed — on-target mutations or bypass activation). Common patterns:
+- **EGFR TKIs**: 1st/2nd-gen resistance → T790M (50-60%); osimertinib resistance → C797S (10-25%), MET amp (15-20%), HER2 amp, histologic transformation (SCLC ~5%)
+- **ALK TKIs**: crizotinib resistance → ALK secondary mutations (L1196M, G1269A); alectinib resistance → G1202R (solvent front); lorlatinib resistance → compound mutations
+- **BRAF inhibitors**: MAPK reactivation (MEK mutations, BRAF amplification, NRAS mutations), PI3K/AKT bypass
+- **Anti-HER2**: HER2 truncation (p95HER2), PIK3CA activation, HER3 upregulation
+- **Immunotherapy (anti-PD1)**: B2M loss (MHC-I loss), JAK1/2 loss-of-function (IFN-gamma signaling escape), WNT/beta-catenin activation (T-cell exclusion)
+For resistance workup: query `civic_search_evidence_items` with the drug name + "resistance", then `PubMed_search_articles` for recent mechanisms.
+
+## LOOK UP DON'T GUESS
+
+- FDA approval status for a mutation-drug pair: query `OncoKB_annotate_variant` and `civic_search_variants`; never assume approval status from memory.
+- Active clinical trials: search `search_clinical_trials` with the specific condition and mutation; do not cite trials from memory.
+- Resistance mechanisms for specific drugs: query `civic_search_evidence_items` and `PubMed_search_articles`; do not assume resistance pathways.
+- Variant frequency in TCGA: retrieve from `GDC_get_mutation_frequency` or `cBioPortal_get_mutations`; do not estimate prevalence.
+
+---
+
 **KEY PRINCIPLES**:
 1. **Report-first** - Create report file FIRST, update progressively
 2. **Evidence-graded** - Every recommendation has evidence level
@@ -30,8 +62,8 @@ Provide actionable treatment recommendations for cancer patients based on their 
 
 | Tool | WRONG | CORRECT |
 |------|-------|---------|
-| `civic_get_variant` | `variant_name` | `id` (numeric) |
-| `civic_get_evidence_item` | `variant_id` | `id` |
+| `civic_get_variant` | `variant_name` | `variant_id` (numeric, e.g., 4170) |
+| `civic_get_evidence_item` | `variant_id` | `id` (numeric) |
 | `OpenTargets_*` | `ensemblID` | `ensemblId` (camelCase) |
 | `search_clinical_trials` | `disease` | `condition` |
 
@@ -111,6 +143,12 @@ Phase 6: Report Synthesis -> Executive summary + prioritized recommendations
 - `PubMed_search_articles` - Published evidence (use `limit`, `mindate`, `maxdate` for date filtering)
 - `BioRxiv_list_recent_preprints` / `MedRxiv_get_preprint` - Preprints (flag as NOT peer-reviewed)
 - `openalex_search_works` - Citation analysis
+
+---
+
+## Cross-Skill References
+
+For CYP interaction with cancer drugs, run: `python3 skills/tooluniverse-drug-drug-interaction/scripts/pharmacology_ref.py --type cyp_substrate --drug drugname`
 
 ---
 

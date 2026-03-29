@@ -9,7 +9,8 @@ from ._shared_client import get_shared_client
 
 
 def STITCH_get_chemical_protein_interactions(
-    identifiers: list[str],
+    identifiers: Optional[list[str]] = None,
+    chemical: Optional[str] = None,
     species: Optional[int] = 9606,
     required_score: Optional[int] = 400,
     limit: Optional[int] = 10,
@@ -17,7 +18,7 @@ def STITCH_get_chemical_protein_interactions(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> dict[str, Any]:
+) -> Any:
     """
     Get chemical-protein interactions from STITCH. Returns known and predicted interactions between c...
 
@@ -25,6 +26,8 @@ def STITCH_get_chemical_protein_interactions(
     ----------
     identifiers : list[str]
         Chemical names, drug names, or STITCH IDs (e.g., ['aspirin', 'ibuprofen'] or ...
+    chemical : str
+        Single chemical name or STITCH ID (alias for identifiers, e.g., 'aspirin' or ...
     species : int
         NCBI taxonomy ID (9606 for human, 10090 for mouse).
     required_score : int
@@ -40,7 +43,7 @@ def STITCH_get_chemical_protein_interactions(
 
     Returns
     -------
-    dict[str, Any]
+    Any
     """
     # Handle mutable defaults to avoid B006 linting error
 
@@ -49,6 +52,7 @@ def STITCH_get_chemical_protein_interactions(
         k: v
         for k, v in {
             "identifiers": identifiers,
+            "chemical": chemical,
             "species": species,
             "required_score": required_score,
             "limit": limit,

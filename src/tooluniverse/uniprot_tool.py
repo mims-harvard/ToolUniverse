@@ -207,9 +207,12 @@ class UniProtRESTTool(BaseTool):
             # If custom fields requested, return raw API response for flexibility
             if fields and isinstance(fields, list):
                 return {
-                    "total_results": data.get("resultsFound", 0),
-                    "returned": len(results),
-                    "results": results,  # Return raw results when custom fields used
+                    "status": "success",
+                    "data": {
+                        "total_results": data.get("resultsFound", 0),
+                        "returned": len(results),
+                        "results": results,
+                    },
                 }
 
             # Otherwise, use formatted extraction logic
@@ -251,9 +254,12 @@ class UniProtRESTTool(BaseTool):
                 formatted_results.append(formatted_entry)
 
             return {
-                "total_results": data.get("resultsFound", len(results)),
-                "returned": len(results),
-                "results": formatted_results,
+                "status": "success",
+                "data": {
+                    "total_results": data.get("resultsFound", len(results)),
+                    "returned": len(results),
+                    "results": formatted_results,
+                },
             }
 
         except requests.exceptions.Timeout:
@@ -431,9 +437,12 @@ class UniProtRESTTool(BaseTool):
 
             results = data.get("results", [])
             return {
-                "total_results": data.get("resultsFound", len(results)),
-                "returned": len(results),
-                "results": results,
+                "status": "success",
+                "data": {
+                    "total_results": data.get("resultsFound", len(results)),
+                    "returned": len(results),
+                    "results": results,
+                },
             }
         except requests.exceptions.Timeout:
             return {"status": "error", "error": "Request to UniProt API timed out"}
@@ -464,9 +473,12 @@ class UniProtRESTTool(BaseTool):
 
             results = data.get("results", [])
             return {
-                "total_results": data.get("resultsFound", len(results)),
-                "returned": len(results),
-                "results": results,
+                "status": "success",
+                "data": {
+                    "total_results": data.get("resultsFound", len(results)),
+                    "returned": len(results),
+                    "results": results,
+                },
             }
         except requests.exceptions.Timeout:
             return {"status": "error", "error": "Request to UniProt API timed out"}

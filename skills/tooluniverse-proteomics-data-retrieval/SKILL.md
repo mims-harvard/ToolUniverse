@@ -33,6 +33,9 @@ including instruments, publications, species, and post-translational modificatio
 
 ---
 
+## COMPUTE, DON'T DESCRIBE
+When analysis requires computation (statistics, data processing, scoring, enrichment), write and run Python code via Bash. Don't describe what you would do — execute it and report actual results. Use ToolUniverse tools to retrieve data, then Python (pandas, scipy, statsmodels, matplotlib) to analyze it.
+
 ## KEY PRINCIPLES
 
 1. **ProteomeXchange is the aggregator** -- it indexes datasets from PRIDE, MassIVE, PeptideAtlas, jPOST, and iProX
@@ -40,6 +43,11 @@ including instruments, publications, species, and post-translational modificatio
 3. **Search both repositories** -- ProteomeXchange for breadth, MassIVE for detail
 4. **Species uses NCBI taxonomy IDs** -- human = 9606, mouse = 10090, rat = 10116
 5. **Accession formats**: PXD (ProteomeXchange), MSV (MassIVE) -- both accepted by MassIVE_get_dataset
+6. **LOOK UP DON'T GUESS** -- Never assume which datasets exist, their accessions, or their instrument types. Always search and retrieve metadata to confirm.
+
+## Domain Reasoning: Dataset Quality Assessment
+
+Dataset quality depends on instrument, sample preparation, and quantification method. TMT/iTRAQ (isobaric labeling) datasets have ratio compression and co-isolation interference biases that differ from label-free quantification (LFQ). DIA datasets require different analysis pipelines than DDA. Check the original publication for methods before reusing data in a meta-analysis or cross-study comparison. Instrument resolution (Orbitrap > ion trap) and acquisition mode (DIA > DDA for completeness) directly affect how many proteins are quantified and at what confidence.
 
 ---
 

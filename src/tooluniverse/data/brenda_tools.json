@@ -224,5 +224,80 @@
         "ec_number": "1.1.1.1"
       }
     ]
+  },
+  {
+    "name": "BRENDA_get_enzyme_kinetics",
+    "description": "Get comprehensive enzyme kinetic parameters WITHOUT requiring BRENDA credentials. Retrieves enzyme identity (name, catalytic activity, alternative names) from ExPASy ENZYME and kinetic parameters (Km, kcat, Ki, Vmax, kcat/Km) from SABIO-RK. If BRENDA credentials are set (BRENDA_EMAIL, BRENDA_PASSWORD), additionally fetches optimal pH, optimal temperature, and specific activity from BRENDA. Accepts EC number (e.g., 1.1.1.1) or enzyme name (e.g., alcohol dehydrogenase). Returns aggregated summary statistics across all reported values plus individual measurements with substrate specificity and organism information.",
+    "type": "BRENDATool",
+    "optional_api_keys": [
+      "BRENDA_EMAIL",
+      "BRENDA_PASSWORD"
+    ],
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "operation": {
+          "type": "string",
+          "const": "get_enzyme_kinetics",
+          "description": "Operation type (fixed: get_enzyme_kinetics)"
+        },
+        "ec_number": {
+          "type": "string",
+          "description": "EC number (e.g., 1.1.1.1 for alcohol dehydrogenase, 2.7.1.1 for hexokinase, 3.4.21.5 for thrombin)"
+        },
+        "enzyme_name": {
+          "type": "string",
+          "description": "Enzyme common name. Will be resolved to EC number via UniProt. Examples: alcohol dehydrogenase, hexokinase, lactate dehydrogenase, thrombin"
+        },
+        "organism": {
+          "type": "string",
+          "description": "Optional organism filter (e.g., Homo sapiens, Escherichia coli, Saccharomyces cerevisiae)"
+        },
+        "enzyme_id": {
+          "type": "string",
+          "description": "Alias for ec_number. Enzyme identifier in EC notation."
+        },
+        "limit": {
+          "type": ["integer", "null"],
+          "description": "Maximum number of SABIO-RK kinetic law entries to retrieve (default 20)"
+        }
+      },
+      "required": []
+    },
+    "return_schema": {
+      "type": "object",
+      "properties": {
+        "ec_number": {"type": "string"},
+        "enzyme_name": {"type": "string"},
+        "alternative_names": {"type": "array", "items": {"type": "string"}},
+        "catalytic_activity": {"type": "array", "items": {"type": "string"}},
+        "comments": {"type": "array", "items": {"type": "string"}},
+        "kinetic_parameters": {
+          "type": "array",
+          "description": "Individual kinetic law entries from SABIO-RK"
+        },
+        "parameter_summary": {
+          "type": "object",
+          "description": "Aggregated statistics for Km, kcat, Ki, Vmax across all entries"
+        },
+        "sabiork_total_entries": {"type": "integer"},
+        "ph_optima": {"type": "array", "description": "Optimal pH values (BRENDA only, requires credentials)"},
+        "temperature_optima": {"type": "array", "description": "Optimal temperature values (BRENDA only, requires credentials)"},
+        "specific_activity": {"type": "array", "description": "Specific activity values (BRENDA only, requires credentials)"}
+      }
+    },
+    "test_examples": [
+      {
+        "ec_number": "1.1.1.1"
+      },
+      {
+        "enzyme_name": "hexokinase"
+      },
+      {
+        "ec_number": "2.7.1.1",
+        "organism": "Homo sapiens",
+        "limit": 10
+      }
+    ]
   }
 ]

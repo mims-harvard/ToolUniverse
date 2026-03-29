@@ -11,8 +11,6 @@ from ._shared_client import get_shared_client
 def OpenTargets_search_gwas_studies_by_disease(
     diseaseIds: Optional[list[str]] = None,
     enableIndirect: Optional[bool] = True,
-    size: Optional[int] = 10,
-    index: Optional[int] = 0,
     disease_name: Optional[str] = None,
     disease: Optional[str] = None,
     trait: Optional[str] = None,
@@ -30,10 +28,6 @@ def OpenTargets_search_gwas_studies_by_disease(
         Disease ontology IDs (e.g., ['MONDO_0005148'] for type 2 diabetes, ['MONDO_00...
     enableIndirect : bool
         Include studies for child disease terms (default true)
-    size : int
-        Number of results per page (default 10)
-    index : int
-        Page index for pagination (0-based, default 0)
     disease_name : str
         Disease or trait name for auto-resolution (e.g., 'type 2 diabetes'). Resolved...
     disease : str
@@ -59,8 +53,6 @@ def OpenTargets_search_gwas_studies_by_disease(
         for k, v in {
             "diseaseIds": diseaseIds,
             "enableIndirect": enableIndirect,
-            "size": size,
-            "index": index,
             "disease_name": disease_name,
             "disease": disease,
             "trait": trait,

@@ -9,12 +9,13 @@ from ._shared_client import get_shared_client
 
 
 def iPTMnet_search(
-    operation: str,
-    search_term: str,
+    operation: Optional[str] = None,
+    search_term: Optional[str] = None,
     role: Optional[str] = "Substrate",
     ptm_type: Optional[str | Any] = None,
     term_type: Optional[str] = "All",
     max_results: Optional[int] = 25,
+    query: Optional[str] = None,
     *,
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
@@ -37,6 +38,8 @@ def iPTMnet_search(
         Type of search term. Default: All (searches across all fields)
     max_results : int
         Maximum results to return (default: 25)
+    query : str
+        Gene name, protein name, or keyword to search (alias for search_term)
     stream_callback : Callable, optional
         Callback for streaming output
     use_cache : bool, default False
@@ -60,6 +63,7 @@ def iPTMnet_search(
             "ptm_type": ptm_type,
             "term_type": term_type,
             "max_results": max_results,
+            "query": query,
         }.items()
         if v is not None
     }

@@ -7,6 +7,19 @@ description: Analyze metabolomics data including metabolite identification, quan
 
 Comprehensive analysis of metabolomics data from metabolite identification through quantification, statistical analysis, pathway interpretation, and integration with other omics layers.
 
+## Domain Reasoning
+
+Metabolomics quantification depends critically on normalization. Total ion current (TIC) normalization corrects for sample-loading variation and works well for global abundance changes; internal standard normalization is more accurate for targeted analysis where specific metabolite concentrations matter. Missing values in a peak table may reflect signal below the detection limit — not true absence — and should be imputed or handled explicitly rather than treated as zero. Failing to account for batch effects across instrument runs is a frequent source of spurious differential metabolites.
+
+## LOOK UP DON'T GUESS
+
+- Metabolite identities: use `Metabolite_search` and `Metabolite_get_info` to confirm names, CIDs, and HMDB IDs; never assume identity from m/z alone.
+- Pathway memberships: query KEGG, MetaCyc, or Reactome tools; do not list pathways from memory.
+- Disease associations: retrieve from CTD via `Metabolite_get_diseases`; do not infer clinical relevance without database evidence.
+- CV thresholds and QC criteria: apply the values defined in this workflow (CV < 30%, blank ratio > 3x); do not override with guesses.
+
+---
+
 ## When to Use This Skill
 
 **Triggers**:

@@ -1,6 +1,44 @@
 [
   {
     "type": "BindingDBTool",
+    "name": "BindingDB_search_by_target",
+    "description": "Search BindingDB for binding affinity data by target gene name or protein name. NOTE: BindingDB REST API is currently unavailable (requests time out). Use ChEMBL_get_target_activities or PubChem BioAssay as alternatives. To query by UniProt ID, use BindingDB_get_ligands_by_uniprot instead.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "query": {
+          "type": "string",
+          "description": "Target gene symbol or protein name (e.g., 'EGFR', 'BRAF', 'kinase')"
+        },
+        "target": {
+          "type": "string",
+          "description": "Alias for query. Target gene symbol or protein name."
+        }
+      },
+      "required": ["query"]
+    },
+    "fields": {
+      "operation": "search_by_target"
+    },
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "object",
+          "properties": {
+            "status": {"type": "string", "enum": ["error"]},
+            "error": {"type": "string"}
+          },
+          "required": ["status", "error"]
+        }
+      ]
+    },
+    "test_examples": [
+      {"query": "EGFR"},
+      {"query": "BRAF"}
+    ]
+  },
+  {
+    "type": "BindingDBTool",
     "name": "BindingDB_get_ligands_by_uniprot",
     "description": "Get binding affinity data (Ki, IC50, Kd) for a single protein by UniProt ID. Returns SMILES structures and measured affinities from BindingDB. Essential for drug discovery target analysis. Example: P00533 (EGFR) returns known inhibitors with binding constants.",
     "parameter": {

@@ -26,16 +26,25 @@ Comprehensive pathway and systems biology analysis integrating multiple curated 
 5. **Model Discovery**: Find computational systems biology models (SBML)
 6. **Cross-Database Validation**: Compare pathway annotations across multiple sources
 
+## COMPUTE, DON'T DESCRIBE
+When analysis requires computation (statistics, data processing, scoring, enrichment), write and run Python code via Bash. Don't describe what you would do — execute it and report actual results. Use ToolUniverse tools to retrieve data, then Python (pandas, scipy, statsmodels, matplotlib) to analyze it.
+
+## Domain Reasoning: Enrichment vs Causation
+
+Pathway analysis answers: which biological processes are enriched in my gene list? But enrichment is not causation. A pathway being enriched means your gene list overlaps it more than expected by chance. Ask: is the enrichment driven by a few hub genes, or by many genes distributed across the pathway? A pathway with 3 input genes but 200 annotated members is less informative than one where 15 of 40 members are in your list.
+
+LOOK UP DON'T GUESS: pathway membership, gene-to-pathway assignments, and enrichment statistics. Do not assume a gene is in a pathway — use Reactome, KEGG, or Enrichr to verify. Pathway databases disagree on membership; cross-validate key findings across at least two sources.
+
 ## Core Databases Integrated
 
-| Database | Coverage | Strengths |
-|----------|----------|-----------|
-| **Reactome** | Human-curated reactions & pathways | Detailed mechanistic pathways with reactions |
-| **KEGG** | Reference pathways across organisms | Metabolic maps, disease pathways, drug targets |
-| **WikiPathways** | Community-curated pathways | Emerging processes, collaborative updates |
-| **Pathway Commons** | Integrated meta-database | Aggregates multiple sources (Reactome, KEGG, etc.) |
-| **BioModels** | Computational SBML models | Mathematical/dynamic systems biology models |
-| **Enrichr** | Statistical enrichment | Pathway over-representation analysis |
+| Database | Strengths |
+|----------|-----------|
+| **Reactome** | Detailed mechanistic pathways with reactions; human-curated |
+| **KEGG** | Metabolic maps, disease pathways, drug targets |
+| **WikiPathways** | Emerging and community-curated pathways |
+| **Pathway Commons** | Meta-database aggregating multiple sources |
+| **BioModels** | Mathematical/computational SBML models |
+| **Enrichr** | Statistical over-representation analysis |
 
 ## Workflow Overview
 
@@ -51,48 +60,16 @@ Input → Phase 1: Enrichment → Phase 2: Protein Mapping → Phase 3: Keyword 
 
 **Objective**: Identify biological pathways statistically over-represented in gene list
 
-### Tools Used
+### Tools & Workflow
 
-**ReactomeAnalysis_pathway_enrichment** (recommended — returns FDR-corrected results with Reactome pathway IDs):
-- **Input**: `identifiers` (newline-separated gene symbols, e.g., "PIK3CA\nAKT1\nMTOR"), `page_size` (int)
-- **Output**: Enriched pathways with p-values, FDR, entity counts, Reactome stable IDs
+| Tool | Input | Use |
+|------|-------|-----|
+| `ReactomeAnalysis_pathway_enrichment` | `identifiers` (newline-separated symbols), `page_size` | FDR-corrected Reactome enrichment (recommended) |
+| `enrichr_gene_enrichment_analysis` | `gene_list` (array), `libs` (array) | Over-representation with KEGG/Reactome/WikiPathways |
+| `STRING_functional_enrichment` | `protein_ids` (array), `species`, `category` | Functional enrichment from PPI networks |
+| `intact_get_interactions` | `identifier` (UniProt accession) | Binary protein interactions with evidence |
 
-**enrichr_gene_enrichment_analysis**:
-- **Input**:
-  - `gene_list`: Array of gene symbols (e.g., ["TP53", "BRCA1", "EGFR"])
-  - `libs`: Array of library names (e.g., ["KEGG_2021_Human", "Reactome_2022", "WikiPathways_2024_Human"])
-- **Output**: Array of enriched pathways with p-values, adjusted p-values, genes
-- **Use**: Statistical over-representation analysis
-
-**STRING_get_network** (protein interaction networks):
-- **Input**: `identifiers` (gene symbol), `species` (9606 for human), `limit` (max interactors)
-- **Output**: Interaction edges with combined scores, evidence types
-
-**STRING_functional_enrichment** (functional enrichment from PPI networks):
-- **Input**: `protein_ids` (array of gene symbols), `species` (9606), `category` ("KEGG", "Process", "Component", "Function", "Reactome", "WikiPathways")
-- **Output**: Enriched functional categories with FDR values
-
-**intact_get_interactions** (detailed binary protein interactions):
-- **Input**: `identifier` (UniProt accession)
-- **Output**: Interaction records with experimental evidence types
-
-### Workflow
-
-1. Submit gene list to Enrichr
-2. Query KEGG pathway library for human
-3. Get enriched pathways sorted by significance
-4. Extract:
-   - Pathway names and IDs
-   - P-values (raw and adjusted)
-   - Genes from input list in each pathway
-   - Enrichment scores
-
-### Decision Logic
-
-- **Significance threshold**: Adjusted p-value < 0.05 (default)
-- **Minimum genes**: At least 2 genes from input list in pathway
-- **Report top pathways**: Show 10-20 most significant
-- **Empty results**: If no enrichment → note "no significant pathways" (don't fail)
+1. Submit gene list to Enrichr/Reactome. 2. Sort by adjusted p-value < 0.05. 3. Report top 10-20 pathways with IDs, p-values, and overlapping genes. If no enrichment, note explicitly.
 
 ---
 
@@ -139,60 +116,17 @@ Input → Phase 1: Enrichment → Phase 2: Protein Mapping → Phase 3: Keyword 
 
 **Objective**: Search multiple pathway databases to find relevant pathways
 
-### Tools Used
+### Tools
 
-#### KEGG Search
-**kegg_search_pathway**:
-- **Input**: `keyword` (e.g., "diabetes", "apoptosis")
-- **Output**: Array of pathway IDs and descriptions
-- **Coverage**: Reference pathways, metabolism, diseases
+| Tool | Key Params | Coverage |
+|------|-----------|----------|
+| `kegg_search_pathway` | `keyword` | Reference, metabolic, disease pathways |
+| `kegg_get_pathway_info` | `pathway_id` (e.g., "hsa04930") | Detailed genes/compounds for a pathway |
+| `WikiPathways_search` | `query`, `organism` | Community-curated, emerging pathways |
+| `PathwayCommons_search` | `action`="search_pathways", `keyword` | Meta-database aggregating multiple sources |
+| `biomodels_search` | `query`, `limit` | SBML computational models |
 
-**kegg_get_pathway_info**:
-- **Input**: `pathway_id` (e.g., "hsa04930")
-- **Output**: Pathway details, genes, compounds
-- **Use**: Get detailed information for specific pathway
-
-#### WikiPathways Search
-**WikiPathways_search**:
-- **Input**:
-  - `query`: Keyword or gene symbol
-  - `organism`: Species filter (e.g., "Homo sapiens")
-- **Output**: Array of pathway matches with IDs, names, URLs
-- **Coverage**: Community-curated, includes emerging pathways
-
-#### Pathway Commons Search
-**PathwayCommons_search**:
-- **Input**:
-  - `action`: "search_pathways"
-  - `keyword`: Search term
-  - `datasource`: Optional filter (e.g., "reactome", "kegg")
-  - `limit`: Max results (default: 10)
-- **Output**: Total hits and array of pathways with source attribution
-- **Coverage**: Meta-database aggregating multiple sources
-
-#### BioModels Search
-**biomodels_search**:
-- **Input**:
-  - `query`: Keyword for computational models
-  - `limit`: Max results
-- **Output**: Array of SBML models with IDs, names, publications
-- **Coverage**: Mathematical/computational systems biology models
-
-### Workflow
-
-1. Search KEGG pathways by keyword
-2. Search WikiPathways with organism filter
-3. Search Pathway Commons (aggregates multiple sources)
-4. Search BioModels for computational models
-5. Compile results from all sources
-6. Note overlaps and source-specific pathways
-
-### Decision Logic
-
-- **Parallel queries**: Search all databases simultaneously (independent)
-- **Empty from one source**: Continue with other sources (common for specialized keywords)
-- **Result consolidation**: Group by pathway concept, note which databases contain each
-- **Model availability**: BioModels may be empty for many processes - this is normal
+Search all databases in parallel. Group results by pathway concept. BioModels often returns empty — this is normal.
 
 ---
 
@@ -225,58 +159,82 @@ Input → Phase 1: Enrichment → Phase 2: Protein Mapping → Phase 3: Keyword 
 
 ## Output Structure
 
-### Report Format
-
-**Progressive Markdown Report**:
-- Create report file first
-- Add sections progressively
-- Each section self-contained (handles empty gracefully)
-
-**Required Sections**:
-1. **Header**: Analysis parameters (genes, protein, keyword, organism)
-2. **Phase 1 Results**: Pathway enrichment (if gene list)
-3. **Phase 2 Results**: Protein-pathway mapping (if protein ID)
-4. **Phase 3 Results**: Keyword search across databases (if keyword)
-5. **Phase 4 Results**: Top-level pathway catalog (always)
-
-**Per-Database Subsections**:
-- Database name and result count
-- Table of pathways with key metadata
-- Note if database returns no results
-- Links or IDs for follow-up
-
-### Data Tables
-
-**Enrichment Results**:
-| Pathway | P-value | Adjusted P-value | Genes |
-| ... | ... | ... | ... |
-
-**Protein Pathways**:
-| Pathway Name | Pathway ID | Species |
-| ... | ... | ... |
-
-**Keyword Search**:
-| Pathway/Model ID | Name | Source/Database |
-| ... | ... | ... |
-
----
+Create a markdown report progressively: header → Phase 1 enrichment results → Phase 2 protein mapping → Phase 3 keyword search → Phase 4 top pathway catalog. Note empty results explicitly; never silently omit them. Include pathway IDs for follow-up.
 
 ## Tool Parameter Reference
 
 **Critical Parameter Notes** (from testing):
 
-| Tool | Parameter | CORRECT Name | Common Mistake |
-|------|-----------|--------------|----------------|
-| Reactome_map_uniprot_to_pathways | `uniprot_id` | ✅ `uniprot_id` | ❌ `id` |
-| kegg_search_pathway | `keyword` | ✅ `keyword` | - |
-| WikiPathways_search | `query` | ✅ `query` | - |
-| PathwayCommons_search | `action` + `keyword` | ✅ Both required | ❌ `action` optional |
-| enrichr_gene_enrichment_analysis | `gene_list` | ✅ `gene_list` | - |
+| Tool | Correct Parameter | Common Mistake |
+|------|-------------------|----------------|
+| `Reactome_map_uniprot_to_pathways` | `uniprot_id` | `id` |
+| `PathwayCommons_search` | `action` + `keyword` (both required) | omitting `action` |
+| `enrichr_gene_enrichment_analysis` | `gene_list` (array) | string |
 
 **Response Format Notes**:
 - **Reactome**: Returns list directly (not wrapped in `{status, data}`)
-- **Pathway Commons**: Returns dict directly with `total_hits` and `pathways`
+- **Pathway Commons**: Returns dict with `total_hits` and `pathways`
 - **Others**: Standard `{status: "success", data: [...]}` format
+
+---
+
+## Domain Reasoning: Enzyme Kinetics & Metabolic Analysis
+
+LOOK UP DON'T GUESS: Km values, kcat values, cofactor requirements, and optimal pH/temperature for specific enzymes. Use `BindingDB_search_by_target`, `ChEMBL_get_molecule`, `BRENDA_search` (if available), or `EuropePMC_search_articles` to retrieve published kinetic parameters. Do not estimate Km from first principles.
+
+### Michaelis-Menten Kinetics
+
+The foundational model: v = Vmax * [S] / (Km + [S])
+- **Km** = substrate concentration at half-maximal velocity. NOT binding affinity (Km = (koff + kcat) / kon).
+- **Vmax** = maximum velocity = kcat * [E_total]. Proportional to enzyme concentration.
+- **kcat** = turnover number = molecules of substrate converted per enzyme per second.
+- **Catalytic efficiency** = kcat / Km. The "best" enzymes approach the diffusion limit (~10^8 M^-1 s^-1).
+
+To determine Km and Vmax from data: use Lineweaver-Burk (1/v vs 1/[S]), Eadie-Hofstee (v vs v/[S]), or nonlinear regression (preferred — avoids distortion from reciprocal transforms). See `enzyme_kinetics.py` in `skills/tooluniverse-computational-biophysics/scripts/`.
+
+### Allosteric Regulation & Cooperative Binding
+
+Not all enzymes follow Michaelis-Menten. Sigmoidal v-vs-[S] curves indicate cooperativity.
+- **Hill equation**: v = Vmax * [S]^nH / (K0.5^nH + [S]^nH)
+- **Hill coefficient (nH)**: nH = 1 (no cooperativity), nH > 1 (positive, e.g., hemoglobin O2 binding nH ~ 2.8), nH < 1 (negative cooperativity).
+- **K0.5**: substrate concentration at half-maximal velocity (analogous to Km but not identical for cooperative systems).
+- Allosteric activators shift the curve LEFT (lower K0.5). Allosteric inhibitors shift it RIGHT (higher K0.5) or reduce Vmax.
+
+### Enzyme Inhibition Types
+
+| Type | Effect on Km | Effect on Vmax | Lineweaver-Burk pattern |
+|------|-------------|----------------|------------------------|
+| Competitive | Increases (Km_app = Km * (1 + [I]/Ki)) | Unchanged | Lines intersect on y-axis |
+| Uncompetitive | Decreases | Decreases | Parallel lines |
+| Noncompetitive (pure) | Unchanged | Decreases (Vmax_app = Vmax / (1 + [I]/Ki)) | Lines intersect on x-axis |
+| Mixed | Changes | Decreases | Lines intersect in quadrant II or III |
+
+To determine Ki: measure v at multiple [I] and [S], fit to the appropriate model. The `enzyme_kinetics.py` script handles competitive, uncompetitive, and noncompetitive inhibition calculations.
+
+### Troubleshooting "No Activity" Results
+
+When a purified enzyme shows no catalytic activity, systematically check:
+
+1. **Oligomeric state**: Many enzymes are obligate dimers/tetramers. Dilute protein may dissociate. Check with SEC, native PAGE, or DLS. Concentrate sample or add stabilizing agents (glycerol, specific ions).
+2. **Cofactors**: Metal ions (Zn2+, Mg2+, Mn2+), coenzymes (NAD+, FAD, PLP), or prosthetic groups may be lost during purification. LOOK UP the enzyme's cofactor requirements and supplement the assay buffer.
+3. **pH**: Most enzymes have a sharp pH optimum. Even 1 pH unit off can reduce activity 10-fold. Buffer at the literature-reported optimal pH.
+4. **Temperature**: Standard assays at 25C or 37C. Thermophilic enzymes need 50-80C. Psychrophilic enzymes denature above 30C.
+5. **Reducing environment**: Many enzymes need DTT or beta-mercaptoethanol to maintain active-site cysteines in reduced form.
+6. **Substrate**: Wrong isomer (D- vs L-), wrong oxidation state, or degraded substrate. Use fresh substrate and verify by a positive control enzyme.
+7. **Inhibitors in buffer**: EDTA chelates essential metals. Phosphate competes at phospho-binding sites. Detergents can denature.
+8. **Protein folding**: Inclusion body protein may be misfolded even after refolding. Check by CD spectroscopy or thermal shift assay.
+
+### Metabolic Flux Analysis Reasoning
+
+Metabolic flux analysis (MFA) quantifies the rates of metabolic reactions in vivo, not just enzyme activities in vitro.
+
+Key concepts:
+- **Steady-state assumption**: At metabolic steady state, the rate of production of each intermediate equals its rate of consumption. This gives a system of linear equations: S * v = 0, where S is the stoichiometric matrix and v is the flux vector.
+- **Flux Balance Analysis (FBA)**: When the system is underdetermined (more reactions than metabolites), FBA uses linear programming to optimize an objective function (e.g., maximize biomass production). Use `biomodels_search` to find published SBML models for the organism.
+- **13C-MFA**: Uses isotope labeling to experimentally constrain intracellular fluxes. The labeling pattern of metabolites reveals which pathways carried flux.
+- **Control coefficients**: How much does a 1% change in enzyme activity change the pathway flux? Most enzymes have near-zero flux control coefficients — flux is usually controlled by a few rate-limiting steps plus substrate supply.
+
+LOOK UP DON'T GUESS: stoichiometric coefficients, pathway topology, and published flux distributions. Use KEGG (`kegg_get_pathway_info`), Reactome (`Reactome_get_pathway_reactions`), and BioModels (`biomodels_search`) for these data.
 
 ---
 
@@ -299,91 +257,13 @@ Input → Phase 1: Enrichment → Phase 2: Protein Mapping → Phase 3: Keyword 
 
 ---
 
-## Common Use Patterns
-
-### Pattern 1: Differential Expression Analysis
-```
-Input: Gene list from RNA-seq (upregulated genes)
-Workflow: Phase 1 (Enrichment) → Phase 4 (Context)
-Output: Enriched pathways explaining expression changes
-```
-
-### Pattern 2: Protein Function Investigation
-```
-Input: UniProt ID of protein of interest
-Workflow: Phase 2 (Protein mapping) → Phase 3 (Keyword with protein name)
-Output: All pathways involving protein + related pathways
-```
-
-### Pattern 3: Disease Pathway Exploration
-```
-Input: Disease name or process keyword
-Workflow: Phase 3 (Keyword search) → Phase 4 (Context)
-Output: Pathways from multiple databases related to disease
-```
-
-### Pattern 4: Comprehensive Multi-Input
-```
-Input: Gene list + protein ID + keyword
-Workflow: All phases
-Output: Complete systems view with enrichment, specific mappings, and context
-```
-
----
-
-## Quality Checks
-
-### Data Completeness
-- [ ] At least one analysis phase completed successfully
-- [ ] Each database result includes source attribution
-- [ ] Empty results explicitly noted (not silently omitted)
-- [ ] P-values reported with appropriate precision
-- [ ] Pathway IDs provided for follow-up analysis
-
-### Biological Validity
-- [ ] Enrichment p-values show significance threshold
-- [ ] Protein mappings consistent with known function
-- [ ] Keyword results relevant to query
-- [ ] Cross-database results show expected overlaps
-
-### Report Quality
-- [ ] All sections present even if "no data"
-- [ ] Tables formatted consistently
-- [ ] Source databases clearly attributed
-- [ ] Follow-up recommendations if data sparse
-
----
-
 ## Limitations & Known Issues
 
-### Database-Specific
 - **Reactome**: Strong human coverage; limited for non-model organisms
 - **KEGG**: Requires keyword match; may miss synonyms
 - **WikiPathways**: Variable curation quality; check pathway version dates
-- **Pathway Commons**: Aggregation can have duplicates; check source
+- **Pathway Commons**: Aggregation may have duplicates; check source attribution
 - **BioModels**: Sparse for many processes; often returns no results
 - **Enrichr**: Requires gene symbols (not IDs); case-sensitive
-
-### Technical
-- **Response formats**: Different databases use different response structures (handled in implementation)
-- **Rate limits**: Some databases have rate limits for heavy usage
-- **Version differences**: Pathway databases updated at different rates
-
-### Analysis
-- **Enrichment bias**: Pathway enrichment depends on pathway size and annotation completeness
-- **Organism specificity**: Not all databases cover all organisms equally
-- **Pathway definitions**: Same biological process may be modeled differently across databases
-
----
-
-## Summary
-
-**Systems Biology & Pathway Analysis Skill** provides comprehensive pathway analysis by integrating:
-1. ✅ Statistical pathway enrichment (Enrichr)
-2. ✅ Protein-pathway mapping (Reactome)
-3. ✅ Multi-database keyword search (KEGG, WikiPathways, Pathway Commons, BioModels)
-4. ✅ Hierarchical pathway context (Reactome top-level)
-
-**Outputs**: Markdown report with pathway tables, enrichment statistics, and cross-database comparisons
 
 **Best for**: Gene set analysis, protein function investigation, pathway discovery, systems-level biology

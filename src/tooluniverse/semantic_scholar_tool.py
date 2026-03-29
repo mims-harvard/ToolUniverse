@@ -121,6 +121,7 @@ class SemanticScholarTool(BaseTool):
                     "externalIds",
                     "title",
                     "abstract",
+                    "tldr",
                     "year",
                     "venue",
                     "url",
@@ -129,6 +130,7 @@ class SemanticScholarTool(BaseTool):
                     "referenceCount",
                     "isOpenAccess",
                     "openAccessPdf",
+                    "fieldsOfStudy",
                 ]
             ),
         }
@@ -194,6 +196,16 @@ class SemanticScholarTool(BaseTool):
             url = p.get("url")
             paper_id = p.get("paperId") if isinstance(p.get("paperId"), str) else None
 
+            # Extract TLDR summary
+            raw_tldr = p.get("tldr")
+            tldr = None
+            if isinstance(raw_tldr, dict) and isinstance(raw_tldr.get("text"), str):
+                tldr = raw_tldr["text"]
+
+            # Extract fields of study
+            raw_fields = p.get("fieldsOfStudy")
+            fields_of_study = raw_fields if isinstance(raw_fields, list) else None
+
             authors = []
             raw_authors = p.get("authors", [])
             if isinstance(raw_authors, list):
@@ -258,6 +270,7 @@ class SemanticScholarTool(BaseTool):
                 {
                     "title": title or "Title not available",
                     "abstract": abstract,
+                    "tldr": tldr,
                     "journal": journal,
                     "year": year,
                     "url": url,
@@ -265,6 +278,7 @@ class SemanticScholarTool(BaseTool):
                     "doi": doi,
                     "doi_url": doi_url,
                     "authors": authors,
+                    "fields_of_study": fields_of_study,
                     "citation_count": citation_count,
                     "reference_count": reference_count,
                     "open_access": is_open_access
@@ -273,6 +287,7 @@ class SemanticScholarTool(BaseTool):
                     "open_access_pdf_url": open_access_pdf_url,
                     "data_quality": {
                         "has_abstract": bool(abstract),
+                        "has_tldr": bool(tldr),
                         "has_journal": bool(journal),
                         "has_year": bool(year),
                         "has_url": bool(url),

@@ -9,7 +9,7 @@ from ._shared_client import get_shared_client
 
 
 def ChIPAtlas_search_datasets(
-    operation: str,
+    operation: Optional[str] = "search_datasets",
     antigen: Optional[str] = None,
     cell_type: Optional[str] = None,
     genome: Optional[str] = "hg38",

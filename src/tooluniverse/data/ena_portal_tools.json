@@ -104,7 +104,10 @@
           ]
         }
       ]
-    }
+    },
+    "aliases": [
+      "ENA_search"
+    ]
   },
   {
     "name": "ENAPortal_search_samples",

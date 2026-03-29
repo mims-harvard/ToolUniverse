@@ -15,7 +15,9 @@
           "description": "Organism filter (scientific name), e.g., 'Homo sapiens'."
         }
       },
-      "required": ["query"]
+      "required": [
+        "query"
+      ]
     },
     "fields": {
       "endpoint": "https://webservice.wikipathways.org/findPathwaysByText",
@@ -31,27 +33,67 @@
           "items": {
             "type": "object",
             "properties": {
-              "id": {"type": "string", "description": "WikiPathways ID (WPID)"},
-              "name": {"type": "string", "description": "Pathway name"},
-              "species": {"type": "string", "description": "Organism name"},
-              "url": {"type": "string", "description": "Pathway URL"},
-              "revision": {"type": "string", "description": "Revision number"},
-              "score": {"type": ["object", "null"], "description": "Search relevance score"},
-              "fields": {"type": "array", "description": "Additional fields"}
+              "id": {
+                "type": "string",
+                "description": "WikiPathways ID (WPID)"
+              },
+              "name": {
+                "type": "string",
+                "description": "Pathway name"
+              },
+              "species": {
+                "type": "string",
+                "description": "Organism name"
+              },
+              "url": {
+                "type": "string",
+                "description": "Pathway URL"
+              },
+              "revision": {
+                "type": "string",
+                "description": "Revision number"
+              },
+              "score": {
+                "type": [
+                  "object",
+                  "null"
+                ],
+                "description": "Search relevance score"
+              },
+              "fields": {
+                "type": "array",
+                "description": "Additional fields"
+              }
             }
           }
         }
       }
     },
     "test_examples": [
-      {"query": "p53"},
-      {"query": "metabolism", "organism": "Homo sapiens"}
+      {
+        "query": "p53"
+      },
+      {
+        "query": "metabolism",
+        "organism": "Homo sapiens"
+      }
     ],
-    "label": ["WikiPathways", "Pathway", "Search"],
+    "label": [
+      "WikiPathways",
+      "Pathway",
+      "Search"
+    ],
     "metadata": {
-      "tags": ["pathway", "enrichment", "visualization"],
+      "tags": [
+        "pathway",
+        "enrichment",
+        "visualization"
+      ],
       "estimated_execution_time": "< 2 seconds"
-    }
+    },
+    "aliases": [
+      "WikiPathways_search_pathways"
+    ]
   },
   {
     "name": "WikiPathways_get_pathway",
@@ -66,12 +108,17 @@
         },
         "format": {
           "type": "string",
-          "enum": ["json", "gpml"],
+          "enum": [
+            "json",
+            "gpml"
+          ],
           "default": "json",
           "description": "Response format: 'json' for structured, 'gpml' for GPML XML."
         }
       },
-      "required": ["wpid"]
+      "required": [
+        "wpid"
+      ]
     },
     "fields": {
       "endpoint": "https://webservice.wikipathways.org/getPathway",
@@ -85,22 +132,54 @@
           "type": "object",
           "description": "Pathway content and metadata",
           "properties": {
-            "id": {"type": "string", "description": "WikiPathways ID"},
-            "name": {"type": "string", "description": "Pathway name"},
-            "species": {"type": "string", "description": "Organism name"},
-            "revision": {"type": "string", "description": "Revision number"},
-            "url": {"type": "string", "description": "Pathway URL"},
-            "gpml": {"type": ["string", "null"], "description": "GPML XML content if format=gpml"}
+            "id": {
+              "type": "string",
+              "description": "WikiPathways ID"
+            },
+            "name": {
+              "type": "string",
+              "description": "Pathway name"
+            },
+            "species": {
+              "type": "string",
+              "description": "Organism name"
+            },
+            "revision": {
+              "type": "string",
+              "description": "Revision number"
+            },
+            "url": {
+              "type": "string",
+              "description": "Pathway URL"
+            },
+            "gpml": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "GPML XML content if format=gpml"
+            }
           }
         }
       }
     },
     "test_examples": [
-      {"wpid": "WP254", "format": "json"}
+      {
+        "wpid": "WP254",
+        "format": "json"
+      }
     ],
-    "label": ["WikiPathways", "Pathway", "Content"],
+    "label": [
+      "WikiPathways",
+      "Pathway",
+      "Content"
+    ],
     "metadata": {
-      "tags": ["pathway", "content", "gpml"],
+      "tags": [
+        "pathway",
+        "content",
+        "gpml"
+      ],
       "estimated_execution_time": "< 2 seconds"
     }
   }

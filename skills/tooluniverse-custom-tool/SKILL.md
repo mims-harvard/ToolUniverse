@@ -12,6 +12,11 @@ description: >
 
 # Adding Custom Tools to ToolUniverse
 
+**When to create a custom tool:** Create one if you need to access an API that ToolUniverse
+doesn't cover, or if you need a specialized data transformation that no existing tool provides.
+Start with the JSON config approach (simplest — no Python needed); escalate to a Python class
+only if you need custom response parsing or stateful logic.
+
 Three ways to add tools — pick the one that fits your needs:
 
 | Approach | When to use |
@@ -119,99 +124,17 @@ tu test --config my_tool_tests.json
 - `return_schema` validation — validates `result["data"]` against the JSON Schema defined in `return_schema` (if present)
 - `expect_status` and `expect_keys` — only if set in the config file
 
-**Gotcha:** `tu test` does NOT verify that results are non-empty. An empty array `[]` satisfies
-`"type": "array"` and passes all checks. Make sure your `test_examples` use args that actually
-return results — otherwise a completely broken tool can pass all tests silently.
+**Gotchas:** (1) `tu test` does NOT verify non-empty results — `[]` passes schema validation. Use test_examples args that return real data. (2) Verify test_examples manually first with urllib (not curl) to confirm the API returns JSON, not HTML. Use 2-4 broad keywords.
 
+Add `test_examples` and `return_schema` to JSON config for best coverage. `tu test` validates `result["data"]` against `return_schema` (match `"type": "array"` or `"type": "object"` to your data shape).
 
-**Verify test_examples manually before finalizing.** Run a quick Python snippet against
-the real API with your chosen args BEFORE writing them into `test_examples`. Some APIs require
-all query words to appear literally in a title field (`intitle`-style); overly specific queries
-like "I2C pull-up resistor value" will return 0 results even though the tool works. Use 2-4 key
-words that are reliably present in real content.
-
-Use `urllib` rather than `curl` for API verification — `curl` requires shell quoting tricks and
-may not follow redirects correctly, while `urllib` matches what the tool will actually do:
-
-```python
-import urllib.request, json
-with urllib.request.urlopen("https://api.example.com/search?q=test") as r:
-    print(json.dumps(json.loads(r.read()), indent=2))
-```
-
-**Also check that the URL is still a real JSON API** before writing any tool code. Some
-candidate URLs (e.g. `certification.oshwa.org/api/projects`) may redirect to a GitHub Pages
-static site that returns HTML, not JSON. A quick urllib fetch will reveal this immediately.
-
-`my_tool_tests.json` (optional extra assertions):
-```json
-{
-  "tool_name": "MyAPI_search",
-  "tests": [
-    {
-      "name": "basic search",
-      "args": {"q": "climate change"},
-      "expect_status": "success",
-      "expect_keys": ["data"]
-    }
-  ]
-}
-```
-
-Add `test_examples` and `return_schema` to your JSON config for best coverage:
-```json
-{
-  "name": "MyAPI_search",
-  ...
-  "test_examples": [
-    {"q": "climate change"},
-    {"q": "CRISPR", "limit": 3}
-  ],
-  "return_schema": {
-    "type": "array",
-    "items": {
-      "type": "object",
-      "properties": {
-        "id":    { "type": "string" },
-        "title": { "type": "string" },
-        "score": { "type": "number" }
-      }
-    }
-  }
-}
-```
-`tu test` validates `result["data"]` against `return_schema`. Match the schema type to what
-your `run()` returns under the `"data"` key:
-- If `data` is a list: `"type": "array"`
-- If `data` is a dict: `"type": "object"`
+Optional `my_tool_tests.json` for extra assertions (`expect_status`, `expect_keys`).
 
 ### Use with MCP server
 
-Tools in `.tooluniverse/tools/` are automatically available when you run:
+Tools in `.tooluniverse/tools/` are auto-available via `tu serve`. Workspace priority: `--workspace` flag → `TOOLUNIVERSE_HOME` env → `./.tooluniverse/` → `~/.tooluniverse/`.
 
-```bash
-tu serve          # MCP stdio server (Claude Desktop, etc.)
-tooluniverse      # same
-```
-
-The workspace directory is auto-detected in this priority order:
-`--workspace` flag → `TOOLUNIVERSE_HOME` env var → `./.tooluniverse/` (current dir) → `~/.tooluniverse/` (global)
-
-### Point to a different tools directory
-
-Add a `sources` entry in `.tooluniverse/profile.yaml`:
-
-```yaml
-name: my-profile
-sources:
-  - ./my-custom-tools/    # relative to profile.yaml location
-  - /absolute/path/tools/
-```
-
-Then start with:
-```bash
-tooluniverse --load .tooluniverse/profile.yaml
-```
+To use a different tools directory, add `sources: [./my-custom-tools/]` in `.tooluniverse/profile.yaml` and start with `tooluniverse --load .tooluniverse/profile.yaml`.
 
 ---
 
@@ -313,143 +236,27 @@ Place configs in `data/my_api_tools.json`. The `"type"` field must match the str
 
 ### `__init__.py`
 
-Keep it minimal — no registration code needed. The plugin system imports every `.py` file in the
-package directory automatically (via `_discover_entry_point_plugins()`), so `@register_tool`
-decorators fire on their own:
-
-```python
-"""My tools plugin for ToolUniverse."""
-```
-
-If you want IDE autocompletion or to make it easy to import specific classes directly, you can
-add explicit imports — they are harmless because `@register_tool` is idempotent (registering
-the same class twice is a no-op):
-
-```python
-"""My tools plugin for ToolUniverse."""
-
-from . import my_api_tool       # optional — for IDE support
-from . import my_other_tool     # optional
-```
-
-**Do not** add registration logic, JSON loading, or `register_tool_configs()` calls here.
-Those run automatically at plugin discovery time.
+Keep minimal — just a docstring. The plugin system auto-imports all `.py` files via `_discover_entry_point_plugins()`, so `@register_tool` decorators fire automatically. Optional: add `from . import my_api_tool` for IDE support (idempotent). Do NOT add registration logic or JSON loading here.
 
 ### Install and verify
 
 ```bash
-# Install in editable mode — path must point to the directory containing pyproject.toml
 pip install -e /path/to/my_project_root
-
-# Verify the entry point is registered
-python -c "
-from importlib.metadata import entry_points
-eps = entry_points(group='tooluniverse.plugins')
-print([ep.name for ep in eps])
-"
-
-# Test the tool — MUST run from the plugin repo directory
-cd /path/to/my_project_root
+cd /path/to/my_project_root   # MUST run from plugin repo directory
 tu test MyAPI_search '{"query": "test"}'
 ```
 
-`tu test` finds plugin tools via the installed entry point — the package must be
-`pip install -e`'d first. Always run `tu test` from the plugin repo directory (not
-from an arbitrary location): ToolUniverse's workspace auto-detection looks for
-`.tooluniverse/` in the current directory, which is where the plugin's `profile.yaml`
-and any workspace-level config lives.
-
-Add `test_examples` to your JSON config for zero-config testing:
-```json
-{ "name": "MyAPI_search", ..., "test_examples": [{"query": "test"}] }
-```
-Then: `tu test MyAPI_search`
-
-**Note:** `tu list` shows tool counts grouped by category, not individual tool names. To confirm
-your specific tool loaded, use `tu info MyAPI_search` or run `tu test MyAPI_search` directly.
-If "Tool not found", see the gotcha above about the lazy registry refresh.
+Must `pip install -e` first. Run `tu test` from plugin repo dir (workspace auto-detection needs `.tooluniverse/`). Add `test_examples` to JSON config for zero-config testing. Use `tu info MyAPI_search` to confirm the tool loaded.
 
 ---
 
 ## Offline / pure-computation tools
 
-Calculator tools that perform local math (no HTTP) follow the plugin-package pattern
-but skip the HTTP layer entirely. Common designs:
+Calculator tools (no HTTP) follow the plugin-package pattern but skip the HTTP layer. Key design patterns:
 
-### Preset lookup tables
+- **Preset lookup tables**: Define `Dict[str, float]` at module level. Resolution priority: explicit value → preset name → default. Include presets in `metadata` for discoverability.
+- **Bidirectional equations**: Expose as separate `operation` values in a single tool. Use `"fields": {"operation": "default_op"}` in JSON config.
+- **Physical constants**: Define at module level (`_MU0 = 4*pi*1e-7`, etc.). Material-specific values as named dicts.
+- **Multi-output**: Return all related results in `data` (e.g., temperature + headroom + pass/fail) rather than forcing multiple calls.
 
-Define named presets at **module level** as a `Dict[str, float]`, then resolve the
-parameter with a priority chain: explicit user value → preset name → default.
-Always include the preset table in `metadata` so callers can discover valid names
-without reading source code:
-
-```python
-_PACKAGE_THETA_JA = {"sot-23": 200.0, "to-220": 50.0, "bga-256": 20.0}
-
-def run(self, arguments):
-    theta = arguments.get("theta_ja")
-    if theta is None and arguments.get("package"):
-        key = arguments["package"].lower()
-        if key not in _PACKAGE_THETA_JA:
-            return {"status": "error",
-                    "message": f"Unknown package. Known: {list(_PACKAGE_THETA_JA)}"}
-        theta = _PACKAGE_THETA_JA[key]
-    return {
-        "status": "success",
-        "data": {"theta_ja": theta, ...},
-        "metadata": {"package_presets": _PACKAGE_THETA_JA},
-    }
-```
-
-### Solving the same equation in both directions
-
-When the same formula can be rearranged to solve for different unknowns, expose them
-as separate `operation` values with a single runtime-dispatch tool:
-
-```python
-# C_min = I × Δt / ΔV  →  also: ΔV = I × Δt / C
-op = arguments.get("operation") or self.operation
-if op == "solve_capacitance":
-    dV = _req_float(arguments, "voltage_droop_V")
-    C_min = I * dt / dV
-    ...
-elif op == "solve_droop":
-    C = _req_float(arguments, "capacitance_F")
-    dV = I * dt / C
-    ...
-```
-
-The two directions share a single JSON config entry. Use `"fields": {"operation": "default_op"}`
-in the JSON to set the default, and document both modes clearly in the description.
-
-### Physical constants at module level
-
-Define fundamental constants once, near the top of the file, so they appear in code
-review and are easy to update:
-
-```python
-import math
-
-_MU0   = 4.0 * math.pi * 1e-7   # H/m — permeability of free space
-_KB_EV = 8.617333e-5             # eV/K — Boltzmann constant
-
-# Material-specific values as a named dict
-_MATERIAL_EA = {"al": 0.7, "cu": 0.9, "w": 1.0}   # activation energy in eV
-```
-
-### Multi-output operations
-
-When a single computation naturally yields multiple related results (e.g., Tj AND
-headroom AND pass/fail), return them all in `data` rather than forcing a second call:
-
-```python
-data = {
-    "junction_temp_C":   tj,
-    "headroom_C":        tj_max - tj,
-    "passes_thermal":    (tj_max - tj) >= 0,
-    ...
-}
-```
-
-For the complete patterns (significant-figure rounding, `_req_float` helper, preset
-resolution), see [references/python-tool.md](references/python-tool.md).
+For complete patterns, see [references/python-tool.md](references/python-tool.md).

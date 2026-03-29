@@ -1,4 +1,4 @@
-from .graphql_tool import GraphQLTool
+from .graphql_tool import GraphQLTool, remove_none_and_empty_values
 import requests
 import copy
 from .tool_registry import register_tool
@@ -69,17 +69,9 @@ class MonarchTool(RESTfulTool):
         if "facet_fields" in response:
             del response["facet_fields"]
 
-        def remove_empty_values(obj):
-            if isinstance(obj, dict):
-                return {
-                    k: remove_empty_values(v) for k, v in obj.items() if v is not None
-                }
-            elif isinstance(obj, list):
-                return [remove_empty_values(v) for v in obj if v is not None]
-            else:
-                return obj
-
-        response = remove_empty_values(response)
+        response = remove_none_and_empty_values(response)
+        if isinstance(response, dict) and "status" not in response:
+            return {"status": "success", "data": response}
         return response
 
 

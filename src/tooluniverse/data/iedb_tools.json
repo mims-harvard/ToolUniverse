@@ -1,391 +1,780 @@
 [
-    {
-        "name": "iedb_search_epitopes",
-        "type": "IEDBTool",
-        "description": "Search immune epitopes (IEDB Query API). Use this to discover epitope `structure_id` values, then use the epitope linking tools (e.g., `iedb_get_epitope_references`) to retrieve related references, MHC, antigens, etc.\n\nTips:\n- Use `select` to request only a few fields (smaller + faster responses).\n- For advanced filtering, pass `filters` with values like `eq.123` or `ilike.*KVF*`.",
-        "parameter": {
-            "type": "object",
-            "properties": {
-                "sequence_contains": {
-                    "type": "string",
-                    "description": "Sequence fragment to search within `linear_sequence` using a contains match. Example: 'KVF' finds epitopes containing that motif."
-                },
-                "structure_type": {
-                    "type": "string",
-                    "description": "Filter by epitope structure type. Example: 'Linear peptide'.",
-                    "enum": [
-                        "Linear peptide",
-                        "Discontinuous peptide",
-                        "Non-peptidic"
-                    ]
-                },
-                "limit": {
-                    "type": "integer",
-                    "description": "Maximum number of rows to return.",
-                    "default": 10
-                },
-                "offset": {
-                    "type": "integer",
-                    "description": "Pagination offset.",
-                    "default": 0
-                },
-                "order": {
-                    "type": "string",
-                    "description": "Optional PostgREST order clause (e.g., 'structure_id.asc')."
-                },
-                "select": {
-                    "description": "Optional projection list to reduce payload size. Provide a comma-separated string or an array of field names (e.g., ['structure_id','linear_sequence']).",
-                    "anyOf": [
-                        {"type": "string"},
-                        {"type": "array", "items": {"type": "string"}}
-                    ]
-                },
-                "filters": {
-                    "type": "object",
-                    "description": "Advanced PostgREST filters mapping column -> filter expression (e.g., {\"linear_sequence\":\"ilike.*KVF*\"}).",
-                    "additionalProperties": {"type": "string"}
-                }
-            },
-            "required": []
+  {
+    "name": "iedb_search_epitopes",
+    "type": "IEDBTool",
+    "description": "Search immune epitopes (IEDB Query API). Use this to discover epitope `structure_id` values, then use the epitope linking tools (e.g., `iedb_get_epitope_references`) to retrieve related references, MHC, antigens, etc.\n\nTips:\n- Use `select` to request only a few fields (smaller + faster responses).\n- For advanced filtering, pass `filters` with values like `eq.123` or `ilike.*KVF*`.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "sequence_contains": {
+          "type": "string",
+          "description": "Sequence fragment to search within `linear_sequence` using a contains match. Example: 'KVF' finds epitopes containing that motif."
         },
-        "return_schema": {
-            "type": "array",
-            "description": "List of matching epitope rows (projected via `select` if provided).",
-            "items": {
-                "type": "object",
-                "properties": {
-                    "structure_id": {"type": ["integer", "string", "null"]},
-                    "structure_type": {"type": ["string", "null"]},
-                    "linear_sequence": {"type": ["string", "null"]}
-                },
-                "additionalProperties": true
-            }
+        "structure_type": {
+          "type": "string",
+          "description": "Filter by epitope structure type. Example: 'Linear peptide'.",
+          "enum": [
+            "Linear peptide",
+            "Discontinuous peptide",
+            "Non-peptidic"
+          ]
         },
-        "test_examples": [
+        "limit": {
+          "type": "integer",
+          "description": "Maximum number of rows to return.",
+          "default": 10
+        },
+        "offset": {
+          "type": "integer",
+          "description": "Pagination offset.",
+          "default": 0
+        },
+        "order": {
+          "type": "string",
+          "description": "Optional PostgREST order clause (e.g., 'structure_id.asc')."
+        },
+        "select": {
+          "description": "Optional projection list to reduce payload size. Provide a comma-separated string or an array of field names (e.g., ['structure_id','linear_sequence']).",
+          "anyOf": [
             {
-                "sequence_contains": "KVF",
-                "structure_type": "Linear peptide",
-                "limit": 2,
-                "select": ["structure_id", "structure_type", "linear_sequence"],
-                "order": "structure_id.asc"
-            }
-        ],
-        "fields": {
-            "endpoint": "/epitope_search",
-            "default_params": {"order": "structure_id.asc"},
-            "shorthand_filters": {
-                "sequence_contains": {"column": "linear_sequence", "op": "ilike_contains"},
-                "structure_type": {"column": "structure_type", "op": "eq"}
-            }
-        }
-    },
-    {
-        "name": "iedb_search_antigens",
-        "type": "IEDBTool",
-        "description": "Search antigen-related rows (IEDB Query API). This is mainly useful for discovering antigen IRIs/IDs to use in other filters.\n\nTip: use `select` to request only a few fields (smaller + faster responses).",
-        "parameter": {
-            "type": "object",
-            "properties": {
-                "limit": {"type": "integer", "default": 10, "description": "Maximum number of rows to return."},
-                "offset": {"type": "integer", "default": 0, "description": "Pagination offset."},
-                "order": {"type": "string", "description": "Optional PostgREST order clause."},
-                "select": {
-                    "description": "Optional projection list (comma-separated string or array of field names).",
-                    "anyOf": [{"type": "string"}, {"type": "array", "items": {"type": "string"}}]
-                },
-                "filters": {
-                    "type": "object",
-                    "description": "Advanced PostgREST filters mapping column -> filter expression.",
-                    "additionalProperties": {"type": "string"}
-                }
+              "type": "string"
             },
-            "required": []
-        },
-        "return_schema": {
-            "type": "array",
-            "description": "List of antigen-related rows",
-            "items": {
-                "type": "object",
-                "properties": {
-                    "parent_source_antigen_id": {"type": ["string", "null"]},
-                    "parent_source_antigen_names": {"type": ["array", "null"], "items": {"type": "string"}},
-                    "parent_source_antigen_source_org_name": {"type": ["string", "null"]}
-                },
-                "additionalProperties": true
-            }
-        },
-        "test_examples": [
             {
-                "limit": 2,
-                "select": [
-                    "parent_source_antigen_id",
-                    "parent_source_antigen_names",
-                    "parent_source_antigen_source_org_name"
-                ]
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
             }
-        ],
-        "fields": {"endpoint": "/antigen_search"}
+          ]
+        },
+        "filters": {
+          "type": "object",
+          "description": "Advanced PostgREST filters mapping column -> filter expression (e.g., {\"linear_sequence\":\"ilike.*KVF*\"}).",
+          "additionalProperties": {
+            "type": "string"
+          }
+        }
+      },
+      "required": []
     },
-    {
-        "name": "iedb_search_mhc",
-        "type": "IEDBTool",
-        "description": "Search MHC-related assay rows (IEDB Query API). Use this to discover epitope `structure_id` values involved in MHC restriction.\n\nTip: use `select` to request only a few fields (smaller + faster responses).",
-        "parameter": {
-            "type": "object",
-            "properties": {
-                "limit": {"type": "integer", "default": 10, "description": "Maximum number of rows to return."},
-                "offset": {"type": "integer", "default": 0, "description": "Pagination offset."},
-                "order": {"type": "string", "description": "Optional PostgREST order clause."},
-                "select": {
-                    "description": "Optional projection list (comma-separated string or array of field names).",
-                    "anyOf": [{"type": "string"}, {"type": "array", "items": {"type": "string"}}]
-                },
-                "filters": {
-                    "type": "object",
-                    "description": "Advanced PostgREST filters mapping column -> filter expression.",
-                    "additionalProperties": {"type": "string"}
-                }
-            },
-            "required": []
+    "return_schema": {
+      "type": "array",
+      "description": "List of matching epitope rows (projected via `select` if provided).",
+      "items": {
+        "type": "object",
+        "properties": {
+          "structure_id": {
+            "type": [
+              "integer",
+              "string",
+              "null"
+            ]
+          },
+          "structure_type": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "linear_sequence": {
+            "type": [
+              "string",
+              "null"
+            ]
+          }
         },
-        "return_schema": {
-            "type": "array",
-            "description": "List of MHC-related assay rows",
-            "items": {
-                "type": "object",
-                "properties": {
-                    "structure_id": {"type": ["integer", "null"]},
-                    "mhc_restriction": {"type": ["string", "null"]},
-                    "mhc_class": {"type": ["string", "null"]},
-                    "mhc_allele_resolution": {"type": ["string", "null"]},
-                    "reference_id": {"type": ["integer", "null"]}
-                },
-                "additionalProperties": true
-            }
+        "additionalProperties": true
+      }
+    },
+    "test_examples": [
+      {
+        "sequence_contains": "KVF",
+        "structure_type": "Linear peptide",
+        "limit": 2,
+        "select": [
+          "structure_id",
+          "structure_type",
+          "linear_sequence"
+        ],
+        "order": "structure_id.asc"
+      }
+    ],
+    "fields": {
+      "endpoint": "/epitope_search",
+      "default_params": {
+        "order": "structure_id.asc"
+      },
+      "shorthand_filters": {
+        "sequence_contains": {
+          "column": "linear_sequence",
+          "op": "ilike_contains"
         },
-        "test_examples": [
+        "structure_type": {
+          "column": "structure_type",
+          "op": "eq"
+        }
+      }
+    },
+    "aliases": [
+      "IEDB_search_epitopes"
+    ]
+  },
+  {
+    "name": "iedb_search_antigens",
+    "type": "IEDBTool",
+    "description": "Search antigen-related rows (IEDB Query API). This is mainly useful for discovering antigen IRIs/IDs to use in other filters.\n\nTip: use `select` to request only a few fields (smaller + faster responses).",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "limit": {
+          "type": "integer",
+          "default": 10,
+          "description": "Maximum number of rows to return."
+        },
+        "offset": {
+          "type": "integer",
+          "default": 0,
+          "description": "Pagination offset."
+        },
+        "order": {
+          "type": "string",
+          "description": "Optional PostgREST order clause."
+        },
+        "select": {
+          "description": "Optional projection list (comma-separated string or array of field names).",
+          "anyOf": [
             {
-                "limit": 2,
-                "select": [
-                    "structure_id",
-                    "mhc_restriction",
-                    "mhc_class",
-                    "mhc_allele_resolution",
-                    "reference_id"
-                ]
-            }
-        ],
-        "fields": {"endpoint": "/mhc_search"}
-    },
-    {
-        "name": "iedb_search_bcell",
-        "type": "IEDBTool",
-        "description": "Search B-cell assay rows (IEDB Query API). Use this to discover `bcell_id` values and related epitope `structure_id` values.\n\nTip: use `select` to request only a few fields (smaller + faster responses).",
-        "parameter": {
-            "type": "object",
-            "properties": {
-                "limit": {"type": "integer", "default": 10, "description": "Maximum number of rows to return."},
-                "offset": {"type": "integer", "default": 0, "description": "Pagination offset."},
-                "order": {"type": "string", "description": "Optional PostgREST order clause."},
-                "select": {
-                    "description": "Optional projection list (comma-separated string or array of field names).",
-                    "anyOf": [{"type": "string"}, {"type": "array", "items": {"type": "string"}}]
-                },
-                "filters": {
-                    "type": "object",
-                    "description": "Advanced PostgREST filters mapping column -> filter expression.",
-                    "additionalProperties": {"type": "string"}
-                }
+              "type": "string"
             },
-            "required": []
-        },
-        "return_schema": {
-            "type": "array",
-            "description": "List of B-cell assay rows",
-            "items": {
-                "type": "object",
-                "properties": {
-                    "bcell_id": {"type": ["integer", "null"]},
-                    "structure_id": {"type": ["integer", "null"]},
-                    "assay_description": {"type": ["string", "null"]},
-                    "reference_id": {"type": ["integer", "null"]}
-                },
-                "additionalProperties": true
+            {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
             }
+          ]
         },
-        "test_examples": [
-            {"limit": 2, "select": ["bcell_id", "structure_id", "assay_description", "reference_id"]}
-        ],
-        "fields": {"endpoint": "/bcell_search"}
-    },
-    {
-        "name": "iedb_search_references",
-        "type": "IEDBTool",
-        "description": "Search references/citations (IEDB Query API). Use this to discover `reference_id` values, PubMed IDs, and paper titles.\n\nTip: use `select` to request only a few fields (smaller + faster responses).",
-        "parameter": {
-            "type": "object",
-            "properties": {
-                "limit": {"type": "integer", "default": 10, "description": "Maximum number of rows to return."},
-                "offset": {"type": "integer", "default": 0, "description": "Pagination offset."},
-                "order": {"type": "string", "description": "Optional PostgREST order clause."},
-                "select": {
-                    "description": "Optional projection list (comma-separated string or array of field names).",
-                    "anyOf": [{"type": "string"}, {"type": "array", "items": {"type": "string"}}]
-                },
-                "filters": {
-                    "type": "object",
-                    "description": "Advanced PostgREST filters mapping column -> filter expression.",
-                    "additionalProperties": {"type": "string"}
-                }
-            },
-            "required": []
-        },
-        "return_schema": {
-            "type": "array",
-            "description": "List of reference/citation rows",
-            "items": {
-                "type": "object",
-                "properties": {
-                    "reference_id": {"type": ["integer", "null"]},
-                    "pubmed_id": {"type": ["string", "null"]},
-                    "journal_name": {"type": ["string", "null"]},
-                    "reference_title": {"type": ["string", "null"]}
-                },
-                "additionalProperties": true
-            }
-        },
-        "test_examples": [
-            {"limit": 2, "select": ["reference_id", "pubmed_id", "journal_name", "reference_title"]}
-        ],
-        "fields": {"endpoint": "/reference_search"}
-    },
-    {
-        "name": "iedb_get_epitope_antigens",
-        "type": "IEDBTool",
-        "description": "Given an epitope `structure_id`, get linked antigens (IEDB Query API). Returned rows contain `parent_source_antigen_iri` (an antigen identifier) that you can use in other filters/searches.",
-        "parameter": {
-            "type": "object",
-            "properties": {
-                "structure_id": {"type": "integer", "description": "IEDB epitope structure ID (from `iedb_search_epitopes`)."},
-                "limit": {"type": "integer", "default": 10, "description": "Maximum number of rows to return."},
-                "offset": {"type": "integer", "default": 0, "description": "Pagination offset."},
-                "order": {"type": "string", "description": "Optional PostgREST order clause."},
-                "select": {
-                    "description": "Optional projection list (comma-separated string or array of field names).",
-                    "anyOf": [{"type": "string"}, {"type": "array", "items": {"type": "string"}}]
-                },
-                "filters": {
-                    "type": "object",
-                    "description": "Advanced PostgREST filters mapping column -> filter expression.",
-                    "additionalProperties": {"type": "string"}
-                }
-            },
-            "required": ["structure_id"]
-        },
-        "return_schema": {
-            "type": "array",
-            "description": "List of epitope-to-antigen linkage rows",
-            "items": {
-                "type": "object",
-                "properties": {
-                    "structure_id": {"type": ["integer", "null"]},
-                    "parent_source_antigen_iri": {"type": ["string", "null"]}
-                },
-                "additionalProperties": true
-            }
-        },
-        "test_examples": [
-            {"structure_id": 2, "limit": 2, "select": ["structure_id", "parent_source_antigen_iri"]}
-        ],
-        "fields": {
-            "endpoint": "/epitope_to_antigen",
-            "shorthand_filters": {"structure_id": {"column": "structure_id", "op": "eq"}}
+        "filters": {
+          "type": "object",
+          "description": "Advanced PostgREST filters mapping column -> filter expression.",
+          "additionalProperties": {
+            "type": "string"
+          }
         }
+      },
+      "required": []
     },
-    {
-        "name": "iedb_get_epitope_mhc",
-        "type": "IEDBTool",
-        "description": "Given an epitope `structure_id`, get linked MHC restriction association rows (IEDB Query API). Returned rows include `elution_id` for the association.",
-        "parameter": {
-            "type": "object",
-            "properties": {
-                "structure_id": {"type": "integer", "description": "IEDB epitope structure ID (from `iedb_search_epitopes`)."},
-                "limit": {"type": "integer", "default": 10, "description": "Maximum number of rows to return."},
-                "offset": {"type": "integer", "default": 0, "description": "Pagination offset."},
-                "order": {"type": "string", "description": "Optional PostgREST order clause."},
-                "select": {
-                    "description": "Optional projection list (comma-separated string or array of field names).",
-                    "anyOf": [{"type": "string"}, {"type": "array", "items": {"type": "string"}}]
-                },
-                "filters": {
-                    "type": "object",
-                    "description": "Advanced PostgREST filters mapping column -> filter expression.",
-                    "additionalProperties": {"type": "string"}
-                }
-            },
-            "required": ["structure_id"]
-        },
-        "return_schema": {
-            "type": "array",
-            "description": "List of epitope-to-MHC linkage rows",
+    "return_schema": {
+      "type": "array",
+      "description": "List of antigen-related rows",
+      "items": {
+        "type": "object",
+        "properties": {
+          "parent_source_antigen_id": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "parent_source_antigen_names": {
+            "type": [
+              "array",
+              "null"
+            ],
             "items": {
-                "type": "object",
-                "properties": {
-                    "structure_id": {"type": ["integer", "null"]},
-                    "elution_id": {"type": ["integer", "null"]}
-                },
-                "additionalProperties": true
+              "type": "string"
             }
+          },
+          "parent_source_antigen_source_org_name": {
+            "type": [
+              "string",
+              "null"
+            ]
+          }
         },
-        "test_examples": [
-            {"structure_id": 2, "limit": 2, "select": ["structure_id", "elution_id"]}
-        ],
-        "fields": {
-            "endpoint": "/epitope_to_mhc",
-            "shorthand_filters": {"structure_id": {"column": "structure_id", "op": "eq"}}
-        }
+        "additionalProperties": true
+      }
     },
-    {
-        "name": "iedb_get_epitope_references",
-        "type": "IEDBTool",
-        "description": "Given an epitope `structure_id`, get linked references (IEDB Query API). Returned rows include `reference_id`; use `iedb_search_references` to retrieve titles and PubMed IDs for those reference IDs.",
-        "parameter": {
-            "type": "object",
-            "properties": {
-                "structure_id": {"type": "integer", "description": "IEDB epitope structure ID (from `iedb_search_epitopes`)."},
-                "limit": {"type": "integer", "default": 10, "description": "Maximum number of rows to return."},
-                "offset": {"type": "integer", "default": 0, "description": "Pagination offset."},
-                "order": {"type": "string", "description": "Optional PostgREST order clause."},
-                "select": {
-                    "description": "Optional projection list (comma-separated string or array of field names).",
-                    "anyOf": [{"type": "string"}, {"type": "array", "items": {"type": "string"}}]
-                },
-                "filters": {
-                    "type": "object",
-                    "description": "Advanced PostgREST filters mapping column -> filter expression.",
-                    "additionalProperties": {"type": "string"}
-                }
-            },
-            "required": ["structure_id"]
-        },
-        "return_schema": {
-            "type": "array",
-            "description": "List of epitope-to-reference linkage rows",
-            "items": {
-                "type": "object",
-                "properties": {
-                    "structure_id": {"type": ["integer", "null"]},
-                    "reference_id": {"type": ["integer", "null"]}
-                },
-                "additionalProperties": true
-            }
-        },
-        "test_examples": [
-            {"structure_id": 2, "limit": 2, "select": ["structure_id", "reference_id"]}
-        ],
-        "fields": {
-            "endpoint": "/epitope_to_reference",
-            "shorthand_filters": {"structure_id": {"column": "structure_id", "op": "eq"}}
-        }
+    "test_examples": [
+      {
+        "limit": 2,
+        "select": [
+          "parent_source_antigen_id",
+          "parent_source_antigen_names",
+          "parent_source_antigen_source_org_name"
+        ]
+      }
+    ],
+    "fields": {
+      "endpoint": "/antigen_search"
     }
+  },
+  {
+    "name": "iedb_search_mhc",
+    "type": "IEDBTool",
+    "description": "Search MHC-related assay rows (IEDB Query API). Use this to discover epitope `structure_id` values involved in MHC restriction.\n\nTip: use `select` to request only a few fields (smaller + faster responses).",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "limit": {
+          "type": "integer",
+          "default": 10,
+          "description": "Maximum number of rows to return."
+        },
+        "offset": {
+          "type": "integer",
+          "default": 0,
+          "description": "Pagination offset."
+        },
+        "order": {
+          "type": "string",
+          "description": "Optional PostgREST order clause."
+        },
+        "select": {
+          "description": "Optional projection list (comma-separated string or array of field names).",
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            }
+          ]
+        },
+        "filters": {
+          "type": "object",
+          "description": "Advanced PostgREST filters mapping column -> filter expression.",
+          "additionalProperties": {
+            "type": "string"
+          }
+        }
+      },
+      "required": []
+    },
+    "return_schema": {
+      "type": "array",
+      "description": "List of MHC-related assay rows",
+      "items": {
+        "type": "object",
+        "properties": {
+          "structure_id": {
+            "type": [
+              "integer",
+              "null"
+            ]
+          },
+          "mhc_restriction": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "mhc_class": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "mhc_allele_resolution": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "reference_id": {
+            "type": [
+              "integer",
+              "null"
+            ]
+          }
+        },
+        "additionalProperties": true
+      }
+    },
+    "test_examples": [
+      {
+        "limit": 2,
+        "select": [
+          "structure_id",
+          "mhc_restriction",
+          "mhc_class",
+          "mhc_allele_resolution",
+          "reference_id"
+        ]
+      }
+    ],
+    "fields": {
+      "endpoint": "/mhc_search"
+    }
+  },
+  {
+    "name": "iedb_search_bcell",
+    "type": "IEDBTool",
+    "description": "Search B-cell assay rows (IEDB Query API). Use this to discover `bcell_id` values and related epitope `structure_id` values.\n\nTip: use `select` to request only a few fields (smaller + faster responses).",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "limit": {
+          "type": "integer",
+          "default": 10,
+          "description": "Maximum number of rows to return."
+        },
+        "offset": {
+          "type": "integer",
+          "default": 0,
+          "description": "Pagination offset."
+        },
+        "order": {
+          "type": "string",
+          "description": "Optional PostgREST order clause."
+        },
+        "select": {
+          "description": "Optional projection list (comma-separated string or array of field names).",
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            }
+          ]
+        },
+        "filters": {
+          "type": "object",
+          "description": "Advanced PostgREST filters mapping column -> filter expression.",
+          "additionalProperties": {
+            "type": "string"
+          }
+        }
+      },
+      "required": []
+    },
+    "return_schema": {
+      "type": "array",
+      "description": "List of B-cell assay rows",
+      "items": {
+        "type": "object",
+        "properties": {
+          "bcell_id": {
+            "type": [
+              "integer",
+              "null"
+            ]
+          },
+          "structure_id": {
+            "type": [
+              "integer",
+              "null"
+            ]
+          },
+          "assay_description": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "reference_id": {
+            "type": [
+              "integer",
+              "null"
+            ]
+          }
+        },
+        "additionalProperties": true
+      }
+    },
+    "test_examples": [
+      {
+        "limit": 2,
+        "select": [
+          "bcell_id",
+          "structure_id",
+          "assay_description",
+          "reference_id"
+        ]
+      }
+    ],
+    "fields": {
+      "endpoint": "/bcell_search"
+    }
+  },
+  {
+    "name": "iedb_search_references",
+    "type": "IEDBTool",
+    "description": "Search references/citations (IEDB Query API). Use this to discover `reference_id` values, PubMed IDs, and paper titles.\n\nTip: use `select` to request only a few fields (smaller + faster responses).",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "limit": {
+          "type": "integer",
+          "default": 10,
+          "description": "Maximum number of rows to return."
+        },
+        "offset": {
+          "type": "integer",
+          "default": 0,
+          "description": "Pagination offset."
+        },
+        "order": {
+          "type": "string",
+          "description": "Optional PostgREST order clause."
+        },
+        "select": {
+          "description": "Optional projection list (comma-separated string or array of field names).",
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            }
+          ]
+        },
+        "filters": {
+          "type": "object",
+          "description": "Advanced PostgREST filters mapping column -> filter expression.",
+          "additionalProperties": {
+            "type": "string"
+          }
+        }
+      },
+      "required": []
+    },
+    "return_schema": {
+      "type": "array",
+      "description": "List of reference/citation rows",
+      "items": {
+        "type": "object",
+        "properties": {
+          "reference_id": {
+            "type": [
+              "integer",
+              "null"
+            ]
+          },
+          "pubmed_id": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "journal_name": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "reference_title": {
+            "type": [
+              "string",
+              "null"
+            ]
+          }
+        },
+        "additionalProperties": true
+      }
+    },
+    "test_examples": [
+      {
+        "limit": 2,
+        "select": [
+          "reference_id",
+          "pubmed_id",
+          "journal_name",
+          "reference_title"
+        ]
+      }
+    ],
+    "fields": {
+      "endpoint": "/reference_search"
+    }
+  },
+  {
+    "name": "iedb_get_epitope_antigens",
+    "type": "IEDBTool",
+    "description": "Given an epitope `structure_id`, get linked antigens (IEDB Query API). Returned rows contain `parent_source_antigen_iri` (an antigen identifier) that you can use in other filters/searches.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "structure_id": {
+          "type": "integer",
+          "description": "IEDB epitope structure ID (from `iedb_search_epitopes`)."
+        },
+        "limit": {
+          "type": "integer",
+          "default": 10,
+          "description": "Maximum number of rows to return."
+        },
+        "offset": {
+          "type": "integer",
+          "default": 0,
+          "description": "Pagination offset."
+        },
+        "order": {
+          "type": "string",
+          "description": "Optional PostgREST order clause."
+        },
+        "select": {
+          "description": "Optional projection list (comma-separated string or array of field names).",
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            }
+          ]
+        },
+        "filters": {
+          "type": "object",
+          "description": "Advanced PostgREST filters mapping column -> filter expression.",
+          "additionalProperties": {
+            "type": "string"
+          }
+        }
+      },
+      "required": [
+        "structure_id"
+      ]
+    },
+    "return_schema": {
+      "type": "array",
+      "description": "List of epitope-to-antigen linkage rows",
+      "items": {
+        "type": "object",
+        "properties": {
+          "structure_id": {
+            "type": [
+              "integer",
+              "null"
+            ]
+          },
+          "parent_source_antigen_iri": {
+            "type": [
+              "string",
+              "null"
+            ]
+          }
+        },
+        "additionalProperties": true
+      }
+    },
+    "test_examples": [
+      {
+        "structure_id": 2,
+        "limit": 2,
+        "select": [
+          "structure_id",
+          "parent_source_antigen_iri"
+        ]
+      }
+    ],
+    "fields": {
+      "endpoint": "/epitope_to_antigen",
+      "shorthand_filters": {
+        "structure_id": {
+          "column": "structure_id",
+          "op": "eq"
+        }
+      }
+    }
+  },
+  {
+    "name": "iedb_get_epitope_mhc",
+    "type": "IEDBTool",
+    "description": "Given an epitope `structure_id`, get linked MHC restriction association rows (IEDB Query API). Returned rows include `elution_id` for the association.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "structure_id": {
+          "type": "integer",
+          "description": "IEDB epitope structure ID (from `iedb_search_epitopes`)."
+        },
+        "limit": {
+          "type": "integer",
+          "default": 10,
+          "description": "Maximum number of rows to return."
+        },
+        "offset": {
+          "type": "integer",
+          "default": 0,
+          "description": "Pagination offset."
+        },
+        "order": {
+          "type": "string",
+          "description": "Optional PostgREST order clause."
+        },
+        "select": {
+          "description": "Optional projection list (comma-separated string or array of field names).",
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            }
+          ]
+        },
+        "filters": {
+          "type": "object",
+          "description": "Advanced PostgREST filters mapping column -> filter expression.",
+          "additionalProperties": {
+            "type": "string"
+          }
+        }
+      },
+      "required": [
+        "structure_id"
+      ]
+    },
+    "return_schema": {
+      "type": "array",
+      "description": "List of epitope-to-MHC linkage rows",
+      "items": {
+        "type": "object",
+        "properties": {
+          "structure_id": {
+            "type": [
+              "integer",
+              "null"
+            ]
+          },
+          "elution_id": {
+            "type": [
+              "integer",
+              "null"
+            ]
+          }
+        },
+        "additionalProperties": true
+      }
+    },
+    "test_examples": [
+      {
+        "structure_id": 2,
+        "limit": 2,
+        "select": [
+          "structure_id",
+          "elution_id"
+        ]
+      }
+    ],
+    "fields": {
+      "endpoint": "/epitope_to_mhc",
+      "shorthand_filters": {
+        "structure_id": {
+          "column": "structure_id",
+          "op": "eq"
+        }
+      }
+    }
+  },
+  {
+    "name": "iedb_get_epitope_references",
+    "type": "IEDBTool",
+    "description": "Given an epitope `structure_id`, get linked references (IEDB Query API). Returned rows include `reference_id`; use `iedb_search_references` to retrieve titles and PubMed IDs for those reference IDs.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "structure_id": {
+          "type": "integer",
+          "description": "IEDB epitope structure ID (from `iedb_search_epitopes`)."
+        },
+        "limit": {
+          "type": "integer",
+          "default": 10,
+          "description": "Maximum number of rows to return."
+        },
+        "offset": {
+          "type": "integer",
+          "default": 0,
+          "description": "Pagination offset."
+        },
+        "order": {
+          "type": "string",
+          "description": "Optional PostgREST order clause."
+        },
+        "select": {
+          "description": "Optional projection list (comma-separated string or array of field names).",
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            }
+          ]
+        },
+        "filters": {
+          "type": "object",
+          "description": "Advanced PostgREST filters mapping column -> filter expression.",
+          "additionalProperties": {
+            "type": "string"
+          }
+        }
+      },
+      "required": [
+        "structure_id"
+      ]
+    },
+    "return_schema": {
+      "type": "array",
+      "description": "List of epitope-to-reference linkage rows",
+      "items": {
+        "type": "object",
+        "properties": {
+          "structure_id": {
+            "type": [
+              "integer",
+              "null"
+            ]
+          },
+          "reference_id": {
+            "type": [
+              "integer",
+              "null"
+            ]
+          }
+        },
+        "additionalProperties": true
+      }
+    },
+    "test_examples": [
+      {
+        "structure_id": 2,
+        "limit": 2,
+        "select": [
+          "structure_id",
+          "reference_id"
+        ]
+      }
+    ],
+    "fields": {
+      "endpoint": "/epitope_to_reference",
+      "shorthand_filters": {
+        "structure_id": {
+          "column": "structure_id",
+          "op": "eq"
+        }
+      }
+    }
+  }
 ]

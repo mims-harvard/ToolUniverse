@@ -5,6 +5,10 @@ description: Comprehensive ADMET (Absorption, Distribution, Metabolism, Excretio
 
 # ADMET Prediction & Drug Candidate Profiling
 
+**ADMET reasoning**: a drug fails if it can't be absorbed, distributes to wrong tissues, isn't metabolized safely, or isn't excreted. Evaluate each property independently — good absorption doesn't compensate for liver toxicity. The ADME properties determine whether a compound reaches its target at therapeutic concentrations; toxicity determines whether it's safe to do so. Prioritize experimental data (T2) over computational predictions (T3) — ADMETAI predictions are screening tools, not definitive verdicts. When a FAIL is flagged in any toxicity category (hERG, AMES, DILI), treat it as program-limiting until wet-lab data refutes it.
+
+**LOOK UP DON'T GUESS**: never assume SMILES, CID, or experimental LD50 values — always call PubChem to resolve compound identity before any ADMETAI or PubChemTox call.
+
 Comprehensive pharmacokinetic and toxicity profiling integrating AI-based ADMET predictions, rule-based drug-likeness filters, and experimental benchmarks from curated databases.
 
 ## When to Use This Skill
@@ -23,6 +27,9 @@ Comprehensive pharmacokinetic and toxicity profiling integrating AI-based ADMET 
 **Input**: Drug name (e.g., "ibuprofen") OR SMILES string (e.g., "CC(C)Cc1ccc(cc1)C(C)C(=O)O")
 
 ---
+
+## COMPUTE, DON'T DESCRIBE
+When analysis requires computation (statistics, data processing, scoring, enrichment), write and run Python code via Bash. Don't describe what you would do — execute it and report actual results. Use ToolUniverse tools to retrieve data, then Python (pandas, scipy, statsmodels, matplotlib) to analyze it.
 
 ## KEY PRINCIPLES
 
@@ -45,53 +52,6 @@ Comprehensive pharmacokinetic and toxicity profiling integrating AI-based ADMET 
 | **T2** | Experimental | PubChemTox LD50/LC50, in vitro AMES, animal studies |
 | **T3** | Computational | ADMETAI predictions, SwissADME calculations |
 | **T4** | Annotation | Database cross-references, text-mined |
-
----
-
-## Tool Reference (Verified Parameters)
-
-### Compound Resolution
-| Tool | Parameters | Returns |
-|------|-----------|---------|
-| `PubChem_get_CID_by_compound_name` | `name: str` | `{IdentifierList: {CID: [int]}}` |
-| `PubChem_get_CID_by_SMILES` | `smiles: str` | `{IdentifierList: {CID: [int]}}` |
-| `PubChem_get_compound_properties_by_CID` | `cid: int` | `{CID, MolecularWeight, ConnectivitySMILES, IUPACName}` |
-
-### ADMETAI Predictions (all take `smiles: list[str]`)
-| Tool | Predicts | Key Outputs |
-|------|----------|-------------|
-| `ADMETAI_predict_physicochemical_properties` | MW, logP, PSA, HBD, HBA | Lipinski descriptors |
-| `ADMETAI_predict_solubility_lipophilicity_hydration` | Aqueous solubility | LogS, hydration free energy |
-| `ADMETAI_predict_BBB_penetrance` | Blood-brain barrier crossing | BBB+/BBB- classification |
-| `ADMETAI_predict_bioavailability` | Oral bioavailability | F20%/F30% classification |
-| `ADMETAI_predict_CYP_interactions` | CYP450 substrate/inhibitor | CYP1A2, 2C9, 2C19, 2D6, 3A4 |
-| `ADMETAI_predict_clearance_distribution` | VDss, clearance, PPB | PK parameters |
-| `ADMETAI_predict_toxicity` | AMES, DILI, hERG, LD50, ClinTox | Safety flags |
-| `ADMETAI_predict_nuclear_receptor_activity` | NR-AR, NR-AhR, NR-ER, etc. | Endocrine disruption |
-| `ADMETAI_predict_stress_response` | p53, HSE, MMP, ATAD5 | Genotoxicity stress |
-
-### SwissADME (SOAP-style: requires `operation` param)
-| Tool | Parameters | Returns |
-|------|-----------|---------|
-| `SwissADME_calculate_adme` | `operation: "calculate_adme"`, `smiles: str` | 49 ADME properties |
-| `SwissADME_check_druglikeness` | `operation: "check_druglikeness"`, `smiles: str` | Lipinski/Veber/Ghose/Egan/Muegge |
-
-### PubChemTox (all take `cid: int` OR `compound_name: str`)
-| Tool | Returns |
-|------|---------|
-| `PubChemTox_get_toxicity_values` | LD50, LC50 from animal studies |
-| `PubChemTox_get_ghs_classification` | GHS hazard codes and statements |
-| `PubChemTox_get_acute_effects` | Acute toxicity by route/species |
-| `PubChemTox_get_carcinogen_classification` | IARC/NTP/EPA carcinogen class |
-| `PubChemTox_get_target_organs` | Organ-specific toxicity |
-| `PubChemTox_get_toxicity_summary` | Overall toxicity summary |
-
-### Clinical Benchmarks
-| Tool | Parameters | Returns |
-|------|-----------|---------|
-| `ChEMBL_get_molecule` | `chembl_id: str` | Max phase, Ro5 violations, molecular properties |
-
----
 
 ## Workflow: 5-Phase ADMET Profiling
 
@@ -227,17 +187,7 @@ User Query (drug name or SMILES)
 5. **SwissADME pharmacokinetics** (cross-validation):
    - GI absorption (high/low), P-gp substrate status, skin permeation (logKp)
 
-**Interpret & Score**:
-
-| Property | Flag Condition | Risk |
-|----------|---------------|------|
-| BBB+ for non-CNS drug | WARN | Potential CNS side effects |
-| BBB- for CNS drug | FAIL | Drug will not reach target |
-| F < 20% | WARN | Poor oral bioavailability |
-| CYP3A4 inhibitor | WARN | High DDI potential |
-| CYP2D6 substrate | WARN | Pharmacogenomic variability |
-| PPB > 99% | WARN | Very narrow therapeutic window |
-| High clearance + low bioavail | FAIL | Drug unlikely to reach therapeutic levels |
+**Key flags**: BBB+ for non-CNS drug (WARN: CNS side effects); BBB- for CNS drug (FAIL: won't reach target); F < 20% (WARN: poor oral bioavailability); CYP3A4 inhibitor (WARN: high DDI); CYP2D6 substrate (WARN: pharmacogenomic variability); PPB > 99% (WARN: narrow window); high clearance + low bioavailability (FAIL).
 
 **Fallback**: If ADMETAI unavailable, SwissADME provides GI absorption, BBB permeation (yes/no), P-gp substrate, and CYP inhibition predictions.
 
@@ -291,20 +241,7 @@ User Query (drug name or SMILES)
    - GHS classification provides internationally harmonized hazard categories
    - Carcinogen classification from IARC (Group 1/2A/2B), NTP, EPA
 
-**Interpret & Score**:
-
-| Endpoint | Flag Condition | Severity |
-|----------|---------------|----------|
-| AMES positive | FAIL | Mutagenic; regulatory barrier |
-| DILI positive | WARN | Hepatotox risk; requires monitoring |
-| hERG positive | FAIL | Cardiac liability; often program-killing |
-| ClinTox positive | WARN | Historical failure signal |
-| LD50 < 50 mg/kg | FAIL | Highly toxic (GHS Category 1-2) |
-| LD50 50-300 mg/kg | WARN | Toxic (GHS Category 3) |
-| LD50 > 2000 mg/kg | PASS | Low acute toxicity |
-| NR-ER/AR active | WARN | Endocrine disruption |
-| p53 active | WARN | Genotoxicity signal |
-| IARC Group 1/2A | FAIL | Known/probable carcinogen |
+**Key flags**: AMES positive (FAIL: mutagenic); DILI positive (WARN: hepatotox); hERG positive (FAIL: cardiac, often program-killing); ClinTox positive (WARN); LD50 < 50 mg/kg (FAIL: GHS 1-2); LD50 50-300 mg/kg (WARN: GHS 3); NR-ER/AR active (WARN: endocrine disruption); p53 active (WARN: genotoxicity); IARC Group 1/2A (FAIL: known/probable carcinogen).
 
 **Fallback**: If ADMETAI unavailable, PubChemTox provides experimental toxicity data for known compounds. For novel compounds without PubChem entries, flag as "no experimental toxicity data available -- computational predictions only."
 
@@ -324,51 +261,7 @@ User Query (drug name or SMILES)
    - Ro5 violations from ChEMBL (independent validation of Lipinski)
    - First approval year, indication class, black box warning flag
 
-2. **Build the ADMET Scorecard**:
-
-```
-============================================================
-ADMET SCORECARD: [Compound Name] ([SMILES])
-============================================================
-
-COMPOUND IDENTITY
-  Name:           [name]
-  PubChem CID:    [CID]
-  SMILES:         [SMILES]
-  MW:             [value] Da
-  Formula:        [formula]
-  ChEMBL Phase:   [0-4 or N/A]
-
-------------------------------------------------------------
-CATEGORY            VERDICT    KEY FINDINGS
-------------------------------------------------------------
-Physicochemical     [P/W/F]    MW=[x], LogP=[x], TPSA=[x], Ro5 viol=[n]
-Solubility          [P/W/F]    LogS=[x], class=[soluble/moderate/poor]
-Absorption          [P/W/F]    GI=[high/low], F=[x]%, P-gp=[Y/N]
-Distribution        [P/W/F]    BBB=[+/-], VDss=[x] L/kg, PPB=[x]%
-Metabolism          [P/W/F]    CYP3A4=[sub/inh], CYP2D6=[sub/inh]
-Excretion           [P/W/F]    Clearance=[high/med/low], T1/2=[est]
-Tox: Mutagenicity   [P/W/F]    AMES=[+/-], p53=[+/-]
-Tox: Hepatotoxicity [P/W/F]    DILI=[+/-], target organs=[list]
-Tox: Cardiotoxicity [P/W/F]    hERG=[+/-]
-Tox: Carcinogenicity[P/W/F]    IARC=[class], Lagunin=[+/-]
-Tox: Acute          [P/W/F]    LD50=[x] mg/kg, GHS=[cat]
-Endocrine           [P/W/F]    NR-ER=[+/-], NR-AR=[+/-]
-Clinical Tox        [P/W/F]    ClinTox=[+/-], skin=[+/-]
-------------------------------------------------------------
-OVERALL             [P/W/F]    [n] PASS, [n] WARN, [n] FAIL
-============================================================
-
-VERDICT DEFINITIONS:
-  PASS (P) = Within acceptable range; no flags
-  WARN (W) = Borderline or manageable risk; monitor/mitigate
-  FAIL (F) = Significant liability; may be program-limiting
-
-EVIDENCE SOURCES:
-  [T1] ChEMBL clinical data, FDA labels
-  [T2] PubChemTox experimental (LD50, AMES, GHS)
-  [T3] ADMETAI predictions, SwissADME calculations
-```
+2. **Build the ADMET Scorecard**: produce a table with 13 categories (Physicochemical, Solubility, Absorption, Distribution, Metabolism, Excretion, Tox: Mutagenicity/Hepatotoxicity/Cardiotoxicity/Carcinogenicity/Acute, Endocrine, Clinical Tox), each with PASS/WARN/FAIL verdict and key finding. Include compound identity header and overall verdict. Tag each finding with evidence tier [T1-T3].
 
 3. **Interpretation narrative**: After the scorecard, provide a 3-5 sentence summary:
    - Highlight the most critical findings (any FAILs or WARNs)
@@ -376,60 +269,6 @@ EVIDENCE SOURCES:
    - Note any DDI risks from CYP interactions
    - Flag pharmacogenomic concerns (CYP2D6 substrate)
    - Recommend next steps (e.g., "hERG patch clamp assay recommended to confirm computational prediction")
-
----
-
-## ADMETAI Dependency Note
-
-ADMETAI tools require the `tooluniverse[ml]` extra:
-```bash
-pip install tooluniverse[ml]
-```
-
-If ADMETAI tools raise `ImportError` or `ModuleNotFoundError`:
-1. Log the error: "ADMETAI unavailable -- using fallback tools only"
-2. Use SwissADME for physicochemical + drug-likeness + basic PK
-3. Use PubChemTox for toxicity (experimental only, no predictions for novel compounds)
-4. Mark all prediction-dependent fields as "N/A (ADMETAI not installed)"
-5. Still produce the scorecard, marking unavailable rows
-
----
-
-## Common Query Patterns
-
-### Pattern 1: Named Drug Assessment
-```
-User: "What are the ADMET properties of metformin?"
-Flow: PubChem name->CID(4091)->SMILES -> all 5 phases -> scorecard
-```
-
-### Pattern 2: Novel Compound by SMILES
-```
-User: "Predict toxicity for CC(=O)Nc1ccc(O)cc1"
-Flow: Validate SMILES -> PubChem CID lookup -> all 5 phases -> scorecard
-Note: PubChemTox may have no data for truly novel compounds
-```
-
-### Pattern 3: BBB-Specific Query
-```
-User: "Can donepezil cross the blood-brain barrier?"
-Flow: Resolve SMILES -> Phase 3 BBB only -> brief answer with context
-Note: Still report full scorecard if user wants comprehensive profile
-```
-
-### Pattern 4: CYP/DDI Risk Query
-```
-User: "What CYP interactions does ketoconazole have?"
-Flow: Resolve SMILES -> Phase 3 CYP only -> report substrate/inhibitor for each isoform
-Note: Ketoconazole is a classic CYP3A4 inhibitor -- predictions should match known pharmacology
-```
-
-### Pattern 5: Comparative Profiling
-```
-User: "Compare ADMET of ibuprofen vs naproxen"
-Flow: Run full pipeline for each compound -> side-by-side scorecard
-Note: Use same SMILES list in ADMETAI calls for efficiency: smiles=["<SMILES1>", "<SMILES2>"]
-```
 
 ---
 

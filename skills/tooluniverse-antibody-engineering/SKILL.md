@@ -18,6 +18,11 @@ AI-guided antibody optimization pipeline from preclinical lead to clinical candi
 
 ---
 
+## LOOK UP, DON'T GUESS
+When uncertain about any scientific fact, SEARCH databases first (PubMed, UniProt, ChEMBL, ClinVar, etc.) rather than reasoning from memory. A database-verified answer is always more reliable than a guess.
+
+---
+
 ## When to Use
 
 Apply when user asks:

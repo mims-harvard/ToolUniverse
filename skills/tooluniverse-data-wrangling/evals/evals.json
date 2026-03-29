@@ -1,0 +1,23 @@
+{
+  "skill_name": "tooluniverse-data-wrangling",
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "I need to download all TCGA-BRCA clinical data and run a Cox proportional hazards model on overall survival stratified by TP53 mutation status. Can you get the data and run the analysis?",
+      "expected_output": "Agent should: (1) use GDC API to download clinical data with pagination, (2) parse JSON into DataFrame, (3) get TP53 mutation data, (4) merge and run Cox PH regression, (5) report hazard ratio with CI and p-value",
+      "files": []
+    },
+    {
+      "id": 2,
+      "prompt": "Download the GWAS Catalog associations for type 2 diabetes, filter to genome-wide significant hits, and tell me which genes have the most associations.",
+      "expected_output": "Agent should: (1) download full GWAS Catalog TSV, (2) filter by DISEASE/TRAIT containing diabetes AND p-value < 5e-8, (3) group by MAPPED_GENE, (4) report top genes with counts",
+      "files": []
+    },
+    {
+      "id": 3,
+      "prompt": "I have a VCF file with variants from whole exome sequencing. Can you parse it and annotate each variant with ClinVar significance and predicted functional impact from VEP?",
+      "expected_output": "Agent should: (1) parse VCF using the pandas pattern from Format Cookbook, (2) for each variant, query Ensembl VEP REST API, (3) optionally check ClinVar, (4) produce annotated DataFrame",
+      "files": []
+    }
+  ]
+}

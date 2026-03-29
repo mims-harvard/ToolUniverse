@@ -3,6 +3,9 @@ name: tooluniverse-adverse-event-detection
 description: Detect and analyze adverse drug event signals using FDA FAERS data, drug labels, disproportionality analysis (PRR, ROR, IC), and biomedical evidence. Generates quantitative safety signal scores (0-100) with evidence grading. Use for post-market surveillance, pharmacovigilance, drug safety assessment, adverse event investigation, and regulatory decision support.
 ---
 
+## COMPUTE, DON'T DESCRIBE
+When analysis requires computation (statistics, data processing, scoring, enrichment), write and run Python code via Bash. Don't describe what you would do — execute it and report actual results. Use ToolUniverse tools to retrieve data, then Python (pandas, scipy, statsmodels, matplotlib) to analyze it.
+
 # Adverse Drug Event Signal Detection & Analysis
 
 Automated pipeline for detecting, quantifying, and contextualizing adverse drug event signals using FAERS disproportionality analysis, FDA label mining, mechanism-based prediction, and literature evidence. Produces a quantitative Safety Signal Score (0-100) for regulatory and clinical decision-making.
@@ -15,6 +18,24 @@ Automated pipeline for detecting, quantifying, and contextualizing adverse drug 
 5. **Report-first approach** - Create report file FIRST, update progressively
 6. **Evidence grading mandatory** - T1 (regulatory/boxed warning) through T4 (computational)
 7. **English-first queries** - Always use English drug names in tool calls, respond in user's language
+
+**REASONING STRATEGY — Start Here**:
+Start with the signal: What adverse event was reported more than expected? (PRR >= 2.0, N >= 3, lower CI > 1.0 is the threshold). Then ask three questions in order:
+1. **Biologically plausible?** Given the drug's mechanism of action and targets, does this adverse event make sense? An off-target kinase inhibitor causing cardiac events is plausible; a topical agent causing systemic toxicity needs more scrutiny. LOOK UP DON'T GUESS — use `OpenTargets_get_drug_mechanisms_of_action_by_chemblId` and `drugbank_get_targets_by_drug_name_or_drugbank_id` to check targets before asserting plausibility.
+2. **Timing consistent?** Acute reactions (within hours/days) suggest immune or direct pharmacologic mechanism. Delayed reactions (weeks/months) suggest cumulative toxicity or idiosyncratic response. Check FAERS time-to-onset distribution.
+3. **Could confounders explain it?** Patients taking this drug likely have the underlying disease — compare against background rate in that population, not the general population. Class-wide signals (appearing for all drugs in the class) suggest mechanism-based rather than molecule-specific toxicity.
+
+**Causality Assessment — Naranjo Algorithm Reasoning**:
+When determining whether an adverse event is drug-caused (not just associated), apply these steps systematically. LOOK UP DON'T GUESS — search FAERS and FDA labels for each criterion:
+1. **Prior reports?** Are there previous conclusive reports of this reaction? Check FDA label (`FDA_get_adverse_reactions_by_drug_name`) and literature (`PubMed_search_articles`). Yes = +1.
+2. **Temporal relationship?** Did the AE appear after drug administration? Onset within expected pharmacokinetic window (1-5 half-lives) = +2. Use `FAERS_stratify_by_demographics` for time-to-onset data.
+3. **Dechallenge?** Did the AE improve when the drug was stopped? Positive dechallenge = +1. Look for rechallenge/dechallenge case reports in literature.
+4. **Rechallenge?** Did the AE reappear when the drug was restarted? Positive rechallenge = +2 (strongest single piece of evidence for causality).
+5. **Alternative causes?** Could the underlying disease, concomitant drugs, or other factors explain the AE? Check `drugbank_get_drug_interactions_by_drug_name_or_id` for interacting drugs.
+6. **Dose-response?** Did the reaction worsen with higher doses or improve with lower doses? Dose-dependent AEs suggest on-target toxicity.
+7. **Drug level confirmation?** Was the drug detected in body fluids at toxic concentrations?
+- Score: Definite (>=9), Probable (5-8), Possible (1-4), Doubtful (<=0).
+- Even without individual patient data, you can estimate causality from aggregate FAERS signals + label evidence + mechanistic plausibility.
 
 **Reference files** (in this directory):
 - `PHASE_DETAILS.md` - Detailed tool calls, code examples, and output templates per phase
@@ -139,19 +160,6 @@ Calculate Safety Signal Score (0-100) from four components: FAERS signal strengt
 
 ### Phase 9: Report Synthesis
 Generate comprehensive markdown report with executive summary, all phase outputs, monitoring recommendations, risk mitigation strategies, patient counseling points, and completeness checklist. See `REPORT_TEMPLATE.md` for full template.
-
----
-
-## Common Analysis Patterns
-
-| Pattern | Description | Phases |
-|---------|-------------|--------|
-| **Full Safety Profile** | Comprehensive report for regulatory/safety reviews | All (0-9) |
-| **Specific AE Investigation** | "Does [drug] cause [event]?" | 0, 2, 3, 7 |
-| **Drug Class Comparison** | Compare 3-5 drugs for specific AE | 0, 2, 5 |
-| **Emerging Signal Detection** | Screen for signals not in FDA label | 1, 2, 3, 7 |
-| **PGx Risk Assessment** | Genetic risk factors for AEs | 0, 6 |
-| **Pre-Approval Assessment** | New drugs with limited FAERS data | 4, 7 |
 
 ---
 

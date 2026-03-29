@@ -9,6 +9,19 @@ Coordinate and integrate multiple omics datasets for comprehensive systems biolo
 
 ---
 
+## Domain Reasoning
+
+Multi-omics integration asks whether different molecular layers tell a concordant story. If a gene is upregulated in RNA-seq AND its protein is elevated in proteomics, that is concordant evidence of true biological change. Discordance — high mRNA but low protein, or elevated protein without matching mRNA — may indicate post-transcriptional regulation (miRNA silencing, protein degradation, translational control) and is itself a meaningful finding worth reporting. Not every discordance is noise; some are the most interesting biology.
+
+## LOOK UP DON'T GUESS
+
+- Expected RNA-protein correlation ranges: compute Spearman r from the actual data; the typical range (0.4-0.6) is a guide, not a guarantee.
+- Pathway enrichment results: run `ReactomeAnalysis_pathway_enrichment` or gseapy on the actual gene lists; never list enriched pathways from memory.
+- eQTL associations: query GTEx or eQTL databases for the specific variant and tissue; do not assume regulatory relationships.
+- Methylation-expression directionality at specific loci: retrieve experimental data; promoter repression is the canonical model but exceptions exist.
+
+---
+
 ## When to Use This Skill
 
 - User has multiple omics datasets (RNA-seq + proteomics, methylation + expression, etc.)

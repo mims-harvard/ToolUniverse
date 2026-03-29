@@ -5,6 +5,13 @@
     "parameter": {
       "type": "object",
       "properties": {
+        "query": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Alias for 'text'. Free text search across titles, keywords, and compound names. Examples: 'aspirin', 'perovskite', 'diamond'"
+        },
         "text": {
           "type": [
             "string",
@@ -61,6 +68,13 @@
           ],
           "description": "Mineral name search (partial match). Examples: 'calcite', 'feldspar', 'pyrite', 'magnetite'"
         },
+        "spacegroup": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Alias for 'sg'. Space group symbol (Hermann-Mauguin notation). Examples: 'P 21/c', 'Fm -3 m', 'P 1'"
+        },
         "sg": {
           "type": [
             "string",
@@ -74,6 +88,13 @@
             "null"
           ],
           "description": "Space group number (1-230). Examples: '225' (Fm-3m, FCC metals), '62' (Pnma, common for perovskites)"
+        },
+        "max_results": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "description": "Alias for 'results'. Maximum number of results to return (default 100, use smaller values for speed, e.g. 5 or 10)"
         },
         "results": {
           "type": [
@@ -91,7 +112,7 @@
         "format": "json"
       }
     },
-    "type": "BaseRESTTool",
+    "type": "CODTool",
     "test_examples": [
       {
         "el1": "Si",
@@ -296,14 +317,16 @@
     "parameter": {
       "type": "object",
       "properties": {
+        "cod_id": {
+          "type": "string",
+          "description": "Alias for 'id'. COD structure entry ID (numeric string). Examples: '9008460' (Aluminum), '1011240' (Hematite Fe2O3), '5900000' (Methane), '1515581' (Aspirin)"
+        },
         "id": {
           "type": "string",
           "description": "COD structure entry ID (numeric string). Examples: '9008460' (Aluminum), '1011240' (Hematite Fe2O3), '5900000' (Methane), '1515581' (Aspirin)"
         }
       },
-      "required": [
-        "id"
-      ]
+      "required": []
     },
     "fields": {
       "endpoint": "https://www.crystallography.net/cod/result",
@@ -311,7 +334,7 @@
         "format": "json"
       }
     },
-    "type": "BaseRESTTool",
+    "type": "CODTool",
     "test_examples": [
       {
         "id": "9008460"

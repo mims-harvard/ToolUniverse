@@ -7,6 +7,12 @@ description: Design and evaluate vaccine candidates using computational immunolo
 
 Computational pipeline for designing peptide/subunit vaccine candidates through epitope prediction, population coverage optimization, and immunogenicity assessment.
 
+## Reasoning Strategy
+
+Vaccine design requires presenting the right epitopes to elicit protective immunity — not just any immune response, but one that is neutralizing, durable, and broadly applicable. For T-cell vaccines, the core tool is MHC binding prediction (IEDB tools): predict peptide-MHC affinity across multiple HLA alleles, then select epitopes with broad coverage of the target population. For antibody vaccines, prioritize surface-exposed conserved regions — a deeply buried or hypervariable region makes a poor antibody target. MHC binding does not equal immunogenicity; many good binders are not immunogenic in vivo due to tolerance, poor processing, or lack of T-cell help. A multi-epitope strategy (combining MHC-I for CD8+ CTL response, MHC-II for CD4+ helper response, and B-cell epitopes for antibody induction) is more robust than any single epitope. Conservation across pathogen strains is critical — an epitope that mutates under immune pressure (like HIV envelope hypervariable regions) is a poor vaccine target.
+
+**LOOK UP DON'T GUESS**: Do not predict MHC binding or population coverage from memory — use `IEDB_predict_mhci_binding` and `IEDB_predict_mhcii_binding` for predictions and `IEDB_search_epitopes` for validated experimental data. Do not assume what's on the pathogen surface; retrieve annotated sequences from UniProt or BVBRC.
+
 **Key principles**:
 1. **Epitope-driven** — vaccines work by presenting epitopes to T/B cells; start with epitope prediction
 2. **Population coverage matters** — HLA diversity means no single epitope covers everyone; design for breadth
@@ -34,8 +40,9 @@ Computational pipeline for designing peptide/subunit vaccine candidates through 
 |------|---------|
 | `IEDB_search_epitopes` | Search experimentally validated epitopes |
 | `IEDB_get_epitope` | Get detailed epitope data (assay results, MHC restriction) |
-| `iedb_search_mhc` | Predict MHC-I/II binding affinity for peptides |
-| `iedb_search_mhc` | HLA allele frequencies by population |
+| `iedb_search_mhc` | Search validated MHC binding assay data |
+| `IEDB_predict_mhci_binding` | **Predict MHC-I binding** (NetMHCpan EL; rank < 0.5% = strong binder) |
+| `IEDB_predict_mhcii_binding` | **Predict MHC-II binding** (NetMHCIIpan EL; CD4+ helper epitopes) |
 | `UniProt_get_entry_by_accession` | Get antigen protein sequence |
 | `UniProt_search` | Find pathogen protein sequences |
 | `BVBRC_search_genome_features` | Search pathogen proteomes |
@@ -79,21 +86,14 @@ UniProt_search(query="[organism] AND locations:(location:cell surface) AND revie
 BVBRC_search_genome_features(keyword="surface protein", genome_id="[taxon_id]")
 ```
 
-**Antigen prioritization**:
-
-| Criterion | Best (3) | Good (2) | Poor (1) |
-|-----------|---------|---------|---------|
-| Surface exposure | Outer membrane/secreted | Transmembrane | Cytoplasmic |
-| Conservation | >95% identity across strains | 80-95% | <80% (hypervariable) |
-| Essentiality | Essential gene (no growth without it) | Important but dispensable | Redundant |
-| Immunogenicity precedent | Known immunogen in natural infection | Predicted immunogenic | No data |
+**Antigen prioritization**: prefer surface-exposed (secreted/outer membrane) over cytoplasmic; >95% conserved across strains; essential for pathogen viability; known immunogen in natural infection. Use UniProt subcellular location annotations and PubMed to verify these properties.
 
 ### Phase 1: T-Cell Epitope Prediction
 
 **MHC-I epitopes** (CD8+ cytotoxic T cells — kill infected cells):
 
 ```python
-# Search for known MHC-I epitopes from your pathogen
+# Option A: Search for KNOWN validated epitopes from IEDB
 iedb_search_mhc(
     mhc_class="I",
     qualitative_measure="Positive",
@@ -101,9 +101,18 @@ iedb_search_mhc(
     select=["linear_sequence", "mhc_restriction", "qualitative_measure"],
     limit=50
 )
-# NOTE: iedb_search_mhc queries EXPERIMENTALLY VALIDATED binding data from IEDB.
-# For computational prediction of novel peptides, use external tools (NetMHCpan, MHCflurry)
-# or the IEDB Analysis Resource (tools.iedb.org) directly.
+
+# Option B: PREDICT novel peptide binding (recommended for new proteins)
+IEDB_predict_mhci_binding(
+    sequence="YOUR_PROTEIN_SEQUENCE",  # full protein or peptide
+    allele="HLA-A*02:01",             # or H-2-Kd for mouse
+    method="netmhcpan_el",            # EL = eluted ligand (recommended)
+    length=9                           # 8-11 for MHC-I
+)
+# Returns peptides ranked by percentile_rank:
+# < 0.5% = strong binder (include in vaccine)
+# 0.5-2% = moderate binder (consider)
+# > 2% = weak/non-binder (exclude)
 ```
 
 **MHC-II epitopes** (CD4+ helper T cells — activate B cells and CD8+ T cells):

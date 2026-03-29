@@ -16,6 +16,47 @@ from .base_tool import BaseTool
 from .tool_registry import register_tool
 
 WORMBASE_BASE_URL = "https://rest.wormbase.org/rest"
+ALLIANCE_SEARCH_URL = "https://www.alliancegenome.org/api/search"
+
+# Module-level cache: gene name (lower) -> WBGene ID, avoids repeated lookups
+_WBGENE_CACHE: dict = {}
+
+
+def _resolve_wbgene_id(gene_input: str) -> str:
+    """Resolve a gene name (e.g. 'unc-86') to a WBGene ID via the Alliance API.
+
+    If the input already looks like a WBGene ID, return it unchanged.
+    Returns the resolved WBGene ID or the original input if resolution fails.
+    """
+    if gene_input.upper().startswith("WBGENE"):
+        return gene_input
+
+    cache_key = gene_input.lower()
+    if cache_key in _WBGENE_CACHE:
+        return _WBGENE_CACHE[cache_key]
+
+    try:
+        params = {
+            "category": "gene",
+            "q": gene_input,
+            "species": "Caenorhabditis elegans",
+            "limit": 5,
+        }
+        resp = requests.get(ALLIANCE_SEARCH_URL, params=params, timeout=10)
+        if resp.status_code != 200:
+            return gene_input
+        results = resp.json().get("results", [])
+        for r in results:
+            symbol = r.get("symbol", "")
+            if symbol.lower() == cache_key:
+                raw_id = r.get("id", "")
+                # Alliance returns "WB:WBGene00006818" — strip the "WB:" prefix
+                resolved = raw_id.split(":")[-1] if ":" in raw_id else raw_id
+                _WBGENE_CACHE[cache_key] = resolved
+                return resolved
+        return gene_input
+    except Exception:
+        return gene_input
 
 
 @register_tool("WormBaseTool")
@@ -77,13 +118,14 @@ class WormBaseTool(BaseTool):
             }
 
     def _gene_overview(self, arguments: Dict[str, Any]) -> Dict[str, Any]:
-        """Get detailed gene overview from WormBase by WBGene ID."""
-        gene_id = arguments.get("gene_id", "")
-        if not gene_id:
+        """Get detailed gene overview from WormBase by WBGene ID or gene name."""
+        gene_input = arguments.get("gene_id", "")
+        if not gene_input:
             return {
                 "status": "error",
-                "error": "gene_id parameter is required (e.g., 'WBGene00006763' for unc-26)",
+                "error": "gene_id parameter is required (e.g., 'WBGene00006763' or 'unc-86')",
             }
+        gene_id = _resolve_wbgene_id(gene_input)
 
         url = f"{WORMBASE_BASE_URL}/widget/gene/{gene_id}/overview"
         response = requests.get(
@@ -159,12 +201,13 @@ class WormBaseTool(BaseTool):
 
     def _gene_phenotypes(self, arguments: Dict[str, Any]) -> Dict[str, Any]:
         """Get phenotype annotations for a C. elegans gene from WormBase."""
-        gene_id = arguments.get("gene_id", "")
-        if not gene_id:
+        gene_input = arguments.get("gene_id", "")
+        if not gene_input:
             return {
                 "status": "error",
-                "error": "gene_id parameter is required (e.g., 'WBGene00006763' for unc-26)",
+                "error": "gene_id parameter is required (e.g., 'WBGene00006763' or 'unc-86')",
             }
+        gene_id = _resolve_wbgene_id(gene_input)
 
         url = f"{WORMBASE_BASE_URL}/widget/gene/{gene_id}/phenotype"
         response = requests.get(
@@ -244,12 +287,13 @@ class WormBaseTool(BaseTool):
 
     def _gene_expression(self, arguments: Dict[str, Any]) -> Dict[str, Any]:
         """Get expression data for a C. elegans gene from WormBase."""
-        gene_id = arguments.get("gene_id", "")
-        if not gene_id:
+        gene_input = arguments.get("gene_id", "")
+        if not gene_input:
             return {
                 "status": "error",
-                "error": "gene_id parameter is required (e.g., 'WBGene00006763' for unc-26)",
+                "error": "gene_id parameter is required (e.g., 'WBGene00006763' or 'unc-86')",
             }
+        gene_id = _resolve_wbgene_id(gene_input)
 
         url = f"{WORMBASE_BASE_URL}/widget/gene/{gene_id}/expression"
         response = requests.get(

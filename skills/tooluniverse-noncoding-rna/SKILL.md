@@ -14,6 +14,11 @@ Pipeline for identifying, annotating, and interpreting non-coding RNAs and their
 4. **Conservation indicates function** — deeply conserved ncRNAs (miR-let-7, MALAT1) have well-established roles
 5. **Evidence grading** — T1: validated targets (reporter assay, CLIP-seq), T2: high-confidence computational prediction, T3: expression correlation, T4: sequence-based prediction only
 
+**Type-based reasoning — look up, don't guess**:
+Non-coding RNA function depends on type: miRNA silences target mRNAs (look up targets in miRTarBase/TargetScan), lncRNA has diverse functions (scaffolding, guiding, decoying — check literature for the specific lncRNA), circRNA may sponge miRNAs.
+
+For any ncRNA query: first identify the class from the name/sequence, then select the appropriate evidence source. Do not assume function based on name alone — a gene named "LINC" may have a characterized mechanism, or none at all. Always search PubMed for the specific ncRNA before interpreting. For miRNAs, validated targets (T1) from miRTarBase outweigh any computational prediction — a predicted target with no experimental support is a hypothesis, not a finding. For lncRNAs, mechanism is almost always determined by experimental studies; use `PubMed_search_articles` with the lncRNA name + "mechanism" or "function" to find relevant evidence. For circRNAs, miRNA sponging is the most common proposed mechanism but is frequently over-claimed — look for CLIP-seq or reporter assay evidence before asserting it.
+
 ---
 
 ## When to Use
@@ -73,16 +78,15 @@ Phase 4: Functional Interpretation
 
 ### Phase 0: ncRNA Identity & Classification
 
-| ncRNA Class | Size | Database | Function |
-|---|---|---|---|
-| **miRNA** | ~22 nt | miRBase | Post-transcriptional gene silencing via 3'UTR binding |
-| **lncRNA** | >200 nt | LNCipedia | Diverse: chromatin remodeling, transcription regulation, miRNA sponges |
-| **rRNA** | 120-5000 nt | RNAcentral/Rfam | Ribosome components (translation) |
-| **tRNA** | ~76 nt | RNAcentral | Amino acid delivery to ribosome |
-| **snoRNA** | 60-300 nt | Rfam | rRNA modification (methylation, pseudouridylation) |
-| **snRNA** | ~150 nt | Rfam | Spliceosome components (mRNA splicing) |
-| **piRNA** | 26-31 nt | RNAcentral | Transposon silencing in germline |
-| **circRNA** | Variable | RNAcentral | miRNA sponges, protein scaffolds |
+ncRNA classes by size and database:
+- **miRNA** (~22 nt, miRBase): Post-transcriptional silencing via 3'UTR binding
+- **lncRNA** (>200 nt, LNCipedia): Diverse — chromatin remodeling, transcription regulation, miRNA sponges
+- **rRNA** (120-5000 nt, RNAcentral/Rfam): Ribosome components
+- **tRNA** (~76 nt, RNAcentral): Amino acid delivery
+- **snoRNA** (60-300 nt, Rfam): rRNA modification (methylation, pseudouridylation)
+- **snRNA** (~150 nt, Rfam): Spliceosome components
+- **piRNA** (26-31 nt, RNAcentral): Transposon silencing in germline
+- **circRNA** (variable, RNAcentral): miRNA sponges, protein scaffolds (experimental evidence required)
 
 **Identification workflow**:
 - Name starts with `miR-` or `hsa-mir-` → search miRBase
@@ -108,12 +112,9 @@ Well-studied miRNA targets (for common oncomiRs/tumor suppressors):
 - **let-7**: RAS, HMGA2, MYC, LIN28
 
 **Target interpretation framework**:
-
-| Evidence Level | Method | Confidence | Use |
-|---|---|---|---|
-| **Validated** | Luciferase reporter, CLIP-seq, degradome-seq | High (T1) | Base conclusions on these |
-| **High-confidence prediction** | TargetScan (conserved sites), DIANA-microT (score>0.9) | Medium (T2) | Support validated findings |
-| **Prediction only** | miRanda, PicTar, RNA22 | Low (T3-T4) | Hypothesis generation only |
+- **Validated** (T1): Luciferase reporter, CLIP-seq, degradome-seq — base conclusions on these
+- **High-confidence prediction** (T2): TargetScan conserved sites, DIANA-microT score > 0.9 — support validated findings
+- **Prediction only** (T3-T4): miRanda, PicTar, RNA22 — hypothesis generation only; do not report as findings
 
 **For lncRNAs** — the mechanism varies:
 
@@ -141,20 +142,16 @@ DisGeNET_search_gene(query="MIR21")  # miR-21 disease associations
 PubMed_search_articles(query="miR-21 biomarker cancer")
 ```
 
-**Key ncRNA-disease associations** (well-established):
-
-| ncRNA | Disease | Role | Evidence |
-|---|---|---|---|
-| miR-21 | Multiple cancers | OncomiR; targets PTEN, PDCD4, TPM1 | T1 (hundreds of studies) |
-| miR-155 | B-cell lymphoma, inflammation | Immune regulation | T1 |
-| miR-122 | Hepatitis C, liver disease | HCV replication cofactor; therapeutic target (miravirsen) | T1 |
-| let-7 family | Lung cancer, stem cell differentiation | Tumor suppressor; targets RAS, HMGA2 | T1 |
-| HOTAIR | Breast, colorectal cancer | Recruits PRC2; metastasis | T1 |
-| MALAT1 | Lung cancer, metastasis | Splicing regulation, transcription | T1 |
-| XIST | X-inactivation, cancer | Chromatin silencing | T1 |
-| NEAT1 | Paraspeckle formation, cancer | Nuclear body scaffold | T2 |
-| H19 | Beckwith-Wiedemann, cancer | Imprinted lncRNA; miR-675 host | T1 |
-| ANRIL | CVD, diabetes, cancer | CDKN2A/B locus regulation | T1 (GWAS) |
+**Key ncRNA-disease associations** (well-established T1 examples — always verify via DisGeNET or PubMed for the specific ncRNA):
+- miR-21: OncomiR in multiple cancers; targets PTEN, PDCD4, TPM1 (hundreds of T1 studies)
+- miR-155: B-cell lymphoma, inflammation — immune regulation
+- miR-122: Hepatitis C liver disease — HCV replication cofactor; therapeutic target (miravirsen)
+- let-7 family: Lung cancer, stem cell differentiation — tumor suppressor targeting RAS, HMGA2
+- HOTAIR: Breast/colorectal cancer — recruits PRC2, promotes metastasis
+- MALAT1: Lung cancer/metastasis — splicing regulation
+- XIST: X-inactivation, cancer — chromatin silencing
+- H19: Beckwith-Wiedemann syndrome, cancer — imprinted lncRNA, miR-675 host
+- ANRIL: CVD, diabetes, cancer — CDKN2A/B locus regulation (GWAS-validated)
 
 ### Phase 4: Functional Interpretation
 

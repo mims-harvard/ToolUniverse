@@ -136,6 +136,42 @@ if detail["status"] == "success":
     OncoKB_annotate_variant(gene="IDH1", variant="R132H", tumor_type="GB")
 ```
 
+## Tumor Classification Reasoning (CRITICAL)
+
+**LOOK UP DON'T GUESS** -- tumor classification determines treatment. Always verify codes and biomarker interpretation via tools rather than relying on memory.
+
+### Histological vs Molecular Classification
+
+Tumors are classified on TWO axes -- both matter for treatment selection:
+- **Histological** (what it looks like under microscope): adenocarcinoma, squamous, small cell, etc. This determines the OncoTree hierarchy level 3+.
+- **Molecular** (what mutations/alterations drive it): EGFR-mutant, HER2-amplified, MSI-high, etc. This determines OncoKB therapeutic levels.
+
+A tumor can be histologically identical to another but molecularly different, requiring different treatment. Example: two lung adenocarcinomas (both LUAD) but one is EGFR-mutant (targeted therapy) and another is KRAS-mutant (different targeted therapy). **Always check both axes.**
+
+### Biomarker Interpretation Strategy
+
+When interpreting cancer biomarkers, use OncoKB for actionability:
+- **HER2**: Positive = IHC 3+ or FISH-amplified. Use `OncoKB_annotate_variant(gene="ERBB2", variant="Amplification", tumor_type="BRCA")` for therapeutic level
+- **ER/PR**: Positive = hormone-receptor positive breast cancer. Changes treatment class (endocrine therapy)
+- **Ki67**: Proliferation index. High (>20%) suggests aggressive biology; used in breast cancer grading (Luminal A vs B)
+- **TMB (Tumor Mutational Burden)**: High TMB (>10 mut/Mb) predicts immunotherapy response across tumor types. Use `OncoKB_annotate_variant(gene="Other Biomarkers", variant="TMB-H")`
+- **MSI (Microsatellite Instability)**: MSI-High is FDA-approved biomarker for pembrolizumab pan-cancer. Use `OncoKB_annotate_variant(gene="Other Biomarkers", variant="MSI-H")`
+
+### Staging vs Grading -- Different Concepts
+
+- **Stage** (TNM): How far has it spread? T=tumor size, N=lymph nodes, M=metastasis. Stage I-IV. Determines prognosis and surgery eligibility.
+- **Grade**: How abnormal do the cells look? Grade 1 (well-differentiated, slow) to Grade 3 (poorly-differentiated, aggressive). Determines aggressiveness.
+- A Stage I, Grade 3 tumor (small but aggressive) has different implications than Stage III, Grade 1 (spread but slow-growing).
+
+### Actionability Assessment
+
+After classifying the tumor, assess whether findings are clinically actionable:
+1. **Level 1** (FDA-approved, specific tumor type): Immediate treatment implication. Example: EGFR L858R in LUAD
+2. **Level 2** (Standard care): Strong evidence but context-dependent
+3. **Level 3** (Compelling evidence): Clinical trial candidates
+4. **Level 4** (Biological evidence): Research-stage only
+5. Always provide the OncoTree code to OncoKB -- without it, you get pan-cancer levels which may understate or overstate actionability for the specific tumor type
+
 ## Reasoning Framework for Result Interpretation
 
 ### Evidence Grading

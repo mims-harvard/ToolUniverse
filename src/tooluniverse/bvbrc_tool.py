@@ -273,7 +273,7 @@ class BVBRCTool(BaseTool):
         ]
 
         gene = arguments.get("gene")
-        product = arguments.get("product")
+        product = arguments.get("product") or arguments.get("keyword")
         genome_id = arguments.get("genome_id")
 
         if gene:
@@ -286,7 +286,7 @@ class BVBRCTool(BaseTool):
         if not gene and not product and not genome_id:
             return {
                 "status": "error",
-                "error": "At least one of gene, product, or genome_id is required",
+                "error": "At least one of gene, product, keyword, or genome_id is required",
             }
 
         limit = min(arguments.get("limit") or 10, 100)

@@ -1,7 +1,7 @@
 [
   {
     "name": "SemanticScholar_get_paper",
-    "description": "Get detailed metadata for a specific paper from Semantic Scholar by paper ID, DOI, PubMed ID, or other identifier. Returns title, abstract, authors, citation count, reference count, journal, publication types, open access PDF link, and external IDs (DOI, PubMed, ArXiv, etc.). Identifier formats: Semantic Scholar paper ID (40-char hex), DOI: prefix (e.g., 'DOI:10.1126/science.1225829'), PMID: prefix (e.g., 'PMID:22745249'), ArXiv: prefix (e.g., 'ArXiv:2106.01345'), or CorpusId: prefix. This complements SemanticScholar_search_papers by providing full paper details.",
+    "description": "Get detailed metadata for a specific paper from Semantic Scholar by paper ID, DOI, PubMed ID, or other identifier. Returns title, abstract, AI-generated TLDR summary, authors, citation count, reference count, journal, publication types, fields of study, open access PDF link, and external IDs (DOI, PubMed, ArXiv, etc.). Identifier formats: Semantic Scholar paper ID (40-char hex), DOI: prefix (e.g., 'DOI:10.1126/science.1225829'), PMID: prefix (e.g., 'PMID:22745249'), ArXiv: prefix (e.g., 'ArXiv:2106.01345'), or CorpusId: prefix. This complements SemanticScholar_search_papers by providing full paper details.",
     "parameter": {
       "type": "object",
       "properties": {
@@ -12,7 +12,7 @@
         "fields": {
           "type": "string",
           "description": "Comma-separated list of fields to return. Available: paperId,title,abstract,year,citationCount,referenceCount,openAccessPdf,journal,publicationTypes,externalIds,authors,tldr,publicationDate,venue,fieldsOfStudy. Default returns core fields.",
-          "default": "paperId,title,abstract,year,citationCount,referenceCount,openAccessPdf,journal,publicationTypes,externalIds,authors,publicationDate,fieldsOfStudy"
+          "default": "paperId,title,abstract,tldr,year,citationCount,referenceCount,openAccessPdf,journal,publicationTypes,externalIds,authors,publicationDate,fieldsOfStudy"
         }
       },
       "required": [
@@ -54,6 +54,23 @@
                 "null"
               ],
               "description": "Paper abstract"
+            },
+            "tldr": {
+              "type": [
+                "object",
+                "null"
+              ],
+              "description": "AI-generated one-sentence summary (TLDR) of the paper",
+              "properties": {
+                "model": {
+                  "type": "string",
+                  "description": "Model used to generate the TLDR"
+                },
+                "text": {
+                  "type": "string",
+                  "description": "The TLDR summary text"
+                }
+              }
             },
             "year": {
               "type": [

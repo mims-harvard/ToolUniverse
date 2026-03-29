@@ -11,6 +11,12 @@ Generate a comprehensive disease research report with full source citations. The
 
 ---
 
+## LOOK UP, DON'T GUESS
+
+When asked about a disease, query Orphanet/OMIM/DisGeNET FIRST. Don't rely on memory for prevalence, genetics, or treatment — these change over time. When you're not sure about a fact, your first instinct should be to SEARCH for it using tools, not to reason harder from memory.
+
+---
+
 ## When to Use
 
 - User asks about any disease, syndrome, or medical condition
@@ -27,6 +33,18 @@ Generate a comprehensive disease research report with full source citations. The
 2. **Research each dimension** - Use all relevant tools
 3. **Update report progressively** - Write findings after each dimension
 4. **Include citations** - Every fact must reference its source tool
+
+---
+
+## Disease Mechanism Reasoning
+
+When synthesizing disease etiology, trace the full pathogenic cascade:
+1. **Genetic basis** - Which variants (rare or common) confer risk, and in which genes?
+2. **Molecular mechanism** - How do those variants alter protein function, expression, or regulation?
+3. **Cellular effect** - What downstream cellular processes are disrupted (signaling, metabolism, stress response)?
+4. **Tissue/organ manifestation** - How does cellular dysfunction present as organ-level pathology?
+
+This chain structures the Genetic & Molecular Basis (Section 3) and Biological Pathways (Section 5) sections.
 
 ---
 
@@ -212,6 +230,12 @@ For a well-studied disease (e.g., Alzheimer's), the final report should include:
 - Drug warnings and adverse events
 
 Total: 500+ individual data points, each with source citation.
+
+---
+
+## Cross-Skill References
+
+For rare disease differential diagnosis, run: `python3 skills/tooluniverse-rare-disease-diagnosis/scripts/clinical_patterns.py --type differential --symptoms 'symptom1,symptom2'`
 
 ---
 

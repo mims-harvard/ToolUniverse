@@ -23,6 +23,12 @@ This skill bridges genetic discoveries from GWAS with drug development by:
 
 **Key insight**: Targets with genetic support have 2x higher probability of clinical approval (Nelson et al., Nature Genetics 2015).
 
+## Reasoning Strategy
+
+GWAS-to-drug translation succeeds when you think causally. A genetic association provides causal direction that observational data cannot: if a loss-of-function variant protects against disease, an inhibitor of that gene's product is the hypothesis to test. The direction of effect (LOF vs. GOF) determines whether you need an inhibitor or an agonist — get this wrong and the drug works backwards. GWAS effect sizes are small (odds ratios of 1.1–1.5 are typical), but the drug effect may be much larger or smaller than the genetic effect; the genetic signal validates the target, not the dose. Always integrate multiple lines of evidence (eQTL colocalization, pQTL, L2G score) before committing to a target, because many GWAS variants tag the causal gene only indirectly.
+
+**LOOK UP DON'T GUESS**: Do not assume which gene a GWAS variant implicates — use `OpenTargets_get_variant_credible_sets` or `gwas_get_associations_for_snp` to get the actual mapped gene and L2G score. Do not guess the direction of effect, odds ratio, or whether a drug already exists for the target; always query the tools.
+
 ---
 
 ## Workflow Steps
@@ -182,20 +188,6 @@ After identifying GWAS-linked genes, rank them by answering:
    - Drug for same target approved for ANY disease → safety data exists → lower risk
    - Drug in clinical trials → partial de-risking
    - No precedent → full de novo development risk
-
-### Evidence Integration Table
-
-For the final report, score each GWAS-to-target candidate:
-
-| Criterion | Score 3 | Score 2 | Score 1 |
-|-----------|---------|---------|---------|
-| GWAS signal | Replicated, multi-ancestry | Single study, significant | Suggestive only |
-| L2G / fine-mapping | L2G > 0.5, credible set < 5 variants | L2G 0.2-0.5 | L2G < 0.2 or no fine-mapping |
-| Druggability | Approved drug or probe exists | Tractable (binding site known) | Not classically druggable |
-| Direction of effect | Clear LOF/GOF with consistent direction | Ambiguous | Unknown |
-| Safety | pLI < 0.5, not expressed in heart/brain | pLI 0.5-0.9 | pLI > 0.9 (essential gene) |
-
-**Max score 15**: 12-15 = priority target; 8-11 = worth investigating; <8 = deprioritize.
 
 ---
 

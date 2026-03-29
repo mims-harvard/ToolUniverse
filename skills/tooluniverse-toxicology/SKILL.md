@@ -15,6 +15,22 @@ Systematic toxicology analysis that links molecular initiating events (MIEs) thr
 pathways (AOPs) to apical adverse outcomes, then triangulates with real-world FAERS signals, FDA
 label data, and toxicogenomic associations.
 
+## Domain Reasoning
+
+Toxicity has many mechanisms, and the first interpretive question is temporal: is this acute toxicity (immediate effect from a high dose) or chronic toxicity (cumulative damage from long-term low-dose exposure)? Acute and chronic toxicity operate through different mechanisms — acute hepatotoxicity may reflect direct mitochondrial damage, while chronic hepatotoxicity may involve fibrosis from repeated low-level inflammation. They also have different regulatory frameworks: acute toxicity is captured by LD50 and emergency protocols, while chronic toxicity requires long-term carcinogenicity and repeat-dose studies.
+
+## LOOK UP DON'T GUESS
+
+- Adverse outcome pathways for a chemical: query `AOPWiki_list_aops` and `AOPWiki_get_aop`; do not describe mechanisms from memory.
+- FAERS adverse event signals: retrieve from `FAERS_count_reactions_by_drug_event` and `FAERS_calculate_disproportionality`; never estimate PRR values.
+- FDA label warnings: call `DailyMed_parse_adverse_reactions` and related tools; do not state boxed warnings from memory.
+- CTD chemical-gene and chemical-disease associations: query `CTD_get_chemical_gene_interactions` and `CTD_get_chemical_diseases`; do not infer gene targets without database evidence.
+
+---
+
+## COMPUTE, DON'T DESCRIBE
+When analysis requires computation (statistics, data processing, scoring, enrichment), write and run Python code via Bash. Don't describe what you would do — execute it and report actual results. Use ToolUniverse tools to retrieve data, then Python (pandas, scipy, statsmodels, matplotlib) to analyze it.
+
 ## When to Use This Skill
 
 **Triggers**:

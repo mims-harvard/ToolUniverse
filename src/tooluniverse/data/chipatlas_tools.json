@@ -50,7 +50,7 @@
           "default": "5000"
         }
       },
-      "required": ["operation"]
+      "required": []
     },
     "return_schema": {
       "type": "object",
@@ -106,7 +106,7 @@
           "maximum": 1000
         }
       },
-      "required": ["operation"]
+      "required": []
     },
     "return_schema": {
       "type": "object",
@@ -166,7 +166,7 @@
           "default": "05"
         }
       },
-      "required": ["operation", "experiment_id"]
+      "required": ["experiment_id"]
     },
     "return_schema": {
       "type": "object",
@@ -216,7 +216,7 @@
           "default": "hg38"
         }
       },
-      "required": ["operation"]
+      "required": []
     },
     "return_schema": {
       "type": "object",

@@ -9,6 +9,19 @@ Systematically assess clinical trial feasibility by analyzing 6 research dimensi
 
 **IMPORTANT**: Always use English terms in tool calls (drug names, disease names, biomarker names), even if the user writes in another language. Only try original-language terms as a fallback if English returns no results. Respond in the user's language.
 
+## Reasoning Before Searching
+
+Trial design starts with the question, not the methods. Answer these four questions before running any tools — they determine everything else:
+
+1. **What is the primary endpoint?** Is it overall survival (gold standard but slow), PFS (faster but surrogate), ORR (single-arm friendly but not always accepted), or a biomarker (needs validation as surrogate first)? The endpoint determines FDA pathway, statistical design, and duration.
+2. **Who is the population?** Broad unselected vs. biomarker-enriched. Enriched populations have higher response rates, allowing smaller trials — but require a validated companion diagnostic and reduce the eligible patient pool.
+3. **What is the comparator?** Placebo (only if no standard of care exists), active control (requires non-inferiority or superiority framing), or single-arm with historical control (acceptable for rare diseases or breakthrough designations, but FDA scrutiny is high).
+4. **Is the effect size realistic given the mechanism?** A 20% improvement in ORR over SOC requires ~100 patients per arm. A 50% improvement requires ~30. If the mechanism only justifies a 10% improvement, the trial may be underpowered regardless of design. Check precedent effect sizes in similar trials before committing to an endpoint.
+
+These four answers determine sample size, duration, and trial design. Look them up from precedent trials and FDA guidance — do not derive them from first principles.
+
+**LOOK UP DON'T GUESS**: Never assume what the standard of care is for an indication — look it up with DrugBank and FDA tools. Never assume an endpoint is FDA-accepted — verify with `search_clinical_trials` precedents and `OpenFDA_get_approval_history`. Never estimate prevalence from memory — use OpenTargets, gnomAD, or COSMIC.
+
 ## Core Principles
 
 ### 1. Report-First Approach (MANDATORY)
@@ -196,6 +209,46 @@ See `WORKFLOW_DETAILS.md` for the complete 6-path Python workflow and use case e
 - **tooluniverse-target-research**: Validate drug target, essentiality
 - **tooluniverse-pharmacovigilance**: Post-market safety for comparator drugs
 - **tooluniverse-precision-oncology**: Biomarker biology, resistance mechanisms
+
+---
+
+## Programmatic Access (Beyond Tools)
+
+When ToolUniverse tools return limited trial metadata, use the ClinicalTrials.gov v2 API directly:
+
+```python
+import requests, pandas as pd
+
+# Search with pagination (all lung cancer immunotherapy trials with results)
+all_studies = []
+token = None
+while True:
+    params = {"query.cond": "lung cancer", "query.intr": "immunotherapy",
+              "filter.overallStatus": "COMPLETED", "filter.results": "WITH_RESULTS", "pageSize": 100}
+    if token: params["pageToken"] = token
+    resp = requests.get("https://clinicaltrials.gov/api/v2/studies", params=params).json()
+    all_studies.extend(resp.get("studies", []))
+    token = resp.get("nextPageToken")
+    if not token: break
+
+# Extract structured data
+rows = []
+for s in all_studies:
+    proto = s.get("protocolSection", {})
+    rows.append({
+        "nctId": proto.get("identificationModule", {}).get("nctId"),
+        "title": proto.get("identificationModule", {}).get("briefTitle"),
+        "enrollment": proto.get("designModule", {}).get("enrollmentInfo", {}).get("count"),
+        "phase": proto.get("designModule", {}).get("phases", [None])[0] if proto.get("designModule", {}).get("phases") else None,
+    })
+df = pd.DataFrame(rows)
+
+# FDA drug approval history
+drug = "pembrolizumab"
+fda = requests.get(f"https://api.fda.gov/drug/drugsfda.json?search=openfda.brand_name:{drug}&limit=10").json()
+```
+
+See `tooluniverse-data-wrangling` skill for pagination, error handling, and bulk download patterns.
 
 ---
 

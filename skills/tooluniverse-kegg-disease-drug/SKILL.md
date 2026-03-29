@@ -14,6 +14,12 @@ triggers:
 
 Systematic exploration of disease-drug-variant relationships using KEGG's curated databases.
 
+## Reasoning Strategy
+
+KEGG maps diseases to pathways and drugs to targets, but the real value is in the connections — which pathways link a disease gene to a drug target? This is a network question, not a simple lookup. A gene appearing in a KEGG disease entry has been editorially reviewed as mechanistically relevant; a drug entry with a confirmed target is more reliable than one inferred from pathway co-membership. When using KEGG for drug repurposing, always ask: is the drug-target relationship direct (the drug binds the gene product) or indirect (the drug affects a pathway that contains the gene)? Direct relationships are far stronger evidence. KEGG coverage is not exhaustive — absence from KEGG does not mean absence of biological involvement; complement with Reactome, WikiPathways, or CTD for broader coverage. ID namespace differences are a frequent source of errors: KEGG uses its own gene IDs (e.g., hsa:7157 for TP53), so always convert external IDs before querying KEGG-specific tools.
+
+**LOOK UP DON'T GUESS**: Do not assume KEGG disease IDs, drug IDs, or gene IDs from memory — always search first with `KEGG_search_disease`, `KEGG_search_drug`, or `KEGG_convert_ids`. Do not assume which pathways link a disease gene to a drug; use `KEGG_link_entries` and `KEGG_get_network` to retrieve the actual connections.
+
 ## When to Use
 
 - "What genes are associated with [disease] in KEGG?"
@@ -145,18 +151,6 @@ result = tu.tools.KEGG_link_entries(target_db="hsa", source_db_or_ids="path:hsa0
 ```
 
 These tools are especially useful when you have external IDs (Entrez Gene, UniProt, ChEMBL) and need to bridge into KEGG's namespace, or when you want a complete gene-pathway or drug-disease adjacency list.
-
-## Fallback Strategies
-
-| Phase | If Empty | Fallback |
-|-------|----------|----------|
-| Disease search | No hits | Broaden keyword, try synonyms |
-| Disease genes | No genes | Use kegg_find_genes with disease keyword |
-| Drug search | No hits | Try generic name, chemical name |
-| Drug targets | No targets | Use kegg_search_pathway for pathway context |
-| Network | No entries | Combine disease + drug results manually |
-| Variant | No entries | Use kegg_find_genes for gene-level info |
-| External ID → KEGG | Unknown KEGG ID | Use KEGG_convert_ids with ncbi-geneid or up (UniProt) |
 
 ## Integration with Other Skills
 

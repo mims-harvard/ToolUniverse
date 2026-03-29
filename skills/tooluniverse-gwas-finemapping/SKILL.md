@@ -3,6 +3,9 @@ name: tooluniverse-gwas-finemapping
 description: Identify and prioritize causal variants at GWAS loci using statistical fine-mapping and locus-to-gene predictions. Computes posterior probabilities for causal variants, links variants to genes via L2G predictions, annotates functional consequences, and suggests validation strategies. Use when asked to fine-map GWAS loci, prioritize causal variants, identify credible sets, or link GWAS signals to causal genes.
 ---
 
+## COMPUTE, DON'T DESCRIBE
+When analysis requires computation (statistics, data processing, scoring, enrichment), write and run Python code via Bash. Don't describe what you would do — execute it and report actual results. Use ToolUniverse tools to retrieve data, then Python (pandas, scipy, statsmodels, matplotlib) to analyze it.
+
 # GWAS Fine-Mapping & Causal Variant Prioritization
 
 Identify and prioritize causal variants at GWAS loci using statistical fine-mapping and locus-to-gene predictions.
@@ -10,6 +13,12 @@ Identify and prioritize causal variants at GWAS loci using statistical fine-mapp
 ## Overview
 
 Genome-wide association studies (GWAS) identify genomic regions associated with traits, but linkage disequilibrium (LD) makes it difficult to pinpoint the causal variant. **Fine-mapping** uses Bayesian statistical methods to compute the posterior probability that each variant is causal, given the GWAS summary statistics.
+
+**REASONING STRATEGY — Start Here**:
+Fine-mapping asks: which variant at this locus is CAUSAL? Work through this chain:
+1. **LD structure first** — variants in high LD (r² > 0.8) cannot be statistically distinguished from each other. Look up the LD block via Open Targets or the GWAS Catalog before assuming any single variant is the cause.
+2. **Functional annotation breaks LD ties** — if two variants have similar posterior probabilities but one is coding (missense, stop-gain) or sits in an active regulatory element (promoter, enhancer), that variant is biologically prioritized. Functional evidence is the tiebreaker.
+3. **eQTL colocalization is the key bridge** — a variant that is also a significant eQTL for a nearby gene in the relevant tissue (e.g., a pancreatic islet eQTL for a T2D locus) has a mechanistic story. Look up eQTL evidence via Open Targets L2G scores; don't assume the nearest gene is the effector gene.
 
 This skill provides tools to:
 - **Prioritize causal variants** using fine-mapping posterior probabilities
@@ -37,183 +46,55 @@ L2G scores integrate multiple data types to predict which gene is affected by a 
 
 L2G scores range from 0 to 1, with higher scores indicating stronger gene-variant links.
 
-## Use Cases
+## Fine-Mapping Reasoning Framework (CRITICAL)
 
-### 1. Prioritize Variants at a Known Locus
-**Question**: "Which variant at the TCF7L2 locus is likely causal for type 2 diabetes?"
+**LOOK UP DON'T GUESS** -- never assume a lead SNP is the causal variant. Always check LD structure, credible sets, and functional annotations via the tools below.
 
-```python
-from python_implementation import prioritize_causal_variants
+### Step 1: Lead SNP vs Causal Variant
 
-# Prioritize variants in TCF7L2 for diabetes
-result = prioritize_causal_variants("TCF7L2", "type 2 diabetes")
-print(result.get_summary())
+The lead SNP (most significant p-value) is often NOT the causal variant. It is simply the best-tagged variant on the genotyping array. The causal variant may be:
+- In perfect LD (r2 > 0.95) with the lead SNP but with a functional consequence
+- A non-coding regulatory variant not on the array
+- One of several independent signals at the locus (conditional analysis reveals multiple)
 
-# Output shows:
-# - Credible sets containing TCF7L2 variants
-# - Posterior probabilities (via fine-mapping methods)
-# - Top L2G genes (which genes are likely affected)
-# - Associated traits
-```
+**Action**: Always call `OpenTargets_get_variant_credible_sets` for the lead SNP. If the posterior probability is < 0.5, the lead SNP is likely NOT causal -- examine other variants in the credible set.
 
-### 2. Fine-Map a Specific Variant
-**Question**: "What do we know about rs429358 (APOE4) from fine-mapping?"
+### Step 2: LD Structure Interpretation
 
-```python
-# Fine-map a specific variant
-result = prioritize_causal_variants("rs429358")
+LD blocks define the resolution limit of fine-mapping:
+- **Tight LD block (few variants, r2 > 0.9)**: Credible set will be small; functional annotation is the tiebreaker
+- **Broad LD block (many variants)**: Credible set is large; statistical fine-mapping alone is insufficient -- need functional data (eQTL, chromatin, CRISPR)
+- **Population matters**: LD patterns differ between European, African, East Asian populations. African populations have shorter LD blocks and better fine-mapping resolution. Check which population the GWAS was conducted in.
 
-# Check which credible sets contain this variant
-for cs in result.credible_sets:
-    print(f"Trait: {cs.trait}")
-    print(f"Fine-mapping method: {cs.finemapping_method}")
-    print(f"Top gene: {cs.l2g_genes[0] if cs.l2g_genes else 'N/A'}")
-    print(f"Confidence: {cs.confidence}")
-```
+### Step 3: Credible Set Analysis
 
-### 3. Explore All Loci from a GWAS Study
-**Question**: "What are all the causal loci from the recent T2D meta-analysis?"
+When interpreting a credible set:
+1. **Size matters**: A 95% credible set with 1-3 variants = high resolution. With 50+ variants = low resolution, need more data.
+2. **Posterior probability distribution**: If one variant has PP > 0.5, it is the strong favorite. If PP is spread evenly across many variants, no single causal variant can be identified statistically.
+3. **Multiple credible sets at one locus**: Indicates multiple independent causal signals (allelic heterogeneity). Each set represents a different causal mechanism.
 
-```python
-from python_implementation import get_credible_sets_for_study
+### Step 4: Colocalization Reasoning
 
-# Get all fine-mapped loci from a study
-credible_sets = get_credible_sets_for_study("GCST90029024")  # T2D GWAS
+Colocalization asks: do two association signals (e.g., GWAS + eQTL) share the SAME causal variant?
+- **High L2G score (> 0.7) + eQTL in relevant tissue**: Strong evidence the variant affects disease THROUGH gene expression changes
+- **High GWAS signal but no eQTL**: Variant may act through protein-coding change, splicing, or a tissue/cell-type not yet profiled
+- **eQTL for distant gene (not nearest)**: The effector gene is NOT the nearest gene. **LOOK UP** the L2G score -- do not default to nearest gene
 
-print(f"Found {len(credible_sets)} independent loci")
+### Step 5: Prioritization Tiebreakers
 
-# Examine each locus
-for cs in credible_sets:
-    print(f"\nRegion: {cs.region}")
-    print(f"Lead variant: {cs.lead_variant.rs_ids[0] if cs.lead_variant else 'N/A'}")
+When multiple variants have similar posterior probabilities:
+1. Coding variant (missense, stop-gain) > regulatory > intronic > intergenic
+2. In active chromatin mark (H3K27ac, H3K4me1) in disease-relevant tissue
+3. Disrupts transcription factor binding motif
+4. Conserved across species (PhyloP, GERP)
+5. eQTL in disease-relevant tissue with consistent direction of effect
 
-    if cs.l2g_genes:
-        top_gene = cs.l2g_genes[0]
-        print(f"Most likely causal gene: {top_gene.gene_symbol} (L2G: {top_gene.l2g_score:.3f})")
-```
+## Common Queries
 
-### 4. Find GWAS Studies for a Disease
-**Question**: "What GWAS studies exist for Alzheimer's disease?"
-
-```python
-from python_implementation import search_gwas_studies_for_disease
-
-# Search by disease name
-studies = search_gwas_studies_for_disease("Alzheimer's disease")
-
-for study in studies[:5]:
-    print(f"{study['id']}: {study.get('nSamples', 'N/A')} samples")
-    print(f"   Author: {study.get('publicationFirstAuthor', 'N/A')}")
-    print(f"   Has summary stats: {study.get('hasSumstats', False)}")
-
-# Or use precise disease ontology IDs
-studies = search_gwas_studies_for_disease(
-    "Alzheimer's disease",
-    disease_id="EFO_0000249"  # EFO ID for Alzheimer's
-)
-```
-
-### 5. Get Validation Suggestions
-**Question**: "How should we validate the top causal variant?"
-
-```python
-result = prioritize_causal_variants("APOE", "alzheimer")
-
-# Get experimental validation suggestions
-suggestions = result.get_validation_suggestions()
-for suggestion in suggestions:
-    print(suggestion)
-
-# Output includes:
-# - CRISPR knock-in experiments
-# - Reporter assays
-# - eQTL analysis
-# - Colocalization studies
-```
-
-## Workflow Example: Complete Fine-Mapping Analysis
-
-```python
-from python_implementation import (
-    prioritize_causal_variants,
-    search_gwas_studies_for_disease,
-    get_credible_sets_for_study
-)
-
-# Step 1: Find relevant GWAS studies
-print("Step 1: Finding T2D GWAS studies...")
-studies = search_gwas_studies_for_disease("type 2 diabetes", "MONDO_0005148")
-largest_study = max(studies, key=lambda s: s.get('nSamples', 0) or 0)
-print(f"Largest study: {largest_study['id']} ({largest_study.get('nSamples', 'N/A')} samples)")
-
-# Step 2: Get all fine-mapped loci from the study
-print("\nStep 2: Getting fine-mapped loci...")
-credible_sets = get_credible_sets_for_study(largest_study['id'], max_sets=100)
-print(f"Found {len(credible_sets)} credible sets")
-
-# Step 3: Find loci near genes of interest
-print("\nStep 3: Finding TCF7L2 loci...")
-tcf7l2_loci = [
-    cs for cs in credible_sets
-    if any(gene.gene_symbol == "TCF7L2" for gene in cs.l2g_genes)
-]
-
-print(f"TCF7L2 appears in {len(tcf7l2_loci)} loci")
-
-# Step 4: Prioritize variants at TCF7L2
-print("\nStep 4: Prioritizing TCF7L2 variants...")
-result = prioritize_causal_variants("TCF7L2", "type 2 diabetes")
-
-# Step 5: Print summary and validation plan
-print("\n" + "="*60)
-print("FINE-MAPPING SUMMARY")
-print("="*60)
-print(result.get_summary())
-
-print("\n" + "="*60)
-print("VALIDATION STRATEGY")
-print("="*60)
-suggestions = result.get_validation_suggestions()
-for suggestion in suggestions:
-    print(suggestion)
-```
-
-## Data Classes
-
-### `FineMappingResult`
-Main result object containing:
-- `query_variant`: Variant annotation
-- `query_gene`: Gene symbol (if queried by gene)
-- `credible_sets`: List of fine-mapped loci
-- `associated_traits`: All associated traits
-- `top_causal_genes`: L2G genes ranked by score
-
-Methods:
-- `get_summary()`: Human-readable summary
-- `get_validation_suggestions()`: Experimental validation strategies
-
-### `CredibleSet`
-Represents a fine-mapped locus:
-- `study_locus_id`: Unique identifier
-- `region`: Genomic region (e.g., "10:112861809-113404438")
-- `lead_variant`: Top variant by posterior probability
-- `finemapping_method`: Statistical method used (SuSiE, FINEMAP, etc.)
-- `l2g_genes`: Locus-to-gene predictions
-- `confidence`: Credible set confidence (95%, 99%)
-
-### `L2GGene`
-Locus-to-gene prediction:
-- `gene_symbol`: Gene name (e.g., "TCF7L2")
-- `gene_id`: Ensembl gene ID
-- `l2g_score`: Probability score (0-1)
-
-### `VariantAnnotation`
-Functional annotation for a variant:
-- `variant_id`: Open Targets format (chr_pos_ref_alt)
-- `rs_ids`: dbSNP identifiers
-- `chromosome`, `position`: Genomic coordinates
-- `most_severe_consequence`: Functional impact
-- `allele_frequencies`: Population-specific MAFs
+- "Which variant at the TCF7L2 locus is likely causal for type 2 diabetes?" → Use `OpenTargets_get_variant_credible_sets` or `gwas_search_snps` with gene=TCF7L2
+- "Fine-map rs429358 (APOE4)" → Use `OpenTargets_get_variant_info` then `OpenTargets_get_variant_credible_sets`
+- "All causal loci from GWAS study GCST90029024" → Use `OpenTargets_get_study_credible_sets`
+- "GWAS studies for Alzheimer's disease" → Use `OpenTargets_search_gwas_studies_by_disease` or `gwas_search_studies`
 
 ## Tools Used
 
@@ -243,15 +124,6 @@ Functional annotation for a variant:
 - **0.5 - 0.7**: Moderate confidence
 - **0.3 - 0.5**: Weak but possible link
 - **< 0.3**: Low confidence
-
-### Fine-Mapping Methods Compared
-
-| Method | Approach | Strengths | Use Case |
-|--------|----------|-----------|----------|
-| **SuSiE** | Sum of Single Effects | Handles multiple causal variants | Multi-signal loci |
-| **FINEMAP** | Bayesian shotgun stochastic search | Fast, scalable | Large studies |
-| **PAINTOR** | Functional annotations | Integrates epigenomics | Regulatory variants |
-| **CAVIAR** | Colocalization | Finds shared causal variants | eQTL overlap |
 
 ## Common Questions
 

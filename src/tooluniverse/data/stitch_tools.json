@@ -10,7 +10,11 @@
                     "items": {
                         "type": "string"
                     },
-                    "description": "Chemical names, drug names, or STITCH IDs (e.g., ['aspirin', 'ibuprofen'] or ['CIDm00002244'])."
+                    "description": "Chemical names, drug names, or STITCH IDs (e.g., ['aspirin', 'ibuprofen'] or ['CIDm00002244']). Alias: 'chemical'."
+                },
+                "chemical": {
+                    "type": "string",
+                    "description": "Single chemical name or STITCH ID (alias for identifiers, e.g., 'aspirin' or 'CIDm00002244')."
                 },
                 "species": {
                     "type": "integer",
@@ -27,10 +31,7 @@
                     "description": "Maximum number of interaction partners per query.",
                     "default": 10
                 }
-            },
-            "required": [
-                "identifiers"
-            ]
+            }
         },
         "fields": {
             "operation": "get_interactions"
@@ -51,35 +52,34 @@
             }
         ],
         "return_schema": {
-            "type": "object",
-            "properties": {
-                "interactions": {
-                    "type": "array",
-                    "items": {
-                        "type": "object",
-                        "properties": {
-                            "stringId_A": {
-                                "type": "string",
-                                "description": "STITCH ID of first entity"
-                            },
-                            "stringId_B": {
-                                "type": "string",
-                                "description": "STITCH ID of second entity"
-                            },
-                            "preferredName_A": {
-                                "type": "string"
-                            },
-                            "preferredName_B": {
-                                "type": "string"
-                            },
-                            "score": {
-                                "type": "number",
-                                "description": "Combined confidence score (0-1)"
+            "oneOf": [
+                {
+                    "type": "object",
+                    "properties": {
+                        "status": {"type": "string", "enum": ["success"]},
+                        "data": {
+                            "type": "array",
+                            "items": {
+                                "type": "object",
+                                "properties": {
+                                    "stringId_A": {"type": "string", "description": "STITCH ID of first entity"},
+                                    "stringId_B": {"type": "string", "description": "STITCH ID of second entity"},
+                                    "preferredName_A": {"type": "string"},
+                                    "preferredName_B": {"type": "string"},
+                                    "score": {"type": "number", "description": "Combined confidence score (0-1)"}
+                                }
                             }
                         }
                     }
+                },
+                {
+                    "type": "object",
+                    "properties": {
+                        "status": {"type": "string", "enum": ["error"]},
+                        "error": {"type": "string"}
+                    }
                 }
-            }
+            ]
         }
     },
     {
@@ -128,26 +128,32 @@
             }
         ],
         "return_schema": {
-            "type": "object",
-            "properties": {
-                "interactors": {
-                    "type": "array",
-                    "items": {
-                        "type": "object",
-                        "properties": {
-                            "stringId": {
-                                "type": "string"
-                            },
-                            "preferredName": {
-                                "type": "string"
-                            },
-                            "annotation": {
-                                "type": "string"
+            "oneOf": [
+                {
+                    "type": "object",
+                    "properties": {
+                        "status": {"type": "string", "enum": ["success"]},
+                        "data": {
+                            "type": "array",
+                            "items": {
+                                "type": "object",
+                                "properties": {
+                                    "stringId": {"type": "string"},
+                                    "preferredName": {"type": "string"},
+                                    "annotation": {"type": "string"}
+                                }
                             }
                         }
                     }
+                },
+                {
+                    "type": "object",
+                    "properties": {
+                        "status": {"type": "string", "enum": ["error"]},
+                        "error": {"type": "string"}
+                    }
                 }
-            }
+            ]
         }
     },
     {
@@ -183,30 +189,33 @@
             }
         ],
         "return_schema": {
-            "type": "object",
-            "properties": {
-                "matches": {
-                    "type": "array",
-                    "items": {
-                        "type": "object",
-                        "properties": {
-                            "stringId": {
-                                "type": "string",
-                                "description": "STITCH identifier"
-                            },
-                            "preferredName": {
-                                "type": "string"
-                            },
-                            "taxonId": {
-                                "type": "integer"
-                            },
-                            "annotation": {
-                                "type": "string"
+            "oneOf": [
+                {
+                    "type": "object",
+                    "properties": {
+                        "status": {"type": "string", "enum": ["success"]},
+                        "data": {
+                            "type": "array",
+                            "items": {
+                                "type": "object",
+                                "properties": {
+                                    "stringId": {"type": "string", "description": "STITCH identifier"},
+                                    "preferredName": {"type": "string"},
+                                    "taxonId": {"type": "integer"},
+                                    "annotation": {"type": "string"}
+                                }
                             }
                         }
                     }
+                },
+                {
+                    "type": "object",
+                    "properties": {
+                        "status": {"type": "string", "enum": ["error"]},
+                        "error": {"type": "string"}
+                    }
                 }
-            }
+            ]
         }
     }
 ]

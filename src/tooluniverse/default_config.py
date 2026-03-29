@@ -60,6 +60,9 @@ default_tool_files = {
     "pmc": os.path.join(current_dir, "data", "pmc_tools.json"),
     "zenodo": os.path.join(current_dir, "data", "zenodo_tools.json"),
     "openaire": os.path.join(current_dir, "data", "openaire_tools.json"),
+    "openaire_dataset": os.path.join(
+        current_dir, "data", "openaire_dataset_tools.json"
+    ),
     "osf_preprints": os.path.join(current_dir, "data", "osf_preprints_tools.json"),
     "fatcat": os.path.join(current_dir, "data", "fatcat_tools.json"),
     "wikidata_sparql": os.path.join(current_dir, "data", "wikidata_sparql_tools.json"),
@@ -82,6 +85,7 @@ default_tool_files = {
         current_dir, "data", "drug_discovery_agents.json"
     ),
     "dataset": os.path.join(current_dir, "data", "dataset_tools.json"),
+    "datagov": os.path.join(current_dir, "data", "datagov_tools.json"),
     # 'mcp_clients': os.path.join(current_dir, 'data', 'mcp_client_tools_example.json'),
     "mcp_auto_loader_txagent": os.path.join(
         current_dir, "data", "txagent_client_tools.json"
@@ -337,6 +341,8 @@ default_tool_files = {
     "gpcrdb": os.path.join(current_dir, "data", "gpcrdb_tools.json"),
     # BRENDA - Enzyme Kinetics Database
     "brenda": os.path.join(current_dir, "data", "brenda_tools.json"),
+    # SABIO-RK - Biochemical Reaction Kinetics Database
+    "sabiork": os.path.join(current_dir, "data", "sabiork_tools.json"),
     # SAbDab - Structural Antibody Database
     "sabdab": os.path.join(current_dir, "data", "sabdab_tools.json"),
     # IMGT - International ImMunoGeneTics Information System
@@ -527,6 +533,8 @@ default_tool_files = {
     "nci_cactus": os.path.join(current_dir, "data", "nci_cactus_tools.json"),
     # OncoTree - MSK cancer type ontology (897+ cancer types, UMLS/NCI cross-refs)
     "oncotree": os.path.join(current_dir, "data", "oncotree_tools.json"),
+    # AgingCohort - Curated registry of ~30 major longitudinal aging cohort studies worldwide
+    "aging_cohort": os.path.join(current_dir, "data", "aging_cohort_tools.json"),
     # ClinGen Allele Registry - Standardized allele IDs (HGVS normalization, cross-references)
     "clingen_ar": os.path.join(current_dir, "data", "clingen_ar_tools.json"),
     # NDEx - Network Data Exchange (biological network repository, PPI, signaling, regulatory networks)
@@ -778,6 +786,7 @@ default_tool_files = {
     "ncbi_gene": os.path.join(current_dir, "data", "ncbi_gene_tools.json"),
     # DataCite - research data DOIs for datasets, software, samples across repositories
     "datacite": os.path.join(current_dir, "data", "datacite_tools.json"),
+    "re3data": os.path.join(current_dir, "data", "re3data_tools.json"),
     # Figshare - open-access research repository for datasets, figures, code, posters
     "figshare": os.path.join(current_dir, "data", "figshare_tools.json"),
     # Human Protein Atlas - protein expression across tissues, subcellular location, disease, cancer
@@ -1093,10 +1102,38 @@ default_tool_files = {
     "gmrepo": os.path.join(current_dir, "data", "gmrepo_tools.json"),
     # Xenbase - Xenopus (frog) model organism database (via Alliance API)
     "xenbase": os.path.join(current_dir, "data", "xenbase_tools.json"),
+    # IEDB Prediction - MHC-I/II binding prediction via NetMHCpan
+    "iedb_prediction": os.path.join(current_dir, "data", "iedb_prediction_tools.json"),
     # RGD - Rat Genome Database (gene info, disease/phenotype annotations, orthologs)
     "rgd": os.path.join(current_dir, "data", "rgd_tools.json"),
     # T3DB - Toxin and Toxin-Target Database (toxin info, targets, health effects)
     "t3db": os.path.join(current_dir, "data", "t3db_tools.json"),
+    # Scientific Calculators - DNA translation, molecular formula, equilibrium, enzyme kinetics, statistics
+    "scientific_calculator": os.path.join(
+        current_dir, "data", "scientific_calculator_tools.json"
+    ),
+    # Population Genetics - HWE test, Fst, inbreeding coefficient, haplotype counting (local)
+    "popgen": os.path.join(current_dir, "data", "popgen_tools.json"),
+    # Epidemiology - R0/herd immunity, NNT, diagnostic tests, Bayesian post-test probability (local)
+    "epidemiology": os.path.join(current_dir, "data", "epidemiology_tools.json"),
+    # Sequence Analysis - Residue counting, GC content, reverse complement, stats (local + UniProt)
+    "sequence_analyze": os.path.join(
+        current_dir, "data", "sequence_analyze_tools.json"
+    ),
+    # SMILES Verifier - Parse SMILES and compute MW, formula, rings, DoU without RDKit (local)
+    "smiles_verify": os.path.join(current_dir, "data", "smiles_verify_tools.json"),
+    # Crystal Structure Validator - Compute density from unit cell params, compare to reported (local)
+    "crystal_structure": os.path.join(
+        current_dir, "data", "crystal_structure_tools.json"
+    ),
+    # Degrees of Unsaturation - Calculate DoU from molecular formula (local)
+    "degrees_of_unsaturation": os.path.join(
+        current_dir, "data", "degrees_of_unsaturation_tools.json"
+    ),
+    # Data Quality Assessment - per-column stats, missing values, outliers, correlations (local)
+    "data_quality": os.path.join(current_dir, "data", "data_quality_tools.json"),
+    # Meta-Analysis - fixed/random effects, inverse-variance, DerSimonian-Laird (local)
+    "meta_analysis": os.path.join(current_dir, "data", "meta_analysis_tools.json"),
 }
 
 # Auto-load any user-provided tools from ~/.tooluniverse/user_tools/

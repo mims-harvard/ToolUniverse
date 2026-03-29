@@ -1,0 +1,274 @@
+[
+  {
+    "name": "re3data_search_repositories",
+    "description": "Search re3data.org for research data repositories worldwide. re3data is a global registry of 3,000+ research data repositories covering all academic disciplines. Search by keyword to find repositories that host datasets for a specific research topic, data type, or discipline. Returns repository names, IDs, and DOIs. Use re3data_get_repository with the returned ID for detailed metadata including subjects, access conditions, content types, and institutional affiliations. Useful for finding where to deposit research data, discovering domain-specific data repositories, or identifying repositories hosting longitudinal, clinical, or cohort study data.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "query": {
+          "type": "string",
+          "description": "Search keyword(s) to find repositories (e.g., 'nutrition longitudinal', 'genomics', 'climate data', 'medical imaging'). Searches across repository names, descriptions, subjects, and keywords."
+        },
+        "subjects": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Optional subject filter to narrow results (e.g., 'medicine', 'biology', 'chemistry', 'social sciences'). Applied as client-side filter on repository names."
+        },
+        "countries": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Optional country filter using ISO 3166 country code (e.g., 'USA', 'GBR', 'DEU'). Note: requires fetching detail for each result so use sparingly."
+        }
+      },
+      "required": [
+        "query"
+      ]
+    },
+    "type": "Re3DataTool",
+    "test_examples": [
+      {
+        "query": "nutrition longitudinal"
+      },
+      {
+        "query": "genomics sequencing"
+      },
+      {
+        "query": "climate temperature"
+      }
+    ],
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "array",
+          "description": "List of matching research data repositories",
+          "items": {
+            "type": "object",
+            "properties": {
+              "id": {
+                "type": "string",
+                "description": "re3data repository identifier (e.g., 'r3d100011969')"
+              },
+              "name": {
+                "type": "string",
+                "description": "Repository name"
+              },
+              "doi": {
+                "type": "string",
+                "description": "Repository DOI"
+              }
+            }
+          }
+        },
+        {
+          "type": "object",
+          "properties": {
+            "error": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "error"
+          ]
+        }
+      ]
+    }
+  },
+  {
+    "name": "re3data_get_repository",
+    "description": "Get detailed metadata for a specific research data repository from re3data.org by its re3data ID. Returns comprehensive information including repository name, URL, description, subjects, keywords, content types, data access conditions, data licenses, hosting institutions, and countries. Use this after re3data_search_repositories to get full details about a repository of interest, or when you already have a re3data ID (format: r3d100XXXXXX). Essential for evaluating whether a repository is suitable for data deposit or data discovery.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "repository_id": {
+          "type": "string",
+          "description": "re3data repository identifier (e.g., 'r3d100011969', 'r3d100000001'). Find IDs using re3data_search_repositories."
+        }
+      },
+      "required": [
+        "repository_id"
+      ]
+    },
+    "type": "Re3DataTool",
+    "test_examples": [
+      {
+        "repository_id": "r3d100011969"
+      },
+      {
+        "repository_id": "r3d100000001"
+      },
+      {
+        "repository_id": "r3d100010468"
+      }
+    ],
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "object",
+          "description": "Detailed repository metadata",
+          "properties": {
+            "id": {
+              "type": "string",
+              "description": "re3data repository identifier"
+            },
+            "name": {
+              "type": "string",
+              "description": "Repository name"
+            },
+            "url": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "Repository URL"
+            },
+            "description": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "Repository description"
+            },
+            "type": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "Repository type (e.g., 'disciplinary', 'institutional')"
+            },
+            "size": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "Repository size information"
+            },
+            "languages": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              },
+              "description": "Languages supported by the repository"
+            },
+            "subjects": {
+              "type": "array",
+              "description": "Subject classifications",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "subject": {
+                    "type": "string"
+                  },
+                  "scheme": {
+                    "type": "string"
+                  }
+                }
+              }
+            },
+            "keywords": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              },
+              "description": "Repository keywords"
+            },
+            "content_types": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              },
+              "description": "Types of content hosted (e.g., 'Databases', 'Raw data')"
+            },
+            "data_access": {
+              "type": "array",
+              "description": "Data access conditions",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "type": {
+                    "type": "string"
+                  },
+                  "restrictions": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            },
+            "data_licenses": {
+              "type": "array",
+              "description": "Data licenses",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "name": {
+                    "type": "string"
+                  },
+                  "url": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  }
+                }
+              }
+            },
+            "institutions": {
+              "type": "array",
+              "description": "Hosting institutions",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "name": {
+                    "type": "string"
+                  },
+                  "country": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "type": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "url": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  }
+                }
+              }
+            },
+            "mission_statement_url": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "URL to the repository's mission statement"
+            }
+          }
+        },
+        {
+          "type": "object",
+          "properties": {
+            "error": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "error"
+          ]
+        }
+      ]
+    }
+  }
+]

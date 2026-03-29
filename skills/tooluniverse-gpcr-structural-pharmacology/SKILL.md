@@ -6,6 +6,10 @@ description: >
 
 # GPCR and Structural Pharmacology Research
 
+**GPCR pharmacology**: agonist vs antagonist vs inverse agonist vs biased agonist — each has different clinical implications. Biased agonism (preferential G-protein vs β-arrestin signaling) can separate efficacy from side effects; for example, G-protein-biased opioid agonists aim to retain analgesia while reducing β-arrestin-mediated respiratory depression. Always classify retrieved ligands by their pharmacological type, not just their chemical structure. Receptor state (active vs inactive crystal structure) determines which ligands and mutations are interpretable — an inactive-state structure is appropriate for antagonist binding analysis, active-state for agonist-bound complexes. Generic GPCR numbering (Ballesteros-Weinstein) enables cross-receptor mutation comparison; always report positions in this system alongside sequence positions.
+
+**LOOK UP DON'T GUESS**: never assume GPCRdb entry names (e.g., `adrb2_human`) or PDB IDs — always use `GPCRdb_list_proteins` to find the correct entry name and `GPCRdb_get_structures` to confirm available structures.
+
 Research skill integrating GPCRdb (GPCR receptor biology), SAbDab (antibody structures), and PDBePISA (protein interface analysis) to support structural pharmacology, antibody engineering, and GPCR-targeted drug discovery.
 
 **KEY PRINCIPLES**:

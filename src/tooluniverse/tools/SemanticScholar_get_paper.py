@@ -12,7 +12,7 @@ def SemanticScholar_get_paper(
     paper_id: str,
     fields: Optional[
         str
-    ] = "paperId,title,abstract,year,citationCount,referenceCount,openAccessPdf,journal,publicationTypes,externalIds,authors,publicationDate,fieldsOfStudy",
+    ] = "paperId,title,abstract,tldr,year,citationCount,referenceCount,openAccessPdf,journal,publicationTypes,externalIds,authors,publicationDate,fieldsOfStudy",
     *,
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,

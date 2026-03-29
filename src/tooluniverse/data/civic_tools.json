@@ -335,7 +335,8 @@
         "query": "V600E",
         "limit": 5
       }
-    ]
+    ],
+    "aliases": ["CIViC_search_variants"]
   },
   {
     "name": "civic_get_evidence_item",

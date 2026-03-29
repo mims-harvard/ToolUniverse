@@ -37,6 +37,69 @@ class SASBDBSearchTool(BaseTool):
             return {"status": "error", "error": f"SASBDB API error: {e}"}
 
 
+@register_tool("SASBDBTextSearchTool")
+class SASBDBTextSearchTool(BaseTool):
+    """SASBDB search by text query — routes to UniProt lookup or molecular-type listing."""
+
+    def __init__(self, tool_config: Dict):
+        super().__init__(tool_config)
+        self.session = requests.Session()
+        self.session.headers.update({"Accept": "application/json"})
+        self.timeout = 30
+
+    def run(self, arguments: Dict[str, Any]) -> Dict[str, Any]:
+        import re
+
+        query = (
+            arguments.get("query")
+            or arguments.get("term")
+            or arguments.get("molecular_type")
+            or ""
+        )
+        # If it looks like a UniProt accession, search by UniProt
+        if query and re.match(
+            r"^[OPQ][0-9][A-Z0-9]{3}[0-9]$|^[A-NR-Z][0-9]([A-Z][A-Z0-9]{2}[0-9]){1,2}$",
+            query,
+        ):
+            url = f"{BASE_URL}/entry/codes/uniprot/{query}/"
+            try:
+                resp = request_with_retry(
+                    self.session, "GET", url, timeout=self.timeout, max_attempts=3
+                )
+                if resp.status_code == 200:
+                    return {
+                        "status": "success",
+                        "data": resp.json(),
+                        "note": f"Results retrieved for UniProt accession '{query}'.",
+                    }
+            except Exception as e:
+                return {"status": "error", "error": f"SASBDB API error: {e}"}
+        # Fall back to listing all entries with a note that text search is unavailable
+        url = f"{BASE_URL}/entry/codes/all/"
+        try:
+            resp = request_with_retry(
+                self.session, "GET", url, timeout=self.timeout, max_attempts=3
+            )
+            if resp.status_code != 200:
+                return {
+                    "status": "error",
+                    "error": f"SASBDB API error: HTTP {resp.status_code}",
+                }
+            entries = resp.json()
+            return {
+                "status": "success",
+                "data": entries,
+                "note": (
+                    f"SASBDB does not support free-text search. "
+                    f"Returned all {len(entries)} published entries. "
+                    f"To search by protein, provide a UniProt accession (e.g., 'P02769' for BSA). "
+                    f"Use SASBDB_get_entry with a specific code (e.g., 'SASDCZ9') for details."
+                ),
+            }
+        except Exception as e:
+            return {"status": "error", "error": f"SASBDB API error: {e}"}
+
+
 @register_tool("SASBDBRESTTool")
 class SASBDBRESTTool(BaseTool):
     """SASBDB API tool for small-angle scattering (SAXS/SANS) data."""

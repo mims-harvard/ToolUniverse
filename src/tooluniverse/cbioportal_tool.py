@@ -59,6 +59,16 @@ class CBioPortalRESTTool(BaseTool):
 
     def run(self, arguments: Dict[str, Any]) -> Dict[str, Any]:
         try:
+            if "query" in arguments and "keyword" not in arguments:
+                arguments = {**arguments, "keyword": arguments["query"]}
+            if (
+                "get_genes" in self.tool_config.get("name", "")
+                and "keyword" not in arguments
+            ):
+                return {
+                    "status": "error",
+                    "error": "keyword or query parameter is required",
+                }
             method = self.tool_config["fields"].get("method", "GET")
             url = self._build_url(arguments)
 

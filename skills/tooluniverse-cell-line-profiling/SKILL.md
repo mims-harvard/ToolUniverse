@@ -16,18 +16,17 @@ Comprehensive profiling of cancer cell lines for experimental model selection. T
 6. **Source-referenced** - Cite database sources for every claim
 7. **English-first queries** - Always use English terms in tool calls, even if the user writes in another language
 
+## LOOK UP, DON'T GUESS
+When uncertain about any scientific fact, SEARCH databases first rather than reasoning from memory. A database-verified answer is always more reliable than a guess.
+
 ---
+
+## COMPUTE, DON'T DESCRIBE
+When analysis requires computation (statistics, data processing, scoring, enrichment), write and run Python code via Bash. Don't describe what you would do — execute it and report actual results. Use ToolUniverse tools to retrieve data, then Python (pandas, scipy, statsmodels, matplotlib) to analyze it.
 
 ## When to Use
 
-Apply when user asks:
-- "Which cell line should I use for NSCLC with EGFR mutations?"
-- "Profile A549 for my lung cancer study"
-- "What are the gene dependencies of MCF7?"
-- "Which breast cancer cell lines are sensitive to paclitaxel?"
-- "Does HeLa have TP53 mutations?"
-- "Compare A549 vs H1975 for EGFR studies"
-- "What drugs work against KRAS-mutant colorectal cancer cell lines?"
+Apply for: cell line selection by cancer type/gene, cell line profiling, gene dependencies, drug sensitivity queries, cell line comparisons, mutation checks.
 
 ---
 
@@ -99,47 +98,11 @@ Phase 5: Target Druggability & Recommendations
 
 ## Phase 1: Cell Line Identification
 
-**Goal**: Verify cell line identity and find candidates matching the user's needs.
+**Goal**: Verify cell line identity and find candidates.
 
-### If user provides a specific cell line name:
+**If specific cell line given**: (1) `cellosaurus_search_cell_lines(q="id:<NAME>")` → get CVCL accession, species, disease, contamination flags. (2) `cellosaurus_get_cell_line_info(accession="CVCL_XXXX")` for STR profile. (3) `DepMap_get_cell_line(model_name="...")` for tissue, cancer_type, MSI, ploidy. (4) `PharmacoDB_get_cell_line(operation="get_cell_line", cell_name="...")` for datasets.
 
-1. **Search Cellosaurus** for identity verification:
-   ```
-   cellosaurus_search_cell_lines(q="id:<CELL_LINE_NAME>", size=5)
-   ```
-   Extract: accession (CVCL_XXXX), species, disease, synonyms, cross-references.
-
-2. **Get detailed info** with the accession:
-   ```
-   cellosaurus_get_cell_line_info(accession="CVCL_XXXX")
-   ```
-   Check: species (must be human for most studies), STR profile, known contamination/misidentification flags.
-
-3. **Get DepMap metadata**:
-   ```
-   DepMap_get_cell_line(model_name="A549")
-   ```
-   Extract: tissue, cancer_type, MSI status, ploidy, mutational burden.
-
-4. **Get PharmacoDB metadata**:
-   ```
-   PharmacoDB_get_cell_line(operation="get_cell_line", cell_name="A549")
-   ```
-   Extract: tissue, diseases, datasets available, synonyms across studies.
-
-### If user provides cancer type without a specific cell line:
-
-1. **Search DepMap by tissue/cancer type**:
-   ```
-   DepMap_get_cell_lines(tissue="Lung", page_size=20)
-   ```
-
-2. **Narrow by gene of interest** (if provided): after getting candidate list, check which lines carry relevant mutations or dependencies (Phase 2-3).
-
-3. **Cross-reference with CellMarker** for cancer markers:
-   ```
-   CellMarker_search_cancer_markers(operation="search_cancer_markers", cancer_type="Lung")
-   ```
+**If cancer type only**: (1) `DepMap_get_cell_lines(tissue="Lung", page_size=20)`. (2) Narrow by gene mutations/dependencies in Phases 2-3. (3) `CellMarker_search_cancer_markers(operation="search_cancer_markers", cancer_type="Lung")`.
 
 **OUTPUT**: Table of candidate cell lines with: name, tissue, cancer type, key identifiers.
 
@@ -147,37 +110,13 @@ Phase 5: Target Druggability & Recommendations
 
 ## Phase 2: Molecular Profiling
 
-**Goal**: Characterize the mutational and expression landscape of candidate cell lines.
+**Goal**: Characterize mutational and expression landscape.
 
-### 2A: Mutation Landscape
+**2A Mutations**: `COSMIC_get_mutations_by_gene(gene="EGFR")` + `cBioPortal_get_mutations(study_id="ccle_broad_2019", gene_list="EGFR,KRAS,TP53")`. Note: `gene_list` is a comma-separated STRING. CCLE study ID: `ccle_broad_2019`.
 
-1. **COSMIC mutations** for gene of interest:
-   ```
-   COSMIC_get_mutations_by_gene(operation="get_by_gene", gene="EGFR", max_results=100)
-   ```
-   Filter results by cell line context if available.
+**2B Expression**: `HPA_get_comparative_expression_by_gene_and_cellline(gene_name="EGFR", cell_line="a549")`. Only 10 lines supported: hela, mcf7, a549, hepg2, jurkat, pc3, rh30, siha, u251, ishikawa.
 
-2. **cBioPortal CCLE mutations** (cell line genomics):
-   ```
-   cBioPortal_get_mutations(study_id="ccle_broad_2019", gene_list="EGFR,KRAS,TP53")
-   ```
-   NOTE: `gene_list` is a comma-separated STRING, not an array.
-   NOTE: `cBioPortal_get_cancer_studies` is BROKEN (literal `{limit}` in URL). Use known study IDs:
-   - CCLE: `ccle_broad_2019`
-
-### 2B: Gene Expression (limited to HPA-supported lines)
-
-For HPA-supported cell lines (hela, mcf7, a549, hepg2, jurkat, pc3, rh30, siha, u251, ishikawa):
-```
-HPA_get_comparative_expression_by_gene_and_cellline(gene_name="EGFR", cell_line="a549")
-```
-
-### 2C: Cancer Cell Markers
-
-Check if key genes are known cancer markers:
-```
-CellMarker_search_by_gene(operation="search_by_gene", gene_symbol="EGFR", species="Human")
-```
+**2C Cancer markers**: `CellMarker_search_by_gene(operation="search_by_gene", gene_symbol="EGFR", species="Human")`
 
 **OUTPUT**: Mutation table (gene, AA change, type) + expression summary per cell line.
 
@@ -187,137 +126,29 @@ CellMarker_search_by_gene(operation="search_by_gene", gene_symbol="EGFR", specie
 
 **Goal**: Determine which genes are essential in candidate cell lines.
 
-**IMPORTANT LIMITATION**: The `DepMap_get_gene_dependencies` tool queries the Sanger Cell Model Passports API, which returns gene metadata (HGNC ID, Ensembl ID, symbol) but NOT per-cell-line CRISPR gene effect scores. Full CRISPR dependency data (Chronos scores) is available at depmap.org but not through this API.
+**LIMITATION**: `DepMap_get_gene_dependencies` returns gene metadata (HGNC ID, Ensembl ID) but NOT per-cell-line CRISPR scores. Full Chronos scores require depmap.org download.
 
-**What you CAN do with current tools**:
+**Available tools**: (1) `DepMap_search_genes(query="EGFR")` — validate gene exists. (2) `DepMap_get_gene_dependencies(gene_symbol="EGFR")` — metadata only. (3) **Alternatives**: cBioPortal CCLE for mutation data, PubMed for published screens, or direct user to depmap.org/portal.
 
-1. **Validate gene exists in DepMap**:
-   ```
-   DepMap_search_genes(query="EGFR")
-   ```
-   This confirms the gene is tracked and returns identifiers.
+**Interpreting Chronos scores** (from DepMap portal): <-0.5 = essential; ~0 = not essential; ~-1.0 = strongly essential. Selective dependency (essential in some lineages only) indicates therapeutic window.
 
-2. **Get gene metadata**:
-   ```
-   DepMap_get_gene_dependencies(gene_symbol="EGFR")
-   ```
-   Returns: gene symbol, HGNC ID, Ensembl ID. Note: the tool returns metadata only, not per-line scores.
+**OUTPUT**: Gene validation + mutation status per cell line.
 
-3. **Alternative approaches for essentiality data**:
-   - **cBioPortal CCLE**: `cBioPortal_get_mutations(study_id="ccle_broad_2019", gene_list="EGFR")` — check if the gene is mutated (mutated oncogenes are often dependencies)
-   - **Literature**: `PubMed_search_articles(query="EGFR dependency CRISPR screen [cell_line]")` — find published screen results
-   - **Recommend DepMap portal**: For actual CRISPR scores, direct the user to depmap.org/portal where they can download gene effect data
+**Offline DepMap analysis** (when API lacks CRISPR scores): Download `CRISPRGeneEffect.csv` + `Model.csv` from https://depmap.org/portal/download/all/. Load with pandas, find gene column (format: "KRAS (3845)"), merge with metadata, filter by lineage, sort by score. Most negative Chronos score = most dependent.
 
-**Interpreting dependency scores** (when obtained from DepMap portal):
-- Score < -0.5: gene is likely essential (cell death upon knockout)
-- Score ~ 0: gene is not essential
-- Score near -1.0: comparable to common essential genes
-- **Selective dependency**: essential in some lineages but not others (indicates therapeutic window)
-
-**OUTPUT**: Gene validation + mutation status per cell line. Note DepMap portal as source for full dependency data.
-
-**Computational procedure: DepMap dependency from downloaded data**
-
-When the API can't deliver CRISPR scores, download the data directly.
-
-**Download instructions**: Go to https://depmap.org/portal/download/all/ (free registration required). Download:
-- **CRISPRGeneEffect.csv** (~300MB) — Chronos dependency scores per gene per cell line
-- **Model.csv** (~2MB) — Cell line metadata (name, lineage, disease, mutations)
-- **OmicsSomaticMutations.csv** (optional, ~100MB) — Mutation calls per cell line
-
-```python
-# DepMap CRISPR dependency analysis for cell line selection
-# Requires: pandas (included in ToolUniverse dependencies)
-import pandas as pd
-import os
-
-# --- Configuration ---
-depmap_dir = "."  # directory with DepMap files
-gene_symbol = "KRAS"  # gene of interest
-lineage = "Pancreas"  # cancer lineage
-
-effect_file = os.path.join(depmap_dir, "CRISPRGeneEffect.csv")
-model_file = os.path.join(depmap_dir, "Model.csv")
-
-if not os.path.exists(effect_file):
-    print(f"Download CRISPRGeneEffect.csv from https://depmap.org/portal/download/all/")
-else:
-    df = pd.read_csv(effect_file, index_col=0)
-    meta = pd.read_csv(model_file)
-
-    # Find gene column (format: "KRAS (3845)")
-    gene_col = [c for c in df.columns if c.startswith(f"{gene_symbol} (")]
-    if gene_col:
-        scores = df[gene_col[0]].dropna()
-
-        # Merge with cell line metadata
-        merged = pd.DataFrame({'score': scores}).join(
-            meta.set_index('ModelID')[['CellLineName', 'OncotreeLineage',
-                                        'OncotreePrimaryDisease', 'OncotreeSubtype']]
-        )
-
-        # Filter to lineage of interest
-        lineage_lines = merged[merged['OncotreeLineage'] == lineage]
-
-        print(f"=== {gene_symbol} dependency in {lineage} cell lines ===")
-        print(f"Total {lineage} lines: {len(lineage_lines)}")
-        print(f"\nMost {gene_symbol}-dependent {lineage} lines:")
-        top = lineage_lines.sort_values('score').head(15)
-        for _, row in top.iterrows():
-            dep = "ESSENTIAL" if row['score'] < -0.5 else "moderate" if row['score'] < -0.2 else "not essential"
-            print(f"  {row['CellLineName']:20s} score={row['score']:.3f}  ({dep})")
-
-        # For cell line selection: most negative = most dependent on this gene
-        # Cross-reference with mutation data to find lines with specific mutations
-```
-
-**Interpretation**: Most negative Chronos score = most dependent on the gene. For cell line selection:
-- Score < -0.5: The gene is essential in this line (good for studying gene function)
-- Score < -1.0: Strongly essential (comparable to common essential genes)
-- Compare your target lineage vs pan-cancer to assess selectivity
-
-**If DepMap data is unavailable**: Use `cBioPortal_get_mutations(study_id="ccle_broad_2019", gene_list="KRAS")` for mutation data, and rely on the Quick Reference table in this skill for common cell line recommendations.
+**If DepMap data is unavailable**: Use `cBioPortal_get_mutations(study_id="ccle_broad_2019", gene_list="KRAS")` for mutation data, and the Quick Reference table below for common recommendations.
 
 ---
 
 ## Phase 4: Drug Sensitivity
 
-**Goal**: Profile drug response data for candidate cell lines.
+**Goal**: Profile drug response data.
 
-### 4A: Drug Response (PharmacoDB)
+**4A PharmacoDB**: `PharmacoDB_get_experiments(operation="get_experiments", compound_name="Erlotinib", cell_line_name="A549", per_page=20)` for dose-response (IC50, AAC, EC50). Omit `compound_name` to get all drugs for a cell line. Use `PharmacoDB_get_biomarker_assoc(compound_name="...", tissue_name="...", mdata_type="mutation")` for sensitivity biomarkers.
 
-1. **Get dose-response experiments** for a specific drug + cell line:
-   ```
-   PharmacoDB_get_experiments(operation="get_experiments", compound_name="Erlotinib", cell_line_name="A549", per_page=20)
-   ```
-   Key metrics: IC50 (potency), AAC (area above curve, overall sensitivity), EC50, Hill slope.
+**4B SYNERGxDB**: `SYNERGxDB_search_combos(drug_name_1="gemcitabine", drug_name_2="erlotinib", sample="lung")`. Positive ZIP = synergy. Covers cytotoxic agents only (not targeted therapies/biologics).
 
-2. **Get all drug responses for a cell line** (to find most effective drugs):
-   ```
-   PharmacoDB_get_experiments(operation="get_experiments", cell_line_name="MCF7", per_page=50)
-   ```
-
-3. **Biomarker associations** (which genes predict drug sensitivity):
-   ```
-   PharmacoDB_get_biomarker_assoc(operation="get_biomarker_associations", compound_name="Erlotinib", tissue_name="Lung", mdata_type="mutation", per_page=20)
-   ```
-
-### 4B: Drug Combination Synergy (SYNERGxDB)
-
-For drug combination experiments:
-```
-SYNERGxDB_search_combos(drug_name_1="gemcitabine", drug_name_2="erlotinib", sample="lung")
-```
-Interpretation: positive ZIP scores indicate synergy; negative scores indicate antagonism.
-
-NOTE: SYNERGxDB covers in vitro cytotoxicity screening only. Clinical regimens (FOLFOX, R-CHOP) and most targeted therapies/biologics are not represented.
-
-### 4C: L1000 Connectivity Map (CLUE)
-
-Check perturbation signatures if CLUE_API_KEY is available:
-```
-CLUE_get_cell_lines(operation="get_cell_lines", cell_id="MCF7")
-```
+**4C CLUE**: `CLUE_get_cell_lines(operation="get_cell_lines", cell_id="MCF7")` — requires CLUE_API_KEY.
 
 **OUTPUT**: Drug sensitivity table (drug, IC50, AAC, dataset) + synergy data if available.
 
@@ -325,30 +156,9 @@ CLUE_get_cell_lines(operation="get_cell_lines", cell_id="MCF7")
 
 ## Phase 5: Target Druggability and Recommendations
 
-**Goal**: Assess whether key genes/targets are druggable and produce final recommendations.
+**5A Druggability**: `DGIdb_get_drug_gene_interactions(genes=["EGFR", "KRAS"])` + `MyGene_query_genes(query="EGFR")` → `OpenTargets_get_associated_drugs_by_target_ensemblID(ensemblId="...", size=10)` + `STRING_get_network(protein_ids=["EGFR"], species=9606)`.
 
-### 5A: Druggability Assessment
-
-1. **DGIdb interactions**:
-   ```
-   DGIdb_get_drug_gene_interactions(genes=["EGFR", "KRAS"])
-   ```
-
-2. **OpenTargets drugs** (requires Ensembl ID from MyGene):
-   ```
-   MyGene_query_genes(query="EGFR")
-   # Extract ensemblId, then:
-   OpenTargets_get_associated_drugs_by_target_ensemblID(ensemblId="ENSG00000146648", size=10)
-   ```
-
-3. **Protein interaction context**:
-   ```
-   STRING_get_network(protein_ids=["EGFR"], species=9606)
-   ```
-
-### 5B: Final Recommendation
-
-Synthesize all phases into a ranked recommendation. **Don't just score — explain WHY one line is better than another for this specific use case.**
+**5B Final Recommendation**: Synthesize all phases. **Explain WHY one line is better for this specific use case.**
 
 #### Decision Criteria with Concrete Thresholds
 
@@ -395,54 +205,13 @@ The best cell line depends on what you're doing with it:
 
 ## Common Use Patterns
 
-### Pattern 1: "Which cell line for [cancer] + [gene]?"
-
-Example: "Which cell line should I use for NSCLC with EGFR mutations?"
-
-1. `DepMap_get_cell_lines(tissue="Lung", page_size=20)` -- get NSCLC lines
-2. `DepMap_get_gene_dependencies(gene_symbol="EGFR")` -- check dependency
-3. `COSMIC_get_mutations_by_gene(operation="get_by_gene", gene="EGFR")` -- mutation landscape
-4. `cBioPortal_get_mutations(study_id="ccle_broad_2019", gene_list="EGFR")` -- CCLE mutations
-5. `PharmacoDB_get_experiments(operation="get_experiments", compound_name="Erlotinib", per_page=20)` -- drug response
-6. Rank lines by: EGFR mutation status + dependency score + drug sensitivity
-
-Typical answer: H1975 (EGFR L858R + T790M, resistant to 1st-gen TKIs), PC-9 (exon 19 del, sensitive to erlotinib), HCC827 (exon 19 del, EGFR-amplified).
-
-### Pattern 2: "Profile cell line X"
-
-Example: "Profile A549 for my study"
-
-1. `cellosaurus_search_cell_lines(q="id:A549", size=3)` -- identity
-2. `DepMap_get_cell_line(model_name="A549")` -- DepMap metadata
-3. `PharmacoDB_get_cell_line(operation="get_cell_line", cell_name="A549")` -- PharmacoDB metadata
-4. `cBioPortal_get_mutations(study_id="ccle_broad_2019", gene_list="KRAS,TP53,STK11,KEAP1,EGFR")` -- key mutations
-5. `HPA_get_comparative_expression_by_gene_and_cellline(gene_name="KRAS", cell_line="a549")` -- expression
-6. `PharmacoDB_get_experiments(operation="get_experiments", cell_line_name="A549", per_page=30)` -- drug sensitivities
-7. Compile comprehensive profile report
-
-### Pattern 3: "Which lines are sensitive to [drug]?"
-
-Example: "Which breast cancer cell lines are sensitive to paclitaxel?"
-
-1. `DepMap_get_cell_lines(tissue="Breast", page_size=30)` -- breast cancer lines
-2. `PharmacoDB_get_experiments(operation="get_experiments", compound_name="Paclitaxel", per_page=50)` -- all paclitaxel data
-3. `PharmacoDB_get_biomarker_assoc(operation="get_biomarker_associations", compound_name="Paclitaxel", tissue_name="Breast", per_page=20)` -- sensitivity biomarkers
-4. Rank by AAC (higher = more sensitive) or IC50 (lower = more sensitive)
-
-### Pattern 4: "Compare cell line A vs B"
-
-Example: "Compare A549 vs H1975 for EGFR studies"
-
-Run Pattern 2 for both lines in parallel, then build a side-by-side comparison table covering: mutations, dependencies, drug responses, expression.
-
-### Pattern 5: "Drug combinations for [cell line]"
-
-Example: "What drug combinations show synergy in MCF7?"
-
-1. `SYNERGxDB_search_combos(sample="breast", per_page=50)` -- breast cancer combos
-2. Filter for MCF7 if results include cell line names
-3. `PharmacoDB_get_experiments(operation="get_experiments", cell_line_name="MCF7", per_page=50)` -- single-agent baseline
-4. Report synergistic pairs with ZIP scores
+| Pattern | Question Type | Key Tools (in order) |
+|---------|--------------|---------------------|
+| **1** | "Which cell line for [cancer] + [gene]?" | DepMap_get_cell_lines → DepMap_get_gene_dependencies → COSMIC_get_mutations_by_gene → cBioPortal_get_mutations (ccle_broad_2019) → PharmacoDB_get_experiments → rank by mutation + dependency + drug sensitivity |
+| **2** | "Profile cell line X" | cellosaurus_search → DepMap_get_cell_line → PharmacoDB_get_cell_line → cBioPortal_get_mutations → HPA expression (if supported) → PharmacoDB_get_experiments |
+| **3** | "Which lines are sensitive to [drug]?" | DepMap_get_cell_lines (tissue filter) → PharmacoDB_get_experiments (compound) → PharmacoDB_get_biomarker_assoc → rank by AAC (higher=sensitive) or IC50 (lower=sensitive) |
+| **4** | "Compare A vs B" | Run Pattern 2 for both in parallel → side-by-side comparison table |
+| **5** | "Drug combos for [cell line]?" | SYNERGxDB_search_combos → PharmacoDB_get_experiments (single-agent baseline) → report synergistic pairs with ZIP scores |
 
 ---
 
@@ -465,23 +234,9 @@ Example: "What drug combinations show synergy in MCF7?"
 
 ## Cross-Referencing Cell Line IDs
 
-Different databases use different identifiers for the same cell line. To join results across tools:
+Use cell line NAME as common key across databases. IDs: DepMap=SIDM, Cellosaurus=CVCL, cBioPortal=sample (e.g. A549_LUNG), PharmacoDB/SYNERGxDB=name string. When names differ ("HCT 116" vs "HCT116"), check Cellosaurus synonyms first.
 
-| Database | ID Format | Example | How to Find |
-|----------|-----------|---------|-------------|
-| **DepMap** | SIDM model_id | SIDM00001 | `DepMap_search_cell_lines(query="A549")` |
-| **Cellosaurus** | CVCL accession | CVCL_0023 | `cellosaurus_search_cell_lines(q="id:A549")` |
-| **cBioPortal** | Sample ID | A549_LUNG | `cBioPortal_get_mutations(study_id="ccle_broad_2019")` |
-| **PharmacoDB** | Cell name string | "A549" | `PharmacoDB_search(operation="search", query="A549")` |
-| **SYNERGxDB** | Cell line name | A549 | `SYNERGxDB_list_cell_lines()` |
-
-**Joining strategy**: Use the cell line NAME as the common key (most databases accept human-readable names). When names differ (e.g., "HCT 116" vs "HCT116" vs "HCT-116"), search Cellosaurus for synonyms first.
-
-**Mutation-based filtering**: To find cell lines with a SPECIFIC mutation (e.g., KRAS G12D):
-1. `cBioPortal_get_mutations(study_id="ccle_broad_2019", gene_list="KRAS")` — get ALL KRAS mutations in CCLE
-2. Filter results by `amino_acid_change` containing "G12D"
-3. Extract cell line names from matching records
-4. Use these names to query other databases
+**Mutation-based filtering**: `cBioPortal_get_mutations(study_id="ccle_broad_2019", gene_list="KRAS")` → filter by `amino_acid_change` → extract cell line names → query other databases.
 
 ---
 

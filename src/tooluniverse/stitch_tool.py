@@ -58,7 +58,13 @@ class STITCHTool(BaseTool):
 
         Endpoint: GET /json/interactions
         """
-        identifiers = arguments.get("identifiers", [])
+        # Accept 'chemical' or 'chemicals' as alias for 'identifiers'
+        identifiers = (
+            arguments.get("identifiers")
+            or arguments.get("chemical")
+            or arguments.get("chemicals")
+            or []
+        )
 
         if not identifiers:
             return {
@@ -68,6 +74,17 @@ class STITCHTool(BaseTool):
 
         if isinstance(identifiers, str):
             identifiers = [identifiers]
+
+        # Normalize CID format: CID000002244 → CIDm00002244 (STITCH uses 'm' prefix)
+        import re
+
+        def _normalize_cid(id_str):
+            m = re.match(r"^CID0*(\d+)$", id_str, re.IGNORECASE)
+            if m:
+                return f"CIDm{int(m.group(1)):08d}"
+            return id_str
+
+        identifiers = [_normalize_cid(i) for i in identifiers]
 
         params = {
             "identifiers": "%0D".join(identifiers),  # URL-encoded newline separator
@@ -90,7 +107,7 @@ class STITCHTool(BaseTool):
                     "or check compound names at http://stitch.embl.de/",
                 }
             response.raise_for_status()
-            return {"interactions": response.json()}
+            return {"status": "success", "data": response.json()}
         except requests.RequestException as e:
             return {"status": "error", "error": f"STITCH API request failed: {str(e)}"}
 
@@ -127,7 +144,7 @@ class STITCHTool(BaseTool):
                     "Try using CID identifiers or check compound names at http://stitch.embl.de/",
                 }
             response.raise_for_status()
-            return {"interactors": response.json()}
+            return {"status": "success", "data": response.json()}
         except requests.RequestException as e:
             return {"status": "error", "error": f"STITCH API request failed: {str(e)}"}
 
@@ -157,6 +174,6 @@ class STITCHTool(BaseTool):
                     "Try using CID identifiers or check at http://stitch.embl.de/",
                 }
             response.raise_for_status()
-            return {"matches": response.json()}
+            return {"status": "success", "data": response.json()}
         except requests.RequestException as e:
             return {"status": "error", "error": f"STITCH API request failed: {str(e)}"}

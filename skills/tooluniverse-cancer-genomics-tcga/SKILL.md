@@ -13,6 +13,10 @@ triggers:
 
 # Cancer Genomics / TCGA Analysis
 
+**TCGA analysis starts with: what cancer type? what data type?** Build your cohort FIRST (GDC filters), then analyze. Don't query mutations without defining the cohort — pan-cancer counts from `GDC_get_mutation_frequency` are uninformative without cancer-type context. A mutation frequency of 10% in one cancer type may be 0.5% in another; always specify `project_id`. Survival analysis (Kaplan-Meier) is hypothesis-generating in retrospective TCGA data — always report sample size and p-value, and note that TCGA cohorts are not treatment-stratified.
+
+**LOOK UP DON'T GUESS**: never assume TCGA project IDs, NCIt codes, or gene coordinates — use `GDC_list_projects` to confirm project IDs and `Progenetix_list_filtering_terms` for NCIt codes.
+
 Systematic TCGA/GDC analysis: define cohorts, retrieve clinical data, profile somatic
 mutations, query copy number variations, run survival analysis, and interpret variants
 with OncoKB.
@@ -80,15 +84,6 @@ Phase 6: Variant Interpretation -- OncoKB_annotate_variant
 | Colorectal | TCGA-COAD | NCIT:C4349 |
 | Ovarian | TCGA-OV | NCIT:C4908 |
 | Prostate | TCGA-PRAD | NCIT:C7378 |
-
-### Common RefSeq Chromosome Accessions (GRCh38)
-
-| Chr | RefSeq accession |
-|-----|-----------------|
-| 7 | refseq:NC_000007.14 |
-| 12 | refseq:NC_000012.12 |
-| 17 | refseq:NC_000017.11 |
-| 22 | refseq:NC_000022.11 |
 
 ---
 
@@ -292,6 +287,46 @@ A complete cancer genomics report should answer:
 3. Are recurrent CNV events (amplifications or deletions) present at known oncogene/tumor suppressor loci?
 4. What is the OncoKB clinical actionability level for identified variants?
 5. How does the mutation landscape compare across TCGA cancer types (pan-cancer context)?
+
+---
+
+## Programmatic Access (Beyond Tools)
+
+When ToolUniverse tools return truncated results or you need bulk data, use the GDC API directly:
+
+```python
+import requests, pandas as pd
+
+# Bulk clinical data for a TCGA project
+filters = {"op":"and","content":[
+    {"op":"=","content":{"field":"project.project_id","value":"TCGA-BRCA"}}
+]}
+all_cases = []
+offset = 0
+while True:
+    resp = requests.post("https://api.gdc.cancer.gov/cases", json={
+        "filters": filters, "size": 500, "from": offset,
+        "fields": "submitter_id,demographic.vital_status,demographic.days_to_death,diagnoses.tumor_stage"
+    }).json()
+    hits = resp["data"]["hits"]
+    if not hits: break
+    all_cases.extend(hits)
+    offset += len(hits)
+df = pd.json_normalize(all_cases)
+
+# Download MAF mutation file by UUID
+file_uuid = "abc123-..."  # from GDC_list_files result
+url = f"https://api.gdc.cancer.gov/data/{file_uuid}"
+content = requests.get(url, headers={"Content-Type": "application/json"}).content
+
+# Gene expression: query files endpoint for HTSeq counts
+expr_filters = {"op":"and","content":[
+    {"op":"=","content":{"field":"cases.project.project_id","value":"TCGA-BRCA"}},
+    {"op":"=","content":{"field":"data_type","value":"Gene Expression Quantification"}}
+]}
+```
+
+See `tooluniverse-data-wrangling` skill for pagination, error handling, and format parsing patterns.
 
 ---
 

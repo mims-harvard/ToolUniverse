@@ -3,11 +3,20 @@ name: tooluniverse-gene-enrichment
 description: Perform comprehensive gene enrichment and pathway analysis using gseapy (ORA and GSEA), PANTHER, STRING, Reactome, and 40+ ToolUniverse tools. Supports GO enrichment (BP, MF, CC), KEGG, Reactome, WikiPathways, MSigDB Hallmark, and 220+ Enrichr libraries. Handles multiple ID types (gene symbols, Ensembl, Entrez, UniProt), multiple organisms (human, mouse, rat, fly, worm, yeast), customizable backgrounds, and multiple testing correction (BH, Bonferroni). Use when users ask about gene enrichment, pathway analysis, GO term enrichment, KEGG pathway analysis, GSEA, over-representation analysis, functional annotation, or gene set analysis.
 ---
 
+## COMPUTE, DON'T DESCRIBE
+When analysis requires computation (statistics, data processing, scoring, enrichment), write and run Python code via Bash. Don't describe what you would do — execute it and report actual results. Use ToolUniverse tools to retrieve data, then Python (pandas, scipy, statsmodels, matplotlib) to analyze it.
+
 # Gene Enrichment and Pathway Analysis
 
 Perform comprehensive gene enrichment analysis including Gene Ontology (GO), KEGG, Reactome, WikiPathways, and MSigDB enrichment using both Over-Representation Analysis (ORA) and Gene Set Enrichment Analysis (GSEA). Integrates local computation via gseapy with ToolUniverse pathway databases for cross-validated, publication-ready results.
 
 **IMPORTANT**: Always use English terms in tool calls (gene names, pathway names, organism names), even if the user writes in another language. Only try original-language terms as a fallback if English returns no results. Respond in the user's language.
+
+## Domain Reasoning: Background Selection
+
+Enrichment results are only as good as your background. The default background (all annotated genes in the genome) inflates enrichment for tissue-specific or context-specific gene lists. Always consider: what is the appropriate background for this experiment? For brain RNA-seq, use brain-expressed genes as background; for a proteomics experiment, use detected proteins. A gene that is never expressed in your system cannot be a true negative control.
+
+LOOK UP DON'T GUESS: adjusted p-values, gene set overlap counts, and which genes from your input list drive each enriched term. Always retrieve the `inputGenes` field from enrichment results — do not assume which genes caused a term to be significant. When a term looks surprising, verify by checking which genes overlap.
 
 ---
 
@@ -124,138 +133,13 @@ Additional Context (Optional):
 
 ## Quick Start Workflow
 
-### Step 1: Create Report File (IMMEDIATE)
+1. **Create report file** immediately; populate progressively.
+2. **Convert IDs**: Use `MyGene_batch_query` (fields: `symbol,entrezgene,ensembl.gene`) then `STRING_map_identifiers` to get canonical symbols. Auto-detect: `ENSG*` = Ensembl, numeric = Entrez, else = Symbol.
+3. **Primary enrichment**: `gseapy.enrichr()` for ORA (gene list), `gseapy.prerank()` for GSEA (ranked list with scores). Use `background=background_genes` — do not leave as genome-wide default if your experiment has a specific expressed gene set.
+4. **Cross-validate**: Run `PANTHER_enrichment` (param: comma-sep `gene_list`, `annotation_dataset='GO:0008150'`) and `ReactomeAnalysis_pathway_enrichment` (param: space-sep `identifiers`). `STRING_functional_enrichment` returns all categories — filter by `category` field.
+5. **Report**: Include raw p-value, adjusted p-value, overlap ratio, and `inputGenes` for each significant term. Note consensus terms (significant in 2+ sources).
 
-```python
-report_path = f"{analysis_name}_enrichment_report.md"
-# Write header with placeholder sections
-# Update progressively as analysis proceeds
-```
-
-### Step 2: ID Conversion and Validation
-
-```python
-from tooluniverse import ToolUniverse
-tu = ToolUniverse()
-tu.load_tools()
-
-# Detect ID type
-gene_list = ["TP53", "BRCA1", "EGFR"]
-# Auto-detect: ENSG* = Ensembl, numeric = Entrez, pattern = UniProt, else = Symbol
-
-# Convert if needed (Ensembl/Entrez → Symbol)
-result = tu.tools.MyGene_batch_query(
-    gene_ids=gene_list,
-    fields="symbol,entrezgene,ensembl.gene"
-)
-# Extract symbols from results
-
-# Validate with STRING
-mapped = tu.tools.STRING_map_identifiers(
-    protein_ids=gene_symbols,
-    species=9606  # human
-)
-# Use preferredName for canonical symbols
-```
-
-**See**: references/id_conversion.md for complete examples
-
-### Step 3: Primary Enrichment with gseapy
-
-**For ORA (gene list only)**:
-```python
-import gseapy
-
-# GO Biological Process
-go_bp = gseapy.enrichr(
-    gene_list=gene_symbols,
-    gene_sets='GO_Biological_Process_2021',
-    organism='human',
-    outdir=None,
-    no_plot=True,
-    background=background_genes  # None = genome-wide
-)
-go_bp_sig = go_bp.results[go_bp.results['Adjusted P-value'] < 0.05]
-```
-
-**For GSEA (ranked gene list)**:
-```python
-import pandas as pd
-
-# Ranked by log2FC
-ranked_series = pd.Series(gene_to_score).sort_values(ascending=False)
-
-gsea_result = gseapy.prerank(
-    rnk=ranked_series,
-    gene_sets='GO_Biological_Process_2021',
-    outdir=None,
-    no_plot=True,
-    seed=42,
-    min_size=5,
-    max_size=500,
-    permutation_num=1000
-)
-gsea_sig = gsea_result.res2d[gsea_result.res2d['FDR q-val'] < 0.25]
-```
-
-**See**:
-- references/ora_workflow.md for complete ORA examples
-- references/gsea_workflow.md for complete GSEA examples
-- references/enrichr_guide.md for all 225+ libraries
-
-### Step 4: Cross-Validation with ToolUniverse
-
-```python
-# PANTHER [T1 - curated]
-panther_bp = tu.tools.PANTHER_enrichment(
-    gene_list=','.join(gene_symbols),  # comma-separated string
-    organism=9606,
-    annotation_dataset='GO:0008150'  # biological_process
-)
-
-# STRING [T2 - validated]
-string_result = tu.tools.STRING_functional_enrichment(
-    protein_ids=gene_symbols,
-    species=9606
-)
-# Filter by category: Process, Function, Component, KEGG, Reactome
-
-# Reactome [T1 - curated]
-reactome_result = tu.tools.ReactomeAnalysis_pathway_enrichment(
-    identifiers=' '.join(gene_symbols),  # space-separated
-    page_size=50,
-    include_disease=True
-)
-```
-
-**See**: references/cross_validation.md for comparison strategies
-
-### Step 5: Report Compilation
-
-```markdown
-## Results
-
-### GO Biological Process (Top 10)
-| Term | P-value | Adj. P-value | Overlap | Genes | Evidence |
-|------|---------|-------------|---------|-------|----------|
-| regulation of cell cycle (GO:0051726) | 1.2e-08 | 3.4e-06 | 12/45 | TP53;BRCA1;... | [T2] gseapy |
-
-### Cross-Validation
-| GO Term | gseapy FDR | PANTHER FDR | STRING FDR | Consensus |
-|---------|-----------|-------------|-----------|-----------|
-| GO:0051726 | 3.4e-06 | 2.1e-05 | 1.8e-05 | 3/3 ✓ |
-
-### Completeness Checklist
-- [x] ID Conversion (MyGene, STRING) - 95% mapped
-- [x] GO BP (gseapy, PANTHER, STRING) - 24 significant terms
-- [x] GO MF (gseapy, PANTHER, STRING) - 18 significant terms
-- [x] GO CC (gseapy, PANTHER, STRING) - 12 significant terms
-- [x] KEGG (gseapy, STRING) - 8 significant pathways
-- [x] Reactome (gseapy, ReactomeAPI) - 15 significant pathways
-- [x] Cross-validation - 12 consensus terms (2+ sources)
-```
-
-**See**: scripts/format_enrichment_output.py for automated formatting
+**See**: references/ for complete code examples (ora_workflow.md, gsea_workflow.md, cross_validation.md)
 
 ---
 
@@ -272,14 +156,7 @@ reactome_result = tu.tools.ReactomeAnalysis_pathway_enrichment(
 
 ## Supported Organisms
 
-| Organism | Taxonomy ID | gseapy | PANTHER | STRING | Reactome |
-|----------|------------|--------|---------|--------|----------|
-| Human | 9606 | Yes | Yes | Yes | Yes |
-| Mouse | 10090 | Yes (`*_Mouse`) | Yes | Yes | Yes (projection) |
-| Rat | 10116 | Limited | Yes | Yes | Yes (projection) |
-| Fly | 7227 | Limited | Yes | Yes | Yes (projection) |
-| Worm | 6239 | Limited | Yes | Yes | Yes (projection) |
-| Yeast | 4932 | Limited | Yes | Yes | Yes |
+Core organisms: human (9606), mouse (10090), rat (10116), fly (7227), worm (6239), yeast (4932). gseapy has full human/mouse support; other organisms are limited — use PANTHER or STRING for non-human enrichment.
 
 **See**: references/organism_support.md for organism-specific libraries
 

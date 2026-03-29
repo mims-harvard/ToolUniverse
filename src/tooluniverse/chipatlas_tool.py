@@ -25,7 +25,16 @@ class ChIPAtlasTool(BaseTool):
     def run(self, arguments: Dict[str, Any]) -> Dict[str, Any]:
         """Execute the tool with given arguments."""
         try:
-            operation = arguments.get("operation", "enrichment_analysis")
+            # Get default operation from tool config schema if not provided
+            default_op = "enrichment_analysis"
+            if hasattr(self, "tool_config") and self.tool_config:
+                param_schema = self.tool_config.get("parameter", {})
+                default_op = (
+                    param_schema.get("properties", {})
+                    .get("operation", {})
+                    .get("default", "enrichment_analysis")
+                )
+            operation = arguments.get("operation", default_op)
 
             if operation == "enrichment_analysis":
                 return self._enrichment_analysis(arguments)

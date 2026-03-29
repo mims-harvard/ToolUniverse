@@ -142,6 +142,12 @@ report = generate_crispr_report(gene_scores, enrichment, drug_targets)
 
 ---
 
+## Domain Reasoning: Hits Are Statistical, Not Biological
+
+Screen hits are statistical findings, not direct readouts of biological relevance. A gene scoring as essential might be essential for cell growth in general (housekeeping) or essential specifically for the phenotype you are screening for (interesting). Always compare your screen hits to public essentiality data — use DepMap pan-cancer dependency scores to filter genes that are broadly essential across all cell lines. A gene essential only in your specific context, but not pan-essential in DepMap, is a better candidate for follow-up than one that scores in every screen.
+
+LOOK UP DON'T GUESS: DepMap dependency scores, known core essential gene sets (Hart et al., Blomen et al.), and DGIdb druggability data for your top hits. Do not assume a hit is context-specific without checking public essentiality databases.
+
 ## Interpretation Framework
 
 | Evidence Grade | Criteria | Validation Priority |

@@ -9,7 +9,7 @@ from ._shared_client import get_shared_client
 
 
 def ADMETAI_predict_bioavailability(
-    smiles: list[str],
+    smiles: list[str] | str,
     *,
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
@@ -20,8 +20,8 @@ def ADMETAI_predict_bioavailability(
 
     Parameters
     ----------
-    smiles : list[str]
-        The list of SMILES strings.
+    smiles : list[str] | str
+        SMILES string(s) for the molecule(s). Accepts a single string or list of stri...
     stream_callback : Callable, optional
         Callback for streaming output
     use_cache : bool, default False

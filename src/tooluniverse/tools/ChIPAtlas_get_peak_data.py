@@ -9,8 +9,8 @@ from ._shared_client import get_shared_client
 
 
 def ChIPAtlas_get_peak_data(
-    operation: str,
     experiment_id: str,
+    operation: Optional[str] = "get_peak_data",
     genome: Optional[str] = "hg38",
     format: Optional[str] = "bigwig",
     threshold: Optional[str] = "05",

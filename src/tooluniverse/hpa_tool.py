@@ -223,7 +223,10 @@ class HPASearchTool(HPASearchApiTool):
         if not search_query:
             return {"status": "error", "error": "Parameter 'search_query' is required"}
 
-        return self._make_api_request(search_query, columns, format_type)
+        result = self._make_api_request(search_query, columns, format_type)
+        if isinstance(result, dict) and result.get("status") == "error":
+            return result
+        return {"status": "success", "data": result}
 
 
 # --- New Enhanced Tools Based on Your Optimization Plan ---
@@ -586,14 +589,17 @@ class HPAGetSubcellularLocationTool(HPASearchApiTool):
             additional_locations = []
 
         return {
-            "gene_name": gene_data.get("Gene", gene_name),
-            "gene_synonym": gene_data.get("Gene synonym", ""),
-            "main_locations": main_locations,
-            "additional_locations": additional_locations,
-            "total_locations": len(main_locations) + len(additional_locations),
-            "location_summary": self._generate_location_summary(
-                main_locations, additional_locations
-            ),
+            "status": "success",
+            "data": {
+                "gene_name": gene_data.get("Gene", gene_name),
+                "gene_synonym": gene_data.get("Gene synonym", ""),
+                "main_locations": main_locations,
+                "additional_locations": additional_locations,
+                "total_locations": len(main_locations) + len(additional_locations),
+                "location_summary": self._generate_location_summary(
+                    main_locations, additional_locations
+                ),
+            },
         }
 
     def _generate_location_summary(
@@ -659,9 +665,12 @@ class HPASearchGenesTool(HPASearchApiTool):
             )
 
         return {
-            "search_query": search_query,
-            "match_count": len(formatted_results),
-            "genes": formatted_results,
+            "status": "success",
+            "data": {
+                "search_query": search_query,
+                "match_count": len(formatted_results),
+                "genes": formatted_results,
+            },
         }
 
 
@@ -741,18 +750,22 @@ class HPAGetComparativeExpressionTool(HPASearchApiTool):
         )
 
         return {
-            "gene_name": gene_name,
-            "gene_symbol": cell_data.get("Gene", gene_name),
-            "gene_synonym": cell_data.get("Gene synonym", ""),
-            "cell_line": cell_line,
-            "cell_line_expression": cell_data.get(cell_column, "N/A"),
-            "healthy_tissue_expression": tissue_data.get(
-                "RNA tissue specific nTPM", "N/A"
-            ),
-            "expression_unit": "nTPM (normalized Transcripts Per Million)",
-            "comparison_summary": self._generate_comparison_summary(
-                cell_data.get(cell_column), tissue_data.get("RNA tissue specific nTPM")
-            ),
+            "status": "success",
+            "data": {
+                "gene_name": gene_name,
+                "gene_symbol": cell_data.get("Gene", gene_name),
+                "gene_synonym": cell_data.get("Gene synonym", ""),
+                "cell_line": cell_line,
+                "cell_line_expression": cell_data.get(cell_column, "N/A"),
+                "healthy_tissue_expression": tissue_data.get(
+                    "RNA tissue specific nTPM", "N/A"
+                ),
+                "expression_unit": "nTPM (normalized Transcripts Per Million)",
+                "comparison_summary": self._generate_comparison_summary(
+                    cell_data.get(cell_column),
+                    tissue_data.get("RNA tissue specific nTPM"),
+                ),
+            },
         }
 
     def _generate_comparison_summary(self, cell_expr, tissue_expr) -> str:
@@ -857,17 +870,21 @@ class HPAGetDiseaseExpressionTool(HPASearchApiTool):
         gene_data = result[0] if isinstance(result, list) and result else {}
 
         return {
-            "gene_name": gene_name,
-            "gene_symbol": gene_data.get("Gene", gene_name),
-            "gene_synonym": gene_data.get("Gene synonym", ""),
-            "tissue_type": tissue_type or "Not specified",
-            "disease_name": disease_name,
-            "disease_expression": gene_data.get(cancer_column, "N/A"),
-            "healthy_expression": gene_data.get("RNA tissue specific nTPM", "N/A"),
-            "expression_unit": "nTPM (normalized Transcripts Per Million)",
-            "disease_vs_healthy": self._compare_disease_healthy(
-                gene_data.get(cancer_column), gene_data.get("RNA tissue specific nTPM")
-            ),
+            "status": "success",
+            "data": {
+                "gene_name": gene_name,
+                "gene_symbol": gene_data.get("Gene", gene_name),
+                "gene_synonym": gene_data.get("Gene synonym", ""),
+                "tissue_type": tissue_type or "Not specified",
+                "disease_name": disease_name,
+                "disease_expression": gene_data.get(cancer_column, "N/A"),
+                "healthy_expression": gene_data.get("RNA tissue specific nTPM", "N/A"),
+                "expression_unit": "nTPM (normalized Transcripts Per Million)",
+                "disease_vs_healthy": self._compare_disease_healthy(
+                    gene_data.get(cancer_column),
+                    gene_data.get("RNA tissue specific nTPM"),
+                ),
+            },
         }
 
     def _compare_disease_healthy(self, disease_expr, healthy_expr) -> str:
@@ -941,14 +958,17 @@ class HPAGetBiologicalProcessTool(HPASearchApiTool):
         biological_processes = gene_data.get("Biological process", "")
         if not biological_processes or biological_processes == "N/A":
             return {
-                "gene_name": gene_name,
-                "gene_symbol": gene_data.get("Gene", gene_name),
-                "gene_synonym": gene_data.get("Gene synonym", ""),
-                "biological_processes": [],
-                "target_processes_found": [],
-                "target_process_names": [],
-                "total_processes": 0,
-                "target_processes_count": 0,
+                "status": "success",
+                "data": {
+                    "gene_name": gene_name,
+                    "gene_symbol": gene_data.get("Gene", gene_name),
+                    "gene_synonym": gene_data.get("Gene synonym", ""),
+                    "biological_processes": [],
+                    "target_processes_found": [],
+                    "target_process_names": [],
+                    "total_processes": 0,
+                    "target_processes_count": 0,
+                },
             }
 
         # Split and clean process list - handle both string and list formats
@@ -974,14 +994,17 @@ class HPAGetBiologicalProcessTool(HPASearchApiTool):
                         )
 
         return {
-            "gene_name": gene_name,
-            "gene_symbol": gene_data.get("Gene", gene_name),
-            "gene_synonym": gene_data.get("Gene synonym", ""),
-            "biological_processes": processes_list,
-            "target_processes_found": target_found,
-            "target_process_names": [tp["target_process"] for tp in target_found],
-            "total_processes": len(processes_list),
-            "target_processes_count": len(target_found),
+            "status": "success",
+            "data": {
+                "gene_name": gene_name,
+                "gene_symbol": gene_data.get("Gene", gene_name),
+                "gene_synonym": gene_data.get("Gene synonym", ""),
+                "biological_processes": processes_list,
+                "target_processes_found": target_found,
+                "target_process_names": [tp["target_process"] for tp in target_found],
+                "total_processes": len(processes_list),
+                "target_processes_count": len(target_found),
+            },
         }
 
 
@@ -1016,16 +1039,19 @@ class HPAGetCancerPrognosticsTool(HPAJsonApiTool):
                     )
 
         return {
-            "ensembl_id": ensembl_id,
-            "gene": data.get("Gene", "Unknown"),
-            "gene_synonym": data.get("Gene synonym", ""),
-            "prognostic_cancers_count": len(prognostics),
-            "prognostic_summary": (
-                prognostics
-                if prognostics
-                else "No significant prognostic value found in the analyzed cancers."
-            ),
-            "note": "Prognostic value indicates whether high/low expression of this gene correlates with patient survival in specific cancer types.",
+            "status": "success",
+            "data": {
+                "ensembl_id": ensembl_id,
+                "gene": data.get("Gene", "Unknown"),
+                "gene_synonym": data.get("Gene synonym", ""),
+                "prognostic_cancers_count": len(prognostics),
+                "prognostic_summary": (
+                    prognostics
+                    if prognostics
+                    else "No significant prognostic value found in the analyzed cancers."
+                ),
+                "note": "Prognostic value indicates whether high/low expression of this gene correlates with patient survival in specific cancer types.",
+            },
         }
 
 
@@ -1125,18 +1151,21 @@ class HPAGetRnaExpressionByTissueTool(HPAJsonApiTool):
                 }
 
         return {
-            "ensembl_id": ensembl_id,
-            "gene": data.get("Gene", "Unknown"),
-            "gene_synonym": data.get("Gene synonym", ""),
-            "expression_unit": "nTPM (normalized Transcripts Per Million)",
-            "queried_tissues": tissue_names,
-            "tissue_expression": expression_results,
-            "available_tissues_sample": (
-                available_tissues[:10]
-                if len(available_tissues) > 10
-                else available_tissues
-            ),
-            "total_available_tissues": len(available_tissues),
+            "status": "success",
+            "data": {
+                "ensembl_id": ensembl_id,
+                "gene": data.get("Gene", "Unknown"),
+                "gene_synonym": data.get("Gene synonym", ""),
+                "expression_unit": "nTPM (normalized Transcripts Per Million)",
+                "queried_tissues": tissue_names,
+                "tissue_expression": expression_results,
+                "available_tissues_sample": (
+                    available_tissues[:10]
+                    if len(available_tissues) > 10
+                    else available_tissues
+                ),
+                "total_available_tissues": len(available_tissues),
+            },
         }
 
     def _categorize_expression(self, expr_value) -> str:
@@ -1384,20 +1413,25 @@ class HPAGetContextualBiologicalProcessTool(BaseTool):
             conclusion = f"Gene {gene_name} is involved in {len(processes_list)} biological processes. It is {expression_level} in {context_name} ({expression_value} nTPM), suggesting its functional roles {relevance} in this {context_type} context."
 
             return {
-                "gene": gene_data.get("Gene", gene_name),
-                "gene_synonym": gene_data.get("Gene synonym", ""),
-                "ensembl_id": ensembl_id,
-                "context": context_name,
-                "context_type": context_type,
-                "context_category": validation["category"],
-                "expression_in_context": f"{expression_value} nTPM",
-                "expression_level": expression_level,
-                "total_biological_processes": len(processes_list),
-                "biological_processes": (
-                    processes_list[:10] if len(processes_list) > 10 else processes_list
-                ),
-                "contextual_conclusion": conclusion,
-                "functional_relevance": relevance,
+                "status": "success",
+                "data": {
+                    "gene": gene_data.get("Gene", gene_name),
+                    "gene_synonym": gene_data.get("Gene synonym", ""),
+                    "ensembl_id": ensembl_id,
+                    "context": context_name,
+                    "context_type": context_type,
+                    "context_category": validation["category"],
+                    "expression_in_context": f"{expression_value} nTPM",
+                    "expression_level": expression_level,
+                    "total_biological_processes": len(processes_list),
+                    "biological_processes": (
+                        processes_list[:10]
+                        if len(processes_list) > 10
+                        else processes_list
+                    ),
+                    "contextual_conclusion": conclusion,
+                    "functional_relevance": relevance,
+                },
             }
 
         except Exception as e:
@@ -1432,9 +1466,10 @@ class HPAGetGenePageDetailsTool(HPAXmlApiTool):
 
         try:
             root = self._make_api_request(ensembl_id)
-            return self._parse_gene_xml(
+            parsed = self._parse_gene_xml(
                 root, ensembl_id, include_images, include_antibodies, include_expression
             )
+            return {"status": "success", "data": parsed}
 
         except Exception as e:
             return {"status": "error", "error": str(e)}

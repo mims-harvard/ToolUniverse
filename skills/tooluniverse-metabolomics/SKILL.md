@@ -227,39 +227,6 @@ No manual tool configuration required - all tools loaded automatically.
 **Cause**: Pipeline queries each metabolite individually
 **Solution**: Reports limit to first 10 metabolites; consider batching for >20 metabolites
 
-## Tool Parameter Reference
-
-### HMDB Tools (SOAP)
-
-| Tool | Required Parameters | Optional Parameters | Response Format | Notes |
-|------|---------------------|---------------------|-----------------|-------|
-| `HMDB_search` | `operation="search"`, `query` | - | `{status, data: []}` | **SOAP tool - operation required** |
-| `HMDB_get_metabolite` | `operation="get_metabolite"`, `hmdb_id` | - | `{status, data: {}}` | **SOAP tool - operation required** |
-
-### MetaboLights Tools (REST)
-
-| Tool | Required Parameters | Optional Parameters | Response Format | Notes |
-|------|---------------------|---------------------|-----------------|-------|
-| `metabolights_list_studies` | - | `size` (default: 10) | `{status, data: []}` or `[...]` | May return direct list |
-| `metabolights_search_studies` | `query` | - | `{status, data: []}` | Returns study IDs |
-| `metabolights_get_study` | `study_id` | - | `{status, data: {}}` | Full study metadata |
-
-### Metabolomics Workbench Tools (REST)
-
-| Tool | Required Parameters | Optional Parameters | Response Format | Notes |
-|------|---------------------|---------------------|-----------------|-------|
-| `MetabolomicsWorkbench_get_study` | `study_id` | `output_item` (default: "summary") | `{status, data: {}}` | Data may be text |
-| `MetabolomicsWorkbench_search_compound_by_name` | `compound_name` | - | `{status, data: {}}` | Compound information |
-
-### PubChem Tools (REST)
-
-| Tool | Required Parameters | Optional Parameters | Response Format | Notes |
-|------|---------------------|---------------------|-----------------|-------|
-| `PubChem_get_CID_by_compound_name` | `compound_name` | - | `{status, data: {cid}}` | Returns CID |
-| `PubChem_get_compound_properties_by_CID` | `cid` | - | `{status, data: {}}` | Chemical properties |
-
-**Important**: All parameter names and requirements apply to **both Python SDK and MCP implementations**.
-
 ## Summary
 
 The Metabolomics Research skill provides comprehensive metabolomics analysis through a 4-phase pipeline that:
@@ -285,22 +252,28 @@ The Metabolomics Research skill provides comprehensive metabolomics analysis thr
 
 ## Reasoning Framework
 
+### Starting Point: Mass Spectrum Analysis
+
+Metabolite identification starts with the mass spectrum. LOOK UP DON'T GUESS — always search HMDB/PubChem with the calculated neutral mass rather than guessing identity from m/z alone.
+
+- **Step 1 — Calculate neutral mass**: Determine ionization mode. Positive: subtract adduct mass ([M+H]+ = -1.0073, [M+Na]+ = -22.9892, [M+NH4]+ = -18.0344). Negative: add back ([M-H]- = +1.0073, [M+Cl]- = +34.9694, [M+HCOO]- = +44.9977).
+- **Step 2 — Search databases**: Query HMDB by mass (±5 ppm for Orbitrap/Q-TOF, ±0.5 Da for unit-resolution). Multiple adduct hypotheses yield different neutral masses — check all plausible adducts before concluding.
+- **Step 3 — Resolve ambiguity**: Exact mass alone often matches 5-20 candidates. Use isotope pattern (M+1/M+2 ratios indicate element composition — e.g., high M+2 suggests S or Cl), retention time, and MS/MS fragmentation to narrow down. A single mass match is L3 confidence; MS/MS match to reference spectrum is required for L2/L1.
+
 ### Evidence Grading (Metabolite Identification Confidence)
 
-| Level | Description | Criteria |
-|-------|-------------|----------|
-| **L1 - Confirmed** | Matched to authenticated standard | HMDB ID + retention time + MS/MS match to reference standard |
-| **L2 - Probable** | Putative annotation via spectral library | HMDB match by exact mass + MS/MS similarity (cosine > 0.7), no standard |
-| **L3 - Tentative** | Class-level identification | Matched by exact mass and molecular formula only; structural isomers unresolved |
-| **L4 - Unknown** | Unidentified feature | Detected m/z with no database match; PubChem fallback may provide candidates |
+- **L1 - Confirmed**: HMDB ID + retention time + MS/MS match to reference standard
+- **L2 - Probable**: HMDB match by exact mass + MS/MS similarity (cosine > 0.7), no standard
+- **L3 - Tentative**: Matched by exact mass and molecular formula only; structural isomers unresolved
+- **L4 - Unknown**: Detected m/z with no database match; PubChem fallback may provide candidates
 
 ### Interpretation Guidance
 
 **Metabolite identification**: HMDB IDs provide the strongest annotation when paired with experimental validation. A PubChem-only match (fallback) indicates the metabolite is chemically characterized but may lack biological context (pathways, disease associations). Always report the identification confidence level.
 
-**Pathway enrichment**: When multiple metabolites map to the same KEGG or HMDB pathway, enrichment is meaningful only if the input list is unbiased (not pre-selected for that pathway). Report the number of hits vs. pathway size. A pathway with 3/5 metabolites detected is more informative than one with 3/500.
+**Pathway enrichment strategy**: When multiple metabolites map to the same KEGG or HMDB pathway, enrichment is meaningful only if the input list is unbiased (not pre-selected for that pathway). Report hits vs. pathway size (3/5 detected is more informative than 3/500). LOOK UP DON'T GUESS — use `HMDB_get_metabolite` to get pathway annotations for each metabolite rather than assuming pathway membership from names alone.
 
-**Biomarker discovery criteria**: A candidate biomarker should show: (1) consistent direction of change across samples (fold-change > 1.5), (2) statistical significance (FDR-adjusted p < 0.05), (3) biological plausibility (known role in disease pathway), and (4) reproducibility in an independent cohort. Single-study HMDB associations are hypothesis-generating, not confirmatory.
+**Biomarker discovery reasoning**: A candidate biomarker should show: (1) consistent direction of change across samples (fold-change > 1.5), (2) statistical significance (FDR-adjusted p < 0.05), (3) biological plausibility — LOOK UP the metabolite's known disease associations via HMDB, and (4) reproducibility in an independent cohort. Single-study HMDB associations are hypothesis-generating, not confirmatory. Check MetaboLights/Metabolomics Workbench for independent validation datasets.
 
 ### Synthesis Questions
 
@@ -317,10 +290,4 @@ A complete metabolomics report should answer:
 - Large metabolite lists (>10) auto-limited in reports
 - API rate limits may affect large-scale queries
 
-## Quick Start
-
-See `QUICK_START.md` for:
-- Python SDK implementation with code examples
-- MCP integration instructions
-- Step-by-step tutorial for common workflows
-- Advanced usage patterns
+See `QUICK_START.md` for Python SDK examples, MCP integration, and step-by-step tutorials.

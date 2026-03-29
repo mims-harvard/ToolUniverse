@@ -1,0 +1,120 @@
+[
+  {
+    "type": "DataGovTool",
+    "name": "DataGov_search_datasets",
+    "description": "Search the US federal open data catalog (Data.gov) for datasets from agencies like EPA, CDC, Census Bureau, NIH, USDA, NOAA, and more. Data.gov uses the CKAN API and indexes over 300,000 federal datasets. Returns dataset titles, descriptions, organizations, download resource URLs, tags, and last-modified dates. Use organization filter (e.g. 'epa-gov', 'cdc-gov', 'usda-gov', 'nih-gov', 'census-gov', 'noaa-gov') to narrow results to a specific agency.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "query": {
+          "type": "string",
+          "description": "Search keywords for dataset discovery. Searches across dataset titles, descriptions, and tags."
+        },
+        "organization": {
+          "type": ["string", "null"],
+          "description": "Optional CKAN organization slug to filter by federal agency. Examples: 'epa-gov', 'cdc-gov', 'usda-gov', 'nih-gov', 'census-gov', 'noaa-gov', 'nasa-gov', 'nsf-gov', 'doe-gov', 'hhs-gov'. Leave null to search all agencies.",
+          "default": null
+        },
+        "rows": {
+          "type": "integer",
+          "description": "Number of results to return. Default 10, maximum 100.",
+          "default": 10,
+          "minimum": 1,
+          "maximum": 100
+        }
+      },
+      "required": ["query"],
+      "additionalProperties": false
+    },
+    "return_schema": {
+      "type": "object",
+      "description": "Data.gov dataset search results (inside the data wrapper)",
+      "properties": {
+        "query": {
+          "type": "string",
+          "description": "The search query that was executed"
+        },
+        "organization": {
+          "type": ["string", "null"],
+          "description": "Organization filter applied, or null"
+        },
+        "total_count": {
+          "type": "integer",
+          "description": "Total number of matching datasets in Data.gov"
+        },
+        "returned": {
+          "type": "integer",
+          "description": "Number of datasets returned in this response"
+        },
+        "datasets": {
+          "type": "array",
+          "description": "List of matching datasets",
+          "items": {
+            "type": "object",
+            "properties": {
+              "title": {
+                "type": "string",
+                "description": "Dataset title"
+              },
+              "description": {
+                "type": ["string", "null"],
+                "description": "Dataset description/notes"
+              },
+              "organization": {
+                "type": ["string", "null"],
+                "description": "Publishing organization name"
+              },
+              "organization_title": {
+                "type": ["string", "null"],
+                "description": "Human-readable organization title"
+              },
+              "metadata_modified": {
+                "type": ["string", "null"],
+                "description": "Last modification date (ISO format)"
+              },
+              "tags": {
+                "type": "array",
+                "items": {"type": "string"},
+                "description": "Dataset tags/keywords"
+              },
+              "resources": {
+                "type": "array",
+                "description": "Download links and resource files",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "name": {"type": ["string", "null"]},
+                    "url": {"type": ["string", "null"]},
+                    "format": {"type": ["string", "null"]},
+                    "description": {"type": ["string", "null"]}
+                  }
+                }
+              },
+              "url": {
+                "type": ["string", "null"],
+                "description": "Dataset page URL on Data.gov"
+              }
+            }
+          }
+        }
+      },
+      "required": ["query", "total_count", "returned", "datasets"]
+    },
+    "test_examples": [
+      {
+        "query": "air quality monitoring",
+        "organization": "epa-gov",
+        "rows": 3
+      },
+      {
+        "query": "dietary iron intake survey",
+        "rows": 3
+      },
+      {
+        "query": "census population demographics",
+        "organization": "census-gov",
+        "rows": 2
+      }
+    ]
+  }
+]

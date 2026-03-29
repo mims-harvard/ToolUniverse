@@ -1,0 +1,82 @@
+[
+    {
+        "name": "IEDB_predict_mhci_binding",
+        "description": "Predict MHC class I peptide binding using NetMHCpan via the IEDB Analysis Resource API. Given a protein sequence and HLA allele, predicts which peptides will bind and be presented on the cell surface. Returns peptides ranked by percentile rank (lower = stronger binding). Essential for vaccine design, neoantigen prediction, and epitope mapping. Supports human HLA-A/B/C and mouse H-2 alleles.",
+        "parameter": {
+            "type": "object",
+            "properties": {
+                "sequence": {
+                    "type": "string",
+                    "description": "Protein sequence (amino acid letters, e.g., 'TYQRTRALVFQRTRALKMFAL'). Multiple peptides can be concatenated."
+                },
+                "allele": {
+                    "type": "string",
+                    "description": "MHC allele name. Human: 'HLA-A*02:01', 'HLA-B*07:02'. Mouse: 'H-2-Kd', 'H-2-Db'. Default: HLA-A*02:01",
+                    "default": "HLA-A*02:01"
+                },
+                "method": {
+                    "type": "string",
+                    "description": "Prediction method. 'netmhcpan_el' (recommended, eluted ligand), 'netmhcpan_ba' (binding affinity), 'ann', 'smm'",
+                    "default": "netmhcpan_el"
+                },
+                "length": {
+                    "type": "integer",
+                    "description": "Peptide length (8-14 for MHC-I, typically 9)",
+                    "default": 9
+                }
+            },
+            "required": ["sequence"]
+        },
+        "fields": {
+            "endpoint_type": "predict_mhci"
+        },
+        "type": "IEDBPredictionTool",
+        "test_examples": [
+            {"sequence": "TYQRTRALV", "allele": "H-2-Kd", "length": 9},
+            {"sequence": "GILGFVFTL", "allele": "HLA-A*02:01", "length": 9}
+        ],
+        "return_schema": {
+            "oneOf": [
+                {"type": "object", "properties": {"data": {"type": "array"}, "metadata": {"type": "object"}}},
+                {"type": "object", "properties": {"error": {"type": "string"}}}
+            ]
+        }
+    },
+    {
+        "name": "IEDB_predict_mhcii_binding",
+        "description": "Predict MHC class II peptide binding using NetMHCIIpan via the IEDB Analysis Resource API. Predicts CD4+ T helper cell epitopes. Given a protein sequence and HLA-DR/DP/DQ allele, returns predicted binding peptides ranked by percentile rank. Essential for vaccine design (helper epitopes) and autoimmunity research.",
+        "parameter": {
+            "type": "object",
+            "properties": {
+                "sequence": {
+                    "type": "string",
+                    "description": "Protein sequence (amino acid letters)"
+                },
+                "allele": {
+                    "type": "string",
+                    "description": "MHC-II allele. Examples: 'HLA-DRB1*01:01', 'HLA-DRB1*15:01'. Default: HLA-DRB1*01:01",
+                    "default": "HLA-DRB1*01:01"
+                },
+                "method": {
+                    "type": "string",
+                    "description": "Prediction method: 'netmhciipan_el' (recommended), 'netmhciipan_ba', 'nn_align'",
+                    "default": "netmhciipan_el"
+                }
+            },
+            "required": ["sequence"]
+        },
+        "fields": {
+            "endpoint_type": "predict_mhcii"
+        },
+        "type": "IEDBPredictionTool",
+        "test_examples": [
+            {"sequence": "PKYVKQNTLKLAT", "allele": "HLA-DRB1*01:01"}
+        ],
+        "return_schema": {
+            "oneOf": [
+                {"type": "object", "properties": {"data": {"type": "array"}, "metadata": {"type": "object"}}},
+                {"type": "object", "properties": {"error": {"type": "string"}}}
+            ]
+        }
+    }
+]

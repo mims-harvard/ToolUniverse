@@ -984,5 +984,183 @@
         ]
       }
     ]
+  },
+  {
+    "type": "EuropePMCStructuredFullTextTool",
+    "name": "EuropePMC_get_full_text",
+    "description": "Retrieve and parse full-text XML from Europe PMC into structured sections. Returns title, abstract, body sections (introduction, methods, results, discussion, conclusions), figure captions, table captions, and references as structured JSON. Accepts a PMC ID directly or a PMID (auto-resolved to PMC ID via Europe PMC search). Only works for open-access articles available in PubMed Central.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "pmcid": {
+          "type": "string",
+          "description": "PubMed Central ID (e.g., 'PMC7096075' or '7096075'). Preferred identifier."
+        },
+        "pmid": {
+          "type": "string",
+          "description": "PubMed ID (e.g., '32226684'). Will be auto-resolved to a PMC ID via Europe PMC search. Use when PMC ID is not known."
+        },
+        "max_section_chars": {
+          "type": "integer",
+          "description": "Maximum characters per section in the output. Longer sections are truncated.",
+          "default": 50000,
+          "minimum": 1000,
+          "maximum": 500000
+        }
+      }
+    },
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "object",
+          "description": "Structured full-text content",
+          "properties": {
+            "status": {
+              "type": "string",
+              "enum": ["success"]
+            },
+            "data": {
+              "type": "object",
+              "properties": {
+                "title": {
+                  "type": ["string", "null"],
+                  "description": "Article title"
+                },
+                "abstract": {
+                  "type": ["string", "null"],
+                  "description": "Article abstract text"
+                },
+                "sections": {
+                  "type": "object",
+                  "description": "Body sections keyed by canonical name (introduction, methods, results, discussion, conclusions, acknowledgments, other_sections). Each value is a string (single section) or array of {title, text} objects (multiple subsections).",
+                  "properties": {
+                    "introduction": {
+                      "type": ["string", "object"],
+                      "description": "Introduction / background section text"
+                    },
+                    "methods": {
+                      "type": ["string", "object"],
+                      "description": "Methods / materials and methods section text"
+                    },
+                    "results": {
+                      "type": ["string", "object"],
+                      "description": "Results / findings section text"
+                    },
+                    "discussion": {
+                      "type": ["string", "object"],
+                      "description": "Discussion section text"
+                    },
+                    "conclusions": {
+                      "type": ["string", "object"],
+                      "description": "Conclusions / summary section text"
+                    },
+                    "acknowledgments": {
+                      "type": ["string", "object"],
+                      "description": "Acknowledgments section text"
+                    },
+                    "other_sections": {
+                      "type": "array",
+                      "description": "Sections that do not map to standard categories",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "title": {"type": "string"},
+                          "text": {"type": "string"}
+                        }
+                      }
+                    }
+                  }
+                },
+                "figures": {
+                  "type": "array",
+                  "description": "Figure labels and captions",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "id": {"type": "string"},
+                      "label": {"type": ["string", "null"]},
+                      "caption": {"type": ["string", "null"]}
+                    }
+                  }
+                },
+                "tables": {
+                  "type": "array",
+                  "description": "Table labels and captions",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "id": {"type": "string"},
+                      "label": {"type": ["string", "null"]},
+                      "caption": {"type": ["string", "null"]}
+                    }
+                  }
+                },
+                "references": {
+                  "type": "array",
+                  "description": "List of references",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "id": {"type": "string"},
+                      "text": {"type": "string"}
+                    }
+                  }
+                },
+                "figure_count": {
+                  "type": "integer",
+                  "description": "Number of figures"
+                },
+                "table_count": {
+                  "type": "integer",
+                  "description": "Number of tables"
+                },
+                "reference_count": {
+                  "type": "integer",
+                  "description": "Number of references"
+                }
+              }
+            },
+            "metadata": {
+              "type": "object",
+              "properties": {
+                "pmcid": {"type": "string"},
+                "source": {"type": ["string", "null"]},
+                "format": {"type": ["string", "null"]}
+              }
+            }
+          }
+        },
+        {
+          "type": "object",
+          "description": "Error response",
+          "properties": {
+            "status": {
+              "type": "string",
+              "enum": ["error"]
+            },
+            "error": {
+              "type": "string",
+              "description": "Error message describing why full text could not be retrieved or parsed"
+            },
+            "retrieval_trace": {
+              "type": "array",
+              "description": "Trace of retrieval attempts (when available)",
+              "items": {
+                "type": "object"
+              }
+            }
+          },
+          "required": ["error"]
+        }
+      ]
+    },
+    "test_examples": [
+      {
+        "pmcid": "PMC7096075"
+      },
+      {
+        "pmid": "32226684"
+      }
+    ]
   }
 ]

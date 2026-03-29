@@ -1,0 +1,106 @@
+[
+  {
+    "name": "DataQuality_assess",
+    "description": "Assess the quality of a tabular dataset (CSV file or JSON array of records). Returns per-column statistics (data type, missing count/percentage, unique values, numeric min/max/mean/std, categorical mode/top values), overall summary (total rows, columns, complete cases), and warnings for columns with >20% missing values, zero variance, potential outliers (>3 SD from mean), and highly correlated numeric pairs (|r| > 0.95). Pure local computation with pandas -- no external API calls. Useful for pre-analysis data validation and quality control.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "data": {
+          "oneOf": [
+            {
+              "type": "array",
+              "items": {
+                "type": "object"
+              },
+              "description": "JSON array of records (list of dicts), each dict representing one row."
+            },
+            {
+              "type": "string",
+              "description": "Absolute path to a CSV file on the local filesystem."
+            }
+          ],
+          "description": "Input dataset: either a JSON array of records (list of dicts) or an absolute path to a CSV file."
+        },
+        "columns": {
+          "type": ["array", "null"],
+          "items": {
+            "type": "string"
+          },
+          "description": "List of column names to assess. Default: all columns."
+        }
+      },
+      "required": ["data"]
+    },
+    "type": "DataQualityTool",
+    "required_packages": ["pandas"],
+    "test_examples": [
+      {
+        "data": [
+          {"age": 25, "name": "Alice", "score": 88.5, "group": "A"},
+          {"age": 30, "name": "Bob", "score": 92.1, "group": "A"},
+          {"age": null, "name": "Charlie", "score": 75.0, "group": "B"},
+          {"age": 28, "name": "Diana", "score": null, "group": "B"},
+          {"age": 35, "name": "Eve", "score": 95.3, "group": "A"},
+          {"age": 200, "name": "Frank", "score": 91.0, "group": "A"},
+          {"age": 29, "name": null, "score": 85.2, "group": "C"},
+          {"age": 31, "name": "Hank", "score": 89.0, "group": "C"},
+          {"age": 27, "name": "Ivy", "score": 87.5, "group": "B"},
+          {"age": 33, "name": "Jack", "score": 90.0, "group": "A"}
+        ]
+      },
+      {
+        "data": [
+          {"x": 1.0, "y": 2.0, "z": 5},
+          {"x": 2.0, "y": 4.0, "z": 5},
+          {"x": 3.0, "y": 6.0, "z": 5},
+          {"x": 4.0, "y": 8.0, "z": 5},
+          {"x": 5.0, "y": 10.0, "z": 5}
+        ],
+        "columns": ["x", "y", "z"]
+      }
+    ],
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "object",
+          "required": ["overall", "columns", "warnings"],
+          "properties": {
+            "overall": {
+              "type": "object",
+              "properties": {
+                "total_rows": {"type": "integer"},
+                "total_columns": {"type": "integer"},
+                "complete_cases": {"type": "integer"},
+                "complete_case_pct": {"type": "number"}
+              }
+            },
+            "columns": {
+              "type": "object",
+              "description": "Per-column quality statistics keyed by column name."
+            },
+            "warnings": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "type": {"type": "string"},
+                  "column": {"type": "string"},
+                  "detail": {"type": "string"}
+                }
+              }
+            }
+          }
+        },
+        {
+          "type": "object",
+          "required": ["error"],
+          "properties": {
+            "error": {
+              "type": "string"
+            }
+          }
+        }
+      ]
+    }
+  }
+]

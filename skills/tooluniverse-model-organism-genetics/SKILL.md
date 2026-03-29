@@ -3,480 +3,241 @@ name: tooluniverse-model-organism-genetics
 description: Cross-species genetic analysis using model organism databases. Maps human genes to orthologs in mouse, fly, worm, zebrafish, yeast, and frog, then retrieves phenotypes, expression, and functional data from MGI, FlyBase, WormBase, ZFIN, SGD, and Xenbase. Use when users ask about model organisms, gene orthologs, mouse phenotypes, fly genetics, worm RNAi, zebrafish morphants, cross-species comparison, animal models for human disease, or conservation of gene function.
 ---
 
+## COMPUTE, DON'T DESCRIBE
+When analysis requires computation (statistics, data processing, scoring, enrichment), write and run Python code via Bash. Don't describe what you would do — execute it and report actual results. Use ToolUniverse tools to retrieve data, then Python (pandas, scipy, statsmodels, matplotlib) to analyze it.
+
 # Model Organism Genetics Pipeline
 
 Map human genes to model organism orthologs and retrieve phenotype, expression, and functional data across six species. Synthesize cross-species evidence to assess gene function conservation and identify the best animal models for studying human genes and diseases.
 
-## Key Principles
+**Not for**: human variant interpretation (`tooluniverse-variant-analysis`), drug target validation (`tooluniverse-drug-target-validation`), human disease characterization (`tooluniverse-multiomic-disease-characterization`).
 
-1. **Disambiguation FIRST** - Resolve human gene to canonical identifiers before ortholog mapping
-2. **Ortholog confidence matters** - Prioritize one-to-one orthologs; flag one-to-many or many-to-many
-3. **Species-appropriate IDs** - Each database uses its own ID format (MGI:xxx, FB:FBgnXXX, WBGene, ZFIN:ZDB-GENE, SGD:SXXX)
-4. **Negative results are data** - "No ortholog in yeast" is informative (gene may be metazoan-specific)
-5. **Evidence grading** - T1: direct experimental (knockout/KD phenotype), T2: genetic screen, T3: computational orthology, T4: sequence similarity only
-6. **Organism selection by question** - Not all organisms are relevant to all questions (see Organism Selection Guide)
-7. **Synthesize, don't enumerate** - The value is in connecting phenotypes across species, not listing them separately. Always end with a cross-species synthesis that answers "what does this gene do?" at a conceptual level
-8. **Report progressively** - Create report file first, populate section by section
-9. **English-first queries** - Use English gene symbols in all tool calls; respond in user's language
-
-## When to Use
-
-Apply when users ask about:
-- "What is the mouse ortholog of [human gene]?"
-- "What happens when you knock out [gene] in mouse/fly/worm/fish?"
-- "Which model organism best models [human disease]?"
-- Cross-species gene function comparison
-- Conservation of a gene across evolution
-- Animal models for a specific human gene or pathway
-- Phenotypes from genetic screens in model organisms
-
-**Not for** (use other skills): human variant interpretation (`tooluniverse-variant-analysis`), drug target validation (`tooluniverse-drug-target-validation`), human disease characterization (`tooluniverse-multiomic-disease-characterization`).
-
-## Input Parameters
-
-| Parameter | Required | Description | Example |
-|-----------|----------|-------------|---------|
-| **gene** | Yes | Human gene symbol, Ensembl ID, or UniProt ID | `TP53`, `ENSG00000141510` |
-| **organisms** | No | Subset of organisms to query (default: all) | `["mouse", "fly", "worm"]` |
-| **disease** | No | Human disease context for model relevance | `Parkinson's disease` |
-| **focus** | No | Analysis focus: `phenotypes`, `expression`, `function`, `all` | `phenotypes` |
+**LOOK UP, DON'T GUESS**: When asked about a species' taxonomy, ecology, or biology, search GBIF/NCBI Taxonomy first. For GBIF: use `GBIF_search_species(query="species name")`, then use the `nubKey` (not `key`) from the result to call `GBIF_get_species(speciesKey=nubKey)` for full taxonomy (kingdom, phylum, class, order, family). The `nubKey` is the GBIF backbone key; the `key` is dataset-specific and often lacks higher taxonomy.
 
 ---
 
-## Pipeline Phases
+## Reasoning Principles
+
+### Ortholog Reasoning
+Sequence conservation across species implies functional conservation — but not always. A highly conserved gene in mouse and human likely has the same function. But regulatory differences (when/where a gene is expressed) can cause different phenotypes even from the same gene. Always check: is the protein domain conserved, or just raw sequence? Are there known regulatory differences? A 40% identity ortholog with a conserved catalytic domain can be more functionally equivalent than a 90% identity paralog in the same species.
+
+Paralog contamination is a common pitfall. Gene families (e.g., FOXP1/2/3/4, HOX clusters) generate false ortholog hits. Distinguish true orthologs from paralogs by checking synteny (conserved gene neighborhood) and homology type: 1:1 = likely true ortholog; 1:many or many:many = likely paralog expansion. If the target species has a single gene where humans have multiple (e.g., one fly FoxP vs four human FOXPs), it is the co-ortholog of all human paralogs — note this explicitly.
+
+### Model Organism Selection
+Choose your model by the question:
+- **Mouse**: mammalian physiology, drug testing, immune system, CNS disease — best when you need human-like biology
+- **Fly**: genetic screens, signaling pathways (Notch, Wnt, Hh first characterized here), neural circuits, aging — best for rapid genome-wide genetics
+- **Worm**: cell lineage, apoptosis, RNAi screens, aging — best when you need single-cell resolution and mapped connectome
+- **Zebrafish**: development, organ formation, live imaging, cardiac biology — best when you need vertebrate biology with optical access
+- **Yeast**: cell cycle, DNA repair, metabolism, protein trafficking, chromatin — best for fundamental cell biology
+- **Frog (Xenopus)**: early development, cell signaling, oocyte biochemistry — note X. laevis is allotetraploid (two homeologs: .L and .S)
+
+Invertebrates (fly, worm, yeast) lack adaptive immunity and many vertebrate-specific organs — if the question involves those systems, they will be uninformative.
+
+### Phenotype Transfer Reasoning
+A knockout phenotype in mouse does not automatically predict the human phenotype. Ask three questions before inferring cross-species relevance:
+1. **Is the pathway conserved?** A mouse cardiac phenotype only predicts human cardiac disease if the same developmental pathway operates in both hearts.
+2. **Are there compensating paralogs?** If the mouse has one gene but humans have three paralogs, a mouse knockout can be more severe than loss of a single human paralog. Conversely, if humans lost a paralog that mice retain, the mouse KO may overpredict human phenotype.
+3. **Is the gene dosage-sensitive?** Haploinsufficiency in mouse (heterozygous phenotype) is a stronger predictor of human dominant disease than phenotypes seen only in homozygous knockouts.
+
+When phenotypes differ across species, consider regulatory divergence: the coding sequence may be conserved while the expression pattern has shifted. This can produce organisms with the "same gene" but different tissues of expression and therefore different phenotypes.
+
+---
+
+## Pipeline
 
 ### Phase 0: Human Gene Disambiguation (ALWAYS FIRST)
 
-Resolve input to all needed identifiers.
+1. `MyGene_query_genes(query="<gene>")` — get Ensembl ID, Entrez ID, UniProt, symbol (filter by `symbol` match; first hit may be a pseudogene)
+2. `ensembl_lookup_gene(gene_id="<ensembl_id>", species="homo_sapiens")` — validate
+3. If disease context: `HPO_search_terms(query="<disease>")` — get HPO terms for phenotype matching
 
-**Steps**:
-1. `MyGene_query_genes(query="<gene>")` - Get Ensembl ID, Entrez ID, UniProt, symbol
-   - IMPORTANT: Filter results by `symbol` match (first hit may be a LOC pseudogene)
-2. `ensembl_lookup_gene(gene_id="<ensembl_id>", species="homo_sapiens")` - Validate Ensembl ID
-3. If disease context provided: `HPO_search_terms(query="<disease>")` - Get HPO terms for phenotype matching
+Fallback if gene not found: `UniProt_search(query="<gene>", organism="9606")`
 
-**Output**: Canonical symbol, Ensembl ID (ENSG), Entrez ID, UniProt accession, full gene name.
-
-**Failure handling**: If gene not found, try `UniProt_search(query="<gene>", organism="9606")` as fallback.
+**Output**: canonical symbol, Ensembl ID (ENSG), Entrez ID, UniProt accession.
 
 ---
 
 ### Phase 1: Ortholog Mapping
 
-Map human gene to orthologs across all target species.
+**Primary**: `EnsemblCompara_get_orthologues(gene="<ENSG>", species="human", target_species="<species>")`
 
-**Primary tool**: `EnsemblCompara_get_orthologues`
-```
-EnsemblCompara_get_orthologues(
-    gene="<ensembl_id>",        # e.g., "ENSG00000141510"
-    species="human",
-    target_species="<species>"  # Use EXACT names below
-)
-```
+Accepted `target_species` values: `"mouse"`, `"zebrafish"`, `"drosophila_melanogaster"` (NOT "fruitfly" — returns HTTP 400), `"caenorhabditis_elegans"`, `"saccharomyces_cerevisiae"`, `"xenopus_tropicalis"`
 
-**CRITICAL: Ensembl Compara species names** (these are the only accepted values):
-- Mouse: `"mouse"` or `"mus_musculus"`
-- Zebrafish: `"zebrafish"` or `"danio_rerio"`
-- Fly: `"drosophila_melanogaster"` (NOT "fruitfly" — that returns HTTP 400)
-- Worm: `"caenorhabditis_elegans"`
-- Yeast: `"saccharomyces_cerevisiae"`
-- Frog: `"xenopus_tropicalis"`
+**Fallbacks** (if Ensembl Compara returns no results):
+1. `PANTHER_ortholog(gene_id="<symbol>", organism=9606, target_organism=<taxon>)` — taxon IDs: mouse=10090, fly=7227, worm=6239, zebrafish=7955, yeast=559292, frog=8364
+2. `NCBIDatasets_get_orthologs(gene_id="<entrez_id>")` — broad, all vertebrates
+3. For fly: `FlyMine_search(query="<human_gene_symbol>")` — text search finds distant orthologs that automated tools miss; confirm with `FlyBase_get_gene_orthologs`
+4. For worm: `WormBase_get_gene(gene_id="<gene_symbol>")` — gene record often contains ortholog info
 
-**Fallback tools** (if Ensembl Compara returns no results or errors):
-1. `PANTHER_ortholog(gene_id="<gene_symbol>", organism=9606, target_organism=<taxon>)` - Taxon IDs: mouse=10090, fly=7227, worm=6239, zebrafish=7955, yeast=559292, frog=8364
-2. `NCBIDatasets_get_orthologs(gene_id="<entrez_id>")` - Broad ortholog search (vertebrates mainly)
-3. **For distant orthologs (especially fly)**: If automated tools fail, use `FlyMine_search(query="<human_gene_symbol>")` with text search. Distant orthologs (low overall sequence identity but conserved domains) often fail automated detection. FlyBase gene IDs can be found this way, then confirmed with `FlyBase_get_gene_orthologs`.
-4. **For worm**: `WormBase_get_gene(gene_id="<gene_symbol>")` may return ortholog information directly in the gene record.
+**Cross-reference via Monarch**:
+- `Monarch_search_gene(query="<gene_symbol>")` — get Monarch gene entity
+- `MonarchV3_get_associations(subject="HGNC:<id>", category="biolink:GeneHomologAssociation")` — all orthologs
 
-**Additional per-organism ortholog tools** (confirm/supplement):
-- `FlyBase_get_gene_orthologs(gene_id="FB:FBgnXXXXXXX")` - Fly-centric ortholog view
-- `ZFIN_get_gene_orthologs(gene_id="ZFIN:ZDB-GENE-XXXXXX-X")` - Zebrafish-centric view
-
-**Cross-reference with Monarch**:
-- `Monarch_search_gene(query="<gene_symbol>")` - Get Monarch gene entity
-- `MonarchV3_get_associations(subject="HGNC:<id>", category="biolink:GeneHomologAssociation")` - All orthologs via Monarch
-
-**Finding organism-specific gene IDs when ortholog mapping fails**:
-When automated ortholog mapping misses a hit (common for distant orthologs like fly or worm):
-1. Search the organism database directly by human gene symbol (e.g., `FlyBase_get_gene` with the expected fly gene name)
-2. Fly gene names often follow the pattern: human FOXP2 → fly FoxP (capitalization differs)
-3. If the gene family is known (e.g., forkhead), search by family name
-4. Use `FlyMine_search` or `WormBase_get_gene` for text-based discovery
-
-**Output per ortholog**: Species, gene symbol, gene ID, homology type (1:1, 1:many, many:many), percent identity, confidence.
-
-**Key interpretation**:
-- **One-to-one**: Strong conservation; model organism gene likely has conserved function
-- **One-to-many**: Gene duplicated in target species; check subfunctionalization
-- **No ortholog found by tools**: Try manual search (step 3-4 above) before concluding absence. Sequence divergence ≠ functional divergence — a gene can have a conserved role despite low sequence identity
-- **True absence**: Gene may be lineage-specific (e.g., adaptive immunity genes absent in invertebrates)
-
-**Paralog contamination warning**: Gene families (e.g., FOXP1/FOXP2/FOXP3/FOXP4, or HOX clusters) generate false ortholog hits. To distinguish true orthologs from paralogs:
-- Check synteny (conserved gene order in the genome neighborhood)
-- Verify the ortholog mapping is 1:1 (paralogs show 1:many or many:many)
-- If the target species has a single gene in the family (e.g., Drosophila has one FoxP vs four human FOXPs), it is the co-ortholog of all human paralogs — note this explicitly
+Note: "No ortholog found by tools" is not the same as "no ortholog exists." Sequence divergence does not equal functional divergence. Try manual search before concluding absence.
 
 ---
 
 ### Phase 2: Mouse Phenotypes (MGI)
 
-Mouse is the primary mammalian model. Knockout phenotypes are the gold standard for gene function.
+1. `MGI_search_genes(query="<mouse_symbol>")` — confirm MGI ID
+2. `MGI_get_gene(gene_id="MGI:XXXXXXX")` — full gene details
+3. `MGI_get_phenotypes(gene_id="MGI:XXXXXXX", limit=50)` — knockout/transgenic phenotypes
 
-**Steps**:
-1. `MGI_search_genes(query="<mouse_symbol>")` - Confirm mouse gene ID (MGI:XXXXXXX)
-2. `MGI_get_gene(gene_id="MGI:XXXXXXX")` - Full gene details, synonyms, location
-3. `MGI_get_phenotypes(gene_id="MGI:XXXXXXX", limit=50)` - Knockout/transgenic phenotypes
+Extract: MP ontology terms, allele types (null KO, conditional KO, point mutation), zygosity, lethality, disease model relevance.
 
-**What to extract**:
-- Phenotype terms (MP ontology) and their descriptions
-- Allele types: knockout (null), conditional KO, point mutation, transgenic
-- Zygosity: homozygous vs heterozygous effects
-- Lethality: embryonic lethal, perinatal lethal, viable
-- Disease model relevance: does phenotype match human disease?
-
-**If disease context provided**: Match mouse phenotypes to HPO terms from Phase 0.
-
-**Phenotype-to-disease mapping via Monarch**:
-- `MonarchV3_get_associations(subject="MGI:XXXXXXX", category="biolink:GeneToPhenotypicFeatureAssociation")` - Phenotype associations
-- `MonarchV3_get_associations(subject="MGI:XXXXXXX", category="biolink:GeneToDiseaseAssociation")` - Disease model annotations
+Supplement via Monarch:
+- `MonarchV3_get_associations(subject="MGI:XXXXXXX", category="biolink:GeneToPhenotypicFeatureAssociation")`
+- `MonarchV3_get_associations(subject="MGI:XXXXXXX", category="biolink:GeneToDiseaseAssociation")`
 
 ---
 
-### Phase 3: Invertebrate Models (Fly and Worm)
+### Phase 3: Invertebrate Models
 
-Drosophila and C. elegans offer powerful genetic screens, rapid generation time, and conserved pathways.
+#### Fly (FlyBase)
+1. `FlyBase_get_gene(gene_id="FB:FBgnXXX")` — gene details, function summary
+2. `FlyBase_get_gene_alleles(gene_id="FB:FBgnXXX", limit=20)` — LOF, GOF, RNAi lines
+3. `FlyBase_get_gene_disease_models(gene_id="FB:FBgnXXX")` — human disease models in fly
+4. `FlyBase_get_gene_expression(gene_id="FB:FBgnXXX")` — tissue/stage expression
+5. `FlyBase_get_gene_interactions(gene_id="FB:FBgnXXX")` — genetic and physical interactions
 
-#### 3A: Drosophila (FlyBase)
-
-1. `FlyBase_get_gene(gene_id="FB:FBgnXXXXXXX")` - Gene details, function summary
-2. `FlyBase_get_gene_alleles(gene_id="FB:FBgnXXXXXXX", limit=20)` - Mutant alleles (LOF, GOF, RNAi lines)
-3. `FlyBase_get_gene_disease_models(gene_id="FB:FBgnXXXXXXX")` - Human disease models in fly
-4. `FlyBase_get_gene_expression(gene_id="FB:FBgnXXXXXXX")` - Tissue/stage expression
-5. `FlyBase_get_gene_interactions(gene_id="FB:FBgnXXXXXXX")` - Genetic and physical interactions
-
-**What to extract**:
-- Loss-of-function phenotypes (lethal, viable, morphological, behavioral)
-- Gain-of-function phenotypes (overexpression, misexpression)
-- Genetic interaction partners (enhancers, suppressors)
-- Human disease model annotations (OMIM cross-references)
-- Expression pattern (ubiquitous vs tissue-specific)
-
-#### 3B: C. elegans (WormBase)
-
-1. `WormBase_get_gene(gene_id="WBGene00XXXXXX")` - Gene details, concise description
-2. `WormBase_get_phenotypes(gene_id="WBGene00XXXXXX")` - RNAi and mutant phenotypes
-3. `WormBase_get_expression(gene_id="WBGene00XXXXXX")` - Expression pattern
-
-**What to extract**:
-- RNAi phenotypes (genome-wide screen results)
-- Mutant phenotypes (null, reduction-of-function, gain-of-function)
-- Essential vs non-essential classification
-- Tissue expression (neurons, muscle, intestine, germline)
+#### Worm (WormBase)
+1. `WormBase_get_gene(gene_id="WBGene00XXXXXX")` — gene details, concise description
+2. `WormBase_get_phenotypes(gene_id="WBGene00XXXXXX")` — RNAi and mutant phenotypes
+3. `WormBase_get_expression(gene_id="WBGene00XXXXXX")` — expression pattern
 
 ---
 
-### Phase 4: Vertebrate Models (Zebrafish and Frog)
+### Phase 4: Vertebrate Non-Mammalian Models
 
-Zebrafish and Xenopus are key for developmental biology, organ formation, and disease modeling.
+#### Zebrafish (ZFIN)
+1. `ZFIN_get_gene(gene_id="ZFIN:ZDB-GENE-XXXXXX-X")`
+2. `ZFIN_get_gene_phenotypes(gene_id="...", limit=30)` — morpholino/CRISPR/mutant phenotypes
+3. `ZFIN_get_gene_expression(gene_id="...")` — spatiotemporal expression
 
-#### 4A: Zebrafish (ZFIN)
+Distinguish: morpholino knockdown (rapid, potential off-target), CRISPR mutant (more reliable), ENU mutant (unbiased forward genetics).
 
-1. `ZFIN_get_gene(gene_id="ZFIN:ZDB-GENE-XXXXXX-X")` - Gene details
-2. `ZFIN_get_gene_phenotypes(gene_id="ZFIN:ZDB-GENE-XXXXXX-X", limit=30)` - Morpholino/CRISPR/mutant phenotypes
-3. `ZFIN_get_gene_alleles(gene_id="ZFIN:ZDB-GENE-XXXXXX-X", limit=20)` - Available mutant lines
-4. `ZFIN_get_gene_expression(gene_id="ZFIN:ZDB-GENE-XXXXXX-X")` - Spatiotemporal expression
-
-**What to extract**:
-- Morpholino knockdown phenotypes (rapid, but potential off-target)
-- CRISPR mutant phenotypes (more reliable)
-- ENU mutant phenotypes (unbiased forward genetics)
-- Expression domains during development (in situ hybridization data)
-- Maternal vs zygotic contribution
-
-#### 4B: Frog (Xenbase)
-
-1. `Xenbase_search_genes(query="<gene_symbol>")` - Find Xenopus gene
-2. `Xenbase_get_gene(gene_id="<xenbase_id>")` - Gene details, expression, phenotypes
-
-**What to extract**:
-- Morpholino/CRISPR phenotypes
-- Expression in developmental stages (Nieuwkoop-Faber stages)
-- Note: X. laevis is allotetraploid (two homeologs: .L and .S)
+#### Frog (Xenbase)
+1. `Xenbase_search_genes(query="<gene_symbol>")`
+2. `Xenbase_get_gene(gene_id="<xenbase_id>")` — gene details, expression, phenotypes
 
 ---
 
-### Phase 5: Yeast Functional Genomics (SGD)
+### Phase 5: Yeast (SGD)
 
-Saccharomyces cerevisiae provides fundamental cell biology insights for conserved cellular processes.
+1. `SGD_search(query="<gene_symbol>", category="gene")`
+2. `SGD_get_gene(sgd_id="<sgd_id>")` — function, pathway
+3. `SGD_get_phenotypes(sgd_id="<sgd_id>")` — deletion and overexpression phenotypes
+4. `SGD_get_go_annotations(sgd_id="<sgd_id>")` — GO terms (often best-characterized for conserved genes)
+5. `SGD_get_interactions(sgd_id="<sgd_id>")` — synthetic lethal partners = potential drug targets
 
-1. `SGD_search(query="<gene_symbol>", category="gene")` - Find yeast gene (SGD ID)
-2. `SGD_get_gene(sgd_id="<sgd_id>")` - Gene details, function, pathway
-3. `SGD_get_phenotypes(sgd_id="<sgd_id>")` - Deletion and overexpression phenotypes
-4. `SGD_get_go_annotations(sgd_id="<sgd_id>")` - GO terms (molecular function, biological process, cellular component)
-5. `SGD_get_interactions(sgd_id="<sgd_id>")` - Genetic and physical interactions
-
-**What to extract**:
-- Deletion viability (essential vs non-essential)
-- Growth phenotypes under stress conditions (DNA damage, oxidative stress, nutrient deprivation)
-- Synthetic lethal interactions (potential drug targets)
-- GO annotations (often the best-characterized for conserved genes)
-- Physical interaction partners (protein complexes)
-
-**When yeast is most informative**: Cell cycle, DNA repair, protein folding, metabolism, autophagy, secretory pathway, chromatin biology.
-
-**When yeast is NOT informative**: Multicellular processes (development, immunity, neural function).
+Most informative for: cell cycle, DNA repair, protein folding, metabolism, autophagy, secretory pathway, chromatin. Not informative for: multicellular processes (development, immunity, neural function).
 
 ---
 
-### Phase 6: Cross-Species Pathway Conservation
+### Phase 6: Cross-Species Synthesis (CRITICAL)
 
-Assess whether the gene's pathway context is conserved.
+This phase transforms per-organism data into biological insight.
 
-**Steps**:
-1. Collect orthologs from all species (Phase 1 results)
-2. `STRING_get_network(identifiers="<human_gene> <mouse_ortholog> <fly_ortholog>", species=9606)` - Check if interaction partners are also conserved
-3. `ReactomeAnalysis_pathway_enrichment(identifiers="<human_gene> <ortholog1> <ortholog2>")` - Shared pathway membership
-
-**Cross-species phenotype comparison via Monarch**:
-- `MonarchV3_get_associations(subject="HGNC:<id>", category="biolink:GeneToPhenotypicFeatureAssociation")` - Human gene phenotypes
-- Compare with mouse (MP), fly (FBcv), worm (WBPhenotype) phenotypes from Phases 2-3
-- `MonarchV3_phenotype_similarity_search(...)` - Automated phenotype comparison across species
-
-**Conservation assessment criteria**:
-- **Highly conserved**: Ortholog in all 6 species, consistent phenotypes, shared pathways
-- **Vertebrate-specific**: Ortholog in mouse/fish/frog but not fly/worm/yeast
-- **Metazoan-specific**: Ortholog in mouse/fish/fly/worm but not yeast
-- **Mammalian-specific**: Ortholog only in mouse (and frog sometimes)
-- **Human-specific**: No clear ortholog in any model organism
-
----
-
-## Phase 7: Cross-Species Phenotype Synthesis (CRITICAL)
-
-This phase is what makes the skill useful — it transforms per-organism data into biological insight.
-
-**Objective**: Connect phenotypes across species to identify the gene's core function and evolutionary trajectory.
-
-### Step 1: Build a Cross-Species Phenotype Matrix
+**Step 1: Build the phenotype matrix**
 
 | Feature | Human | Mouse | Fly | Worm | Zebrafish | Yeast |
 |---------|-------|-------|-----|------|-----------|-------|
-| Ortholog present? | -- | | | | | |
-| Lethality (LOF) | | | | | | |
+| Ortholog present? | — | | | | | |
+| LOF lethality | | | | | | |
 | Primary phenotype | | | | | | |
 | Expression domain | | | | | | |
-| Conserved pathway | | | | | | |
 
-### Step 2: Identify the Ancestral/Core Function
+**Step 2: Identify the core/ancestral function**
+Look for the phenotype that is most consistent across species. Abstract from species-specific terms:
+- Mouse "reduced vocalization" + Fly "defective courtship song" + Human "speech apraxia" → **core: motor circuit development for learned sequences**
+- Mouse "embryonic lethal" + Worm "lethal" + Yeast "essential" → **core: fundamental cell viability**
+- Mouse "cardiac defects" + Zebrafish "heart edema" + Human "cardiomyopathy" → **core: cardiac development**
 
-Look for the phenotype that is most consistent across species. This is often more abstract than any single organism's phenotype:
-- Mouse "reduced vocalization" + Fly "defective courtship song" + Human "speech apraxia" → **Core function: motor circuit development and learned motor sequences**
-- Mouse "embryonic lethal" + Worm "lethal" + Yeast "essential" → **Core function: fundamental cell viability**
-- Mouse "cardiac defects" + Zebrafish "heart edema" + Human "cardiomyopathy" → **Core function: cardiac development**
+**Step 3: Cross-species phenotype mapping**
+Different species use different ontologies (HPO, MP, FBcv, WBPhenotype, ZP). Use `MonarchV3_phenotype_similarity_search` to find equivalent phenotypes via the uPheno ontology. When automated mapping fails, use biological reasoning to find conceptual equivalents.
 
-### Step 3: Map Phenotype Ontology Across Species
+**Step 4: Conservation assessment**
+- Highly conserved: ortholog in all 6 species, consistent phenotypes, shared pathways
+- Vertebrate-specific: ortholog in mouse/fish/frog but not fly/worm/yeast
+- Metazoan-specific: ortholog in mouse/fish/fly/worm but not yeast
+- Human-specific: no clear ortholog in any model organism
 
-Different species use different phenotype ontologies. To compare meaningfully:
+**Step 5: Pathway conservation check**
+- `STRING_get_network(identifiers="<human_gene> <mouse_ortholog> <fly_ortholog>", species=9606)` — check if interaction partners are also conserved
+- `ReactomeAnalysis_pathway_enrichment(identifiers="<human_gene> <ortholog1> <ortholog2>")` — shared pathway membership
 
-| Species | Ontology | Tool for Mapping |
-|---------|----------|-----------------|
-| Human | HPO (Human Phenotype Ontology) | `HPO_search_terms` |
-| Mouse | MP (Mammalian Phenotype) | `MGI_get_phenotypes` |
-| Fly | FBcv (FlyBase Controlled Vocabulary) | `FlyBase_get_gene` (phenotype descriptions) |
-| Worm | WBPhenotype | `WormBase_get_phenotypes` |
-| Zebrafish | ZP (Zebrafish Phenotype) | `ZFIN_get_gene_phenotypes` |
-
-**Cross-species phenotype matching**: Use `MonarchV3_phenotype_similarity_search` to find equivalent phenotypes across species via the uPheno ontology (which maps MP↔HPO↔ZP↔WBPhenotype↔FBcv).
-
-When automated mapping fails, use biological reasoning:
-- "Reduced ultrasonic vocalizations" (mouse) ≈ "Defective courtship song" (fly) ≈ "Speech apraxia" (human) — all are **disrupted learned motor sequences for communication**
-- "Embryonic lethal" (mouse) ≈ "Lethal" (worm) ≈ "Inviable" (yeast) — all are **essential for viability**
-- "Purkinje cell defects" (mouse) ≈ "Protocerebral bridge defects" (fly) — both are **motor coordination center malformation**
-
-### Step 4: Synthesize the Evolutionary Narrative
-
-Write a synthesis paragraph that answers:
-1. **What is this gene's fundamental role?** (Abstract from species-specific phenotypes)
-2. **How has the function been elaborated during evolution?** (e.g., motor circuit → vocal circuit → speech)
-3. **Which model organism best recapitulates the human condition?** (Consider phenotype match AND experimental tractability)
-4. **What are the key conserved vs divergent aspects?** (e.g., conserved neural expression but divergent behavioral output)
-
-### Step 5: Recommend the Best Model System
-
-Based on the synthesis, recommend which organism(s) to use for further study, considering:
-- **Phenotype match**: Which organism's phenotype most closely mirrors the human condition?
-- **Experimental tools**: Which organism has the best genetic tools for the question?
-- **Complementary models**: Often the best approach uses 2-3 organisms (e.g., mouse for physiology + fly for genetic screens)
-- **Practical considerations**: Cost, time, throughput, imaging capability
+**Step 6: Organism recommendation**
+Recommend which organism(s) to use for further study. Consider: phenotype match to human condition, available genetic tools, complementary models (e.g., mouse for physiology + fly for genetic screens), practical considerations (cost, throughput, imaging).
 
 ---
 
-## Phase 8: Conserved Regulatory Elements (Optional)
+### Phase 7: Human Disease Connection (Optional)
 
-For developmental biology questions, conserved regulatory elements (enhancers, promoters) are often as important as the coding sequence.
-
-**Tools**:
-- `EnsemblReg_get_regulatory_elements(species="homo_sapiens", region="<chr:start-end>")` — find regulatory features near the gene
-- `ENCODE_search_experiments(query="<gene_symbol> ChIP-seq")` — ChIP-seq and ATAC-seq data
-- `UCSC_get_encode_cCREs(genome="hg38", chrom="<chr>", start=<start>, end=<end>)` — candidate cis-regulatory elements
-- `JASPAR_search_motifs(query="<TF_name>")` — transcription factor binding motifs
-- `UCSC_get_track(genome="hg38", track="phastCons100way", chrom="<chr>", start=<start>, end=<end>)` — conservation scores for non-coding regions
-
-**Workflow**:
-1. Get the genomic coordinates of the human gene (from Phase 0)
-2. Extend the region (±100kb for nearby enhancers)
-3. Query ENCODE for regulatory elements and UCSC for conservation
-4. Look for deeply conserved non-coding elements (CNEs) — these often control developmental expression
-5. Cross-reference with expression patterns from Phases 2-4
-
-**When to use**: Always for developmental biology questions. Deeply conserved enhancers (e.g., FOXP2 intron 8 enhancer) can be more functionally important than the protein sequence itself.
-
----
-
-## Phase 9: Human Disease Connection (Optional)
-
-Link model organism findings back to human disease.
-
-**Tools**:
 - `OMIM_search(query="<gene_symbol>")` — Mendelian disease associations
 - `ClinVar_search_variants(query="<gene_symbol>")` — pathogenic variants
-- `ClinGen_search_gene_validity(gene="<gene_symbol>")` — gene-disease validity assessment
-- `HPO_search_terms(query="<disease_name>")` — human phenotype terms for cross-species comparison
+- `ClinGen_search_gene_validity(gene="<gene_symbol>")` — gene-disease validity (Definitive/Strong/Moderate/Limited)
+- `HPO_search_terms(query="<disease_name>")` — phenotype terms for cross-species comparison
 
-**Workflow**:
-1. Search OMIM for known disease associations
-2. Get ClinGen validity level (Definitive, Strong, Moderate, Limited)
-3. Search HPO for relevant phenotype terms
-4. Map HPO terms back to model organism phenotypes (Phase 7) to assess model fidelity
+Map HPO terms back to model organism phenotypes (Phase 6) to assess model fidelity.
 
 ---
 
-## Organism Selection Guide
+## Bacterial and Classical Genetics Reasoning
 
-| Question Type | Best Organism(s) | Rationale |
-|---------------|-------------------|-----------|
-| Disease model (cancer, neurodegeneration) | Mouse | Mammalian physiology, drug testing |
-| Developmental biology | Zebrafish, Frog | Transparent embryos, rapid development |
-| Neural circuits / behavior | Fly, Worm | Mapped connectome, genetic tools |
-| Cell cycle / DNA repair | Yeast | Best-characterized, rapid genetics |
-| Genetic screens (large-scale) | Fly, Worm | RNAi libraries, balancer chromosomes |
-| Protein trafficking / secretion | Yeast | Sec pathway first characterized here |
-| Immune system / inflammation | Mouse | Adaptive immunity (absent in invertebrates) |
-| Cardiac development | Zebrafish | Regeneration, transparent, genetic tools |
-| Aging / lifespan | Worm, Fly, Yeast | Short lifespan, conserved pathways |
-| Metabolism / obesity | Mouse, Fly | Diet-induced obesity models |
-| Signaling pathways (Notch, Wnt, Hh) | Fly | Originally discovered in Drosophila |
-| Chromatin / epigenetics | Yeast, Fly | Histone code, Polycomb/Trithorax |
+These problems require computation and logical deduction, not database lookups. Work through the logic step by step.
 
----
+### Hfr Conjugation and Chromosome Mapping
 
-## Quick Reference: Tool-to-Organism Mapping
+**Time-of-entry mapping**: In Hfr x F- crosses, genes transfer in a fixed linear order from the integrated F factor origin. Interrupted mating at different times reveals gene order and map distances (1 minute ~ 1 map unit on the circular E. coli chromosome, ~47 kb).
 
-### Ortholog Mapping Tools
+Key reasoning steps:
+1. **Gene order** = order of appearance in recombinants as mating time increases
+2. **Map distance** = difference in entry times (minutes) between consecutive markers
+3. **Directionality**: Different Hfr strains have F integrated at different positions and orientations. Compare gene orders from multiple Hfr strains to construct the circular map. If Hfr1 transfers A-B-C and Hfr2 transfers C-B-A, their F factors are integrated at opposite orientations near the same site.
+4. **F' formation**: Imprecise excision of F captures adjacent chromosomal genes. An F' carrying gene X means X was adjacent to the F integration site. F' x F- = partial diploid (merodiploid) for the carried region -- use for complementation/dominance tests.
+5. **Recombinant selection**: Only recombinants that integrate donor markers by double crossover (or even number) are stable. The selected marker must be the LAST to enter (closest to Hfr origin = first to enter is WRONG -- the selected marker is the one you plate for, which requires full transfer or recombination).
 
-| Tool | Parameter | Notes |
-|------|-----------|-------|
-| `EnsemblCompara_get_orthologues` | `gene` (Ensembl ID), `species`, `target_species` | Primary. Use species names: "mouse", "zebrafish", "drosophila_melanogaster" (NOT "fruitfly"), "caenorhabditis_elegans", "saccharomyces_cerevisiae", "xenopus_tropicalis" |
-| `PANTHER_ortholog` | `gene_id` (symbol), `organism` (taxon), `target_organism` (taxon) | Fallback. Taxon: 9606/10090/7227/6239/7955/559292/8364 |
-| `NCBIDatasets_get_orthologs` | `gene_id` (Entrez ID) | Broad, all species at once |
+### Operon Regulation and Attenuation
 
-### Mouse (MGI)
+**lac operon logic** (negative inducible):
+- Repressor (lacI) binds operator (lacO) in absence of inducer (allolactose)
+- lacI+ is trans-dominant over lacI- (repressor diffuses)
+- lacOc (operator constitutive) is cis-dominant (only affects genes on same DNA molecule)
+- In partial diploids: determine genotype of EACH DNA molecule separately, then combine
 
-| Tool | Parameter | Returns |
-|------|-----------|---------|
-| `MGI_search_genes` | `query` (symbol/name) | Gene list with MGI IDs |
-| `MGI_get_gene` | `gene_id` (MGI:XXXXXXX) | Full gene record |
-| `MGI_get_phenotypes` | `gene_id`, `limit` | MP phenotype annotations |
+**trp operon attenuation** (leader peptide mechanism):
+- Leader transcript has 4 regions (1-2-3-4) that form alternative stem-loops
+- Region 1 encodes a short peptide rich in Trp codons
+- High Trp: ribosome translates quickly through region 1-2, region 3-4 forms TERMINATOR hairpin -> transcription stops
+- Low Trp: ribosome stalls at Trp codons in region 1, region 2-3 forms ANTITERMINATOR hairpin -> transcription continues
+- No ribosome (in vitro): region 1-2 pairs, then 3-4 pairs -> termination (default)
+- Key: the ribosome's position relative to the mRNA folding regions determines which stem-loops form
 
-### Fly (FlyBase)
+**Catabolite repression**: Even with inducer present, lac operon requires cAMP-CAP for full expression. High glucose -> low cAMP -> low expression. This is POSITIVE regulation layered on top of the negative repressor system.
 
-| Tool | Parameter | Returns |
-|------|-----------|---------|
-| `FlyBase_get_gene` | `gene_id` (FB:FBgnXXX) | Gene record, function |
-| `FlyBase_get_gene_alleles` | `gene_id`, `limit` | Mutant alleles |
-| `FlyBase_get_gene_disease_models` | `gene_id` | Human disease models |
-| `FlyBase_get_gene_expression` | `gene_id` | Expression pattern |
-| `FlyBase_get_gene_interactions` | `gene_id` | Genetic + physical |
-| `FlyBase_get_gene_orthologs` | `gene_id`, `stringency` | Ortholog list |
+### Gene Mapping from Cross Data
 
-### Worm (WormBase)
+**Three-point cross** (most common exam problem):
+1. Identify the 8 phenotypic classes and their frequencies
+2. Parentals = two most frequent classes
+3. Double crossovers = two least frequent classes
+4. Compare double crossovers to parentals to find the MIDDLE gene (the gene whose allele has switched relative to parentals in the DCO class)
+5. Map distances: (single CO region 1 + DCO) / total = distance 1; (single CO region 2 + DCO) / total = distance 2
+6. Coefficient of coincidence = observed DCO / expected DCO; Interference = 1 - CoC
 
-| Tool | Parameter | Returns |
-|------|-----------|---------|
-| `WormBase_get_gene` | `gene_id` (WBGeneXXX) | Gene record |
-| `WormBase_get_phenotypes` | `gene_id` | RNAi + mutant phenotypes |
-| `WormBase_get_expression` | `gene_id` | Expression pattern |
-
-### Zebrafish (ZFIN)
-
-| Tool | Parameter | Returns |
-|------|-----------|---------|
-| `ZFIN_get_gene` | `gene_id` (ZFIN:ZDB-GENE-XXX) | Gene record |
-| `ZFIN_get_gene_phenotypes` | `gene_id`, `limit` | Morpholino/CRISPR phenotypes |
-| `ZFIN_get_gene_alleles` | `gene_id`, `limit` | Mutant lines |
-| `ZFIN_get_gene_expression` | `gene_id` | In situ expression |
-| `ZFIN_get_gene_orthologs` | `gene_id`, `stringency` | Ortholog list |
-
-### Yeast (SGD)
-
-| Tool | Parameter | Returns |
-|------|-----------|---------|
-| `SGD_search` | `query`, `category` ("gene") | Gene list with SGD IDs |
-| `SGD_get_gene` | `sgd_id` | Gene record, function |
-| `SGD_get_phenotypes` | `sgd_id` | Deletion/overexpression phenotypes |
-| `SGD_get_go_annotations` | `sgd_id` | GO terms |
-| `SGD_get_interactions` | `sgd_id` | Genetic + physical interactions |
-
-### Frog (Xenbase)
-
-| Tool | Parameter | Returns |
-|------|-----------|---------|
-| `Xenbase_search_genes` | `query`, `species`, `limit` | Gene list |
-| `Xenbase_get_gene` | `gene_id` | Gene record |
-
-### Cross-Species / Phenotype Ontology
-
-| Tool | Parameter | Returns |
-|------|-----------|---------|
-| `HPO_search_terms` | `query` | Human Phenotype Ontology terms |
-| `Monarch_search_gene` | `query` | Gene entity across species |
-| `MonarchV3_get_associations` | `subject` (gene ID), `category` | Phenotype/disease associations |
-| `MonarchV3_phenotype_similarity_search` | phenotype IDs | Cross-species phenotype match |
-| `STRING_get_network` | `identifiers` (space-separated), `species` (9606) | Protein interaction network |
-| `ReactomeAnalysis_pathway_enrichment` | `identifiers` (space-separated) | Shared pathways |
-
----
-
-## Common Use Patterns
-
-### Pattern 1: "What does gene X do?" (Full cross-species survey)
-Run all phases (0-6). Start with disambiguation, map orthologs, then query all organism databases. Synthesize: which phenotypes are conserved? Where does the gene appear essential?
-
-### Pattern 2: "Best model for disease Y involving gene X"
-Phase 0 (disambiguate) -> Phase 1 (orthologs) -> Check `FlyBase_get_gene_disease_models` -> `MGI_get_phenotypes` -> `MonarchV3_get_associations` for disease annotations. Recommend organism where phenotype best recapitulates human disease.
-
-### Pattern 3: "Is gene X essential?"
-Phase 0 -> Phase 1 -> Check: Mouse KO lethality (Phase 2), Fly LOF lethality (Phase 3A), Worm RNAi lethality (Phase 3B), Yeast deletion viability (Phase 5). Cross-reference: essential in all species = core cellular function.
-
-### Pattern 4: "Conservation of gene X across evolution"
-Phase 0 -> Phase 1 (all species) -> Phase 6 (pathway conservation). Report: ortholog presence/absence per species, sequence identity, shared vs divergent phenotypes, pathway membership.
-
-### Pattern 5: "Genetic interactors of gene X"
-Phase 0 -> Phase 1 -> `FlyBase_get_gene_interactions` + `SGD_get_interactions` + `STRING_get_network`. Compare: which interactors are conserved across species? Synthetic lethal partners in yeast = potential drug targets.
-
----
+**Cotransduction frequency** (phage P1 mapping in bacteria):
+- Higher cotransduction frequency = genes are closer together
+- Wu's formula: cotransduction freq = (1 - d/L)^3, where d = distance, L = phage headful size (~2.5 min for P1)
+- If two genes are cotransduced 50% of the time: d = L(1 - 0.5^(1/3)) ~ 0.5 min
 
 ## Completeness Checklist
 
-Before finalizing any report, verify:
-
+Before finalizing any report:
 - [ ] Human gene resolved to Ensembl ID, Entrez ID, UniProt, symbol
-- [ ] Ortholog mapping attempted for all requested species
-- [ ] Each ortholog identified with confidence level (1:1, 1:many, none)
+- [ ] Ortholog mapping attempted for all requested species; confidence level noted (1:1, 1:many, none)
 - [ ] Phenotype data retrieved for each species with orthologs
-- [ ] Expression data included where available
 - [ ] "No ortholog" or "No data" explicitly stated (not silently omitted)
 - [ ] Cross-species conservation summary provided
 - [ ] Organism recommendation given if disease context provided
-- [ ] Evidence graded (T1-T4) for key findings
-- [ ] All tool calls documented with actual parameters used
+- [ ] Evidence graded: T1 = direct experimental (KO phenotype), T2 = genetic screen, T3 = computational orthology, T4 = sequence similarity only

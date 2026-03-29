@@ -1,0 +1,112 @@
+[
+  {
+    "name": "SABIO_RK_search_reactions",
+    "description": "Search SABIO-RK database for biochemical reaction kinetic parameters. Returns Km, kcat, Vmax, Ki values with substrate specificity, organism, and literature references. No authentication required. Search by EC number (e.g., 1.1.1.1), enzyme name (e.g., alcohol dehydrogenase), substrate (e.g., ethanol), organism (e.g., Homo sapiens), or product. SABIO-RK contains >200,000 kinetic entries curated from published literature.",
+    "type": "SABIORKTool",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "operation": {
+          "type": "string",
+          "const": "search_reactions",
+          "description": "Operation type (fixed: search_reactions)"
+        },
+        "ec_number": {
+          "type": "string",
+          "description": "EC number (e.g., 1.1.1.1 for alcohol dehydrogenase, 2.7.1.1 for hexokinase)"
+        },
+        "enzyme_name": {
+          "type": "string",
+          "description": "Enzyme common name (e.g., alcohol dehydrogenase, hexokinase, lactate dehydrogenase)"
+        },
+        "substrate": {
+          "type": "string",
+          "description": "Substrate name (e.g., ethanol, glucose, ATP)"
+        },
+        "organism": {
+          "type": "string",
+          "description": "Organism name (e.g., Homo sapiens, Escherichia coli, Saccharomyces cerevisiae)"
+        },
+        "product": {
+          "type": "string",
+          "description": "Product name (e.g., acetaldehyde, pyruvate)"
+        },
+        "parameter_type": {
+          "type": "string",
+          "description": "Filter by kinetic parameter type (e.g., Km, kcat, Vmax, Ki)"
+        },
+        "limit": {
+          "type": ["integer", "null"],
+          "description": "Maximum number of kinetic laws to return (default 20, max 100)"
+        }
+      },
+      "required": []
+    },
+    "return_schema": {
+      "type": "object",
+      "properties": {
+        "query": {
+          "type": "string",
+          "description": "The search query sent to SABIO-RK"
+        },
+        "kinetic_laws": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "entry_id": {
+                "type": "string",
+                "description": "SABIO-RK entry identifier"
+              },
+              "ec_number": {
+                "type": "string"
+              },
+              "substrates": {
+                "type": "array",
+                "items": {"type": "string"}
+              },
+              "products": {
+                "type": "array",
+                "items": {"type": "string"}
+              },
+              "parameters": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "type": {"type": "string", "description": "Parameter type (Km, kcat, Ki, Vmax, kcat/Km)"},
+                    "name": {"type": "string"},
+                    "value": {"type": "number"},
+                    "unit": {"type": "string"}
+                  }
+                }
+              }
+            }
+          }
+        },
+        "total_count": {
+          "type": "integer",
+          "description": "Total number of matching kinetic laws"
+        },
+        "returned_count": {
+          "type": "integer",
+          "description": "Number of kinetic laws returned in this response"
+        }
+      }
+    },
+    "test_examples": [
+      {
+        "ec_number": "1.1.1.1"
+      },
+      {
+        "enzyme_name": "hexokinase",
+        "organism": "Homo sapiens",
+        "limit": 5
+      },
+      {
+        "substrate": "ethanol",
+        "limit": 10
+      }
+    ]
+  }
+]

@@ -186,31 +186,44 @@ ena_studies = tu.run_one_function({
 
 ## MGnify Biome Hierarchy
 
-Key biome lineages for common research areas:
-
-| Research Area | Biome Lineage |
-|--------------|---------------|
-| Human gut | `root:Host-associated:Human:Digestive system` |
-| Human oral | `root:Host-associated:Human:Oral` |
-| Human skin | `root:Host-associated:Human:Skin` |
-| Soil | `root:Environmental:Terrestrial:Soil` |
-| Ocean surface | `root:Environmental:Aquatic:Marine` |
-| Freshwater | `root:Environmental:Aquatic:Freshwater` |
-| Wastewater | `root:Engineered:Wastewater` |
-| Food/fermented | `root:Engineered:Food production` |
+Key biome lineages (use `MGnify_list_biomes` to discover others):
+- Human gut: `root:Host-associated:Human:Digestive system`
+- Human oral/skin: `root:Host-associated:Human:Oral` / `root:Host-associated:Human:Skin`
+- Soil: `root:Environmental:Terrestrial:Soil`
+- Ocean/Freshwater: `root:Environmental:Aquatic:Marine` / `root:Environmental:Aquatic:Freshwater`
+- Wastewater: `root:Engineered:Wastewater`
 
 ## Key Identifiers
 
-| ID Type | Example | Used By |
-|---------|---------|---------|
-| MGnify study | MGYS00006860 | MGnify_search_studies, MGnify_search_studies_detail |
-| MGnify analysis | MGYA00612683 | MGnify_get_taxonomy, MGnify_get_go_terms |
-| MGnify genome | MGYG000000001 | MGnify_get_genome |
-| ENA study | PRJEB41867 | ENAPortal_search_studies |
-| GTDB genome | GCA_000016605.1 | GTDB_get_genome |
-| ENVO term | ENVO:00002041 | ols_get_term_info (biome) |
+MGnify: studies=`MGYS*`, analyses=`MGYA*`, genomes=`MGYG*`. ENA studies=`PRJEB*`. GTDB genomes=`GCA_*`. ENVO terms=`ENVO:*` (e.g. ENVO:00002041).
 
 ## Reasoning Framework
+
+### Starting Point: Define the Question First
+
+Microbiome analysis starts with: what is the question? LOOK UP DON'T GUESS — always check the study type and sequencing method before interpreting results.
+
+**Decision tree for data type:**
+- Community composition (who is there?) → 16S/ITS amplicon → alpha/beta diversity, differential abundance
+- Functional potential (what can they do?) → Shotgun metagenomics → MGnify GO terms, InterPro, KEGG pathways
+- Active function (what are they doing now?) → Metatranscriptomics → specialized pipelines (not MGnify/GTDB alone)
+
+Before calling any tool, determine which data type the user has via `MGnify_search_studies_detail` — the pipeline type (amplicon vs shotgun) determines which analyses are valid. Do not apply 16S diversity metrics to metagenomic data or vice versa.
+
+### Dysbiosis Assessment Strategy
+
+Dysbiosis (microbial imbalance) is context-dependent — there is no universal "healthy" microbiome. LOOK UP DON'T GUESS — compare to study-matched controls, not general population references.
+
+1. **Check alpha diversity**: Reduced Shannon index relative to controls suggests dysbiosis. Use `MGnify_get_taxonomy` to get community profiles, then assess richness and evenness.
+2. **Identify keystone taxa shifts**: Loss of known beneficial taxa (e.g., Faecalibacterium, Roseburia in gut) or bloom of pathobionts (e.g., Enterobacteriaceae). LOOK UP taxa roles with `GTDB_get_species` and literature via `EuropePMC_search_articles`.
+3. **Functional consequences**: Does taxonomic shift correlate with loss/gain of metabolic pathways? Check `MGnify_get_go_terms` and `MGnify_get_interpro` for the affected samples.
+4. **Confounders**: Antibiotics, diet, age, and geography all affect microbiome composition. A dysbiosis claim requires controlling for these factors or acknowledging them as limitations.
+
+### Taxonomic vs Functional Analysis: When to Use Each
+
+- **Taxonomic analysis alone** is sufficient when the question is "which organisms are present?" or "does community composition differ between groups?" Use `MGnify_get_taxonomy` + `GTDB_search_genomes`.
+- **Functional analysis** is needed when the question is "what metabolic capabilities differ?" or "why does a taxonomic shift matter?" Use `MGnify_get_go_terms` + `MGnify_get_interpro` + `kegg_search_pathway`.
+- **Both together** when linking organisms to functions (e.g., "which taxa drive butyrate production in healthy vs IBD gut?"). Cross-reference taxonomic profiles with functional annotations from the same MGnify analysis.
 
 ### Evidence Grading
 
@@ -223,9 +236,9 @@ Key biome lineages for common research areas:
 
 ### Interpretation Guidance
 
-**Alpha diversity**: Shannon index measures within-sample richness and evenness. Higher Shannon (>3.0 for gut) suggests a healthy, stable community. Reduced alpha diversity is associated with dysbiosis (e.g., IBD, antibiotic use). Compare to study-matched controls, not absolute thresholds, as diversity varies by body site and sequencing depth.
+**Alpha diversity (within-sample)**: Shannon index measures richness and evenness. Higher Shannon (>3.0 for gut) suggests a stable community. Reduced alpha diversity is associated with dysbiosis (IBD, antibiotics). Always compare to study-matched controls — diversity varies by body site, sequencing depth, and geography.
 
-**Beta diversity**: Differences between samples (e.g., Bray-Curtis, UniFrac). Significant clustering by condition (PERMANOVA p < 0.05, R-squared > 0.05) indicates the condition explains meaningful variation in community composition. Low R-squared (<0.02) even with significant p-value suggests the effect is real but small relative to inter-individual variation.
+**Beta diversity (between-sample)**: Bray-Curtis (abundance-based) or UniFrac (phylogenetic). PERMANOVA p < 0.05 with R-squared > 0.05 indicates condition-driven clustering. Low R-squared (<0.02) even with significant p suggests the effect is small relative to inter-individual variation. Choose weighted UniFrac when abundant taxa matter most; unweighted when rare taxa are important.
 
 **Taxonomic composition**: Relative abundance at phylum level (Firmicutes/Bacteroidetes ratio) is a coarse indicator; genus- or species-level resolution is preferred. A taxon present at >1% relative abundance in multiple samples is reliably detected. Taxa at <0.1% may be noise or sequencing artifacts. GTDB taxonomy may reclassify NCBI names (e.g., Firmicutes split into multiple phyla).
 

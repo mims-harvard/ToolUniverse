@@ -7,343 +7,83 @@ description: Retrieves chemical compound information from PubChem and ChEMBL wit
 
 Retrieve comprehensive chemical compound data with proper disambiguation and cross-database validation.
 
-**IMPORTANT**: Always use English compound names and search terms in tool calls, even if the user writes in another language (e.g., translate "阿司匹林" to "aspirin"). Only try original-language terms as a fallback if English returns no results. Respond in the user's language.
+**LOOK UP DON'T GUESS**: Never assume a CID, ChEMBL ID, or molecular property value. Always retrieve from PubChem/ChEMBL.
 
-## Workflow Overview
+**English-first**: Always use English compound names in tool calls. Respond in user's language.
 
-```
-Phase 0: Clarify (if needed)
-    ↓
-Phase 1: Disambiguate Compound Identity
-    ↓
-Phase 2: Retrieve Data (Internal)
-    ↓
-Phase 3: Report Compound Profile
-```
+## Domain Reasoning: Disambiguation
+
+"Aspirin" = one compound. "Vitamin D" = multiple forms (D2/D3/active metabolite). For generic class names (steroids, vitamins, acids), present candidates and confirm before proceeding.
 
 ---
 
-## Phase 0: Clarification (When Needed)
+## Workflow
 
-Ask the user ONLY if:
-- Compound name is highly ambiguous (e.g., "vitamin E" → α, β, γ, δ-tocopherol?)
-- Multiple distinct compounds share the name (e.g., "aspirin" is clear; "sterol" is not)
+```
+Phase 0: Clarify (only if highly ambiguous -- skip for unambiguous names or specific IDs)
+Phase 1: Disambiguate → resolve PubChem CID + ChEMBL ID
+Phase 2: Retrieve data (silent)
+Phase 3: Report compound profile
+```
 
-Skip clarification for:
-- Unambiguous drug names (aspirin, ibuprofen, metformin)
-- Specific identifiers provided (CID, ChEMBL ID, SMILES)
-- Clear structural queries (SMILES, InChI)
-
----
-
-## Phase 1: Compound Disambiguation
-
-### 1.1 Resolve Primary Identifier
+### Phase 1: Disambiguation
 
 ```python
-from tooluniverse import ToolUniverse
-tu = ToolUniverse()
-tu.load_tools()
-
-# Strategy depends on input type
-if user_provided_cid:
-    cid = user_provided_cid
-elif user_provided_smiles:
-    result = tu.tools.PubChem_get_CID_by_SMILES(smiles=smiles)
-    cid = result["data"]["cid"]
-elif user_provided_name:
-    result = tu.tools.PubChem_get_CID_by_compound_name(compound_name=name)
-    cid = result["data"]["cid"]
+# By name
+result = tu.tools.PubChem_get_CID_by_compound_name(compound_name=name)
+# By SMILES
+result = tu.tools.PubChem_get_CID_by_SMILES(smiles=smiles)
+# Cross-reference
+chembl_result = tu.tools.ChEMBL_search_compounds(query=name, limit=5)
 ```
 
-### 1.2 Cross-Reference Identifiers
+Verify: CID + ChEMBL ID + canonical SMILES + stereochemistry + salt forms.
 
-Always establish compound identity across both databases:
+### Phase 2: Data Retrieval
 
-```python
-# PubChem → ChEMBL cross-reference
-chembl_result = tu.tools.ChEMBL_search_compounds(query=compound_name, limit=5)
-if chembl_result["data"]:
-    chembl_id = chembl_result["data"][0]["molecule_chembl_id"]
-```
+**PubChem**: `PubChem_get_compound_properties_by_CID`, `PubChemBioAssay_get_assay_summary`, `PubChemTox_get_acute_effects`, `PubChem_get_compound_2D_image_by_CID`
 
-### 1.3 Handle Naming Collisions
+**ChEMBL**: `ChEMBL_get_bioactivity_by_chemblid`, `ChEMBL_get_target_by_chemblid`, `ChEMBL_get_assays_by_chemblid`
 
-For generic names (e.g., "vitamin", "steroid", "acid"):
-- Search returns multiple CIDs → present top matches with structures
-- Verify SMILES/InChI matches user intent
-- Note stereoisomers or salt forms if relevant
+**Optional**: `PubChem_get_associated_patents_by_CID`, `PubChem_search_compounds_by_similarity`
 
-**Identity Resolution Checklist:**
-- [ ] PubChem CID established
-- [ ] ChEMBL ID cross-referenced (if exists)
-- [ ] Canonical SMILES captured
-- [ ] Stereochemistry noted (if relevant)
-- [ ] Salt forms identified (if applicable)
+### Phase 3: Report
+
+Compound Profile with: Identity (CID, ChEMBL ID, IUPAC, SMILES), Chemical Properties (MW, LogP, HBD, HBA, PSA, Lipinski), Bioactivity (targets, IC50/Ki), Drug Info (if approved), Data Sources.
 
 ---
 
-## Phase 2: Data Retrieval (Internal)
+## Fallback Chains
 
-Retrieve all data silently. Do NOT narrate the search process.
-
-### 2.1 Core Properties (PubChem)
-
-```python
-# Basic properties
-props = tu.tools.PubChem_get_compound_properties_by_CID(cid=cid)
-
-# Bioactivity summary
-bio = tu.tools.PubChemBioAssay_get_assay_summary(cid=cid)
-
-# Drug label (if approved drug)
-drug = tu.tools.PubChemTox_get_acute_effects(cid=cid)
-
-# Structure image
-image = tu.tools.PubChem_get_compound_2D_image_by_CID(cid=cid)
-```
-
-### 2.2 Bioactivity Data (ChEMBL)
-
-```python
-if chembl_id:
-    # Detailed bioactivity
-    activity = tu.tools.ChEMBL_get_bioactivity_by_chemblid(chembl_id=chembl_id)
-    
-    # Protein targets
-    targets = tu.tools.ChEMBL_get_target_by_chemblid(chembl_id=chembl_id)
-    
-    # Assay data
-    assays = tu.tools.ChEMBL_get_assays_by_chemblid(chembl_id=chembl_id)
-```
-
-### 2.3 Optional Extended Data
-
-```python
-# Patents (for drugs)
-patents = tu.tools.PubChem_get_associated_patents_by_CID(cid=cid)
-
-# Similar compounds (for SAR)
-similar = tu.tools.PubChem_search_compounds_by_similarity(cid=cid, threshold=85)
-```
-
-### Fallback Chains
-
-| Primary | Fallback | Notes |
-|---------|----------|-------|
-| PubChem_get_CID_by_compound_name | ChEMBL_search_compounds → get SMILES → PubChem_get_CID_by_SMILES | Name lookup failed |
-| ChEMBL_get_bioactivity | PubChem_get_bioactivity_summary | ChEMBL ID unavailable |
-| PubChem_get_drug_label_info | Note "Drug label unavailable" | Not an approved drug |
+| Primary | Fallback |
+|---------|----------|
+| PubChem name lookup | ChEMBL search → SMILES → PubChem_get_CID_by_SMILES |
+| ChEMBL bioactivity | PubChem bioassay summary |
+| Drug label | Note "unavailable" |
 
 ---
 
-## Phase 3: Report Compound Profile
+## Evidence Grading
 
-### Output Structure
-
-Present results as a **Compound Profile Report**. Hide all search process details.
-
-```markdown
-# Compound Profile: [Compound Name]
-
-## Identity
-| Property | Value |
-|----------|-------|
-| **PubChem CID** | [cid] |
-| **ChEMBL ID** | [chembl_id or "N/A"] |
-| **IUPAC Name** | [full name] |
-| **Common Names** | [synonyms] |
-
-## Chemical Properties
-
-### Molecular Descriptors
-| Property | Value | Drug-Likeness |
-|----------|-------|---------------|
-| **Formula** | C₉H₈O₄ | - |
-| **Molecular Weight** | 180.16 g/mol | ✓ (<500) |
-| **LogP** | 1.19 | ✓ (-2 to 5) |
-| **H-Bond Donors** | 1 | ✓ (<5) |
-| **H-Bond Acceptors** | 4 | ✓ (<10) |
-| **Polar Surface Area** | 63.6 Å² | ✓ (<140) |
-| **Rotatable Bonds** | 3 | ✓ (<10) |
-
-### Structural Representation
-- **SMILES**: `CC(=O)Oc1ccccc1C(=O)O`
-- **InChI**: `InChI=1S/C9H8O4/...`
-
-[2D structure image if available]
-
-## Bioactivity Profile
-
-### Summary
-- **Active in**: [X] assays out of [Y] tested
-- **Primary Targets**: [list top targets]
-- **Mechanism**: [if known]
-
-### Key Target Interactions (from ChEMBL)
-| Target | Activity Type | Value | Units |
-|--------|--------------|-------|-------|
-| [Target 1] | IC50 | [value] | nM |
-| [Target 2] | Ki | [value] | nM |
-
-## Drug Information (if applicable)
-
-### Clinical Status
-| Property | Value |
-|----------|-------|
-| **Approval Status** | [Approved/Investigational/N/A] |
-| **Drug Class** | [therapeutic class] |
-| **Indication** | [approved uses] |
-| **Route** | [oral/IV/topical/etc.] |
-
-### Safety
-- **Black Box Warning**: [Yes/No]
-- **Major Interactions**: [if any]
-
-## Related Compounds (if retrieved)
-
-Top 5 structurally similar compounds:
-| CID | Name | Similarity | Key Difference |
-|-----|------|------------|----------------|
-| [cid] | [name] | 95% | [note] |
-
-## Data Sources
-- PubChem: [CID link]
-- ChEMBL: [ChEMBL ID link]
-- Retrieved: [date]
-```
-
----
-
-## Data Quality Tiers
-
-Apply to data completeness assessment:
-
-| Tier | Symbol | Criteria |
-|------|--------|----------|
-| Complete | ●●● | All core properties + bioactivity + drug info |
-| Substantial | ●●○ | Core properties + bioactivity OR drug info |
-| Basic | ●○○ | Core properties only |
-| Minimal | ○○○ | CID/name only, limited data |
-
-Include in report header:
-```markdown
-**Data Completeness**: ●●● Complete (properties, bioactivity, drug data)
-```
-
----
-
-## Completeness Checklist
-
-Every compound profile MUST include these sections (even if "unavailable"):
-
-### Identity (Required)
-- [ ] PubChem CID
-- [ ] ChEMBL ID (or "N/A")
-- [ ] IUPAC name
-- [ ] Canonical SMILES
-
-### Properties (Required)
-- [ ] Molecular formula
-- [ ] Molecular weight
-- [ ] LogP
-- [ ] Lipinski rule assessment
-
-### Bioactivity (Required)
-- [ ] Activity summary (or "No bioactivity data")
-- [ ] Primary targets (or "Unknown")
-
-### Drug Info (If Approved Drug)
-- [ ] Approval status
-- [ ] Indication
-- [ ] Drug class
-
-### Always Include
-- [ ] Data sources with links
-- [ ] Retrieval date
-- [ ] Quality tier assessment
-
----
-
-## Reasoning Framework for Result Interpretation
-
-### Evidence Grading
-
-| Grade | Criteria | Example |
-|-------|----------|---------|
-| **Confirmed identity** | PubChem CID + ChEMBL ID cross-match, InChI/SMILES agree, reviewed in DrugBank or ChEMBL | Aspirin: CID 2244, CHEMBL25, consistent SMILES across databases |
-| **Probable identity** | PubChem CID found, ChEMBL partial match, minor stereochemistry ambiguity | Natural product with CID but ChEMBL entry lacking full stereochem |
-| **Uncertain identity** | Only one database has entry, or name resolves to multiple CIDs | "Vitamin E" returning alpha- and gamma-tocopherol CIDs |
-| **Unverified** | No cross-reference, single-source data only | Novel compound with PubChem SID only, no CID assigned |
-
-### Interpretation Guidance
-
-- **Compound identity confidence**: Always cross-reference PubChem CID with ChEMBL ID. If InChI strings match across databases, identity is confirmed. Discrepancies in SMILES may reflect salt forms, stereoisomers, or tautomers -- flag these for the user.
-- **Data source priority for bioactivity**: ChEMBL > PubChem BioAssay for curated bioactivity data. ChEMBL entries are manually curated from medicinal chemistry literature with standardized activity units. PubChem BioAssay aggregates HTS results with variable quality. For drug-target interactions, ChEMBL IC50/Ki values are more reliable than PubChem confirmatory assay flags.
-- **Cross-reference validation**: A compound profile is most reliable when 3+ databases agree on structure and activity (PubChem + ChEMBL + DrugBank for approved drugs). Single-source bioactivity claims, especially from a single assay, should be flagged as preliminary.
-- **Lipinski assessment**: Ro5 violations do not disqualify a compound but reduce oral bioavailability likelihood. Many approved drugs (e.g., cyclosporine) violate Ro5. Report violations as context, not as pass/fail.
-- **Bioactivity values**: IC50/Ki < 100 nM = potent; 100 nM - 1 uM = moderate; > 10 uM = weak. Activity type matters: IC50 is assay-dependent; Ki is more comparable across assays.
-
-### Synthesis Questions
-
-1. Does the compound identity resolve unambiguously across PubChem and ChEMBL, or are there stereochemical or salt-form variants that could affect interpretation?
-2. Is the bioactivity data from ChEMBL based on multiple independent publications, or does it rely on a single study?
-3. For drug candidates, do the molecular properties (MW, LogP, PSA) fall within drug-like space, and are there structural alerts (PAINS, reactive groups) that warrant caution?
-
----
-
-## Common Use Cases
-
-### Drug Property Check
-User: "Tell me about metformin"
-→ Full compound profile with drug information emphasis
-
-### Structure Verification
-User: "Verify this SMILES: CC(=O)Oc1ccccc1C(=O)O"
-→ Disambiguation-focused profile, confirm identity
-
-### SAR Analysis
-User: "Find compounds similar to ibuprofen"
-→ Similarity search + comparative property table
-
-### Target Identification
-User: "What proteins does gefitinib target?"
-→ ChEMBL bioactivity emphasis with target list
-
----
-
-## Error Handling
-
-| Error | Response |
+| Grade | Criteria |
 |-------|----------|
-| "Compound not found" | Try synonyms, verify spelling, offer SMILES search |
-| "No ChEMBL ID" | Note in Identity section, continue with PubChem data |
-| "No bioactivity data" | Include section with "No bioactivity screening data available" |
-| "API timeout" | Retry once, note unavailable data with "(retrieval failed)" |
+| **Confirmed** | CID + ChEMBL cross-match, InChI/SMILES agree |
+| **Probable** | CID found, partial ChEMBL match |
+| **Uncertain** | Single database only, or multiple CIDs |
+| **Unverified** | No cross-reference, single-source |
+
+**Bioactivity**: ChEMBL > PubChem BioAssay for curated data. IC50/Ki < 100nM = potent, 100nM-1uM = moderate, >10uM = weak. Lipinski violations reduce oral bioavailability but don't disqualify.
+
+---
+
+## SMILES Verification
+
+Always verify novel SMILES: `python3 src/tooluniverse/tools/smiles_verifier.py --smiles "SMILES_STRING"`. Invalid SMILES produce wrong results or cryptic errors.
 
 ---
 
 ## Tool Reference
 
-**PubChem (Chemical Database)**
-| Tool | Purpose |
-|------|---------|
-| `PubChem_get_CID_by_compound_name` | Name → CID |
-| `PubChem_get_CID_by_SMILES` | Structure → CID |
-| `PubChem_get_compound_properties_by_CID` | Molecular properties |
-| `PubChem_get_compound_2D_image_by_CID` | Structure visualization |
-| `PubChemBioAssay_get_assay_summary` | Activity overview |
-| `PubChemTox_get_acute_effects` | FDA drug labels |
-| `PubChem_get_associated_patents_by_CID` | IP information |
-| `PubChem_search_compounds_by_similarity` | Find analogs |
-| `PubChem_search_compounds_by_substructure` | Substructure search |
+**PubChem**: `PubChem_get_CID_by_compound_name`, `PubChem_get_CID_by_SMILES`, `PubChem_get_compound_properties_by_CID`, `PubChem_get_compound_2D_image_by_CID`, `PubChemBioAssay_get_assay_summary`, `PubChemTox_get_acute_effects`, `PubChem_get_associated_patents_by_CID`, `PubChem_search_compounds_by_similarity`, `PubChem_search_compounds_by_substructure`
 
-**ChEMBL (Bioactivity Database)**
-| Tool | Purpose |
-|------|---------|
-| `ChEMBL_search_drugs` | Name/structure search |
-| `ChEMBL_get_molecule` | Compound details |
-| `ChEMBL_get_activity` | Activity data |
-| `ChEMBL_get_target` | Protein targets |
-| `ChEMBL_search_targets` | Target search |
-| `ChEMBL_search_assays` | Assay metadata |
+**ChEMBL**: `ChEMBL_search_drugs`, `ChEMBL_get_molecule`, `ChEMBL_get_activity`, `ChEMBL_get_target`, `ChEMBL_search_targets`, `ChEMBL_search_assays`

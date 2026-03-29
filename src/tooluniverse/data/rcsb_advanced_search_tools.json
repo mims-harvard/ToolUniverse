@@ -138,7 +138,8 @@
           ]
         }
       ]
-    }
+    },
+    "aliases": ["RCSB_search"]
   },
   {
     "name": "RCSBAdvSearch_search_by_motif",

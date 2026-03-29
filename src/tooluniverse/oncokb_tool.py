@@ -118,6 +118,12 @@ class OncoKBTool(BaseTool):
         # Accept alteration as alias for variant
         if not arguments.get("variant") and arguments.get("alteration"):
             arguments = dict(arguments, variant=arguments["alteration"])
+        # Parse 'query' like "BRAF V600E" or "BRAF" into gene + variant
+        if not arguments.get("gene") and arguments.get("query"):
+            parts = arguments["query"].strip().split(None, 1)
+            arguments = dict(arguments, gene=parts[0])
+            if len(parts) > 1 and not arguments.get("variant"):
+                arguments = dict(arguments, variant=parts[1])
 
         if operation == "annotate_variant":
             return self._annotate_variant(arguments)

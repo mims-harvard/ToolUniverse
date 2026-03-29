@@ -113,7 +113,10 @@
     ],
     "return_schema": {
       "type": "array"
-    }
+    },
+    "aliases": [
+      "Monarch_search_diseases"
+    ]
   },
   {
     "name": "MonarchV3_get_histopheno",

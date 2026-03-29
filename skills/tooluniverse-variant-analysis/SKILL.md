@@ -7,6 +7,27 @@ description: Production-ready VCF processing, variant annotation, mutation analy
 
 Production-ready VCF processing and variant annotation skill combining local bioinformatics computation with ToolUniverse database integration. Designed to answer bioinformatics analysis questions about VCF data, mutation classification, variant filtering, and clinical annotation.
 
+## Domain Reasoning
+
+VCF quality filtering must come before interpretation. A variant called at 2x read depth is unreliable regardless of its QUAL score, because stochastic sequencing errors at low depth can mimic true variants. The recommended minimums — depth > 10x, QUAL > 20, allele frequency consistent with expected zygosity — are not conservative; they are the floor below which calls cannot be trusted. Applying lenient filters to "keep more variants" sacrifices accuracy for coverage and produces false positives that propagate through all downstream analyses.
+
+## LOOK UP DON'T GUESS
+
+- Clinical significance of specific variants: query `MyVariant_query_variants` or `EnsemblVEP_annotate_rsid`; never cite ClinVar classifications from memory.
+- Population allele frequencies: retrieve from MyVariant.info or gnomAD tools; do not assume rarity.
+- ClinGen dosage sensitivity scores for genes in a CNV: call `ClinGen_dosage_by_gene`; do not estimate HI/TS scores.
+- Mutation consequence predictions: run Ensembl VEP or retrieve from MyVariant.info; do not classify impact without tool output.
+
+---
+
+## CRISPR sgRNA Design Reasoning
+
+- PAM sequence (NGG for SpCas9) must lie 3' of the target on the non-target strand; the guide RNA targets the 20 nt immediately upstream of the PAM
+- For exon targeting: choose guides that cut early in the coding sequence for maximum frameshift/disruption
+- Off-target risk increases with fewer mismatches; always check for genomic sites with 0-3 mismatches to the guide
+
+---
+
 ## When to Use This Skill
 
 **Triggers**:
@@ -50,70 +71,19 @@ Production-ready VCF processing and variant annotation skill combining local bio
 
 ## Workflow Overview
 
-```
-Input VCF File (SNVs/indels or SVs)
-    |
-    v
-Phase 1: Parse VCF
-    |-- Pure Python parser (any VCF 4.x)
-    |-- cyvcf2 parser (faster, C-based)
-    |-- Extract: CHROM, POS, REF, ALT, QUAL, FILTER, INFO, FORMAT, samples
-    |-- Extract per-sample: GT, VAF, depth
-    |-- Extract annotations from INFO (ANN, CSQ, FUNCOTATION)
-    |-- Detect variant class: SNV/indel vs SV/CNV
-    |
-    v
-Phase 2: Classify Variants
-    |-- Variant type: SNV, INS, DEL, MNV, COMPLEX, SV
-    |-- Mutation type: missense, nonsense, synonymous, frameshift, splice, etc.
-    |-- Impact: HIGH, MODERATE, LOW, MODIFIER
-    |-- SV type: DEL, DUP, INV, BND, CNV (if structural variant)
-    |
-    v
-Phase 3: Apply Filters
-    |-- VAF range (min/max)
-    |-- Read depth minimum
-    |-- Quality threshold
-    |-- PASS only
-    |-- Variant/mutation type inclusion/exclusion
-    |-- Consequence exclusion (intronic, intergenic)
-    |-- Population frequency range
-    |-- Chromosome selection
-    |-- SV size range (for structural variants)
-    |
-    v
-Phase 4: Compute Statistics
-    |-- Variant type distribution
-    |-- Mutation type distribution
-    |-- Impact distribution
-    |-- Chromosome distribution
-    |-- Ti/Tv ratio (for SNVs)
-    |-- Per-sample VAF/depth stats
-    |-- Gene mutation counts
-    |-- SV size distribution (for structural variants)
-    |
-    v
-Phase 5: Annotate with ToolUniverse (optional)
-    |-- MyVariant.info: ClinVar, dbSNP, gnomAD, CADD, SIFT, PolyPhen
-    |-- dbSNP: Population frequencies, gene associations
-    |-- gnomAD: Population allele frequencies
-    |-- Ensembl VEP: Consequence prediction
-    |
-    v
-Phase 6: Generate Report / Answer Question
-    |-- Markdown report with tables
-    |-- Direct answer to specific question
-    |-- DataFrame for downstream analysis
-    |
-    v
-Phase 7: Structural Variant & CNV Analysis (if SV/CNV detected)
-    |-- Annotate with gnomAD SV population frequencies
-    |-- Query DGVa/dbVar for known SVs (Ensembl)
-    |-- Identify affected genes
-    |-- Query ClinGen dosage sensitivity (HI/TS scores)
-    |-- Classify pathogenicity (Pathogenic/Likely Pathogenic/VUS/Benign)
-    |-- Generate SV clinical report with ACMG/ClinGen guidelines
-```
+**Phase 1: Parse VCF** → Extract CHROM/POS/REF/ALT/QUAL/FILTER/INFO, per-sample GT/VAF/depth, annotations (ANN/CSQ/FUNCOTATION). Pure Python or cyvcf2.
+
+**Phase 2: Classify** → Variant type (SNV/INS/DEL/MNV/SV), mutation type (missense/nonsense/synonymous/frameshift/splice/etc.), impact (HIGH/MODERATE/LOW/MODIFIER).
+
+**Phase 3: Filter** → VAF range, depth, quality, PASS, variant/mutation type, consequence exclusion, population frequency, chromosome, SV size.
+
+**Phase 4: Statistics** → Type/mutation/impact/chromosome distributions, Ti/Tv ratio, per-sample VAF/depth, gene mutation counts.
+
+**Phase 5: Annotate** (optional) → MyVariant.info (ClinVar/dbSNP/gnomAD/CADD), Ensembl VEP consequence prediction.
+
+**Phase 6: Report** → Markdown tables, direct answers, DataFrame export.
+
+**Phase 7: SV/CNV Analysis** (if applicable) → gnomAD SV frequencies, ClinGen dosage sensitivity, ACMG pathogenicity classification.
 
 ---
 
@@ -177,51 +147,11 @@ criteria = FilterCriteria(
 
 **See references/vcf_filtering.md for all filter options**
 
-### Phase 4: Statistics
+### Phase 4-6: Statistics, Annotation, Reporting
 
-**Use pandas for**:
-- Complex aggregations (groupby, pivot tables)
-- Custom statistical tests
-- Data exploration
-
-**Use python_implementation for**:
-- Standard variant statistics (Ti/Tv, type distribution)
-- Per-sample VAF/depth summary
-- Quick mutation type counts
-
-### Phase 5: ToolUniverse Annotation
-
-**When to use ToolUniverse annotation tools**:
-1. **ClinVar clinical significance**: Use MyVariant.info or dbSNP tools
-2. **Population frequencies**: Use MyVariant.info (aggregates gnomAD, ExAC, 1000G)
-3. **Pathogenicity scores**: Use MyVariant.info (aggregates CADD, SIFT, PolyPhen)
-4. **Consequence prediction**: Use Ensembl VEP tools
-
-**Best practices**:
-- Annotate variants with rsIDs first (most reliable)
-- Use MyVariant.info for batch annotation (aggregates multiple sources)
-- Limit to top variants (max_annotate=50-100) to respect rate limits
-- Query dbSNP/gnomAD directly for specific use cases
-
-**Key tools**:
-- `MyVariant_query_variants`: Batch annotation (ClinVar, dbSNP, gnomAD, CADD)
-- `dbsnp_get_variant_by_rsid`: Population frequencies
-- `gnomad_get_variant`: Basic variant metadata
-- `EnsemblVEP_annotate_rsid`: Consequence prediction
+Use python_implementation for standard stats (Ti/Tv, type distributions, per-sample VAF/depth); pandas for custom aggregations. For annotation, prefer MyVariant.info (batch: ClinVar + dbSNP + gnomAD + CADD); limit to 50-100 variants per batch. Reports include type/mutation/impact/chromosome distributions, VAF stats, clinical significance, and top mutated genes.
 
 **See references/annotation_guide.md for detailed examples**
-
-### Phase 6: Report Generation
-
-**Report includes**:
-1. Summary Statistics (total variants, type counts, Ti/Tv)
-2. Mutation Type Distribution (table with counts and percentages)
-3. Impact Distribution
-4. Chromosome Distribution
-5. VAF Distribution (per-sample)
-6. Clinical Significance
-7. Top Mutated Genes
-8. Variant Annotations (ClinVar-annotated variants)
 
 ### Phase 7: Structural Variant & CNV Analysis
 
@@ -325,88 +255,24 @@ result = answer_non_reference_after_filter(
 
 ## Common Use Patterns
 
-### Pattern 1: Quick VCF Summary
-Parse VCF, compute statistics, generate report.
-
 ```python
+# Quick summary
 report = variant_analysis_pipeline("input.vcf", output_file="report.md")
+
+# Filtered analysis
+report = variant_analysis_pipeline("input.vcf",
+    filters=FilterCriteria(min_vaf=0.1, min_depth=20, pass_only=True))
+
+# Annotated report (top 50 variants with ClinVar/gnomAD/CADD)
+report = variant_analysis_pipeline("input.vcf", annotate=True, max_annotate=50)
 ```
 
-### Pattern 2: Filtered Analysis
-Parse VCF, apply multi-criteria filter, compute statistics on filtered set.
+**pandas vs python_implementation**: Use python_implementation for parsing/classification/annotation, then convert to DataFrame for custom aggregations:
 
 ```python
-report = variant_analysis_pipeline(
-    vcf_path="input.vcf",
-    filters=FilterCriteria(min_vaf=0.1, min_depth=20, pass_only=True),
-    output_file="filtered_report.md"
-)
-```
-
-### Pattern 3: Annotated Report
-Parse VCF, annotate top variants with ClinVar/gnomAD/CADD, generate clinical report.
-
-```python
-report = variant_analysis_pipeline(
-    vcf_path="input.vcf",
-    annotate=True,
-    max_annotate=50,
-    output_file="annotated_report.md"
-)
-```
-
-### Pattern 4: BixBench Question Answering
-Parse VCF, apply specific filters, compute targeted statistics to answer precise questions.
-
-```python
-result = answer_vaf_mutation_fraction(
-    vcf_path="input.vcf",
-    max_vaf=0.3,
-    mutation_type="missense"
-)
-```
-
-### Pattern 5: Cohort Comparison
-Parse multiple VCFs, compare mutation frequencies across cohorts.
-
-```python
-result = answer_cohort_comparison(
-    vcf_paths=["cohort1.vcf", "cohort2.vcf"],
-    mutation_type="missense"
-)
-```
-
----
-
-## When to Use pandas vs python_implementation
-
-**Use pandas when**:
-- You need to read VCF as a flat table
-- You want to do custom aggregations (groupby, pivot)
-- You need to join with other data
-- You're doing exploratory data analysis
-- You want to export to CSV/Excel
-
-**Use python_implementation when**:
-- You need production-grade VCF parsing
-- You need to extract INFO annotations (ANN, CSQ)
-- You need per-sample VAF/depth extraction
-- You need to classify mutation types
-- You need standard variant statistics (Ti/Tv)
-- You need to integrate with ToolUniverse annotation
-
-**Best approach**: Use python_implementation for parsing/classification, then convert to DataFrame for custom analysis:
-
-```python
-# Parse and classify
 vcf_data = parse_vcf("input.vcf")
-passing, failing = filter_variants(vcf_data.variants, criteria)
-
-# Convert to DataFrame for custom analysis
+passing, _ = filter_variants(vcf_data.variants, criteria)
 df = variants_to_dataframe(passing, sample="TUMOR")
-
-# Now use pandas
-missense_high_vaf = df[(df['mutation_type'] == 'missense') & (df['vaf'] >= 0.3)]
 ```
 
 ---
@@ -430,19 +296,7 @@ missense_high_vaf = df[(df['mutation_type'] == 'missense') & (df['vaf'] >= 0.3)]
 
 ---
 
-## Utility Scripts
+## Additional Resources
 
-- **scripts/parse_vcf.py**: Standalone VCF parsing script
-- **scripts/filter_variants.py**: Command-line variant filtering
-- **scripts/annotate_variants.py**: Batch variant annotation
-
----
-
-## Quick Start
-
-See QUICK_START.md for:
-- Python SDK examples (pipeline, question functions, individual tools)
-- MCP conversational examples
-- Common recipes (somatic analysis, clinical screening, population frequency)
-- Expected output formats
-- Troubleshooting guide
+- Scripts: `scripts/parse_vcf.py`, `scripts/filter_variants.py`, `scripts/annotate_variants.py`
+- Quick start recipes and MCP examples: `QUICK_START.md`

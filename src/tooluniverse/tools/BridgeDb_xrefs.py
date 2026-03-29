@@ -9,11 +9,13 @@ from ._shared_client import get_shared_client
 
 
 def BridgeDb_xrefs(
-    operation: str,
     identifier: str,
-    source: str,
+    operation: Optional[str] = None,
+    source: Optional[str] = None,
+    source_database: Optional[str] = None,
     organism: Optional[str] = None,
     target_source: Optional[str] = None,
+    target_database: Optional[str] = None,
     *,
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
@@ -30,10 +32,14 @@ def BridgeDb_xrefs(
         The identifier to look up (e.g., 'HMDB0000122' for glucose, 'ENSG00000141510'...
     source : str
         Source database name or system code. Common codes: Ch=HMDB, Ce=ChEBI, Ck=KEGG...
+    source_database : str
+        Alias for source. Source database name or system code.
     organism : str
         Organism name (default: Human). Options include: Human, Mouse, Rat, Yeast, Wo...
     target_source : str
         Optional: filter results to a specific target database. Use database name or ...
+    target_database : str
+        Alias for target_source. Filter results to a specific target database.
     stream_callback : Callable, optional
         Callback for streaming output
     use_cache : bool, default False
@@ -54,8 +60,10 @@ def BridgeDb_xrefs(
             "operation": operation,
             "identifier": identifier,
             "source": source,
+            "source_database": source_database,
             "organism": organism,
             "target_source": target_source,
+            "target_database": target_database,
         }.items()
         if v is not None
     }

@@ -19,6 +19,14 @@ Comprehensive clinical interpretation of somatic mutations in cancer. Transforms
 
 ---
 
+## LOOK UP, DON'T GUESS
+When uncertain about any scientific fact, SEARCH databases first (PubMed, UniProt, ChEMBL, ClinVar, etc.) rather than reasoning from memory. A database-verified answer is always more reliable than a guess.
+
+---
+
+## COMPUTE, DON'T DESCRIBE
+When analysis requires computation (statistics, data processing, scoring, enrichment), write and run Python code via Bash. Don't describe what you would do — execute it and report actual results. Use ToolUniverse tools to retrieve data, then Python (pandas, scipy, statsmodels, matplotlib) to analyze it.
+
 ## When to Use
 
 Apply when user asks:
@@ -33,22 +41,10 @@ Apply when user asks:
 
 ## Input Parsing
 
-**Required**: Gene symbol + variant notation
+**Required**: Gene symbol + variant notation (e.g., "EGFR L858R", "BRAF p.V600E", "EML4-ALK fusion", "HER2 amplification")
 **Optional**: Cancer type (improves specificity)
 
-### Accepted Input Formats
-
-| Format | Example | How to Parse |
-|--------|---------|-------------|
-| Gene + amino acid change | EGFR L858R | gene=EGFR, variant=L858R |
-| Gene + HGVS protein | BRAF p.V600E | gene=BRAF, variant=V600E |
-| Gene + exon notation | EGFR exon 19 deletion | gene=EGFR, variant=exon 19 deletion |
-| Gene + fusion | EML4-ALK fusion | gene=ALK, variant=EML4-ALK |
-| Gene + amplification | HER2 amplification | gene=ERBB2, variant=amplification |
-
-### Gene Symbol Normalization
-
-Common aliases: HER2 -> ERBB2, PD-L1 -> CD274, VEGF -> VEGFA
+Parse the gene symbol and variant separately. For fusions, use the kinase partner as the primary gene. For amplifications/deletions, use the gene name directly. Normalize common aliases: HER2 -> ERBB2, PD-L1 -> CD274, VEGF -> VEGFA.
 
 ---
 
@@ -115,25 +111,46 @@ For detailed code snippets and API call patterns for each phase, see `ANALYSIS_D
 
 ---
 
-## Evidence Grading Summary
+## Clinical Reasoning Strategies
 
-| Tier | Criteria | Examples |
-|------|----------|---------|
-| **T1** | FDA-approved therapy, Level A CIViC evidence, phase 3 trial | Osimertinib for EGFR T790M |
-| **T2** | Phase 2/3 clinical data, Level B CIViC evidence | Combination trial data |
-| **T3** | Preclinical data, Level D CIViC, case reports | Novel mechanisms, in vitro |
-| **T4** | Computational prediction, pathway inference | Docking, pathway analysis |
+### Driver vs Passenger Reasoning
 
-## Clinical Actionability Scoring
+Not every mutation in a tumor is driving the cancer. Before querying databases, form a hypothesis:
 
-| Score | Criteria |
-|-------|----------|
-| **HIGH** | FDA-approved targeted therapy for this exact mutation + cancer type |
-| **MODERATE** | Approved therapy for different cancer type with same mutation, OR phase 2-3 trial data |
-| **LOW** | Only preclinical evidence or pathway-based rationale |
-| **UNKNOWN** | Insufficient data to assess actionability |
+- **Is this gene a known oncogene or tumor suppressor?** Genes like EGFR, BRAF, KRAS, TP53, PIK3CA are well-established cancer drivers. A mutation in one of these warrants deep investigation. A mutation in a gene with no known cancer role is likely a passenger.
+- **Is this specific mutation recurrent across tumors (hotspot)?** Use cBioPortal to check. A mutation seen in hundreds of independent tumors (e.g., BRAF V600E) is almost certainly a driver. A unique, never-before-seen missense in the same gene is less certain.
+- **What is the predicted functional impact?** Truncating mutations (nonsense, frameshift) in tumor suppressors are likely loss-of-function drivers. Missense mutations in oncogenes at known hotspot residues are likely gain-of-function drivers.
+- **Conclusion pattern**: A recurrent mutation in a known driver gene is likely actionable. A unique mutation in a gene not associated with cancer is likely a passenger. State your assessment and the reasoning behind it.
 
-For full scoring tables and treatment prioritization, see `SCORING_TABLES.md`.
+### Actionability Reasoning
+
+Actionable means a therapy exists that targets this alteration. Think in tiers based on evidence strength:
+
+- **Tier 1**: FDA-approved drug for this mutation in this cancer type. The standard of care — recommend confidently. Example reasoning: "CIViC returns Level A evidence, FDA label confirms indication."
+- **Tier 2**: FDA-approved for this mutation in a different cancer type, or strong clinical trial evidence (phase 2-3) in this cancer type. Reasonable to consider, especially under tumor-agnostic approvals or with molecular tumor board discussion.
+- **Tier 3**: Preclinical evidence only — cell line data, animal models, or case reports. May justify clinical trial enrollment but not off-label use.
+- **Tier 4**: Biological rationale but no direct evidence — the mutation is in a druggable pathway, or a structurally similar mutation responds to therapy. Hypothesis-generating only.
+
+When synthesizing, state the tier and explain WHY you assigned it based on the evidence you found, not just which database returned a hit.
+
+### Resistance Reasoning
+
+If the patient has already been treated, ask: could this mutation be a resistance mechanism?
+
+- **On-target resistance**: Mutations in the drug target gene itself that restore signaling despite drug binding. These typically emerge at the drug-binding site (e.g., EGFR T790M after erlotinib, EGFR C797S after osimertinib, ABL T315I after imatinib).
+- **Bypass pathway activation**: Mutations in parallel signaling pathways that render the target irrelevant (e.g., MET amplification bypassing EGFR inhibition, BRAF activation bypassing MEK inhibition).
+- **Phenotypic transformation**: Lineage changes (e.g., small cell transformation in EGFR-mutant lung cancer) that eliminate dependence on the original driver.
+- **Timing matters**: If the mutation was detected AFTER treatment, it is more likely a resistance mechanism than if it was present at diagnosis.
+
+### When to Use Which Tool
+
+Form your clinical hypothesis FIRST based on gene function and mutation type, THEN use tools to validate:
+
+- **CIViC** (`civic_search_genes`, `civic_get_variants_by_gene`): Your primary source for clinical evidence. Returns curated evidence items with evidence levels, clinical significance, and associated therapies. Start here for any variant with potential clinical relevance.
+- **cBioPortal** (`cBioPortal_get_mutations`): Use to assess mutation prevalence — is this a hotspot? How common is it across cancer types? This informs your driver vs passenger assessment.
+- **OpenTargets** (`OpenTargets_get_associated_drugs_by_target_ensemblID`): Use for actionability — what drugs target this gene? Cross-reference with CIViC evidence to assign tiers.
+- **PubMed** (`PubMed_search_articles`): Use when CIViC lacks entries for your variant, or to find resistance mechanism reports and recent clinical trial results.
+- **ClinicalTrials.gov** (`search_clinical_trials`): Use after establishing the variant is potentially actionable, to find enrollment opportunities.
 
 ---
 
@@ -160,7 +177,7 @@ For full scoring tables and treatment prioritization, see `SCORING_TABLES.md`.
 
 | Tool | Key Parameters | Response Key Fields |
 |------|---------------|-------------------|
-| `OpenTargets_get_associated_drugs_by_target_ensemblID` | `ensemblId`, `size` | `data.target.knownDrugs.rows[]` |
+| `OpenTargets_get_associated_drugs_by_target_ensemblID` | `ensemblId`, `size` | `data.target.drugAndClinicalCandidates.rows[]` |
 | `FDA_get_indications_by_drug_name` | `drug_name`, `limit` | `results[].indications_and_usage` |
 | `drugbank_get_drug_basic_info_by_drug_name_or_id` | `query`, `case_sensitive`, `exact_match`, `limit` (ALL required) | `results[]` |
 
@@ -180,43 +197,12 @@ For full scoring tables and treatment prioritization, see `SCORING_TABLES.md`.
 | `Reactome_map_uniprot_to_pathways` | `id` (UniProt accession) | Pathway mappings |
 | `GTEx_get_median_gene_expression` | `gencode_id`, `operation="median"` | Expression by tissue |
 
-For full tool parameter reference, see `TOOLS_REFERENCE.md`.
-
 ---
 
-## Fallback Chains
+## Fallback Strategy
 
-| Primary Tool | Fallback | Use When |
-|-------------|----------|----------|
-| CIViC variant lookup | PubMed literature search | Gene not found in CIViC |
-| OpenTargets drugs | ChEMBL drug search | No OpenTargets drug hits |
-| FDA indications | DrugBank drug info | Drug not in FDA database |
-| cBioPortal TCGA study | cBioPortal pan-cancer | Specific cancer study not available |
-| GTEx expression | Ensembl gene lookup | GTEx returns empty |
-| Reactome pathways | UniProt function | Pathway mapping fails |
-
----
-
-## Quantified Minimums
-
-| Section | Requirement |
-|---------|-------------|
-| Gene IDs | At least Ensembl + UniProt resolved |
-| Clinical evidence | CIViC queried + PubMed literature search |
-| Mutation prevalence | At least 1 cBioPortal study |
-| Therapeutic options | All approved drugs listed + FDA label for top drugs |
-| Resistance | Literature search + known patterns documented |
-| Clinical trials | At least 1 search query executed |
-| Prognostic impact | PubMed literature search performed |
-| Pathway context | Reactome pathway mapping attempted |
-
----
-
-## See Also
-
-- `ANALYSIS_DETAILS.md` - Detailed code snippets and API call patterns for each phase
-- `REPORT_TEMPLATE.md` - Full report template with completeness checklist
-- `SCORING_TABLES.md` - Evidence grading, treatment prioritization, use cases
-- `TOOLS_REFERENCE.md` - Detailed tool parameter reference
-- `QUICK_START.md` - Example usage and quick reference
-- `EXAMPLES.md` - Complete example reports
+When a primary tool returns no results, fall back rather than reporting "no data found":
+- **CIViC empty** -> search PubMed for "[gene] [variant] clinical evidence"
+- **OpenTargets no drugs** -> try ChEMBL drug search by target
+- **cBioPortal specific study empty** -> try pan-cancer study (msk_impact_2017 or similar)
+- **Reactome no pathways** -> use UniProt function annotation for pathway context

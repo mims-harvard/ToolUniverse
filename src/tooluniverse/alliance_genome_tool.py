@@ -89,15 +89,67 @@ class AllianceGenomeTool(BaseTool):
             return self._get_gene_disease_models(arguments)
         elif endpoint_type == "allele_detail":
             return self._get_allele_detail(arguments)
+        elif endpoint_type == "zfin_search":
+            return self._search_genes_by_species(
+                arguments, species_prefix="ZFIN:", species_name="Danio rerio"
+            )
+        elif endpoint_type == "mgi_search":
+            return self._search_genes_by_species(
+                arguments, species_prefix="MGI:", species_name="Mus musculus"
+            )
+        elif endpoint_type == "flybase_search":
+            return self._search_genes_by_species(
+                arguments, species_prefix="FB:", species_name="Drosophila melanogaster"
+            )
+        elif endpoint_type == "wormbase_search":
+            return self._search_genes_by_species(
+                arguments, species_prefix="WB:", species_name="Caenorhabditis elegans"
+            )
         else:
             return {
                 "status": "error",
                 "error": f"Unknown endpoint type: {endpoint_type}",
             }
 
+    @staticmethod
+    def _normalize_gene_id(gene_id: str) -> str:
+        """Auto-add required namespace prefix if missing."""
+        if not gene_id:
+            return gene_id
+        # Already has a known prefix
+        for prefix in (
+            "FB:",
+            "ZFIN:",
+            "MGI:",
+            "WB:",
+            "RGD:",
+            "SGD:",
+            "HGNC:",
+            "Xenbase:",
+        ):
+            if gene_id.startswith(prefix):
+                return gene_id
+        # FlyBase bare IDs (FBgn, FBtr, FBpp, FBgn...)
+        if (
+            gene_id.startswith("FBgn")
+            or gene_id.startswith("FBtr")
+            or gene_id.startswith("FBpp")
+        ):
+            return f"FB:{gene_id}"
+        # ZFIN bare IDs (ZDB-GENE-...)
+        if gene_id.startswith("ZDB-"):
+            return f"ZFIN:{gene_id}"
+        # WormBase bare IDs (WBGene...)
+        if gene_id.startswith("WBGene"):
+            return f"WB:{gene_id}"
+        # MGI bare numeric IDs (e.g. "98834")
+        if gene_id.isdigit() and len(gene_id) >= 5:
+            return f"MGI:{gene_id}"
+        return gene_id
+
     def _get_gene_detail(self, arguments: Dict[str, Any]) -> Dict[str, Any]:
         """Get detailed gene information from Alliance."""
-        gene_id = arguments.get("gene_id", "")
+        gene_id = self._normalize_gene_id(arguments.get("gene_id", ""))
         if not gene_id:
             return {
                 "status": "error",
@@ -155,51 +207,72 @@ class AllianceGenomeTool(BaseTool):
             },
         }
 
-    def _search_genes(self, arguments: Dict[str, Any]) -> Dict[str, Any]:
-        """Search for genes across all model organisms."""
+    def _search_genes(
+        self,
+        arguments: Dict[str, Any],
+        species_prefix: str = "",
+        species_name: str = "",
+    ) -> Dict[str, Any]:
+        """Search genes via Alliance autocomplete, optionally filtered to one species."""
         query = arguments.get("query", "")
         if not query:
             return {"status": "error", "error": "query parameter is required"}
 
-        limit = arguments.get("limit", 10)
-        url = f"{ALLIANCE_BASE}/search_autocomplete"
-        params = {"q": query, "category": "gene", "limit": min(int(limit), 50)}
+        limit = int(arguments.get("limit", 10))
+        # When filtering by species, fetch more candidates so client-side filtering
+        # still returns enough results (Alliance has no server-side species filter).
+        _SPECIES_FETCH_MULTIPLIER = 5
+        fetch_limit = (
+            min(limit * _SPECIES_FETCH_MULTIPLIER, 100)
+            if species_prefix
+            else min(limit, 50)
+        )
+        params = {"q": query, "category": "gene", "limit": fetch_limit}
 
         response = requests.get(
-            url,
+            f"{ALLIANCE_BASE}/search_autocomplete",
             params=params,
             headers={"Accept": "application/json"},
             timeout=self.timeout,
         )
         response.raise_for_status()
-        data = response.json()
+        results = response.json().get("results", [])
 
-        results = data.get("results", [])
-        genes = []
-        for r in results:
-            genes.append(
-                {
-                    "symbol": r.get("symbol"),
-                    "name": r.get("name"),
-                    "primary_key": r.get("primaryKey"),
-                    "name_key": r.get("name_key"),
-                    "category": r.get("category"),
-                }
-            )
+        if species_prefix:
+            results = [
+                r for r in results if r.get("primaryKey", "").startswith(species_prefix)
+            ]
 
-        return {
-            "status": "success",
-            "data": genes,
-            "metadata": {
-                "total_results": len(genes),
-                "query": query,
-                "source": "Alliance of Genome Resources",
-            },
+        genes = [
+            {
+                "symbol": r.get("symbol"),
+                "name": r.get("name"),
+                "gene_id": r.get("primaryKey"),
+                "category": r.get("category"),
+            }
+            for r in results[:limit]
+        ]
+
+        metadata: Dict[str, Any] = {
+            "total_results": len(genes),
+            "query": query,
+            "source": "Alliance of Genome Resources",
         }
+        if species_name:
+            metadata["species"] = species_name
+
+        return {"status": "success", "data": genes, "metadata": metadata}
+
+    def _search_genes_by_species(
+        self, arguments: Dict[str, Any], species_prefix: str, species_name: str
+    ) -> Dict[str, Any]:
+        return self._search_genes(
+            arguments, species_prefix=species_prefix, species_name=species_name
+        )
 
     def _get_gene_phenotypes(self, arguments: Dict[str, Any]) -> Dict[str, Any]:
         """Get phenotype annotations for a gene."""
-        gene_id = arguments.get("gene_id", "")
+        gene_id = self._normalize_gene_id(arguments.get("gene_id", ""))
         if not gene_id:
             return {"status": "error", "error": "gene_id parameter is required"}
 
@@ -333,7 +406,7 @@ class AllianceGenomeTool(BaseTool):
 
     def _get_gene_orthologs(self, arguments: Dict[str, Any]) -> Dict[str, Any]:
         """Get ortholog genes across species for a given gene."""
-        gene_id = arguments.get("gene_id", "")
+        gene_id = self._normalize_gene_id(arguments.get("gene_id", ""))
         if not gene_id:
             return {"status": "error", "error": "gene_id parameter is required"}
 
@@ -398,7 +471,7 @@ class AllianceGenomeTool(BaseTool):
 
     def _get_gene_alleles(self, arguments: Dict[str, Any]) -> Dict[str, Any]:
         """Get alleles and variants for a gene."""
-        gene_id = arguments.get("gene_id", "")
+        gene_id = self._normalize_gene_id(arguments.get("gene_id", ""))
         if not gene_id:
             return {"status": "error", "error": "gene_id parameter is required"}
 
@@ -457,7 +530,7 @@ class AllianceGenomeTool(BaseTool):
 
     def _get_gene_expression_summary(self, arguments: Dict[str, Any]) -> Dict[str, Any]:
         """Get expression summary (ribbon) for a gene."""
-        gene_id = arguments.get("gene_id", "")
+        gene_id = self._normalize_gene_id(arguments.get("gene_id", ""))
         if not gene_id:
             return {"status": "error", "error": "gene_id parameter is required"}
 
@@ -504,7 +577,7 @@ class AllianceGenomeTool(BaseTool):
 
     def _get_gene_interactions(self, arguments: Dict[str, Any]) -> Dict[str, Any]:
         """Get molecular or genetic interactions for a gene."""
-        gene_id = arguments.get("gene_id", "")
+        gene_id = self._normalize_gene_id(arguments.get("gene_id", ""))
         if not gene_id:
             return {"status": "error", "error": "gene_id parameter is required"}
 
@@ -577,7 +650,7 @@ class AllianceGenomeTool(BaseTool):
 
     def _get_gene_disease_models(self, arguments: Dict[str, Any]) -> Dict[str, Any]:
         """Get disease models involving a gene."""
-        gene_id = arguments.get("gene_id", "")
+        gene_id = self._normalize_gene_id(arguments.get("gene_id", ""))
         if not gene_id:
             return {"status": "error", "error": "gene_id parameter is required"}
 

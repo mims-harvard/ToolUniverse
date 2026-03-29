@@ -3,17 +3,20 @@
     "type": "RegulomeDBRESTTool",
     "name": "RegulomeDB_query_variant",
     "description": "Query RegulomeDB for regulatory variant annotations using rsID",
+    "aliases": ["RegulomeDB_get_score"],
     "parameter": {
       "type": "object",
       "properties": {
         "rsid": {
           "type": "string",
           "description": "dbSNP rsID (e.g., 'rs4994', 'rs429358')"
+        },
+        "variant": {
+          "type": "string",
+          "description": "Alias for rsid. dbSNP rsID (e.g., 'rs7903146', 'rs429358')."
         }
       },
-      "required": [
-        "rsid"
-      ]
+      "required": []
     },
     "fields": {
       "endpoint": "https://regulomedb.org/regulome-search/?regions={rsid}&genome=GRCh38",

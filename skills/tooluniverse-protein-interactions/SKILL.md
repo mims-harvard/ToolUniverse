@@ -7,490 +7,152 @@ description: Analyze protein-protein interaction networks using STRING, BioGRID,
 
 Comprehensive protein interaction network analysis using ToolUniverse tools. Analyzes protein networks through a 4-phase workflow: identifier mapping, network retrieval, enrichment analysis, and optional structural data.
 
-## Features
+## Domain Reasoning: Interaction Type Clarification
 
-✅ **Identifier Mapping** - Convert protein names to database IDs (STRING, UniProt, Ensembl)
-✅ **Network Retrieval** - Get interaction networks with confidence scores (0-1.0)
-✅ **Functional Enrichment** - GO terms, KEGG pathways, Reactome pathways
-✅ **PPI Enrichment** - Test if proteins form functional modules
-✅ **Structural Data** - Optional SAXS/SANS solution structures (SASBDB)
-✅ **Fallback Strategy** - STRING primary (no API key) → BioGRID secondary (if key available)
+When asked about protein interactions, ask: physical interaction (do they bind?) or functional interaction (do they affect the same pathway)? STRING combines both — a high combined_score does not mean physical binding. For physical binding evidence, check the experimental score (`escore`) specifically. A high `tscore` (text mining) or `dscore` (database) with a low `escore` suggests co-annotation or co-citation, not direct binding.
+
+LOOK UP DON'T GUESS: protein interaction scores, experimental evidence types, and whether two specific proteins have known co-crystal structures. Use STRING `escore` and BioGRID experimental data — do not infer binding from pathway co-membership alone.
 
 ## Databases Used
 
 | Database | Coverage | API Key | Purpose |
 |----------|----------|---------|---------|
-| **STRING** | 14M+ proteins, 5,000+ organisms | ❌ Not required | Primary interaction source |
-| **BioGRID** | 2.3M+ interactions, 80+ organisms | ✅ Required | Fallback, curated data |
-| **SASBDB** | 2,000+ SAXS/SANS entries | ❌ Not required | Solution structures |
+| **STRING** | 14M+ proteins, 5,000+ organisms | Not required | Primary interaction source |
+| **BioGRID** | 2.3M+ interactions, 80+ organisms | Required | Fallback, curated data |
+| **SASBDB** | 2,000+ SAXS/SANS entries | Not required | Solution structures |
 
-## Quick Start
+## 4-Phase Workflow
 
-### Basic Usage
+1. **Identifier Mapping** — `STRING_map_identifiers()`: validate protein names, get STRING IDs
+2. **Network Retrieval** — `STRING_get_network()` (primary); `BioGRID_get_interactions()` (fallback, requires API key)
+3. **Enrichment Analysis** — `STRING_functional_enrichment()` for GO/KEGG/Reactome; `STRING_ppi_enrichment()` to test functional coherence
+4. **Structural Data (optional)** — `SASBDB_search_entries()` for SAXS/SANS solution structures
 
-```python
-from tooluniverse import ToolUniverse
-from python_implementation import analyze_protein_network
-
-# Initialize ToolUniverse
-tu = ToolUniverse()
-
-# Analyze protein network
-result = analyze_protein_network(
-    tu=tu,
-    proteins=["TP53", "MDM2", "ATM", "CHEK2"],
-    species=9606,  # Human
-    confidence_score=0.7  # High confidence
-)
-
-# Access results
-print(f"Mapped: {len(result.mapped_proteins)} proteins")
-print(f"Network: {result.total_interactions} interactions")
-print(f"Enrichment: {len(result.enriched_terms)} GO terms")
-print(f"PPI p-value: {result.ppi_enrichment.get('p_value', 1.0):.2e}")
-```
-
-### Expected Output
-
-```
-🔍 Phase 1: Mapping 4 protein identifiers...
-✅ Mapped 4/4 proteins (100.0%)
-
-🕸️  Phase 2: Retrieving interaction network...
-✅ STRING: Retrieved 6 interactions
-
-🧬 Phase 3: Performing enrichment analysis...
-✅ Found 245 enriched GO terms (FDR < 0.05)
-✅ PPI enrichment significant (p=3.45e-05)
-
-✅ Analysis complete!
-```
-
-## Use Cases
-
-### 1. Single Protein Analysis
-
-Discover interaction partners for a protein of interest:
-
-```python
-result = analyze_protein_network(
-    tu=tu,
-    proteins=["TP53"],  # Single protein
-    species=9606,
-    confidence_score=0.7
-)
-
-# Top 5 partners will be in the network
-for edge in result.network_edges[:5]:
-    print(f"{edge['preferredName_A']} ↔ {edge['preferredName_B']} "
-          f"(score: {edge['score']})")
-```
-
-### 2. Protein Complex Validation
-
-Test if proteins form a functional complex:
-
-```python
-# DNA damage response proteins
-proteins = ["TP53", "ATM", "CHEK2", "BRCA1", "BRCA2"]
-
-result = analyze_protein_network(tu=tu, proteins=proteins)
-
-# Check PPI enrichment
-if result.ppi_enrichment.get("p_value", 1.0) < 0.05:
-    print("✅ Proteins form functional module!")
-    print(f"   Expected edges: {result.ppi_enrichment['expected_number_of_edges']:.1f}")
-    print(f"   Observed edges: {result.ppi_enrichment['number_of_edges']}")
-else:
-    print("⚠️  Proteins may be unrelated")
-```
-
-### 3. Pathway Discovery
-
-Find enriched pathways for a protein set:
-
-```python
-result = analyze_protein_network(
-    tu=tu,
-    proteins=["MAPK1", "MAPK3", "RAF1", "MAP2K1"],  # MAPK pathway
-    confidence_score=0.7
-)
-
-# Show top enriched processes
-print("\nTop Enriched Pathways:")
-for term in result.enriched_terms[:10]:
-    print(f"  {term['term']}: p={term['p_value']:.2e}, FDR={term['fdr']:.2e}")
-```
-
-### 4. Multi-Protein Network Analysis
-
-Build complete interaction network for multiple proteins:
-
-```python
-# Apoptosis regulators
-proteins = ["TP53", "BCL2", "BAX", "CASP3", "CASP9"]
-
-result = analyze_protein_network(
-    tu=tu,
-    proteins=proteins,
-    confidence_score=0.7
-)
-
-# Export network for Cytoscape
-import pandas as pd
-df = pd.DataFrame(result.network_edges)
-df.to_csv("apoptosis_network.tsv", sep="\t", index=False)
-```
-
-### 5. With BioGRID Validation
-
-Use BioGRID for experimentally validated interactions:
-
-```python
-# Requires BIOGRID_API_KEY in environment
-result = analyze_protein_network(
-    tu=tu,
-    proteins=["TP53", "MDM2"],
-    include_biogrid=True  # Enable BioGRID fallback
-)
-
-print(f"Primary source: {result.primary_source}")  # "STRING" or "BioGRID"
-```
-
-**BioGRID chemical interactions note:** `BioGRID_get_chemical_interactions` always
-returns a limitation note in the response. This is expected behavior -- the tool
-documents that chemical interaction data may be incomplete.
-
-### 6. Including Structural Data
-
-Add SAXS/SANS solution structures:
-
-```python
-result = analyze_protein_network(
-    tu=tu,
-    proteins=["TP53"],
-    include_structure=True  # Query SASBDB
-)
-
-if result.structural_data:
-    print(f"\nFound {len(result.structural_data)} SAXS/SANS entries:")
-    for entry in result.structural_data:
-        print(f"  {entry.get('sasbdb_id')}: {entry.get('title')}")
-```
+See `python_implementation.py` for runnable examples (`example_tp53_analysis()`, `analyze_protein_network()`).
 
 ## Parameters
 
-### `analyze_protein_network()` Parameters
-
-| Parameter | Type | Default | Description |
-|-----------|------|---------|-------------|
-| `tu` | ToolUniverse | Required | ToolUniverse instance |
-| `proteins` | list[str] | Required | Protein identifiers (gene symbols, UniProt IDs) |
-| `species` | int | 9606 | NCBI taxonomy ID (9606=human, 10090=mouse) |
-| `confidence_score` | float | 0.7 | Min interaction confidence (0-1). 0.4=low, 0.7=high, 0.9=very high |
-| `include_biogrid` | bool | False | Use BioGRID if STRING fails (requires API key) |
-| `include_structure` | bool | False | Include SASBDB structural data (slower) |
-| `suppress_warnings` | bool | True | Suppress ToolUniverse loading warnings |
-
-### Species IDs (Common)
-
-- `9606` - Homo sapiens (human)
-- `10090` - Mus musculus (mouse)
-- `10116` - Rattus norvegicus (rat)
-- `7227` - Drosophila melanogaster (fruit fly)
-- `6239` - Caenorhabditis elegans (worm)
-- `7955` - Danio rerio (zebrafish)
-- `559292` - Saccharomyces cerevisiae (yeast)
+| Parameter | Default | Description |
+|-----------|---------|-------------|
+| `proteins` | Required | Gene symbols or UniProt IDs |
+| `species` | 9606 | NCBI taxonomy ID |
+| `confidence_score` | 0.7 | Min interaction confidence (0–1) |
+| `include_biogrid` | False | BioGRID fallback (requires API key) |
+| `include_structure` | False | SASBDB structural data (slower) |
 
 ### Confidence Score Guidelines
 
-| Score | Level | Description | Use Case |
-|-------|-------|-------------|----------|
-| 0.15 | Very low | All evidence | Exploratory, hypothesis generation |
-| 0.4 | Low | Medium evidence | Default STRING threshold |
-| 0.7 | High | Strong evidence | **Recommended** - reliable interactions |
-| 0.9 | Very high | Strongest evidence | Core interactions only |
+| Score | Use Case |
+|-------|----------|
+| 0.4 | Exploratory analysis (default STRING threshold) |
+| 0.7 | Recommended — reliable interactions |
+| 0.9 | Core interactions only |
 
-## Results Structure
+## Network Edge Fields (STRING)
 
-### `ProteinNetworkResult` Object
-
-```python
-@dataclass
-class ProteinNetworkResult:
-    # Phase 1: Identifier mapping
-    mapped_proteins: List[Dict[str, Any]]
-    mapping_success_rate: float
-
-    # Phase 2: Network retrieval
-    network_edges: List[Dict[str, Any]]
-    total_interactions: int
-
-    # Phase 3: Enrichment analysis
-    enriched_terms: List[Dict[str, Any]]
-    ppi_enrichment: Dict[str, Any]
-
-    # Phase 4: Structural data (optional)
-    structural_data: Optional[List[Dict[str, Any]]]
-
-    # Metadata
-    primary_source: str  # "STRING" or "BioGRID"
-    warnings: List[str]
-```
-
-### Network Edge Format (STRING)
-
-```python
-{
-    "stringId_A": "9606.ENSP00000269305",  # Protein A STRING ID
-    "stringId_B": "9606.ENSP00000258149",  # Protein B STRING ID
-    "preferredName_A": "TP53",             # Protein A name
-    "preferredName_B": "MDM2",             # Protein B name
-    "ncbiTaxonId": 9606,                   # Species
-    "score": 0.999,                        # Combined confidence (0-1)
-    "nscore": 0.0,                         # Neighborhood score
-    "fscore": 0.0,                         # Gene fusion score
-    "pscore": 0.0,                         # Phylogenetic profile score
-    "ascore": 0.947,                       # Coexpression score
-    "escore": 0.951,                       # Experimental score
-    "dscore": 0.9,                         # Database score
-    "tscore": 0.994                        # Text mining score
-}
-```
-
-### Enrichment Term Format
-
-```python
-{
-    "category": "Process",                  # GO category
-    "term": "GO:0006915",                   # GO term ID
-    "description": "apoptotic process",     # Term description
-    "number_of_genes": 4,                   # Genes in your set
-    "number_of_genes_in_background": 1234, # Genes in genome
-    "p_value": 1.23e-05,                    # Enrichment p-value
-    "fdr": 0.0012,                          # FDR correction
-    "inputGenes": "TP53,MDM2,BAX,CASP3"    # Matching genes
-}
-```
-
-## Workflow Details
-
-### 4-Phase Analysis Pipeline
-
-```
-┌─────────────────────────────────────────────────────────────┐
-│ Phase 1: Identifier Mapping                                 │
-│ ─────────────────────────────────────────────────────────── │
-│ STRING_map_identifiers()                                    │
-│   • Validates protein names exist in database              │
-│   • Converts to STRING IDs for consistency                 │
-│   • Returns mapping success rate                           │
-└─────────────────────────────────────────────────────────────┘
-                            ↓
-┌─────────────────────────────────────────────────────────────┐
-│ Phase 2: Network Retrieval                                  │
-│ ─────────────────────────────────────────────────────────── │
-│ PRIMARY: STRING_get_network() (no API key needed)          │
-│   • Retrieves all pairwise interactions                    │
-│   • Returns confidence scores by evidence type             │
-│                                                             │
-│ FALLBACK: BioGRID_get_interactions() (if enabled)          │
-│   • Used if STRING fails or for validation                 │
-│   • Requires BIOGRID_API_KEY                               │
-└─────────────────────────────────────────────────────────────┘
-                            ↓
-┌─────────────────────────────────────────────────────────────┐
-│ Phase 3: Enrichment Analysis                                │
-│ ─────────────────────────────────────────────────────────── │
-│ STRING_functional_enrichment()                              │
-│   • GO terms (Process, Component, Function)                │
-│   • KEGG pathways                                           │
-│   • Reactome pathways                                       │
-│   • FDR-corrected p-values                                  │
-│                                                             │
-│ STRING_ppi_enrichment()                                     │
-│   • Tests if proteins interact more than random            │
-│   • Returns p-value for functional coherence               │
-└─────────────────────────────────────────────────────────────┘
-                            ↓
-┌─────────────────────────────────────────────────────────────┐
-│ Phase 4: Structural Data (Optional)                         │
-│ ─────────────────────────────────────────────────────────── │
-│ SASBDB_search_entries()                                     │
-│   • SAXS/SANS solution structures                           │
-│   • Protein flexibility and conformations                   │
-│   • Complements crystal/cryo-EM data                       │
-└─────────────────────────────────────────────────────────────┘
-```
-
-## Installation & Setup
-
-### Prerequisites
-
-```bash
-# Install ToolUniverse (if not already installed)
-pip install tooluniverse
-
-# Or with extras
-pip install tooluniverse[all]
-```
-
-### Optional: BioGRID API Key
-
-For BioGRID fallback functionality:
-
-1. Register for free API key: https://webservice.thebiogrid.org/
-2. Add to `.env` file:
-   ```bash
-   BIOGRID_API_KEY=your_key_here
-   ```
-
-### Skill Files
-
-```
-tooluniverse-protein-interactions/
-├── SKILL.md                    # This file
-├── python_implementation.py    # Main implementation
-├── QUICK_START.md             # Quick reference
-├── DOMAIN_ANALYSIS.md         # Design rationale
-└── KNOWN_ISSUES.md            # ToolUniverse limitations
-```
+Key fields returned per interaction edge:
+- `score` — combined confidence (0–1)
+- `escore` — experimental score (use for physical binding evidence)
+- `dscore` — database score
+- `tscore` — text mining score
+- `ascore` — coexpression score
+- `preferredName_A`, `preferredName_B` — gene names
 
 ## Extended Analysis Tools
 
-For research questions that go beyond network topology (e.g., druggable nodes, synthetic lethality, clinical context), these ToolUniverse tools complement the core PPI workflow:
-
 **Signaling Pathways:**
-- `OmniPath_get_signaling_interactions` — directed, signed PPI (stimulation/inhibition). Essential for mapping signaling cascades.
+- `OmniPath_get_signaling_interactions` — directed, signed PPI (stimulation/inhibition)
 - `Reactome_map_uniprot_to_pathways` — map proteins to Reactome pathways (param: `uniprot_id`)
 - `ReactomeAnalysis_pathway_enrichment` — pathway enrichment for gene sets
 
 **Druggability & Clinical Context:**
-- `DGIdb_get_drug_gene_interactions` — drug interactions for network hub proteins (param: `genes` as array)
+- `DGIdb_get_drug_gene_interactions` — drug interactions for hub proteins (param: `genes` as array)
 - `DGIdb_get_gene_druggability` — druggability categories
-- `gnomad_get_gene_constraints` — gene essentiality metrics (pLI, oe_lof) for target prioritization
+- `gnomad_get_gene_constraints` — gene essentiality metrics (pLI, oe_lof)
 - `civic_search_evidence_items` — clinical evidence for mutations in network proteins
-- `UniProt_get_function_by_accession` — protein function annotation for key hubs
+- `UniProt_get_function_by_accession` — protein function annotation
 
----
-
-## Tool-Specific Notes (Updated)
+## Tool-Specific Notes
 
 ### IntAct Interaction Data
 
-When using IntAct tools (`intact_get_interactions`, `intact_search_interactions`,
-`intact_get_interaction_network`), note that `interaction_ids` are now returned in
-the `metadata` field of the response, NOT as a top-level key. Access them as:
-
+`interaction_ids` are in the `metadata` field of the response, NOT at the top level:
 ```python
-result = tu.tools.intact_get_interactions(...)
-# Correct: interaction IDs are in metadata
 interaction_ids = result.get("metadata", {}).get("interaction_ids", [])
-# WRONG: result.get("interaction_ids")  -- no longer at top level
 ```
 
 ### BioGRID Chemical Interactions
 
-`BioGRID_get_chemical_interactions` always includes a limitation note in the
-response indicating that chemical interaction data coverage may be incomplete.
-This is by design. The tool defaults to `taxId=9606` (human) when no organism
-argument is provided.
+`BioGRID_get_chemical_interactions` always includes a limitation note — chemical interaction coverage may be incomplete. Defaults to `taxId=9606` (human) when no organism is provided.
 
 ### IntAct `protein_name` Alias
 
-IntAct tools now support `protein_name` as an alias parameter for protein queries,
-in addition to the original parameter names. This simplifies queries when you have
-a protein name but not the specific identifier format.
+IntAct tools accept `protein_name` as an alias parameter in addition to the original identifier parameter.
 
----
+## Domain Reasoning: Multimeric Assemblies & Binding Valency
 
-## Known Limitations
+LOOK UP DON'T GUESS: oligomeric state, subunit stoichiometry, and binding valency. Use RCSB PDB (`RCSB_search_structures`, `RCSB_get_entry_info`) or UniProt (`UniProt_get_function_by_accession`) to confirm whether a protein is a monomer, dimer, trimer, etc. Do not assume from gene name alone.
 
-### 1. ToolUniverse Verbose Output
+### Calculating Multimer Valency from Binding Data
 
-**Issue**: ToolUniverse prints 40+ warning messages during analysis.
+**Valency** = number of independent binding sites on a multimeric complex. A homodimer with one binding site per subunit has valency 2. A pentamer (e.g., IgM) with 2 Fab arms each has valency 10.
 
-**Workaround**: Filter output when running:
-```bash
-python your_script.py 2>&1 | grep -v "Error loading tools"
-```
+Key reasoning steps:
+1. **Determine oligomeric state**: Look up quaternary structure in PDB/UniProt. A "dimer" in solution may be a dimer-of-dimers (tetramer) crystallographically.
+2. **Count binding sites per subunit**: Each subunit contributes independently unless the binding site spans the interface (then the complex itself is the functional unit).
+3. **Valency = subunits x sites_per_subunit** (only if sites are independent). If binding at one site affects another, you have cooperativity, not simple valency.
+4. **Avidity vs affinity**: A multivalent complex binds more tightly than a single site (avidity effect). Apparent Kd_multivalent << Kd_monovalent. The enhancement depends on linker flexibility and target geometry.
 
-See `KNOWN_ISSUES.md` for details.
+### Statistical Factors in Multimeric Binding
 
-### 2. BioGRID Requires API Key
+When a symmetric multimer binds a ligand, **statistical factors** affect the apparent rate constants:
+- **First ligand binding**: kon_apparent = n x kon_intrinsic (n equivalent sites available)
+- **First ligand dissociation**: koff_apparent = koff_intrinsic (only one ligand to dissociate)
+- **General rule**: For a multimer with n identical sites, binding to the i-th site has forward statistical factor (n - i + 1) and reverse statistical factor i.
+- **Macroscopic vs microscopic Kd**: Kd_macro(1st site) = Kd_micro / n. Kd_macro(last site) = n x Kd_micro. The ratio Kd_last / Kd_first = n^2 for non-cooperative binding.
 
-BioGRID fallback requires free API key. STRING works without any API key.
+If measured Kd values deviate from these statistical predictions, the protein shows **positive cooperativity** (Kd decreases more than expected) or **negative cooperativity** (Kd increases more than expected).
 
-### 3. SASBDB May Have API Issues
+### When to Use Binding Curve Analysis vs Stoichiometry
 
-SASBDB endpoints occasionally return errors. Structural data is optional.
+| Approach | Use when | What it tells you |
+|----------|----------|-------------------|
+| **Stoichiometry** (ITC, AUC, SEC-MALS) | You need the number of binding partners per complex | n (sites), not affinity |
+| **Binding curves** (SPR, FP, ELISA) | You need Kd and kinetics | Affinity, but apparent Kd conflates valency and cooperativity |
+| **Hill plot** (log-log binding curve) | You suspect cooperativity | Hill coefficient nH: nH=1 non-cooperative, nH>1 positive, nH<1 negative |
+| **Scatchard plot** (bound/free vs bound) | Classic approach, now less common | Curved = multiple site classes or cooperativity; linear = single Kd |
 
-## Performance
+**Obligate vs facultative multimers**: An obligate dimer (e.g., many kinases) has NO monomeric activity. If your "purified protein" shows no activity, check if dimer formation is required. Use SEC or native PAGE to confirm oligomeric state. Low protein concentration, high salt, or wrong pH can dissociate obligate multimers.
 
-### Typical Execution Times
+## Domain Reasoning: Coiled-Coil Oligomeric State Prediction
 
-| Operation | Time | Notes |
-|-----------|------|-------|
-| Identifier mapping | 1-2 sec | For 5 proteins |
-| Network retrieval | 2-3 sec | Depends on network size |
-| Enrichment analysis | 3-5 sec | For 374 terms |
-| Full 4-phase analysis | 6-10 sec | Excluding ToolUniverse overhead |
+- **Heptad repeat**: (abcdefg)n where positions a and d are hydrophobic core residues.
+- **Oligomeric state from packing**: dimer (leucine zipper, Leu at d), trimer (Ile/Val at a, Leu at d), tetramer (Leu at both a+d), pentamer (complex mixed packing, e.g., Trp or polar residues at a).
+- **Heptad net diagram**: map residues onto helical wheel; a+d form the hydrophobic core interface. The identity of a/d residues determines packing geometry and thus oligomeric state.
+- **Polar residues at a/d** (Asn, Gln) specify parallel vs antiparallel orientation and can select for specific oligomeric states.
+- LOOK UP: search PubMed for "[sequence motif] coiled coil oligomeric state" and check CC+ or SOCKET databases before predicting oligomeric state from sequence alone.
 
-**Note**: Add 4-8 seconds per tool call for ToolUniverse loading (framework limitation).
+## Domain Reasoning: Detergent Effects on Membrane Proteins
 
-### Optimization Tips
+- **Mild detergents** (DDM, LMNG, CHAPS, digitonin) preserve native oligomeric state and lipid interactions; preferred for structural studies.
+- **Harsh detergents** (SDS, OG at high concentration above CMC) can dissociate native complexes and strip stabilizing lipids.
+- **Native MS in different detergents** reveals whether specific lipids stabilize oligomeric assemblies; comparing CHAPS vs OG results distinguishes detergent-stable from lipid-dependent oligomers.
 
-1. **Disable structural data** if not needed: `include_structure=False`
-2. **Use higher confidence scores** to reduce network size: `confidence_score=0.9`
-3. **Filter output** to avoid processing warning messages
-4. **Reuse ToolUniverse instance** across multiple analyses
+## Protein Identification Questions
+
+For "what protein does X" questions: ALWAYS search UniProt and PubMed first — do not guess from memory. Key pathways to know:
+- **Amyloid clearance**: collagen degradation by matrix metalloproteinases is required to expose amyloid deposits, allowing macrophage engulfment. The answer is collagen, not serum amyloid P (SAP) or other amyloid-binding proteins.
+- When a question asks "what protein", give JUST the protein name — no abbreviations, descriptions, or qualifications.
 
 ## Troubleshooting
 
-### "Error: 'protein_ids' is a required property"
-
-✅ **Fixed in this skill** - All parameter names verified in Phase 2 testing.
-
-### No interactions found
-
-- Check protein names are correct (case-sensitive)
-- Try lower confidence score: `confidence_score=0.4`
-- Verify species ID is correct
-- Check if proteins actually interact (not all proteins have known interactions)
-
-### BioGRID not working
-
-- Ensure `BIOGRID_API_KEY` is set in environment
-- Check API key is valid at https://webservice.thebiogrid.org/
-- BioGRID is optional - STRING works without it
-
-### Slow performance
-
-- This is expected (see KNOWN_ISSUES.md)
-- ToolUniverse framework reloads tools on every call
-- Use output filtering to reduce processing time
-
-## Examples
-
-See `python_implementation.py` for:
-- `example_tp53_analysis()` - Complete TP53 network analysis
-- `analyze_protein_network()` - Main function with all options
-- `ProteinNetworkResult` - Result data structure
+- **No interactions found**: verify protein names (case-sensitive), try `confidence_score=0.4`
+- **BioGRID not working**: set `BIOGRID_API_KEY` in environment; STRING works without a key
+- **Verbose output**: filter with `2>&1 | grep -v "Error loading tools"` (see KNOWN_ISSUES.md)
 
 ## References
 
-- **STRING**: https://string-db.org/ (14M+ proteins, 5,000+ organisms)
-- **BioGRID**: https://thebiogrid.org/ (2.3M+ interactions, experimentally validated)
-- **SASBDB**: https://www.sasbdb.org/ (2,000+ SAXS/SANS entries)
-- **ToolUniverse**: https://github.com/mims-harvard/ToolUniverse
-
-## Support
-
-For issues with:
-- **This skill**: Check KNOWN_ISSUES.md and troubleshooting section
-- **ToolUniverse framework**: See TOOLUNIVERSE_BUG_REPORT.md
-- **API errors**: Check database status pages (STRING, BioGRID, SASBDB)
-
-## License
-
-Same as ToolUniverse framework license.
+- STRING: https://string-db.org/
+- BioGRID: https://thebiogrid.org/ (register for free API key)
+- SASBDB: https://www.sasbdb.org/
+- ToolUniverse: https://github.com/mims-harvard/ToolUniverse

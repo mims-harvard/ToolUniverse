@@ -15,7 +15,13 @@ Pipeline for identifying, sourcing, and purchasing chemical compounds from comme
 5. **Structure over name** -- vendor searches by SMILES/InChI are more reliable than name searches
 6. **English-first queries** -- use English compound names in tool calls
 
+## LOOK UP, DON'T GUESS
+When uncertain about any scientific fact, SEARCH databases first rather than reasoning from memory. A database-verified answer is always more reliable than a guess.
+
 ---
+
+## COMPUTE, DON'T DESCRIBE
+When analysis requires computation (statistics, data processing, scoring, enrichment), write and run Python code via Bash. Don't describe what you would do — execute it and report actual results. Use ToolUniverse tools to retrieve data, then Python (pandas, scipy, statsmodels, matplotlib) to analyze it.
 
 ## When to Use
 

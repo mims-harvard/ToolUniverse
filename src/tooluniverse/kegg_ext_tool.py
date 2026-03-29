@@ -444,11 +444,11 @@ class KEGGExtTool(BaseTool):
 
     def _search_disease(self, arguments: Dict[str, Any]) -> Dict[str, Any]:
         """Search KEGG disease database by keyword."""
-        keyword = arguments.get("keyword", "")
+        keyword = arguments.get("keyword") or arguments.get("query", "")
         if not keyword:
             return {
                 "status": "error",
-                "error": "keyword is required (e.g., 'leukemia', 'diabetes')",
+                "error": "keyword or query is required (e.g., 'leukemia', 'diabetes')",
             }
 
         url = f"{KEGG_BASE_URL}/find/disease/{keyword}"

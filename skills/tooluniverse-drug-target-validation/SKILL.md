@@ -7,6 +7,22 @@ description: Comprehensive computational validation of drug targets for early-st
 
 Validate drug target hypotheses using multi-dimensional computational evidence before committing to wet-lab work. Produces a quantitative Target Validation Score (0-100) with priority tier classification and GO/NO-GO recommendation.
 
+## Reasoning Before Searching
+
+A valid drug target must pass 4 gates in order. Failing an early gate makes later gates irrelevant:
+
+1. **Genetic evidence linking it to disease**: Does human genetic data (GWAS, rare variant studies, Mendelian genetics) support this target's role? Genetic evidence is the strongest predictor of clinical success. Use OpenTargets and GWAS catalog before anything else. If no genetic link exists, the hypothesis is speculative — document this clearly.
+2. **Druggability**: Can a molecule reach and modulate the target? Check structure availability (PDB, AlphaFold), binding pocket prediction (ProteinsPlus), target class (kinase, GPCR, nuclear receptor = favorable; transcription factor, scaffold protein = difficult), and existing chemical probes.
+3. **Safety — essentiality in normal tissue**: Is the target expressed in critical tissues (heart, liver, bone marrow)? Is knockout lethal in mice? High expression in essential tissue or lethality in mouse models is a strong safety red flag even before any clinical data.
+4. **Competitive landscape**: Are other drugs already approved or in late-stage trials for this target? If so, the bar is differentiation, not first-in-class. Check ChEMBL, DrugBank, and ClinicalTrials.gov early.
+
+Do not proceed to Phase 3 (Chemical Matter) before completing Phase 1 (Disease Association). Gate 1 failures should prompt a NO-GO or pivot recommendation.
+
+**LOOK UP DON'T GUESS**: Never assume a target is druggable based on its protein family alone, never assume expression is low in a tissue without checking GTEx or HPA, never assume no competitors without searching ClinicalTrials.gov.
+
+## COMPUTE, DON'T DESCRIBE
+When analysis requires computation (statistics, data processing, scoring, enrichment), write and run Python code via Bash. Don't describe what you would do — execute it and report actual results. Use ToolUniverse tools to retrieve data, then Python (pandas, scipy, statsmodels, matplotlib) to analyze it.
+
 ## Key Principles
 
 1. **Report-first** - Create report file FIRST, then populate progressively

@@ -1,0 +1,105 @@
+[
+  {
+    "name": "AgingCohort_search",
+    "type": "AgingCohortSearchTool",
+    "description": "Search a curated registry of ~30 major longitudinal cohort studies relevant to aging research worldwide. Contains study metadata including design, sample size, age range, variable categories, and data access information. Use to find the right cohort for a specific research question, such as which studies measure iron intake, grip strength, or walking speed in older adults. Filters by country, study design (longitudinal/cross-sectional), minimum sample size, and specific variable availability.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "query": {
+          "type": "string",
+          "description": "Keyword search across study names, descriptions, variable categories, and topics. Examples: 'iron intake longitudinal', 'grip strength aging Europe', 'biomarkers elderly China'."
+        },
+        "country": {
+          "type": ["string", "null"],
+          "description": "Filter by country or region. Examples: 'USA', 'UK', 'China', 'Europe', 'Netherlands'. Case-insensitive substring match."
+        },
+        "design": {
+          "type": ["string", "null"],
+          "description": "Filter by study design. One of: 'longitudinal', 'cross-sectional', 'both'.",
+          "enum": ["longitudinal", "cross-sectional", "both", null]
+        },
+        "min_sample_size": {
+          "type": ["integer", "null"],
+          "description": "Minimum sample size threshold. Only returns cohorts with sample_size >= this value."
+        },
+        "has_variable": {
+          "type": ["string", "null"],
+          "description": "Filter for cohorts that include a specific variable category. Substring match against variable categories. Examples: 'iron', 'grip_strength', 'walking_speed', 'nutrition', 'cognitive', 'biomarkers', 'genetics'."
+        }
+      },
+      "required": ["query"],
+      "additionalProperties": false
+    },
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "object",
+          "properties": {
+            "status": {"type": "string", "enum": ["success"]},
+            "data": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "name": {"type": "string"},
+                  "full_name": {"type": "string"},
+                  "country": {"type": "string"},
+                  "design": {"type": "string"},
+                  "sample_size": {"type": "integer"},
+                  "sample_size_note": {"type": "string"},
+                  "age_range": {"type": "string"},
+                  "start_year": {"type": "integer"},
+                  "waves_or_follow_up": {"type": "string"},
+                  "key_variable_categories": {
+                    "type": "array",
+                    "items": {"type": "string"}
+                  },
+                  "description": {"type": "string"},
+                  "access_method": {"type": "string"},
+                  "access_url": {"type": "string"},
+                  "key_publications": {
+                    "type": "array",
+                    "items": {"type": "string"}
+                  }
+                }
+              }
+            },
+            "metadata": {
+              "type": "object",
+              "properties": {
+                "query": {"type": "string"},
+                "filters_applied": {"type": "object"},
+                "total_matched": {"type": "integer"},
+                "total_in_registry": {"type": "integer"}
+              }
+            }
+          },
+          "required": ["status", "data"]
+        },
+        {
+          "type": "object",
+          "properties": {
+            "status": {"type": "string", "enum": ["error"]},
+            "error": {"type": "string"},
+            "retryable": {"type": "boolean"}
+          },
+          "required": ["status", "error"]
+        }
+      ]
+    },
+    "test_examples": [
+      {"query": "iron intake longitudinal"},
+      {"query": "grip strength aging", "country": "Europe"},
+      {"query": "biomarkers elderly", "min_sample_size": 10000},
+      {"query": "walking speed physical function", "has_variable": "walking_speed"},
+      {"query": "nutrition diet", "design": "longitudinal"}
+    ],
+    "label": ["Aging", "Cohort", "Longitudinal", "Epidemiology", "Gerontology"],
+    "metadata": {
+      "tags": ["aging", "cohort", "longitudinal study", "gerontology", "epidemiology", "nutrition", "physical function", "biomarkers", "geriatrics"],
+      "estimated_execution_time": "<1 second",
+      "note": "Internal curated database; no external API calls. Cohort metadata changes rarely."
+    }
+  }
+]

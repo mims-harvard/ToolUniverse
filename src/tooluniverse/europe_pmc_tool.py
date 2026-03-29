@@ -1215,3 +1215,294 @@ class EuropePMCRESTTool(BaseTool):
                 "error": f"Europe PMC API request failed: {str(e)}",
                 "url": url if "url" in locals() else None,
             }
+
+
+@register_tool("EuropePMCStructuredFullTextTool")
+class EuropePMCStructuredFullTextTool(BaseTool):
+    """
+    Retrieve and parse full-text XML from Europe PMC into structured sections
+    (title, abstract, introduction, methods, results, discussion, figures,
+    tables, references).  Accepts a PMC ID or PMID (auto-resolved via the
+    Europe PMC search API).
+    """
+
+    _SECTION_KEYWORDS: dict[str, list[str]] = {
+        "introduction": ["introduction", "background", "intro"],
+        "methods": [
+            "methods",
+            "materials and methods",
+            "material and methods",
+            "methodology",
+            "experimental",
+            "experimental procedures",
+            "study design",
+            "patients and methods",
+        ],
+        "results": ["results", "findings"],
+        "discussion": ["discussion"],
+        "conclusions": ["conclusions", "conclusion", "summary"],
+        "acknowledgments": ["acknowledgments", "acknowledgements", "funding"],
+    }
+
+    def __init__(self, tool_config):
+        super().__init__(tool_config)
+        self.session = requests.Session()
+        self.session.headers.update(
+            {
+                "Accept": "application/xml, text/xml;q=0.9, */*;q=0.8",
+                "User-Agent": (
+                    "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) "
+                    "AppleWebKit/537.36 (KHTML, like Gecko) "
+                    "Chrome/120.0.0.0 Safari/537.36"
+                ),
+            }
+        )
+
+    # ------------------------------------------------------------------
+    # helpers
+    # ------------------------------------------------------------------
+
+    @staticmethod
+    def _local(tag: str) -> str:
+        """Strip XML namespace prefix."""
+        return tag.rsplit("}", 1)[-1] if "}" in tag else tag
+
+    @staticmethod
+    def _itertext(el) -> str:
+        """Collapse all text under *el* into a single whitespace-normalised string."""
+        return " ".join("".join(el.itertext()).split())
+
+    def _resolve_pmid_to_pmcid(self, pmid: str) -> str | None:
+        """Use Europe PMC search to convert a PMID to a PMCID."""
+        url = (
+            "https://www.ebi.ac.uk/europepmc/webservices/rest/search"
+            f"?query=EXT_ID:{pmid}&format=json&pageSize=1"
+        )
+        try:
+            resp = request_with_retry(
+                self.session, "GET", url, timeout=15, max_attempts=2
+            )
+            if resp.status_code != 200:
+                return None
+            results = resp.json().get("resultList", {}).get("result", [])
+            if results:
+                return results[0].get("pmcid") or None
+        except Exception:
+            pass
+        return None
+
+    def _classify_section(self, title_text: str) -> str:
+        """Map a section title to a canonical name, or return 'other'."""
+        low = title_text.lower().strip()
+        for canonical, keywords in self._SECTION_KEYWORDS.items():
+            for kw in keywords:
+                if low == kw or low.startswith(kw):
+                    return canonical
+        return "other"
+
+    # ------------------------------------------------------------------
+    # XML parsing
+    # ------------------------------------------------------------------
+
+    def _parse_article_xml(self, xml_text: str) -> dict:
+        """Parse JATS/NLM article XML into structured sections."""
+        root = ET.fromstring(xml_text)
+
+        # --- title ---
+        title_el = root.find(".//article-title")
+        title = self._itertext(title_el) if title_el is not None else None
+
+        # --- abstract ---
+        abstract_el = root.find(".//abstract")
+        abstract = self._itertext(abstract_el) if abstract_el is not None else None
+
+        # --- body sections ---
+        sections: dict[str, list[dict]] = {}
+        body = root.find(".//body")
+        if body is not None:
+            for sec in body.findall("sec"):
+                sec_type_attr = sec.attrib.get("sec-type", "")
+                title_el = sec.find("title")
+                sec_title = self._itertext(title_el) if title_el is not None else ""
+
+                # Classify
+                canonical = self._classify_section(sec_title)
+                if canonical == "other" and sec_type_attr:
+                    # Fallback to sec-type attribute
+                    canonical = self._classify_section(sec_type_attr)
+
+                # Skip reference-list and footnote sections
+                if sec_type_attr in ("ref-list", "fn-group"):
+                    continue
+
+                text = self._itertext(sec)
+                entry = {"title": sec_title, "text": text}
+                sections.setdefault(canonical, []).append(entry)
+
+        # Flatten single-entry sections into strings for common ones
+        structured_body: dict[str, str | list[dict]] = {}
+        for key in (
+            "introduction",
+            "methods",
+            "results",
+            "discussion",
+            "conclusions",
+            "acknowledgments",
+        ):
+            parts = sections.pop(key, [])
+            if len(parts) == 1:
+                structured_body[key] = parts[0]["text"]
+            elif len(parts) > 1:
+                structured_body[key] = parts
+        # Remaining sections go into 'other_sections'
+        other = []
+        for key, entries in sections.items():
+            other.extend(entries)
+        if other:
+            structured_body["other_sections"] = other
+
+        # --- figures ---
+        figures = []
+        for fig in root.iter("fig"):
+            fig_id = fig.attrib.get("id", "")
+            label_el = fig.find("label")
+            label = self._itertext(label_el) if label_el is not None else None
+            cap_el = fig.find(".//caption")
+            caption = self._itertext(cap_el) if cap_el is not None else None
+            if label or caption:
+                figures.append({"id": fig_id, "label": label, "caption": caption})
+
+        # --- tables ---
+        tables = []
+        for tbl in root.iter("table-wrap"):
+            tbl_id = tbl.attrib.get("id", "")
+            label_el = tbl.find("label")
+            label = self._itertext(label_el) if label_el is not None else None
+            cap_el = tbl.find(".//caption")
+            caption = self._itertext(cap_el) if cap_el is not None else None
+            if label or caption:
+                tables.append({"id": tbl_id, "label": label, "caption": caption})
+
+        # --- references ---
+        references = []
+        for ref in root.iter("ref"):
+            ref_id = ref.attrib.get("id", "")
+            text = self._itertext(ref)
+            if text:
+                references.append({"id": ref_id, "text": text})
+
+        return {
+            "title": title,
+            "abstract": abstract,
+            "sections": structured_body,
+            "figures": figures,
+            "tables": tables,
+            "references": references,
+            "figure_count": len(figures),
+            "table_count": len(tables),
+            "reference_count": len(references),
+        }
+
+    # ------------------------------------------------------------------
+    # run
+    # ------------------------------------------------------------------
+
+    def run(self, arguments):
+        pmcid = arguments.get("pmcid")
+        pmid = arguments.get("pmid")
+
+        # Resolve PMID -> PMCID when only PMID is given
+        if not pmcid and pmid:
+            pmcid = self._resolve_pmid_to_pmcid(str(pmid))
+            if not pmcid:
+                return {
+                    "status": "error",
+                    "error": (
+                        f"Could not resolve PMID {pmid} to a PMC ID. "
+                        "The article may not be in PubMed Central or may not have open-access full text."
+                    ),
+                }
+
+        if not pmcid:
+            return {
+                "status": "error",
+                "error": "Provide `pmcid` (e.g. 'PMC7096075') or `pmid` (e.g. '32226684').",
+            }
+
+        # Normalise PMC ID
+        pmcid_norm, _ = _normalize_pmcid(pmcid)
+        if not pmcid_norm:
+            return {
+                "status": "error",
+                "error": f"Invalid pmcid format: {pmcid!r}",
+            }
+
+        try:
+            max_chars = int(arguments.get("max_section_chars", 50000))
+        except (TypeError, ValueError):
+            max_chars = 50000
+        max_chars = max(1000, min(max_chars, 500000))
+
+        # Fetch full text using the shared fallback chain
+        fetch = _fetch_fulltext_with_trace(
+            self.session,
+            europe_fulltext_xml_url=(
+                f"https://www.ebi.ac.uk/europepmc/webservices/rest/{pmcid_norm}/fullTextXML"
+            ),
+            pmcid=pmcid_norm,
+            timeout=30,
+        )
+        content = fetch.get("content")
+        if not isinstance(content, str) or not content.strip():
+            return {
+                "status": "error",
+                "error": (
+                    f"Full text not available for {pmcid_norm}. "
+                    "The article may not be open access."
+                ),
+                "retrieval_trace": fetch.get("trace") or [],
+            }
+
+        # Only XML sources can be structurally parsed
+        if fetch.get("format") != "xml":
+            return {
+                "status": "error",
+                "error": (
+                    f"Full text for {pmcid_norm} was retrieved as HTML, "
+                    "which cannot be structurally parsed into sections. "
+                    "Use EuropePMC_get_fulltext for plain-text extraction instead."
+                ),
+                "retrieval_trace": fetch.get("trace") or [],
+            }
+
+        try:
+            parsed = self._parse_article_xml(content)
+        except ET.ParseError as exc:
+            return {
+                "status": "error",
+                "error": f"XML parse error: {exc}",
+                "retrieval_trace": fetch.get("trace") or [],
+            }
+
+        # Truncate long section text
+        sections = parsed.get("sections", {})
+        for key, val in sections.items():
+            if isinstance(val, str) and len(val) > max_chars:
+                sections[key] = val[:max_chars] + "... [truncated]"
+            elif isinstance(val, list):
+                for entry in val:
+                    if isinstance(entry, dict) and isinstance(entry.get("text"), str):
+                        if len(entry["text"]) > max_chars:
+                            entry["text"] = (
+                                entry["text"][:max_chars] + "... [truncated]"
+                            )
+
+        return {
+            "status": "success",
+            "data": parsed,
+            "metadata": {
+                "pmcid": pmcid_norm,
+                "source": fetch.get("source"),
+                "format": fetch.get("format"),
+            },
+        }

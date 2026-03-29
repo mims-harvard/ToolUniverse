@@ -3,6 +3,9 @@ name: tooluniverse-pharmacogenomics
 description: Guide pharmacogenomics (PGx) research -- drug-gene interaction lookup, CPIC guideline retrieval, variant-drug annotation, allele function status, FDA biomarker labeling, and clinical dosing recommendations. Covers the full CPIC-to-PharmGKB-to-clinical-recommendation workflow. Use when users ask about pharmacogenomics, drug-gene interactions, CPIC guidelines, genotype-guided dosing, PGx biomarkers, CYP enzyme phenotypes, or star allele interpretation.
 ---
 
+## COMPUTE, DON'T DESCRIBE
+When analysis requires computation (statistics, data processing, scoring, enrichment), write and run Python code via Bash. Don't describe what you would do — execute it and report actual results. Use ToolUniverse tools to retrieve data, then Python (pandas, scipy, statsmodels, matplotlib) to analyze it.
+
 # Pharmacogenomics (PGx) Research Skill
 
 Systematic PGx analysis: resolve gene-drug pairs, retrieve CPIC dosing guidelines, annotate alleles and variants with PharmGKB, check FDA PGx biomarker labeling, and generate evidence-graded clinical recommendations.
@@ -83,61 +86,18 @@ Resolve user input to canonical identifiers before querying PGx databases.
 **EpiGraphDB_get_gene_drug_associations**: `gene_name` (string REQUIRED, e.g., "CYP2D6"). Returns `{status, data: {gene_drug_associations: [{gene, drug, source, pharmgkb_evidence, cpic_level, pgx_on_fda_label, guideline}]}}`.
 - Aggregates CPIC + PharmGKB evidence with FDA label status in one call. Good for quick overview.
 
-### Key Guideline IDs (verified)
+### Finding Guideline IDs
 
-| Guideline ID | Gene(s) | Drug(s) | clinpgxid |
-|---|---|---|---|
-| 100409 | CFTR | Ivacaftor | PA166251449 |
-| 100411 | CYP2C19 | Clopidogrel | PA166251443 |
-| 100412 | HLA-B, CYP2C9 | Phenytoin/Fosphenytoin | PA166251461 |
-| 100414 | CYP2D6, CYP2C19 | Tricyclic Antidepressants | PA166251445 |
-| 100415 | CYP2D6 | Tamoxifen | PA166251458 |
-| 100416 | CYP2D6, OPRM1, COMT | Opioids (Codeine, Tramadol, Hydrocodone) | PA166251454 |
-| 100421 | HLA-B | Abacavir | PA166251444 |
-| 100422 | HLA-B | Allopurinol | PA166251446 |
-| 100425 | CYP2C9, VKORC1, CYP4F2 | Warfarin | PA166251465 |
-| 104243 | CYP2D6 | Atomoxetine | PA166251459 |
+Don't memorize guideline IDs. Use `CPIC_list_guidelines(gene="CYP2D6")` or `CPIC_list_guidelines(drug="codeine")` to discover them. Each result includes both the numeric `id` (for `CPIC_get_recommendations`) and the `clinpgxid` string (for `PharmGKB_get_dosing_guidelines`).
 
 ---
 
 ## Phase 2: Retrieve Dosing Guidelines
 
-### Recommended Workflow: Drug-Name-First Approach (CPICGetRecommendationsTool)
-
-The fastest path from a drug name to dosing recommendations uses the **auto-resolving** `CPIC_get_recommendations` tool:
-
-```
-# PREFERRED: Pass drug name directly -- auto-resolves to guideline_id
-CPIC_get_recommendations(drug="codeine", limit=50)
-  -> Auto-resolves codeine -> guideline_id=100416 via CPIC /drug endpoint
-  -> Filters to codeine-specific recommendations within multi-drug guidelines
-  -> Returns phenotype-specific dosing recommendations
-```
-
-The tool accepts EITHER:
-- `guideline_id` (integer) -- direct guideline lookup
-- `drug` or `drug_name` (string) -- auto-resolved to guideline_id via CPIC API
-
-**This eliminates the need for a separate CPIC_get_drug_info call.** The tool also filters multi-drug guidelines (e.g., CYP2D6 opioid guideline covers codeine + tramadol) to the specific requested drug using RxNorm ID matching.
-
-### Alternative: Two-Step Approach (still valid)
-
-```
-Step 1: CPIC_get_drug_info(name="codeine")
-  -> Extract guidelineid (e.g., 100416)
-
-Step 2: CPIC_get_recommendations(guideline_id=100416, limit=50)
-  -> Filter by phenotype for patient-specific recommendation
-```
-
-### Tool Reference
-
 **CPIC_get_recommendations** (CPICGetRecommendationsTool): `guideline_id` (integer, OR `drug`/`drug_name` string for auto-resolution), `limit` (int, default 50), `offset` (int). Returns `{status, data: {guideline_id, recommendations: [{drugrecommendation, classification, phenotypes, implications, activityscore, lookupkey, population, drug: {name}}], count}}`.
-- `classification`: "Strong", "Moderate", or "Optional" (CPIC recommendation strength).
-- `phenotypes`: Maps gene -> metabolizer phenotype (e.g., `{"CYP2D6": "Poor Metabolizer"}`).
-- `activityscore`: Maps gene -> activity score (e.g., `{"CYP2D6": "0.0"}`).
-- **Drug name auto-resolution**: Pass `drug="codeine"` and the tool calls CPIC `/drug` API with ilike matching to find the guideline_id automatically.
-- **Multi-drug filtering**: When auto-resolving, also extracts RxNorm ID to filter within multi-drug guidelines.
+- Preferred usage: `CPIC_get_recommendations(drug="codeine", limit=50)` — auto-resolves drug name to guideline_id via CPIC API, and filters within multi-drug guidelines (e.g., CYP2D6 opioid guideline covers codeine + tramadol) using RxNorm ID matching.
+- `classification`: "Strong", "Moderate", or "Optional". `phenotypes`: maps gene → metabolizer phenotype. `activityscore`: maps gene → activity score.
+- Fallback: `CPIC_get_drug_info(name="codeine")` to extract guidelineid, then `CPIC_get_recommendations(guideline_id=100416, limit=50)`.
 
 **CPIC_get_drug_info**: `name` (string REQUIRED, lowercase, e.g., "codeine"). Returns `{status, data: [{drugid, guidelineid, flowchart, rxnormid, drugbankid}]}`.
 - Key shortcut: returns `guidelineid` directly. Still useful for extracting DrugBank/ATC IDs.
@@ -179,14 +139,17 @@ Step 2: CPIC_get_recommendations(guideline_id=100416, limit=50)
 **OpenTargets_drug_pharmacogenomics_data**: `chemblId` (string REQUIRED, e.g., "CHEMBL1201560"), `size` (int). Returns PGx variant data from OpenTargets including variant consequences and drug associations.
 - Queries by drug (ChEMBL ID), not by gene. Use when you have a ChEMBL ID and want PGx variant annotations from OpenTargets.
 
-### Activity Score Interpretation (CYP2D6)
+### Metabolizer Status Reasoning
 
-| Activity Score | Phenotype | Clinical Impact |
-|---|---|---|
-| >=3.0 | Ultrarapid Metabolizer | Increased metabolism; risk of toxicity (prodrugs) or treatment failure |
-| 1.25-2.25 | Normal Metabolizer | Standard dosing |
-| 0.25-1.0 | Intermediate Metabolizer | Reduced metabolism; consider dose reduction |
-| 0.0 | Poor Metabolizer | Absent/minimal metabolism; avoid prodrugs, reduce active drug dose |
+A poor metabolizer has reduced or absent enzyme activity. What that means clinically depends entirely on whether the drug is active or a prodrug:
+
+- **Active drug + poor metabolizer**: drug accumulates → toxicity risk (e.g., codeine is a prodrug — this case doesn't apply; but nortriptyline is active — PM → high plasma levels → side effects).
+- **Prodrug + poor metabolizer**: less conversion to active form → reduced efficacy (e.g., codeine → morphine; clopidogrel → active thienopyridine).
+- **Prodrug + ultrarapid metabolizer**: excess activation → toxicity (classic case: codeine in CYP2D6 UM → morphine accumulation → respiratory depression).
+
+This active-vs-prodrug distinction determines the direction of clinical concern. Get it right before interpreting any metabolizer phenotype.
+
+**Star allele reasoning**: Don't memorize allele tables. The logic is always: allele function status (normal / decreased / no function) → diplotype → predicted enzyme activity → phenotype (UM/NM/IM/PM) → clinical recommendation. Use `CPIC_get_alleles(genesymbol=...)` to look up function status for any specific allele.
 
 ---
 
@@ -200,15 +163,9 @@ Step 2: CPIC_get_recommendations(guideline_id=100416, limit=50)
 
 **FDA_get_pharmacogenomics_info_by_drug_name**: `drug_name` (string REQUIRED). Returns FDA label PGx sections with brand/generic names. Good for finding PGx labeling text in actual FDA labels.
 
-### FDA PGx Classification
+### FDA PGx Label Reasoning
 
-| Label Section | Clinical Actionability |
-|---|---|
-| Boxed Warning / Contraindications | Highest -- testing may be required |
-| Dosage and Administration | Direct dosing guidance based on genotype |
-| Use in Specific Populations | Population-specific PGx considerations |
-| Clinical Pharmacology | Informational -- PK/PD impact described |
-| Precautions | General awareness of PGx relevance |
+The `LabelingSection` field tells you how actionable the PGx information is. "Boxed Warning" or "Contraindications" means testing may be required or the drug contraindicated in certain genotypes — highest urgency. "Dosage and Administration" means genotype directly drives dose selection. "Clinical Pharmacology" is usually informational (PK/PD data), not a prescribing directive. When in doubt, retrieve the full label text with `FDA_get_pharmacogenomics_info_by_drug_name`.
 
 ---
 
@@ -228,102 +185,46 @@ Step 2: CPIC_get_recommendations(guideline_id=100416, limit=50)
 
 ### Adverse Event Signal Detection for PGx-Relevant Drugs
 
-**FAERS_filter_serious_events**: `drug_name` (string REQUIRED), `seriousness_type` (string: "all"/"death"/"hospitalization"/"disability"/"life_threatening"), `adverse_event` (string, optional -- filters to reports containing this specific reaction term). Returns `{status, data: {drug_name, seriousness_type, total_serious_events, top_serious_reactions: [{reaction, count}]}}`.
-- Use to identify serious adverse events associated with PGx-relevant drugs (e.g., codeine respiratory depression in CYP2D6 ultrarapid metabolizers).
-- The `adverse_event` parameter restricts results to reports containing that reaction, enabling targeted signal detection.
+**FAERS_filter_serious_events**: `drug_name` (string REQUIRED), `seriousness_type` ("all"/"death"/"hospitalization"/"disability"/"life_threatening"), `adverse_event` (string, optional). Use to detect serious adverse event signals for PGx-relevant drugs — e.g., respiratory depression reports for codeine in the context of CYP2D6 UM status. The `adverse_event` parameter filters to reports containing that specific reaction term.
 
-```python
-# Example: Serious respiratory depression events for codeine
-result = tu.tools.FAERS_filter_serious_events(
-    drug_name="codeine", seriousness_type="all", adverse_event="respiratory depression"
-)
-# result["data"]["total_serious_events"] -> 68
-```
-
-### Optional Tools (require API keys or may be unavailable)
-
-- **DisGeNET_get_vda**: Variant-disease associations (requires DISGENET_API_KEY).
+**Optional**: `DisGeNET_get_vda` for variant-disease associations (requires DISGENET_API_KEY).
 
 ---
 
-## Evidence Grading
+## When PGx Testing Changes Clinical Decisions
 
-### CPIC Evidence Levels
+PGx testing changes clinical decisions ONLY for drugs with narrow therapeutic indices metabolized by polymorphic enzymes where genotype reliably predicts outcome. If the drug has a wide therapeutic index or is cleared by multiple redundant pathways, PGx status rarely alters the prescribing decision even when a variant is present.
 
-| Level | Description | Action |
-|---|---|---|
-| A | Strong evidence, clinical guidelines exist | Prescribing action recommended |
-| B | Moderate evidence | Consider PGx-guided changes |
-| C | Limited evidence | Informational only |
-| D | Insufficient evidence | No clinical action |
+**Evidence grading — reasoning approach**: CPIC levels A/B represent actionable evidence; C/D are informational. PharmGKB level 1A means the annotation is already embedded in a CPIC or DPWG guideline — the highest confidence tier. Levels 3/4 are hypothesis-generating, not prescribing-grade. CPIC recommendation strength (Strong/Moderate/Optional) within a guideline reflects how certain the genotype-to-outcome link is for that specific phenotype.
 
-### PharmGKB Levels of Evidence
-
-| Level | Description |
-|---|---|
-| 1A | Annotation in a CPIC or DPWG guideline, or implemented in a major health system |
-| 1B | Well-replicated clinical evidence |
-| 2A | Moderate clinical evidence |
-| 2B | Limited clinical evidence |
-| 3 | Low-level, annotation-based evidence |
-| 4 | Case report or preclinical only |
-
-### CPIC Recommendation Strength
-
-| Classification | Meaning |
-|---|---|
-| Strong | High confidence; benefits clearly outweigh risks |
-| Moderate | Moderate confidence; benefits likely outweigh risks |
-| Optional | Weak evidence; clinical judgment should guide |
+The key question is not "what level is this?" but "does this level justify changing the prescription?" For Level A CPIC with Strong classification, yes. For PharmGKB level 3, no — report it but don't act on it alone.
 
 ---
 
-## Tool Parameter Quick Reference
+## Key Parameter Notes
 
-| Tool | Key Params | Return Format |
-|---|---|---|
-| CPIC_list_guidelines | (none) | `{status, data: [{id, name, genes, clinpgxid}]}` |
-| CPIC_get_recommendations | `guideline_id` (int) OR `drug`/`drug_name` (string) | `{status, data: {guideline_id, recommendations: [...], count}}` |
-| CPIC_search_gene_drug_pairs | `gene_symbol`/`gene`, `cpiclevel`, `limit` | `{status, data: [{genesymbol, cpiclevel, guidelineid}]}` |
-| CPIC_get_gene_drug_pairs | `genesymbol` | `{status, data: [{cpiclevel, drug:{name}, guidelineid}]}` |
-| CPIC_get_alleles | `genesymbol`, `limit` | `{status, data: [{name, clinicalfunctionalstatus, activityvalue}]}` |
-| CPIC_get_gene_info | `symbol` | `{status, data: [{symbol, ensemblid, lookupmethod}]}` |
-| CPIC_get_drug_info | `name` (lowercase) | `{status, data: [{drugid, guidelineid, flowchart}]}` |
-| CPIC_list_drugs | (none) | `{status, data: [{name, guidelineid}]}` |
-| CPIC_list_pgx_genes | (none) | `{status, data: [{symbol, lookupmethod}]}` |
-| PharmGKB_search_genes | `query` | `{status, data: [{id, symbol, name}]}` |
-| PharmGKB_search_drugs | `query` | `{status, data: [{id, name, types}]}` |
-| PharmGKB_search_variants | `query` (rsID) | `{status, data: [{id, symbol, clinicalSignificance}]}` |
-| PharmGKB_get_clinical_annotations | `annotation_id` (required) | `{status, data: {accessionId, allelePhenotypes, levelOfEvidence}}` |
-| PharmGKB_get_clinical_annotations | `annotation_id` | `{status, data: {allelePhenotypes, levelOfEvidence}}` |
-| PharmGKB_get_dosing_guidelines | `guideline_id` (clinpgxid string) | `{status, data: {name, level, literature}}` |
-| PharmGKB_get_gene_details | `gene_id` (accession) | `{status, data: {symbol, name, alleleType}}` |
-| PharmGKB_get_drug_details | `drug_id` (chemical ID) | `{status, data: {name, smiles, types}}` |
-| fda_pharmacogenomic_biomarkers | `drug_name`, `biomarker`, `limit` | `{status, count, results: [{Drug, Biomarker, LabelingSection}]}` |
-| FDA_get_pharmacogenomics_info_by_drug_name | `drug_name` | FDA label PGx sections |
-| EpiGraphDB_get_gene_drug_associations | `gene_name` | `{status, data: {gene_drug_associations: [...]}}` |
-| DGIdb_get_drug_gene_interactions | `genes` (array) | Drug-gene interactions with sources |
-| DGIdb_get_gene_druggability | `genes` (array) | Gene categories |
-| OpenTargets_drug_pharmacogenomics_data | `chemblId`, `size` | PGx variant data by drug |
-| FAERS_filter_serious_events | `drug_name`, `seriousness_type`, `adverse_event` (optional) | `{status, data: {total_serious_events, top_serious_reactions}}` |
+Critical parameter behaviors to remember — these are the ones that actually cause failures:
+
+- `CPIC_get_recommendations`: accepts `guideline_id` (integer) OR `drug`/`drug_name` (string). Never pass guideline_id as a string.
+- `PharmGKB_get_dosing_guidelines`: requires `clinpgxid` (e.g., "PA166251445"), not the numeric `pharmgkbid`. Get clinpgxid from `CPIC_list_guidelines`.
+- `PharmGKB_get_clinical_annotations`: requires `annotation_id`. Cannot query by gene or drug. Discover IDs via `PharmGKB_search_variants(query=rsID)`.
+- `fda_pharmacogenomic_biomarkers`: default `limit=10` is almost always too small. Pass `limit=1000`.
+- `CPIC_get_drug_info`: drug name must be lowercase.
+- `DGIdb_get_drug_gene_interactions` and `DGIdb_get_gene_druggability`: `genes` is an array, not a string (e.g., `["CYP2D6"]`).
+- `CPIC_search_gene_drug_pairs`: returns RxNorm IDs, not drug names. Use `CPIC_get_gene_drug_pairs` when you need drug names.
 
 ---
 
-## Common Mistakes to Avoid
+## CPIC Guideline Application Reasoning
 
-| Mistake | Correction |
-|---|---|
-| Using wrong params with `CPIC_list_guidelines` | Supports `gene`, `gene_symbol`, `drug`, `drug_name` filters; use them to filter server-side |
-| Using `CPIC_search_gene_drug_pairs` | Tool does not exist; use `CPIC_search_gene_drug_pairs` |
-| Passing string to `guideline_id` in CPIC_get_recommendations | Must be integer (e.g., 100416 not "100416") -- OR use `drug="codeine"` for auto-resolution |
-| Using `pharmgkbid` in PharmGKB_get_dosing_guidelines | Use `clinpgxid` (e.g., "PA166251445") |
-| Passing gene/drug to PharmGKB_get_clinical_annotations | Requires `annotation_id`; discover IDs via `PharmGKB_search_variants(query=rsID)` |
-| Omitting `limit` for fda_pharmacogenomic_biomarkers | Default is 10; always pass `limit=1000` |
-| Using `gene_name` for DGIdb | Param is `genes` (array), e.g., `["CYP2D6"]` |
-| Using uppercase drug name in CPIC_get_drug_info | Must be lowercase (e.g., "codeine" not "Codeine") |
-| Calling CPIC_get_drug_info then CPIC_get_recommendations separately | Use `CPIC_get_recommendations(drug="codeine")` for one-step resolution |
-| Not using CPIC_list_guidelines to discover clinpgxid | Call it first, then pass `clinpgxid` to PharmGKB_get_dosing_guidelines |
-| Accessing recommendations as `data[0].drugrecommendation` | Auto-resolve response nests under `data.recommendations` list |
+CPIC guidelines give genotype → phenotype → recommendation mappings. The skill is knowing when to apply them, not memorizing the mappings themselves. Use tools to retrieve the specific recommendation for the specific phenotype. The reasoning chain is:
+
+1. Does a CPIC guideline exist for this gene-drug pair? (Level A or B = actionable)
+2. What is the patient's phenotype? (from diplotype + allele function statuses)
+3. What does the guideline recommend for that phenotype? (retrieve with `CPIC_get_recommendations`)
+4. Is there FDA label reinforcement? (check `fda_pharmacogenomic_biomarkers`)
+
+If step 1 is no, fall back to PharmGKB variant annotations for evidence-graded but non-guideline information.
 
 ---
 
@@ -342,101 +243,21 @@ result = tu.tools.FAERS_filter_serious_events(
 
 ## Example Workflows
 
-### Workflow 1: CYP2D6 Poor Metabolizer Prescribed Codeine (one-step)
+**Drug-first (codeine + CYP2D6 PM)**: `CPIC_get_recommendations(drug="codeine", limit=50)` → filter `phenotypes.CYP2D6="Poor Metabolizer"` → Strong recommendation: avoid codeine. Then `CPIC_get_alleles(genesymbol="CYP2D6", limit=100)` to confirm star allele function (e.g., *4/*4 → no function, AS 0.0). Then `fda_pharmacogenomic_biomarkers(drug_name="codeine", limit=1000)` to confirm FDA label status. Gene-first alternative: `CPIC_get_gene_drug_pairs(genesymbol="CYP2D6")` to list all associated drugs.
 
-```
-Step 1: CPIC_get_recommendations(drug="codeine", limit=50)
-  -> Auto-resolves codeine -> guideline_id=100416
-  -> Filters to codeine-specific recommendations (excludes tramadol)
-  -> Filter for phenotypes.CYP2D6="Poor Metabolizer"
-  -> Result: "Avoid codeine use. If opioid use warranted, consider non-codeine opioid."
-  -> classification: "Strong"
+**Gene-first (all CYP2C19 drugs)**: `CPIC_search_gene_drug_pairs(gene_symbol="CYP2C19", cpiclevel="A")` for Level A pairs. `EpiGraphDB_get_gene_drug_associations(gene_name="CYP2C19")` for CPIC + PharmGKB + FDA label overview in one call. `fda_pharmacogenomic_biomarkers(biomarker="CYP2C19", limit=1000)` for complete FDA coverage.
 
-Step 2: CPIC_get_alleles(genesymbol="CYP2D6", limit=100)
-  -> Verify patient's star alleles (e.g., *4/*4 = No function + No function = AS 0.0)
-
-Step 3: fda_pharmacogenomic_biomarkers(drug_name="codeine", limit=1000)
-  -> Confirm FDA label mentions CYP2D6
-
-Step 4: Report with CPIC level A, Strong recommendation, FDA labeling status
-```
-
-**Alternative (gene-first)**: If starting from a gene, use `CPIC_get_gene_drug_pairs(genesymbol="CYP2D6")` to find all associated drugs and their guideline IDs.
-
-### Workflow 2: Which Drugs Are Affected by CYP2C19 Genotype?
-
-```
-Step 1: CPIC_search_gene_drug_pairs(gene_symbol="CYP2C19", cpiclevel="A")
-  -> List all Level A pairs (clopidogrel, voriconazole, PPIs, SSRIs, TCAs)
-
-Step 2: EpiGraphDB_get_gene_drug_associations(gene_name="CYP2C19")
-  -> Cross-reference with PharmGKB evidence and FDA label status
-
-Step 3: fda_pharmacogenomic_biomarkers(biomarker="CYP2C19", limit=1000)
-  -> Get full FDA labeling coverage
-
-Step 4: Summarize by evidence tier and clinical actionability
-```
-
-### Workflow 3: Variant rs1799853 Clinical Significance
-
-```
-Step 1: PharmGKB_search_variants(query="rs1799853")
-  -> Returns: CYP2C9 variant, Missense, drug-response significance
-
-Step 2: CPIC_get_alleles(genesymbol="CYP2C9", limit=100)
-  -> Map variant to star allele (*2 contains rs1799853)
-  -> clinicalfunctionalstatus: "Decreased function"
-
-Step 3: CPIC_get_gene_drug_pairs(genesymbol="CYP2C9")
-  -> List affected drugs (warfarin, phenytoin, NSAIDs)
-
-Step 4: For each drug with guideline, retrieve specific dosing recommendations:
-  CPIC_get_recommendations(drug="phenytoin", limit=50)
-  -> Auto-resolves and returns phenotype-specific dosing
-```
-
-### Workflow 4: Quick Drug PGx Lookup (new -- drug-name-only)
-
-```
-Step 1: CPIC_get_recommendations(drug="tamoxifen", limit=50)
-  -> Auto-resolves tamoxifen -> guideline_id=100415
-  -> Returns all CYP2D6 phenotype recommendations
-
-Step 2: PharmGKB_search_variants(query="rs16947")  # Use known variant rsID for CYP2D6*2
-  -> Discover PharmGKB clinical annotation IDs
-
-Step 3: fda_pharmacogenomic_biomarkers(drug_name="tamoxifen", limit=1000)
-  -> FDA labeling status
-
-Step 4: Report with dosing table by phenotype
-```
+**Variant-first (rs1799853)**: `PharmGKB_search_variants(query="rs1799853")` → CYP2C9 variant, drug-response significance. `CPIC_get_alleles(genesymbol="CYP2C9", limit=100)` → maps to *2, "Decreased function". `CPIC_get_gene_drug_pairs(genesymbol="CYP2C9")` → warfarin, phenytoin, NSAIDs. For each drug with a guideline: `CPIC_get_recommendations(drug="phenytoin", limit=50)`.
 
 ---
 
 ## Drug Class Context (RxClass)
 
-When PGx analysis involves understanding which drug class a substrate belongs to, or finding all drugs in a class that share the same metabolizing enzyme, use:
-
-| Tool | Key Params | Use Case |
-|------|-----------|----------|
-| `RxClass_get_drug_classes` | `drug_name` or `rxcui`, `rela_source` | Get all class memberships (ATC, MoA, EPC, VA) for a drug |
-| `RxClass_find_classes` | `query` (keyword), `class_type` | Find class IDs without knowing RxNorm CUI |
-| `RxClass_get_class_members` | `class_id`, `rela_source`, `ttys="IN"` | List all drugs within a therapeutic class |
-
-Example: find all SSRIs (class members) to advise which require CYP2D6 testing as a class note.
+When PGx analysis involves understanding which drug class a substrate belongs to, or finding all drugs in a class that share the same metabolizing enzyme: use `RxClass_get_drug_classes(drug_name=...)` to get all class memberships for a drug, `RxClass_find_classes(query=..., class_type=...)` to find class IDs from a keyword, and `RxClass_get_class_members(class_id=..., rela_source=..., ttys="IN")` to list all drugs in a class. Example: find all SSRIs to advise which require CYP2D6 testing as a class note.
 
 ## FDA Substance Identification (FDAGSRS)
 
-For canonical FDA substance identification (UNII codes, cross-references to ATC/DrugBank/CAS), use:
-
-| Tool | Key Params | Use Case |
-|------|-----------|----------|
-| `FDAGSRS_search_substances` | `query` (name/UNII/InChIKey), `substance_class`, `limit` | Find UNII code and substance class for any FDA-regulated substance |
-| `FDAGSRS_get_substance` | `unii` (10-char code) | Full record: all names, cross-references, structure, approval status |
-| `FDAGSRS_get_structure` | `unii` | SMILES, InChIKey, MW, stereochemistry (chemical substances only) |
-
-Example: confirm regulatory identity of a PGx-relevant drug (e.g., verify that "warfarin sodium" and "warfarin" share the same UNII) before cross-referencing in CPIC or PharmGKB.
+For canonical FDA substance identification (UNII codes, cross-references to ATC/DrugBank/CAS): use `FDAGSRS_search_substances(query=...)` to find the UNII code, `FDAGSRS_get_substance(unii=...)` for the full record with all names and cross-references, and `FDAGSRS_get_structure(unii=...)` for SMILES/InChIKey. Useful to confirm that two drug name variants (e.g., "warfarin sodium" and "warfarin") share the same UNII before cross-referencing in CPIC or PharmGKB.
 
 ---
 

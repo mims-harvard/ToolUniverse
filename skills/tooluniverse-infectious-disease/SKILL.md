@@ -3,6 +3,9 @@ name: tooluniverse-infectious-disease
 description: Rapid pathogen characterization and drug repurposing analysis for infectious disease outbreaks. Identifies pathogen taxonomy, essential proteins, predicts structures, and screens existing drugs via docking. Use when facing novel pathogens, emerging infections, or needing rapid therapeutic options during outbreaks.
 ---
 
+## COMPUTE, DON'T DESCRIBE
+When analysis requires computation (statistics, data processing, scoring, enrichment), write and run Python code via Bash. Don't describe what you would do — execute it and report actual results. Use ToolUniverse tools to retrieve data, then Python (pandas, scipy, statsmodels, matplotlib) to analyze it.
+
 # Infectious Disease Outbreak Intelligence
 
 Rapid response system for emerging pathogens using taxonomy analysis, target identification, structure prediction, and computational drug repurposing.
@@ -15,6 +18,15 @@ Rapid response system for emerging pathogens using taxonomy analysis, target ide
 5. **Evidence-graded** - Grade repurposing candidates by evidence strength
 6. **Actionable output** - Prioritized drug candidates with rationale
 7. **English-first queries** - Always use English terms in tool calls; respond in user's language
+
+**REASONING STRATEGY — Start Here**:
+Start with pathogen identification: What type of organism? (virus, bacteria, fungus, parasite). Then ask:
+- What are the essential proteins? (required for replication or viability — cannot be mutated away)
+- Which are surface-exposed? (accessible to drugs and antibodies)
+- Which are conserved across strains? (targeting conserved regions prevents resistance escape)
+These three questions define your drug targets and vaccine candidates. Organisms in the same genus share targets — look up drug precedent for related pathogens before predicting from scratch.
+
+**LOOK UP DON'T GUESS**: Never assume a pathogen's taxonomy, genome size, or protein function. Always call `BVBRC_search_taxonomy` or `UniProt_search` first. Even well-known pathogens have strains with different drug susceptibility profiles — look up the specific strain when known.
 
 ---
 
@@ -122,19 +134,7 @@ Phase 6: Report Synthesis
 ### Phase 1: Pathogen Identification
 Classify via NCBI Taxonomy (query param). Identify related pathogens with existing drugs for knowledge transfer. Determine genome/proteome availability.
 
-**Pathogen classification decision tree** — determines the repurposing strategy:
-
-| Pathogen Type | Drug Strategy | Key Targets | Example |
-|---------------|--------------|-------------|---------|
-| **RNA virus** | Polymerase inhibitors (nucleoside analogs), protease inhibitors | RdRp, main protease, helicase | SARS-CoV-2 → remdesivir, nirmatrelvir |
-| **DNA virus** | Polymerase inhibitors, kinase inhibitors | DNA pol, thymidine kinase | HSV → acyclovir |
-| **Gram-negative bacteria** | Cell wall (beta-lactams), ribosome (aminoglycosides), topoisomerase (fluoroquinolones) | PBPs, 30S/50S ribosome, DNA gyrase | E. coli → meropenem |
-| **Gram-positive bacteria** | Cell wall (vancomycin), ribosome (macrolides), cell membrane (daptomycin) | PBPs, 50S ribosome, membrane | MRSA → vancomycin |
-| **Mycobacteria (acid-fast)** | Cell wall mycolic acid (isoniazid), RNA polymerase (rifampin), ATP synthase (bedaquiline), DNA gyrase (fluoroquinolones) | InhA, RpoB, AtpE, GyrA | M. tuberculosis → HRZE regimen |
-| **Fungal** | Ergosterol (azoles), cell wall (echinocandins), nucleic acid (flucytosine) | Lanosterol demethylase, glucan synthase | Candida → fluconazole |
-| **Parasite** | Variable by species; often metabolic targets | DHFR, proteasome, kinases | Plasmodium → artemisinin |
-
-**Knowledge transfer principle**: Drugs effective against related pathogens are the highest-priority repurposing candidates. A protease inhibitor for SARS-CoV-1 is immediately relevant to SARS-CoV-2.
+**Knowledge transfer principle**: Drugs effective against related pathogens are the highest-priority repurposing candidates. A protease inhibitor for SARS-CoV-1 is immediately relevant to SARS-CoV-2. Look up the related pathogen's approved drugs in ChEMBL before generating candidates from first principles.
 
 ### Phase 2: Target Identification
 Search UniProt for pathogen proteins (reviewed). Check ChEMBL for drug precedent. Score targets by: Essentiality (30%), Conservation (25%), Druggability (25%), Drug precedent (20%). Aim for 5+ targets.

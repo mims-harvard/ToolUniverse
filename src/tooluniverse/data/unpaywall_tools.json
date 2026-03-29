@@ -22,65 +22,106 @@
     },
     "return_schema": {
       "type": "object",
-      "description": "Open access status and location information for the given DOI",
       "properties": {
         "is_oa": {
-          "type": "boolean",
-          "description": "Whether the article is open access"
+          "type": "boolean"
         },
         "oa_status": {
-          "type": "string",
-          "description": "Open access status (e.g., 'gold', 'green', 'hybrid', 'closed')"
+          "type": "string"
         },
         "best_oa_location": {
-          "type": "object",
-          "description": "Best available open access location"
-        },
-        "oa_locations": {
-          "type": "array",
-          "description": "All available open access locations"
-        },
-        "journal_is_oa": {
-          "type": "boolean",
-          "description": "Whether the journal is open access"
-        },
-        "journal_issn_l": {
-          "type": "string",
-          "description": "Journal ISSN-L"
-        },
-        "journal_issns": {
-          "type": "array",
-          "items": {
-            "type": "string"
-          },
-          "description": "Journal ISSNs"
+          "type": [
+            "object",
+            "null"
+          ]
         },
         "doi": {
-          "type": "string",
-          "description": "The DOI that was queried"
+          "type": "string"
         },
         "title": {
-          "type": "string",
-          "description": "Article title"
-        },
-        "year": {
-          "type": "integer",
-          "description": "Publication year"
-        },
-        "publisher": {
-          "type": "string",
-          "description": "Publisher name"
-        },
-        "url": {
-          "type": "string",
-          "description": "URL to the article"
+          "type": "string"
         }
-      }
+      },
+      "required": [
+        "is_oa"
+      ]
     },
     "test_examples": [
       {
-        "doi": "10.1038/nature12345",
-        "email": "test@example.com"
+        "doi": "10.1038/nature12373",
+        "email": "tools@tooluniverse.org"
+      }
+    ]
+  },
+  {
+    "type": "UnpaywallTool",
+    "name": "Unpaywall_get_full_text_url",
+    "description": "Retrieve full-text PDF and landing page URLs for a scholarly article via its DOI. Returns the best open-access PDF link, landing page URL, all available OA locations with their host types (publisher, repository, etc.), plus basic article metadata (title, journal, publisher). Use this tool when you need to access the full text of a paper.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "doi": {
+          "type": "string",
+          "description": "DOI (Digital Object Identifier) of the article, e.g. '10.1038/nature12373'."
+        },
+        "email": {
+          "type": "string",
+          "description": "Contact email for Unpaywall API polite pool. Defaults to 'tools@tooluniverse.org' if not provided.",
+          "default": "tools@tooluniverse.org"
+        }
+      },
+      "required": [
+        "doi"
+      ]
+    },
+    "return_schema": {
+      "type": "object",
+      "properties": {
+        "doi": {
+          "type": "string"
+        },
+        "title": {
+          "type": "string"
+        },
+        "is_oa": {
+          "type": "boolean"
+        },
+        "oa_status": {
+          "type": "string"
+        },
+        "best_pdf_url": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "best_landing_page_url": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "best_oa_url": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "all_oa_locations": {
+          "type": "array"
+        }
+      },
+      "required": [
+        "doi",
+        "is_oa"
+      ]
+    },
+    "test_examples": [
+      {
+        "doi": "10.1038/nature12373"
+      },
+      {
+        "doi": "10.7554/eLife.01567"
       }
     ]
   }

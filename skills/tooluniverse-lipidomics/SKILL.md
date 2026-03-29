@@ -7,6 +7,12 @@ description: Analyze lipids, lipid metabolism, and lipid-disease associations us
 
 Integrated pipeline for lipid identification, classification, pathway mapping, and disease association analysis. Distinct from general metabolomics because lipids have unique classification systems (LIPID MAPS), specialized pathways (sphingolipid, eicosanoid, steroid), and disease associations (cardiovascular, neurodegeneration, metabolic syndrome).
 
+## Reasoning Strategy
+
+Lipid identification starts with mass spectrometry: the lipid class is determined by the head group fragment mass (e.g., m/z 184 for phosphocholine in positive mode), total chain length and saturation from the precursor exact mass, and individual fatty acid chains from neutral loss or product ion scans. LIPID MAPS classification organizes lipids by chemical structure into 8 categories — knowing the category immediately tells you the likely biological context (sphingolipids → apoptosis/neurodegeneration; glycerophospholipids → membrane remodeling; eicosanoids → inflammation). Structural specificity matters biologically: Cer(d18:1/16:0) and Cer(d18:1/24:1) have different membrane properties and disease associations despite being the same lipid class. Always map changed lipids back to metabolic pathways because lipids are intermediates — an elevated ceramide could mean increased synthesis (CERS activity up), decreased degradation (ASAH1 down), or shunting from sphingomyelin (SMPD1 up).
+
+**LOOK UP DON'T GUESS**: Do not assume a lipid's LIPID MAPS ID, exact mass, or pathway membership — query `LipidMaps_search_by_name` first. Do not guess which diseases are associated with a lipid class; retrieve them from HMDB or CTD.
+
 **Key principles**:
 1. **LIPID MAPS classification first** — use the 8-category system (fatty acyls, glycerolipids, glycerophospholipids, sphingolipids, sterol lipids, prenol lipids, saccharolipids, polyketides)
 2. **Structural specificity matters** — chain length, unsaturation, and sn-position affect biological function
@@ -81,20 +87,7 @@ PubChem_get_CID_by_compound_name(name="ceramide") → CID, SMILES
 
 ### Phase 1: Structural Classification
 
-LIPID MAPS classifies all lipids into 8 categories:
-
-| Category | Prefix | Examples | Biological Role |
-|----------|--------|---------|-----------------|
-| Fatty Acyls | FA | Palmitic acid, arachidonic acid, DHA | Energy storage, signaling precursors |
-| Glycerolipids | GL | Triacylglycerols, diacylglycerols | Energy storage (fat), signaling (DAG) |
-| Glycerophospholipids | GP | Phosphatidylcholine, PE, PS, PI | Membrane structure, signaling |
-| Sphingolipids | SP | Ceramide, sphingomyelin, gangliosides | Membrane rafts, apoptosis, neurodegeneration |
-| Sterol Lipids | ST | Cholesterol, bile acids, vitamin D | Membrane fluidity, hormone precursors |
-| Prenol Lipids | PR | Coenzyme Q, dolichol | Electron transport, protein modification |
-| Saccharolipids | SL | Lipid A (LPS component) | Bacterial cell wall, innate immunity trigger |
-| Polyketides | PK | Aflatoxins, erythromycin | Natural products, some drugs |
-
-**Interpretation**: The LIPID MAPS category tells you the biological context immediately. Sphingolipid changes → think neurodegeneration, apoptosis, inflammation. Glycerophospholipid changes → think membrane remodeling. Eicosanoid changes (from arachidonic acid) → think inflammation.
+Use `LipidMaps_get_compound_by_id` to retrieve the LIPID MAPS 8-category classification (FA, GL, GP, SP, ST, PR, SL, PK) for any lipid. The category immediately signals biological context: SP (sphingolipids) → apoptosis/neurodegeneration; GP (glycerophospholipids) → membrane remodeling; FA-derived eicosanoids → inflammation.
 
 ### Phase 2: Pathway Mapping
 
@@ -128,17 +121,7 @@ HMDB_get_metabolite(compound_name="ceramide")  # metabolite-disease links
 PubMed_search_articles(query="ceramide biomarker Alzheimer")  # clinical evidence
 ```
 
-**Disease interpretation framework for lipids**:
-
-| Lipid Change | Direction | Common Disease Context | Mechanism |
-|---|---|---|---|
-| Ceramide ↑ | Elevated | Alzheimer's, heart failure, insulin resistance | Apoptosis induction, mitochondrial dysfunction |
-| Sphingomyelin ↓ | Depleted | Niemann-Pick disease type A/B | SMPD1 deficiency → SM accumulation in lysosomes |
-| Lysophosphatidylcholine ↑ | Elevated | Atherosclerosis, inflammation | Lp-PLA2 activity, foam cell formation |
-| Oxidized phospholipids ↑ | Elevated | CVD, atherosclerosis | LDL oxidation, endothelial dysfunction |
-| Bile acids (altered ratio) | Shifted | NAFLD, cholestasis, IBD | FXR/TGR5 signaling disruption |
-| Eicosanoids (PGE2, LTB4) ↑ | Elevated | Inflammation, cancer | COX-2/LOX overactivation |
-| Gangliosides (altered) | Variable | Tay-Sachs, Gaucher, cancer | Glycosphingolipid degradation defects |
+**Disease context**: Ceramide elevation → apoptosis, Alzheimer's, insulin resistance. Sphingomyelin depletion → Niemann-Pick. Oxidized phospholipids → CVD. Altered bile acid ratios → NAFLD, cholestasis. Eicosanoid elevation → inflammation. Always verify via HMDB or CTD rather than relying on memory.
 
 ### Phase 4: Interpretation & Report
 

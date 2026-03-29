@@ -1,0 +1,115 @@
+[
+  {
+    "name": "MetaAnalysis_run",
+    "description": "Run a fixed-effects or random-effects meta-analysis from a set of effect sizes and standard errors. Uses inverse-variance weighting for fixed effects and the DerSimonian-Laird estimator for random effects. Returns pooled effect size with 95% CI, p-value, heterogeneity statistics (Cochran Q, I-squared, tau-squared), per-study weights, and a text interpretation. Pure local computation -- no external API calls. Useful for combining results from multiple studies in systematic reviews.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "studies": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "name": {
+                "type": "string",
+                "description": "Study identifier or label."
+              },
+              "effect_size": {
+                "type": "number",
+                "description": "Effect size estimate (e.g., beta coefficient, log odds ratio, mean difference)."
+              },
+              "se": {
+                "type": "number",
+                "description": "Standard error of the effect size."
+              },
+              "n": {
+                "type": ["integer", "null"],
+                "description": "Sample size (optional, for informational purposes)."
+              }
+            },
+            "required": ["name", "effect_size", "se"]
+          },
+          "description": "List of studies, each with name, effect_size, se, and optional n."
+        },
+        "method": {
+          "type": ["string", "null"],
+          "enum": ["fixed", "random", null],
+          "description": "Meta-analysis method: 'fixed' for fixed-effects (inverse-variance), 'random' for random-effects (DerSimonian-Laird). Default: 'random'."
+        }
+      },
+      "required": ["studies"]
+    },
+    "type": "MetaAnalysisTool",
+    "test_examples": [
+      {
+        "studies": [
+          {"name": "Study A", "effect_size": 0.5, "se": 0.1, "n": 200},
+          {"name": "Study B", "effect_size": 0.3, "se": 0.15, "n": 150},
+          {"name": "Study C", "effect_size": 0.7, "se": 0.2, "n": 100}
+        ],
+        "method": "random"
+      },
+      {
+        "studies": [
+          {"name": "Trial 1", "effect_size": -0.25, "se": 0.08},
+          {"name": "Trial 2", "effect_size": -0.30, "se": 0.10},
+          {"name": "Trial 3", "effect_size": -0.20, "se": 0.12},
+          {"name": "Trial 4", "effect_size": -0.35, "se": 0.09}
+        ],
+        "method": "fixed"
+      }
+    ],
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "object",
+          "required": ["method", "num_studies", "pooled_effect", "pooled_se", "per_study"],
+          "properties": {
+            "method": {"type": "string"},
+            "num_studies": {"type": "integer"},
+            "pooled_effect": {"type": "number"},
+            "pooled_se": {"type": "number"},
+            "pooled_ci_lower": {"type": "number"},
+            "pooled_ci_upper": {"type": "number"},
+            "pooled_z": {"type": "number"},
+            "pooled_p_value": {"type": "number"},
+            "heterogeneity": {
+              "type": "object",
+              "properties": {
+                "Q": {"type": "number"},
+                "Q_df": {"type": "integer"},
+                "Q_p_value": {"type": "number"},
+                "I_squared": {"type": "number"},
+                "tau_squared": {"type": ["number", "null"]}
+              }
+            },
+            "per_study": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "name": {"type": "string"},
+                  "effect_size": {"type": "number"},
+                  "se": {"type": "number"},
+                  "weight_pct": {"type": "number"},
+                  "ci_lower": {"type": "number"},
+                  "ci_upper": {"type": "number"}
+                }
+              }
+            },
+            "interpretation": {"type": "string"}
+          }
+        },
+        {
+          "type": "object",
+          "required": ["error"],
+          "properties": {
+            "error": {
+              "type": "string"
+            }
+          }
+        }
+      ]
+    }
+  }
+]

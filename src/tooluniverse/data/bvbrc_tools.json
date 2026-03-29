@@ -448,6 +448,13 @@
             "null"
           ],
           "description": "Maximum number of results. Default: 10. Max: 100."
+        },
+        "keyword": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Alias for product: gene product keyword to search (e.g., 'spike protein', 'beta-lactamase')."
         }
       },
       "required": []

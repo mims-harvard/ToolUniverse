@@ -9,7 +9,8 @@ from ._shared_client import get_shared_client
 
 
 def ensembl_get_variation(
-    id: str,
+    id: Optional[str] = None,
+    variant_id: Optional[str] = None,
     species: Optional[str] = "human",
     phenotypes: Optional[int] = 0,
     *,
@@ -24,6 +25,8 @@ def ensembl_get_variation(
     ----------
     id : str
         Variation ID (e.g., 'rs699', 'rs1421085'). Use ensembl_get_variants to find v...
+    variant_id : str
+        Alias for id. dbSNP rsID or Ensembl variation ID (e.g., 'rs7903146', 'rs699').
     species : str
         Species name (default 'human')
     phenotypes : int
@@ -44,7 +47,12 @@ def ensembl_get_variation(
     # Strip None values so optional parameters don't trigger schema validation errors
     _args = {
         k: v
-        for k, v in {"id": id, "species": species, "phenotypes": phenotypes}.items()
+        for k, v in {
+            "id": id,
+            "variant_id": variant_id,
+            "species": species,
+            "phenotypes": phenotypes,
+        }.items()
         if v is not None
     }
     return get_shared_client().run_one_function(

@@ -12,12 +12,38 @@ Reference: Licata et al. (2020) Nucleic Acids Research
 """
 
 import requests
+from functools import lru_cache
 from typing import Dict, Any, List
 from .base_tool import BaseTool
 from .tool_registry import register_tool
 
 SIGNOR_DATA_URL = "https://signor.uniroma2.it/getData.php"
 SIGNOR_PATHWAY_URL = "https://signor.uniroma2.it/getPathwayData.php"
+UNIPROT_SEARCH_URL = "https://rest.uniprot.org/uniprotkb/search"
+
+
+@lru_cache(maxsize=256)
+def _resolve_gene_to_uniprot(gene_symbol: str, taxon_id: int = 9606) -> str:
+    """Resolve a gene symbol to a reviewed UniProt accession (cached per process)."""
+    try:
+        resp = requests.get(
+            UNIPROT_SEARCH_URL,
+            params={
+                "query": f"gene_exact:{gene_symbol} AND organism_id:{taxon_id} AND reviewed:true",
+                "fields": "accession",
+                "format": "json",
+                "size": 1,
+            },
+            timeout=10,
+        )
+        if resp.status_code == 200:
+            hits = resp.json().get("results", [])
+            if hits:
+                return hits[0].get("primaryAccession", "")
+    except Exception:
+        pass
+    return ""
+
 
 # Column names for getData.php TSV response (no header row)
 DATA_COLUMNS = [
@@ -103,7 +129,12 @@ class SIGNORTool(BaseTool):
 
     def _get_interactions(self, params: Dict[str, Any]) -> Dict[str, Any]:
         """Get signaling interactions for a protein/entity."""
-        entity_id = params.get("entity_id", "")
+        entity_id = (
+            params.get("entity_id")
+            or params.get("protein")
+            or params.get("uniprot_id")
+            or ""
+        )
         organism = params.get("organism", 9606)
         limit = params.get("limit", 50)
         if not entity_id:
@@ -123,11 +154,36 @@ class SIGNORTool(BaseTool):
                 "error": f"SIGNOR request failed: HTTP {resp.status_code}",
             }
 
-        if not resp.text.strip() or resp.text.strip().startswith("<!"):
-            return {
-                "status": "error",
-                "error": f"No interactions found for '{entity_id}' in organism {organism}",
-            }
+        # If no results and input looks like a gene symbol, try resolving to UniProt ID
+        if resp.text.strip() in (
+            "",
+            "No result found.",
+        ) or resp.text.strip().startswith("<!"):
+            resolved = _resolve_gene_to_uniprot(entity_id, organism)
+            if resolved and resolved != entity_id:
+                resp2 = self.session.get(
+                    SIGNOR_DATA_URL,
+                    params={"organism": organism, "id": resolved},
+                    timeout=30,
+                )
+                if (
+                    resp2.status_code == 200
+                    and resp2.text.strip()
+                    and not resp2.text.strip().startswith("<!")
+                    and resp2.text.strip() != "No result found."
+                ):
+                    resp = resp2
+                    entity_id = resolved
+                else:
+                    return {
+                        "status": "error",
+                        "error": f"No interactions found for '{params.get('entity_id') or params.get('protein')}' (resolved to UniProt {resolved}) in organism {organism}. SIGNOR requires UniProt accessions (e.g., P04637 for TP53).",
+                    }
+            else:
+                return {
+                    "status": "error",
+                    "error": f"No interactions found for '{entity_id}' in organism {organism}. SIGNOR requires UniProt accessions (e.g., P04637 for TP53).",
+                }
 
         rows = _parse_tsv(resp.text, DATA_COLUMNS, has_header=False)
         interactions = [_format_interaction(row) for row in rows[:limit]]

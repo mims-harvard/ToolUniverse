@@ -11,7 +11,11 @@
         },
         "sequence": {
           "type": "string",
-          "description": "Amino acid sequence to search (alternative to pdb_id). For sequence-based structure search."
+          "description": "Amino acid sequence to search (alternative to pdb_id). For sequence-based structure search. Alias: 'query'."
+        },
+        "query": {
+          "type": "string",
+          "description": "Amino acid sequence to search (alias for sequence)."
         },
         "database": {
           "type": "string",

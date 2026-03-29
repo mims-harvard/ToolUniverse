@@ -126,5 +126,121 @@
         "limit": 1
       }
     ]
+  },
+  {
+    "name": "NHANES_download_and_parse",
+    "description": "Download and parse NHANES XPT data files from CDC into structured JSON (DataFrame-ready). Bridges dataset discovery to analysis by handling XPT download, parsing, optional variable selection, and age filtering. For standard components (Demographics, Dietary, Examination/BodyMeasures, Questionnaire), the tool auto-resolves the filename from the cycle suffix. For Laboratory data, provide the exact dataset_name (e.g., 'CBC', 'BIOPRO', 'GHB', 'GLU', 'TRIGLY', 'HDL', 'TCHOL'). Returns column metadata, summary statistics, and the first 5000 rows as JSON records. Use nhanes_search_datasets first to discover available dataset names if unsure.",
+    "type": "NHANESTool",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "component": {
+          "type": "string",
+          "enum": [
+            "Demographics",
+            "Dietary",
+            "DietaryDay2",
+            "Examination",
+            "Laboratory",
+            "Questionnaire",
+            "BodyMeasures"
+          ],
+          "description": "NHANES component category. 'Dietary' = Day 1 intake totals (DR1TOT), 'DietaryDay2' = Day 2 (DR2TOT), 'BodyMeasures' = BMX, 'Examination' = general exam. For Laboratory, also provide dataset_name."
+        },
+        "cycle": {
+          "type": "string",
+          "description": "NHANES survey cycle (e.g., '2017-2018', '2015-2016', '2013-2014', '2011-2012')"
+        },
+        "dataset_name": {
+          "type": "string",
+          "description": "Exact NHANES dataset filename prefix (without cycle suffix). Required for Laboratory (e.g., 'CBC', 'BIOPRO', 'GHB', 'GLU', 'TRIGLY', 'HDL', 'TCHOL'). Optional for other components to override the default filename."
+        },
+        "variables": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "List of variable names to select (e.g., ['SEQN', 'DR1TIRON', 'DR1TKCAL']). SEQN is always included. If omitted, all variables are returned."
+        },
+        "age_min": {
+          "type": "number",
+          "description": "Minimum age filter (inclusive). Filters by RIDAGEYR from Demographics. Auto-merges with DEMO file if the requested component is not Demographics."
+        },
+        "age_max": {
+          "type": "number",
+          "description": "Maximum age filter (inclusive). Filters by RIDAGEYR from Demographics."
+        },
+        "max_rows": {
+          "type": "integer",
+          "description": "Maximum number of data rows to return (default: 5000). Set lower for faster responses.",
+          "default": 5000
+        }
+      },
+      "required": [
+        "component",
+        "cycle"
+      ]
+    },
+    "fields": {
+      "endpoint": "download_and_parse",
+      "return_format": "JSON"
+    },
+    "return_schema": {
+      "type": "object",
+      "properties": {
+        "columns": {
+          "type": "array"
+        },
+        "dtypes": {
+          "type": "object"
+        },
+        "total_rows": {
+          "type": "integer"
+        },
+        "returned_rows": {
+          "type": "integer"
+        },
+        "records": {
+          "type": "array"
+        },
+        "summary_statistics": {
+          "type": "object"
+        }
+      },
+      "required": [
+        "columns",
+        "total_rows",
+        "records"
+      ]
+    },
+    "test_examples": [
+      {
+        "component": "Dietary",
+        "cycle": "2017-2018",
+        "variables": [
+          "SEQN",
+          "DR1TIRON",
+          "DR1TKCAL"
+        ],
+        "age_min": 60,
+        "max_rows": 50
+      },
+      {
+        "component": "Demographics",
+        "cycle": "2017-2018",
+        "variables": [
+          "SEQN",
+          "RIDAGEYR",
+          "RIAGENDR"
+        ],
+        "max_rows": 50
+      },
+      {
+        "component": "Laboratory",
+        "cycle": "2017-2018",
+        "dataset_name": "GHB",
+        "max_rows": 50
+      }
+    ]
   }
 ]

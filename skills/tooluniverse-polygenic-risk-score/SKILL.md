@@ -7,6 +7,12 @@ description: Build and interpret polygenic risk scores (PRS) for complex disease
 
 Build and interpret polygenic risk scores for complex diseases using genome-wide association study (GWAS) data.
 
+## Reasoning Strategy
+
+A polygenic risk score predicts genetic risk, not disease. A high PRS means elevated risk relative to the population — it does not mean the person will develop the condition, and a low PRS does not confer immunity. PRS performance varies dramatically across ancestries: a European-derived PRS applied to a West African population can lose 50–70% of its predictive power because the underlying GWAS was trained on European allele frequencies and LD patterns. Effect sizes from discovery GWAS are subject to winner's curse (overestimation in single studies); always prefer weights from large meta-analyses or validated PGS Catalog models. PRS should always be interpreted in the context of non-genetic risk factors — for most complex diseases, environmental factors contribute as much or more than genetics.
+
+**LOOK UP DON'T GUESS**: Do not assume effect sizes, allele frequencies, or which SNPs are genome-wide significant for a trait — always query GWAS Catalog (`gwas_get_associations_for_trait`) for actual data. Do not assume a validated PRS model exists for a trait; check PGS Catalog via PubMed search.
+
 ## Overview
 
 **Use Cases:**
@@ -154,91 +160,12 @@ Consumer genetic testing (23andMe, Ancestry DNA) provides raw genotypes. Users c
 
 ## Limitations and Considerations
 
-### Scientific Limitations
-
-1. **Heritability Gap**: PRS explains a fraction of genetic heritability
-   - Type 2 diabetes: ~50% heritable, PRS explains ~10-20%
-   - Rare variants, epistasis, and gene-environment interactions not captured
-
-2. **Ancestry Bias**: Most GWAS are European ancestry
-   - PRS accuracy drops in non-European populations
-   - Need for diverse cohort recruitment
-
-3. **Winner's Curse**: Discovery effect sizes often overestimated
-   - Replication studies show smaller effects
-   - Meta-analyses provide better estimates
-
-4. **Missing Heritability**: Unexplained genetic contribution from:
-   - Rare variants not captured by SNP arrays
-   - Structural variants (CNVs, inversions)
-   - Epigenetic factors
-
-### Clinical Limitations
-
-1. **Not Diagnostic**: PRS is probabilistic, not deterministic
-   - High PRS doesn't mean you will get disease
-   - Low PRS doesn't mean you won't get disease
-
-2. **Environmental Factors**: Many complex diseases are 50%+ environmental
-   - Smoking, diet, exercise, stress, pollution
-   - PRS doesn't account for these
-
-3. **Pleiotropy**: Same variants affect multiple traits
-   - Genetic correlation between diseases
-   - Risk for one may protect against another
-
-4. **Actionability**: Not all high-risk predictions have interventions
-   - Alzheimer's PRS has limited actionability currently
-   - Ethical considerations for testing
-
-### Ethical Considerations
-
-1. **Privacy**: Genetic data is identifiable and permanent
-   - Can't be changed like passwords
-   - Familial implications (relatives share genetics)
-
-2. **Discrimination**: Potential for genetic discrimination
-   - GINA protects against health/employment discrimination (US)
-   - Life insurance and long-term care not protected
-
-3. **Psychological Impact**: Knowledge of high risk can cause anxiety
-   - Need for genetic counseling
-   - Risk communication training
-
-4. **Equity**: Ancestry bias means unequal benefits
-   - Europeans benefit most from current PRS
-   - Exacerbates health disparities
-
-## References
-
-### Key Publications
-
-1. **Lambert et al. (2021)**: "The Polygenic Score Catalog as an open database for reproducibility and systematic evaluation"
-   - PGS Catalog: https://www.pgscatalog.org/
-   - Repository of published PRS models
-
-2. **Khera et al. (2018)**: "Genome-wide polygenic scores for common diseases identify individuals with risk equivalent to monogenic mutations"
-   - Nature Genetics, 50:1219–1224
-   - Demonstrated clinical utility of PRS
-
-3. **Torkamani et al. (2018)**: "The personal and clinical utility of polygenic risk scores"
-   - Nature Reviews Genetics, 19:581–590
-   - Comprehensive review of PRS applications
-
-4. **Martin et al. (2019)**: "Clinical use of current polygenic risk scores may exacerbate health disparities"
-   - Nature Genetics, 51:584–591
-   - Addresses ancestry bias and equity concerns
-
-5. **Choi et al. (2020)**: "Tutorial: a guide to performing polygenic risk score analyses"
-   - Nature Protocols, 15:2759–2772
-   - Practical guide to PRS calculation and evaluation
-
-### Resources
-
-- **PGS Catalog**: https://www.pgscatalog.org/ - Published PRS models
-- **LD Hub**: http://ldsc.broadinstitute.org/ - Genetic correlations
-- **PRSice**: https://www.prsice.info/ - PRS calculation software
-- **GWAS Catalog**: https://www.ebi.ac.uk/gwas/ - Association database
+- **Heritability gap**: PRS explains only a fraction of genetic heritability (T2D: ~50% heritable, PRS explains ~10–20%). Rare variants, epistasis, and gene-environment interactions are not captured.
+- **Ancestry bias**: European-derived PRS performance drops substantially in non-European populations. Use multi-ancestry GWAS weights when available.
+- **Winner's curse**: Discovery effect sizes are overestimated; use meta-analysis weights or PGS Catalog validated models.
+- **Not diagnostic**: High PRS does not guarantee disease; low PRS does not guarantee protection. Environmental factors contribute equally or more for most complex diseases.
+- **Actionability varies**: Alzheimer's PRS has limited actionable interventions; cardiovascular PRS can guide statin or lifestyle decisions. Always consider what the person can do with the information.
+- **Ethical**: Genetic data is permanent and familial. GINA protects employment/health insurance in the US, but not life insurance. Provide genetic counseling context.
 
 ## Workflow
 
@@ -321,61 +248,11 @@ print(f"Risk: {result.risk_category}")
 
 ## Best Practices
 
-### PRS Construction
-
-1. **Use validated PRS from PGS Catalog** when available
-   - Published models have been externally validated
-   - Include LD clumping and ancestry-specific weights
-
-2. **Match ancestries** between GWAS and target population
-   - European GWAS for European individuals
-   - Use multi-ancestry GWAS when available
-
-3. **Include as many SNPs as practical**
-   - More SNPs = better prediction (up to a point)
-   - Balance between coverage and genotyping cost
-
-4. **Consider trait architecture**
-   - Highly polygenic traits (height, education): benefit from relaxed thresholds
-   - Oligogenic traits (IBD, T1D): few large-effect variants, strict thresholds
-
-### Clinical Use
-
-1. **Combine with clinical risk scores**
-   - Add PRS to Framingham Risk Score, QRISK, etc.
-   - Integrated models improve prediction
-
-2. **Stratify screening and prevention**
-   - Intensify surveillance for high PRS (e.g., earlier mammography)
-   - Lifestyle interventions for modifiable risk
-
-3. **Provide genetic counseling**
-   - Explain probabilistic nature of PRS
-   - Discuss limitations and uncertainty
-   - Address psychological impact
-
-4. **Consider actionability**
-   - Is there an intervention for high risk?
-   - Benefits vs. harms of knowing genetic risk
-
-### Research Use
-
-1. **Report methods transparently**
-   - Document SNP selection criteria
-   - Report LD clumping parameters
-   - Specify ancestry of GWAS and target
-
-2. **Validate in held-out cohorts**
-   - Split data: training vs. testing
-   - Report out-of-sample prediction accuracy (R², AUC)
-
-3. **Compare to existing PRS**
-   - Benchmark against PGS Catalog models
-   - Report incremental improvement
-
-4. **Test across ancestries**
-   - Evaluate transferability to non-European populations
-   - Report performance stratified by ancestry
+- Use validated PRS from PGS Catalog when available (externally validated, includes LD clumping and ancestry-specific weights)
+- Match ancestries between GWAS and target population; use multi-ancestry GWAS when available
+- For highly polygenic traits (height, education), relaxed p-value thresholds capture more signal; for oligogenic traits (IBD, T1D), strict thresholds are better
+- Combine PRS with clinical risk scores (Framingham, QRISK) for integrated prediction
+- In research: document SNP selection criteria, LD clumping parameters, and ancestry of GWAS; validate in held-out cohorts; report R² or AUC stratified by ancestry
 
 ## Disclaimer
 

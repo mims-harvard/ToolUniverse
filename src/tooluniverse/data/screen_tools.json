@@ -8,7 +8,11 @@
       "properties": {
         "gene_name": {
           "type": "string",
-          "description": "Gene symbol to search for regulatory elements (e.g., BRCA1, TP53)"
+          "description": "Gene symbol to search for regulatory elements (e.g., BRCA1, TP53). Alias: 'query'."
+        },
+        "query": {
+          "type": "string",
+          "description": "Gene symbol to search for regulatory elements (alias for gene_name)."
         },
         "element_type": {
           "type": "string",
@@ -23,9 +27,7 @@
           "maximum": 50
         }
       },
-      "required": [
-        "gene_name"
-      ]
+      "required": []
     },
     "fields": {
       "endpoint": "https://www.encodeproject.org/search/?type=Experiment&assay_title=ChIP-seq&target.label={gene_name}&biosample_ontology.classification=cell_line&format=json&limit={limit}",

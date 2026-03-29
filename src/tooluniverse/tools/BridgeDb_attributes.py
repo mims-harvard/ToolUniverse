@@ -9,9 +9,9 @@ from ._shared_client import get_shared_client
 
 
 def BridgeDb_attributes(
-    operation: str,
     identifier: str,
     source: str,
+    operation: Optional[str] = None,
     organism: Optional[str] = None,
     *,
     stream_callback: Optional[Callable[[str], None]] = None,
