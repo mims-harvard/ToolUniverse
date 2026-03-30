@@ -22,18 +22,29 @@ claude --plugin-dir /path/to/tooluniverse-plugin
 ## Usage
 
 ```
-# Discover tools
+# Discover tools (MCP — good for exploration)
 /tooluniverse:find-tools protein structure prediction
 
-# Run a specific tool
-/tooluniverse:run-tool UniProt_search {"query": "BRCA1", "organism": "human"}
+# Run a tool via CLI (faster, batchable)
+tu run UniProt_search '{"query": "BRCA1", "organism": "human"}'
 
-# Launch research agent
+# Research a question (auto-plans tool calls, uses CLI for execution)
+/tooluniverse:research What are the top mutated genes in breast cancer?
+
+# Launch research agent for complex multi-database questions
 /tooluniverse:researcher What genes are associated with Alzheimer's disease?
 
 # Or just ask — the router skill auto-dispatches
 "What do we know about drug resistance mutations in EGFR?"
 ```
+
+## Design Philosophy: CLI First, MCP for Discovery
+
+- **MCP tools** (`find_tools`, `get_tool_info`): Best for discovering which tools exist and checking parameters
+- **CLI** (`tu run`): Best for actual data retrieval — can be batched in Python scripts, piped, and composed
+- **Python SDK**: Best for complex analysis pipelines — `from tooluniverse import ToolUniverse`
+
+The plugin configures MCP for discovery and teaches the agent to use CLI/SDK for efficient execution.
 
 ## API Keys (Optional)
 

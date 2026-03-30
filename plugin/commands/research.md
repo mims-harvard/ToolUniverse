@@ -8,22 +8,39 @@ Answer this scientific research question using ToolUniverse MCP tools: $ARGUMENT
 
 ## Instructions
 
-1. **Do NOT spawn subagents** — use MCP tools directly in this conversation.
-2. **Plan first**: List ALL tool calls you'll need BEFORE making any. Write them out as a numbered list.
-3. **Call tools directly** — skip `find_tools` for common tools (see Quick Reference below). Only use `find_tools` for niche domains.
-4. **BATCH queries via Python**: For multiple items (5 genes, 3 drugs), write a Python script — do NOT make them one-by-one:
+## Execution Strategy: CLI First, MCP for Discovery
+
+**Use MCP** (`find_tools`, `get_tool_info`) only for:
+- Discovering which tools exist for an unfamiliar topic
+- Checking a tool's parameter schema before first use
+
+**Use CLI** (`tu run` via Bash) for all actual data retrieval:
+- Faster: one Python script replaces 10+ sequential MCP calls
+- Batchable: loop over genes/drugs/variants in code
+- Composable: pipe output, save to files, merge with pandas
+
+**Rules:**
+1. **Do NOT spawn subagents** — work directly in this conversation.
+2. **Plan first**: List ALL tools you need, then write ONE Python script that calls them all.
+3. **Use `tu run` in Python** for all execute_tool work:
    ```python
-   # Run via Bash — this replaces 5 sequential execute_tool calls with 1 script
    import subprocess, json
+
+   def tu_run(tool_name, args):
+       """Call a ToolUniverse tool via CLI and return parsed result."""
+       r = subprocess.run(["tu", "run", tool_name, json.dumps(args)],
+                          capture_output=True, text=True, timeout=60)
+       return json.loads(r.stdout) if r.returncode == 0 else {"error": r.stderr[:200]}
+
+   # Example: batch query 5 genes in one script
    genes = ["TP53", "PIK3CA", "GATA3", "KMT2C", "CDH1"]
    for g in genes:
-       r = subprocess.run(["tu", "run", "GDC_get_mutation_frequency", json.dumps({"gene_symbol": g})],
-                          capture_output=True, text=True)
-       print(f"{g}: {r.stdout[:200]}")
+       result = tu_run("GDC_get_mutation_frequency", {"gene_symbol": g})
+       print(f"{g}: {json.dumps(result.get('data', {}), indent=2)[:300]}")
    ```
-5. **Cross-validate**: Check 2+ sources for key claims. Flag any disagreements.
-6. **Limit results**: Always pass `size=10` or `limit=5` to avoid truncation.
-7. **Avoid trial-and-error**: Use `get_tool_info("tool_name")` ONCE to check parameters before calling, rather than guessing and retrying.
+4. **Cross-validate**: Check 2+ sources for key claims.
+5. **Limit results**: Always pass `size=10` or `limit=5`.
+6. **Check params first**: If unsure about a tool's parameters, use MCP `get_tool_info("tool_name")` once, then use CLI for execution.
 
 ## Tool Quick Reference (with example parameters)
 
