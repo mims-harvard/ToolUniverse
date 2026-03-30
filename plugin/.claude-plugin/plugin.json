@@ -1,0 +1,11 @@
+{
+  "name": "tooluniverse",
+  "description": "1000+ scientific research tools for biology, chemistry, medicine, and data science. Access PubMed, UniProt, PubChem, TCGA, NHANES, GWAS Catalog, and hundreds more databases through a unified MCP interface. Includes 114 specialized research skills for genomics, drug discovery, clinical analysis, and more.",
+  "version": "1.1.11",
+  "author": {
+    "name": "MIMS Harvard"
+  },
+  "homepage": "https://aiscientist.tools",
+  "repository": "https://github.com/mims-harvard/ToolUniverse",
+  "license": "Apache-2.0"
+}
