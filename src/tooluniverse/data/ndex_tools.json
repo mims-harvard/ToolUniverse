@@ -41,31 +41,40 @@
         "type": "object",
         "properties": {
           "uuid": {
-            "type": "string"
+            "type": "string",
+            "description": "Network UUID"
           },
           "name": {
-            "type": "string"
+            "type": "string",
+            "description": "Network name"
           },
           "description": {
-            "type": "string"
+            "type": "string",
+            "description": "Network description"
           },
           "owner": {
-            "type": "string"
+            "type": "string",
+            "description": "Owner username"
           },
           "node_count": {
-            "type": "integer"
+            "type": "integer",
+            "description": "Number of nodes in the network"
           },
           "edge_count": {
-            "type": "integer"
+            "type": "integer",
+            "description": "Number of edges in the network"
           },
           "visibility": {
-            "type": "string"
+            "type": "string",
+            "description": "Network visibility (PUBLIC or PRIVATE)"
           },
           "doi": {
-            "type": "string"
+            "type": ["string", "null"],
+            "description": "DOI for the network if published"
           },
           "version": {
-            "type": "string"
+            "type": ["string", "null"],
+            "description": "Network version"
           }
         }
       }

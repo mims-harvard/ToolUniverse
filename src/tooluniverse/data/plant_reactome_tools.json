@@ -188,16 +188,20 @@
         "type": "object",
         "properties": {
           "dbId": {
-            "type": "integer"
+            "type": "integer",
+            "description": "Plant Reactome database ID"
           },
           "displayName": {
-            "type": "string"
+            "type": "string",
+            "description": "Species scientific name (e.g., Oryza sativa)"
           },
           "taxId": {
-            "type": "string"
+            "type": "string",
+            "description": "NCBI Taxonomy ID"
           },
           "abbreviation": {
-            "type": "string"
+            "type": "string",
+            "description": "Three-letter species abbreviation (e.g., OSA)"
           }
         }
       }

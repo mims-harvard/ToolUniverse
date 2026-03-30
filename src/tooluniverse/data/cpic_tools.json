@@ -508,35 +508,94 @@
       "type": "object",
       "properties": {
         "guideline_id": {
-          "type": "integer"
+          "type": "integer",
+          "description": "CPIC guideline numeric ID"
         },
         "recommendations": {
           "type": "array",
           "items": {
             "type": "object",
             "properties": {
-              "id": {},
-              "guidelineid": {},
-              "drugid": {},
-              "implications": {},
-              "drugrecommendation": {},
-              "classification": {},
-              "phenotypes": {},
-              "activityscore": {},
-              "allelestatus": {},
-              "lookupkey": {},
-              "population": {},
-              "comments": {},
-              "version": {},
-              "dosinginformation": {},
-              "alternatedrugavailable": {},
-              "otherprescribingguidance": {},
-              "drug": {}
+              "id": {
+                "type": "integer",
+                "description": "Recommendation unique ID"
+              },
+              "guidelineid": {
+                "type": "integer",
+                "description": "Parent guideline ID"
+              },
+              "drugid": {
+                "type": "string",
+                "description": "Drug identifier (e.g., RxNorm:2670)"
+              },
+              "implications": {
+                "type": "object",
+                "description": "Gene-specific clinical implications (gene symbol to text)"
+              },
+              "drugrecommendation": {
+                "type": "string",
+                "description": "Clinical recommendation text for drug dosing"
+              },
+              "classification": {
+                "type": "string",
+                "description": "Recommendation strength (Strong, Moderate, Optional)"
+              },
+              "phenotypes": {
+                "type": "object",
+                "description": "Gene-specific phenotype (gene symbol to metabolizer status)"
+              },
+              "activityscore": {
+                "type": "object",
+                "description": "Gene-specific activity score (gene symbol to score string)"
+              },
+              "allelestatus": {
+                "type": "object",
+                "description": "Allele function status"
+              },
+              "lookupkey": {
+                "type": "object",
+                "description": "Lookup key used for matching (gene symbol to value)"
+              },
+              "population": {
+                "type": "string",
+                "description": "Target population (e.g., general)"
+              },
+              "comments": {
+                "type": "string",
+                "description": "Additional comments"
+              },
+              "version": {
+                "type": "integer",
+                "description": "Recommendation version"
+              },
+              "dosinginformation": {
+                "type": "boolean",
+                "description": "Whether dosing information is provided"
+              },
+              "alternatedrugavailable": {
+                "type": "boolean",
+                "description": "Whether an alternate drug is available"
+              },
+              "otherprescribingguidance": {
+                "type": "boolean",
+                "description": "Whether other prescribing guidance exists"
+              },
+              "drug": {
+                "type": ["object", "null"],
+                "description": "Embedded drug info",
+                "properties": {
+                  "name": {
+                    "type": "string",
+                    "description": "Drug name (e.g., codeine)"
+                  }
+                }
+              }
             }
           }
         },
         "count": {
-          "type": "integer"
+          "type": "integer",
+          "description": "Number of recommendations returned"
         }
       }
     }

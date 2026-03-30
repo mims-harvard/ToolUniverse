@@ -273,145 +273,157 @@
       "properties": {
         "query": {
           "type": "object",
+          "description": "Echo of the query parameters submitted",
           "properties": {
-            "id": {
-              "type": "null"
-            },
             "referenceGenome": {
-              "type": "string"
+              "type": "string",
+              "description": "Reference genome (e.g., GRCh37)"
             },
             "hugoSymbol": {
-              "type": "string"
+              "type": "string",
+              "description": "Gene symbol"
             },
             "entrezGeneId": {
-              "type": "integer"
+              "type": "integer",
+              "description": "Entrez Gene ID"
             },
             "alteration": {
-              "type": "string"
-            },
-            "alterationType": {
-              "type": "null"
-            },
-            "svType": {
-              "type": "null"
+              "type": ["string", "null"],
+              "description": "Alteration type (e.g., Amplification, Deletion)"
             },
             "tumorType": {
-              "type": "null"
-            },
-            "consequence": {
-              "type": "null"
-            },
-            "proteinStart": {
-              "type": "null"
-            },
-            "proteinEnd": {
-              "type": "null"
-            },
-            "hgvs": {
-              "type": "null"
-            },
-            "hgvsInfo": {
-              "type": "null"
-            },
-            "canonicalTranscript": {
-              "type": "null"
+              "type": ["string", "null"],
+              "description": "OncoTree tumor type code"
             }
           }
         },
         "geneExist": {
-          "type": "boolean"
+          "type": "boolean",
+          "description": "Whether the gene exists in OncoKB"
         },
         "variantExist": {
-          "type": "boolean"
+          "type": "boolean",
+          "description": "Whether the specific variant is cataloged"
         },
         "alleleExist": {
-          "type": "boolean"
+          "type": "boolean",
+          "description": "Whether the allele exists"
         },
         "oncogenic": {
-          "type": "string"
+          "type": "string",
+          "description": "Oncogenicity classification (Oncogenic, Likely Oncogenic, Unknown)"
         },
         "mutationEffect": {
           "type": "object",
+          "description": "Effect of the copy number alteration",
           "properties": {
             "knownEffect": {
-              "type": "string"
+              "type": "string",
+              "description": "Known functional effect (Gain-of-function, Loss-of-function, Unknown)"
             },
             "description": {
-              "type": "string"
+              "type": "string",
+              "description": "Textual description of the mutation effect"
             },
             "citations": {
               "type": "object",
               "properties": {
-                "pmids": {},
-                "abstracts": {}
+                "pmids": {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  }
+                },
+                "abstracts": {
+                  "type": "array",
+                  "items": {
+                    "type": "object"
+                  }
+                }
               }
             }
           }
         },
         "highestSensitiveLevel": {
-          "type": "null"
+          "type": ["string", "null"],
+          "description": "Highest evidence level for drug sensitivity (e.g., LEVEL_1)"
         },
         "highestResistanceLevel": {
-          "type": "null"
+          "type": ["string", "null"],
+          "description": "Highest evidence level for drug resistance"
         },
         "highestDiagnosticImplicationLevel": {
-          "type": "null"
+          "type": ["string", "null"],
+          "description": "Highest diagnostic implication level"
         },
         "highestPrognosticImplicationLevel": {
-          "type": "null"
+          "type": ["string", "null"],
+          "description": "Highest prognostic implication level"
         },
         "highestFdaLevel": {
-          "type": "null"
+          "type": ["string", "null"],
+          "description": "Highest FDA evidence level"
         },
         "otherSignificantSensitiveLevels": {
           "type": "array",
-          "items": {}
+          "items": {
+            "type": "string"
+          }
         },
         "otherSignificantResistanceLevels": {
           "type": "array",
-          "items": {}
+          "items": {
+            "type": "string"
+          }
         },
         "VUS": {
-          "type": "boolean"
+          "type": "boolean",
+          "description": "Whether the variant is of unknown significance"
         },
         "hotspot": {
-          "type": "boolean"
-        },
-        "exon": {
-          "type": "null"
+          "type": "boolean",
+          "description": "Whether the variant is a hotspot mutation"
         },
         "geneSummary": {
-          "type": "string"
+          "type": "string",
+          "description": "Curated gene summary from OncoKB"
         },
         "variantSummary": {
-          "type": "string"
+          "type": "string",
+          "description": "Curated variant summary from OncoKB"
         },
         "tumorTypeSummary": {
-          "type": "string"
-        },
-        "prognosticSummary": {
-          "type": "string"
-        },
-        "diagnosticSummary": {
-          "type": "string"
+          "type": "string",
+          "description": "Tumor-type-specific summary"
         },
         "diagnosticImplications": {
           "type": "array",
-          "items": {}
+          "items": {
+            "type": "object"
+          },
+          "description": "Diagnostic implication entries"
         },
         "prognosticImplications": {
           "type": "array",
-          "items": {}
+          "items": {
+            "type": "object"
+          },
+          "description": "Prognostic implication entries"
         },
         "treatments": {
           "type": "array",
-          "items": {}
+          "items": {
+            "type": "object"
+          },
+          "description": "Treatment options with evidence levels"
         },
         "dataVersion": {
-          "type": "string"
+          "type": "string",
+          "description": "OncoKB data version"
         },
         "lastUpdate": {
-          "type": "string"
+          "type": "string",
+          "description": "Date of last update"
         }
       }
     }

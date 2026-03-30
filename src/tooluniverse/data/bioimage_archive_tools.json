@@ -48,25 +48,32 @@
         "type": "object",
         "properties": {
           "accession": {
-            "type": "string"
+            "type": "string",
+            "description": "BioImage Archive study accession (e.g., S-BIAD928)"
           },
           "title": {
-            "type": "string"
+            "type": "string",
+            "description": "Study title"
           },
           "author": {
-            "type": "string"
+            "type": "string",
+            "description": "Study author(s)"
           },
           "release_date": {
-            "type": "string"
+            "type": "string",
+            "description": "Release date (YYYY-MM-DD)"
           },
           "type": {
-            "type": "string"
+            "type": "string",
+            "description": "Entry type (e.g., study)"
           },
           "links": {
-            "type": "integer"
+            "type": "integer",
+            "description": "Number of linked resources"
           },
           "files": {
-            "type": "integer"
+            "type": "integer",
+            "description": "Number of files in the study"
           }
         }
       }
