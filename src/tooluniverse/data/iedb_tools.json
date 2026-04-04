@@ -10,6 +10,10 @@
                     "type": "string",
                     "description": "Sequence fragment to search within `linear_sequence` using a contains match. Example: 'KVF' finds epitopes containing that motif."
                 },
+                "antigen_uniprot": {
+                    "type": "string",
+                    "description": "UniProt accession of the source antigen. Example: 'Q15116' for PD-1 (PDCD1), 'P01012' for ovalbumin. Accepts with or without 'UNIPROT:' prefix."
+                },
                 "structure_type": {
                     "type": "string",
                     "description": "Filter by epitope structure type. Example: 'Linear peptide'.",
@@ -75,7 +79,8 @@
             "default_params": {"order": "structure_id.asc"},
             "shorthand_filters": {
                 "sequence_contains": {"column": "linear_sequence", "op": "ilike_contains"},
-                "structure_type": {"column": "structure_type", "op": "eq"}
+                "structure_type": {"column": "structure_type", "op": "eq"},
+                "antigen_uniprot": {"column": "parent_source_antigen_iris", "op": "cs_uniprot"}
             }
         }
     },

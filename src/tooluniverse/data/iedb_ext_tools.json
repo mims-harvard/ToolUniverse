@@ -19,6 +19,10 @@
                     "description": "MHC class restriction (I or II).",
                     "enum": ["I", "II"]
                 },
+                "antigen_uniprot": {
+                    "type": "string",
+                    "description": "UniProt accession of the source antigen. Example: 'Q15116' for PD-1 (PDCD1), 'P29996' for Hepatitis delta antigen. Accepts with or without 'UNIPROT:' prefix."
+                },
                 "qualitative_measure": {
                     "type": "string",
                     "description": "Filter by assay result.",
@@ -86,7 +90,8 @@
                 "sequence": {"column": "linear_sequence", "op": "eq"},
                 "sequence_contains": {"column": "linear_sequence", "op": "ilike_contains"},
                 "mhc_class": {"column": "mhc_class", "op": "eq"},
-                "qualitative_measure": {"column": "qualitative_measure", "op": "eq"}
+                "qualitative_measure": {"column": "qualitative_measure", "op": "eq"},
+                "antigen_uniprot": {"column": "parent_source_antigen_iri", "op": "eq_uniprot"}
             }
         }
     },

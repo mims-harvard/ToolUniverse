@@ -86,6 +86,14 @@ class IEDBTool(BaseTool):
                     params[str(column)] = f"eq.{val}"
                 elif op == "ilike_contains":
                     params[str(column)] = f"ilike.*{val}*"
+                elif op == "cs_uniprot":
+                    # Array contains: e.g., parent_source_antigen_iris cs {"UNIPROT:Q15116"}
+                    uid = val if val.startswith("UNIPROT:") else f"UNIPROT:{val}"
+                    params[str(column)] = f'cs.{{"{uid}"}}'
+                elif op == "eq_uniprot":
+                    # Scalar equals: e.g., parent_source_antigen_iri eq UNIPROT:Q15116
+                    uid = val if val.startswith("UNIPROT:") else f"UNIPROT:{val}"
+                    params[str(column)] = f"eq.{uid}"
                 elif op == "raw":
                     params[str(column)] = str(val)
 
