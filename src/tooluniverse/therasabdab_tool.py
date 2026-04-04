@@ -15,14 +15,19 @@ Features:
 Website: https://opig.stats.ox.ac.uk/webapps/sabdab-sabpred/therasabdab/
 """
 
+import time
 import requests
-from typing import Dict, Any, List, Optional
+from typing import Dict, Any, List
 import re
 from .base_tool import BaseTool
 from .tool_registry import register_tool
 
 # Base URL for Thera-SAbDab
 THERASABDAB_BASE_URL = "https://opig.stats.ox.ac.uk/webapps/sabdab-sabpred/therasabdab"
+
+# Retry settings for transient server errors (502/503/504)
+_MAX_RETRIES = 2
+_RETRY_BACKOFF = 2  # seconds, doubles each retry
 
 
 @register_tool("TheraSAbDabTool")
@@ -49,6 +54,22 @@ class TheraSAbDabTool(BaseTool):
         self.operation = tool_config.get("fields", {}).get(
             "operation", "search_therapeutics"
         )
+
+    def _request(self, method: str, url: str, **kwargs) -> requests.Response:
+        """HTTP request with retry on transient 502/503/504 errors."""
+        kwargs.setdefault("timeout", self.timeout)
+        last_exc: Exception | None = None
+        for attempt in range(_MAX_RETRIES + 1):
+            try:
+                resp = requests.request(method, url, **kwargs)
+                if resp.status_code not in (502, 503, 504) or attempt == _MAX_RETRIES:
+                    return resp
+            except requests.exceptions.ConnectionError as exc:
+                last_exc = exc
+                if attempt == _MAX_RETRIES:
+                    raise
+            time.sleep(_RETRY_BACKOFF * (2**attempt))
+        raise last_exc  # type: ignore[misc]
 
     def run(self, arguments: Dict[str, Any]) -> Dict[str, Any]:
         """Execute the Thera-SAbDab API call."""
@@ -114,7 +135,7 @@ class TheraSAbDabTool(BaseTool):
         url = f"{THERASABDAB_BASE_URL}/search/"
         params = {"all": "true"}
 
-        response = requests.get(url, params=params, timeout=self.timeout)
+        response = self._request("GET", url, params=params)
         response.raise_for_status()
 
         therapeutics = self._parse_search_results(response.text)

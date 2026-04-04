@@ -104,11 +104,26 @@ class CTDTool(BaseTool):
             }
 
         content_type = response.headers.get("content-type", "")
+        is_html = "text/html" in content_type or raw_text.lstrip().startswith("<")
+
+        # Detect CAPTCHA gate (CTD added bot verification in 2026)
+        if is_html and "verify you are a human" in raw_text.lower():
+            return {
+                "status": "error",
+                "error": "CTD requires CAPTCHA verification and blocks programmatic access",
+                "retryable": False,
+                "suggestion": (
+                    "CTD (ctdbase.org) has gated API access behind CAPTCHA. "
+                    "Alternatives: use OpenTargets for gene-disease associations, "
+                    "FAERS for chemical safety data, or download CTD bulk data "
+                    "from https://ctdbase.org/downloads/."
+                ),
+            }
+
         try:
             data = response.json()
         except ValueError:
             snippet = raw_text[:200]
-            is_html = "text/html" in content_type or raw_text.lstrip().startswith("<")
             return {
                 "status": "error",
                 "error": "CTD API returned non-JSON response",

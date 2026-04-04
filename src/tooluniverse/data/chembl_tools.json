@@ -22,9 +22,7 @@
         }
       },
       "required": [
-        "query",
-        "similarity_threshold",
-        "max_results"
+        "query"
       ]
     },
     "test_examples": [

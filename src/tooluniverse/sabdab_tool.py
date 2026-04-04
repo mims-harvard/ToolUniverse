@@ -7,6 +7,7 @@ annotated with CDR sequences, chain pairings, and other structural features.
 Website: https://opig.stats.ox.ac.uk/webapps/sabdab-sabpred/sabdab
 """
 
+import time
 import requests
 from typing import Dict, Any
 from .base_tool import BaseTool
@@ -14,6 +15,10 @@ from .tool_registry import register_tool
 
 # SAbDab base URL
 SABDAB_BASE_URL = "https://opig.stats.ox.ac.uk/webapps/sabdab-sabpred/sabdab"
+
+# Retry settings for transient server errors (502/503/504)
+_MAX_RETRIES = 2
+_RETRY_BACKOFF = 2  # seconds, doubles each retry
 
 
 @register_tool("SAbDabTool")
@@ -34,6 +39,23 @@ class SAbDabTool(BaseTool):
         super().__init__(tool_config)
         self.timeout: int = tool_config.get("timeout", 60)
         self.parameter = tool_config.get("parameter", {})
+
+    def _request(self, method: str, url: str, **kwargs) -> requests.Response:
+        """HTTP request with retry on transient 502/503/504 errors."""
+        kwargs.setdefault("timeout", self.timeout)
+        kwargs.setdefault("headers", {"User-Agent": "ToolUniverse/SAbDab"})
+        last_exc: Exception | None = None
+        for attempt in range(_MAX_RETRIES + 1):
+            try:
+                resp = requests.request(method, url, **kwargs)
+                if resp.status_code not in (502, 503, 504) or attempt == _MAX_RETRIES:
+                    return resp
+            except requests.exceptions.ConnectionError as exc:
+                last_exc = exc
+                if attempt == _MAX_RETRIES:
+                    raise
+            time.sleep(_RETRY_BACKOFF * (2**attempt))
+        raise last_exc  # type: ignore[misc]
 
     def run(self, arguments: Dict[str, Any]) -> Dict[str, Any]:
         """Execute SAbDab query based on operation type."""
@@ -68,10 +90,10 @@ class SAbDabTool(BaseTool):
 
         try:
             # SAbDab search endpoint
-            response = requests.get(
+            response = self._request(
+                "GET",
                 f"{SABDAB_BASE_URL}/search/",
                 params={"q": query, "limit": limit},
-                timeout=self.timeout,
                 headers={
                     "User-Agent": "ToolUniverse/SAbDab",
                     "Accept": "application/json",
@@ -130,11 +152,7 @@ class SAbDabTool(BaseTool):
         try:
             # Use direct PDB download endpoint (Chothia numbering)
             pdb_url = f"{SABDAB_BASE_URL}/pdb/{pdb_id_lower}/"
-            response = requests.get(
-                pdb_url,
-                timeout=self.timeout,
-                headers={"User-Agent": "ToolUniverse/SAbDab"},
-            )
+            response = self._request("GET", pdb_url)
 
             if response.status_code == 404:
                 return {
@@ -205,9 +223,9 @@ class SAbDabTool(BaseTool):
                 ),
             }
         try:
-            response = requests.get(
+            response = self._request(
+                "GET",
                 f"{SABDAB_BASE_URL}/stats/",
-                timeout=self.timeout,
                 headers={
                     "User-Agent": "ToolUniverse/SAbDab",
                     "Accept": "application/json",
