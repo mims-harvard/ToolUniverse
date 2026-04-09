@@ -8,19 +8,21 @@ from typing import Any, Callable, Dict, List, Optional
 from .base_tool import BaseTool
 from .tool_registry import register_tool
 from .logging_config import get_logger
-from .llm_clients import AzureOpenAIClient, GeminiClient, OpenRouterClient, VLLMClient
+from .llm_clients import AzureOpenAIClient, GeminiClient, OpenAIClient, OpenRouterClient, VLLMClient
 
 
 # Global default fallback configuration
 DEFAULT_FALLBACK_CHAIN = [
     {"api_type": "CHATGPT", "model_id": "gpt-4o-1120"},
     {"api_type": "OPENROUTER", "model_id": "openai/gpt-4o"},
+    {"api_type": "OPENAI", "model_id": "gpt-4o"},
     {"api_type": "GEMINI", "model_id": "gemini-2.0-flash"},
 ]
 
 # API key environment variable mapping
 API_KEY_ENV_VARS = {
     "CHATGPT": ["AZURE_OPENAI_API_KEY", "AZURE_OPENAI_ENDPOINT"],
+    "OPENAI": ["OPENAI_API_KEY"],
     "OPENROUTER": ["OPENROUTER_API_KEY"],
     "GEMINI": ["GEMINI_API_KEY"],
     "VLLM": ["VLLM_SERVER_URL"],
@@ -272,6 +274,8 @@ class AgenticTool(BaseTool):
         try:
             if api_type == "CHATGPT":
                 self._llm_client = AzureOpenAIClient(model_id, None, self.logger)
+            elif api_type == "OPENAI":
+                self._llm_client = OpenAIClient(model_id, self.logger)
             elif api_type == "OPENROUTER":
                 self._llm_client = OpenRouterClient(model_id, self.logger)
             elif api_type == "GEMINI":
@@ -602,6 +606,8 @@ class AgenticTool(BaseTool):
         try:
             if self._api_type == "CHATGPT":
                 self._llm_client = AzureOpenAIClient(self._model_id, None, self.logger)
+            elif self._api_type == "OPENAI":
+                self._llm_client = OpenAIClient(self._model_id, self.logger)
             elif self._api_type == "OPENROUTER":
                 self._llm_client = OpenRouterClient(self._model_id, self.logger)
             elif self._api_type == "GEMINI":
