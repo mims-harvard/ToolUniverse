@@ -319,7 +319,7 @@ class AgenticTool(BaseTool):
 
     # ------------------------------------------------------------------ LLM utilities -----------
     def _validate_model_config(self):
-        supported_api_types = ["CHATGPT", "OPENROUTER", "GEMINI", "VLLM"]
+        supported_api_types = ["CHATGPT", "OPENAI", "OPENROUTER", "GEMINI", "VLLM"]
         if self._api_type not in supported_api_types:
             raise ValueError(
                 f"Unsupported API type: {self._api_type}. Supported types: {supported_api_types}"
