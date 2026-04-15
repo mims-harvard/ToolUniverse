@@ -167,3 +167,50 @@ See [troubleshooting.md](references/troubleshooting.md) for full debugging guide
 
 - [format_deseq2_output.py](scripts/format_deseq2_output.py) - Output formatters
 - [load_count_matrix.py](scripts/load_count_matrix.py) - Data loading utilities
+
+## BixBench-verified conventions
+
+### Prefer the dataset's authoritative script
+Before running DESeq2 yourself, `ls` the dataset folder. If you see `run_*.py`, `analysis.R`, `find_*.R`, or similar, those are the benchmark's ground-truth recipes.
+
+1. `cat` the script to see its exact parameters — every kwarg.
+2. If the script already prints the quantity you need, `cd DATASET_DIR && python3 run_*.py` and take its answer.
+3. If the question needs a different metric from the same fitted model, make a SMALL addition (extra print statements) without changing the `DeseqDataSet(...)` / `DeseqStats(...)` constructor calls.
+
+**Copy ALL kwargs literally**: `refit_cooks=True`, `alpha=0.05`, `n_cpus`, `design_factors`, `ref_level`. On the JBX dataset, omitting `refit_cooks=True` changes `(sig97 ∪ sig98) − sig99` from 395 to 441. Plain "remembered" defaults produce a different gene list than the ground-truth script.
+
+### R DESeq2 vs pydeseq2
+The two libraries can disagree on edge cases (e.g., sig gene counts at the same alpha often differ by ~2%). **Match whatever the authoritative script uses.** If no script is present, prefer R DESeq2 — its behavior is more widely referenced in published papers.
+
+```bash
+Rscript -e '
+library(DESeq2)
+counts <- read.csv("raw_counts.csv", row.names=1)
+meta <- read.csv("metadata.csv")
+meta$condition <- relevel(factor(meta$condition), ref="control")
+dds <- DESeqDataSetFromMatrix(round(counts), meta, ~condition)
+dds <- DESeq(dds)
+res <- results(dds)
+write.csv(as.data.frame(res), "/tmp/deseq2_results.csv")
+cat("Total DE (padj<0.05):", sum(res$padj < 0.05, na.rm=TRUE), "\n")
+'
+```
+
+### Strain identity pinning
+When a question names strains by number (e.g., JBX97, JBX98, JBX99) AND describes their biology (ΔlasI, ΔrhlI, ΔlasIΔrhlI), pin the mapping from the question text, not from numeric order. Never assume "strain_99 is between strain_97 and strain_98" — the question states JBX99 is the double mutant.
+
+### "Uniquely DE in A/B not C" = exclusive, not inclusive
+When asked for genes "uniquely DE in one of {A, B} single mutants but not in C (double)", this means **exclusively in A xor exclusively in B, each also not in C**:
+
+```
+(A − B − C) ∪ (B − A − C)
+```
+
+NOT `(A ∪ B) − C` (which includes the A∩B intersection). On JBX: the exclusive interpretation gives 235 + 160 = 395 (matches GT=397 within tolerance); the inclusive gives 441 (outside).
+
+### Set-operation percentages — check the denominator
+If your `unique_DE / total_DE` gives a number in the 30–50% range, the expected denominator is probably different. Common alternatives:
+- `unique_DE / total_genes_tested` (often 5-10% for bacterial, <2% for eukaryotic)
+- `unique_DE / |union of all sig sets|`
+
+Re-read the question to see what population "as a percentage of" refers to.

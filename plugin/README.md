@@ -25,10 +25,10 @@ claude --plugin-dir /path/to/tooluniverse-plugin
 # Discover tools (MCP — good for exploration)
 /tooluniverse:find-tools protein structure prediction
 
-# Run a tool via CLI (faster, batchable)
+# Run a single tool via CLI (one-off Bash query)
 tu run UniProt_search '{"query": "BRCA1", "organism": "human"}'
 
-# Research a question (auto-plans tool calls, uses CLI for execution)
+# Research a question (auto-plans tool calls, uses SDK for batches)
 /tooluniverse:research What are the top mutated genes in breast cancer?
 
 # Launch research agent for complex multi-database questions
@@ -38,13 +38,13 @@ tu run UniProt_search '{"query": "BRCA1", "organism": "human"}'
 "What do we know about drug resistance mutations in EGFR?"
 ```
 
-## Design Philosophy: CLI First, MCP for Discovery
+## Design Philosophy: CLI Default, SDK for Large Batches, MCP for Discovery
 
+- **CLI** (`tu run`): Default for most tool calls — simple, direct, output flows into conversation naturally
+- **Python SDK** (`from tooluniverse import ToolUniverse`): Use for large batches (5+ calls in a loop) — loads the registry once and avoids per-call startup overhead
 - **MCP tools** (`find_tools`, `get_tool_info`): Best for discovering which tools exist and checking parameters
-- **CLI** (`tu run`): Best for actual data retrieval — can be batched in Python scripts, piped, and composed
-- **Python SDK**: Best for complex analysis pipelines — `from tooluniverse import ToolUniverse`
 
-The plugin configures MCP for discovery and teaches the agent to use CLI/SDK for efficient execution.
+The plugin configures MCP for discovery and teaches the agent to use the CLI for most work, switching to the SDK only when looping over many items.
 
 ## API Keys (Optional)
 

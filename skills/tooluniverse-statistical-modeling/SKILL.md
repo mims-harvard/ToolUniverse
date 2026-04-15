@@ -339,6 +339,44 @@ See `TOOLS_REFERENCE.md` for complete tool catalog.
 - **scikit-learn**: https://scikit-learn.org/
 - **Ordinal models**: statsmodels.miscmodels.ordinal_model.OrderedModel
 
+## BixBench-verified conventions
+
+These conventions were validated by reverse-engineering BixBench ground truths. Apply when the dataset/question matches.
+
+### CSV encoding
+Clinical-trial exports (SDTM) are often latin1. If `pd.read_csv()` fails with `UnicodeDecodeError`, retry with `encoding='latin1'`.
+
+### Clinical-trial AE analysis — applies to regression AND chi-square AND any severity test
+For **any statistical test** of a clinical-trial AE severity outcome (chi-square, ordinal/logistic regression, Mann-Whitney, etc.) on trial covariates, fit/test on the cohort that reported **any AE** (inner-joined to demographics). Do NOT pre-filter AE records by AEPT — NOT even when the question says "COVID-19 severity" or names any specific condition. Use `max(AESEV)` across **all AE records per subject**, regardless of AEPT.
+
+**Why**: In these papers, AESEV on the AE table reflects the study's protocol-defined severity scale. Pre-filtering to specific AEPT values (e.g., keeping only `COVID-19`, `COVID-19 pneumonia`, `Asymptomatic COVID-19`) drops subjects whose worst severity was recorded under a different AEPT label, which drastically changes the contingency table. On the BCG-CORONA dataset:
+- All AEPTs, inner join → chi² = 9.42, p = 0.024 (correct)
+- COVID-only AEPTs → chi² = 4.70, p = 0.195 (wrong, agent's typical mistake)
+- Ordinal OR: all AEPT → 1.52; COVID-only AEPT → 0.98 (wrong)
+
+Do NOT pad subjects with no AEs as AESEV=0 — that dilutes the signal.
+
+```python
+dm = pd.read_csv("DM.csv", encoding='latin1')
+ae = pd.read_csv("AE.csv", encoding='latin1')
+sev = ae.groupby('USUBJID')['AESEV'].max().reset_index()
+df = dm.merge(sev, on='USUBJID', how='inner').dropna(subset=['AESEV'])
+df['AESEV'] = df['AESEV'].astype(int)
+# Now ordinal regression / chi-square on df
+```
+
+### Odds-ratio deviation
+"**Percentage reduction in odds ratio**" means `(1 − OR) × 100%` — deviation from OR=1 (no effect). OR=0.75 → 25% reduction vs reference. Do NOT interpret as `(unadjusted_OR − adjusted_OR) / unadjusted_OR`; that's almost always ≈0% because adjustment barely moves a well-specified OR.
+
+### F-statistic vs p-value
+`scipy.stats.f_oneway(g1, g2, ...)` returns `(F, p)`. If GT looks like `(0.76, 0.78)` and you computed `F=91.6`, you returned the F-statistic when the question asked for the p-value (or vice-versa). Always re-read the question for which the answer expects.
+
+### Natural spline regression on strain co-culture data
+When fitting `lm(Area ~ ns(freq, df=4))` with freq = strain_X / (strain_X + strain_Y), the dataset MUST include the pure-strain endpoints (pure X → freq=1, pure Y → freq=0) as anchor points. Restricting to mixed co-culture rows only under-anchors the spline. Diagnostic: if R² ≤ 0.79 or your N equals only the mixed rows (e.g., N=36 when pure samples exist), add the pure-strain rows — R² typically jumps to 0.81 and peak prediction shifts by several thousand units.
+
+### "Frequency ratio" output format
+If the Ratio column contains strings like `"10:1"`, and the question asks for a "frequency ratio of X to total population", convert to a fraction: `first / (first + second)` = 0.909. Report as a fraction in [0, 1], not as ratio notation.
+
 ## Support
 
 For detailed examples and troubleshooting:

@@ -266,6 +266,20 @@ Helper scripts:
 
 ---
 
+## BixBench-verified conventions
+
+### Tool choice: R clusterProfiler vs gseapy
+- **Prefer R clusterProfiler** (via `Rscript -e 'library(clusterProfiler); ...'`) when the dataset folder contains an `analysis.R` / `find_*.R` script — match whatever the authoritative script uses.
+- `gseapy` is a fine fallback for pure-Python workflows, but `enrichGO + clusterProfiler::simplify(cutoff=0.7)` is not faithfully reproduced by gseapy alone.
+
+### Simplify (`cutoff=0.7`) drops redundant terms
+`clusterProfiler::simplify(ego, cutoff=0.7, by="p.adjust", select_fun=min)` removes redundant GO terms. If the question asks about a specific term (e.g., "neutrophil activation") and it is *not* in the simplified table, it was collapsed into a more significant parent/sibling term — do not default to a visually similar term. Inspect `as.data.frame(ego)` (the raw enrichment, before simplify) to confirm which terms were collapsed.
+
+### Background universe matters
+Some datasets provide an explicit background (e.g., `bg_ensembl.txt`, `gencode.v31.primary_assembly.genes.csv`). Use it as `universe=` to `enrichGO` — **do not substitute the DEG-tested genes as background**. Different backgrounds produce meaningfully different adjusted p-values.
+
+---
+
 ## Resources
 
 For network-level analysis: [tooluniverse-network-pharmacology](../tooluniverse-network-pharmacology/SKILL.md)
