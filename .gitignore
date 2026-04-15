@@ -174,3 +174,23 @@ DEVTU_*.md
 # Claude Code configuration
 .claude/
 .tooluniverse/
+
+# Benchmark outputs (large, machine-generated, no history value)
+skills/evals/bixbench/results_*.json
+skills/evals/lab-bench/results_*.json
+skills/evals/bixbench/retest_*.json
+skills/evals/*.log
+skills/evals/*/BENCHMARK_REPORT.md
+skills/evals/*/BIXBENCH_FULL_REPORT.md
+
+# Per-user auto-memory / private session notes (never push)
+memory/
+MEMORY.md
+CLAUDE.md
+
+# API keys & secrets
+.env
+.env.local
+credentials.json
+*_api_key*
+*_token*

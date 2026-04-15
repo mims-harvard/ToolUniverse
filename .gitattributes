@@ -1,0 +1,27 @@
+# Files to exclude when users run `git archive` (e.g., GitHub release tarballs).
+# These are kept in the repo for development but shouldn't ship with the plugin.
+
+# Benchmark data (third-party content)
+temp_docs_and_tests/ export-ignore
+
+# Benchmark outputs and harness (not part of the plugin itself)
+skills/evals/ export-ignore
+
+# Development-only dirs
+tests/ export-ignore
+src/tooluniverse/tools_generated/ export-ignore
+docs/ export-ignore
+
+# Session / memory
+memory/ export-ignore
+*_SUMMARY.md export-ignore
+*_REPORT.md export-ignore
+SESSION_*.md export-ignore
+
+# Build output (regenerated)
+dist/ export-ignore
+
+# Version control metadata
+.github/ export-ignore
+.gitattributes export-ignore
+.gitignore export-ignore

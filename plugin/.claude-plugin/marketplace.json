@@ -1,0 +1,18 @@
+{
+  "name": "tooluniverse-local",
+  "owner": {
+    "name": "MIMS Harvard"
+  },
+  "metadata": {
+    "description": "Local marketplace for the ToolUniverse plugin",
+    "version": "1.1.11"
+  },
+  "plugins": [
+    {
+      "name": "tooluniverse",
+      "description": "1000+ scientific research tools for biology, chemistry, medicine, and data science.",
+      "source": "./",
+      "strict": false
+    }
+  ]
+}
