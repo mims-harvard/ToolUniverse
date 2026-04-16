@@ -14,7 +14,7 @@ claude plugin install tooluniverse@tooluniverse
 
 Restart Claude Code. Done.
 
-**Full install guide** (troubleshooting, API keys, offline zip install, version pinning): see the [`tooluniverse-install-plugin`](../skills/tooluniverse-install-plugin/SKILL.md) skill.
+**Full install guide** (troubleshooting, API keys, offline zip install, version pinning): see the [`tooluniverse-claude-code-plugin`](../skills/tooluniverse-claude-code-plugin/SKILL.md) skill.
 
 ### Local development install
 

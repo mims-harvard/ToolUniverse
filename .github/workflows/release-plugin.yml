@@ -97,4 +97,4 @@ jobs:
             claude plugin install tooluniverse@tooluniverse
             ```
 
-            Full install guide: `skills/tooluniverse-install-plugin/SKILL.md`
+            Full install guide: `skills/tooluniverse-claude-code-plugin/SKILL.md`

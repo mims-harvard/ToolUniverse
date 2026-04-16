@@ -145,7 +145,7 @@ Make sure Step 2 is done (`uv --version` works).
 
 **Config file locations:**
 
-> **Claude Code users**: skip manual MCP config — use the plugin instead. Invoke the `tooluniverse-install-plugin` skill or run:
+> **Claude Code users**: skip manual MCP config — use the plugin instead. Invoke the `tooluniverse-claude-code-plugin` skill or run:
 > ```bash
 > claude plugin marketplace add mims-harvard/ToolUniverse
 > claude plugin install tooluniverse@tooluniverse
