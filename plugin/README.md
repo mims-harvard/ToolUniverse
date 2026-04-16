@@ -5,11 +5,23 @@
 ## Install
 
 ```bash
-# One command:
-claude plugin add /path/to/tooluniverse-plugin
+# 1. Register the marketplace from GitHub
+claude plugin marketplace add mims-harvard/ToolUniverse
 
-# Or load for current session:
-claude --plugin-dir /path/to/tooluniverse-plugin
+# 2. Install the plugin
+claude plugin install tooluniverse@tooluniverse
+```
+
+Restart Claude Code. Done.
+
+**Full install guide** (troubleshooting, API keys, offline zip install, version pinning): see the [`tooluniverse-install-plugin`](../skills/tooluniverse-install-plugin/SKILL.md) skill.
+
+### Local development install
+
+```bash
+# From the repo root:
+claude plugin marketplace add ./
+claude plugin install tooluniverse@tooluniverse
 ```
 
 ## What's Included

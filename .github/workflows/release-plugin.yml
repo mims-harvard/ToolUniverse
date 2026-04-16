@@ -1,0 +1,100 @@
+name: Release Claude Code Plugin
+
+on:
+  push:
+    tags:
+      - 'v*'
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: 'Tag name to build (e.g., v1.1.12)'
+        required: true
+
+permissions:
+  contents: write
+
+jobs:
+  build-plugin-zip:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.inputs.tag || github.ref }}
+
+      - name: Determine tag name
+        id: tag
+        run: |
+          TAG="${{ github.event.inputs.tag || github.ref_name }}"
+          echo "name=$TAG" >> $GITHUB_OUTPUT
+          echo "Building plugin zip for $TAG"
+
+      - name: Build plugin artifact
+        run: |
+          set -euo pipefail
+          TAG="${{ steps.tag.outputs.name }}"
+          BUILD_DIR="build/tooluniverse-plugin-${TAG}"
+          mkdir -p "$BUILD_DIR"
+
+          # Copy plugin directory, resolving symlinks (skills/ uses symlinks)
+          cp -rL plugin/. "$BUILD_DIR/"
+
+          # Include a copy of the root marketplace manifest for optional
+          # "unzip and add as local marketplace" install path.
+          mkdir -p "$BUILD_DIR/../marketplace"
+          cp -r .claude-plugin "$BUILD_DIR/../marketplace/"
+
+          # Rewrite the marketplace source path to the extracted plugin dir
+          TAG_NAME="$TAG" python3 - <<'PY'
+          import json, os, pathlib
+          tag = os.environ["TAG_NAME"]
+          m = pathlib.Path("build/marketplace/.claude-plugin/marketplace.json")
+          data = json.loads(m.read_text())
+          for p in data.get("plugins", []):
+              if p.get("name") == "tooluniverse":
+                  p["source"] = f"./tooluniverse-plugin-{tag}"
+          m.write_text(json.dumps(data, indent=2) + "\n")
+          PY
+
+          # Stage a top-level zip root that contains both
+          ZIP_ROOT="build/zip-root"
+          mkdir -p "$ZIP_ROOT"
+          mv "$BUILD_DIR" "$ZIP_ROOT/"
+          mv build/marketplace/.claude-plugin "$ZIP_ROOT/"
+
+          cd "$ZIP_ROOT"
+          zip -r "../../tooluniverse-plugin-${TAG}.zip" .
+          cd -
+
+          ls -la tooluniverse-plugin-${TAG}.zip
+          unzip -l tooluniverse-plugin-${TAG}.zip | head -30
+
+      - name: Upload artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: tooluniverse-plugin-${{ steps.tag.outputs.name }}
+          path: tooluniverse-plugin-*.zip
+          if-no-files-found: error
+
+      - name: Attach to GitHub Release
+        if: startsWith(github.ref, 'refs/tags/')
+        uses: softprops/action-gh-release@v2
+        with:
+          files: tooluniverse-plugin-*.zip
+          fail_on_unmatched_files: true
+          body: |
+            ### ToolUniverse Claude Code Plugin ${{ steps.tag.outputs.name }}
+
+            Install from GitHub (recommended):
+            ```bash
+            claude plugin marketplace add mims-harvard/ToolUniverse#${{ steps.tag.outputs.name }}
+            claude plugin install tooluniverse@tooluniverse
+            ```
+
+            Or offline: download `tooluniverse-plugin-${{ steps.tag.outputs.name }}.zip`, unzip, then
+            ```bash
+            claude plugin marketplace add ./unzipped-directory
+            claude plugin install tooluniverse@tooluniverse
+            ```
+
+            Full install guide: `skills/tooluniverse-install-plugin/SKILL.md`
