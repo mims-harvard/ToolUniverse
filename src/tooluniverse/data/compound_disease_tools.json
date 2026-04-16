@@ -1,0 +1,48 @@
+[
+  {
+    "type": "CompoundDiseaseProfileTool",
+    "name": "gather_disease_profile",
+    "description": "Gather a comprehensive disease profile from Orphanet, OMIM, DisGeNET, OpenTargets, and OLS in a single call. Returns disease identifiers (ORPHA, MIM, EFO, MONDO), associated genes with scores, inheritance pattern, prevalence, and ontology cross-references. Use for disease research requiring multi-database evidence.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "disease": {
+          "type": "string",
+          "description": "Disease name (e.g., 'breast cancer', 'cystic fibrosis', 'distal renal tubular acidosis')"
+        }
+      },
+      "required": ["disease"]
+    },
+    "return_schema": {
+      "type": "object",
+      "oneOf": [
+        {
+          "properties": {
+            "status": {"const": "success"},
+            "data": {
+              "type": "object",
+              "properties": {
+                "query": {"type": "string"},
+                "sources_queried": {"type": "array"},
+                "sources_failed": {"type": "array"},
+                "profile": {"type": "object"},
+                "per_source": {"type": "object"}
+              }
+            }
+          }
+        },
+        {
+          "properties": {
+            "status": {"const": "error"},
+            "error": {"type": "string"}
+          }
+        }
+      ]
+    },
+    "test_examples": [
+      {"disease": "breast cancer"},
+      {"disease": "cystic fibrosis"},
+      {"disease": "distal renal tubular acidosis"}
+    ]
+  }
+]

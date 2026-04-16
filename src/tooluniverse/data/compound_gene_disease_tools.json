@@ -1,0 +1,52 @@
+[
+  {
+    "type": "CompoundGeneDiseaseAssociationTool",
+    "name": "gather_gene_disease_associations",
+    "description": "Query multiple gene-disease databases (DisGeNET, OMIM, OpenTargets, GenCC, ClinVar) in a single call. Returns a cross-referenced comparison table showing which sources agree on each association, with concordance scores. Use when you need to compare gene-disease evidence across databases or find associations unique to one source.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "gene": {
+          "type": ["string", "null"],
+          "description": "Gene symbol (e.g., 'TP53', 'BRCA1'). At least one of gene or disease required."
+        },
+        "disease": {
+          "type": ["string", "null"],
+          "description": "Disease name (e.g., 'breast cancer', 'distal renal tubular acidosis'). At least one of gene or disease required."
+        }
+      },
+      "required": []
+    },
+    "return_schema": {
+      "type": "object",
+      "oneOf": [
+        {
+          "properties": {
+            "status": {"const": "success"},
+            "data": {
+              "type": "object",
+              "properties": {
+                "query": {"type": "object"},
+                "sources_queried": {"type": "array"},
+                "sources_failed": {"type": "array"},
+                "num_associations": {"type": "integer"},
+                "associations": {"type": "array"}
+              }
+            }
+          }
+        },
+        {
+          "properties": {
+            "status": {"const": "error"},
+            "error": {"type": "string"}
+          }
+        }
+      ]
+    },
+    "test_examples": [
+      {"gene": "TP53"},
+      {"disease": "breast cancer"},
+      {"gene": "BRCA1", "disease": "breast cancer"}
+    ]
+  }
+]

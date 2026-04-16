@@ -170,5 +170,107 @@
         }
       ]
     }
+  },
+  {
+    "type": "MSigDBTool",
+    "name": "MSigDB_check_gene_in_set",
+    "description": "Check if a specific gene is a member of an MSigDB gene set. Covers GTRD transcription factor targets (e.g., ZNF549_TARGET_GENES), miRDB miRNA targets, oncogenic signatures (C6), hallmark sets (H), and 33,000+ other sets. Use to verify gene membership in TF target lists, miRNA target lists, or any MSigDB collection.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "operation": {
+          "const": "check_gene_in_set"
+        },
+        "gene_set_name": {
+          "type": "string",
+          "description": "Exact gene set name (e.g., 'ZNF549_TARGET_GENES', 'ESC_V6.5_UP_EARLY.V1_DN', 'HALLMARK_APOPTOSIS')"
+        },
+        "gene": {
+          "type": "string",
+          "description": "Gene symbol to check (e.g., 'SELENOP', 'TP53', 'CD37')"
+        }
+      },
+      "required": ["gene_set_name", "gene"]
+    },
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "object",
+          "properties": {
+            "status": {"const": "success"},
+            "data": {
+              "type": "object",
+              "properties": {
+                "gene_set_name": {"type": "string"},
+                "gene": {"type": "string"},
+                "is_member": {"type": "boolean"},
+                "total_genes_in_set": {"type": "integer"}
+              }
+            }
+          }
+        },
+        {
+          "type": "object",
+          "properties": {
+            "status": {"const": "error"},
+            "error": {"type": "string"}
+          }
+        }
+      ]
+    },
+    "test_examples": [
+      {"gene_set_name": "ZNF549_TARGET_GENES", "gene": "SELENOP"},
+      {"gene_set_name": "HALLMARK_APOPTOSIS", "gene": "TP53"},
+      {"gene_set_name": "ESC_V6.5_UP_EARLY.V1_DN", "gene": "CD37"}
+    ]
+  },
+  {
+    "type": "MSigDBTool",
+    "name": "MSigDB_get_gene_set_members",
+    "description": "Get all gene members of an MSigDB gene set by exact name. Returns parsed gene list (unlike MSigDB_get_geneset which returns raw API response). Covers 33,000+ gene sets including GTRD TF targets, miRDB miRNA targets, oncogenic signatures, hallmark sets, GO terms, and pathway gene sets.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "operation": {
+          "const": "get_gene_set"
+        },
+        "gene_set_name": {
+          "type": "string",
+          "description": "Exact MSigDB gene set name (e.g., 'ZNF549_TARGET_GENES', 'MIR675_3P_TARGET_GENES', 'ESC_V6.5_UP_EARLY.V1_DN')"
+        }
+      },
+      "required": ["gene_set_name"]
+    },
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "object",
+          "properties": {
+            "status": {"const": "success"},
+            "data": {
+              "type": "object",
+              "properties": {
+                "gene_set_name": {"type": "string"},
+                "num_genes": {"type": "integer"},
+                "genes": {"type": "array"},
+                "collection": {"type": "string"}
+              }
+            }
+          }
+        },
+        {
+          "type": "object",
+          "properties": {
+            "status": {"const": "error"},
+            "error": {"type": "string"}
+          }
+        }
+      ]
+    },
+    "test_examples": [
+      {"gene_set_name": "HALLMARK_APOPTOSIS"},
+      {"gene_set_name": "ZNF549_TARGET_GENES"},
+      {"gene_set_name": "ESC_V6.5_UP_EARLY.V1_DN"}
+    ]
   }
 ]
