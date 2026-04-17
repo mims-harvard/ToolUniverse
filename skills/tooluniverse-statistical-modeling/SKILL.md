@@ -372,10 +372,24 @@ df['AESEV'] = df['AESEV'].astype(int)
 `scipy.stats.f_oneway(g1, g2, ...)` returns `(F, p)`. If GT looks like `(0.76, 0.78)` and you computed `F=91.6`, you returned the F-statistic when the question asked for the p-value (or vice-versa). Always re-read the question for which the answer expects.
 
 ### Natural spline regression on strain co-culture data
-When fitting `lm(Area ~ ns(freq, df=4))` with freq = strain_X / (strain_X + strain_Y), the dataset MUST include the pure-strain endpoints (pure X → freq=1, pure Y → freq=0) as anchor points. Restricting to mixed co-culture rows only under-anchors the spline. Diagnostic: if R² ≤ 0.79 or your N equals only the mixed rows (e.g., N=36 when pure samples exist), add the pure-strain rows — R² typically jumps to 0.81 and peak prediction shifts by several thousand units.
+When fitting models on strain co-culture frequency data:
 
-### "Frequency ratio" output format
-If the Ratio column contains strings like `"10:1"`, and the question asks for a "frequency ratio of X to total population", convert to a fraction: `first / (first + second)` = 0.909. Report as a fraction in [0, 1], not as ratio notation.
+1. **Ratio → frequency conversion**: If the Ratio column contains strings like `"10:1"`, convert to a frequency fraction: `first / (first + second)` = 0.909. Report as a fraction in [0, 1], not as ratio notation.
+
+2. **Pure-strain endpoints**: Whether to include pure-strain data (freq=0 and freq=1) depends on the model type:
+   - **Cubic/polynomial models**: Fit on co-culture rows ONLY (exclude pure strains). The cubic model captures the mixed-population response curve; pure strains are fundamentally different biological regimes. On the Swarm co-culture dataset: co-culture-only cubic R² ≈ 0.58; adding pure strains drops R² to 0.53.
+   - **Natural spline models (`ns(freq, df=4)`)**: Include pure-strain endpoints as anchor points. Splines need boundary data to interpolate correctly near the extremes. On the same dataset: with endpoints NS R² ≈ 0.81; without endpoints NS R�� ≈ 0.78.
+
+3. **R vs Python splines**: R's `ns()` (from the `splines` package) and Python's `patsy.cr()` or `scipy BSpline` produce DIFFERENT knot placements and boundary conditions. If the question references R's `lm(y ~ ns(x, df=4))`, use `Rscript` directly:
+   ```r
+   library(splines)
+   fit <- lm(Area ~ ns(Frequency_rhlI, df=4), data=df)
+   summary(fit)  # R², F, p-value
+   pred <- predict(fit, newdata=data.frame(Frequency_rhlI=seq(0,1,len=1000)), interval="confidence")
+   ```
+   Do NOT substitute Python's `patsy dmatrix("cr(x, df=4)")` — it will give different R², F-statistics, and predictions.
+
+4. **Prediction at peak**: After fitting, predict on a fine grid (1000 points), find `which.max(pred[,"fit"])`, and report the CI from `interval="confidence"` at that index.
 
 ## Support
 

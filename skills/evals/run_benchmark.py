@@ -55,6 +55,7 @@ _BIXBENCH_SKILL_NAMES = [
     "tooluniverse-crispr-screen-analysis",
     "tooluniverse-phylogenetics",
     "tooluniverse-variant-analysis",
+    "tooluniverse-single-cell",
 ]
 
 
