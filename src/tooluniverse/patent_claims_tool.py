@@ -188,21 +188,22 @@ class PatentClaimsTool(BaseTool):
     def _get_grant_xml_uri(self, app_number: str) -> str | None:
         """Fetch the grant XML download URI from /associated-documents.
 
-        The endpoint returns a list of document objects; we look for the one
-        whose ``documentCode`` is ``"GRTXML"`` (Grant XML).
+        The response has grantDocumentMetaData at the top level of each
+        patentFileWrapperDataBag item (NOT inside a nested document list).
+        The fileLocationURI points directly to the downloadable XML.
         """
         url = f"{self.base_url}/patent/applications/{app_number}/associated-documents"
         resp = self.session.get(url, headers=self.headers, timeout=60)
         resp.raise_for_status()
 
-        # Navigate the nested response to find grant XML
+        # The grant XML URI is at: patentFileWrapperDataBag[0].grantDocumentMetaData.fileLocationURI
         bag = resp.json().get("patentFileWrapperDataBag", [])
-        for entry in bag:
-            docs = entry.get("associatedDocumentDataBag", [])
-            for doc in docs:
-                if doc.get("documentCode") == "GRTXML":
-                    return doc.get("documentURI")
-        return None
+        if not bag:
+            return None
+        grant_meta = bag[0].get("grantDocumentMetaData")
+        if not grant_meta:
+            return None  # patent may not be granted yet
+        return grant_meta.get("fileLocationURI")
 
     def _download_xml(self, uri: str) -> str:
         """Download XML from the given URI, following redirects.

@@ -152,7 +152,7 @@ class PatentResolverTool(BaseTool):
     # -- internal search helpers --
 
     def _search(self, query: str) -> dict | None:
-        """Run a search query and return the first result's metadata, or None."""
+        """Run a search query and return the first result (full bag item), or None."""
         resp = self.session.get(
             f"{self.base_url}/patent/applications/search",
             headers=self.headers,
@@ -163,7 +163,9 @@ class PatentResolverTool(BaseTool):
         results = resp.json().get("patentFileWrapperDataBag", [])
         if not results:
             return None
-        return results[0].get("applicationMetaData")
+        # Return the full bag item — applicationNumberText is at this level,
+        # not inside applicationMetaData
+        return results[0]
 
     def _get_meta(self, app_number: str) -> dict | None:
         """Fetch application metadata directly by application number."""
@@ -178,12 +180,19 @@ class PatentResolverTool(BaseTool):
         bag = resp.json().get("patentFileWrapperDataBag", [])
         if not bag:
             return None
-        return bag[0].get("applicationMetaData")
+        # Return the full bag item — applicationNumberText is at this level
+        return bag[0]
 
-    def _extract(self, meta: dict) -> dict:
-        """Pull the fields callers need from raw applicationMetaData."""
+    def _extract(self, bag_item: dict) -> dict:
+        """Pull the fields callers need from a full patentFileWrapperDataBag item.
+
+        applicationNumberText lives at the top level of the bag item.
+        Everything else lives inside applicationMetaData.
+        """
+        meta = bag_item.get("applicationMetaData", {})
         return {
-            "applicationNumberText": meta.get("applicationNumberText", ""),
+            # applicationNumberText is at the bag-item level, NOT inside applicationMetaData
+            "applicationNumberText": bag_item.get("applicationNumberText", ""),
             "patentNumber": meta.get("patentNumber", ""),
             "inventionTitle": meta.get("inventionTitle", ""),
             "filingDate": meta.get("filingDate", ""),
