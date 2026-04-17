@@ -1,9 +1,4 @@
----
-name: tooluniverse-gene-regulatory-networks
-description: Gene regulatory network analysis — TF-target inference, ChIP-seq binding, motif analysis, eQTL integration. Use when users ask about transcription factor regulation, gene regulatory networks, or TF binding evidence.
----
-
-# Gene Regulatory Network Analysis
+# Skill: Gene Regulatory Network Analysis
 
 **GRN inference starts with: which TF regulates which gene?** Direct evidence (ChIP-seq binding) is stronger than indirect (co-expression correlation). A TF binding near a gene doesn't prove regulation — check if expression changes when the TF is perturbed. JASPAR provides binding motifs but motif presence in a promoter is only computational evidence (T3); ENCODE ChIP-seq data that places the TF at the locus in the relevant cell type is stronger (T1). eQTLs from GTEx show which variants affect expression but don't identify the upstream regulator — combine with TF motif disruption analysis for mechanistic insight.
 

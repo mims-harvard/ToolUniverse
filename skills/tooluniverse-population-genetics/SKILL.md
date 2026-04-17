@@ -7,6 +7,8 @@ description: Population genetics analysis — allele frequencies, Hardy-Weinberg
 
 **MC Strategy**: Population genetics MC questions often test whether you know a specific theorem or result. COMPUTE the answer first (use popgen_calculator.py or write Python), then match to options. Don't try to reason about which option "sounds right."
 
+**MC Strategy**: Population genetics MC questions often test whether you know a specific theorem or result. COMPUTE the answer first (use popgen_calculator.py or write Python), then match to options. Don't try to reason about which option "sounds right."
+
 Analyze population-level genetic variation, allele frequencies, GWAS associations, clinical significance, and evolutionary constraints using ToolUniverse tools.
 
 ## When to Use
