@@ -1,0 +1,38 @@
+[
+  {
+    "type": "PatentDeepLookupTool",
+    "name": "USPTO_patent_deep_lookup",
+    "description": "Analyze multiple US patents in one call. Provide a list of patent numbers OR a search query, and specify which analyses to run: metadata, assignment (ownership chain), claims (full text), transactions (prosecution history), and/or enriched_citations (AI-extracted prior art relevance). Handles patent number resolution, rate limiting, and result aggregation automatically. Use this for batch patent analysis, FTO preparation, or portfolio reviews instead of calling individual tools in a loop.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "patent_numbers": {
+          "type": "array",
+          "items": {"type": "string"},
+          "description": "List of patent numbers in any format. Provide this OR search_query."
+        },
+        "search_query": {
+          "type": "string",
+          "description": "ODP search query to find patents (e.g., 'applicationMetaData.firstApplicantName:Moderna*'). Provide this OR patent_numbers."
+        },
+        "include": {
+          "type": "array",
+          "items": {"type": "string"},
+          "description": "Analyses to run: metadata, assignment, claims, transactions, enriched_citations. Default: ['metadata'].",
+          "default": ["metadata"]
+        },
+        "limit": {
+          "type": "integer",
+          "description": "Maximum patents to analyze (default 10, max 50)",
+          "default": 10
+        }
+      },
+      "required": []
+    },
+    "required_api_keys": ["USPTO_API_KEY"],
+    "test_examples": [
+      {"patent_numbers": ["US9629826B2"], "include": ["metadata", "assignment"]},
+      {"search_query": "applicationMetaData.patentNumber:9629826", "include": ["metadata", "claims"]}
+    ]
+  }
+]

@@ -891,5 +891,207 @@
         "applicationNumberText": "17456789"
       }
     ]
+  },
+  {
+    "type": "USPTOOpenDataPortalTool",
+    "name": "USPTO_get_patent_assignment",
+    "description": "Get the chain of title (ownership history) for a US patent application. Returns every assignment recorded with the USPTO: who transferred rights (assignor), who received them (assignee), when it was recorded, and the type of transfer (assignment, merger, security interest, etc.). Use this to determine who currently owns a patent and trace how ownership changed over time. Requires an application number \u2014 use USPTO_patent_number_to_application to convert patent numbers first.",
+    "api_endpoint": "patent/applications/{applicationNumberText}/assignment",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "applicationNumberText": {
+          "type": "string",
+          "description": "The application number of the patent (e.g., '14966067'). This is NOT the patent number \u2014 use USPTO_patent_number_to_application to convert."
+        }
+      },
+      "required": [
+        "applicationNumberText"
+      ]
+    },
+    "required": [
+      "applicationNumberText"
+    ],
+    "required_api_keys": [
+      "USPTO_API_KEY"
+    ],
+    "return_fields": [
+      "applicationNumberText",
+      "assignmentBag/reelNumber",
+      "assignmentBag/frameNumber",
+      "assignmentBag/reelAndFrameNumber",
+      "assignmentBag/conveyanceText",
+      "assignmentBag/assignmentRecordedDate",
+      "assignmentBag/assignmentReceivedDate",
+      "assignmentBag/assignmentMailedDate",
+      "assignmentBag/assignmentDocumentLocationURI",
+      "assignmentBag/pageTotalQuantity",
+      "assignmentBag/attorneyDocketNumber",
+      "assignmentBag/assignorBag",
+      "assignmentBag/assigneeBag",
+      "assignmentBag/correspondenceAddress"
+    ],
+    "return_schema": {
+      "type": "object",
+      "properties": {
+        "count": {
+          "type": "integer"
+        },
+        "patentFileWrapperDataBag": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "applicationNumberText": {
+                "type": "string"
+              },
+              "assignmentBag": {
+                "type": "array",
+                "description": "Each entry is one recorded assignment (ownership transfer)",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "reelNumber": {
+                      "type": "integer"
+                    },
+                    "frameNumber": {
+                      "type": "integer"
+                    },
+                    "reelAndFrameNumber": {
+                      "type": "string"
+                    },
+                    "conveyanceText": {
+                      "type": "string"
+                    },
+                    "assignmentRecordedDate": {
+                      "type": "string"
+                    },
+                    "assignmentReceivedDate": {
+                      "type": "string"
+                    },
+                    "assignmentMailedDate": {
+                      "type": "string"
+                    },
+                    "assignmentDocumentLocationURI": {
+                      "type": "string"
+                    },
+                    "assignorBag": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "assignorName": {
+                            "type": "string"
+                          },
+                          "executionDate": {
+                            "type": "string"
+                          }
+                        }
+                      }
+                    },
+                    "assigneeBag": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "assigneeNameText": {
+                            "type": "string"
+                          },
+                          "assigneeAddress": {
+                            "type": "object"
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "test_examples": [
+      {
+        "applicationNumberText": "14966067"
+      },
+      {
+        "applicationNumberText": "18045436"
+      }
+    ]
+  },
+  {
+    "type": "USPTOOpenDataPortalTool",
+    "name": "USPTO_get_patent_transactions",
+    "description": "Get the full prosecution history timeline for a US patent application. Returns every event recorded by the USPTO: office actions (rejections, allowances), applicant responses, fee payments, publication events, and more. Each event has a code, description, and date. Use this to understand what happened during examination and when. Requires an application number \u2014 use USPTO_patent_number_to_application to convert patent numbers first.",
+    "api_endpoint": "patent/applications/{applicationNumberText}/transactions",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "applicationNumberText": {
+          "type": "string",
+          "description": "The application number of the patent (e.g., '14966067'). This is NOT the patent number \u2014 use USPTO_patent_number_to_application to convert."
+        }
+      },
+      "required": [
+        "applicationNumberText"
+      ]
+    },
+    "required": [
+      "applicationNumberText"
+    ],
+    "required_api_keys": [
+      "USPTO_API_KEY"
+    ],
+    "return_fields": [
+      "applicationNumberText",
+      "eventDataBag/eventCode",
+      "eventDataBag/eventDescriptionText",
+      "eventDataBag/eventDate"
+    ],
+    "return_schema": {
+      "type": "object",
+      "properties": {
+        "count": {
+          "type": "integer"
+        },
+        "patentFileWrapperDataBag": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "applicationNumberText": {
+                "type": "string"
+              },
+              "eventDataBag": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "eventCode": {
+                      "type": "string"
+                    },
+                    "eventDescriptionText": {
+                      "type": "string"
+                    },
+                    "eventDate": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "test_examples": [
+      {
+        "applicationNumberText": "14966067"
+      },
+      {
+        "applicationNumberText": "18045436"
+      }
+    ]
   }
 ]

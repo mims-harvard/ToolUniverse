@@ -1,0 +1,57 @@
+[
+  {
+    "type": "DSAPITool",
+    "name": "USPTO_search_enriched_citations",
+    "description": "Search AI-extracted citation data from USPTO office actions. Returns which prior art was cited against which claims, with relevance codes (X=anticipation, Y=obviousness combination, A=background). Powered by USPTO's machine learning algorithms that analyze office actions. Use this to quickly identify the most threatening prior art for a patent. Query with Lucene syntax, e.g., 'patentApplicationNumber:14966067'. Data available from October 2017 office actions onward.",
+    "api_endpoint": "patent/oa/enriched_cited_reference_metadata/v3/records",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "query": {
+          "type": "string",
+          "description": "Lucene query string. Examples: 'patentApplicationNumber:14966067', 'citationCategoryCode:X AND techCenter:1600'"
+        },
+        "offset": {
+          "type": "integer",
+          "description": "Start position for pagination (default 0)",
+          "default": 0
+        },
+        "limit": {
+          "type": "integer",
+          "description": "Maximum results to return (default 25)",
+          "default": 25
+        }
+      },
+      "required": ["query"]
+    },
+    "required": ["query"],
+    "required_api_keys": ["USPTO_API_KEY"],
+    "return_schema": {
+      "type": "object",
+      "properties": {
+        "numFound": {"type": "integer"},
+        "start": {"type": "integer"},
+        "docs": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "patentApplicationNumber": {"type": "string"},
+              "citedDocumentIdentifier": {"type": "string"},
+              "citationCategoryCode": {"type": "string", "description": "X=anticipation, Y=obviousness, A=background"},
+              "relatedClaimNumberText": {"type": "string"},
+              "passageLocationText": {"type": "array"},
+              "examinerCitedReferenceIndicator": {"type": "boolean"},
+              "officeActionCategory": {"type": "string"},
+              "officeActionDate": {"type": "string"}
+            }
+          }
+        }
+      }
+    },
+    "test_examples": [
+      {"query": "patentApplicationNumber:14966067"},
+      {"query": "citationCategoryCode:X AND techCenter:1600", "limit": 10}
+    ]
+  }
+]

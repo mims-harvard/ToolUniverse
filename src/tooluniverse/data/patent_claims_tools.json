@@ -1,0 +1,47 @@
+[
+  {
+    "type": "PatentClaimsTool",
+    "name": "USPTO_get_patent_claims",
+    "description": "Extract the full text of every claim from a granted US patent. Returns each claim with its number, full text, whether it is independent or dependent, and which claim it depends on (if dependent). This is the most important tool for Freedom-to-Operate (FTO) analysis --- claims define exactly what the patent protects. Accepts either an application number or a patent number (any format). If a patent number is provided, it is resolved automatically.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "applicationNumberText": {
+          "type": "string",
+          "description": "The application number (e.g., '14966067'). Provide this OR patent_number."
+        },
+        "patent_number": {
+          "type": "string",
+          "description": "Patent number in any format (e.g., 'US9629826B2'). Will be resolved to application number automatically."
+        }
+      },
+      "required": []
+    },
+    "required_api_keys": ["USPTO_API_KEY"],
+    "return_schema": {
+      "type": "object",
+      "properties": {
+        "application_number": {"type": "string"},
+        "claim_count": {"type": "integer"},
+        "independent_claim_count": {"type": "integer"},
+        "claims": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "claim_number": {"type": "integer"},
+              "claim_id": {"type": "string"},
+              "claim_text": {"type": "string"},
+              "is_independent": {"type": "boolean"},
+              "dependent_on": {"type": "integer"}
+            }
+          }
+        }
+      }
+    },
+    "test_examples": [
+      {"applicationNumberText": "14966067"},
+      {"patent_number": "US9629826B2"}
+    ]
+  }
+]

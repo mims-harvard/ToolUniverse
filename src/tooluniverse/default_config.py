@@ -209,6 +209,14 @@ default_tool_files = {
         current_dir, "data", "uspto_downloader_tools.json"
     ),
     "uspto": os.path.join(current_dir, "data", "uspto_tools.json"),
+    "patent_resolver": os.path.join(current_dir, "data", "patent_resolver_tools.json"),
+    "patent_claims": os.path.join(current_dir, "data", "patent_claims_tools.json"),
+    # USPTO DSAPI -- Office Action endpoints (POST/form-encoded, Lucene queries)
+    "dsapi": os.path.join(current_dir, "data", "dsapi_tools.json"),
+    # USPTO Patent Deep Lookup -- batch pipeline chaining all patent tools
+    "patent_deep_lookup": os.path.join(
+        current_dir, "data", "patent_deep_lookup_tools.json"
+    ),
     "xml": os.path.join(current_dir, "data", "xml_tools.json"),
     "mcp_auto_loader_boltz": os.path.join(
         current_dir, "data", "boltz_mcp_loader_tools.json"

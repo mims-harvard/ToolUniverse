@@ -1,0 +1,49 @@
+[
+  {
+    "type": "PatentResolverTool",
+    "name": "USPTO_patent_number_to_application",
+    "description": "Convert any patent number format to a USPTO application number. Accepts grant numbers (US9629826B2, 9629826), application numbers (14/966,067), and publication numbers (US20160106718A1). Returns the application number plus basic metadata (title, dates, status). Use this FIRST before calling any other USPTO patent tool --- they all require application numbers as input.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "patent_number": {
+          "type": "string",
+          "description": "Patent number in any format: grant (US9629826B2), application (14/966,067), or publication (US20160106718A1)"
+        }
+      },
+      "required": ["patent_number"]
+    },
+    "required": ["patent_number"],
+    "required_api_keys": ["USPTO_API_KEY"],
+    "return_schema": {
+      "type": "object",
+      "properties": {
+        "applicationNumberText": {
+          "type": "string",
+          "description": "The USPTO application number (primary key for all other tools)"
+        },
+        "patentNumber": {
+          "type": "string",
+          "description": "Patent grant number (if granted)"
+        },
+        "inventionTitle": {
+          "type": "string"
+        },
+        "filingDate": {
+          "type": "string"
+        },
+        "grantDate": {
+          "type": "string"
+        },
+        "applicationStatusDescriptionText": {
+          "type": "string"
+        }
+      }
+    },
+    "test_examples": [
+      {"patent_number": "US9629826B2"},
+      {"patent_number": "14/966,067"},
+      {"patent_number": "9629826"}
+    ]
+  }
+]
