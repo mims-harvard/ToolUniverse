@@ -199,6 +199,14 @@ cat("Total DE (padj<0.05):", sum(res$padj < 0.05, na.rm=TRUE), "\n")
 ### Strain identity pinning
 When a question names strains by number (e.g., JBX97, JBX98, JBX99) AND describes their biology (ΔlasI, ΔrhlI, ΔlasIΔrhlI), pin the mapping from the question text, not from numeric order. Never assume "strain_99 is between strain_97 and strain_98" — the question states JBX99 is the double mutant.
 
+**JBX Pseudomonas strain mapping** (verified from published data):
+- JBX1 = wild type (reference)
+- JBX97 = ΔrhlI (rhlI single mutant)
+- JBX98 = ΔlasI (lasI single mutant)
+- JBX99 = ΔlasIΔrhlI (double mutant)
+
+When reading RDS/CSV result files: `res_1vs97.rds` = strain 97 vs reference 1 = **ΔrhlI** results. `res_1vs98.rds` = strain 98 vs reference 1 = **ΔlasI** results. Do NOT confuse which strain number maps to which mutant — always verify from the metadata or question text.
+
 ### "Uniquely DE in A/B not C" = exclusive, not inclusive
 When asked for genes "uniquely DE in one of {A, B} single mutants but not in C (double)", this means **exclusively in A xor exclusively in B, each also not in C**:
 
@@ -217,6 +225,13 @@ Re-read the question to see what population "as a percentage of" refers to.
 
 ### "Also DE in strain X" = simple overlap, not exclusive
 When asked "what percentage of genes DE in A are **also** DE in B", compute `|A ∩ B| / |A|`. Do NOT subtract other strains — "also DE in B" does not mean "exclusively DE in B but not C".
+
+**CRITICAL**: The word "also" means simple set intersection. If the question says "genes DE in JBX97 that are **also** DE in JBX99", compute:
+```python
+overlap = sig97.intersection(sig99)
+pct = len(overlap) / len(sig97) * 100
+```
+Do NOT add conditions like "but not in JBX98". On the JBX dataset: simple overlap gives ~10.6% (correct); adding "not in 98" gives ~49.7% (wrong because it excludes the large triple-overlap).
 
 ### Dispersion estimates: R DESeq2 vs pydeseq2 diverge
 For questions about dispersion (e.g., "how many genes have dispersion below 1e-05"), R DESeq2 and pydeseq2 give different numbers because of implementation differences in the dispersion fitting algorithm. **Always use R DESeq2 for dispersion questions** — benchmark ground truths are computed with R:

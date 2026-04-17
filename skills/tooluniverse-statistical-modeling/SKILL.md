@@ -371,6 +371,13 @@ df['AESEV'] = df['AESEV'].astype(int)
 ### F-statistic vs p-value
 `scipy.stats.f_oneway(g1, g2, ...)` returns `(F, p)`. If GT looks like `(0.76, 0.78)` and you computed `F=91.6`, you returned the F-statistic when the question asked for the p-value (or vice-versa). Always re-read the question for which the answer expects.
 
+### ANOVA on expression levels across groups — aggregation matters
+When asked for "F-statistic comparing expression levels across cell types/groups":
+- Do NOT sum all genes per sample (that gives total RNA content, not expression-level ANOVA)
+- The ANOVA is on the **per-gene log2FC values** (or per-gene expression values) across groups
+- For miRNA data: each miRNA's expression across cell types is one observation. The F-stat from ANOVA on log2FC values across groups is typically LOW (0.5–1.5) when most genes show no difference, not HIGH (50+)
+- If your F-statistic is >10 but the biological context suggests "no significant difference", you probably aggregated to sample level instead of gene level
+
 ### Natural spline regression on strain co-culture data
 When fitting models on strain co-culture frequency data:
 

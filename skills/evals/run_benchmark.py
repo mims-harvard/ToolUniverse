@@ -256,7 +256,10 @@ def grade_answer(
     # Normalized containment: strip spaces/punctuation for comparison
     gt_normalized = re.sub(r"[^a-z0-9]", "", gt_lower)
     pred_normalized = re.sub(r"[^a-z0-9]", "", pred_lower)
-    normalized_match = len(gt_normalized) >= 4 and gt_normalized in pred_normalized
+    normalized_match = (
+        (len(gt_normalized) >= 4 and gt_normalized in pred_normalized)
+        or (len(pred_normalized) >= 4 and pred_normalized in gt_normalized)
+    )
 
     # Numeric proximity: if GT contains a single leading number (e.g. "337", "337 samples",
     # "8.1%", "1.9E-05"), accept any predicted number within 5% tolerance.
