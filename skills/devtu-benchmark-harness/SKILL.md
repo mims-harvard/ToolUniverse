@@ -128,22 +128,32 @@ The analyzer maps each question category to the skill responsible for handling i
 | single_cell | tooluniverse-single-cell | scanpy, h5ad |
 | pathway_enrichment | tooluniverse-gene-enrichment | GSEA, Reactome |
 
-## Current Baselines (2026-04-15)
+## Current Baselines (2026-04-17)
 
-| Benchmark | Baseline (Bash) | Plugin | Target |
-|-----------|-----------------|--------|--------|
-| lab-bench (20 MCQ) | 50% | 85% | 90% |
-| bixbench (61 comp) | ~50% | 60.7% | 70% |
+| Benchmark | Baseline (Bash) | Plugin (Apr 14) | Plugin (Apr 17) | Target |
+|-----------|-----------------|-----------------|-----------------|--------|
+| lab-bench (20 MCQ) | 50% | 85% | 85% | 90% |
+| bixbench (61 comp) | ~50% | 60.7% (37/61) | **75.4% (46/61)** | 80% |
 
-### BixBench by skill (current):
-| Skill | Accuracy | Fix Priority |
-|-------|----------|-------------|
-| tooluniverse-statistical-modeling | 48% (11/23) | HIGH |
-| tooluniverse-variant-analysis | 50% (3/6) | HIGH |
-| tooluniverse-gene-enrichment | 60% (3/5) | MEDIUM |
-| tooluniverse-rnaseq-deseq2 | 60% (6/10) | MEDIUM |
-| tooluniverse-crispr-screen-analysis | 67% (2/3) | LOW |
-| tooluniverse-phylogenetics | 82% (9/11) | LOW |
+### BixBench by skill (Apr 17):
+| Skill | Apr 14 | Apr 17 | Change |
+|-------|--------|--------|--------|
+| tooluniverse-statistical-modeling | 48% (11/23) | 78% (18/23) | +30pp |
+| tooluniverse-variant-analysis | 50% (3/6) | 83% (5/6) | +33pp |
+| tooluniverse-rnaseq-deseq2 | 60% (6/10) | 70% (7/10) | +10pp |
+| tooluniverse-gene-enrichment | 60% (3/5) | 60% (3/5) | — |
+| tooluniverse-crispr-screen-analysis | 67% (2/3) | 67% (4/6) | — |
+| tooluniverse-phylogenetics | 82% (9/11) | 100% (11/11) | +18pp |
+
+### Remaining failures (15/61):
+- 3 DESeq2: R vs pydeseq2 divergence on dispersion/denominator
+- 3 spline: R ns() CI/p-value precision for derived quantities
+- 2 enrichGO: R clusterProfiler dependency
+- 2 CRISPR: sgRNA-level correlation, timeout
+- 2 miRNA: ANOVA F-stat, median LFC
+- 1 single-cell: cell type identification
+- 1 fold_change: contrast direction
+- 1 CRISPR pathway: exact Reactome pathway name
 
 ## Integration with devtu-self-evolve
 
