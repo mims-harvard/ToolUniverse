@@ -139,10 +139,10 @@ The analyzer maps each question category to the skill responsible for handling i
 
 ## Current Baselines (2026-04-17)
 
-| Benchmark | Baseline (Bash) | Plugin (Apr 14) | Plugin (Apr 17) | Target |
+| Benchmark | Baseline (Bash) | Plugin (Apr 14) | Plugin (Apr 18) | Target |
 |-----------|-----------------|-----------------|-----------------|--------|
 | lab-bench (20 MCQ) | 50% | 85% | 85% | 90% |
-| bixbench (61 comp) | ~50% | 60.7% (37/61) | **83.6% (51/61)** | 85% |
+| bixbench (205 comp) | ~50% | 60.7% (37/61) | **81.0% (166/205)** | 85% |
 
 ### BixBench by skill (Apr 17, after retest):
 | Skill | Apr 14 | Apr 17 | Change |
