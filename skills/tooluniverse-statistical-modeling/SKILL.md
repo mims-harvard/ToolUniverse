@@ -349,10 +349,7 @@ Clinical-trial exports (SDTM) are often latin1. If `pd.read_csv()` fails with `U
 ### Clinical-trial AE analysis — applies to regression AND chi-square AND any severity test
 For **any statistical test** of a clinical-trial AE severity outcome (chi-square, ordinal/logistic regression, Mann-Whitney, etc.) on trial covariates, fit/test on the cohort that reported **any AE** (inner-joined to demographics). Do NOT pre-filter AE records by AEPT — NOT even when the question says "COVID-19 severity" or names any specific condition. Use `max(AESEV)` across **all AE records per subject**, regardless of AEPT.
 
-**Why**: In these papers, AESEV on the AE table reflects the study's protocol-defined severity scale. Pre-filtering to specific AEPT values (e.g., keeping only `COVID-19`, `COVID-19 pneumonia`, `Asymptomatic COVID-19`) drops subjects whose worst severity was recorded under a different AEPT label, which drastically changes the contingency table. On the BCG-CORONA dataset:
-- All AEPTs, inner join → chi² = 9.42, p = 0.024 (correct)
-- COVID-only AEPTs → chi² = 4.70, p = 0.195 (wrong, agent's typical mistake)
-- Ordinal OR: all AEPT → 1.52; COVID-only AEPT → 0.98 (wrong)
+**Why**: AESEV on the AE table reflects the study's protocol-defined severity scale. Pre-filtering to specific AEPT values (e.g., keeping only certain condition labels) drops subjects whose worst severity was recorded under a different AEPT label, which drastically changes the contingency table and can flip results from significant to non-significant.
 
 Do NOT pad subjects with no AEs as AESEV=0 — that dilutes the signal.
 
@@ -384,8 +381,8 @@ When fitting models on strain co-culture frequency data:
 1. **Ratio → frequency conversion**: If the Ratio column contains strings like `"10:1"`, convert to a frequency fraction: `first / (first + second)` = 0.909. Report as a fraction in [0, 1], not as ratio notation.
 
 2. **Pure-strain endpoints**: Whether to include pure-strain data (freq=0 and freq=1) depends on the model type:
-   - **Cubic/polynomial models**: Fit on co-culture rows ONLY (exclude pure strains). The cubic model captures the mixed-population response curve; pure strains are fundamentally different biological regimes. On the Swarm co-culture dataset: co-culture-only cubic R² ≈ 0.58; adding pure strains drops R² to 0.53.
-   - **Natural spline models (`ns(freq, df=4)`)**: Include pure-strain endpoints as anchor points. Splines need boundary data to interpolate correctly near the extremes. On the same dataset: with endpoints NS R² ≈ 0.81; without endpoints NS R�� ≈ 0.78.
+   - **Cubic/polynomial models**: Fit on co-culture rows ONLY (exclude pure strains). The cubic model captures the mixed-population response curve; pure strains are fundamentally different biological regimes and including them typically lowers R².
+   - **Natural spline models (`ns(freq, df=4)`)**: Include pure-strain endpoints as anchor points. Splines need boundary data to interpolate correctly near the extremes, and including them typically raises R².
 
 3. **R vs Python splines**: R's `ns()` (from the `splines` package) and Python's `patsy.cr()` or `scipy BSpline` produce DIFFERENT knot placements and boundary conditions. If the question references R's `lm(y ~ ns(x, df=4))`, use `Rscript` directly:
    ```r

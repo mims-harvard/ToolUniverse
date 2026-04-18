@@ -312,4 +312,4 @@ When a question asks what fraction of variants at some VAF / filter threshold ar
 - **Coding (include in denominator)**: `synonymous_variant`, `missense_variant`, `splice_region_variant`, `stop_gained`, `stop_lost`, `start_lost`, `frameshift_variant`, `inframe_insertion`, `inframe_deletion`
 - **Non-coding (exclude)**: `intron_variant`, `3_prime_UTR_variant`, `5_prime_UTR_variant`, `upstream_gene_variant`, `downstream_gene_variant`, `intergenic_variant`
 
-On the BLM carrier cohort (VAF<0.3, 19 carriers), this gives synonymous/coding = 30/47 ≈ 0.64 (matches GT `(0.6, 0.7)`). The naïve "synonymous / all variants = 30/108 ≈ 0.28" reading is wrong because 49 of 108 are `intron_variant` / UTR records that aren't what the paper is asking about.
+Using all variants as the denominator (including intronic/UTR records) gives a much lower fraction than intended. Always filter to coding variants first, then compute the fraction.
