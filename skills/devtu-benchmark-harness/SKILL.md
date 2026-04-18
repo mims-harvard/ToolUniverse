@@ -142,24 +142,22 @@ The analyzer maps each question category to the skill responsible for handling i
 | Benchmark | Baseline (Bash) | Plugin (Apr 14) | Plugin (Apr 18) | Target |
 |-----------|-----------------|-----------------|-----------------|--------|
 | lab-bench (20 MCQ) | 50% | 85% | 85% | 90% |
-| bixbench (205 comp) | ~50% | 60.7% (37/61) | **81.0% (166/205)** | 85% |
+| bixbench (205 comp) | ~50% | 60.7% (37/61) | **78.5% (161/205)** | 85% |
 
-### BixBench by skill (Apr 17, after retest):
-| Skill | Apr 14 | Apr 17 | Change |
-|-------|--------|--------|--------|
-| tooluniverse-statistical-modeling | 48% (11/23) | 91% (21/23) | +43pp |
-| tooluniverse-variant-analysis | 50% (3/6) | 83% (5/6) | +33pp |
-| tooluniverse-rnaseq-deseq2 | 60% (6/10) | 80% (8/10) | +20pp |
-| tooluniverse-crispr-screen-analysis | 67% (2/3) | 83% (5/6) | +16pp |
-| tooluniverse-gene-enrichment | 60% (3/5) | 60% (3/5) | — |
-| tooluniverse-phylogenetics | 82% (9/11) | 100% (11/11) | +18pp |
+### BixBench by skill (Apr 18, full 205q, decontaminated skills):
+| Skill | Questions | Accuracy |
+|-------|-----------|----------|
+| tooluniverse-single-cell | 3 | 67% |
+| tooluniverse-crispr-screen-analysis | 3 | 67% |
+| tooluniverse-variant-analysis | 27 | 74% |
+| tooluniverse-rnaseq-deseq2 | 59 | 78% |
+| tooluniverse-phylogenetics | 51 | 80% |
+| tooluniverse-statistical-modeling | 46 | 80% |
+| tooluniverse-gene-enrichment | 16 | 81% |
 
-### Remaining failures (10/61 — hard floor):
-- 3 DESeq2 (bix-13): authoritative script parameter matching, R vs pydeseq2
-- 3 spline (bix-54): R ns() CI/p-value precision for derived quantities
-- 2 enrichGO (bix-1): R clusterProfiler version differences
-- 1 CRISPR (bix-6-q5): timeout on complex screening analysis
-- 1 single-cell (bix-33-q1): grading issue (CD14 Mono ≈ CD14 Monocytes)
+### Failure breakdown (44/205):
+- 40 wrong answers, 4 timeouts
+- Weakest categories: spline_fitting (57%), epigenomics (60%), single_cell/functional_genomics (67%)
 
 ## Integration with devtu-self-evolve
 
