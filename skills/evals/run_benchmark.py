@@ -13,6 +13,7 @@ import argparse
 import json
 import os
 import subprocess
+import sys
 import time
 from pathlib import Path
 
@@ -187,127 +188,39 @@ def extract_answer(response: dict) -> str:
 def grade_answer(
     predicted: str, ground_truth: str, question: str, eval_mode: str = ""
 ) -> dict:
-    """Grade an answer. Supports exact match, MC match, and range verification."""
-    import re
+    """Grade an answer using the unified grader from the benchmark harness.
 
-    ground_truth = str(ground_truth)
-    gt_lower = ground_truth.strip().lower()
-    pred_lower = predicted.lower()
+    Delegates to grade_answers.grade_answer which supports 7 strategies:
+    exact, MC, range (with rounding tolerance), normalized (bidirectional),
+    numeric proximity (5%), synonym, and LLM verifier.
 
-    # Extract numbers, handling US-style comma thousands (e.g. "184,372" -> 184372).
-    # We need to use a spacing-aware pattern: a number may be 184372, 184,372, or 1,184,372
-    # but not 184,37 (that's two numbers 184 and 37) or 0.123 (decimal, not thousand).
-    def _extract_numbers(text):
-        # Match comma-grouped integers (1+ digits then groups of exactly 3 digits)
-        # followed by optional decimal/exponent parts, OR plain numbers.
-        pattern = r"-?(?:\d{1,3}(?:,\d{3})+|\d+)(?:\.\d+)?(?:[eE][+-]?\d+)?"
-        out = []
-        for m in re.findall(pattern, text):
-            try:
-                out.append(float(m.replace(",", "")))
-            except ValueError:
-                pass
-        return out
-
-    # Range verifier: ground truth is "(low,high)", answer is correct if within range.
-    # Also accept predictions that *round* into the range at the prediction's own precision,
-    # since the GT range often has more decimal places than the agent chose to report.
-    # Example: pred 0.22 vs GT (0.215, 0.217) — pred's precision is 2 dp, so its "true value"
-    # is in [0.215, 0.225], which overlaps (0.215, 0.217). Similar for 1.07 vs (1.065, 1.067).
-    range_match = False
-    if eval_mode == "range_verifier" or (
-        gt_lower.startswith("(") and "," in gt_lower
-    ):
-        try:
-            low, high = gt_lower.strip("()").split(",")
-            low, high = float(low), float(high)
-            if low > high:
-                low, high = high, low
-            for raw_match in re.findall(
-                r"-?(?:\d{1,3}(?:,\d{3})+|\d+)(?:\.\d+)?(?:[eE][+-]?\d+)?",
-                predicted,
-            ):
-                clean = raw_match.replace(",", "")
-                try:
-                    val = float(clean)
-                except ValueError:
-                    continue
-                if low <= val <= high:
-                    range_match = True
-                    break
-                # Rounding tolerance: if the predicted was rounded to N decimals,
-                # accept if ±0.5ULP at that precision overlaps [low, high].
-                if "." in clean and "e" not in clean.lower():
-                    dp = len(clean.split(".")[1])
-                elif "e" in clean.lower():
-                    dp = 0  # exponent — handled by 5% tolerance elsewhere
-                else:
-                    dp = 0
-                half_ulp = 0.5 * (10 ** (-dp)) if dp > 0 else 0.5
-                if val - half_ulp <= high and val + half_ulp >= low:
-                    range_match = True
-                    break
-        except (ValueError, IndexError):
-            pass
-
-    # Exact containment check
-    exact_match = gt_lower in pred_lower
-
-    # Normalized containment: strip spaces/punctuation for comparison
-    gt_normalized = re.sub(r"[^a-z0-9]", "", gt_lower)
-    pred_normalized = re.sub(r"[^a-z0-9]", "", pred_lower)
-    normalized_match = (
-        (len(gt_normalized) >= 4 and gt_normalized in pred_normalized)
-        or (len(pred_normalized) >= 4 and pred_normalized in gt_normalized)
+    LLM grading is enabled by default for eval_mode="llm_verifier" questions.
+    """
+    harness_dir = os.path.join(
+        os.path.dirname(__file__), "..", "devtu-benchmark-harness", "scripts"
     )
+    if harness_dir not in sys.path:
+        sys.path.insert(0, harness_dir)
 
-    # Numeric proximity: if GT contains a single leading number (e.g. "337", "337 samples",
-    # "8.1%", "1.9E-05"), accept any predicted number within 5% tolerance.
-    numeric_match = False
-    gt_num_match = re.match(r"^\s*(-?\d+\.?\d*(?:[eE][+-]?\d+)?)", gt_lower.replace(",", ""))
-    if gt_num_match:
-        try:
-            gt_num = float(gt_num_match.group(1))
-            for pred_num in _extract_numbers(predicted):
-                if gt_num == 0:
-                    if pred_num == 0:
-                        numeric_match = True
-                        break
-                elif abs(pred_num - gt_num) / abs(gt_num) < 0.05:
-                    numeric_match = True
-                    break
-        except ValueError:
-            pass
+    from grade_answers import grade_answer as _grade
 
-    # For multiple-choice, check if the correct letter/option is selected
-    mc_match = False
-    if len(gt_lower) <= 3:
-        patterns = [
-            rf"\b{re.escape(gt_lower)}\b",
-            rf"answer[:\s]+{re.escape(gt_lower)}",
-            rf"\({re.escape(gt_lower)}\)",
-        ]
-        mc_match = any(re.search(p, pred_lower) for p in patterns)
-
-    # Synonym match: common statistical/scientific terms that mean the same thing.
-    synonyms = {
-        "normal": ["gaussian", "bell-shaped", "bell shaped", "bell curve"],
-        "gaussian": ["normal", "bell-shaped", "bell shaped", "bell curve"],
-    }
-    synonym_match = False
-    for aliases in [synonyms.get(gt_lower.strip(), [])]:
-        if any(a in pred_lower for a in aliases):
-            synonym_match = True
-            break
-
+    result = _grade(
+        predicted=predicted,
+        ground_truth=ground_truth,
+        eval_mode=eval_mode,
+        numeric_tolerance=0.05,
+        use_llm=True,
+        question=question,
+    )
+    # Flatten strategies for backward compatibility
+    strategies = result.get("strategies", {})
     return {
-        "correct": exact_match or mc_match or range_match or normalized_match
-        or numeric_match or synonym_match,
-        "exact_match": exact_match,
-        "mc_match": mc_match,
-        "range_match": range_match,
-        "normalized_match": normalized_match,
-        "numeric_match": numeric_match,
+        "correct": result["correct"],
+        "exact_match": strategies.get("exact_match", False),
+        "mc_match": strategies.get("mc_match", False),
+        "range_match": strategies.get("range_match", False),
+        "normalized_match": strategies.get("normalized_match", False),
+        "numeric_match": strategies.get("numeric_match", False),
         "ground_truth": ground_truth,
         "predicted_excerpt": predicted[:500],
     }
