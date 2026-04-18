@@ -25,7 +25,13 @@ from pathlib import Path
 
 
 def _extract_numbers(text: str) -> list[float]:
-    """Extract all numbers from text, handling comma-grouped thousands and exponents."""
+    """Extract all numbers from text, handling comma-grouped thousands and exponents.
+
+    Also normalizes Unicode minus signs (U+2212) and en-dashes (U+2013)
+    to ASCII hyphen-minus before extraction.
+    """
+    # Normalize Unicode minus variants to ASCII hyphen
+    text = text.replace("\u2212", "-").replace("\u2013", "-").replace("\u2014", "-")
     pattern = r"-?(?:\d{1,3}(?:,\d{3})+|\d+)(?:\.\d+)?(?:[eE][+-]?\d+)?"
     out = []
     for m in re.findall(pattern, text):
@@ -62,7 +68,11 @@ def grade_answer(
     """
     ground_truth = str(ground_truth)
     gt_lower = ground_truth.strip().lower()
-    pred_lower = predicted.lower()
+    # Normalize Unicode minus/dash variants in prediction
+    predicted_normalized = (
+        predicted.replace("\u2212", "-").replace("\u2013", "-").replace("\u2014", "-")
+    )
+    pred_lower = predicted_normalized.lower()
 
     # --- Strategy 1: Exact match ---
     exact_match = gt_lower in pred_lower
