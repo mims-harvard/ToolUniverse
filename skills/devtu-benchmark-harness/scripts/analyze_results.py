@@ -219,11 +219,15 @@ def analyze(
 
         by_category = defaultdict(lambda: {"correct": 0, "total": 0, "failures": []})
         for r in results:
-            # Enrich with full question text if available
+            # Enrich with full question text and categories if available
             enriched = r
             if r.get("id") in qmap:
                 q = qmap[r["id"]]
-                enriched = {**r, "question": q.get("question", r.get("question", ""))}
+                enriched = {
+                    **r,
+                    "question": q.get("question", r.get("question", "")),
+                    "categories": q.get("categories", ""),
+                }
             cat = categorize_question(enriched, benchmark)
             by_category[cat]["total"] += 1
             if r.get("correct"):
