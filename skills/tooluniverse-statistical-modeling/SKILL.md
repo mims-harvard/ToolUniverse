@@ -370,10 +370,18 @@ df['AESEV'] = df['AESEV'].astype(int)
 
 ### ANOVA on expression levels across groups — aggregation matters
 When asked for "F-statistic comparing expression levels across cell types/groups":
-- Do NOT sum all genes per sample (that gives total RNA content, not expression-level ANOVA)
-- The ANOVA is on the **per-gene log2FC values** (or per-gene expression values) across groups
-- For miRNA data: each miRNA's expression across cell types is one observation. The F-stat from ANOVA on log2FC values across groups is typically LOW (0.5–1.5) when most genes show no difference, not HIGH (50+)
+- Each gene/miRNA is one **observation**. For N genes across K groups, you have N values per group (mean or median expression of that gene across samples in that group)
+- Run `f_oneway(group1_values, group2_values, ...)` where each group has N gene-level values
+- Do NOT sum all genes per sample — that gives total RNA content, a completely different quantity
+- The F-stat is typically LOW (0.5–2.0) when most genes don't differ across groups, not HIGH (50+)
 - If your F-statistic is >10 but the biological context suggests "no significant difference", you probably aggregated to sample level instead of gene level
+
+### Log2 fold change between groups — per-gene, then summarize
+When asked for "median log2 fold change between group A and group B":
+- Compute log2FC **per gene**: for each gene, `log2(mean_expr_A / mean_expr_B)`
+- Then take the median across all genes
+- Do NOT sum all genes per sample first — that gives a single total-expression ratio, not the median per-gene fold change
+- A median log2FC near 0 means most genes have similar expression between groups (expected when groups are similar cell types)
 
 ### Natural spline regression on strain co-culture data
 When fitting models on strain co-culture frequency data:

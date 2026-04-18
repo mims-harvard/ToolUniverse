@@ -145,6 +145,22 @@ All files identified; group structure detected; correct PhyKIT function; ALL gen
 ### Treeness (RCV ratio)
 Treeness = sum of internal branch lengths / total tree length. Internal branches are those that do not lead to a leaf (tip).
 
+### PhyKIT usage
+PhyKIT (`pip install phykit`) provides command-line functions for tree and alignment statistics. Common functions:
+- `phykit treeness <tree_file>` — outputs treeness (RCV) value
+- `phykit saturation <alignment_file> -t <tree_file>` — outputs saturation value
+- `phykit dvmc <tree_file>` — degree of violation of the molecular clock
+- `phykit long_branch_score <tree_file>` — long-branch score (LBS)
+- `phykit alignment_length <alignment_file>` — alignment length
+- `phykit parsimony_informative <alignment_file>` — count parsimony informative sites
+
+When running PhyKIT on multiple gene trees/alignments:
+1. **Process ALL files in the directory** — don't stop at a subset. Count them first with `ls *.treefile | wc -l`
+2. **Verify file format**: PhyKIT expects Newick trees and FASTA alignments. If files have extensions like `.contree`, `.treefile`, `.fa`, `.fasta`, verify they are the right format
+3. **Batch processing**: use a shell loop `for f in *.treefile; do phykit treeness "$f"; done` or Python subprocess
+4. **Gap percentage**: total gap characters / total alignment positions across all alignments (concatenate, don't average per-file)
+5. **Fungi vs animal comparisons**: when comparing values between organism groups, match genes by ortholog ID, not by file order
+
 ## References
 
 `references/sequence_alignment.md`, `references/tree_building.md`, `references/parsimony_analysis.md`, `scripts/tree_statistics.py`
