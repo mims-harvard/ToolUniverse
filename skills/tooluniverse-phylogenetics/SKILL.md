@@ -154,12 +154,37 @@ PhyKIT (`pip install phykit`) provides command-line functions for tree and align
 - `phykit alignment_length <alignment_file>` — alignment length
 - `phykit parsimony_informative <alignment_file>` — count parsimony informative sites
 
-When running PhyKIT on multiple gene trees/alignments:
-1. **Process ALL files in the directory** — don't stop at a subset. Count them first with `ls *.treefile | wc -l`
-2. **Verify file format**: PhyKIT expects Newick trees and FASTA alignments. If files have extensions like `.contree`, `.treefile`, `.fa`, `.fasta`, verify they are the right format
-3. **Batch processing**: use a shell loop `for f in *.treefile; do phykit treeness "$f"; done` or Python subprocess
-4. **Gap percentage**: total gap characters / total alignment positions across all alignments (concatenate, don't average per-file)
-5. **Fungi vs animal comparisons**: when comparing values between organism groups, match genes by ortholog ID, not by file order
+When running PhyKIT on multiple gene trees/alignments, **use the bundled batch script**:
+
+```bash
+# Treeness across all trees
+python skills/tooluniverse-phylogenetics/scripts/phykit_batch.py \
+  --dir scogs_fungi --function treeness --ext .treefile --stat median
+
+# Saturation with paired alignment+tree
+python skills/tooluniverse-phylogenetics/scripts/phykit_batch.py \
+  --dir alignments --function saturation --tree-dir trees \
+  --ext .fa --tree-ext .treefile --stat median
+
+# Long branch score (mean per tree, then median across trees)
+python skills/tooluniverse-phylogenetics/scripts/phykit_batch.py \
+  --dir trees --function long_branch_score --ext .treefile \
+  --per-tree-stat mean --stat median
+
+# DVMC
+python skills/tooluniverse-phylogenetics/scripts/phykit_batch.py \
+  --dir trees --function dvmc --ext .treefile --stat all
+
+# Gap percentage across all alignments
+python skills/tooluniverse-phylogenetics/scripts/phykit_batch.py \
+  --dir alignments --function gap_percentage --ext .fa
+```
+
+Key rules:
+1. **Process ALL files** — don't stop at a subset. The script handles this automatically
+2. **Gap percentage**: total gaps / total positions across all alignments (not per-file average)
+3. **Long branch score**: each tree produces per-taxon scores → summarize per tree (mean) → then summarize across trees (median)
+4. **Fungi vs animal comparisons**: match genes by ortholog ID (filename stem), not by file order
 
 ## References
 
