@@ -2,8 +2,21 @@
 (function() {
     'use strict';
     
+    function isLocalhost() {
+        const hostname = window.location.hostname;
+        return hostname === 'localhost' || hostname === '127.0.0.1';
+    }
+
     // 计算部署的基础前缀（例如 GitHub Pages 项目页面的 /<repo>/ 前缀）
     function getBasePrefix(pathname) {
+        // Local development usually serves docs from the web root.
+        if (isLocalhost()) {
+            if (pathname.includes('/en/')) return pathname.split('/en/')[0] + '/';
+            if (pathname.includes('/zh-CN/')) return pathname.split('/zh-CN/')[0] + '/';
+            if (pathname.includes('/zh_CN/')) return pathname.split('/zh_CN/')[0] + '/';
+            return '/';
+        }
+
         // Always prefer explicit project base if present
         if (pathname.includes('/ToolUniverse/')) return '/ToolUniverse/';
         if (pathname.includes('/en/')) return pathname.split('/en/')[0] + '/';
@@ -29,22 +42,51 @@
         const origin = window.location.origin;
         const basePrefix = getBasePrefix(currentPath);
 
+        function goIfExists(url, fallbackUrl) {
+            fetch(url, { method: 'HEAD' })
+                .then(function(response) {
+                    if (response.ok) {
+                        window.location.href = url;
+                    } else if (fallbackUrl) {
+                        window.location.href = fallbackUrl;
+                    } else {
+                        console.warn('Language target not found:', url);
+                    }
+                })
+                .catch(function() {
+                    if (fallbackUrl) {
+                        window.location.href = fallbackUrl;
+                    } else {
+                        console.warn('Language target not reachable:', url);
+                    }
+                });
+        }
+
         // 优先路径替换，保持当前位置文件一致
         if (currentPath.includes('/en/')) {
             if (newLang === 'zh_CN') {
-                window.location.href = origin + currentPath.replace('/en/', '/zh-CN/');
+                goIfExists(
+                    origin + currentPath.replace('/en/', '/zh-CN/'),
+                    origin + basePrefix + 'zh-CN/index.html'
+                );
             }
             return;
         }
         if (currentPath.includes('/zh-CN/')) {
             if (newLang !== 'zh_CN') {
-                window.location.href = origin + currentPath.replace('/zh-CN/', '/en/');
+                goIfExists(
+                    origin + currentPath.replace('/zh-CN/', '/en/'),
+                    origin + basePrefix + 'en/index.html'
+                );
             }
             return;
         }
         if (currentPath.includes('/zh_CN/')) {
             if (newLang !== 'zh_CN') {
-                window.location.href = origin + currentPath.replace('/zh_CN/', '/en/');
+                goIfExists(
+                    origin + currentPath.replace('/zh_CN/', '/en/'),
+                    origin + basePrefix + 'en/index.html'
+                );
             }
             return;
         }
@@ -64,7 +106,11 @@
         }
         
         const targetLangPrefix = newLang === 'zh_CN' ? 'zh-CN' : 'en';
-        window.location.href = origin + basePrefix + targetLangPrefix + relativePath;
+        const targetUrl = origin + basePrefix + targetLangPrefix + relativePath;
+        const fallbackUrl = newLang === 'zh_CN'
+            ? null
+            : origin + basePrefix + 'index.html';
+        goIfExists(targetUrl, fallbackUrl);
     }
     
     // 创建语言切换器

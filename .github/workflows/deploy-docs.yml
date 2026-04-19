@@ -2,7 +2,7 @@ name: Deploy ToolUniverse Documentation
 
 on:
   push:
-    branches: [main, master]
+    branches: [main, master, doc-dev]
     paths:
       - 'docs/**'
       - 'src/**'
