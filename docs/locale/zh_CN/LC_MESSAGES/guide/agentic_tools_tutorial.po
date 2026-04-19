@@ -2,39 +2,38 @@
 # Copyright (C) 2025, Shanghua Gao
 # This file is distributed under the same license as the ToolUniverse
 # package.
-# FIRST AUTHOR <EMAIL@ADDRESS>, 2026.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2025.
 #
-#, fuzzy
 msgid ""
 msgstr ""
-"Project-Id-Version: ToolUniverse \n"
+"Project-Id-Version: ToolUniverse\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2026-04-19 11:16+0900\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
-"Language: zh_CN\n"
 "Language-Team: zh_CN <LL@li.org>\n"
-"Plural-Forms: nplurals=1; plural=0;\n"
+"Language: zh_CN\n"
 "MIME-Version: 1.0\n"
-"Content-Type: text/plain; charset=utf-8\n"
+"Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Generated-By: Babel 2.18.0\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+"Generated-By: Babel 2.17.0\n"
 
 #: ../../guide/agentic_tools_tutorial.rst:3 991af88c2fb64f36ae855111fda7e53a
 msgid "Agentic Tools Tutorial"
-msgstr ""
+msgstr "智能体工具教程"
 
 #: ../../guide/agentic_tools_tutorial.rst:5 a9b5e179115042aea290a4f89a959455
 msgid "**Learn to build and use AI-powered tools in ToolUniverse**"
-msgstr ""
+msgstr "**学习在ToolUniverse中构建和使用AI驱动的工具**"
 
 #: ../../guide/agentic_tools_tutorial.rst:8 c8c0868474cf4015ac1b646c72c8ac6b
 msgid "What You'll Learn"
-msgstr ""
+msgstr "您将学到的内容"
 
 #: ../../guide/agentic_tools_tutorial.rst:10 f229324f1b0c427298334695275d32e0
 msgid "By the end of this tutorial, you'll be able to:"
-msgstr ""
+msgstr "在本教程结束时，您将能够："
 
 #: ../../guide/agentic_tools_tutorial.rst:12 662e2f4cf6234f80936e3289be35b0d6
 msgid ""
@@ -43,123 +42,134 @@ msgid ""
 "Load and execute agentic tools in your workflows Handle errors and "
 "troubleshoot common issues"
 msgstr ""
+"✅ 了解智能体工具的定义及其适用场景  \n"
+"✅ 从零创建专属智能体工具  \n"
+"✅ 配置大语言模型（LLM）设置以实现最佳性能  \n"
+"✅ 在工作流程中加载并执行智能体工具  \n"
+"✅ 处理错误并排查常见问题"
 
 #: ../../guide/agentic_tools_tutorial.rst:19 d90a305ac34649cc86d9c777e821c6fc
 msgid "What are Agentic Tools?"
-msgstr ""
+msgstr "什么是自主智能体工具？"
 
 #: ../../guide/agentic_tools_tutorial.rst:21 607b539275ac4b9799784e348860aeea
 msgid ""
-"**Agentic Tools** are AI-powered tools that use Large Language Models "
-"(LLMs) to perform tasks requiring human-like reasoning, analysis, and "
-"creativity. Unlike traditional computational tools that follow fixed "
-"algorithms, agentic tools use natural language prompts to Tutorial AI "
-"models."
+"**Agentic Tools** are AI-powered tools that use Large Language Models (LLMs) "
+"to perform tasks requiring human-like reasoning, analysis, and creativity. "
+"Unlike traditional computational tools that follow fixed algorithms, agentic "
+"tools use natural language prompts to Tutorial AI models."
 msgstr ""
+"**自主工具** 是利用大型语言模型（LLMs）驱动的人工智能工具，能够执行需要类人推"
+"理、分析和创造力的任务。与遵循固定算法的传统计算工具不同，自主工具通过自然语"
+"言提示来指导 AI 模型。"
 
 #: ../../guide/agentic_tools_tutorial.rst:23 69ec5930f0d24af185b480ddc116958b
 msgid ""
-"**Perfect for**: Text analysis, research synthesis, creative writing, "
-"code review, hypothesis generation"
-msgstr ""
+"**Perfect for**: Text analysis, research synthesis, creative writing, code "
+"review, hypothesis generation"
+msgstr "**适用于**：文本分析、研究综述、创意写作、代码审查、假设生成"
 
 #: ../../guide/agentic_tools_tutorial.rst:25 1b78a807ce524da7aa3e7f55c7f26b8e
 msgid ""
-"**Not suitable for**: Mathematical calculations, API calls, file "
-"processing, deterministic algorithms"
-msgstr ""
+"**Not suitable for**: Mathematical calculations, API calls, file processing, "
+"deterministic algorithms"
+msgstr "**不适用于**：数学计算、API 调用、文件处理、确定性算法"
 
 #: ../../guide/agentic_tools_tutorial.rst:28 f3bfcfbfc2df4ebfbf67ed3312f14824
 msgid "Step 1: Understand the Components"
-msgstr ""
+msgstr "步骤 1：了解组件"
 
 #: ../../guide/agentic_tools_tutorial.rst:30 816c8a5bd471430faeeceac9d9107fa8
 msgid "Every agentic tool has 5 essential parts:"
-msgstr ""
+msgstr "每个自主工具包含五个基本部分："
 
 #: ../../guide/agentic_tools_tutorial.rst:32 10e19a9d41a34ff5a4cf4271065d1e8a
 msgid "1️⃣ **Tool Metadata**"
-msgstr ""
+msgstr "1️⃣ **工具元数据**"
 
 #: ../../guide/agentic_tools_tutorial.rst:33 138616057d6a43c0b102f7454fc22a1e
 msgid "Name and description"
-msgstr ""
+msgstr "名称和描述"
 
 #: ../../guide/agentic_tools_tutorial.rst:34 5c0dbb76fb844d7ca1a850f23510a6b0
 msgid "Tool type identifier"
-msgstr ""
+msgstr "工具类型标识符"
 
 #: ../../guide/agentic_tools_tutorial.rst:36 354b540a11564a60aea9db517b574442
 msgid "2️⃣ **Prompt Template**"
-msgstr ""
+msgstr "2️⃣ **提示模板**"
 
 #: ../../guide/agentic_tools_tutorial.rst:37 b4283ee250d6415eb6c335d774905d83
 msgid "Natural language instructions"
-msgstr ""
+msgstr "自然语言指令"
 
 #: ../../guide/agentic_tools_tutorial.rst:38 8e6cf71c01fa4348924df367bb6dbcc5
 msgid "Placeholders for user inputs"
-msgstr ""
+msgstr "用户输入的占位符"
 
 #: ../../guide/agentic_tools_tutorial.rst:40 1486f8b450a84fdc95772a6b22c7070a
 msgid "3️⃣ **Input Parameters**"
-msgstr ""
+msgstr "3️⃣ **输入参数**"
 
 #: ../../guide/agentic_tools_tutorial.rst:41 852f048e90ae46d497f2efe3a28f662e
 msgid "What users need to provide"
-msgstr ""
+msgstr "用户需提供的内容"
 
 #: ../../guide/agentic_tools_tutorial.rst:42 3ddb4376547a417da22272803457d6b2
 msgid "Validation rules and descriptions"
-msgstr ""
+msgstr "验证规则和描述"
 
 #: ../../guide/agentic_tools_tutorial.rst:44 c93f1918303541c28cee9a3ef6d8dfb1
 msgid "4️⃣ **LLM Configuration**"
-msgstr ""
+msgstr "4️⃣ **LLM 配置**"
 
 #: ../../guide/agentic_tools_tutorial.rst:45 70211fbc84524593888e8446fbd3f485
 msgid "Which AI model to use"
-msgstr ""
+msgstr "选择使用的AI模型"
 
 #: ../../guide/agentic_tools_tutorial.rst:46 3a5375fc6a3b412e9fb156dddd8179d3
 msgid "Settings like temperature and response length"
-msgstr ""
+msgstr "设置，例如温度和响应时长"
 
 #: ../../guide/agentic_tools_tutorial.rst:48 7a32edfb724241e8be3e4402595ae420
 msgid "5️⃣ **Response Handling**"
-msgstr ""
+msgstr "5️⃣ **响应处理**"
 
 #: ../../guide/agentic_tools_tutorial.rst:49 6a017531341444b0b4d9766376413502
 msgid "Text or structured JSON output"
-msgstr ""
+msgstr "文本或结构化 JSON 输出"
 
 #: ../../guide/agentic_tools_tutorial.rst:50 89082abf8d9a4638bbcd97dc16e3036f
 msgid "Metadata about execution"
-msgstr ""
+msgstr "执行元数据"
 
 #: ../../guide/agentic_tools_tutorial.rst:53 76437d5e17914678a177b0d9ce611975
 msgid "Step 2: Choose Your LLM Provider"
-msgstr ""
+msgstr "步骤 2：选择您的LLM提供商"
 
 #: ../../guide/agentic_tools_tutorial.rst:55 a58cfe43708f4b3d89db52e9ef333946
 msgid "ToolUniverse supports these AI providers:"
-msgstr ""
+msgstr "ToolUniverse 支持以下 AI 提供商："
 
 #: ../../guide/agentic_tools_tutorial.rst:57 87cb105e3cbc49bb975e2bd4e95da43d
 msgid "**OpenAI/Azure OpenAI**"
 msgstr ""
+"**OpenAI/Azure OpenAI**  \n"
+"\n"
+"**OpenAI/Azure OpenAI**"
 
 #: ../../guide/agentic_tools_tutorial.rst:58 0d7ea573d05f4836bb9d5cd43b09d3df
 msgid "Models: GPT-4, GPT-4o, o1-mini, o1-preview"
 msgstr ""
 
 #: ../../guide/agentic_tools_tutorial.rst:59 35f9889ad46a4ccb9032d224beb8c4c6
-msgid "Configuration: Set ``AZURE_OPENAI_API_KEY`` and ``AZURE_OPENAI_ENDPOINT``"
+msgid ""
+"Configuration: Set ``AZURE_OPENAI_API_KEY`` and ``AZURE_OPENAI_ENDPOINT``"
 msgstr ""
 
 #: ../../guide/agentic_tools_tutorial.rst:61 5f7e015887b842bbb5288d69325cb52d
 msgid "**Google Gemini**"
-msgstr ""
+msgstr "**谷歌双子座**"
 
 #: ../../guide/agentic_tools_tutorial.rst:62 3f2e8dad5a7a4a8b83d0f38e7a1cc6a0
 msgid "Models: Gemini 2.0 Flash, Gemini 2.5 Pro"
@@ -211,78 +221,84 @@ msgstr ""
 
 #: ../../guide/agentic_tools_tutorial.rst:79 67cebfc743354f1783dd6bd80063271f
 msgid "Step 3: Create Your First Tool"
-msgstr ""
+msgstr "步骤 3：创建您的第一个工具"
 
 #: ../../guide/agentic_tools_tutorial.rst:81 590720ec13184adabed365861d96872b
 msgid "Let's build a scientific text summarizer step by step."
-msgstr ""
+msgstr "让我们一步一步地构建一个科学文本摘要器。"
 
 #: ../../guide/agentic_tools_tutorial.rst:84 2b3812b9c05a49e1976f40684193cc6b
 msgid "3.1 Start with the Basic Structure"
-msgstr ""
+msgstr "3.1 从基本结构开始"
 
 #: ../../guide/agentic_tools_tutorial.rst:86 b1e06578c7c5410f999d81def7b09e08
 msgid "Create a JSON file with this foundation:"
-msgstr ""
+msgstr "使用此基础创建一个 JSON 文件："
 
 #: ../../guide/agentic_tools_tutorial.rst:101 c379e1f286544250ab0830bb7e48f646
 msgid "3.2 Add Tool Identification"
-msgstr ""
+msgstr "3.2 添加工具识别码"
 
 #: ../../guide/agentic_tools_tutorial.rst:103 595bda1bd3234509ba74dd615ee963e2
 msgid "Fill in the basic tool information:"
-msgstr ""
+msgstr "填写基本工具信息："
 
 #: ../../guide/agentic_tools_tutorial.rst:114 01d4cc2cc86a4815952d1d74318ab074
 msgid "3.3 Design Your Prompt"
-msgstr ""
+msgstr "3.3 设计您的提示"
 
 #: ../../guide/agentic_tools_tutorial.rst:116 eed46f29773f4571b6fdc58218e70991
 msgid "Create instructions for the AI with placeholders for user inputs:"
 msgstr ""
+"为 AI 创建包含用户输入占位符的指令：\n"
+"\n"
+"背景：文档编写"
 
 #: ../../guide/agentic_tools_tutorial.rst:124 186176d3305844ea8b405b67dd4c556a
 #, python-brace-format
 msgid ""
-"**Key Tips**: - Use descriptive placeholders: ``{text}``, "
-"``{summary_length}`` - Give specific output instructions"
+"**Key Tips**: - Use descriptive placeholders: ``{text}``, ``{summary_length}"
+"`` - Give specific output instructions"
 msgstr ""
+"**关键提示**：  \n"
+"- 使用描述性占位符：``{text}``、``{summary_length}``  \n"
+"- 提供具体的输出指令"
 
 #: ../../guide/agentic_tools_tutorial.rst:129 06fcdb6a8812458688194cac1abfc881
 msgid "3.4 Define Input Parameters"
-msgstr ""
+msgstr "3.4 定义输入参数"
 
 #: ../../guide/agentic_tools_tutorial.rst:131 31e40d303e9d490198e541dcabe96311
 msgid "List what users need to provide:"
-msgstr ""
+msgstr "列出用户需要提供的内容："
 
 #: ../../guide/agentic_tools_tutorial.rst:140 9ba7ec0780ab40438aa3632ca8d44ae6
 msgid "3.5 Create Parameter Schema"
-msgstr ""
+msgstr "3.5 创建参数架构"
 
 #: ../../guide/agentic_tools_tutorial.rst:142 1e54fc73bea4473da2ed5eb15aba8989
 msgid "Define validation rules and descriptions:"
-msgstr ""
+msgstr "定义验证规则及说明："
 
 #: ../../guide/agentic_tools_tutorial.rst:171 4ab490822b5c4820968b23f4c54cf512
 msgid "3.6 Configure the LLM"
-msgstr ""
+msgstr "3.6 配置大型语言模型（LLM）"
 
 #: ../../guide/agentic_tools_tutorial.rst:173 898ae26f25944977af51cdafcf88dfa0
 msgid "Set up AI model settings:"
-msgstr ""
+msgstr "设置 AI 模型参数："
 
 #: ../../guide/agentic_tools_tutorial.rst:186 df3ed4484c3844b6844a2ef910e1fa20
 msgid "**Configuration Options**:"
-msgstr ""
+msgstr "**配置选项**："
 
 #: ../../guide/agentic_tools_tutorial.rst:188 15e2c92054384907b953194a0b9d6b63
 msgid "``api_type``: \"CHATGPT\", \"GEMINI\", \"OPENROUTER\", or \"VLLM\""
-msgstr ""
+msgstr "``api_type``: \"CHATGPT\" 或 \"GEMINI\""
 
 #: ../../guide/agentic_tools_tutorial.rst:189 449d3794a1a6410895c446f5fa337cf3
 msgid "``model_id``: Choose your model (see Step 2)"
-msgstr ""
+msgstr "``model_id``：选择您的模型（参见步骤2）"
 
 #: ../../guide/agentic_tools_tutorial.rst:190 c925a7f214c54a09938222dd696e98b9
 msgid "For vLLM: Must match the model name loaded on your vLLM server"
@@ -294,149 +310,153 @@ msgstr ""
 
 #: ../../guide/agentic_tools_tutorial.rst:192 e502b66415a8434cae917cd55c67d622
 msgid "``temperature``: 0.0-2.0 (higher = more creative)"
-msgstr ""
+msgstr "``temperature``：0.0-2.0（数值越高，创意越丰富）"
 
 #: ../../guide/agentic_tools_tutorial.rst:193 17b9c6495adc4f1aba6d931ea1d72630
 msgid "``return_json``: true for structured data, false for text"
-msgstr ""
+msgstr "``return_json``：为结构化数据时为 true，文本时为 false"
 
 #: ../../guide/agentic_tools_tutorial.rst:195 23df9cf747b647f0adfe14118dd2b026
 msgid ""
-"**Using vLLM**: Set ``api_type: \"VLLM\"`` and ensure ``VLLM_SERVER_URL``"
-" is set. See :doc:`../guide/vllm_support` for complete setup guide."
+"**Using vLLM**: Set ``api_type: \"VLLM\"`` and ensure ``VLLM_SERVER_URL`` is "
+"set. See :doc:`../guide/vllm_support` for complete setup guide."
 msgstr ""
 
 #: ../../guide/agentic_tools_tutorial.rst:198 422970d39a704f2c947a9f01056533e6
 msgid "3.7 Complete Tool Example"
-msgstr ""
+msgstr "3.7 完整工具示例"
 
 #: ../../guide/agentic_tools_tutorial.rst:200 90417939e4804b66933b4cd0b08573e4
 msgid "Here's your finished tool:"
-msgstr ""
+msgstr "这是您的成品工具："
 
 #: ../../guide/agentic_tools_tutorial.rst:240 1c53b1cb11d54753a95418f5948eba2a
 msgid "Step 4: Save Your Tool"
-msgstr ""
+msgstr "步骤4：保存您的工具"
 
 #: ../../guide/agentic_tools_tutorial.rst:243 91d9278c8c3d445dbe6b591329cf7a58
 msgid "4.1 Save as JSON File"
-msgstr ""
+msgstr "4.1 另存为 JSON 文件"
 
 #: ../../guide/agentic_tools_tutorial.rst:245 105df96d7eda491b89eafb3fd4c10f87
 msgid "Save your tool configuration as a `.json` file:"
-msgstr ""
+msgstr "将您的工具配置保存为 `.json` 文件："
 
 #: ../../guide/agentic_tools_tutorial.rst:253 ba4f82bcdc1f4c54bb2b891cc3161f8b
 msgid ""
 "Then create `scientific_summarizer.json` and paste your complete tool "
 "configuration from Step 3.7:"
-msgstr ""
+msgstr "然后创建 `scientific_summarizer.json`，并粘贴第3.7步中完整的工具配置："
 
 #: ../../guide/agentic_tools_tutorial.rst:266 6537f712921e4aebb6b8a1806d13a636
 msgid "4.2 Important Notes"
-msgstr ""
+msgstr "4.2 重要说明"
 
 #: ../../guide/agentic_tools_tutorial.rst:268 969e75dc722640ec9f2d18c38fdf6a3f
 msgid ""
-"**Key Point**: When loading from custom config files, you need to specify"
-" which tools to actually load using `include_tools` parameter."
+"**Key Point**: When loading from custom config files, you need to specify "
+"which tools to actually load using `include_tools` parameter."
 msgstr ""
+"**要点**：从自定义配置文件加载时，需要使用 `include_tools` 参数指定实际要加载"
+"的工具。"
 
 #: ../../guide/agentic_tools_tutorial.rst:270 f76d22b4b6254af89d8be594bbeac934
 msgid ""
 "The config file only makes tools *available* - you still need to tell "
 "ToolUniverse which specific tools to load from that file."
 msgstr ""
+"配置文件仅使工具*可用*——您仍需告诉 ToolUniverse 从该文件中加载哪些具体工具。"
 
 #: ../../guide/agentic_tools_tutorial.rst:273 311d7de6783c4cc489e31d24bcec8d8d
 msgid "**Alternative**: Add to Built-in Collection"
-msgstr ""
+msgstr "**替代方案**：添加到内置集合"
 
 #: ../../guide/agentic_tools_tutorial.rst:275 1474c3021007436da3287423dc74bbc9
 msgid ""
 "You can also add your tool to ToolUniverse's built-in agentic tools "
 "collection:"
-msgstr ""
+msgstr "您还可以将您的工具添加到 ToolUniverse 内置的智能智能体工具集合中："
 
 #: ../../guide/agentic_tools_tutorial.rst:283 6a089219a99a403aba4dfd63c4ad10de
 msgid "Step 5: Use Your Tool"
-msgstr ""
+msgstr "步骤5：使用您的工具"
 
 #: ../../guide/agentic_tools_tutorial.rst:286 f51bba947aeb4ed982961bb74afd9d6c
 msgid "5.1 Set Up Environment"
-msgstr ""
+msgstr "5.1 环境搭建"
 
 #: ../../guide/agentic_tools_tutorial.rst:288 d2f2f586d63446e392cc63e159177350
 msgid "First, ensure you have API keys configured:"
-msgstr ""
+msgstr "首先，确保您已配置 API 密钥："
 
 #: ../../guide/agentic_tools_tutorial.rst:300 47d25c25f9734b8f9c17d0554894360c
 msgid "5.2 Load Your Tool"
-msgstr ""
+msgstr "5.2 加载您的工具"
 
 #: ../../guide/agentic_tools_tutorial.rst:302 af07447b581f4989b7ea9d45281e4c2b
 msgid "Import ToolUniverse and load your specific tool from the config file:"
-msgstr ""
+msgstr "导入 ToolUniverse 并从配置文件加载您的特定工具："
 
 #: ../../guide/agentic_tools_tutorial.rst:331 9825b0972d8b4f3b8132e58a2f49d153
 msgid "5.3 Prepare Your Input"
-msgstr ""
+msgstr "5.3 准备您的输入"
 
 #: ../../guide/agentic_tools_tutorial.rst:333 048b805c1d31412ea1f063a2284d5d8c
 msgid "Create the arguments dictionary:"
-msgstr ""
+msgstr "创建参数字典："
 
 #: ../../guide/agentic_tools_tutorial.rst:350 5c911896f4c5467ea4d67dc2e11640e9
 msgid "5.4 Execute the Tool"
-msgstr ""
+msgstr "5.4 执行工具"
 
 #: ../../guide/agentic_tools_tutorial.rst:352 a61fc27bed5044b89ea599233a0912fb
 msgid "Run your tool and handle the response:"
-msgstr ""
+msgstr "运行您的工具并处理响应："
 
 #: ../../guide/agentic_tools_tutorial.rst:370 35cf8a6f5bd24910ae0345abc7ce670c
 msgid "Step 6: Handle Common Issues"
-msgstr ""
+msgstr "第六步：处理常见问题"
 
 #: ../../guide/agentic_tools_tutorial.rst:373 f313a34c086c4942ad805e021bc37a09
 msgid "6.1 Check for Missing API Keys"
-msgstr ""
+msgstr "6.1 检查缺失的 API 密钥"
 
 #: ../../guide/agentic_tools_tutorial.rst:375 0b18d7bebe8e4b04b25f1cff2584365f
 msgid "If you get authentication errors:"
-msgstr ""
+msgstr "如果出现身份验证错误："
 
 #: ../../guide/agentic_tools_tutorial.rst:388 575cf40b956a4bb3a427891f97a431a8
 msgid "6.2 Debug Response Issues"
-msgstr ""
+msgstr "6.2 调试响应问题"
 
 #: ../../guide/agentic_tools_tutorial.rst:390 4018cf6df1774b51b86a1eb0305764a6
 msgid "If the tool returns unexpected results:"
-msgstr ""
+msgstr "如果工具返回了意外结果："
 
 #: ../../guide/agentic_tools_tutorial.rst:408 5bd03d28f7004a9db541cc75d092de8f
 msgid "Step 7: Create More Complex Tools"
-msgstr ""
+msgstr "第7步：创建更复杂的工具"
 
 #: ../../guide/agentic_tools_tutorial.rst:411 f1ddaa31db7a4aca8b801a4cf088d2b9
 msgid "7.1 JSON Response Tool"
-msgstr ""
+msgstr "7.1 JSON 响应工具"
 
 #: ../../guide/agentic_tools_tutorial.rst:413 a8d354d1548440b1b7e43b7006507818
 msgid "Create a tool that returns structured data:"
-msgstr ""
+msgstr "创建一个返回结构化数据的工具："
 
 #: ../../guide/agentic_tools_tutorial.rst:442 07b88308859c4ad0bacf4abd0fe8a0a7
 msgid ""
-"**Key difference**: Set ``\"return_json\": true`` for structured "
-"responses."
-msgstr ""
+"**Key difference**: Set ``\"return_json\": true`` for structured responses."
+msgstr "**关键区别**：设置 ``\"return_json\": true`` 以获取结构化响应。"
 
 #: ../../guide/agentic_tools_tutorial.rst:445 f75d9509fe5c465d8a9f780fa92e9b5f
 msgid "7.2 Tool with Optional Parameters"
-msgstr ""
+msgstr "7.2 带可选参数的工具"
 
 #: ../../guide/agentic_tools_tutorial.rst:447 d6756df778144121bacf99194aae896c
 msgid "Create a tool with both required and optional inputs:"
-msgstr ""
+msgstr "创建一个包含必填和可选输入的工具："
 
+#~ msgid "``max_new_tokens``: Response length limit (1024-8192 typical)"
+#~ msgstr "``max_new_tokens``：响应长度限制（典型范围为1024-8192）"
