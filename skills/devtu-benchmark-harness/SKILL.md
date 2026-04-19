@@ -142,7 +142,7 @@ The analyzer maps each question category to the skill responsible for handling i
 | Benchmark | Baseline (Bash) | Plugin (Apr 14) | Plugin (Apr 18) | Target |
 |-----------|-----------------|-----------------|-----------------|--------|
 | lab-bench (20 MCQ) | 50% | 85% | 85% | 90% |
-| bixbench (205 comp) | ~50% | 60.7% (37/61) | **78.5% (161/205)** | 85% |
+| bixbench (205 comp) | ~50% | 60.7% (37/61) | **81.9% (168/205)** | 85% |
 
 ### BixBench by skill (Apr 18, full 205q, decontaminated skills):
 | Skill | Questions | Accuracy |
